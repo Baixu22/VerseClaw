@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+  "compiledSourceCommit": "d607437e684d11ed259996de21ff1861d4cbbfb3",
+  "productSourceComparison": {
+    "paths": [
+      "electron",
+      "shared",
+      "src",
+      "packages/versebrowser",
+      "openclaw_runtime",
+      "package.json",
+      "pnpm-lock.yaml",
+      "vite.config.ts",
+      "electron-builder.yml",
+      "scripts"
+    ],
+    "exitCode": 0
+  },
+  "copiedBuildFrom": "D:\\tmp\\tf0830\\candidate-scope",
+  "buildProvenanceSha256": "e0ed3bbe295b89da54f1f6e34e876cba1fa2679baeead9c6d1c8ae46efd61092"
+}

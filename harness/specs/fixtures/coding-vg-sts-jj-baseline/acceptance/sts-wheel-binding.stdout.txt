@@ -1,0 +1,1 @@
+{"verified": true, "scope": "all smart_sorter Python modules and v1/v2 contract bytes", "filesChecked": 96, "issues": []}

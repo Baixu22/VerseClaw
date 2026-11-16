@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": "D:\\ClawX\\resources\\bin\\win32-x64\\ae.exe",
+  "copy": "D:\\tmp\\tf0836\\acceptance-bin\\ae.exe",
+  "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+  "bytes": 15144448,
+  "manifestSha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+  "purpose": "Isolated acceptance binary with exact product bytes; original path failure retained separately."
+}

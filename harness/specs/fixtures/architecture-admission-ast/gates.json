@@ -1,0 +1,436 @@
+[
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "typecheck-ready",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:23:38.573Z",
+    "finishedAt": "2026-11-04T23:24:24.620Z",
+    "durationMs": 46041.2169,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\typecheck-ready.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\typecheck-ready.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/typecheck-ready.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/typecheck-ready.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "unit",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "exec",
+      "vitest",
+      "run",
+      "tests/unit/contract-check.test.ts",
+      "--reporter=json",
+      "--outputFile=D:/tmp/architecture-convergence-20261105/gates/11adcfbdb/unit-result.json"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:27:21.690Z",
+    "finishedAt": "2026-11-04T23:29:10.370Z",
+    "durationMs": 108677.1821,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\unit.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\unit.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/unit.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/unit.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "contract",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "scripts/contract-check.mjs"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:35:27.031Z",
+    "finishedAt": "2026-11-04T23:35:32.126Z",
+    "durationMs": 5092.4262,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\contract.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\contract.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/contract.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/contract.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "lint",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "exec",
+      "eslint",
+      "scripts/contract-check.mjs",
+      "tests/unit/contract-check.test.ts",
+      "--max-warnings",
+      "0"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:35:27.030Z",
+    "finishedAt": "2026-11-04T23:35:34.388Z",
+    "durationMs": 7356.0178,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\lint.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\lint.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/lint.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/lint.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "artifacts",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "scripts/check-repository-artifacts.mjs"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:35:27.033Z",
+    "finishedAt": "2026-11-04T23:35:35.820Z",
+    "durationMs": 8784.4074,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\artifacts.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\artifacts.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/artifacts.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/artifacts.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "evidence",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "scripts/check-evidence-refs.mjs"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:35:27.031Z",
+    "finishedAt": "2026-11-04T23:35:27.774Z",
+    "durationMs": 741.1693,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\evidence.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\evidence.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/evidence.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/evidence.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "diff-check",
+    "exe": "git",
+    "argv": [
+      "diff",
+      "--check",
+      "bfcf57616b361a12845014b3f054b95e31c4021c",
+      "HEAD"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:35:27.024Z",
+    "finishedAt": "2026-11-04T23:35:27.744Z",
+    "durationMs": 718.4953999999999,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\diff-check.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\diff-check.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/diff-check.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/diff-check.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "harness-context",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "harness",
+      "context",
+      "--spec",
+      "harness/specs/tasks/architecture-skeleton-admission-ast-hardening.md"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:42:21.238Z",
+    "finishedAt": "2026-11-04T23:42:23.496Z",
+    "durationMs": 2255.827,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\harness-context.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\harness-context.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/harness-context.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/harness-context.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "harness-validate",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "harness",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/architecture-skeleton-admission-ast-hardening.md",
+      "--since",
+      "bfcf57616b361a12845014b3f054b95e31c4021c"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:42:25.463Z",
+    "finishedAt": "2026-11-04T23:42:39.692Z",
+    "durationMs": 14226.4403,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\harness-validate.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\harness-validate.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/harness-validate.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/harness-validate.stderr.txt"
+    }
+  },
+  {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "harness-dry-run",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "harness",
+      "run",
+      "--spec",
+      "harness/specs/tasks/architecture-skeleton-admission-ast-hardening.md",
+      "--since",
+      "bfcf57616b361a12845014b3f054b95e31c4021c",
+      "--dry-run"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T23:42:39.490Z",
+    "finishedAt": "2026-11-04T23:42:42.539Z",
+    "durationMs": 3045.7140999999997,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+        "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\harness-dry-run.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\11adcfbdb\\harness-dry-run.stderr.log",
+    "retainedArtifacts": {
+      "stdout": "harness/specs/fixtures/architecture-admission-ast/harness-dry-run.stdout.txt",
+      "stderr": "harness/specs/fixtures/architecture-admission-ast/harness-dry-run.stderr.txt"
+    }
+  }
+]

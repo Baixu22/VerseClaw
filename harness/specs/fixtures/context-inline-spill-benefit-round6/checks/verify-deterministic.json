@@ -1,0 +1,46 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "verify-deterministic",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "scripts/context-inline-spill-benefit-round6-verify.mjs",
+    "D:\\tmp\\g7-inline-spill-benefit-round6\\2026-11-13T06-11-56-233Z-deterministic",
+    "D:/tmp/g7-inline-spill-tf0749-20261113-01a1d34c/verification-deterministic.json",
+    "--seal"
+  ],
+  "startedAt": "2026-11-13T06:14:15.316Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "tree": "888122eb7ee5be928d3c09c50dc3d998a81e40d3",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T06:14:19.409Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "tree": "888122eb7ee5be928d3c09c50dc3d998a81e40d3",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\verify-deterministic.stdout.txt",
+      "bytes": 673,
+      "sha256": "6144ab8d39ac1950f2d5aa3891cf4312b150ef4a964ccde405706b031e5c00ed"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\verify-deterministic.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

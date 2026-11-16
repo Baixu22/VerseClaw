@@ -1,0 +1,727 @@
+{
+  "schemaVersion": "RsiCodingTaskInputsCheck/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-public-task-inputs",
+  "passed": true,
+  "tasks": [
+    {
+      "id": "tf-0274-e01",
+      "kind": "module-implementation",
+      "inputDigest": "887b8219eebede881aad993f304a9e9a00e3425122b4902dd945ae2500f3733e",
+      "publicApiFiles": 1,
+      "baseFiles": 9,
+      "missingBaseFiles": 7,
+      "omittedContext": [],
+      "inputChars": 16911
+    },
+    {
+      "id": "tf-0275-e02",
+      "kind": "module-implementation",
+      "inputDigest": "77cb6f426b853b1e6bbb1435c8a48d4cddd1657f1ca7bfe97406f072dbf98827",
+      "publicApiFiles": 1,
+      "baseFiles": 9,
+      "missingBaseFiles": 7,
+      "omittedContext": [],
+      "inputChars": 45217
+    },
+    {
+      "id": "tf-0289-g01",
+      "kind": "module-implementation",
+      "inputDigest": "584575666f50471a5b48080d86e3179abfd71de5ee173f226ecfb5ab8d72400f",
+      "publicApiFiles": 1,
+      "baseFiles": 7,
+      "missingBaseFiles": 2,
+      "omittedContext": [],
+      "inputChars": 72509
+    },
+    {
+      "id": "tf-0290-g02",
+      "kind": "specification-verification",
+      "inputDigest": "738a3361a87d8c28f1155e67a8771d0b6a80264b1c36a44bc9f4eb05afe3b9b4",
+      "publicApiFiles": 0,
+      "baseFiles": 24,
+      "missingBaseFiles": 3,
+      "omittedContext": [
+        {
+          "path": "scripts/check-error-governance.mjs",
+          "reason": "character-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l04-checkpoint-attachment-binding.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l02-context-pressure-recovery.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/shadow-census.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "harness/specs/rules/provider-envelope-reject-boundary.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s01-envelope-reject.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "src/lib/error-model.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/g01-error-recovery-next-action.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s03-external-write-boundary.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/hot-file-write-owner.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l06-hot-file-write-owner.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l03-in-run-steering.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s06-memory-effect-receipt.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "scripts/lib/paired-ablation.mjs",
+          "reason": "file-budget"
+        },
+        {
+          "path": "scripts/lib/paired-ablation.d.mts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "shared/agent-dev/paired-ablation-fixture.js",
+          "reason": "file-budget"
+        },
+        {
+          "path": "harness/specs/rules/paired-ablation-boundary.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/e02-paired-ablation.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.mjs",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "scripts/agent-dev-benefit-eval.mjs",
+          "reason": "file-budget"
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.d.mts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "shared/agent-dev/reliability-fixture.js",
+          "reason": "file-budget"
+        },
+        {
+          "path": "harness/specs/rules/reliability-aggregation-boundary.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/e01-reliability-aggregation.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "shared/agent-dev/scenarios.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s02-sink-ledger.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "harness/specs/rules/sensitive-sink-ledger-boundary.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "shared/security/content-provenance.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "scripts/repository-artifacts.js",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/diagnostic-events.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.model-diagnostic-events.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.model-call-usage.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/extensions/diagnostics-otel/src/service.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/extensions/diagnostics-otel/api.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "harness/specs/rules/trace-cost-sampling-boundary.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "harness/specs/scenarios/gateway-backend-communication.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/o02-trace-cost-sampling.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l01-working-context-single-source.md",
+          "reason": "file-budget"
+        },
+        {
+          "path": "electron/services/task-ledger-working-context.ts",
+          "reason": "file-budget"
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "reason": "file-budget"
+        }
+      ],
+      "inputChars": 82007
+    },
+    {
+      "id": "tf-0291-g03",
+      "kind": "module-implementation",
+      "inputDigest": "31c27bc4e50126330c47f03094c65ef604a04770ffc70f39eef6457a872ccfcc",
+      "publicApiFiles": 1,
+      "baseFiles": 4,
+      "missingBaseFiles": 4,
+      "omittedContext": [],
+      "inputChars": 4937
+    },
+    {
+      "id": "tf-0283-l01",
+      "kind": "module-implementation",
+      "inputDigest": "415813a986a483e00822231e0bcfa092acc71da7a9b1672db455df3a2f2f1605",
+      "publicApiFiles": 2,
+      "baseFiles": 8,
+      "missingBaseFiles": 4,
+      "omittedContext": [],
+      "inputChars": 37028
+    },
+    {
+      "id": "tf-0284-l02",
+      "kind": "module-implementation",
+      "inputDigest": "67040fc9e5d906d47421b74e3c4e6107da8b41c3662e5e479e7debde007c546a",
+      "publicApiFiles": 1,
+      "baseFiles": 4,
+      "missingBaseFiles": 3,
+      "omittedContext": [],
+      "inputChars": 10913
+    },
+    {
+      "id": "tf-0285-l03",
+      "kind": "module-implementation",
+      "inputDigest": "5caf789e0b1cde4b1f56285f97cca64d4ad1fcd50eefb202bbf28e052fb8a10c",
+      "publicApiFiles": 1,
+      "baseFiles": 10,
+      "missingBaseFiles": 3,
+      "omittedContext": [
+        {
+          "path": "openclaw_runtime/src/agents/subagent-registry.ts",
+          "reason": "character-budget"
+        }
+      ],
+      "inputChars": 89554
+    },
+    {
+      "id": "tf-0286-l04",
+      "kind": "module-implementation",
+      "inputDigest": "13453078e45514891564cd8bfaca766109f27b8e2905bbfe299870aec6ca2d03",
+      "publicApiFiles": 1,
+      "baseFiles": 3,
+      "missingBaseFiles": 3,
+      "omittedContext": [],
+      "inputChars": 3514
+    },
+    {
+      "id": "tf-0287-l05",
+      "kind": "module-implementation",
+      "inputDigest": "936adb1407508aa4b97417d01e2bf9ce17a918c36fd170d9fbfff3dc9f6edc67",
+      "publicApiFiles": 1,
+      "baseFiles": 3,
+      "missingBaseFiles": 3,
+      "omittedContext": [],
+      "inputChars": 2808
+    },
+    {
+      "id": "tf-0288-l06",
+      "kind": "module-implementation",
+      "inputDigest": "8b2de3641e11d39b5946c7a2af6fc43a2ece3873f4d1eaadc8d6041a280cb5e0",
+      "publicApiFiles": 1,
+      "baseFiles": 4,
+      "missingBaseFiles": 3,
+      "omittedContext": [],
+      "inputChars": 3867
+    },
+    {
+      "id": "tf-0276-s01",
+      "kind": "module-implementation",
+      "inputDigest": "6a2a7b28ac5657bd7f22655e845e20682e0120b287f6b67d0701d61bfbc51921",
+      "publicApiFiles": 2,
+      "baseFiles": 10,
+      "missingBaseFiles": 3,
+      "omittedContext": [
+        {
+          "path": "openclaw_runtime/src/agents/receipt-store.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/net/fetch-guard.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/net/proxy-env.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/net/ssrf.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/logging/subsystem.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/model-transport-url.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-http-errors.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-request-auth.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-payload-trace.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-local-service.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-outbound-budget.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-request-config.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage1-request-envelope.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/anthropic-transport-stream.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/openai-transport-stream.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage1-golden-run.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage2-golden-run.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/plugin-sdk/provider-transport-runtime.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/google-prompt-cache.ts",
+          "reason": "character-budget"
+        }
+      ],
+      "inputChars": 96407
+    },
+    {
+      "id": "tf-0277-s02",
+      "kind": "specification-verification",
+      "inputDigest": "23fdb84a8164dc6ef2dc958694741450f33807cf0ce5d3f2d502d9134db2303f",
+      "publicApiFiles": 0,
+      "baseFiles": 8,
+      "missingBaseFiles": 3,
+      "omittedContext": [
+        {
+          "path": "openclaw_runtime/src/infra/outbound/message-action-runner.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/exec-provenance-policy.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/bash-tools.exec.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/image-generate-tool.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/outbound-send-service.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/channels/plugins/message-action-dispatch.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/gateway/cli-runtime/outbound-send-deps.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/sessions/send-policy.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/auto-reply/send-policy.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/gateway/server-broadcast.ts",
+          "reason": "character-budget"
+        }
+      ],
+      "inputChars": 97266
+    },
+    {
+      "id": "tf-0278-s03",
+      "kind": "module-implementation",
+      "inputDigest": "bc3cce015ef1deef55e675602e4c9654d97fc488d518469ad4f64589c431eac9",
+      "publicApiFiles": 1,
+      "baseFiles": 7,
+      "missingBaseFiles": 3,
+      "omittedContext": [
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.ts",
+          "reason": "character-budget"
+        }
+      ],
+      "inputChars": 36443
+    },
+    {
+      "id": "tf-0279-s04",
+      "kind": "specification-verification",
+      "inputDigest": "d83c5785349b7e81cbdaddd8620023eb5e785227d620ba859381c93d0f431357",
+      "publicApiFiles": 0,
+      "baseFiles": 4,
+      "missingBaseFiles": 2,
+      "omittedContext": [],
+      "inputChars": 19746
+    },
+    {
+      "id": "tf-0280-s05",
+      "kind": "specification-verification",
+      "inputDigest": "09f3e08636e606b80661ae3f7a2e8d4b4e41d720407d1b2e50425e23322ea110",
+      "publicApiFiles": 0,
+      "baseFiles": 4,
+      "missingBaseFiles": 2,
+      "omittedContext": [],
+      "inputChars": 47586
+    },
+    {
+      "id": "tf-0281-s06",
+      "kind": "module-implementation",
+      "inputDigest": "1384c7be6aa8a6782b77a75c5f668799f6c32c566c43266207c7617b586b4ed8",
+      "publicApiFiles": 2,
+      "baseFiles": 7,
+      "missingBaseFiles": 3,
+      "omittedContext": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-store.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/types.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts",
+          "reason": "character-budget"
+        }
+      ],
+      "inputChars": 93065
+    },
+    {
+      "id": "tf-0282-s07",
+      "kind": "module-implementation",
+      "inputDigest": "81254ece952f81f384ab5e1dafdfbfb06152ff351ec8f9301d02d840f72210fd",
+      "publicApiFiles": 1,
+      "baseFiles": 4,
+      "missingBaseFiles": 3,
+      "omittedContext": [],
+      "inputChars": 26216
+    },
+    {
+      "id": "tf-0293-a01",
+      "kind": "specification-verification",
+      "inputDigest": "10903e6612724270b6d6bbf11f218a1283554848b38c00313bea77d845776773",
+      "publicApiFiles": 0,
+      "baseFiles": 9,
+      "missingBaseFiles": 2,
+      "omittedContext": [],
+      "inputChars": 65986
+    },
+    {
+      "id": "tf-0294-a02",
+      "kind": "specification-verification",
+      "inputDigest": "a9e19b372173b1752d7a671275869f45a1ff54790ac3e11fbc1dea16968fe56e",
+      "publicApiFiles": 0,
+      "baseFiles": 6,
+      "missingBaseFiles": 3,
+      "omittedContext": [],
+      "inputChars": 23060
+    },
+    {
+      "id": "tf-0295-a03",
+      "kind": "specification-verification",
+      "inputDigest": "6c27eef7d73d9d8e7b5c42a6b1f9fc5997952bab4c23479126028c6cfaa2245f",
+      "publicApiFiles": 0,
+      "baseFiles": 6,
+      "missingBaseFiles": 2,
+      "omittedContext": [
+        {
+          "path": "openclaw_runtime/src/config/types.openclaw.ts",
+          "reason": "character-budget"
+        }
+      ],
+      "inputChars": 93825
+    },
+    {
+      "id": "tf-0296-a04",
+      "kind": "specification-verification",
+      "inputDigest": "caa444f669cc83282ebc5f14a4248219a1c275fa53f18a41a4d46a91924f5db1",
+      "publicApiFiles": 0,
+      "baseFiles": 5,
+      "missingBaseFiles": 2,
+      "omittedContext": [],
+      "inputChars": 48740
+    },
+    {
+      "id": "tf-0297-a05",
+      "kind": "specification-verification",
+      "inputDigest": "761a558be3fa212eed9522d2567c08d2e8e51032f988edd087d2d3b15e7da49d",
+      "publicApiFiles": 0,
+      "baseFiles": 9,
+      "missingBaseFiles": 3,
+      "omittedContext": [
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-promotion.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/config/types.agent-defaults.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/compact.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "scripts/context-compression-production-summary-regenerator.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "scripts/context-compression-recovery-ledger.mjs",
+          "reason": "character-budget"
+        },
+        {
+          "path": "scripts/context-compression-would-retry-canary.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "harness/specs/tasks/token-dense-recovery-compression-v1.md",
+          "reason": "character-budget"
+        },
+        {
+          "path": "docs/clawx-design-overview.md",
+          "reason": "character-budget"
+        },
+        {
+          "path": "electron/services/sessions-api.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "scripts/context-compression-eval-runner.mjs",
+          "reason": "character-budget"
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "reason": "character-budget"
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "reason": "character-budget"
+        }
+      ],
+      "inputChars": 95163
+    },
+    {
+      "id": "tf-0298-a06",
+      "kind": "specification-verification",
+      "inputDigest": "e97fbf16c62ef4bb4698079d7426bc386be04732a3ab9c0efa70f3a514d64429",
+      "publicApiFiles": 0,
+      "baseFiles": 8,
+      "missingBaseFiles": 3,
+      "omittedContext": [],
+      "inputChars": 64230
+    }
+  ],
+  "coverage": {
+    "total": 24,
+    "moduleImplementation": 14,
+    "specificationVerification": 10
+  },
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "providerCalls": 0,
+    "realHuman": false
+  }
+}

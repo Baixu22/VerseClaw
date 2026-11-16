@@ -106,6 +106,44 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 }
 
 describe('gateway permission approval flow', () => {
+  it('binds chat workspace identity to the Main owner and refuses forged scopes', async () => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({ runId: 'bounded-run' })) };
+    const backpressure = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, backpressure as never);
+    await api.rpc({ method: 'chat.send', params: { sessionKey: 'agent:main:main', message: 'trusted budget scope', idempotencyKey: 'one' } });
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('chat.send', expect.objectContaining({ workspaceId: 'workspace-1' }), undefined);
+    gatewayManager.rpc.mockClear();
+    await expect(api.rpc({ method: 'chat.send', params: { workspaceId: 'forged-project', sessionKey: 'agent:main:main', message: 'scope bypass', idempotencyKey: 'two' } }))
+      .rejects.toThrow(/workspace.*scope|scope.*workspace/i);
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
+  it('rejects verification for a workspace whose permissions were not evaluated', async () => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({})) };
+    const backpressure = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, backpressure as never);
+    await expect(api.rpc({ method: 'task_loop.verifyCompletion', params: {
+      workspaceId: 'another-readonly-workspace', sessionKey: 'agent:main:other', checkpointId: 'checkpoint', checkId: 'check', verificationRunId: 'persistent-check',
+    } })).rejects.toThrow('scope differs');
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+  it('refuses verification when its persisted physical root differs from Main', async () => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })),
+      rpc: vi.fn(async () => ({ workspaceRoot: process.env.SystemRoot ?? '/', checkpoint: { owner: 'task-loop' } })) };
+    const backpressure = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, backpressure as never);
+    await expect(api.rpc({ method: 'task_loop.verifyCompletion', params: {
+      workspaceId: 'workspace-1', sessionKey: 'agent:main:main', checkpointId: 'checkpoint', checkId: 'check', verificationRunId: 'check',
+    } })).rejects.toThrow('physical workspace');
+    expect(gatewayManager.rpc).toHaveBeenCalledTimes(1);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('task_loop.completionEvidence', expect.anything(), 20_000);
+  });
   beforeEach(async () => {
     setSandboxHighRiskPolicyLoader(async () => ({
       degraded: false,
@@ -118,6 +156,24 @@ describe('gateway permission approval flow', () => {
     const { permissionsApiTestDouble } = await import('../helpers/permissions-api-test-double');
     permissionsApiTestDouble.reset();
     activeWorkspace.profile = workspace();
+  });
+
+  it.each([
+    { workspaceId: 'other-workspace' },
+    { workspaceDir: 'D:/tmp/other-workspace' },
+    { sessionKey: 'agent:main:foreign-workspace' },
+  ])('TF-0772 rejects MCP scope drift before the workspace permission gate: %j', async (changed) => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const gatewayManager = { rpc: vi.fn(async () => ({ success: true })) };
+    const fabric = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, fabric as never);
+    expect(await api.rpc({ method: 'mcp.callTool', params: {
+      serverId: 'fixture', toolName: 'echo', workspaceId: activeWorkspace.profile.id,
+      workspaceDir: activeWorkspace.profile.rootPath, sessionKey: activeWorkspace.profile.activeSessionKey,
+      agentId: 'main', expectedSessionGeneration: 'generation-1', ...changed,
+    } })).toMatchObject({ success: false, blocked: true });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
   });
 
   it('requires approval for dangerous gateway RPC and consumes approval before replay', async () => {
@@ -173,6 +229,24 @@ describe('gateway permission approval flow', () => {
       success: false,
       approvalRequired: true,
     });
+  });
+  it.each(['tools.invoke', 'mcp.callTool'])('uses the persisted coordinator root at the %s permission gate', async (method) => {
+    activeWorkspace.profile = workspace('fullAccess');
+    activeWorkspace.profile.coordinatorBindings = { 'agent:main:main': {
+      workspaceId: activeWorkspace.profile.id, sessionKey: 'agent:main:main', agentId: 'main', state: 'active',
+      environment: { canonicalRoot: 'D:/tmp/managed-worktree' }, sessionGeneration: 'generation-1',
+    } } as unknown as NonNullable<WorkspaceProfile['coordinatorBindings']>;
+    const gatewayManager = { rpc: vi.fn(async () => ({ success: true })) };
+    const fabric = { run: vi.fn((name, params, timeoutMs, run) => run(name, params, timeoutMs)) };
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, fabric as never);
+    const params = { serverId: 'fixture', toolName: 'echo', name: 'fixture__echo', workspaceId: activeWorkspace.profile.id,
+      workspaceDir: 'D:/tmp/managed-worktree', sessionKey: 'agent:main:main', agentId: 'main', expectedSessionGeneration: 'generation-1' };
+    expect(await api.rpc({ method, params })).toMatchObject({ success: true });
+    expect(await api.rpc({ method, params: { ...params, expectedSessionGeneration: 'generation-2' } })).toMatchObject({ success: false, blocked: true });
+    activeWorkspace.profile.coordinatorBindings!['agent:main:main'].state = 'paused';
+    expect(await api.rpc({ method, params })).toMatchObject({ success: false, blocked: true });
+    expect(gatewayManager.rpc).toHaveBeenCalledTimes(1);
   });
 
   it('does not allow an approved gateway request to be reused for different params', async () => {

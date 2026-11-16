@@ -14,6 +14,7 @@ const sections = [
   { id: 'channels', to: '/settings/channels', icon: 'connections', group: 'configuration' },
   { id: 'browser', to: '/settings/browser', icon: 'browser', group: 'configuration' },
   { id: 'billing', to: '/settings/billing', icon: 'appearance', group: 'operations' },
+  { id: 'storage', to: '/settings/storage', icon: 'worktrees', group: 'operations' },
   { id: 'system', to: '/settings/system', icon: 'computer', group: 'operations' },
   { id: 'developer', to: '/settings/developer', icon: 'hooks', group: 'operations' },
   { id: 'archived', to: '/settings/archived', icon: 'archived', group: 'experience' },

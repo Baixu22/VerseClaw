@@ -1,0 +1,309 @@
+{
+  "schema": "ContextInlineSpillBenefitLoopEval/v1",
+  "runId": "2026-11-13T11-13-05-321Z-deterministic",
+  "mode": "deterministic",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "loop_driver": "eval-harness (executes only the model-returned tool calls)",
+  "candidate": {
+    "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true,
+    "status": "M scripts/context-inline-spill-benefit-loop-eval.mts\n M scripts/context-inline-spill-benefit-strategy.mts\n?? harness/specs/tasks/inline-spill-real-benefit-eval-round9.md\n?? tests/unit/context-inline-spill-benefit-bookmark.test.ts"
+  },
+  "designFreeze": null,
+  "provider": {
+    "kind": "deterministic-scripted-policy",
+    "endpoint_origin": null,
+    "model": null,
+    "credential_persisted": false
+  },
+  "design": {
+    "repeats": 1,
+    "maxTurns": 8,
+    "maxOutputTokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "strategy": "bookmarked",
+    "pressureSource": "tool",
+    "providerTimeoutMs": 240000,
+    "deterministicFault": "first-checksum-uri",
+    "evidenceTasks": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash"
+    ],
+    "controlTasks": [
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 8,
+      "pass": 2,
+      "successRate": 0.25,
+      "wilson95": [
+        0.071479212752109,
+        0.5907245696898311
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0,
+      "recallOkRate": 0,
+      "meanTurns": 1,
+      "meanMainContextChars": 1612.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0,
+      "p95LatencyMs": 0,
+      "failureClasses": {
+        "recall_not_attempted": 6,
+        "none": 2
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 8,
+      "pass": 8,
+      "successRate": 1,
+      "wilson95": [
+        0.6755924351161198,
+        1
+      ],
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "passAtK": 1,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4,
+      "meanMainContextChars": 19219.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0,
+      "p95LatencyMs": 0,
+      "failureClasses": {
+        "none": 8
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 8,
+      "pass": 8,
+      "successRate": 1,
+      "wilson95": [
+        0.6755924351161198,
+        1
+      ],
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "passAtK": 1,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4,
+      "meanMainContextChars": 19744.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0,
+      "p95LatencyMs": 0,
+      "failureClasses": {
+        "none": 8
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 8,
+      "pass": 2,
+      "successRate": 0.25,
+      "wilson95": [
+        0.071479212752109,
+        0.5907245696898311
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4,
+      "meanMainContextChars": 19660.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0,
+      "p95LatencyMs": 0,
+      "failureClasses": {
+        "recalled_text_evicted": 6,
+        "none": 2
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 2,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 2,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 8,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 1
+    }
+  },
+  "evidenceComparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 0,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 6,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 1
+    }
+  },
+  "inputIntegrity": {
+    "assembly": "production-projection-only/function-protocol/r5-low-reasoning",
+    "mainContextCharsSource": "JSON.stringify(actual request.input).length",
+    "initialPairs": [
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "stableSha256": "b34b667d59d847d4b1ad167e84722730cc7ec3eab296580c8cd84b0b32e385c4",
+        "offSha256": "b34b667d59d847d4b1ad167e84722730cc7ec3eab296580c8cd84b0b32e385c4",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "stableSha256": "e35a1b147e2ea2c7596f7656506d0f319a7aaca3ea09016e4451bafe54c91f51",
+        "offSha256": "e35a1b147e2ea2c7596f7656506d0f319a7aaca3ea09016e4451bafe54c91f51",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "stableSha256": "fa0970e61edb30a27c4a2a0189a243d0b26a6c198067a336797b8722be75a8c7",
+        "offSha256": "fa0970e61edb30a27c4a2a0189a243d0b26a6c198067a336797b8722be75a8c7",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "stableSha256": "34706262d9a620397e862e415190d10badd36a53c5759a34d786cd2a655f3800",
+        "offSha256": "34706262d9a620397e862e415190d10badd36a53c5759a34d786cd2a655f3800",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "stableSha256": "e0f2f4f711d9899df30422dd0f2b8918fe99036420a788f60a68538e1741789d",
+        "offSha256": "e0f2f4f711d9899df30422dd0f2b8918fe99036420a788f60a68538e1741789d",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "stableSha256": "f34d433cd80f00087528a122223d04e2c6d8dea191c0ba3dcc65a75b8fece084",
+        "offSha256": "f34d433cd80f00087528a122223d04e2c6d8dea191c0ba3dcc65a75b8fece084",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "stableSha256": "9c9aca969e176ad47d5b8340fab14c4c0a295fc3ba4158a291152cf1f1476c64",
+        "offSha256": "9c9aca969e176ad47d5b8340fab14c4c0a295fc3ba4158a291152cf1f1476c64",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "stableSha256": "aa1014b25557ca65e46d0526d386e4d6da13a3c5bda00ec5ca874fb98baff06f",
+        "offSha256": "aa1014b25557ca65e46d0526d386e4d6da13a3c5bda00ec5ca874fb98baff06f",
+        "byteIdentical": true
+      }
+    ],
+    "allInitialPairsByteIdentical": true,
+    "unprojectedOutputFallback": false
+  },
+  "decision": {
+    "status": "inconclusive",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": 84,
+    "tokenGrowthPct": 0,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "boundaries": [
+    "The loop driver is an eval harness: it executes only the tool calls the model returns, but it is not the Electron/Gateway product turn (no gateway approval, system prompt or bootstrap).",
+    "Deterministic mode uses a scripted policy and is harness self-test only, never evidence of model autonomy.",
+    "Cost is not-run unless the provider returns a billing unit; token usage is recorded per call.",
+    "Results cover this corpus and this model only; they do not establish product quality or GA."
+  ]
+}

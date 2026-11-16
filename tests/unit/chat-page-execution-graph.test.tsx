@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render as renderView, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+
+const render = (view: Parameters<typeof renderView>[0]) => renderView(view, { wrapper: MemoryRouter });
 
 const hostApiFetchMock = vi.fn();
 
@@ -151,7 +154,8 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async importOriginal => ({
+  ...await importOriginal<typeof import('react-router-dom')>(),
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: '/', search: '', hash: '', state: null, key: 'test' }),
 }));
@@ -220,6 +224,10 @@ vi.mock('@/pages/Chat/ChatMessage', () => ({
 
 describe('Chat execution graph lifecycle', () => {
   beforeEach(async () => {
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      value(this: HTMLElement, options: ScrollToOptions) { this.scrollTop = options.top ?? this.scrollTop; },
+    });
     vi.resetModules();
     hostApiFetchMock.mockReset();
     hostApiFetchMock.mockResolvedValue({ success: true, messages: [] });
@@ -293,13 +301,32 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.queryByText('Checked X. Here is the summary.')).not.toBeInTheDocument();
   });
 
+  it('reads completed execution steps cached after the first page render', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const trigger = { id: 'cache-trigger', role: 'user' as const, content: 'Read the source' };
+    useChatStore.setState({ messages: [trigger], streamingMessage: null, streamingTools: [], pendingFinal: false,
+      runtimeRuns: { 'run-live': { runId: 'run-live', sessionKey: 'agent:main:main', status: 'running',
+        assistantText: '', thinkingText: '', events: [
+          { type: 'tool.started', runId: 'run-live', seq: 1, toolCallId: 'cached-read', name: 'read', args: { path: 'retained.ts' } },
+          { type: 'tool.completed', runId: 'run-live', seq: 2, toolCallId: 'cached-read', name: 'read', result: 'Retained contents' },
+        ] } } });
+    const { Chat } = await import('@/pages/Chat/index');
+    render(<Chat />);
+    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+    act(() => useChatStore.setState({ messages: [trigger, { role: 'assistant', content: 'Finished reading.' }],
+      runtimeRuns: {}, sending: false, activeRunId: null, pendingFinal: false }));
+    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+    expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-sending', 'false');
+  });
+
   it('does not reopen an old handoff draft after changing away and back', async () => {
     const { useChatStore } = await import('@/stores/chat');
     const { hostApi } = await import('@/lib/host-api');
     const { Chat } = await import('@/pages/Chat/index');
     let finish!: (result: unknown) => void;
     Object.assign(hostApi.sessions, { prepareHandoff: vi.fn(() => new Promise(resolve => { finish = resolve; })) });
-    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null });
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null,
+      sessions: [{ key: 'agent:main:a', sessionId: 'generation-a' }, { key: 'agent:main:b', sessionId: 'generation-b' }] });
     render(<Chat />);
     fireEvent.click(screen.getByTestId('mock-prepare-handoff'));
     await waitFor(() => expect(hostApi.sessions.prepareHandoff).toHaveBeenCalledTimes(1));
@@ -316,11 +343,13 @@ describe('Chat execution graph lifecycle', () => {
     let finish!: (result: unknown) => void;
     Object.assign(hostApi.sessions, { compact: vi.fn(() => new Promise(resolve => { finish = resolve; })) });
     vi.mocked(hostApi.sessions.compactionStatus).mockImplementation(async ({ sessionKey }) => ({ success: true, available: true, canCompact: true, inProgress: false, usedTokens: sessionKey === 'agent:main:a' ? 111 : 222, pressure: 'low', truncatedMessageCount: 0, warnings: [] }));
-    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null, loadHistory: vi.fn(async () => undefined), loadSessions: vi.fn(async () => undefined) });
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null, loadHistory: vi.fn(async () => undefined), loadSessions: vi.fn(async () => undefined),
+      sessions: [{ key: 'agent:main:a', sessionId: 'generation-a' }, { key: 'agent:main:b', sessionId: 'generation-b' }] });
     render(<Chat />);
     await waitFor(() => expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-used-tokens', '111'));
     fireEvent.click(screen.getByTestId('mock-compact'));
     await waitFor(() => expect(hostApi.sessions.compact).toHaveBeenCalledTimes(1));
+    expect(hostApi.sessions.compact).toHaveBeenCalledWith(expect.objectContaining({ sessionKey: 'agent:main:a', expectedSessionId: 'generation-a' }));
     act(() => useChatStore.setState({ currentSessionKey: 'agent:main:b' }));
     await waitFor(() => expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-used-tokens', '222'));
     await act(async () => { finish({ success: true, compacted: true, tokensBefore: 111, tokensAfter: 10 }); });
@@ -680,7 +709,7 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.queryByText(/repair/i)).not.toBeInTheDocument();
   });
 
-  it('keeps runtime tool status inside the execution graph while a tool is running', async () => {
+  it('keeps only the current animated tool visible while process details are folded', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
@@ -736,14 +765,21 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toHaveAttribute('data-collapsed', 'false');
+      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
       expect(screen.getAllByText('read').length).toBeGreaterThan(0);
     });
-
+    expect(screen.getByTestId('chat-turn-current-activity')).toBeVisible();
+    expect(screen.getByTestId('mock-streaming-message')).toHaveTextContent('I will read the file first.');
+    expect(screen.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-streaming-tool-status-bar')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.getByTestId('chat-execution-graph')).toBeVisible();
+    expect(screen.queryByTestId('chat-turn-current-activity')).not.toBeInTheDocument();
+    expect(screen.getAllByTestId('chat-call-chip')).toHaveLength(1);
   });
 
-  it('renders the execution graph immediately for an active run before any stream content arrives', async () => {
+  it('renders a single compact working status before any stream content arrives', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
@@ -776,11 +812,11 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toHaveAttribute('data-collapsed', 'false');
+      expect(screen.getByTestId('chat-turn-summary-card')).toHaveAttribute('data-status', 'running');
     });
-
-    expect(screen.getByTestId('chat-execution-step-thinking-trailing')).toBeInTheDocument();
-    expect(screen.getAllByText('Thinking').length).toBeGreaterThan(0);
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('assistant-stream-status')).not.toBeInTheDocument();
   });
 
   it('renders generated file cards with line stats for edit tools', async () => {
@@ -1275,7 +1311,7 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.queryByTestId('chat-activity-indicator')).not.toBeInTheDocument();
   });
 
-  it('shows trailing thinking together with a running tool status', async () => {
+  it('shows the running tool without a second thinking indicator', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
@@ -1316,11 +1352,12 @@ describe('Chat execution graph lifecycle', () => {
 
     await waitFor(() => {
       expect(screen.getAllByText('browser').length).toBeGreaterThan(0);
-      expect(screen.getByTestId('chat-execution-step-thinking-trailing')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-turn-current-activity')).toBeVisible();
     });
+    expect(screen.queryByTestId('chat-execution-step-thinking-trailing')).not.toBeInTheDocument();
   });
 
-  it('keeps trailing thinking visible while waiting for final history after completed tool status', async () => {
+  it('keeps one working summary while waiting for final history after completed tool status', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
@@ -1367,7 +1404,7 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-step-thinking-trailing')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-turn-summary-card')).toHaveAttribute('data-status', 'running');
     });
   });
 
@@ -1493,7 +1530,7 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-step-thinking-trailing')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-turn-summary-card')).toHaveAttribute('data-status', 'running');
     });
     expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-sending', 'true');
   });
@@ -1543,7 +1580,7 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-step-thinking-trailing')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-turn-summary-card')).toHaveAttribute('data-status', 'running');
     });
   });
 });

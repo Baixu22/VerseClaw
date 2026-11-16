@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\final-source-guard.json",
+  "sourceSha256": "77d254598433336d5d499b999760ff4b47eab57c287378be6abf1bf5ddc25e93",
+  "result": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+    "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+    "filesChecked": 26584,
+    "beforeDigest": "ca1abcb3626f2752b59b460d10aa25ea908b8313ea52a057a18c0d20540fc147",
+    "afterDigest": "ca1abcb3626f2752b59b460d10aa25ea908b8313ea52a057a18c0d20540fc147",
+    "sourceUnchanged": true,
+    "before": "candidate-before.json",
+    "after": "candidate-after.json"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-dynamic-destructured-method",
+  "rule": "flat-ipc/non-static-method",
+  "expect": "[flat-ipc/non-static-method]",
+  "description": "Regression for local IPC aliases, bound channels and binding origins through the real checker entrypoint.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\n{\nconst method = ['handle'][0];\nconst { [method]: register } = ipcMain;\nregister.call(ipcMain, 'rogue:dynamic', () => 1);\n}\n"
+    }
+  ]
+}

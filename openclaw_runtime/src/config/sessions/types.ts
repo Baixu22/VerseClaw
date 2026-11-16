@@ -220,7 +220,21 @@ export type SessionGoal = {
   budgetLimitedAt?: number;
 };
 
+export type SessionExecutionMigrationState = {
+  operationId: string;
+  state: "prepared" | "confirmed";
+  requestDigest: string;
+  sourceGeneration: string;
+  targetGeneration: string;
+  sourceRoot: string;
+  targetRoot: string;
+  taskNodeId: string;
+  updatedAt: number;
+};
+
 export type SessionEntry = {
+  /** Durable execution-environment migration gate read by task/model entry points. */
+  executionMigration?: SessionExecutionMigrationState;
   /**
    * Last delivered heartbeat payload (used to suppress duplicate heartbeat notifications).
    * Stored on the main session entry.
@@ -258,6 +272,8 @@ export type SessionEntry = {
   spawnedWorkspaceDir?: string;
   /** Trusted Backend-selected workspace for a normal session. */
   workspaceDir?: string;
+  /** Logical workspace bound by the runtime owner for this session generation. */
+  workspaceId?: string;
   /** Task working directory inherited by spawned sessions and reused on later turns. */
   spawnedCwd?: string;
   /** B-3 v3: write-set coordinate inherited by a spawned worker (files it is expected to touch). */

@@ -40,6 +40,7 @@ import { cleanupDanglingWeChatPluginState, listConfiguredChannelsFromConfig, rea
 import { sanitizeOpenClawConfig, batchSyncConfigFields } from '../utils/openclaw-auth';
 import { buildProxyEnv, resolveProxySettings } from '../utils/proxy';
 import { syncProxyConfigToOpenClaw } from '../utils/openclaw-proxy';
+import { syncSkillsToRuntimeConfig } from '../utils/skill-config';
 import { logger } from '../utils/logger';
 import { applyDcsProdFlagsToGatewayEnv } from '../utils/dcs-prod-flags-env';
 import {
@@ -453,6 +454,9 @@ export async function syncGatewayConfigBeforeLaunch(
     logger.warn('Failed to clean dangling WeChat plugin state before launch:', err);
   }
 
+  // Skill choices and the managed directory must reach the config consumed by this launch.
+  await measureAsync(timingsMs, 'skillsSyncMs', syncSkillsToRuntimeConfig);
+
   // Remove stale copies of built-in extensions (Discord, Telegram) that
   // override OpenClaw's working built-in plugins and break channel loading.
   try {
@@ -819,7 +823,7 @@ export function buildSourceRuntimeIsolationEnv(params: {
  * 3. stripSourceRuntimeIncompatibleConfigKeys still only removes agents.list[].reasoningEffort
  *    and must not touch runtime.* keys.
  */
-export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime', 'tools', 'channels'] as const;
+export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime', 'tools', 'channels', 'mcp'] as const;
 export type SourceRuntimeIsolationSyncKey = typeof SOURCE_RUNTIME_ISOLATION_SYNC_KEYS[number];
 
 export function applySourceRuntimeIsolationUserConfig(
@@ -867,6 +871,7 @@ export function buildInitialSourceRuntimeIsolationConfig(
     // Carry the channel block so the isolated gateway can start the channels the
     // desktop configured (RC-10 H-02..H-06 need a real channel effect).
     channels: userConfig.channels ?? {},
+    ...(userConfig.mcp != null ? { mcp: userConfig.mcp } : {}),
   };
 }
 

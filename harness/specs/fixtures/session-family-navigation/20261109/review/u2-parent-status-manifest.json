@@ -1,0 +1,26 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u2-parent-status",
+  "requested_model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "base": "0ed2befe7c9b753228978586d4130cc05ec3a371",
+  "files": [
+    {
+      "path": "src/components/layout/Sidebar.tsx",
+      "sourceSha256": "0ffbcd54f72c758e733e78603f1c1c40babc0e5a4212758752c2dae909a77545",
+      "candidateSha256": "2d29cdc5b257cf7e75c797f67dda84595b52e46146a2105e53da0074af34c268",
+      "syntaxErrors": 0
+    },
+    {
+      "path": "src/components/layout/session-buckets.ts",
+      "sourceSha256": "9da36d4f51ecff9e6434fc64116a93c71f7c2ba53f858f5dd2dd04eb11231314",
+      "candidateSha256": "1fc01965fbe13495c2bc28f19bf4de1d3953a13f0590e42c2ecee2e6d608acb9",
+      "syntaxErrors": 0
+    },
+    {
+      "path": "tests/unit/sidebar-render-containment.test.tsx",
+      "sourceSha256": "05cbe187f40ca3fc5cc452ca21498571720ace9fac27444da1d930f117cc9a01",
+      "candidateSha256": "22b6c28521fafeec66a0a1671897b6999f6c6c49217da03b171df5a5de7a6624",
+      "syntaxErrors": 0
+    }
+  ]
+}

@@ -147,6 +147,67 @@ async function openChatWithHistory(
 }
 
 test.describe('Verse Claw chat turn summary collapse', () => {
+  test('keeps live activity compact, animated and readable without assistant avatars', async ({ launchElectronApp }, testInfo) => {
+    const history = [
+      { role: 'user', id: 'compact-user', content: 'Inspect the conversation and simplify the output.' },
+      { role: 'assistant', id: 'compact-progress', content: 'I will check the conversation components and then verify the result.' },
+    ];
+    const { app, page } = await openChatWithHistory(launchElectronApp, history);
+    try {
+      const identity = { runId: 'compact-live-run', sessionKey: SESSION_KEY };
+      await app.evaluate(({ BrowserWindow }, identity) => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          win.webContents.send('chat:runtime-event', { ...identity, type: 'run.started', startedAt: Date.now(), ts: Date.now() });
+          win.webContents.send('chat:runtime-event', {
+            ...identity, type: 'tool.started', toolCallId: 'compact-read', name: 'read_file', ts: Date.now(),
+            args: { path: 'C:/workspace/conversation/components/assistant/Message.tsx', limit: 200 },
+          });
+        }
+      }, identity);
+      const toggle = page.getByTestId('chat-turn-summary-toggle');
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(page.getByText(history[1].content, { exact: true })).toBeVisible();
+      await expect(page.getByTestId('chat-assistant-avatar')).toHaveCount(0);
+      await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
+      await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
+      const activity = page.getByTestId('chat-turn-current-activity');
+      await expect(activity.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+      const progress = activity.getByTestId('chat-call-chip-progress');
+      await expect.poll(() => progress.evaluate(element => getComputedStyle(element).transform)).not.toBe('matrix(0, 0, 0, 1, 0, 0)');
+      for (const variant of [{ name: 'light', width: 1280 }, { name: 'dark', width: 1280 }, { name: 'narrow', width: 640 }]) {
+        await page.setViewportSize({ width: variant.width, height: 900 });
+        await page.evaluate(dark => {
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.classList.toggle('light', !dark);
+        }, variant.name === 'dark');
+        const summary = page.getByTestId('chat-turn-summary-card');
+        expect(await summary.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+        await page.screenshot({ path: testInfo.outputPath(`compact-output-${variant.name}.png`), animations: 'disabled' });
+      }
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await expect(progress).toHaveCSS('transition-property', 'none');
+      await toggle.press('Enter');
+      await expect(page.getByTestId('chat-execution-graph')).toBeVisible();
+      await expect(activity).toHaveCount(0);
+      await expect(page.getByTestId('chat-call-chip')).toHaveCount(1);
+      await toggle.press('Enter');
+      await expect(activity).toBeVisible();
+      await app.evaluate(({ BrowserWindow }, identity) => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          win.webContents.send('chat:runtime-event', {
+            ...identity, type: 'tool.completed', toolCallId: 'compact-read', name: 'read_file', ts: Date.now(), result: 'Read complete',
+          });
+        }
+      }, identity);
+      await expect(activity).toHaveCount(0);
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(page.getByTestId('chat-turn-summary-orb')).toBeVisible();
+      await expect(page.getByTestId('chat-assistant-avatar')).toHaveCount(0);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
   test('collapses completed long task process and expands details on demand', async ({ launchElectronApp }, testInfo) => {
     const history = [
       { role: 'user', content: 'Inspect the repo and summarize the work.' },
@@ -155,6 +216,7 @@ test.describe('Verse Claw chat turn summary collapse', () => {
         id: 'tool-read',
         content: [
           { type: 'thinking', thinking: 'Inspect the conversation components before changing their visual hierarchy.' },
+          { type: 'text', text: 'I will inspect the conversation components and check how tool details are presented.' },
           { type: 'tool_use', id: 'read-1', name: 'read_file', input: { path: '/workspace/src/components/conversation/execution/details/app.ts', limit: 200 } },
           { type: 'tool_use', id: 'plan-1', name: 'update_plan', input: { plan: [
             { step: 'Inspect components', status: 'completed' },
@@ -165,7 +227,10 @@ test.describe('Verse Claw chat turn summary collapse', () => {
       {
         role: 'assistant',
         id: 'tool-search',
-        content: [{ type: 'tool_use', id: 'search-1', name: 'search', input: { pattern: 'TODO' } }],
+        content: [
+          { type: 'text', text: 'The output now shares one reading column. I am checking the remaining tool interactions.' },
+          { type: 'tool_use', id: 'search-1', name: 'search', input: { pattern: 'TODO' } },
+        ],
       },
       {
         role: 'assistant',
@@ -186,6 +251,8 @@ test.describe('Verse Claw chat turn summary collapse', () => {
       await expect(page.getByTestId('chat-message-4').getByText('Repo inspection is complete.')).toBeVisible();
       await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
       await expect(page.getByTestId('chat-turn-summary-badges')).toBeVisible();
+      expect(await page.locator('[data-testid^="chat-turn-summary-badge-"]').count()).toBeLessThanOrEqual(2);
+      await expect(page.getByTestId('chat-turn-summary-badge-thoughts')).toHaveCount(0);
       await page.setViewportSize({ width: 640, height: 1000 });
       const summary = page.getByTestId('chat-turn-summary-card');
       expect(await summary.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
@@ -195,6 +262,12 @@ test.describe('Verse Claw chat turn summary collapse', () => {
       await page.keyboard.press('Enter');
       await expect(page.getByTestId('chat-turn-summary-details')).toBeVisible();
       await expect(page.getByTestId('chat-execution-graph')).toBeVisible();
+      await expect(page.getByTestId('chat-execution-graph').getByText('Main Agent execution', { exact: true })).toHaveCount(0);
+      const diagnostics = page.getByTestId('chat-coding-run-evidence');
+      if (await diagnostics.count()) {
+        await expect(diagnostics).not.toHaveAttribute('open');
+        expect(await diagnostics.evaluate(element => element === element.parentElement?.lastElementChild)).toBe(true);
+      }
       const readStep = page.getByTestId('chat-execution-step-toggle').filter({ hasText: 'read_file' });
       await expect(readStep).toContainText('/workspace/src/components/conversation/execution/details/app.ts');
       await expect(readStep).not.toContainText('"limit"');
@@ -204,6 +277,8 @@ test.describe('Verse Claw chat turn summary collapse', () => {
       await page.getByTestId('chat-turn-summary-toggle').click();
       await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
       await expect(page.getByTestId('chat-message-4').getByText('Repo inspection is complete.')).toBeVisible();
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.screenshot({ path: testInfo.outputPath('compact-output-completed.png'), animations: 'disabled' });
     } finally {
       await closeElectronApp(app);
     }

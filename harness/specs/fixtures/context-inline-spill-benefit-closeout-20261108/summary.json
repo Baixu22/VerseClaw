@@ -1,0 +1,1968 @@
+{
+  "schema": "ContextInlineSpillOfflineCloseout/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "date": "2026-11-08",
+  "created_at": "2026-11-08T02:59:32.649650+00:00",
+  "new_provider_calls": 0,
+  "historical_runs": {
+    "round2": {
+      "candidate": {
+        "commit": "ddd66ced9f3d389bd03a476fcbdccfc2de759f33",
+        "tree": "cbcd93f60b96d40bd2161a0481c8971f8485de29",
+        "dirty": true
+      },
+      "replayed": {
+        "driven_by": "agent",
+        "actor": "codex-inline-spill-benefit-r2",
+        "mode": "live",
+        "records": 96,
+        "allSummaryNumbersRecomputed": true,
+        "stats": {
+          "baseline-no-reference": {
+            "arm": "baseline-no-reference",
+            "runs": 24,
+            "pass": 3,
+            "successRate": 0.125,
+            "wilson95": [
+              0.04344334080123444,
+              0.31003881270500067
+            ],
+            "evidenceSuccessRate": 0,
+            "controlSuccessRate": 0.5,
+            "passAtK": 0,
+            "recallAttemptRate": 1,
+            "recallOkRate": 0,
+            "meanTurns": 3.625,
+            "meanMainContextChars": 380.875,
+            "meanInputTokens": 2904.3333333333335,
+            "meanOutputTokens": 1099,
+            "meanTotalTokens": 4003.3333333333335,
+            "p50LatencyMs": 18376.736,
+            "p95LatencyMs": 23123.505,
+            "failureClasses": {
+              "answer_mismatch": 15,
+              "schema_invalid": 6,
+              "none": 3
+            }
+          },
+          "reference-visible": {
+            "arm": "reference-visible",
+            "runs": 24,
+            "pass": 18,
+            "successRate": 0.75,
+            "wilson95": [
+              0.55100555994846,
+              0.8800063377140499
+            ],
+            "evidenceSuccessRate": 0.6666666666666666,
+            "controlSuccessRate": 1,
+            "passAtK": 0.16666666666666666,
+            "recallAttemptRate": 1,
+            "recallOkRate": 1,
+            "meanTurns": 3.75,
+            "meanMainContextChars": 15642.416666666666,
+            "meanInputTokens": 24067,
+            "meanOutputTokens": 1246.4583333333333,
+            "meanTotalTokens": 25313.458333333332,
+            "p50LatencyMs": 22113.979,
+            "p95LatencyMs": 29568.935,
+            "failureClasses": {
+              "none": 18,
+              "schema_invalid": 6
+            }
+          },
+          "recall-stable": {
+            "arm": "recall-stable",
+            "runs": 24,
+            "pass": 17,
+            "successRate": 0.7083333333333334,
+            "wilson95": [
+              0.5083230633550337,
+              0.8508535180303913
+            ],
+            "evidenceSuccessRate": 0.6111111111111112,
+            "controlSuccessRate": 1,
+            "passAtK": 0.3333333333333333,
+            "recallAttemptRate": 1,
+            "recallOkRate": 1,
+            "meanTurns": 3.75,
+            "meanMainContextChars": 47822.958333333336,
+            "meanInputTokens": 33789.875,
+            "meanOutputTokens": 1298.7916666666667,
+            "meanTotalTokens": 35088.666666666664,
+            "p50LatencyMs": 21310.907,
+            "p95LatencyMs": 32620.291,
+            "failureClasses": {
+              "none": 17,
+              "recalled_text_evicted": 2,
+              "schema_invalid": 5
+            }
+          },
+          "retention-off": {
+            "arm": "retention-off",
+            "runs": 24,
+            "pass": 10,
+            "successRate": 0.4166666666666667,
+            "wilson95": [
+              0.24467602609811764,
+              0.6116533413477124
+            ],
+            "evidenceSuccessRate": 0.3333333333333333,
+            "controlSuccessRate": 0.6666666666666666,
+            "passAtK": 0,
+            "recallAttemptRate": 1,
+            "recallOkRate": 1,
+            "meanTurns": 3.7916666666666665,
+            "meanMainContextChars": 48304.333333333336,
+            "meanInputTokens": 33413.333333333336,
+            "meanOutputTokens": 1534.3333333333333,
+            "meanTotalTokens": 34947.666666666664,
+            "p50LatencyMs": 20075.638,
+            "p95LatencyMs": 35480.422,
+            "failureClasses": {
+              "none": 10,
+              "recalled_text_evicted": 4,
+              "schema_invalid": 10
+            }
+          }
+        },
+        "comparisons": {
+          "recall-stable_vs_baseline": {
+            "both": 3,
+            "onlyA": 14,
+            "onlyB": 0,
+            "neither": 7,
+            "p": 0.0001220703125
+          },
+          "recall-stable_vs_retention-off": {
+            "both": 9,
+            "onlyA": 8,
+            "onlyB": 1,
+            "neither": 6,
+            "p": 0.0390625
+          },
+          "recall-stable_vs_reference-visible": {
+            "both": 13,
+            "onlyA": 4,
+            "onlyB": 5,
+            "neither": 2,
+            "p": 1
+          }
+        },
+        "decisions": {
+          "b1_mechanism_and_autonomy": true,
+          "b2_task_benefit": true,
+          "b3_retention_benefit": false,
+          "b4_non_inferiority": false,
+          "b5_no_fabrication": true,
+          "b6_budget": false,
+          "contextGrowthChars": -481.375,
+          "tokenGrowthPct": 0.38616644966528013
+        },
+        "wire": {
+          "providerCalls": 358,
+          "rawUsageAndAnswersMatch": true,
+          "baselineOracleLeaks": 0,
+          "parallelRecallsRejected": 1,
+          "maxParallel": 2,
+          "runsAboveThreeModelRecalls": 4,
+          "incompleteResponses": 29,
+          "providerCallP50LatencyMs": 4913.357,
+          "providerCallP95LatencyMs": 12858.97,
+          "providerCallLatencyByArm": {
+            "baseline-no-reference": {
+              "calls": 87,
+              "p50": 4529.57,
+              "p95": 10519.621,
+              "total": 451421.9969999998
+            },
+            "reference-visible": {
+              "calls": 90,
+              "p50": 4776.609,
+              "p95": 11279.43,
+              "total": 513344.8479999999
+            },
+            "recall-stable": {
+              "calls": 90,
+              "p50": 5389.044,
+              "p95": 13971.229,
+              "total": 570270.9400000002
+            },
+            "retention-off": {
+              "calls": 91,
+              "p50": 5442.823,
+              "p95": 12055.777,
+              "total": 561997.3440000003
+            }
+          },
+          "initialPairInputs": [
+            {
+              "fixtureId": "deploy-token",
+              "repetition": 0,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "deploy-token",
+              "repetition": 1,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "deploy-token",
+              "repetition": 2,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "db-passport",
+              "repetition": 0,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "db-passport",
+              "repetition": 1,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "db-passport",
+              "repetition": 2,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "cache-seed",
+              "repetition": 0,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "cache-seed",
+              "repetition": 1,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "cache-seed",
+              "repetition": 2,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "signing-key",
+              "repetition": 0,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "signing-key",
+              "repetition": 1,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "signing-key",
+              "repetition": 2,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "tenant-id",
+              "repetition": 0,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "tenant-id",
+              "repetition": 1,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "tenant-id",
+              "repetition": 2,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "migration-hash",
+              "repetition": 0,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "migration-hash",
+              "repetition": 1,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "migration-hash",
+              "repetition": 2,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "control-absent-1",
+              "repetition": 0,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "control-absent-1",
+              "repetition": 1,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "control-absent-1",
+              "repetition": 2,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "control-absent-2",
+              "repetition": 0,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "control-absent-2",
+              "repetition": 1,
+              "byteIdentical": false
+            },
+            {
+              "fixtureId": "control-absent-2",
+              "repetition": 2,
+              "byteIdentical": false
+            }
+          ],
+          "perRun": [
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "deploy-token",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2881,
+              "reportedMainContextChars": 421,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "deploy-token",
+              "repetition": 1,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 2516,
+              "reportedMainContextChars": 347,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "deploy-token",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2902,
+              "reportedMainContextChars": 421,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "deploy-token",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 80642,
+              "reportedMainContextChars": 16168,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "deploy-token",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 38580,
+              "reportedMainContextChars": 16168,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "deploy-token",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 80666,
+              "reportedMainContextChars": 16168,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "deploy-token",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 96014,
+              "reportedMainContextChars": 50719,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "deploy-token",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 99010,
+              "reportedMainContextChars": 50719,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "deploy-token",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 85184,
+              "reportedMainContextChars": 50719,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "deploy-token",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 97850,
+              "reportedMainContextChars": 50719,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "deploy-token",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 71365,
+              "reportedMainContextChars": 50719,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "deploy-token",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 101292,
+              "reportedMainContextChars": 50719,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "db-passport",
+              "repetition": 0,
+              "modelRecalls": 4,
+              "maxParallel": 2,
+              "rawRequestChars": 3315,
+              "reportedMainContextChars": 404,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "db-passport",
+              "repetition": 1,
+              "modelRecalls": 1,
+              "maxParallel": 1,
+              "rawRequestChars": 2052,
+              "reportedMainContextChars": 256,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "db-passport",
+              "repetition": 2,
+              "modelRecalls": 1,
+              "maxParallel": 1,
+              "rawRequestChars": 2040,
+              "reportedMainContextChars": 256,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "db-passport",
+              "repetition": 0,
+              "modelRecalls": 1,
+              "maxParallel": 1,
+              "rawRequestChars": 34499,
+              "reportedMainContextChars": 12123,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 1
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "db-passport",
+              "repetition": 1,
+              "modelRecalls": 1,
+              "maxParallel": 1,
+              "rawRequestChars": 34499,
+              "reportedMainContextChars": 12123,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "db-passport",
+              "repetition": 2,
+              "modelRecalls": 1,
+              "maxParallel": 1,
+              "rawRequestChars": 26466,
+              "reportedMainContextChars": 12123,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "db-passport",
+              "repetition": 0,
+              "modelRecalls": 1,
+              "maxParallel": 1,
+              "rawRequestChars": 49994,
+              "reportedMainContextChars": 27640,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "db-passport",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 96028,
+              "reportedMainContextChars": 50702,
+              "oracleInFinalPrompt": true,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "db-passport",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 64480,
+              "reportedMainContextChars": 50702,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "db-passport",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 95967,
+              "reportedMainContextChars": 50702,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "db-passport",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 72925,
+              "reportedMainContextChars": 50702,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "db-passport",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 82324,
+              "reportedMainContextChars": 50702,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 2
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "cache-seed",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2918,
+              "reportedMainContextChars": 390,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "cache-seed",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2833,
+              "reportedMainContextChars": 390,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "cache-seed",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2831,
+              "reportedMainContextChars": 390,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "cache-seed",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 44274,
+              "reportedMainContextChars": 16137,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "cache-seed",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 63455,
+              "reportedMainContextChars": 16137,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "cache-seed",
+              "repetition": 2,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 31371,
+              "reportedMainContextChars": 16123,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "cache-seed",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 101188,
+              "reportedMainContextChars": 50688,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "cache-seed",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 97909,
+              "reportedMainContextChars": 50688,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "cache-seed",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 97764,
+              "reportedMainContextChars": 50666,
+              "oracleInFinalPrompt": true,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "cache-seed",
+              "repetition": 0,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 50381,
+              "reportedMainContextChars": 39157,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "cache-seed",
+              "repetition": 1,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 78370,
+              "reportedMainContextChars": 39157,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "cache-seed",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 97924,
+              "reportedMainContextChars": 50688,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "signing-key",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2871,
+              "reportedMainContextChars": 402,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "signing-key",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2909,
+              "reportedMainContextChars": 402,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "signing-key",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2908,
+              "reportedMainContextChars": 402,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "signing-key",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 46302,
+              "reportedMainContextChars": 16149,
+              "oracleInFinalPrompt": true,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "signing-key",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 81533,
+              "reportedMainContextChars": 16149,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "signing-key",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 80566,
+              "reportedMainContextChars": 16149,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "signing-key",
+              "repetition": 0,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 82396,
+              "reportedMainContextChars": 39169,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 1
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "signing-key",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 97961,
+              "reportedMainContextChars": 50700,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "signing-key",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 77153,
+              "reportedMainContextChars": 50700,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "signing-key",
+              "repetition": 0,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 81358,
+              "reportedMainContextChars": 39169,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 1
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "signing-key",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 95919,
+              "reportedMainContextChars": 50700,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "signing-key",
+              "repetition": 2,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 56380,
+              "reportedMainContextChars": 39169,
+              "oracleInFinalPrompt": true,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 1
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "tenant-id",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2869,
+              "reportedMainContextChars": 389,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "tenant-id",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2857,
+              "reportedMainContextChars": 389,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "tenant-id",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2887,
+              "reportedMainContextChars": 389,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "tenant-id",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 81529,
+              "reportedMainContextChars": 16136,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "tenant-id",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 81505,
+              "reportedMainContextChars": 16136,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "tenant-id",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 37115,
+              "reportedMainContextChars": 16136,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "tenant-id",
+              "repetition": 0,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 82354,
+              "reportedMainContextChars": 39156,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 1
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "tenant-id",
+              "repetition": 1,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 60527,
+              "reportedMainContextChars": 39156,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "tenant-id",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 96911,
+              "reportedMainContextChars": 50687,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "tenant-id",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 99333,
+              "reportedMainContextChars": 50687,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "tenant-id",
+              "repetition": 1,
+              "modelRecalls": 4,
+              "maxParallel": 1,
+              "rawRequestChars": 76594,
+              "reportedMainContextChars": 62218,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "tenant-id",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 107752,
+              "reportedMainContextChars": 50687,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "migration-hash",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2836,
+              "reportedMainContextChars": 394,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "migration-hash",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2862,
+              "reportedMainContextChars": 394,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "migration-hash",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2899,
+              "reportedMainContextChars": 394,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "migration-hash",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 43170,
+              "reportedMainContextChars": 16141,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "migration-hash",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 63502,
+              "reportedMainContextChars": 16141,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "migration-hash",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 81536,
+              "reportedMainContextChars": 16141,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "migration-hash",
+              "repetition": 0,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 82360,
+              "reportedMainContextChars": 39161,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 1
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "migration-hash",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 98006,
+              "reportedMainContextChars": 50692,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "migration-hash",
+              "repetition": 2,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 82404,
+              "reportedMainContextChars": 39161,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 1
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "migration-hash",
+              "repetition": 0,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 58427,
+              "reportedMainContextChars": 39161,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "migration-hash",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 77469,
+              "reportedMainContextChars": 50692,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "migration-hash",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 101219,
+              "reportedMainContextChars": 50692,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": true,
+              "incomplete": 1
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "control-absent-1",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2977,
+              "reportedMainContextChars": 436,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "control-absent-1",
+              "repetition": 1,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 2545,
+              "reportedMainContextChars": 362,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "control-absent-1",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2990,
+              "reportedMainContextChars": 436,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "control-absent-1",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 63859,
+              "reportedMainContextChars": 16183,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "control-absent-1",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 65915,
+              "reportedMainContextChars": 16183,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "control-absent-1",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 65213,
+              "reportedMainContextChars": 15950,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "control-absent-1",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 100435,
+              "reportedMainContextChars": 50734,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "control-absent-1",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 91902,
+              "reportedMainContextChars": 50734,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "control-absent-1",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 84904,
+              "reportedMainContextChars": 50734,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "control-absent-1",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 100419,
+              "reportedMainContextChars": 50734,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "control-absent-1",
+              "repetition": 1,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 82526,
+              "reportedMainContextChars": 39203,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "control-absent-1",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 94720,
+              "reportedMainContextChars": 50734,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "control-absent-2",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 2934,
+              "reportedMainContextChars": 433,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "control-absent-2",
+              "repetition": 1,
+              "modelRecalls": 1,
+              "maxParallel": 1,
+              "rawRequestChars": 2170,
+              "reportedMainContextChars": 285,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "baseline-no-reference",
+              "fixtureId": "control-absent-2",
+              "repetition": 2,
+              "modelRecalls": 2,
+              "maxParallel": 1,
+              "rawRequestChars": 2572,
+              "reportedMainContextChars": 359,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 1
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "control-absent-2",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 65909,
+              "reportedMainContextChars": 16180,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "control-absent-2",
+              "repetition": 1,
+              "modelRecalls": 4,
+              "maxParallel": 1,
+              "rawRequestChars": 54576,
+              "reportedMainContextChars": 16194,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "reference-visible",
+              "fixtureId": "control-absent-2",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 60221,
+              "reportedMainContextChars": 16180,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "control-absent-2",
+              "repetition": 0,
+              "modelRecalls": 4,
+              "maxParallel": 1,
+              "rawRequestChars": 112623,
+              "reportedMainContextChars": 62262,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "control-absent-2",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 66793,
+              "reportedMainContextChars": 50731,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "recall-stable",
+              "fixtureId": "control-absent-2",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 100403,
+              "reportedMainContextChars": 50731,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "control-absent-2",
+              "repetition": 0,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 100411,
+              "reportedMainContextChars": 50731,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "control-absent-2",
+              "repetition": 1,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 79258,
+              "reportedMainContextChars": 50731,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            },
+            {
+              "arm": "retention-off",
+              "fixtureId": "control-absent-2",
+              "repetition": 2,
+              "modelRecalls": 3,
+              "maxParallel": 1,
+              "rawRequestChars": 100400,
+              "reportedMainContextChars": 50731,
+              "oracleInFinalPrompt": false,
+              "oracleInUnprojectedHistory": false,
+              "incomplete": 0
+            }
+          ]
+        }
+      },
+      "evidence": {
+        "driven_by": "agent",
+        "actor": "codex-inline-spill-benefit-r2",
+        "files": 47,
+        "archiveCount": 976,
+        "sha256Mismatches": 0,
+        "credentialHits": 0,
+        "b7_evidence": true
+      }
+    },
+    "round3": {
+      "candidate": {
+        "commit": "491a957ad93e0c9f81d580e693de147d4e2cd49d",
+        "tree": "ef66954e73faacc5277186f54f0ea2cc0eee04ef",
+        "dirty": false
+      },
+      "provider": {
+        "kind": "openai-compatible-responses",
+        "endpoint_origin": "http://127.0.0.1:3065",
+        "model": "space-bunny",
+        "credential_persisted": false
+      },
+      "design": {
+        "repeats": 3,
+        "maxTurns": 8,
+        "evidenceTasks": [
+          "deploy-token",
+          "db-passport",
+          "cache-seed",
+          "signing-key",
+          "tenant-id",
+          "migration-hash"
+        ],
+        "controlTasks": [
+          "control-absent-1",
+          "control-absent-2"
+        ],
+        "arms": {
+          "baseline-no-reference": {
+            "reference": false,
+            "retention": false,
+            "pressure": false
+          },
+          "reference-visible": {
+            "reference": true,
+            "retention": false,
+            "pressure": false
+          },
+          "recall-stable": {
+            "reference": true,
+            "retention": true,
+            "pressure": true
+          },
+          "retention-off": {
+            "reference": true,
+            "retention": false,
+            "pressure": true
+          }
+        },
+        "contextWindowTokens": 32000,
+        "toolMaxChars": 6000,
+        "aggregateMaxChars": 16000,
+        "recallPageChars": 5500
+      },
+      "replayed": {
+        "driven_by": "agent",
+        "actor": "codex-inline-spill-benefit-r3",
+        "mode": "live",
+        "records": 96,
+        "providerCalls": 360,
+        "protocolOutputs": 564,
+        "initialPairs": 24,
+        "allInitialPairsByteIdentical": true,
+        "actualInputCountsMatch": true,
+        "modelCallsAndRawUsageMatch": true,
+        "baselineOracleLeaks": 0,
+        "unprojectedHistoryFallbacks": 0,
+        "incompleteResponses": 53,
+        "providerFailures": 0,
+        "retentionOffFinalOracleAbsent": [
+          {
+            "fixtureId": "deploy-token",
+            "repetition": 0,
+            "success": false
+          },
+          {
+            "fixtureId": "deploy-token",
+            "repetition": 1,
+            "success": false
+          },
+          {
+            "fixtureId": "deploy-token",
+            "repetition": 2,
+            "success": false
+          },
+          {
+            "fixtureId": "db-passport",
+            "repetition": 0,
+            "success": false
+          },
+          {
+            "fixtureId": "db-passport",
+            "repetition": 1,
+            "success": false
+          },
+          {
+            "fixtureId": "db-passport",
+            "repetition": 2,
+            "success": false
+          },
+          {
+            "fixtureId": "cache-seed",
+            "repetition": 0,
+            "success": false
+          },
+          {
+            "fixtureId": "cache-seed",
+            "repetition": 1,
+            "success": false
+          },
+          {
+            "fixtureId": "cache-seed",
+            "repetition": 2,
+            "success": false
+          },
+          {
+            "fixtureId": "signing-key",
+            "repetition": 0,
+            "success": false
+          },
+          {
+            "fixtureId": "signing-key",
+            "repetition": 1,
+            "success": false
+          },
+          {
+            "fixtureId": "signing-key",
+            "repetition": 2,
+            "success": false
+          },
+          {
+            "fixtureId": "tenant-id",
+            "repetition": 0,
+            "success": false
+          },
+          {
+            "fixtureId": "tenant-id",
+            "repetition": 1,
+            "success": false
+          },
+          {
+            "fixtureId": "tenant-id",
+            "repetition": 2,
+            "success": false
+          },
+          {
+            "fixtureId": "migration-hash",
+            "repetition": 0,
+            "success": false
+          },
+          {
+            "fixtureId": "migration-hash",
+            "repetition": 1,
+            "success": false
+          },
+          {
+            "fixtureId": "migration-hash",
+            "repetition": 2,
+            "success": false
+          }
+        ],
+        "stats": {
+          "driven_by": "agent",
+          "actor": "codex-inline-spill-benefit-r3",
+          "mode": "live",
+          "records": 96,
+          "allSummaryNumbersRecomputed": true,
+          "stats": {
+            "baseline-no-reference": {
+              "arm": "baseline-no-reference",
+              "runs": 24,
+              "pass": 5,
+              "successRate": 0.20833333333333334,
+              "wilson95": [
+                0.09244825352851857,
+                0.40470453253188665
+              ],
+              "evidenceSuccessRate": 0,
+              "controlSuccessRate": 0.8333333333333334,
+              "passAtK": 0,
+              "recallAttemptRate": 1,
+              "recallOkRate": 0,
+              "meanTurns": 4.083333333333333,
+              "meanMainContextChars": 2163.9583333333335,
+              "meanInputTokens": 3293.0833333333335,
+              "meanOutputTokens": 1134.2916666666667,
+              "meanTotalTokens": 4427.375,
+              "p50LatencyMs": 17331.325,
+              "p95LatencyMs": 26755.375,
+              "failureClasses": {
+                "answer_mismatch": 15,
+                "schema_invalid": 4,
+                "none": 5
+              }
+            },
+            "reference-visible": {
+              "arm": "reference-visible",
+              "runs": 24,
+              "pass": 7,
+              "successRate": 0.2916666666666667,
+              "wilson95": [
+                0.14914648196960875,
+                0.49167693664496637
+              ],
+              "evidenceSuccessRate": 0.05555555555555555,
+              "controlSuccessRate": 1,
+              "passAtK": 0,
+              "recallAttemptRate": 1,
+              "recallOkRate": 1,
+              "meanTurns": 3.9583333333333335,
+              "meanMainContextChars": 18386.75,
+              "meanInputTokens": 12136.666666666666,
+              "meanOutputTokens": 1426.3333333333333,
+              "meanTotalTokens": 13563,
+              "p50LatencyMs": 22138.403,
+              "p95LatencyMs": 31033.832,
+              "failureClasses": {
+                "recalled_text_evicted": 6,
+                "schema_invalid": 11,
+                "none": 7
+              }
+            },
+            "recall-stable": {
+              "arm": "recall-stable",
+              "runs": 24,
+              "pass": 5,
+              "successRate": 0.20833333333333334,
+              "wilson95": [
+                0.09244825352851857,
+                0.40470453253188665
+              ],
+              "evidenceSuccessRate": 0,
+              "controlSuccessRate": 0.8333333333333334,
+              "passAtK": 0,
+              "recallAttemptRate": 1,
+              "recallOkRate": 1,
+              "meanTurns": 3.5833333333333335,
+              "meanMainContextChars": 48122.458333333336,
+              "meanInputTokens": 19906.041666666668,
+              "meanOutputTokens": 1742.375,
+              "meanTotalTokens": 21648.416666666668,
+              "p50LatencyMs": 24056.561,
+              "p95LatencyMs": 36808.552,
+              "failureClasses": {
+                "schema_invalid": 18,
+                "recalled_text_evicted": 1,
+                "none": 5
+              }
+            },
+            "retention-off": {
+              "arm": "retention-off",
+              "runs": 24,
+              "pass": 4,
+              "successRate": 0.16666666666666666,
+              "wilson95": [
+                0.06678676328632951,
+                0.3585307064969906
+              ],
+              "evidenceSuccessRate": 0,
+              "controlSuccessRate": 0.6666666666666666,
+              "passAtK": 0,
+              "recallAttemptRate": 1,
+              "recallOkRate": 1,
+              "meanTurns": 3.375,
+              "meanMainContextChars": 45630.291666666664,
+              "meanInputTokens": 18316.208333333332,
+              "meanOutputTokens": 1587.9166666666667,
+              "meanTotalTokens": 19904.125,
+              "p50LatencyMs": 18658.105,
+              "p95LatencyMs": 32598.019,
+              "failureClasses": {
+                "schema_invalid": 19,
+                "recalled_text_evicted": 1,
+                "none": 4
+              }
+            }
+          },
+          "comparisons": {
+            "recall-stable_vs_baseline": {
+              "both": 4,
+              "onlyA": 1,
+              "onlyB": 1,
+              "neither": 18,
+              "p": 1
+            },
+            "recall-stable_vs_retention-off": {
+              "both": 4,
+              "onlyA": 1,
+              "onlyB": 0,
+              "neither": 19,
+              "p": 1
+            },
+            "recall-stable_vs_reference-visible": {
+              "both": 5,
+              "onlyA": 0,
+              "onlyB": 2,
+              "neither": 17,
+              "p": 0.5
+            }
+          },
+          "decisions": {
+            "b1_mechanism_and_autonomy": true,
+            "b2_task_benefit": false,
+            "b3_retention_benefit": true,
+            "b4_non_inferiority": false,
+            "b5_no_fabrication": false,
+            "b6_budget": false,
+            "contextGrowthChars": 2492.1666666666715,
+            "tokenGrowthPct": 0.5961377767947111
+          },
+          "wire": null
+        }
+      },
+      "evidence": {
+        "driven_by": "agent",
+        "actor": "codex-inline-spill-benefit-r3",
+        "files": 37,
+        "archiveCount": 629,
+        "sha256Mismatches": 0,
+        "credentialHits": 0,
+        "b7_evidence": true
+      }
+    }
+  },
+  "decision": {
+    "status": "NO_GO",
+    "historical_decision_status": "mechanism-only",
+    "task_benefit_verified": false,
+    "failed_frozen_gates": [
+      "B2",
+      "B4",
+      "B5",
+      "B6"
+    ],
+    "b3_original_flag": true,
+    "b3_evidence_discordant_pairs": [],
+    "b3_control_discordant_pairs": [
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "stable_success": true,
+        "off_success": false
+      }
+    ],
+    "b3_proves_evidence_retention_benefit": false,
+    "cannot_close_from_existing_evidence": true
+  },
+  "failure_classes": {
+    "answer_mismatch": 15,
+    "recalled_text_evicted": 8,
+    "schema_invalid": 52
+  },
+  "budget_diagnostics": {
+    "driven_by": "agent",
+    "actor": "codex-inline-spill-benefit-r3",
+    "pageArgumentCounts": {
+      "1500": 1,
+      "2000": 8,
+      "2140": 1,
+      "2500": 3,
+      "3000": 2,
+      "3140": 2,
+      "3200": 3,
+      "3500": 1,
+      "3701": 1,
+      "4000": 23,
+      "4200": 3,
+      "4214": 1,
+      "4500": 2,
+      "5000": 7,
+      "6000": 18,
+      "6031": 1,
+      "6075": 4,
+      "6100": 2,
+      "6140": 1,
+      "6142": 1,
+      "8000": 15,
+      "9000": 2,
+      "9399": 11,
+      "10000": 2,
+      "11466": 1,
+      "12000": 7,
+      "14000": 1,
+      "15000": 3,
+      "16000": 2,
+      "20000": 45,
+      "20415": 1,
+      "20417": 1,
+      "20419": 1,
+      "22000": 2,
+      "40000": 6,
+      "41142": 1,
+      "41143": 2,
+      "42140": 3,
+      "42142": 2,
+      "43141": 3,
+      "43145": 3,
+      "45000": 3,
+      "45466": 4,
+      "default-12000": 62
+    },
+    "responseStatuses": {
+      "completed": 307,
+      "incomplete": 53
+    },
+    "incompleteReasons": {
+      "max_output_tokens": 53
+    },
+    "returnedModels": {
+      "space-bunny": 360
+    },
+    "completedMessageTextIgnoredByAdapter": [],
+    "byArm": {
+      "baseline-no-reference": {
+        "rawOracleHits": 0,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 76
+      },
+      "reference-visible": {
+        "rawOracleHits": 15,
+        "overProjectionBudgetCalls": 44,
+        "oracleDroppedBeforeNextRequest": 12,
+        "modelRecalls": 72
+      },
+      "recall-stable": {
+        "rawOracleHits": 14,
+        "overProjectionBudgetCalls": 39,
+        "oracleDroppedBeforeNextRequest": 14,
+        "modelRecalls": 62
+      },
+      "retention-off": {
+        "rawOracleHits": 13,
+        "overProjectionBudgetCalls": 37,
+        "oracleDroppedBeforeNextRequest": 13,
+        "modelRecalls": 58
+      }
+    },
+    "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
+  },
+  "known_usage": {
+    "inputTokens": 1287648,
+    "outputTokens": 141382,
+    "totalTokens": 1429030
+  },
+  "cost": {
+    "status": "not-run",
+    "reason": "Provider billing rates and units were not supplied."
+  },
+  "task_forest_observed": {
+    "TF-0749": {
+      "status": "in_progress",
+      "progress": 80
+    },
+    "children": {
+      "TF-0750": {
+        "status": "done",
+        "progress": 100
+      },
+      "TF-0751": {
+        "status": "done",
+        "progress": 100
+      },
+      "TF-0752": {
+        "status": "done",
+        "progress": 100
+      },
+      "TF-0753": {
+        "status": "done",
+        "progress": 100
+      },
+      "TF-0754": {
+        "status": "done",
+        "progress": 100
+      },
+      "TF-0755": {
+        "status": "done",
+        "progress": 100
+      }
+    }
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "schema": "AutonomyA1Gates/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomous-project-system",
+  "candidate": {
+    "commit": "a7ce35fde61a87afd5a7d87ee73b8b74479fae4a",
+    "tree": "16377fc717671d22be6e5dbd2fff2966bf8743af",
+    "dirty": false
+  },
+  "startedAt": "2026-11-02T07:28:00.877Z",
+  "dependencyReuse": {
+    "nodeModules": "D:/ClawX/node_modules",
+    "freshInstall": false,
+    "localVerseBrowserBuild": true
+  },
+  "gates": [
+    {
+      "id": "unit",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/autonomy-object-owner-contract.test.ts",
+        "tests/unit/identity-scope.test.ts",
+        "tests/unit/project-projection.test.ts",
+        "tests/unit/task-ledger-reference.test.ts",
+        "tests/unit/component-authority-manifest.test.ts",
+        "tests/unit/product-semantics.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/autonomy-a1-final-a7ce35fde/tests.json"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:28:00.893Z",
+      "finishedAt": "2026-11-02T07:28:12.154Z",
+      "durationMs": 11255,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\unit.log"
+    },
+    {
+      "id": "lint",
+      "command": [
+        "pnpm",
+        "exec",
+        "eslint",
+        "shared/types/identity-scope.ts",
+        "shared/types/project.ts",
+        "shared/types/task-ledger-reference.ts",
+        "shared/product-semantics.ts",
+        "tests/unit/autonomy-object-owner-contract.test.ts",
+        "tests/unit/task-ledger-reference.test.ts"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:28:12.157Z",
+      "finishedAt": "2026-11-02T07:28:17.299Z",
+      "durationMs": 5142,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\lint.log"
+    },
+    {
+      "id": "typecheck",
+      "command": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:28:17.302Z",
+      "finishedAt": "2026-11-02T07:29:03.416Z",
+      "durationMs": 46114,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\typecheck.log"
+    },
+    {
+      "id": "contract",
+      "command": [
+        "pnpm",
+        "contract:check"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:03.423Z",
+      "finishedAt": "2026-11-02T07:29:04.427Z",
+      "durationMs": 1004,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\contract.log"
+    },
+    {
+      "id": "semantic-authority",
+      "command": [
+        "node",
+        "scripts/check-semantic-authority.mjs",
+        "--report",
+        "D:/tmp/autonomy-a1-final-a7ce35fde/semantic-authority.json",
+        "--actor",
+        "codex/autonomous-project-system"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:04.429Z",
+      "finishedAt": "2026-11-02T07:29:05.005Z",
+      "durationMs": 576,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\semantic-authority.log"
+    },
+    {
+      "id": "ontology-report",
+      "command": [
+        "node",
+        "scripts/check-evidence-refs.mjs",
+        "--report",
+        "D:/tmp/autonomy-a1-final-a7ce35fde/ontology-report.json",
+        "--actor",
+        "codex/autonomous-project-system"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:05.006Z",
+      "finishedAt": "2026-11-02T07:29:05.610Z",
+      "durationMs": 603,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\ontology-report.log"
+    },
+    {
+      "id": "ontology-verify",
+      "command": [
+        "node",
+        "scripts/check-evidence-refs.mjs",
+        "--verify",
+        "D:/tmp/autonomy-a1-final-a7ce35fde/ontology-report.json"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:05.611Z",
+      "finishedAt": "2026-11-02T07:29:06.201Z",
+      "durationMs": 590,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\ontology-verify.log"
+    },
+    {
+      "id": "comms-replay",
+      "command": [
+        "pnpm",
+        "comms:replay"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:06.202Z",
+      "finishedAt": "2026-11-02T07:29:07.006Z",
+      "durationMs": 803,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\comms-replay.log"
+    },
+    {
+      "id": "comms-compare",
+      "command": [
+        "pnpm",
+        "comms:compare"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:07.007Z",
+      "finishedAt": "2026-11-02T07:29:07.688Z",
+      "durationMs": 681,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\comms-compare.log"
+    },
+    {
+      "id": "harness-validate",
+      "command": [
+        "pnpm",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-object-owner-contract.md"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:07.690Z",
+      "finishedAt": "2026-11-02T07:29:09.932Z",
+      "durationMs": 2242,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\harness-validate.log"
+    },
+    {
+      "id": "harness-dry-run",
+      "command": [
+        "pnpm",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-object-owner-contract.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:09.934Z",
+      "finishedAt": "2026-11-02T07:29:12.308Z",
+      "durationMs": 2374,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\harness-dry-run.log"
+    },
+    {
+      "id": "spec-lifecycle",
+      "command": [
+        "pnpm",
+        "harness:specs:lifecycle"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:12.310Z",
+      "finishedAt": "2026-11-02T07:29:14.505Z",
+      "durationMs": 2195,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\spec-lifecycle.log"
+    },
+    {
+      "id": "retention",
+      "command": [
+        "pnpm",
+        "repo:artifacts:check"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:14.507Z",
+      "finishedAt": "2026-11-02T07:29:40.453Z",
+      "durationMs": 25946,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\retention.log"
+    },
+    {
+      "id": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-02T07:29:40.455Z",
+      "finishedAt": "2026-11-02T07:29:40.610Z",
+      "durationMs": 155,
+      "log": "D:\\tmp\\autonomy-a1-final-a7ce35fde\\diff-check.log"
+    }
+  ],
+  "finishedAt": "2026-11-02T07:29:40.610Z",
+  "candidateUnchanged": true,
+  "success": true
+}

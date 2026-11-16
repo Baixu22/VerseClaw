@@ -1,0 +1,384 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-review",
+  "candidate": {
+    "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+    "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+    "dirty": false
+  },
+  "sourceEquivalentToTested": "23d53a29a6a4fb53b3c76670589796bb5d710ce3",
+  "gates": [
+    {
+      "id": "versebrowser-types",
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "packages/versebrowser/tsconfig.build.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:18:14.284575+00:00",
+      "durationSeconds": 6.485,
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "types-node",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:18:21.004786+00:00",
+      "durationSeconds": 18.453,
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "types-web",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:18:39.644486+00:00",
+      "durationSeconds": 4.219,
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "types-test",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:18:44.097017+00:00",
+      "durationSeconds": 16.0,
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:00.552235+00:00",
+      "durationSeconds": 2.891,
+      "stdout": {
+        "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+        "text": "Contract check passed.\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "authority",
+      "argv": [
+        "node",
+        "scripts/check-semantic-authority.mjs",
+        "--report",
+        "D:\\tmp\\architecture-review-20261106\\revalidation\\authority.json",
+        "--actor",
+        "codex-architecture-review"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:03.604102+00:00",
+      "durationSeconds": 0.531,
+      "stdout": {
+        "sha256": "e1ba0d475295e970b4914b5fee297098e125aefe9a65286cdf14ea13b7c38404",
+        "text": "Semantic authority check passed.\nsummary components=35 authorities=44 dispositions=54 claims=45 reliability=7 sensitive=7 concepts=7 relations=6 flags=22 | rules=18 diagnostics=0 adjudicated=0 structural=55/55 gaps=35/35 aliases=1 bindings=3 not-comparable=21 matrix-unmapped=5\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "evidence-report",
+      "argv": [
+        "node",
+        "scripts/check-evidence-refs.mjs",
+        "--report",
+        "D:\\tmp\\architecture-review-20261106\\revalidation\\evidence-report.json",
+        "--actor",
+        "codex-architecture-review"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:04.314567+00:00",
+      "durationSeconds": 0.5,
+      "stdout": {
+        "sha256": "e30e8dc6f8e2a4e5fdaca3f63c091a3fb5ca721f4ed5778a53e340247d106764",
+        "text": "[evidence-refs] report valid: 6 relation(s), 8 source ref(s), 0 diagnostic(s) -> D:/tmp/architecture-review-20261106/revalidation/evidence-report.json\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "evidence-verify",
+      "argv": [
+        "node",
+        "scripts/check-evidence-refs.mjs",
+        "--verify",
+        "D:\\tmp\\architecture-review-20261106\\revalidation\\evidence-report.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:04.983938+00:00",
+      "durationSeconds": 0.546,
+      "stdout": {
+        "sha256": "e61fcbb386107114b45b40e0c26a02423ed5fd4ba1fd307aad3a550b3570272d",
+        "text": "[evidence-refs] verify valid: D:/tmp/architecture-review-20261106/revalidation/evidence-report.json (6 relation(s), 8 source ref(s), candidate d5750f2ba)\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:05.701231+00:00",
+      "durationSeconds": 0.266,
+      "stdout": {
+        "sha256": "4c99450ff1c9317a049a2efbf2d13cfb3f93e5e2a7c39d41b11080df05997031",
+        "text": "Wrote comms replay metrics to D:\\tmp\\architecture-review-20261106\\revalidation\\comms\\current-metrics.json\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:06.131148+00:00",
+      "durationSeconds": 0.188,
+      "stdout": {
+        "sha256": "cc441046a8acee7dbba3f74b8c13f61128ac3dbeb53e261a6fc53db5ab951ec0",
+        "text": "# Comms Regression Report\n\n- Generated at: 2026-11-06T03:19:06.294Z\n- Candidate: d5750f2bad06d13f663de94dd1409e3c1c6c4b07 (7312444eab953200c13b807e6e3d832f88dda175)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\tmp\\architecture-review-20261106\\revalidation\\comms\\compare-report.md\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:06.464263+00:00",
+      "durationSeconds": 5.0,
+      "stdout": {
+        "sha256": "2449116d5fd12514a7e1b41fd2555127319a40f0be4f0c0cfe2351f00068ce79",
+        "text": "Repository artifact retention passed (21218 tracked paths).\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/architecture-review-and-integration.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:11.691658+00:00",
+      "durationSeconds": 0.797,
+      "stdout": {
+        "sha256": "4afae5e6a7990dc70b47301e085fe2ee975afc5d9a88aae0cfb72c40d8c307d6",
+        "text": "Spec is valid: harness\\specs\\tasks\\architecture-review-and-integration.md\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/architecture-review-and-integration.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:12.635260+00:00",
+      "durationSeconds": 0.828,
+      "stdout": {
+        "sha256": "034759bd0daf88e4a88169ef5c03b6a036245aa4f81bdb7070013a94b505fbb3",
+        "text": "Harness report: C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX\\artifacts\\harness\\latest.md\nHarness result: pass\n"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "main"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+        "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "startedAt": "2026-11-06T03:19:13.633091+00:00",
+      "durationSeconds": 0.203,
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    }
+  ]
+}

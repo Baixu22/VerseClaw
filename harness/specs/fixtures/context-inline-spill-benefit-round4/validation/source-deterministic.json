@@ -1,0 +1,39 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "source-deterministic",
+  "cwd": "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "deterministic",
+    "--out",
+    "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/deterministic-source",
+    "--repeats",
+    "1",
+    "--max-turns",
+    "8"
+  ],
+  "started_at": "2026-11-08T04:55:16.254614+00:00",
+  "duration_seconds": 11.063,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\source-deterministic.stdout.txt",
+      "bytes": 1511,
+      "sha256": "8af5d0e183d8c805236f87541dce0b703e4b635a6b07c2b3c9b33c64e9bcb4e8"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\source-deterministic.stderr.txt",
+      "bytes": 7001,
+      "sha256": "7ac2479f1e27bf6a346591be7e29b95d551623d25c2f195ea2ad9a670834eb65"
+    }
+  }
+}

@@ -40,6 +40,7 @@
  * which is what this file exists to prevent.
  */
 import { DIRECTORY_MIME_TYPE } from '@/components/assistant-ui/attachment';
+import { createChatContentCache } from '@/stores/chat/content-cache';
 import {
   parseToolUiContent,
   parseToolUiInteraction,
@@ -328,7 +329,9 @@ function mergeContentBlockResources(
   };
 }
 
-const projectionCache = new WeakMap<RawMessage, Map<string, MessageRenderProjection>>();
+const projectionIds = new WeakMap<RawMessage, number>();
+let nextProjectionId = 0;
+const projectionCache = createChatContentCache<MessageRenderProjection>('message-projection', 1200);
 
 function flagKey(flags: MessageRenderFlags): string {
   return [
@@ -422,23 +425,20 @@ function computeProjection(message: RawMessage, flags: MessageRenderFlags): Mess
  * Project a message into everything the transcript can render from it.
  *
  * Cached per (message identity, flags) so `index.tsx` and `ChatMessage` calling
- * it for the same row costs one parse, not two. The cache is a WeakMap keyed on
- * the message object, so it drains with the transcript.
+ * it for the same row costs one parse, not two. Payloads share the chat byte
+ * budget; object identities are weak and an evicted projection is recomputed.
  */
 export function projectMessageRender(
   message: RawMessage,
   flags: MessageRenderFlags,
 ): MessageRenderProjection {
-  let byFlags = projectionCache.get(message);
-  if (!byFlags) {
-    byFlags = new Map();
-    projectionCache.set(message, byFlags);
-  }
-  const key = flagKey(flags);
-  const cached = byFlags.get(key);
+  let id = projectionIds.get(message);
+  if (id === undefined) { id = ++nextProjectionId; projectionIds.set(message, id); }
+  const key = `${id}:${flagKey(flags)}`;
+  const cached = projectionCache.get(key);
   if (cached) return cached;
 
   const projection = computeProjection(message, flags);
-  byFlags.set(key, projection);
+  projectionCache.set(key, projection);
   return projection;
 }

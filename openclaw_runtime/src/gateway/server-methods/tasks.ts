@@ -21,6 +21,11 @@ import {
   sanitizeTaskStatusText,
 } from "../../tasks/task-status.js";
 import type { GatewayRequestHandlers } from "./types.js";
+import { existsSync } from "node:fs";
+import { TaskSystemStore } from "../../../../shared/task-system/store.js";
+import { createExecutionTaskAccess } from "../../agents/execution-task-authority.js";
+import type { TaskCredential } from "../../../../shared/task-system/types.js";
+import { loadSubagentSessionEntry } from "../../agents/subagent-session-reconciliation.js";
 
 const DEFAULT_TASKS_LIST_LIMIT = 100;
 const MAX_TASKS_LIST_LIMIT = 500;
@@ -145,6 +150,149 @@ function parseCursor(cursor: string | undefined): number | null {
 // Control UI task methods expose the stable gateway protocol shape; helpers
 // above keep runtime registry details out of the wire result.
 export const tasksHandlers: GatewayRequestHandlers = {
+  "tasks.contract.reconcile": async ({ params, respond, context }) => {
+    try {
+      const c = params.credential as TaskCredential | undefined;
+      if (
+        !c ||
+        typeof c.taskNodeId !== "string" ||
+        typeof c.sessionKey !== "string" ||
+        typeof c.generation !== "string" ||
+        !Number.isSafeInteger(c.epoch) ||
+        typeof params.operationId !== "string" ||
+        typeof params.effectReceiptId !== "string" ||
+        typeof params.workspaceDir !== "string"
+      )
+        throw new Error("TASK_RECONCILIATION_INPUT_INVALID");
+      const session = loadSubagentSessionEntry({
+        childSessionKey: c.sessionKey,
+        cfg: context.getRuntimeConfig(),
+      });
+      if (session?.sessionId !== c.generation) throw new Error("TASK_GENERATION_STALE");
+      const access = createExecutionTaskAccess(params.workspaceDir);
+      const domain = access.domain;
+      if (!existsSync(domain.database)) throw new Error("TASK_STORE_UNAVAILABLE");
+      const store = new TaskSystemStore(domain, undefined, access);
+      try {
+        const { reconcilePersistentTaskEffect } =
+          await import("../../agents/persistent-task-acceptance.js");
+        respond(
+          true,
+          {
+            success: true,
+            task: reconcilePersistentTaskEffect(
+              store,
+              c,
+              params.operationId,
+              params.effectReceiptId,
+            ),
+          },
+          undefined,
+        );
+      } finally {
+        store.close();
+      }
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          error instanceof Error ? error.message : String(error),
+        ),
+      );
+    }
+  },
+  "tasks.contract.receipt": async ({ params, respond, context }) => {
+    try {
+      const refs = params.refs as
+        | {
+            taskId: string;
+            candidateDigest: string;
+            generation: string;
+            verifierReceiptId: string;
+            effectReceiptId: string;
+          }
+        | undefined;
+      if (
+        !refs ||
+        Object.values(refs).some((value) => typeof value !== "string") ||
+        typeof params.workspaceDir !== "string"
+      )
+        throw new Error("TASK_RECEIPT_INPUT_INVALID");
+      const access = createExecutionTaskAccess(params.workspaceDir);
+      const domain = access.domain;
+      if (!existsSync(domain.database)) throw new Error("TASK_STORE_UNAVAILABLE");
+      const store = new TaskSystemStore(domain, undefined, access);
+      try {
+        const owner = store.get(refs.taskId).claim;
+        if (!owner) throw new Error("TASK_OWNER_MISSING");
+        const session = loadSubagentSessionEntry({
+          childSessionKey: owner.sessionKey,
+          cfg: context.getRuntimeConfig(),
+        });
+        if (session?.sessionId !== refs.generation) throw new Error("TASK_GENERATION_STALE");
+        const { readPersistentTaskCompletionReceipt } =
+          await import("../../agents/persistent-task-acceptance.js");
+        respond(true, { ok: true, ...readPersistentTaskCompletionReceipt(store, refs) }, undefined);
+      } finally {
+        store.close();
+      }
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          error instanceof Error ? error.message : String(error),
+        ),
+      );
+    }
+  },
+  "tasks.contract.accept": async ({ params, respond, context }) => {
+    try {
+      const credential = params.credential as TaskCredential | undefined;
+      if (
+        !credential ||
+        typeof credential.taskNodeId !== "string" ||
+        typeof credential.sessionKey !== "string" ||
+        typeof credential.generation !== "string" ||
+        !Number.isSafeInteger(credential.epoch) ||
+        credential.epoch < 1 ||
+        typeof params.workspaceDir !== "string" ||
+        typeof params.candidate !== "string"
+      )
+        throw new Error("TASK_ACCEPTANCE_INPUT_INVALID");
+      const session = loadSubagentSessionEntry({
+        childSessionKey: credential.sessionKey,
+        cfg: context.getRuntimeConfig(),
+      });
+      if (session?.sessionId !== credential.generation) throw new Error("TASK_GENERATION_STALE");
+      const access = createExecutionTaskAccess(params.workspaceDir);
+      const domain = access.domain;
+      if (!existsSync(domain.database)) throw new Error("TASK_STORE_UNAVAILABLE");
+      const store = new TaskSystemStore(domain, undefined, access);
+      try {
+        const { acceptPersistentTask } = await import("../../agents/persistent-task-acceptance.js");
+        respond(
+          true,
+          { success: true, task: acceptPersistentTask(store, credential, params.candidate) },
+          undefined,
+        );
+      } finally {
+        store.close();
+      }
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          error instanceof Error ? error.message : String(error),
+        ),
+      );
+    }
+  },
   "tasks.list": ({ params, respond }) => {
     if (!validateTasksListParams(params)) {
       respond(

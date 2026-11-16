@@ -31,7 +31,9 @@ function getExtensionPackages(): Set<string> {
 const extensionPackages = getExtensionPackages();
 export const localOpenClawRuntimeAliases = {
   '@openclaw/normalization-core': resolve(__dirname, 'openclaw_runtime/packages/normalization-core/src'),
+  '@openclaw/media-core': resolve(__dirname, 'openclaw_runtime/packages/media-core/src'),
   '@openclaw/acp-core': resolve(__dirname, 'openclaw_runtime/packages/acp-core/src'),
+  '@openclaw/net-policy': resolve(__dirname, 'openclaw_runtime/packages/net-policy/src'),
   '@openclaw/runtime-redaction': resolve(__dirname, 'openclaw_runtime/src/logging/redact.ts'),
   '@openclaw/provider-request-auth': resolve(__dirname, 'openclaw_runtime/src/agents/provider-request-auth.ts'),
 };
@@ -46,7 +48,9 @@ const bundledMainRuntimeDependencies = new Set([
   'shiki',
   'kysely',
   'tslog',
+  'ipaddr.js',
   '@openclaw/fs-safe',
+  '@openclaw/media-core',
 ]);
 const alias = {
   '@': resolve(__dirname, 'src'),
@@ -87,7 +91,10 @@ function rendererManualChunks(id: string): string | undefined {
   if (packageName === 'lucide-react') return 'lucide-icons';
   // assistant-ui registers resources against symbols initialized by its core.
   // Keep registrations and core in one chunk when Markdown gains a second host.
-  if (packageName.startsWith('@assistant-ui/')) return 'assistant-ui-runtime';
+  if (packageName.startsWith('@assistant-ui/') || packageName === 'assistant-stream' || packageName === 'assistant-cloud') return 'assistant-ui-runtime';
+  // Identifier factories are used during runtime module initialization. Keep
+  // them out of lazy Markdown hosts that import the runtime in turn.
+  if (packageName === 'nanoid') return 'id-runtime';
   if (packageName === 'monaco-editor' || packageName === '@monaco-editor/react') return 'editor';
   if (packageName === 'xlsx' || packageName === 'pdfjs-dist') return 'document-viewers';
   if (packageName === 'katex') return 'math-rendering';

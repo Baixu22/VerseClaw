@@ -160,6 +160,9 @@ interface ArtifactPanelState {
   openWorkspacePanel: (intent: WorkspacePanelIntent) => void;
   setExpanded: (expanded: boolean) => void;
   toggle: () => void;
+  /** Hide the workspace while retaining its tabs, width and selected content. */
+  hide: () => void;
+  /** Reset transient state when leaving or clearing a session. */
   close: () => void;
   /** Update the panel width (clamped). */
   setWidthPct: (pct: number) => void;
@@ -340,6 +343,7 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
       },
       setExpanded: (expanded) => set({ expanded }),
       toggle: () => set((s) => ({ open: !s.open })),
+      hide: () => set({ open: false }),
       close: () => set({ open: false, expanded: false, tabs: [], activeTabId: null, focusedFile: null, selectedPath: null, agentsSessionKey: null }),
       setWidthPct: (pct) => set({ widthPct: clampWidth(pct) }),
       restoreSessionState: (state) => set(() => {

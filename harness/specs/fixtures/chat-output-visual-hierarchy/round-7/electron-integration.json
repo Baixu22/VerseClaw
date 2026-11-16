@@ -1,0 +1,194 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/chat-output-e2e-integration",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-task-visualizer.spec.ts",
+      "file": "chat-task-visualizer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat execution graph",
+          "file": "D:/ClawX/tests/e2e/chat-task-visualizer.spec.ts",
+          "line": 287,
+          "column": 6,
+          "specs": [
+            {
+              "title": "renders internal yield status and linked subagent branch from mocked IPC",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15917,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:56:21.388Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "assistant-ui-ghost-execution-graph",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-integration\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-ghost-execution-graph-99891dc794ce7838aa28fc106fcd757d6a94881d.png"
+                        },
+                        {
+                          "name": "assistant-ui-call-chip-narrow",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-integration\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-call-chip-narrow-084fda490abe73239def9ec3aec6dab399209113.png"
+                        },
+                        {
+                          "name": "assistant-ui-call-chip-dark",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-integration\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-call-chip-dark-0325f871bf95a97842a472155f9a0646830d5c45.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "149f62342d27f572e1ad-05d58eb0eaef810b8898",
+              "file": "D:/ClawX/tests/e2e/chat-task-visualizer.spec.ts",
+              "line": 420,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-workspace-header.spec.ts",
+      "file": "chat-workspace-header.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat workspace header",
+          "file": "D:/ClawX/tests/e2e/chat-workspace-header.spec.ts",
+          "line": 70,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows workspace and conversation without the legacy topic selector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16309,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:56:37.334Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "chat-dot-matrix-running-status",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-integration\\chat-workspace-header-Vers-085eb-t-the-legacy-topic-selector\\attachments\\chat-dot-matrix-running-status-3790ac1d2e6f8c62e1e3a5c75ea2ad12ac852423.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4db553a0a2642d4224fb-1c647703072f95205e37",
+              "file": "D:/ClawX/tests/e2e/chat-workspace-header.spec.ts",
+              "line": 71,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-04T14:56:20.176Z",
+    "duration": 36125.058,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "u2-reading-trace",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/session-task-reading-navigation.spec.ts",
+    "--grep",
+    "restores",
+    "--workers=1",
+    "--reporter=list,json",
+    "--output=D:/tmp/unified-management-20261109/interaction-validation/u2-reading-trace-results"
+  ],
+  "startedAt": "2026-11-09T00:39:29.563Z",
+  "finishedAt": "2026-11-09T00:40:13.977Z",
+  "durationMs": 44412,
+  "exitCode": 1,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "add7600c1be77b4f7c37680740948762fa3b7f0d",
+    "tree": "461ed8d26fe5a12130281f60e088124812f2755d",
+    "dirty": "M tests/e2e/session-task-reading-navigation.spec.ts",
+    "files": [
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "880ef4b8c585c20168631c4dd4273d36fc15c7a4a26852521fc899bedc8e4c0a"
+      },
+      {
+        "file": "src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "3c3b0eb9359450b5076f4f388a9a07b4c16ff7060c5f68f6d3d514f983e64339"
+      },
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "fae12e20a3592e9b88af2b9380d53a470099ce9d32838877012a212069874e6f"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "c28dca21774cf69778dbe6295fd0f4ee211384f1ddac69a327ee0bbee6c38830"
+      },
+      {
+        "file": "tests/unit/session-reading-scroll-owner.test.tsx",
+        "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+      }
+    ]
+  },
+  "after": {
+    "commit": "add7600c1be77b4f7c37680740948762fa3b7f0d",
+    "tree": "461ed8d26fe5a12130281f60e088124812f2755d",
+    "dirty": "M tests/e2e/session-task-reading-navigation.spec.ts",
+    "files": [
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "880ef4b8c585c20168631c4dd4273d36fc15c7a4a26852521fc899bedc8e4c0a"
+      },
+      {
+        "file": "src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "3c3b0eb9359450b5076f4f388a9a07b4c16ff7060c5f68f6d3d514f983e64339"
+      },
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "fae12e20a3592e9b88af2b9380d53a470099ce9d32838877012a212069874e6f"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "c28dca21774cf69778dbe6295fd0f4ee211384f1ddac69a327ee0bbee6c38830"
+      },
+      {
+        "file": "tests/unit/session-reading-scroll-owner.test.tsx",
+        "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+      }
+    ]
+  },
+  "tests": {
+    "startTime": "2026-11-09T00:39:30.251Z",
+    "duration": 42969.241,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-reading-trace.log",
+    "sha256": "9e84652f6920f12516111b9a67b9043b2dcf2dd6232d1a6c53ab9b0caafb8859"
+  }
+}

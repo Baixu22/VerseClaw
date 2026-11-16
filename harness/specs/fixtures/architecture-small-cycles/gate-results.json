@@ -1,0 +1,837 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "candidate": {
+    "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+    "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+    "dirty": false
+  },
+  "gates": [
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "unit",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/workspace-runtime-sync.test.ts",
+        "tests/unit/workspaces-api.test.ts",
+        "tests/unit/sandbox-api.test.ts",
+        "tests/unit/context-view-tool-surface.test.ts",
+        "tests/unit/architecture-small-cycles.test.ts",
+        "tests/unit/long-session-coordinator-binding.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\unit-result.json"
+      ],
+      "startedAt": "2026-11-05T05:09:20.755Z",
+      "finishedAt": "2026-11-05T05:10:37.927Z",
+      "durationMs": 77169.5116,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\unit.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\unit.stderr.txt",
+      "stdoutSha256": "bae7700574bb344a0c058c9a660629dd65cad0a56b9ca0ac909a74f232d4a94b",
+      "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\nJSON report written to D:/tmp/architecture-small-cycles-20261105/gates/36b37acd4/unit-result.json\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "runtime-unit-retry",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence\\ClawX\\openclaw_runtime",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents.config.ts",
+        "src/agents/tools/context-agent-tools.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-unit-result.json"
+      ],
+      "startedAt": "2026-11-05T05:10:38.814Z",
+      "finishedAt": "2026-11-05T05:11:14.109Z",
+      "durationMs": 35291.8682,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-unit-retry.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-unit-retry.stderr.txt",
+      "stdoutSha256": "6a686ccd4c650d48163b6aa7feab9b54521f6a8c287286db495387e9b3cf3daf",
+      "rawStdout": "\n RUN  v4.1.7 C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX/openclaw_runtime\n\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:114:5 > DCS Stage 5 context agent tools > schema + happy path > context_read returns full_content for task_state 22ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:144:5 > DCS Stage 5 context agent tools > schema + happy path > context_read exposes include_archived and persists explicit recall 3ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:187:5 > DCS Stage 5 context agent tools > schema + happy path > context_search wraps searchContext 2ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:209:5 > DCS Stage 5 context agent tools > schema + happy path > context_write appends notes with write_origin 12ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:236:5 > DCS Stage 5 context agent tools > auth / reject paths > omits tools when blockStore or sessionId missing 2ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:243:5 > DCS Stage 5 context agent tools > auth / reject paths > context_write rejects non-whitelisted role 1ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:260:5 > DCS Stage 5 context agent tools > auth / reject paths > context_read reports empty when store returns no blocks (auth empty set) 1ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:276:5 > DCS Stage 5 context agent tools > production catalog registration > createOpenClawCodingTools includes three names when DCS deps present 3167ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:295:5 > DCS Stage 5 context agent tools > production catalog registration > createOpenClawCodingTools omits context tools without DCS deps 2160ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:311:5 > DCS Stage 5 context agent tools > child instruction accuracy > CHILD_CONTEXT_READ_INSTRUCTION names a registered tool 2ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:380:3 > DCS FactStore view tools (C0-1') > RED: view tools invisible without factService (dep-gate like Block tools) 8ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:396:3 > DCS FactStore view tools (C0-1') > context_impact returns callers + radius evidence from real FactStore 107ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:421:3 > DCS FactStore view tools (C0-1') > createDcsContextAgentTools registers 4 view tools when factService present 50ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:432:3 > DCS FactStore view tools (C0-1') > createOpenClawCodingTools includes view tools when factService provided 1104ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:451:3 > DCS FactStore view tools (C0-1') > createOpenClawCodingTools omits view tools without factService (flag-off-equivalent) 730ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:470:3 > DCS FactStore view tools (C0-1') > context_verify with changedFiles includes relatedTests field 36ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:484:3 > DCS FactStore view tools (C0-1') > schema budget recorder records toolCount and schemaChars (W0-4) 33ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:532:3 > TF-0495 standard context view tool surface > auto-discovers view tools from healthy workspace + FactService + permission 38ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:554:3 > TF-0495 standard context view tool surface > explicit false remains a rollback and keeps view tools out 28ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:568:3 > TF-0495 standard context view tool surface > permission denial is visible and execution fails closed 35ms\n ✓ |agents| src/agents/tools/context-agent-tools.test.ts:597:3 > TF-0495 standard context view tool surface > on_demand summary mode: default registry list has no full schema property dump 34ms\n\n Test Files  1 passed (1)\n      Tests  21 passed (21)\n   Start at  13:10:41\n   Duration  31.98s (transform 18.42s, setup 483ms, import 23.42s, tests 7.58s, environment 0ms)\n\nJSON report written to D:/tmp/architecture-small-cycles-20261105/gates/36b37acd4/runtime-unit-result.json\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "folding-unit",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/context-folding-result.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\folding-unit-result.json"
+      ],
+      "startedAt": "2026-11-05T05:11:14.500Z",
+      "finishedAt": "2026-11-05T05:12:24.431Z",
+      "durationMs": 69931.1502,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\folding-unit.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\folding-unit.stderr.txt",
+      "stdoutSha256": "e32b0b3a7ae13f7e269fb72a912d2e6776c66f42464f6827b11368afce8fa385",
+      "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n\n RUN  v4.1.1 C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX\n\n ✓ tests/unit/context-folding-result.test.ts > ContextFoldResult/v1 > accepts a complete result and measures its output size 7ms\n ✓ tests/unit/context-folding-result.test.ts > ContextFoldResult/v1 > requires child identity, evidence refs, unresolved claims, blockers, failed attempts, usage and the agent label 2ms\n ✓ tests/unit/context-folding-result.test.ts > ContextFoldResult/v1 > rejects any transcript-shaped key at the top level or inside structuredOutput 1ms\n ✓ tests/unit/context-folding-result.test.ts > ContextFoldResult/v1 > keeps timeout, cancel, partial, failed and unknown as distinct states that must explain themselves 4ms\n ✓ tests/unit/context-folding-result.test.ts > ContextFoldResult/v1 > projects for the parent within budget without ever carrying a transcript 3ms\n ✓ tests/unit/context-folding-result.test.ts > ContextFoldResult/v1 > names duplicate and unknown deliveries instead of accepting them 0ms\n ✓ tests/unit/context-folding-result.test.ts > flag-off byte parity against the clean-HEAD baseline > was captured at a clean commit of this track before any runtime change 1ms\n ✓ tests/unit/context-folding-result.test.ts > flag-off byte parity against the clean-HEAD baseline > keeps the DCS context tool surface byte-identical with the flag unset and with the flag explicitly off 6ms\n ✓ tests/unit/context-folding-result.test.ts > flag-off byte parity against the clean-HEAD baseline > keeps the tool-name constants, coding navigation prompt bytes and the core tool catalog unchanged 2ms\n ✓ tests/unit/context-folding-result.test.ts > flag-off byte parity against the clean-HEAD baseline > keeps the full OpenClaw tool list byte-identical with the flag off and never exposes a folding tool 2289ms\n\n Test Files  1 passed (1)\n      Tests  10 passed (10)\n   Start at  13:11:16\n   Duration  64.59s (transform 41.93s, setup 242ms, import 61.69s, tests 2.32s, environment 0ms)\n\nJSON report written to D:/tmp/architecture-small-cycles-20261105/gates/36b37acd4/folding-unit-result.json\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "typecheck-full",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-11-05T05:12:25.223Z",
+      "finishedAt": "2026-11-05T05:16:51.627Z",
+      "durationMs": 266340.585,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\typecheck-full.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\typecheck-full.stderr.txt",
+      "stdoutSha256": "0cf8aec6cd86a7e092dcc25cfe521bef595771ae695b234c70ee1e7afb894c54",
+      "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 0,\n    \"durationMs\": 119453,\n    \"observationMode\": false,\n    \"errorCount\": 0,\n    \"errorLog\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": \"ede85fb17d28e8ff98a9201570f02dbca759dc6ff07e054435c3158fbaf898cd\",\n    \"inputCount\": 13062,\n    \"report\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 264929,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 200\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 54803\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 6927\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 119453,\n      \"observationMode\": false,\n      \"errorCount\": 0,\n      \"errorLog\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n",
+      "stderrSha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a",
+      "rawStderr": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n"
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "runtime-lint",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence\\ClawX\\openclaw_runtime",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "scripts/run-oxlint.mjs",
+        "--deny-warnings",
+        "src/agents/tools/context-agent-tools.ts",
+        "src/agents/tools/context-view-tool-surface.ts"
+      ],
+      "startedAt": "2026-11-05T05:16:52.407Z",
+      "finishedAt": "2026-11-05T05:17:26.953Z",
+      "durationMs": 34525.7259,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-lint.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-lint.stderr.txt",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStdout": "",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "lint",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "eslint",
+        "electron/services/sandbox-state.ts",
+        "electron/services/sandbox-api.ts",
+        "electron/services/workspace-runtime-sync.ts",
+        "electron/services/workspaces-api.ts",
+        "tests/unit/workspace-runtime-sync.test.ts",
+        "tests/unit/workspaces-api.test.ts",
+        "tests/unit/sandbox-api.test.ts",
+        "tests/unit/architecture-small-cycles.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "startedAt": "2026-11-05T05:17:27.968Z",
+      "finishedAt": "2026-11-05T05:17:35.330Z",
+      "durationMs": 7353.917399999999,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\lint.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\lint.stderr.txt",
+      "stdoutSha256": "d684aadf7cc18ecc0092139d60cc8dde7043f28dab178aa0b69edc8c63e236be",
+      "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "format",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence\\ClawX\\openclaw_runtime",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "node_modules/oxfmt/bin/oxfmt",
+        "--check",
+        "--threads=1",
+        "src/agents/tools/context-agent-tools.ts",
+        "src/agents/tools/context-view-tool-surface.ts"
+      ],
+      "startedAt": "2026-11-05T05:17:35.693Z",
+      "finishedAt": "2026-11-05T05:17:36.056Z",
+      "durationMs": 361.7713,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\format.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\format.stderr.txt",
+      "stdoutSha256": "d6ad875ec1cc9addfa3f5f070e4ec8c8f6eae0b17e2224f821c9112ed2403f87",
+      "rawStdout": "Checking formatting...\n\nAll matched files use the correct format.\nFinished in 43ms on 2 files using 1 threads.\n",
+      "stderrSha256": "01f25de219844d53f81b996d6b73e782203533bfc6eba81e44b98acc0039ad42",
+      "rawStderr": "No config found, using defaults. Please add a config file or try `oxfmt --init` if needed.\n"
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "bundle-smoke",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "D:\\tmp\\architecture-small-cycles-20261105\\build-touched.cjs"
+      ],
+      "startedAt": "2026-11-05T05:17:36.411Z",
+      "finishedAt": "2026-11-05T05:17:38.715Z",
+      "durationMs": 2302.9455000000003,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\bundle-smoke.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\bundle-smoke.stderr.txt",
+      "stdoutSha256": "1bd77c6be13d343d4b2c78fdf96eab2b34635e157c95cdfd88197ad1d68e77e8",
+      "rawStdout": "{\"entryBundles\":4,\"compatibilityExports\":4,\"bytes\":21351801}\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "graphs",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "D:\\tmp\\architecture-small-cycles-20261105\\dependency-graphs.cjs"
+      ],
+      "startedAt": "2026-11-05T05:17:39.086Z",
+      "finishedAt": "2026-11-05T05:17:52.709Z",
+      "durationMs": 13621.7332,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\graphs.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\graphs.stderr.txt",
+      "stdoutSha256": "509ea57a5cd077c64f9e64a3da2b547339f68be591b3118c7d470a0a0896ffea",
+      "rawStdout": "{\"application\":{\"beforeCycles\":1,\"afterCycles\":0,\"files\":826},\"context\":{\"beforeCycles\":1,\"afterCycles\":0}}\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "runtime-graphs",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "D:\\tmp\\architecture-small-cycles-20261105\\runtime-graphs.cjs"
+      ],
+      "startedAt": "2026-11-05T05:17:54.214Z",
+      "finishedAt": "2026-11-05T05:18:55.055Z",
+      "durationMs": 60839.7424,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-graphs.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-graphs.stderr.txt",
+      "stdoutSha256": "9c968f3bf759093996946c4ce07b80a67ddd5ac685fa9c08cc0697efcce99d28",
+      "rawStdout": "{\"baselineComponents\":[23,2],\"candidateComponents\":[23],\"largeComponentUnchanged\":true}\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "behavior-parity",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "D:\\tmp\\architecture-small-cycles-20261105\\behavior-parity.cjs"
+      ],
+      "startedAt": "2026-11-05T05:18:56.461Z",
+      "finishedAt": "2026-11-05T05:18:58.865Z",
+      "durationMs": 2349.2412,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\behavior-parity.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\behavior-parity.stderr.txt",
+      "stdoutSha256": "efca003a8730987595bf08a171b64a7e4af3831713856ac43fd35cf23dd74fa7",
+      "rawStdout": "{\"sandboxFunctionsUnchanged\":4,\"syncBodiesPreserved\":2,\"protectedFilesUnchanged\":12}\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "contract",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "scripts/contract-check.mjs"
+      ],
+      "startedAt": "2026-11-05T05:19:00.068Z",
+      "finishedAt": "2026-11-05T05:19:12.244Z",
+      "durationMs": 12172.413,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\contract.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\contract.stderr.txt",
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "rawStdout": "Contract check passed.\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "runtime-policy",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "scripts/check-runtime-source-policy.mjs"
+      ],
+      "startedAt": "2026-11-05T05:19:12.699Z",
+      "finishedAt": "2026-11-05T05:19:13.028Z",
+      "durationMs": 326.9057,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-policy.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-policy.stderr.txt",
+      "stdoutSha256": "1505dd372c44f2c7988a2ee141d32144f0e19a60b1bc9dce76a86dc3eae95a47",
+      "rawStdout": "[runtime-policy] upstream, prune, layout and LOC baseline metadata are aligned.\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "comms-replay",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "comms:replay"
+      ],
+      "startedAt": "2026-11-05T05:19:13.493Z",
+      "finishedAt": "2026-11-05T05:19:14.459Z",
+      "durationMs": 958.4531,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\comms-replay.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\comms-replay.stderr.txt",
+      "stdoutSha256": "644d2a295d14dadff3e12fffb97e5bf3fafc62200e060f50bc25f1b3fc21b3b4",
+      "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\nWrote comms replay metrics to D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\comms\\current-metrics.json\n",
+      "stderrSha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a",
+      "rawStderr": "$ node scripts/comms/replay.mjs\n"
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "comms-compare",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "comms:compare"
+      ],
+      "startedAt": "2026-11-05T05:19:14.881Z",
+      "finishedAt": "2026-11-05T05:19:15.673Z",
+      "durationMs": 789.2518,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\comms-compare.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\comms-compare.stderr.txt",
+      "stdoutSha256": "6f43e511f800c67dfe367e02c2e46b743b4ece2f3ed7c1a07a97422becb1a4fc",
+      "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n# Comms Regression Report\n\n- Generated at: 2026-11-05T05:19:15.487Z\n- Candidate: 36b37acd405fc59d7aa2e92de1a06e750b108801 (9b5d9235107a36243d701e0741381a76a76a6fb7)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\comms\\compare-report.md\n",
+      "stderrSha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e",
+      "rawStderr": "$ node scripts/comms/compare.mjs\n"
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "artifacts",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "startedAt": "2026-11-05T05:19:16.097Z",
+      "finishedAt": "2026-11-05T05:19:26.222Z",
+      "durationMs": 10123.7611,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\artifacts.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\artifacts.stderr.txt",
+      "stdoutSha256": "a9c805331f0275a697754e49708ce26756d617e3e69d0c764f17a977c803ea89",
+      "rawStdout": "Repository artifact retention passed (20493 tracked paths).\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "evidence",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "scripts/check-evidence-refs.mjs"
+      ],
+      "startedAt": "2026-11-05T05:19:27.144Z",
+      "finishedAt": "2026-11-05T05:19:27.936Z",
+      "durationMs": 787.9551000000001,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\evidence.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\evidence.stderr.txt",
+      "stdoutSha256": "047cce29d2ca7c0bd2355ac3f116c8b099afb74981f7381fd16ff51c4381427f",
+      "rawStdout": "[evidence-refs] PASS 188 referenced path(s)\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "harness-validate",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/architecture-skeleton-small-cycle-removal.md",
+        "--since",
+        "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f"
+      ],
+      "startedAt": "2026-11-05T05:19:28.829Z",
+      "finishedAt": "2026-11-05T05:19:41.830Z",
+      "durationMs": 12998.5051,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\harness-validate.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\harness-validate.stderr.txt",
+      "stdoutSha256": "8afa619e00f7075e0e100f4a5be8ac39b82794756e5abebed5d9fd00377addbb",
+      "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\nSpec is valid: harness\\specs\\tasks\\architecture-skeleton-small-cycle-removal.md\n",
+      "stderrSha256": "f04c0f9c7715bcf35431f1b08ea7406f66ce43a8cfdbc501b8c143d6332ed08f",
+      "rawStderr": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/architecture-skeleton-small-cycle-removal.md\" \"--since\" \"dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/architecture-skeleton-small-cycle-removal.md\" \"--since\" \"dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f\"\n"
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "harness-dry-run",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/architecture-skeleton-small-cycle-removal.md",
+        "--since",
+        "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-05T05:19:43.263Z",
+      "finishedAt": "2026-11-05T05:20:41.130Z",
+      "durationMs": 57841.4636,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\harness-dry-run.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\harness-dry-run.stderr.txt",
+      "stdoutSha256": "32e708b3a50a3d203657709c5758d49ea77293707498b66923a1c26e74e53fcf",
+      "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\nHarness report: C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence\\ClawX\\artifacts\\harness\\latest.md\nHarness result: pass\n",
+      "stderrSha256": "6a6bd73018dc46fbed2b723ce075e90fd0b2716646d1ba7a589c7e25598a3c78",
+      "rawStderr": "$ pnpm --filter @verse-claw/harness start -- \"run\" \"--spec\" \"harness/specs/tasks/architecture-skeleton-small-cycle-removal.md\" \"--since\" \"dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f\" \"--dry-run\"\n$ node src/cli.mjs \"--\" \"run\" \"--spec\" \"harness/specs/tasks/architecture-skeleton-small-cycle-removal.md\" \"--since\" \"dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f\" \"--dry-run\"\n"
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "diff",
+      "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+      "exe": "git",
+      "argv": [
+        "diff",
+        "--check",
+        "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f"
+      ],
+      "startedAt": "2026-11-05T05:20:44.282Z",
+      "finishedAt": "2026-11-05T05:20:45.471Z",
+      "durationMs": 1141.5457999999999,
+      "exitCode": 0,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\diff.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\diff.stderr.txt",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStdout": "",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    {
+      "schema": "ArchitectureSmallCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "runtime-cycles",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence\\ClawX\\openclaw_runtime",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "--import",
+        "tsx",
+        "scripts/check-import-cycles.ts"
+      ],
+      "startedAt": "2026-11-05T05:20:47.254Z",
+      "finishedAt": "2026-11-05T05:21:07.795Z",
+      "durationMs": 20530.841099999998,
+      "exitCode": 1,
+      "signal": null,
+      "candidate": {
+        "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+        "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+        "dirty": false,
+        "status": "",
+        "afterDirty": false,
+        "afterStatus": ""
+      },
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn"
+      },
+      "stdout": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-cycles.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-small-cycles-20261105\\gates\\36b37acd4\\runtime-cycles.stderr.txt",
+      "stdoutSha256": "68166e648dfe32a9a673324c4af7b2ba54e617e010994b82a47e704e0076735e",
+      "rawStdout": "Import cycle check: 1 runtime value cycle(s).\n",
+      "stderrSha256": "3e49cfbc1df564310e6339654d22d76ced16bb158dccf5005e7185271ea6c3ac",
+      "rawStderr": "\nRuntime value import cycles:\n\n# component size 23\n  src/agents/embedded-agent-runner/tool-schema-runtime.ts\n  -> src/plugins/provider-runtime.ts\n  -> src/plugins/provider-discovery.runtime.ts\n  -> src/plugins/providers.runtime.ts\n  -> src/plugins/active-runtime-registry.ts\n  -> src/plugins/loader.ts\n  -> src/plugins/registry.ts\n  -> src/context-engine/registry.ts\n  -> src/context-engine/cvk/engine.ts\n  -> src/context-engine/model-capability-prompt.ts\n  -> src/runtime-core/model-capability-effective-state.ts\n  -> src/agents/tools-effective-inventory-build.ts\n  -> src/agents/runtime-plan/tools.ts\n  -> src/agents/embedded-agent-runner/tool-schema-runtime.ts\n\nBreak the cycle or convert type-only edges to `import type`.\n"
+    }
+  ]
+}

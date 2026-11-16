@@ -1,0 +1,17 @@
+{
+  "schema": "ContextInlineSpillPreflightRejection/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "startedAt": "2026-11-13T06:06:24.464Z",
+  "candidate": {
+    "commit": "1ad696a8fc7089b0e9a658d65b6b144b58506ea0",
+    "tree": "48420c07cd0d4ee5982c21b91c5c15bfc363f2ef",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "providerRequests": 0,
+  "error": "AssertionError [ERR_ASSERTION]: source differs from commit: scripts/context-inline-spill-benefit-scoring.mts\n+ actual - expected\n\n+ '71542a780e3b06371b5bda6d3eef8ce5047b5cea'\n- 'ab32c5e93284ebf53f3175ed6dd656d479350972'\n",
+  "mode": "deterministic"
+}

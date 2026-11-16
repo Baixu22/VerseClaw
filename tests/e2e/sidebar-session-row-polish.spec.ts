@@ -6,7 +6,7 @@
  *    settles back when the pointer leaves. Reduced motion never scrolls.
  *  - ⋯ opens the session menu anchored under the button; Archive is one click
  *    with an Undo that restores the session.
- *  - The bell carries a live ring while a session runs, and its panel lists
+ *  - The bell swings while a session runs, and its panel lists
  *    running sessions above the recent activity feed.
  *
  * Agent-driven Electron automation; screenshots are evidence of what was
@@ -39,11 +39,18 @@ function stable(value: unknown): string {
   return `{${Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)).map(([key, val]) => `${JSON.stringify(key)}:${stable(val)}`).join(',')}}`;
 }
 
-async function seed(app: ElectronApplication) {
+async function seed(app: ElectronApplication, hierarchy = false) {
+  const childKey = 'agent:main:hierarchy-child';
+  const profile = hierarchy ? { ...workspace,
+    coordinatorBindings: { [MAIN]: { activeTaskNodeId: 'hierarchy-task', bindingRevision: 1 } },
+    sessionStates: { ...workspace.sessionStates, [childKey]: {} },
+  } : workspace;
+  const profiles = hierarchy ? [profile, { ...workspace, id: 'migration-target', name: 'Migration target', rootPath: ROOT + '-target' }] : [profile];
   const sessions = [
-    { key: MAIN, displayName: 'Sidebar review', updatedAt: now },
-    { key: LONG, displayName: LONG_TITLE, updatedAt: now - 60_000 },
-    { key: RUNNING, displayName: 'Background build', updatedAt: now - 30_000, status: 'running', hasActiveRun: true },
+    { key: MAIN, sessionId: 'sidebar-generation', displayName: 'Sidebar review', updatedAt: now },
+    { key: LONG, sessionId: 'sidebar-long-generation', displayName: LONG_TITLE, updatedAt: now - 60_000 },
+    { key: RUNNING, sessionId: 'sidebar-running-generation', displayName: 'Background build', updatedAt: now - 30_000, status: 'running', hasActiveRun: true },
+    ...(hierarchy ? [{ key: childKey, sessionId: 'sidebar-child-generation', displayName: 'Related design review', parentSessionKey: MAIN, forkedFromParent: true, updatedAt: now - 90_000 }] : []),
   ];
   await installIpcMocks(app, {
     gatewayStatus: { state: 'running', gatewayReady: true, port: 18789 },
@@ -54,9 +61,10 @@ async function seed(app: ElectronApplication) {
     hostApi: {
       [stable(['agents', 'list', null])]: { success: true, agents: [{ id: 'main', name: 'Studio Assistant', workspace: ROOT, mainSessionKey: MAIN, isDefault: true, channelTypes: [] }], defaultAgentId: 'main', defaultModelRef: 'deepseek/deepseek-chat', configuredChannelTypes: [] },
       [stable(['settings', 'getAll', null])]: { success: true, data: { setupComplete: true, language: 'en', theme: 'light' } },
-      [stable(['workspaces', 'list', null])]: { success: true, profiles: [workspace], activeWorkspaceId: workspace.id, activeWorkspace: workspace },
-      [stable(['workspaces', 'getActive', null])]: { success: true, activeWorkspaceId: workspace.id, activeWorkspace: workspace },
+      [stable(['workspaces', 'list', null])]: { success: true, profiles, activeWorkspaceId: workspace.id, activeWorkspace: profile },
+      [stable(['workspaces', 'getActive', null])]: { success: true, activeWorkspaceId: workspace.id, activeWorkspace: profile },
       [stable(['workspaces', 'getSessionState', null])]: { success: true, sessionState: {} },
+      [stable(['workspaces', 'saveState', null])]: { success: true },
       [stable(['sessions', 'history', null])]: { messages: [], hasMore: false },
       [stable(['sessions', 'archive', null])]: { success: true },
       [stable(['sessions', 'restore', null])]: { success: true },
@@ -88,6 +96,82 @@ async function translateX(page: Page, key: string): Promise<number> {
 }
 
 test.describe('Sidebar session rows and activity bell', () => {
+  test('keeps the header compact, separates navigation from actions, and retains migration dialogs', async ({ launchElectronApp }, info) => {
+    const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'light' });
+    try {
+      await seed(app, true);
+      const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('chat-header-session-name')).toContainText('Sidebar review');
+      const header = page.getByTestId('chat-toolbar-shell');
+      await expect(header.locator('select')).toHaveCount(0);
+      for (const theme of ['light', 'dark']) {
+        await page.evaluate(theme => document.documentElement.classList.toggle('dark', theme === 'dark'), theme);
+        for (const width of [1280, 960, 720]) {
+          await pinWindowContentSize(app, { width, height: 820 });
+          expect((await header.boundingBox())!.height).toBeLessThanOrEqual(42);
+          await page.getByTestId('chat-header-session-name').click();
+          const menu = page.getByTestId('chat-session-navigation-menu');
+          await expect(menu).toBeInViewport();
+          await expect(menu.locator('[data-testid="chat-session-fork"]')).toHaveCount(0);
+          const search = page.getByTestId('chat-session-navigation-search');
+          await expect(search).toBeFocused();
+          await search.fill('Related design');
+          await expect(page.getByTestId('chat-session-derived-agent:main:hierarchy-child')).toBeVisible();
+          await page.keyboard.press('ArrowDown');
+          await expect(page.getByTestId('chat-session-derived-agent:main:hierarchy-child')).toBeFocused();
+          await page.screenshot({ path: info.outputPath(`navigation-${theme}-${width}.png`) });
+          await page.keyboard.press('Escape');
+          await expect(page.getByTestId('chat-header-session-name')).toBeFocused();
+          await page.getByTestId('chat-toolbar-more').click();
+          await expect(page.getByTestId('chat-toolbar-more-menu')).toBeInViewport();
+          if (theme === 'dark') {
+            const surfaces = await page.evaluate(() => {
+              const color = (selector: string) => getComputedStyle(document.querySelector(selector)!).backgroundColor;
+              const tone = (value: string) => value.match(/[\d.]+/g)!.slice(0, 3).map(Number).reduce((a, b) => a + b) / 3;
+              const canvas = color('[data-testid="chat-page"]');
+              return { canvas: tone(canvas), sidebar: tone(color('[data-testid="sidebar"]')),
+                composer: tone(color('.codex-composer-shell')), menu: tone(color('[data-testid="chat-toolbar-more-menu"]')),
+                headerMatchesCanvas: color('[data-testid="chat-toolbar-shell"]') === canvas };
+            });
+            expect(surfaces.canvas).toBeGreaterThan(surfaces.sidebar + 3);
+            expect(surfaces.composer).toBeGreaterThan(surfaces.canvas + 15);
+            expect(surfaces.menu).toBeGreaterThan(surfaces.canvas + 8);
+            expect(surfaces.headerMatchesCanvas).toBe(true);
+          }
+          await expect(page.getByTestId('chat-session-checkpoints')).toBeVisible();
+          await expect(page.getByTestId('chat-session-fork')).toBeVisible();
+          await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
+          await page.keyboard.press('Escape');
+          expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        }
+      }
+      const sidebarToggle = page.getByTestId('sidebar-collapse-toggle');
+      if (await sidebarToggle.getAttribute('aria-label') === 'Expand sidebar') await sidebarToggle.click();
+      await expect.poll(async () => (await page.getByTestId('sidebar').boundingBox())!.width).toBeGreaterThan(250);
+      await page.getByTestId(`sidebar-session-${LONG}`).click();
+      await expect(page.getByTestId('chat-header-session-name')).toHaveText(LONG_TITLE);
+      await expect.poll(() => page.evaluate(() => {
+        const title = document.querySelector('[data-testid="chat-header-session-name"]')!.getBoundingClientRect();
+        const actions = document.querySelector('[data-testid="chat-toolbar-actions"]')!.getBoundingClientRect();
+        return title.right <= actions.left;
+      })).toBe(true);
+      await page.screenshot({ path: info.outputPath('long-title-expanded-sidebar-720.png') });
+      await page.getByTestId(`sidebar-session-${MAIN}`).click();
+      await page.getByTestId('chat-toolbar-more').click();
+      await page.getByTestId('execution-migration-open').click();
+      await expect(page.getByTestId('execution-migration-dialog')).toBeVisible();
+      await expect(page.getByTestId('chat-toolbar-more-menu')).toBeHidden();
+      await page.getByTestId('execution-migration-target').click();
+      await page.getByRole('option', { name: 'Migration target' }).click();
+      await page.screenshot({ path: info.outputPath('migration-dialog.png') });
+      await page.getByTestId('execution-migration-dialog').getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(page.getByTestId('chat-toolbar-more')).toBeFocused();
+      const calls = await app.evaluate(() => (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module: string; action: string }> }).__verseClawE2eHostCalls ?? []);
+      expect(calls.some(call => call.action === 'migrateExecution')).toBe(false);
+    } finally { await closeElectronApp(app); }
+  });
+
   test('hover shows pin + more, long titles loop and settle, and reduced motion keeps them still', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'light' });
     try {
@@ -189,7 +273,7 @@ test.describe('Sidebar session rows and activity bell', () => {
     }
   });
 
-  test('bell shows a live ring and lists running sessions above recent activity', async ({ launchElectronApp }) => {
+  test('bell shows the row status orb while running, and stays aligned in the collapsed sidebar', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'light' });
     try {
       await seed(app);
@@ -197,10 +281,23 @@ test.describe('Sidebar session rows and activity bell', () => {
       await pinWindowContentSize(app, { width: 1280, height: 820 });
       await page.reload();
       await expect(page.getByTestId(`sidebar-session-status-${RUNNING}`)).toHaveAttribute('data-state', 'running', { timeout: 30_000 });
+      await expect(page.getByTestId('chat-toolbar-refresh')).toBeHidden();
+      await expect(page.getByTestId('chat-memory-injection-toggle')).toBeHidden();
+      await page.getByTestId('chat-toolbar-more').click();
+      await expect(page.getByTestId('chat-toolbar-refresh')).toBeVisible();
+      await expect(page.getByTestId('chat-session-settings')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(page.getByTestId('chat-toolbar-more')).toBeFocused();
 
       const bell = page.getByTestId('chat-completion-bell');
       await expect(bell).toHaveAttribute('data-live', 'running');
-      await expect(page.getByTestId('chat-activity-live-ring')).toBeVisible();
+      await expect(page.getByTestId('chat-activity-live-ring')).toHaveCount(0);
+      // Live state reuses the session rows' status orb: no swing, no corner dot.
+      const orb = page.getByTestId('chat-activity-live-orb');
+      await expect(orb).toBeVisible();
+      await expect(orb).toHaveAttribute('data-state', 'streaming');
+      await expect(page.getByTestId('chat-activity-bell-icon')).toHaveCount(0);
+      await expect(page.getByTestId('chat-activity-waiting')).toHaveCount(0);
       await expect(bell).toHaveAttribute('aria-label', /1 running/);
       await mkdir(artifacts, { recursive: true });
       await bell.screenshot({ path: join(artifacts, 'bell-running-light.png') });
@@ -231,7 +328,23 @@ test.describe('Sidebar session rows and activity bell', () => {
       await page.evaluate(() => document.documentElement.classList.add('dark'));
       await bell.screenshot({ path: join(artifacts, 'bell-running-dark.png') });
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      expect(await page.getByTestId('chat-activity-live-ring').evaluate((element) => getComputedStyle(element).animationName)).toBe('none');
+      await expect(orb).toBeVisible();
+      await page.getByTestId('sidebar-collapse-toggle').click();
+      const collapse = page.getByTestId('sidebar-collapse-toggle');
+      await expect(collapse).toHaveAttribute('aria-label', 'Expand sidebar');
+      const [bellBox, collapseBox, sidebarBox] = await Promise.all([bell.boundingBox(), collapse.boundingBox(), page.getByTestId('sidebar').boundingBox()]);
+      expect(bellBox!.y).toBeGreaterThanOrEqual(collapseBox!.y + collapseBox!.height);
+      expect(Math.abs(bellBox!.x - collapseBox!.x)).toBeLessThanOrEqual(1);
+      expect(bellBox!.x + bellBox!.width).toBeLessThan(sidebarBox!.x + sidebarBox!.width);
+      await bell.click();
+      await expect(panel).toBeVisible();
+      const panelBox = await panel.boundingBox();
+      expect(panelBox!.x).toBeGreaterThanOrEqual(0);
+      expect(panelBox!.x + panelBox!.width).toBeLessThanOrEqual(1280);
+      await capture(page, 'bell-collapsed-dark');
+      await page.keyboard.press('Escape');
+      await expect(panel).toBeHidden();
+      await expect(bell).toBeFocused();
     } finally {
       await closeElectronApp(app);
     }

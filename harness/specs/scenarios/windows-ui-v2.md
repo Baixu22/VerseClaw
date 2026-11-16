@@ -36,6 +36,38 @@ Give the Electron application a coherent FakeCoding-aligned grayscale shell, com
 
 ## Validation
 
+Composer model, knowledge, permission and agent menus share the add control's
+blur-to-clear motion, neutral surface and selection marks. Opening one closes
+the previous menu; Escape and outside click dismiss it. Short and narrow windows
+constrain the menu to available space with internal scrolling. Verify normal and
+reduced motion with `tests/e2e/chat-composer-popovers.spec.ts` and agent-driven
+Electron captures.
+
+Empty Chat uses an unboxed project picker below the composer, with worktree
+selection inside its menu. Observed file changes reveal a compact entry below
+the input; its details retain governed branch search, checkout and worktree
+actions. The three starter actions live in a single Quick start disclosure;
+drafting hides this entry without shifting the composer.
+
+Chat's assistant output has no avatar gutter. Progress text and the final answer
+share one reading column; active process details start folded and show only the
+current tool's existing progress animation. Completed passive tool records open
+on demand. Errors, approval requests and questions remain visible. The shared
+summary owns the live status so a second Thinking row does not compete with it.
+
+Session status and process output share the conversation's neutral surfaces and
+compact text states. Successful calls settle quietly, matched call/result rows
+share one disclosure, and diagnostics follow the useful work. Process history
+folds completed entries without hiding running or failed commands. Open process
+output reuses the transcript terminal with copy and reader-controlled scrolling.
+
+Session environment appears only after observed changes or activity. It groups
+changes, used MCP/skills and workers into bounded previews with details on demand.
+Automatic expansion shares the conversation plane; a manual opening is a compact
+overlay that closes with Escape, outside click or its close control. Dismissal
+survives incoming events. Workers open their own tab from this card; closing the
+workspace preserves its mounted tabs, selected content and expansion state.
+
 The Knowledge corner uses the approved procedural Ginger character. Drag stays
 near its corner dock and out-of-range release snaps back; click or keyboard
 activation opens a compact nonmodal floating conversation with source context

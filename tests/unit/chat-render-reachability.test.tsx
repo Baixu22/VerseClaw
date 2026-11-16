@@ -13,8 +13,9 @@
  * Keep both files. Deleting either one re-opens the gap the other closes.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { act, render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Chat as InitialChat } from '@/pages/Chat/index';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
   gatewayState: { status: { state: 'running', port: 18789 } },
@@ -103,6 +104,8 @@ vi.mock('@/lib/host-api', () => ({
       longTaskControlStatus: vi.fn().mockResolvedValue({
         success: true, available: false, key: 'agent:main:main', queueCount: 0, warnings: [],
       }),
+      // The page reconciles any interrupted session handoff on mount.
+      handoffOperation: vi.fn().mockResolvedValue({ success: true, operation: null }),
     },
   },
   hostApiFetch: vi.fn().mockResolvedValue({ success: true, messages: [] }),
@@ -178,7 +181,6 @@ async function mountChat() {
 
 describe('Run-log replay provenance badge', () => {
   beforeEach(() => {
-    vi.resetModules();
     approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
   });
 
@@ -194,7 +196,8 @@ describe('Run-log replay provenance badge', () => {
         },
       ],
     });
-    await mountChat();
+    // Keep the first cold module load outside the interaction's timeout.
+    render(<MemoryRouter><InitialChat /></MemoryRouter>);
 
     const badge = await screen.findByTestId('chat-message-run-log-replay-1');
     expect(badge).toHaveTextContent('From run log (not the session transcript)');
@@ -347,8 +350,9 @@ describe('Plan surface', () => {
     await waitFor(() => expect(screen.getAllByText('Done.').length).toBeGreaterThan(0));
     expandTurnSummary();
 
-    expect(screen.getByTestId('chat-run-plan')).toBeInTheDocument();
-    expect(screen.getByText('Write patch')).toBeInTheDocument();
+    // The running step is also docked above the composer; this test is about
+    // the turn summary's copy of the plan.
+    expect(within(screen.getByTestId('chat-run-plan')).getByText('Write patch')).toBeInTheDocument();
   });
 
   it('does not also render the plan as a message card', async () => {
@@ -668,7 +672,7 @@ describe('Thinking reasoning', () => {
   });
 
   /** The collapsed header has to say what opening it would reveal. */
-  it('counts adopted thoughts on the collapsed header', async () => {
+  it('keeps thought counts out of the compact header while retaining reasoning details', async () => {
     await seedChat({
       messages: [
         { role: 'user', content: 'fix the auth bug' },
@@ -686,7 +690,9 @@ describe('Thinking reasoning', () => {
     await mountChat();
 
     await waitFor(() => expect(screen.getAllByText('Pinned the algorithm to HS256.').length).toBeGreaterThan(0));
-    expect(screen.getByTestId('chat-turn-summary-badge-thoughts')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-turn-summary-badge-thoughts')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.getByTestId('assistant-reasoning-panel')).toHaveTextContent('First thought.');
   });
 
   /**
@@ -737,7 +743,7 @@ describe('Thinking reasoning', () => {
    * once reasoning moved into the process disclosure it showed up as a bare
    * avatar floating between the fold and the answer.
    */
-  it('drops a narration row whose only content failed to materialize', async () => {
+  it('keeps progress text visible when a referenced attachment fails to materialize', async () => {
     await seedChat({
       messages: [
         { role: 'user', content: 'fix the auth bug' },
@@ -767,10 +773,8 @@ describe('Thinking reasoning', () => {
     await mountChat();
 
     await waitFor(() => expect(screen.getAllByText('Done.').length).toBeGreaterThan(0));
-    const avatars = screen.getAllByTestId('chat-assistant-avatar');
-    // Exactly one assistant turn paints: the reply. The narration row must not
-    // survive as an avatar with an empty content column.
-    expect(avatars).toHaveLength(1);
+    expect(screen.queryByTestId('chat-assistant-avatar')).not.toBeInTheDocument();
+    expect(screen.getByText('Let me look at the middleware.')).toBeVisible();
   });
 
   it('shows live reasoning from the runtime run while streaming', async () => {
@@ -793,8 +797,11 @@ describe('Thinking reasoning', () => {
     });
     await mountChat();
 
+    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false'));
+    expect(screen.queryByTestId('assistant-reasoning-panel')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     await waitFor(() => expect(screen.getByTestId('assistant-reasoning-panel')).toBeInTheDocument());
-    // An active run's fold defaults open, so live thinking needs no interaction.
+    // Live thinking is available on demand in the same process disclosure.
     expect(screen.getAllByTestId('assistant-reasoning-panel')).toHaveLength(1);
     expect(screen.getByText('Reading the middleware.')).toBeInTheDocument();
     expect(screen.getByText('No allowlist on verify.')).toBeInTheDocument();
@@ -1037,6 +1044,7 @@ describe('Turn summary contents badges', () => {
 describe('Turn disclosure survives the optimistic→server id swap', () => {
   beforeEach(() => {
     vi.resetModules();
+    Element.prototype.scrollTo = vi.fn();
     approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
   });
 

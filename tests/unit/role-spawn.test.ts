@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
@@ -61,6 +62,7 @@ type FakeSpawnResult = {
 /** Inline subset of SpawnSubagentContext used by role-spawn mapping. */
 interface FakeSpawnContext {
   agentSessionKey?: string;
+  workspaceDir?: string;
   agentChannel?: string;
   agentAccountId?: string;
   requesterAgentIdOverride?: string;
@@ -448,6 +450,26 @@ describe('role-driven spawn mapping', () => {
     );
     expect(missing.status).toBe('role-not-found');
   });
+
+  it('rechecks the authorized workspace immediately before the injected spawn', async () => {
+    const checkpoints: string[] = [];
+    const fakeSpawn = async (_params: FakeSpawnParams, ctx: FakeSpawnContext): Promise<FakeSpawnResult> => {
+      checkpoints.push('spawn');
+      expect(ctx.workspaceDir).toBe('D:/authorized');
+      return { status: 'accepted', runId: 'run-authorized', childSessionKey: 'child-authorized' };
+    };
+    const result = await spawnRoleSubagent(
+      { role: 'implementer', task: 'write one file', cwd: 'D:/authorized' },
+      {
+        agentSessionKey: 'agent:main:authorized',
+        workspaceDir: 'D:/authorized',
+        assertWorkspaceCurrent: () => checkpoints.push('assert'),
+      },
+      { spawn: fakeSpawn as SpawnFn },
+    );
+    expect(result.status).toBe('accepted');
+    expect(checkpoints).toEqual(['assert', 'spawn']);
+  });
 });
 
 describe('orchestrator run bridge', () => {
@@ -588,7 +610,7 @@ describe('orchestrator run bridge', () => {
       { spawn: fakeSpawn as SpawnFn },
     );
 
-    expect(result.failures).toHaveLength(0);
+    expect(result.failures, JSON.stringify(result.failures)).toHaveLength(0);
     expect(spawned).toHaveLength(1);
     expect(spawned[0]?.cwd?.replace(/\\/g, '/')).toContain('/.openclaw/worktrees/');
     expect(spawned[0]?.orchestration).toMatchObject({
@@ -597,5 +619,43 @@ describe('orchestrator run bridge', () => {
       worktreeWriteSet: ['src/isolated.ts'],
     });
     expect(spawned[0]?.orchestration?.worktreeId).toBeTruthy();
+  });
+
+  it.each([false, true])('checks actual Git isolation after async preparation (tampered=%s)', async (tampered) => {
+    const root = tempDir!;
+    const git = (...args: string[]) => execFileSync('git', [
+      '-c', 'core.hooksPath=' + (process.platform === 'win32' ? 'NUL' : '/dev/null'), ...args,
+    ], { cwd: root, windowsHide: true, stdio: 'pipe' });
+    git('init', '-q');
+    git('config', 'user.name', 'Agent');
+    git('config', 'user.email', 'agent@example.invalid');
+    writeFileSync(join(root, 'seed.txt'), 'seed');
+    git('add', 'seed.txt');
+    git('commit', '-qm', 'seed');
+    const spawned: FakeSpawnParams[] = [];
+    const fakeSpawn: SpawnFn = async params => {
+      spawned.push(params);
+      return { status: 'accepted', runId: 'git-run', childSessionKey: 'git-child' };
+    };
+    const result = await runOrchestration({
+      task: 'isolated edit', maxWorkers: 1, orchestrationRunId: 'git-inspection',
+      cfg: { runtime: { coding: { worktree: { backend: 'git' } } } } as Parameters<typeof runOrchestration>[0]['cfg'],
+      workers: [{ roleName: 'implementer', task: 'edit seed', isolation: 'worktree', writeSet: ['seed.txt'] }],
+      ...(tampered ? { verseGitBindingPort: {
+        bind: async request => {
+          await Promise.resolve();
+          unlinkSync(join(request.worktreePath, '.git'));
+          throw new Error('agent-injected checkout loss during binding');
+        },
+        attach: async () => { throw new Error('unexpected attach'); },
+        end: async () => { throw new Error('unexpected end'); },
+      } } : {}),
+    }, { agentSessionKey: 'agent:main:abc', workspaceDir: root }, { spawn: fakeSpawn });
+    expect(spawned).toHaveLength(tampered ? 0 : 1);
+    if (tampered) expect(result.failures).toMatchObject([{ error: expect.stringContaining('worktree_isolation_unverified') }]);
+    else {
+      expect(result.failures).toEqual([]);
+      expect(spawned[0].orchestration?.worktreeBackend).toBe('git');
+    }
   });
 });

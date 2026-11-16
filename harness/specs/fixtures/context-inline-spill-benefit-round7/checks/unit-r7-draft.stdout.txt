@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/ClawX-work/g7-inline-spill-tf0749-20261113-01a1d34c
+
+
+ Test Files  7 passed (7)
+      Tests  60 passed (60)
+   Start at  16:31:39
+   Duration  104.04s (transform 13.37s, setup 1.38s, import 18.26s, tests 79.39s, environment 2.62s)
+

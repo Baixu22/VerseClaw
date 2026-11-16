@@ -7,7 +7,7 @@ import {
   type KeRetrievalShadowContext,
   type KeRetrievalShadowResult,
 } from "../../runtime-core/ke-retrieval-shadow.js";
-import { normalizeTags, type Principle } from "./types.js";
+import { getPrincipleVersion, normalizeTags, type Principle } from "./types.js";
 
 export type RetrievalEngineOptions = {
   store: KnowledgeStore;
@@ -72,6 +72,7 @@ export class RetrievalEngine {
       .map((principle, index) =>
         [
           `[Relevant SEKB principle ${index + 1}] ${principle.title}`,
+          `Identity: ${principle.principle_id}@${getPrincipleVersion(principle)}`,
           `Condition: ${principle.condition}`,
           `Action: ${principle.action}`,
           `Reason: ${principle.reason}`,
@@ -152,17 +153,18 @@ export class ContextInjector {
     task_intent: string,
     task_type: string,
     context_tags: string[],
+    onRetrieved?: (principles: readonly Principle[]) => void,
   ): string {
-    const injection = this.#engine.format_for_injection(
-      this.#engine.retrieve_for_task(task_intent, task_type, context_tags),
-    );
+    const principles = this.#engine.retrieve_for_task(task_intent, task_type, context_tags);
+    onRetrieved?.(principles);
+    const injection = this.#engine.format_for_injection(principles);
     return injection ? `${system_prompt}\n${injection}` : system_prompt;
   }
 
-  for_error(error_signature: string, context_tags: string[]): string {
-    const injection = this.#engine.format_for_injection(
-      this.#engine.retrieve_for_error(error_signature, context_tags),
-    );
+  for_error(error_signature: string, context_tags: string[], onRetrieved?: (principles: readonly Principle[]) => void): string {
+    const principles = this.#engine.retrieve_for_error(error_signature, context_tags);
+    onRetrieved?.(principles);
+    const injection = this.#engine.format_for_injection(principles);
     return injection ? `[SEKB historical error advice]\n${injection}` : "";
   }
 }

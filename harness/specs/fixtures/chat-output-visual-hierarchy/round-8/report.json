@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-05",
+  "iteration": 8,
+  "driven_by": "agent",
+  "actor": "codex-chat-output",
+  "realHumanEvidence": false,
+  "scope": "Reduce diagnostic and tool-result duplication; unify session status and open process output.",
+  "status": "implemented-and-visually-verified-with-gate-residuals",
+  "candidate": {
+    "commit": "bfcf57616b361a12845014b3f054b95e31c4021c",
+    "dirty": true
+  },
+  "unit": {
+    "passed": 95,
+    "failed": 0,
+    "total": 95,
+    "exitCode": 0
+  },
+  "electron": {
+    "stableScenarios": 7,
+    "runs": [
+      {
+        "file": "electron-process.json",
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-11-04T16:29:59.218Z",
+          "duration": 75493.724,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": []
+      },
+      {
+        "file": "electron-history.json",
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-11-04T16:37:25.953Z",
+          "duration": 47652.152,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": []
+      },
+      {
+        "file": "electron-background.json",
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-11-04T16:50:01.042Z",
+          "duration": 70443.598,
+          "expected": 2,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": []
+      },
+      {
+        "file": "electron-tools.json",
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-11-04T16:52:26.859Z",
+          "duration": 70101.33200000001,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": []
+      },
+      {
+        "file": "electron-completed.json",
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-11-04T16:56:13.064Z",
+          "duration": 71289.579,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": []
+      },
+      {
+        "file": "electron-short.json",
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-11-04T16:57:27.983Z",
+          "duration": 37860.78,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": []
+      },
+      {
+        "file": "electron-live.json",
+        "exitCode": 1,
+        "stats": {
+          "startTime": "2026-11-04T16:53:55.390Z",
+          "duration": 133018.707,
+          "expected": 0,
+          "skipped": 0,
+          "unexpected": 1,
+          "flaky": 0
+        },
+        "errors": [
+          "Error: tracked source changed during Electron E2E run: diffSha256"
+        ]
+      }
+    ],
+    "initialTurnBatch": {
+      "stats": {
+        "startTime": "2026-11-04T16:44:07.995Z",
+        "duration": 237663.975,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "exitCode": 1,
+      "errors": [
+        "\u001b[31mWorker teardown timeout of 90000ms exceeded.\u001b[39m\n\n\u001b[31mFailed worker ran 3 tests:\u001b[39m\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › keeps live activity compact, animated and readable without assistant avatars\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:211:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:287:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped"
+      ]
+    }
+  },
+  "checks": {
+    "web": 0,
+    "i18n": 0,
+    "lint": 0,
+    "testTypecheck": 2,
+    "testLint": 0,
+    "buildVite": 0,
+    "harnessSinceHead": 1,
+    "scopedOwnership": {
+      "count": 29,
+      "failures": []
+    }
+  },
+  "commands": [
+    "pnpm exec vitest run tests/unit/session-activity-panel-sections.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/tool-ui-execution-surfaces.test.tsx tests/unit/execution-graph-card-badge.test.tsx tests/unit/chat-render-reachability.test.tsx tests/unit/chat-page-execution-graph.test.tsx tests/unit/chat-session-status-rail.test.tsx --maxWorkers=1",
+    "pnpm exec playwright test tests/e2e/session-activity-background-read.spec.ts --grep \"unifies session process\"",
+    "pnpm exec playwright test tests/e2e/session-activity-background-read.spec.ts --grep \"unknown state|successful empty\"",
+    "pnpm exec playwright test tests/e2e/chat-run-state-events.spec.ts --grep \"historical execution graph\"",
+    "pnpm exec playwright test tests/e2e/chat-tool-ui-execution-surfaces.spec.ts --grep \"renders official execution\"",
+    "pnpm exec playwright test tests/e2e/chat-turn-summary-collapse.spec.ts --grep \"collapses completed long\"",
+    "pnpm exec playwright test tests/e2e/chat-turn-summary-collapse.spec.ts --grep \"leaves short conversations\"",
+    "pnpm exec playwright test tests/e2e/chat-turn-summary-collapse.spec.ts --grep \"keeps live activity\"",
+    "pnpm run typecheck:web",
+    "pnpm run typecheck:test",
+    "pnpm run i18n:lint",
+    "pnpm run build:vite",
+    "pnpm harness validate --spec harness/specs/tasks/chat-output-visual-hierarchy.md --since HEAD"
+  ],
+  "visualReview": {
+    "actor": "codex-chat-output",
+    "inspected": [
+      "session-status-light.png",
+      "session-status-dark.png",
+      "process-output-light.png",
+      "process-output-dark.png",
+      "process-output-narrow.png",
+      "turn-process-expanded.png",
+      "compact-output-completed.png"
+    ],
+    "observations": [
+      "Single session-status surface with neutral separators.",
+      "Completed process history closed by default; live and failed rows retained.",
+      "Opened process shares transcript terminal status, copy control, font and surface.",
+      "Light/dark/narrow output reviewed; scroll and clipboard assertions passed.",
+      "Expanded tool details have no duplicate agent-execution title; diagnostics are last."
+    ]
+  },
+  "sourceHashes": [
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "sha256": "5c8c369ff98095ca079356c7d55d5d9d4389c4f565fabd4781c6d92875923f7a"
+    },
+    {
+      "file": "src/pages/Chat/SessionActivityPanel.tsx",
+      "sha256": "8970c8387caed650405bdaa8fa9575a4171e6d86d7ba8fe7d154f73d89c44d45"
+    },
+    {
+      "file": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "aa2d076ae1a7ae5a30225d9f9ce2330e333015fa4004995764f8a8a029ebaffe"
+    },
+    {
+      "file": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "6379595865b5f0b7b8df761704a8e9ae2540887d0fdb59544188a94443d529da"
+    },
+    {
+      "file": "src/components/assistant-render/CodingRunEvidence.tsx",
+      "sha256": "d13747fca3e7422118072dcf827a8f202c2da56ebb6b79110e39183956448d8b"
+    },
+    {
+      "file": "src/components/file-preview/WorkspaceProcessPanel.tsx",
+      "sha256": "42e79d30b2826c654ba64dd42f2f6f9d189290af2f1bedb1c293cbb400cff0f3"
+    },
+    {
+      "file": "src/components/tool-ui/RunTerminalSurfaces.tsx",
+      "sha256": "5edd6a0327b781c9807b8fc345f1eef903182221d4b632882786ef7097cfc037"
+    },
+    {
+      "file": "src/components/tool-ui/shared/call-chip.tsx",
+      "sha256": "9d96e94c396b0a99093986b974be5acdc85e0c3c21f23ba4479f4b9d349f04ec"
+    },
+    {
+      "file": "src/components/tool-ui/terminal/terminal.tsx",
+      "sha256": "96f7a1b763c5849c7c44c8f87eba8ef090484f8127ab92c82958df663e8bed69"
+    },
+    {
+      "file": "src/styles/codex-session-activity.css",
+      "sha256": "2f613febf2959627fe18e10971a3b483c3ff14ab60ba7f37e6c4bf7dc45f5132"
+    },
+    {
+      "file": "tests/unit/chat-render-reachability.test.tsx",
+      "sha256": "9a20686d6b4466132d4a26f8282aeace46b75b0b8d0bd07d3072deb89cfa5093"
+    },
+    {
+      "file": "tests/unit/session-activity-panel-sections.test.tsx",
+      "sha256": "6ac025508a0a906eadd1942a571e7750aee13d32a918011e6273f666e03405dd"
+    },
+    {
+      "file": "tests/unit/execution-graph-card-badge.test.tsx",
+      "sha256": "8ad6d2d3d3322d2f3ee17ee49092e09a81ead670971629295ff7a55152aba18e"
+    },
+    {
+      "file": "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "sha256": "99f25da03a638bb814ca0dd3ed4728811a1178d31a856af0bd90c1b995ba4e8c"
+    },
+    {
+      "file": "tests/e2e/session-activity-background-read.spec.ts",
+      "sha256": "7ac24feb428feef0eee1c114b1d67debb091e50f5ae2ab66ebcd1038386514c8"
+    },
+    {
+      "file": "tests/e2e/chat-run-state-events.spec.ts",
+      "sha256": "fdceefd76ab041a865464e144ccd0feebb3b593539e8db1985048202a1640179"
+    },
+    {
+      "file": "tests/e2e/chat-turn-summary-collapse.spec.ts",
+      "sha256": "da7d15166ae32e464c7c5d851cfd73e1e8076407f47149d6688ec564e3e5b360"
+    },
+    {
+      "file": "shared/i18n/locales/en/chat.json",
+      "sha256": "2683c5e4824a91fb1ec7fd3dec4b5062909979a75f7889771648234b7f17b1b6"
+    },
+    {
+      "file": "shared/i18n/locales/zh/chat.json",
+      "sha256": "ea33c1d39a09dd1c9ef17308398f4336fc6b7e2b42f4f71913f0875d9f2cb1ee"
+    },
+    {
+      "file": "shared/i18n/locales/ja/chat.json",
+      "sha256": "921044fd86db87a304518b451401dc7a646f9e8375d968f3cae8bfaa3884b1fa"
+    },
+    {
+      "file": "shared/i18n/locales/ru/chat.json",
+      "sha256": "8d3d3f313218033f676c64d0b4129088d7de972767d823f13e1cee44cd0786a4"
+    },
+    {
+      "file": "README.md",
+      "sha256": "bd17e33bcac8ec9ea27f0c1c6ca1126f780d05fdfdfaf1fc55c407ef482292e6"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "c183349db185418cd1a729e25c0a60dbbb015afbafc42cf6d49d2f51a3773a53"
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "cd0ffd1b5a033b7259c20e185359d900bbd48cdf3d17568d0da955388e6838a2"
+    },
+    {
+      "file": "README.ru-RU.md",
+      "sha256": "42edb666a313ba62691949f80bb0cea761a34d665386c1e9a84cb30b7f001b5c"
+    },
+    {
+      "file": "docs/modules/workspace-and-coding.md",
+      "sha256": "acc24c7251a28f75d615ce18ed2b3b1d8ba3b3acb32b6e120314961552101bc6"
+    },
+    {
+      "file": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "40d77618adc91875ba67e7ab50636ebb6dda37b6f175c19016c6b0afece28532"
+    },
+    {
+      "file": "harness/specs/rules/ui-motion-material-system.md",
+      "sha256": "e16fa6e6a5a2185f352e6a637ee5af62db1b781647d7d8985375b78dbb0dffd6"
+    },
+    {
+      "file": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "db834724ac69f8ef4e7a8c2df2b4f24e34f1f47e126e53df46765e65b1dffcb0"
+    }
+  ],
+  "limitations": [
+    "The initial three turn assertions passed, but worker teardown exceeded 90000ms. The final isolated live-turn rerun timed out and reported a concurrent diffSha256 change while this agent was not editing source; no E2E-wide pass is claimed.",
+    "An earlier tool-surface run was invalidated when this agent updated docs during execution. Its final isolated rerun passed including the source-mutation guard.",
+    "The first new process test read the clipboard before the asynchronous write completed. Polling the actual clipboard retained the full-content assertion; its final rerun passed.",
+    "The first reachability unit test exceeded its 30000ms budget while cold-importing the app. The import now happens during test collection, without increasing test timeouts. Final 95 tests passed.",
+    "Full test typecheck and changed-path Harness include unrelated concurrent session-delegation changes. See retained logs; no gates weakened.",
+    "Current Task Forest read/write is blocked by its occupied lock; continuation proposal retained locally. Prior TF-0783 state is not promoted to done.",
+    "Source checkout is dirty. No release, clean-candidate acceptance or real-provider claim."
+  ]
+}

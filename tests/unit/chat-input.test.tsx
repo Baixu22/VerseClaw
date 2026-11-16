@@ -5,6 +5,7 @@ import { ChatInput } from '@/pages/Chat/ChatInput';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { ComponentProps, ReactElement } from 'react';
 import type { WorkspaceProfile } from '@shared/types/workspace';
+import { buildResumeCheckpoint, type LongTaskControlStatus } from '@shared/types/long-task-control';
 import { toast as sonnerToast } from 'sonner';
 
 function render(ui: ReactElement) {
@@ -65,6 +66,8 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
   },
   settingsState: {
     uiDepthMode: 'basic' as 'basic' | 'advanced',
+    lastChatModelRef: null as string | null,
+    rememberChatModel: vi.fn(),
   },
 }));
 
@@ -104,8 +107,8 @@ vi.mock('@/stores/chat', () => ({
     (selector: (state: typeof chatState) => unknown) => selector(chatState),
     {
       getState: () => chatState,
-      setState: (patch: Partial<typeof chatState>) => {
-        Object.assign(chatState, patch);
+      setState: (patch: Partial<typeof chatState> | ((state: typeof chatState) => Partial<typeof chatState>)) => {
+        Object.assign(chatState, typeof patch === 'function' ? patch(chatState) : patch);
       },
     },
   ),
@@ -146,6 +149,9 @@ vi.mock('@/stores/artifact-panel', () => ({
 vi.mock('@/lib/host-api', () => ({
   hostApiFetch: hostApiFetchMock,
   hostApi: {
+    sessions: {
+      patchRuntimeModel: vi.fn(async () => ({ success: true })),
+    },
     runtimeApprovals: {
       list: vi.fn(async () => ({ pending: [] })),
       resolve: vi.fn(async () => ({ success: true })),
@@ -761,6 +767,29 @@ function renderChatInput(
     </TooltipProvider>,
   );
 }
+
+/**
+ * A /loop session as the gateway reports it: the latest checkpoint carries the
+ * Task Ledger root that chat.send requires before it accepts an explicit
+ * inputMode. Ordinary Chat has a readable status but no such root.
+ */
+const LOOP_SESSION_STATUS: LongTaskControlStatus = {
+  available: true,
+  queueCount: 0,
+  warnings: [],
+  latestCheckpoint: {
+    id: 'checkpoint-loop-1',
+    sessionKey: 'agent:main:main',
+    taskLedgerRootId: 'ledger-root-1',
+    trigger: 'guide',
+    status: 'active',
+    checkpoint: buildResumeCheckpoint({ trigger: 'guide', taskLedgerRootId: 'ledger-root-1', createdAt: 1 }),
+    createdAt: 1,
+    updatedAt: 1,
+  },
+};
+
+const ORDINARY_CHAT_STATUS: LongTaskControlStatus = { available: true, queueCount: 0, warnings: [] };
 
 function workspace(overrides: Partial<WorkspaceProfile> = {}): WorkspaceProfile {
   return {
@@ -1473,6 +1502,34 @@ describe('ChatInput slash commands', () => {
     });
     expect(textbox).toHaveValue('');
   });
+
+  it('shows the generation reason and refuses every disabled handoff control', async () => {
+    const reason = 'The session identity is unavailable. Refresh before continuing.';
+    const onHandoffSession = vi.fn().mockResolvedValue(undefined);
+    renderChatInput(vi.fn(), {
+      handoffDisabled: true,
+      handoffDisabledReason: reason,
+      onHandoffSession,
+    });
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/handoff' } });
+    const slashOption = screen.getByTestId('chat-slash-command-option-handoff');
+    expect(slashOption).toHaveTextContent(reason);
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => expect(sonnerToast.message).toHaveBeenCalledWith(reason));
+    expect(onHandoffSession).not.toHaveBeenCalled();
+
+    openComposerActionMenu();
+    fireEvent.click(screen.getByTestId('chat-composer-action-more'));
+    const action = screen.getByTestId('chat-composer-action-handoff');
+    expect(action).toBeDisabled();
+    expect(action).toHaveAttribute('title', reason);
+    expect(action).toHaveTextContent(reason);
+    fireEvent.click(action);
+    expect(onHandoffSession).not.toHaveBeenCalled();
+  });
 });
 
 describe('ChatInput capability action preflight', () => {
@@ -1845,36 +1902,38 @@ describe('ChatInput slash session lifecycle commands', () => {
     });
   });
 
-  it('disables intervention buttons when the session has no /loop long-task context', async () => {
+  it('keeps long-task modes out of ordinary Chat and queues the running draft locally', async () => {
     const onSend = vi.fn();
     renderChatInput(onSend, {
       sending: true,
-      draftValue: 'interrupt the run',
-      longTaskControlStatus: {
-        available: false,
-        queueCount: 0,
-        warnings: [],
-      },
+      draftValue: 'follow up after this run',
+      // Readable status without a /loop root: chat.send rejects every explicit inputMode.
+      longTaskControlStatus: ORDINARY_CHAT_STATUS,
     });
 
-    expect(screen.getByTestId('chat-intervention-guide')).toBeDisabled();
-    expect(screen.getByTestId('chat-intervention-interrupt')).toBeDisabled();
-    expect(screen.getByTestId('chat-intervention-revise-goal')).toBeDisabled();
+    expect(screen.queryByTestId('chat-intervention-menu-trigger')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-intervention-controls')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-stop')).toBeInTheDocument();
+
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter', ctrlKey: true });
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith('follow up after this run', expect.objectContaining({ knowledgeScope: 'none' }));
+    });
+    expect(onSend.mock.calls[0]?.[1]).not.toHaveProperty('inputMode');
+    expect(sonnerToast.success).toHaveBeenCalledWith('composer.queueQueued');
   });
 
-  it('sends revise-goal through the intervention button', async () => {
+  it('sends revise-goal from the delivery menu of a /loop session', async () => {
     const onSend = vi.fn();
     renderChatInput(onSend, {
       sending: true,
       draftValue: 'the goal changed: ship only the core path',
-      longTaskControlStatus: {
-        available: true,
-        queueCount: 0,
-        warnings: [],
-      },
+      longTaskControlStatus: LOOP_SESSION_STATUS,
     });
 
-    fireEvent.click(screen.getByTestId('chat-intervention-revise-goal'));
+    fireEvent.click(screen.getByTestId('chat-intervention-menu-trigger'));
+    fireEvent.click(await screen.findByTestId('chat-intervention-revise-goal'));
 
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
@@ -1927,29 +1986,29 @@ describe('ChatInput read-only context status', () => {
     expect(screen.queryByText('2 hidden')).not.toBeInTheDocument();
   });
 
-  it('queues a draft with one click while running, and pauses on a double click', async () => {
+  it('offers Stop beside Send while a draft is pending, and /loop delivery modes from one menu', async () => {
     const onSend = vi.fn();
     const onPauseSession = vi.fn();
     const view = renderChatInput(onSend, {
       sending: true,
       draftValue: 'please keep the current validation evidence queued',
       onPauseSession,
+      longTaskControlStatus: LOOP_SESSION_STATUS,
     });
 
-    expect(screen.getByTestId('chat-intervention-controls')).toBeInTheDocument();
     expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running-with-draft');
     expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Queue');
-    expect(screen.getByTestId('chat-intervention-guide')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-intervention-queue')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-intervention-interrupt')).toBeInTheDocument();
+    // The modes live behind one trigger instead of a strip of icon buttons.
+    expect(screen.queryByTestId('chat-intervention-controls')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-intervention-guide')).not.toBeInTheDocument();
 
-    // 单击（在防抖窗口内触发第二次 click）：取消排队、落到暂停当前运行。
-    fireEvent.click(screen.getByTestId('chat-composer-send'));
-    fireEvent.click(screen.getByTestId('chat-composer-send'));
-    fireEvent.doubleClick(screen.getByTestId('chat-composer-send'));
+    fireEvent.click(screen.getByTestId('chat-composer-stop'));
     expect(onPauseSession).toHaveBeenCalledTimes(1);
     expect(onSend).not.toHaveBeenCalled();
 
+    fireEvent.click(screen.getByTestId('chat-intervention-menu-trigger'));
+    expect(await screen.findByTestId('chat-intervention-controls')).toHaveAttribute('role', 'menu');
+    expect(screen.getAllByRole('menuitem')).toHaveLength(4);
     fireEvent.click(screen.getByTestId('chat-intervention-queue'));
 
     await waitFor(() => {
@@ -1966,10 +2025,12 @@ describe('ChatInput read-only context status', () => {
           sending
           draftValue="please keep the current validation evidence"
           onPauseSession={onPauseSession}
+          longTaskControlStatus={LOOP_SESSION_STATUS}
         />
       </TooltipProvider>,
     );
-    fireEvent.click(screen.getByTestId('chat-intervention-guide'));
+    fireEvent.click(screen.getByTestId('chat-intervention-menu-trigger'));
+    fireEvent.click(await screen.findByTestId('chat-intervention-guide'));
 
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
@@ -1985,10 +2046,12 @@ describe('ChatInput read-only context status', () => {
           sending
           draftValue="stop the active run now"
           onPauseSession={onPauseSession}
+          longTaskControlStatus={LOOP_SESSION_STATUS}
         />
       </TooltipProvider>,
     );
-    fireEvent.click(screen.getByTestId('chat-intervention-interrupt'));
+    fireEvent.click(screen.getByTestId('chat-intervention-menu-trigger'));
+    fireEvent.click(await screen.findByTestId('chat-intervention-interrupt'));
 
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
@@ -1998,23 +2061,52 @@ describe('ChatInput read-only context status', () => {
     });
   });
 
-  it('queues the draft when the running primary control is clicked once', async () => {
+  it('binds Mod+Enter to guide and Mod+Shift+Enter to interrupt, leaving Shift+Enter a newline', async () => {
+    const onSend = vi.fn();
+    const view = renderChatInput(onSend, {
+      sending: true,
+      draftValue: 'first line',
+      longTaskControlStatus: LOOP_SESSION_STATUS,
+    });
+    const textbox = screen.getByTestId('chat-composer-input');
+
+    // Not cancelled: the textarea inserts its newline and the run is untouched.
+    expect(fireEvent.keyDown(textbox, { key: 'Enter', shiftKey: true })).toBe(true);
+    expect(onSend).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(textbox, { key: 'Enter', ctrlKey: true });
+    await waitFor(() => {
+      expect(onSend).toHaveBeenLastCalledWith('first line', expect.objectContaining({ inputMode: 'guide' }));
+    });
+
+    view.rerender(
+      <TooltipProvider>
+        <ChatInput onSend={onSend} sending draftValue="drop that, do this instead" longTaskControlStatus={LOOP_SESSION_STATUS} />
+      </TooltipProvider>,
+    );
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter', ctrlKey: true, shiftKey: true });
+    await waitFor(() => {
+      expect(onSend).toHaveBeenLastCalledWith('drop that, do this instead', expect.objectContaining({ inputMode: 'interrupt' }));
+    });
+  });
+
+  it('queues the draft immediately when the running primary control is clicked', async () => {
     const onSend = vi.fn();
     renderChatInput(onSend, {
       sending: true,
       draftValue: 'queue this follow-up after the run',
       onPauseSession: vi.fn(),
+      longTaskControlStatus: LOOP_SESSION_STATUS,
     });
 
     expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running-with-draft');
     fireEvent.click(screen.getByTestId('chat-composer-send'));
 
-    await waitFor(() => {
-      expect(onSend).toHaveBeenCalledWith(
-        'queue this follow-up after the run',
-        expect.objectContaining({ inputMode: 'queue' }),
-      );
-    });
+    // No double-click disambiguation window: the send is dispatched synchronously.
+    expect(onSend).toHaveBeenCalledWith(
+      'queue this follow-up after the run',
+      expect.objectContaining({ inputMode: 'queue' }),
+    );
   });
 
   it('pauses the run with one click when there is no composer draft', () => {
@@ -2278,6 +2370,80 @@ describe('ChatInput read-only context status', () => {
 
     // The command toasts its disabled reason instead of opening the dialog.
     expect(screen.queryByTestId('chat-compaction-dialog')).not.toBeInTheDocument();
+  });
+
+  it('keeps compact unavailable until its session generation is ready', () => {
+    const onManualCompact = vi.fn();
+    renderChatInput(vi.fn(), {
+      compactionStatus: { available: true, canCompact: true, inProgress: false, pressure: 'low', truncatedMessageCount: 0, warnings: [] },
+      compactionUnavailableReason: 'Session generation is still loading', onManualCompact,
+    });
+    fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+    fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
+    expect(screen.queryByTestId('chat-compaction-dialog')).not.toBeInTheDocument();
+    expect(onManualCompact).not.toHaveBeenCalled();
+  });
+});
+
+describe('ChatInput direct model selection', () => {
+  beforeEach(async () => {
+    const { hostApi } = await import('@/lib/host-api');
+    vi.mocked(hostApi.sessions.patchRuntimeModel).mockReset().mockResolvedValue({ success: true });
+    settingsState.lastChatModelRef = null;
+    settingsState.rememberChatModel.mockReset();
+    chatState.currentAgentId = 'main';
+    chatState.currentSessionKey = 'agent:main:model-a';
+    chatState.sessions = [{ key: chatState.currentSessionKey, modelRefOverride: 'provider/old' }];
+    chatState.messages = [];
+    agentsState.agents = [{ id: 'main', name: 'Main', modelRef: 'provider/old', reasoningEffort: 'high' }];
+    gatewayState.status = { state: 'running', port: 18789 };
+    setProviderReady();
+  });
+
+  it('selects directly, remembers the preference and never writes agent defaults', async () => {
+    const { hostApi } = await import('@/lib/host-api');
+    agentsState.updateAgentModel.mockClear();
+    renderChatInput();
+    fireEvent.click(screen.getByTestId('chat-model-picker-button'));
+    expect(screen.queryByTestId('chat-model-scope-selector')).not.toBeInTheDocument();
+    fireEvent.click(within(screen.getByTestId('chat-model-options')).getByRole('button'));
+    await waitFor(() => expect(hostApi.sessions.patchRuntimeModel).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(settingsState.rememberChatModel).toHaveBeenCalledTimes(1));
+    expect(agentsState.updateAgentModel).not.toHaveBeenCalled();
+    expect(chatState.sessions[0].modelRefOverride).not.toBe('provider/old');
+  });
+
+  it('keeps the previous model and preference after a rejected save', async () => {
+    const { hostApi } = await import('@/lib/host-api');
+    vi.mocked(hostApi.sessions.patchRuntimeModel).mockResolvedValueOnce({ success: false, error: 'offline' });
+    renderChatInput();
+    fireEvent.click(screen.getByTestId('chat-model-picker-button'));
+    fireEvent.click(within(screen.getByTestId('chat-model-options')).getByRole('button'));
+    await waitFor(() => expect(hostApi.sessions.patchRuntimeModel).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(within(screen.getByTestId('chat-model-options')).getByRole('button')).toBeEnabled());
+    expect(chatState.sessions[0].modelRefOverride).toBe('provider/old');
+    expect(settingsState.rememberChatModel).not.toHaveBeenCalled();
+  });
+
+  it('does not close another conversation menu when the previous save finishes', async () => {
+    const { hostApi } = await import('@/lib/host-api');
+    let finish!: (result: { success: true }) => void;
+    vi.mocked(hostApi.sessions.patchRuntimeModel).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const view = renderChatInput();
+    fireEvent.click(screen.getByTestId('chat-model-picker-button'));
+    fireEvent.click(within(screen.getByTestId('chat-model-options')).getByRole('button'));
+    await waitFor(() => expect(hostApi.sessions.patchRuntimeModel).toHaveBeenCalledTimes(1));
+    chatState.currentSessionKey = 'agent:main:model-b';
+    chatState.sessions.push({ key: chatState.currentSessionKey, modelRefOverride: 'provider/other' });
+    view.rerender(<TooltipProvider><ChatInput onSend={vi.fn()} /></TooltipProvider>);
+    chatState.currentSessionKey = 'agent:main:model-a';
+    chatState.sessions[0].modelRefOverride = 'provider/newer-choice';
+    view.rerender(<TooltipProvider><ChatInput onSend={vi.fn()} /></TooltipProvider>);
+    fireEvent.click(screen.getByTestId('chat-model-picker-button'));
+    await act(async () => finish({ success: true }));
+    expect(screen.getByTestId('chat-model-picker-button')).toHaveAttribute('aria-expanded', 'true');
+    expect(chatState.sessions.find(s => s.key === chatState.currentSessionKey)?.modelRefOverride).toBe('provider/newer-choice');
+    expect(settingsState.rememberChatModel).not.toHaveBeenCalled();
   });
 });
 

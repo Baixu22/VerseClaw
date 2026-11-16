@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "RsiLiveAdmissionBatchResult/v1",
+  "generatedAt": "2026-11-06T05:31:38.167Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-relay-calibrator",
+  "status": "ready-for-measurement",
+  "candidate": {
+    "commit": "feca048d749ad123780b7015e6e945b15bfc50ec",
+    "tree": "3bdb525341eb864a92cc1bdd4e211e5a0f5c8ce8",
+    "dirty": false,
+    "boundary": "Sealing evaluator is committed; calibration stages retain their original observed execution paths and timestamps."
+  },
+  "batch": {
+    "plannedTasks": 24,
+    "admittedTasks": 24,
+    "rejectedTasks": 0
+  },
+  "oracleBinding": {
+    "policy": "reference-revision-hidden-tests",
+    "supportPackage": "markdown-it",
+    "version": "14.2.0",
+    "versionMatched": true
+  },
+  "trialExecution": {
+    "planned": 216,
+    "executed": 0,
+    "unexecuted": 216,
+    "reason": "measurement-separate"
+  },
+  "claims": {
+    "taskQualityMeasured": false,
+    "benefit": false,
+    "promotionReady": false,
+    "realHuman": false,
+    "productLocksChanged": false,
+    "completeRsiImplementation": false
+  },
+  "limitations": [
+    "S03/L01/L03 are explicitly constructed reconstruction baselines.",
+    "Admission/preflight is not benefit measurement.",
+    "Reused dependency environment; not fresh-install evidence."
+  ]
+}

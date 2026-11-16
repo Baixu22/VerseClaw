@@ -1,0 +1,106 @@
+{"arm":"baseline","exactValueAvailable":false,"providerStatus":"executed","expectedBehaviorMatched":true,"elapsedMs":3085.868}
+{"arm":"reference-visible","exactValueAvailable":true,"providerStatus":"executed","expectedBehaviorMatched":true,"elapsedMs":4407.303}
+{"arm":"recall-stable","exactValueAvailable":true,"providerStatus":"executed","expectedBehaviorMatched":true,"elapsedMs":4094.98}
+{"arm":"retention-off","exactValueAvailable":false,"providerStatus":"executed","expectedBehaviorMatched":true,"elapsedMs":5619.545}
+{
+  "runDir": "D:\\tmp\\context-inline-spill-closeout-20261103\\final-evals\\2026-11-03T15-15-45-473Z-live",
+  "candidate": {
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "dirty": false
+  },
+  "decision": {
+    "deterministicPass": true,
+    "liveStatus": "executed",
+    "livePairedPass": true,
+    "qualityNoRegression": true,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "controls": {
+    "aggregate_block_budget": {
+      "budget_chars": 8576,
+      "on_chars": 8576,
+      "off_chars": 8576,
+      "legacy_plan_used": true,
+      "passed": true
+    },
+    "expiry": {
+      "age_turns": 4,
+      "evidence_available": false,
+      "old_path_restored": true,
+      "passed": true
+    },
+    "rejected": [
+      {
+        "name": "checksum-mismatch",
+        "failed_closed": true,
+        "details": {
+          "ok": false,
+          "diagnostics": [
+            {
+              "code": "checksum_mismatch",
+              "message": "Archive recall failed: checksum_mismatch"
+            }
+          ]
+        }
+      },
+      {
+        "name": "cross-session",
+        "failed_closed": true,
+        "details": {
+          "ok": false,
+          "diagnostics": [
+            {
+              "code": "session_mismatch",
+              "message": "Archive handle belongs to another session."
+            }
+          ]
+        }
+      },
+      {
+        "name": "archive-missing",
+        "failed_closed": true,
+        "details": {
+          "ok": false,
+          "diagnostics": [
+            {
+              "code": "missing",
+              "message": "Archive recall failed: missing"
+            }
+          ]
+        }
+      }
+    ],
+    "off_mode_parity": {
+      "baseline_ref": "off-mode-baseline.json",
+      "baseline_sha256": "54b54cbab66404e371510e29e9706e28ce7ae9abb0bcd824cad647a0f8260ef5",
+      "tool_result": true,
+      "pruner": true,
+      "truncation": true,
+      "reduction": true,
+      "compaction": true
+    },
+    "repeat_projection_soak": {
+      "status": "executed",
+      "iterations": 5000,
+      "elapsed_ms": 74.174,
+      "heap_before_bytes": 147048104,
+      "heap_after_bytes": 147222872,
+      "heap_growth_bytes": 174768,
+      "heap_growth_limit_bytes": 2097152,
+      "same_array": true,
+      "messages_unchanged": true,
+      "message_count": 11,
+      "passed": true
+    },
+    "context_growth": {
+      "chars": 5352,
+      "limit": 16000,
+      "passed": true
+    }
+  },
+  "credentialHits": 0
+}

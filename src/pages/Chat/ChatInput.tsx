@@ -21,28 +21,30 @@ import {
   ChevronDown,
   ChevronRight,
   CircleSlash,
+  Compass,
   Copy,
   Database,
   Eye,
   FilePlus,
   FileText,
   Flame,
+  FolderGit2,
   FolderPlus,
   Gauge,
   GitBranchPlus,
   History,
   Loader2,
-  ListPlus,
+  ListEnd,
   MessageSquarePlus,
   Paperclip,
   PencilLine,
   Plus,
   RotateCcw,
   Search,
-  Navigation,
   Play,
   Shield,
   ShieldCheck,
+  SkipForward,
   Sparkles,
   Square,
   Target,
@@ -65,12 +67,15 @@ import { cn } from '@/lib/utils';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
+import { useWorkspacesStore } from '@/stores/workspaces';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { TaskNodeSelector } from '@/components/task-ledger/TaskNodeSelector';
 import { buildPreviewTarget } from '@/components/file-preview/build-preview-target';
 import { AttachmentRemove, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE } from '@/components/assistant-ui/attachment';
 import { useProviderStore } from '@/stores/providers';
 import { buildConfiguredModelOptions, formatModelRefLabel } from '@/lib/model-options';
+import { resolveChatModelRef } from '@/lib/chat-model-selection';
+import { useSettingsStore } from '@/stores/settings';
 import type { AgentReasoningEffort, AgentSummary } from '@/types/agent';
 import type { QuickAccessSkill } from '@/types/skill';
 import { useTranslation } from 'react-i18next';
@@ -108,6 +113,10 @@ import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import { useResolvedTheme } from '@/lib/theme';
 import { BorderBeam } from 'border-beam';
 import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
+import { ComposerPopover } from '@/components/chat/ComposerPopover';
+import { ModelBrandIcon } from '@/components/chat/ModelBrandIcon';
+import { describeModelRef } from '@/lib/model-brand';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { SmokyDissolve } from '@/components/ui/smoky-dissolve';
 import MaterialFileTypeIcon from '@lobehub/ui/es/MaterialFileTypeIcon/index';
 import LobeConfigProvider from '@lobehub/ui/es/ConfigProvider/index';
@@ -152,12 +161,13 @@ interface ChatInputProps {
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
   onPickWorkspaceFolder?: () => void;
   onSwitchAgent?: (agentId: string) => void | Promise<void>;
-  onNewSession?: () => void | Promise<void>;
+  onNewSession?: () => void | boolean | Promise<void | boolean>;
   onForkSession?: () => void | Promise<void>;
   onHandoffSession?: () => void | Promise<void>;
   forkDisabled?: boolean;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
+  handoffDisabledReason?: string;
   handoffBusy?: boolean;
   knowledgeScope?: WorkspaceKnowledgeScope;
   onKnowledgeScopeChange?: (scope: WorkspaceKnowledgeScope) => void | Promise<void>;
@@ -165,7 +175,8 @@ interface ChatInputProps {
   onKnowledgeModeChange?: (mode: KnowledgeInvocationMode) => void | Promise<void>;
   compactionStatus?: SessionCompactionStatus | null;
   compactionBusy?: boolean;
-  onManualCompact?: (customInstructions?: string) => Promise<void>;
+  compactionUnavailableReason?: string;
+  onManualCompact?: (customInstructions?: string) => Promise<boolean | void>;
   longTaskControlStatus?: LongTaskControlStatus | null;
   queueDrainBusy?: boolean;
   onDrainQueuedFollowup?: () => Promise<void>;
@@ -194,7 +205,8 @@ type PendingCapabilitySend = {
 //   ready               有内容，点击发送
 //   starting            热启动缓冲；有内容时点击立即中止发送，无内容时降级为暂停当前运行
 //   running             运行中且无草稿，点击暂停（保存可恢复检查点）
-//   running-with-draft  运行中且有草稿：单击默认排队（防抖），双击仍可暂停
+//   running-with-draft  运行中且有草稿：主按钮立即排队这条草稿；暂停改由旁边
+//                       常驻的次级停止按钮负责（不再依赖双击这种隐藏手势）
 //   paused              会话已暂停，点击恢复
 type ComposerSendState =
   | 'idle'
@@ -212,14 +224,39 @@ type ComposerSendStateMeta = {
   tooltipKey: string;
 };
 
-const SEND_CLICK_DEBOUNCE_MS = 260;
-
 /**
  * How long the composer may claim a run is starting before the run itself has
  * to take over. It is a ceiling on optimism, not a schedule: a rejected send
  * cancels it immediately (see `cancelOptimisticRunStart`).
  */
 const RUN_START_AFFORDANCE_MS = 620;
+
+type DeliveryShortcut = 'enter' | 'mod-enter' | 'mod-shift-enter';
+
+/**
+ * Long-task delivery modes behind the send button's menu, in menu order. The
+ * menu is the mouse path to what handleKeyDown binds: plain Enter and the
+ * primary click queue, Mod+Enter guides, Mod+Shift+Enter interrupts. Shift+Enter
+ * stays a newline. Revise-goal is rare enough to stay menu-only.
+ */
+const DELIVERY_MODE_OPTIONS: ReadonlyArray<{
+  mode: LongTaskInputMode;
+  icon: LucideIcon;
+  labelKey: string;
+  hintKey: string;
+  shortcut?: DeliveryShortcut;
+}> = [
+  { mode: 'queue', icon: ListEnd, labelKey: 'composer.intervention.queue', hintKey: 'composer.intervention.queueTooltip', shortcut: 'enter' },
+  { mode: 'guide', icon: Compass, labelKey: 'composer.intervention.guide', hintKey: 'composer.intervention.guideTooltip', shortcut: 'mod-enter' },
+  { mode: 'interrupt', icon: SkipForward, labelKey: 'composer.intervention.interrupt', hintKey: 'composer.intervention.interruptTooltip', shortcut: 'mod-shift-enter' },
+  { mode: 'revise-goal', icon: Target, labelKey: 'composer.intervention.reviseGoal', hintKey: 'composer.intervention.reviseGoalTooltip' },
+];
+
+function formatDeliveryShortcut(shortcut: DeliveryShortcut, isMac: boolean): string {
+  const mod = isMac ? '⌘' : 'Ctrl';
+  if (shortcut === 'enter') return '↵';
+  return shortcut === 'mod-enter' ? `${mod} ↵` : `${mod} ⇧ ↵`;
+}
 
 function getComposerSendStateMeta(
   state: ComposerSendState,
@@ -251,21 +288,16 @@ function getComposerSendStateMeta(
         tooltipKey: 'composer.pauseTooltip',
       };
     case 'running-with-draft':
-      return options.queueable
-        ? {
-            icon: ArrowUp,
-            iconClassName: 'h-5 w-5',
-            disabled: false,
-            labelKey: 'composer.intervention.queue',
-            tooltipKey: 'composer.queueTooltip',
-          }
-        : {
-            icon: Square,
-            iconClassName: 'h-3.5 w-3.5 fill-current',
-            disabled: false,
-            labelKey: 'composer.stop',
-            tooltipKey: 'composer.pauseTooltip',
-          };
+      // Stop has its own button in this state, so the primary stays a send
+      // affordance and is only disabled while the draft cannot go out yet
+      // (attachments still uploading or failed).
+      return {
+        icon: ArrowUp,
+        iconClassName: 'h-5 w-5',
+        disabled: !options.queueable,
+        labelKey: 'composer.intervention.queue',
+        tooltipKey: 'composer.queueTooltip',
+      };
     case 'paused':
       return options.resumable
         ? {
@@ -329,6 +361,7 @@ const SLASH_COMMANDS = [
   { id: 'pr-summary', group: 'coding', kind: 'prompt', aliases: ['pr'] },
   { id: 'goal', group: 'workflow', kind: 'mission', aliases: ['mission'] },
   { id: 'ledger', group: 'workflow', kind: 'ledger', aliases: ['task'] },
+  { id: 'storage', group: 'session', kind: 'storage' },
   { id: 'compact', group: 'session', kind: 'compact', aliases: ['compress'] },
   { id: 'fork', group: 'session', kind: 'fork' },
   { id: 'handoff', group: 'session', kind: 'handoff' },
@@ -971,6 +1004,7 @@ export function ChatInput({
   forkDisabled = false,
   forkBusy = false,
   handoffDisabled = false,
+  handoffDisabledReason,
   handoffBusy = false,
   knowledgeScope = 'none',
   onKnowledgeScopeChange,
@@ -978,6 +1012,7 @@ export function ChatInput({
   onKnowledgeModeChange,
   compactionStatus,
   compactionBusy = false,
+  compactionUnavailableReason,
   onManualCompact,
   longTaskControlStatus,
   queueDrainBusy = false,
@@ -992,15 +1027,13 @@ export function ChatInput({
   const [runStarting, setRunStarting] = useState(false);
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
-  /** Area 2 §3.1: turn-scoped model override; cleared after each send. */
-  const [pendingTurnModelRef, setPendingTurnModelRef] = useState<string | null>(null);
-  const [modelScope, setModelScope] = useState<'turn' | 'session' | 'persistent'>('persistent');
   const [actionMenuOpen, setActionMenuOpen] = useState(false);
   const [morphOpen, setMorphOpen] = useState(false);
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
-  const [executionSettingsSection, setExecutionSettingsSection] = useState<'model' | 'effort' | null>(null);
+  const [deliveryMenuOpen, setDeliveryMenuOpen] = useState(false);
+  const [executionSettingsSection, setExecutionSettingsSection] = useState<'effort' | null>(null);
   const [executionEffortPreview, setExecutionEffortPreview] = useState<AgentReasoningEffort>('auto');
   const [knowledgePickerOpen, setKnowledgePickerOpen] = useState(false);
   const [knowledgeQuery, setKnowledgeQuery] = useState('');
@@ -1020,26 +1053,39 @@ export function ChatInput({
   const [slashMenuDismissed, setSlashMenuDismissed] = useState(false);
   const [slashSelectedIndex, setSlashSelectedIndex] = useState(0);
   const [switchingModelRef, setSwitchingModelRef] = useState<string | null>(null);
-  const [optimisticModelRef, setOptimisticModelRef] = useState<string | null>(null);
+  const modelSwitchRef = useRef<symbol | null>(null);
   const [compactionDialogOpen, setCompactionDialogOpen] = useState(false);
   const [compactionInstructions, setCompactionInstructions] = useState('');
   const sessionGenerationRef = useRef(0);
   const cancelCacheConfirmationsRef = useRef(new Set<() => void>());
-  const [activeTaskNodeId, setActiveTaskNodeIdState] = useState<string | null>(null);
+  const selectingTaskRef = useRef(false);
+  const [taskSelectionBusy, setTaskSelectionBusy] = useState(false);
   const [pendingCapabilitySend, setPendingCapabilitySend] = useState<PendingCapabilitySend | null>(null);
   const [capabilityExecuting, setCapabilityExecuting] = useState(false);
   const pendingCapabilityAuditBlocked = useMemo(
     () => pendingCapabilitySend?.plan.some((action) => isCapabilityAuditBlocked(action.auditResult)) ?? false,
     [pendingCapabilitySend],
   );
-  const setActiveTaskNodeId = useCallback((nodeId: string | null) => {
-    setActiveTaskNodeIdState(nodeId);
-    useChatStore.setState({ activeTaskNodeId: nodeId });
-  }, []);
+  const setActiveTaskNodeId = useCallback(async (nodeId: string | null) => {
+    if (!nodeId || selectingTaskRef.current) return;
+    selectingTaskRef.current = true;
+    setTaskSelectionBusy(true);
+    const chat = useChatStore.getState();
+    const owner = useWorkspacesStore.getState().activeWorkspace;
+    try {
+      if (!owner) throw new Error('Workspace unavailable');
+      await hostApi.workspaces.selectSessionTask({ workspaceId: owner.id, sessionKey: chat.currentSessionKey, taskNodeId: nodeId,
+        expectedSessionGeneration: chat.sessions.find((session) => session.key === chat.currentSessionKey)?.sessionId,
+        expectedRevision: owner.coordinatorBindings?.[chat.currentSessionKey]?.bindingRevision,
+      });
+      await useWorkspacesStore.getState().fetchWorkspaces();
+      await useChatStore.getState().loadSessions({ force: true });
+    } catch { toast.error(t('taskLedger:summary.selectFailed')); }
+    finally { selectingTaskRef.current = false; setTaskSelectionBusy(false); }
+  }, [t]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const runStartTimerRef = useRef<number | null>(null);
   const runStartingRef = useRef(false);
-  const sendClickTimerRef = useRef<number | null>(null);
   const previousSendingRef = useRef(sending);
   /**
    * Latest `sending`, readable from async callbacks.
@@ -1060,12 +1106,14 @@ export function ChatInput({
   const workspaceMenuRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
   const modelPickerRef = useRef<HTMLDivElement>(null);
+  const deliveryMenuRef = useRef<HTMLDivElement>(null);
   const knowledgePickerRef = useRef<HTMLDivElement>(null);
   const isComposingRef = useRef(false);
   const lastDraftValueRef = useRef(draftValue);
   const gatewayStatus = useGatewayStore((s) => s.status);
   const agents = useAgentsStore((s) => s.agents);
-  const updateAgentModel = useAgentsStore((s) => s.updateAgentModel);
+  const lastChatModelRef = useSettingsStore((s) => s.lastChatModelRef);
+  const rememberChatModel = useSettingsStore((s) => s.rememberChatModel);
   const defaultModelRef = useAgentsStore((s) => s.defaultModelRef);
   const providerAccounts = useProviderStore((s) => s.accounts);
   const providerStatuses = useProviderStore((s) => s.statuses);
@@ -1073,8 +1121,15 @@ export function ChatInput({
   const refreshProviderSnapshot = useProviderStore((s) => s.refreshProviderSnapshot);
   const currentAgentId = useChatStore((s) => s.currentAgentId);
   const currentSessionKey = useChatStore((s) => s.currentSessionKey);
+  const activeTaskNodeId = useWorkspacesStore((s) => s.activeWorkspace?.coordinatorBindings?.[currentSessionKey]?.activeTaskNodeId ?? null);
+  useEffect(() => {
+    if (useChatStore.getState().currentSessionKey === currentSessionKey) useChatStore.setState({ activeTaskNodeId });
+  }, [activeTaskNodeId, currentSessionKey]);
   const currentSession = useChatStore((s) => s.sessions.find((session) => session.key === s.currentSessionKey));
-  const pendingMessages = useChatStore((s) => s.pendingMessages);
+  const allPendingMessages = useChatStore((s) => s.pendingMessages);
+  const pendingWorkspaceId = useWorkspacesStore((s) => s.activeWorkspaceId);
+  const pendingMessages = useMemo(() => allPendingMessages.filter((item) => item.targetSessionKey === currentSessionKey
+    && (item.opts?.workspaceId ?? null) === pendingWorkspaceId), [allPendingMessages, currentSessionKey, pendingWorkspaceId]);
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
@@ -1103,11 +1158,21 @@ export function ChatInput({
   );
   const [providerGateOpen, setProviderGateOpen] = useState(false);
   const navigate = useNavigate();
-  const sessionModelRef = currentSession?.modelRefOverride;
-  const effectiveModelRef = pendingTurnModelRef || optimisticModelRef || sessionModelRef || currentAgent?.modelRef || defaultModelRef || modelOptions[0]?.modelRef || null;
+  const prefersReducedMotion = useReducedMotion();
+  const effectiveModelRef = resolveChatModelRef({
+    session: currentSession,
+    hasMessages: useChatStore((s) => s.messages.length > 0),
+    lastModelRef: lastChatModelRef,
+    modelOptions,
+    agentModelRef: currentAgent?.modelRef,
+    defaultModelRef,
+  });
   const effectiveModelLabel = effectiveModelRef
     ? formatModelRefLabel(effectiveModelRef)
     : t('composer.modelSourceDefault');
+  const effectiveModelDisplay = effectiveModelRef
+    ? describeModelRef(effectiveModelRef)
+    : { name: effectiveModelLabel, source: null };
   const currentEffortLabel = t(getAgentEffortLabelKey(executionEffortPreview));
   const mentionableAgents = useMemo(
     () => (agents ?? []).filter((agent) => agent.id !== currentAgentId),
@@ -1201,9 +1266,6 @@ export function ChatInput({
   useEffect(() => () => {
     if (runStartTimerRef.current != null) {
       window.clearTimeout(runStartTimerRef.current);
-    }
-    if (sendClickTimerRef.current != null) {
-      window.clearTimeout(sendClickTimerRef.current);
     }
   }, []);
 
@@ -1393,6 +1455,7 @@ export function ChatInput({
     setModelPickerOpen(false);
     setKnowledgePickerOpen(false);
     setWorkspaceMenuOpen(false);
+    setDeliveryMenuOpen(false);
   }, []);
 
   const compactionUsedTokens = compactionStatus?.usedTokens ?? liveUsage?.totalTokens ?? contextRange?.usedTokens ?? null;
@@ -1400,6 +1463,7 @@ export function ChatInput({
   const compactionHiddenCount = compactionStatus?.truncatedMessageCount ?? contextRange?.truncatedMessageCount ?? 0;
   const compactionLastDate = formatCompactionDate(compactionStatus?.lastCompaction?.timestamp);
   const compactDisabledReason = useMemo(() => {
+    if (compactionUnavailableReason) return compactionUnavailableReason;
     if (!onManualCompact) return t('composer.compaction.unavailable');
     if (compactionBusy || compactionStatus?.inProgress) return t('composer.compaction.inProgress');
     if (sending) return t('composer.compaction.activeRun');
@@ -1409,7 +1473,7 @@ export function ChatInput({
       return reason;
     }
     return null;
-  }, [compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
+  }, [compactionUnavailableReason, compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
   const compactDisabled = Boolean(compactDisabledReason);
   const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
   const hasLongTaskControlDetails = queuedFollowupCount > 0
@@ -1526,7 +1590,7 @@ export function ChatInput({
       return t('composer.slashCommands.toasts.forkUnavailable');
     }
     if (command.kind === 'handoff' && handoffDisabled) {
-      return t('composer.handoff.disabledActiveRun');
+      return handoffDisabledReason ?? t('composer.handoff.disabledActiveRun');
     }
     return t(`composer.slashCommands.groups.${command.group}`);
   }, [
@@ -1536,6 +1600,7 @@ export function ChatInput({
     compactionUsedTokens,
     forkDisabled,
     handoffDisabled,
+    handoffDisabledReason,
     knowledgeMode,
     knowledgeScope,
     selectedKnowledgeRefs.length,
@@ -1705,8 +1770,8 @@ export function ChatInput({
     const generation = sessionGenerationRef.current;
     const allowed = await confirmPromptCacheRisk('manual-compaction');
     if (!allowed || generation !== sessionGenerationRef.current) return;
-    await onManualCompact(compactionInstructions.trim() || undefined);
-    if (generation !== sessionGenerationRef.current) return;
+    const acknowledged = await onManualCompact(compactionInstructions.trim() || undefined);
+    if (generation !== sessionGenerationRef.current || acknowledged === false) return;
     setCompactionInstructions('');
     setCompactionDialogOpen(false);
   }, [compactDisabled, compactionInstructions, confirmPromptCacheRisk, onManualCompact]);
@@ -1756,16 +1821,15 @@ export function ChatInput({
   }, [gatewayStatus.state, refreshProviderSnapshot]);
 
   useEffect(() => {
-    setOptimisticModelRef(null);
-  }, [currentAgent?.modelRef, currentAgentId]);
-  useEffect(() => {
-    setPendingTurnModelRef(null);
-    setOptimisticModelRef(null);
-    setModelScope('persistent');
+    modelSwitchRef.current = null;
+    setSwitchingModelRef(null);
+    setModelPickerOpen(false);
     setCompactionDialogOpen(false);
     setCompactionInstructions('');
     const cancellations = cancelCacheConfirmationsRef.current;
     return () => {
+      // Advance the numeric epoch on leave to fence pending cache confirmations.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       sessionGenerationRef.current++;
       for (const cancel of cancellations) cancel();
       cancellations.clear();
@@ -1801,7 +1865,7 @@ export function ChatInput({
   }, [agents, currentAgentId, targetAgentId]);
 
   useEffect(() => {
-    if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen) return;
+    if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen && !deliveryMenuOpen) return;
     const handlePointerDown = (event: MouseEvent) => {
       const target = event.target as Node;
       const insideActionMenu = actionMenuRef.current?.contains(target);
@@ -1809,7 +1873,8 @@ export function ChatInput({
       const insideAgentPicker = pickerRef.current?.contains(target);
       const insideModelPicker = modelPickerRef.current?.contains(target);
       const insideKnowledgePicker = knowledgePickerRef.current?.contains(target);
-      if (!insideActionMenu && !insideWorkspaceMenu && !insideAgentPicker && !insideModelPicker && !insideKnowledgePicker) {
+      const insideDeliveryMenu = deliveryMenuRef.current?.contains(target);
+      if (!insideActionMenu && !insideWorkspaceMenu && !insideAgentPicker && !insideModelPicker && !insideKnowledgePicker && !insideDeliveryMenu) {
         closeComposerPopovers();
       }
     };
@@ -1817,14 +1882,14 @@ export function ChatInput({
     return () => {
       document.removeEventListener('mousedown', handlePointerDown);
     };
-  }, [actionMenuOpen, closeComposerPopovers, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
+  }, [actionMenuOpen, closeComposerPopovers, deliveryMenuOpen, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
 
   useEffect(() => {
     if (!modelPickerOpen) setExecutionSettingsSection(null);
   }, [modelPickerOpen]);
 
   useEffect(() => {
-    if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen) return;
+    if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen && !deliveryMenuOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
       closeComposerPopovers();
@@ -1834,7 +1899,7 @@ export function ChatInput({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [actionMenuOpen, closeComposerPopovers, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
+  }, [actionMenuOpen, closeComposerPopovers, deliveryMenuOpen, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
 
   useEffect(() => {
     setQuickSkills([]);
@@ -2020,66 +2085,39 @@ export function ChatInput({
   }, [loadQuickSkills, slashMenuOpen]);
 
   const handleSelectModel = useCallback(async (modelRef: string) => {
-    if (!currentAgent || switchingModelRef) return;
-
-    if (modelRef !== effectiveModelRef) {
-      const allowed = await confirmPromptCacheRisk('model-switch', modelRef);
-      if (!allowed) {
-        setModelPickerOpen(false);
-        textareaRef.current?.focus();
-        return;
-      }
-    }
-
-    if (modelScope === 'turn') {
-      setPendingTurnModelRef(modelRef);
+    if (!currentAgent || modelSwitchRef.current) return;
+    const operation = Symbol('model-selection');
+    const generation = sessionGenerationRef.current;
+    const isCurrent = () => modelSwitchRef.current === operation
+      && generation === sessionGenerationRef.current
+      && useChatStore.getState().currentSessionKey === currentSessionKey;
+    modelSwitchRef.current = operation;
+    setSwitchingModelRef(modelRef);
+    try {
+      if (modelRef !== effectiveModelRef && !await confirmPromptCacheRisk('model-switch', modelRef)) return;
+      if (!isCurrent()) return;
+      const result = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef });
+      if (!result.success) throw new Error(result.error || t('composer.modelSwitchFailed', { error: modelRef }));
+      if (!isCurrent()) return;
+      useChatStore.setState((state) => ({
+        sessions: state.sessions.some((session) => session.key === currentSessionKey)
+          ? state.sessions.map((session) => session.key === currentSessionKey ? { ...session, modelRefOverride: modelRef } : session)
+          : [...state.sessions, { key: currentSessionKey, modelRefOverride: modelRef }],
+      }));
+      rememberChatModel(modelRef);
       setModelPickerOpen(false);
-      textareaRef.current?.focus();
-      return;
-    }
-    if (modelScope === 'session') {
-      setSwitchingModelRef(modelRef);
-      try {
-        const result = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef });
-        if (!result.success) throw new Error(result.error || t('composer.modelSwitchFailed', { error: modelRef }));
-        useChatStore.setState((state) => ({ sessions: state.sessions.map((session) => session.key === currentSessionKey ? { ...session, modelRefOverride: modelRef } : session) }));
-        setOptimisticModelRef(null);
-        setPendingTurnModelRef(null);
-        setModelPickerOpen(false);
-      } catch (error) {
-        toast.error(t('composer.modelSwitchFailed', { error: String(error) }));
-      } finally {
+    } catch (error) {
+      if (isCurrent()) toast.error(t('composer.modelSwitchFailed', { error: String(error) }));
+    } finally {
+      if (isCurrent()) {
+        modelSwitchRef.current = null;
         setSwitchingModelRef(null);
         textareaRef.current?.focus();
       }
-      return;
     }
-    const desiredOverride = modelRef === (defaultModelRef || '').trim() ? null : modelRef;
-    let persistentSaved = false;
-    setSwitchingModelRef(modelRef);
-    setOptimisticModelRef(modelRef);
-    setModelPickerOpen(false);
-    try {
-      await updateAgentModel(currentAgent.id, desiredOverride);
-      persistentSaved = true;
-      if (useChatStore.getState().currentSessionKey === currentSessionKey) setPendingTurnModelRef(null);
-      // Choosing Always also resets this session's explicit runtime override.
-      const result = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef: null });
-      if (!result.success) throw new Error(result.error || t('composer.modelSwitchFailed', { error: modelRef }));
-      useChatStore.setState((state) => ({ sessions: state.sessions.map((session) => session.key === currentSessionKey ? { ...session, modelRefOverride: undefined } : session) }));
-      setOptimisticModelRef(null);
-      setPendingTurnModelRef(null);
-    } catch (error) {
-      if (useChatStore.getState().currentSessionKey === currentSessionKey) setOptimisticModelRef(null);
-      if (persistentSaved) await useChatStore.getState().loadSessions();
-      toast.error(t(persistentSaved ? 'composer.modelSwitchSessionResetFailed' : 'composer.modelSwitchFailed', { error: String(error) }));
-    } finally {
-      setSwitchingModelRef(null);
-      textareaRef.current?.focus();
-    }
-  }, [confirmPromptCacheRisk, currentAgent, currentSessionKey, modelScope, defaultModelRef, effectiveModelRef, switchingModelRef, t, updateAgentModel]);
+  }, [confirmPromptCacheRisk, currentAgent, currentSessionKey, effectiveModelRef, rememberChatModel, t]);
 
-  const handleWorkspaceAction = useCallback((action: () => void | Promise<void>) => {
+  const handleWorkspaceAction = useCallback((action: () => unknown) => {
     setWorkspaceMenuOpen(false);
     void Promise.resolve(action()).catch((error) => {
       toast.error(t('composer.workspaceActionFailed', { error: String(error) }));
@@ -2204,30 +2242,40 @@ export function ChatInput({
   const allReady = attachments.length === 0 || attachments.every(a => a.status === 'ready');
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
   const hasComposerDraft = Boolean(input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0);
-  const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
-  // 干预门禁（对齐 P1-4）：无 /loop Task Ledger root（available:false）时
-  // 运行时会对显式 inputMode 返回 INVALID_REQUEST——禁用并提示，避免"按钮可点但不可用"。
-  const longTaskAvailable = longTaskControlStatus?.available !== false;
-  const canIntervene = sending && hasComposerDraft && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting && longTaskAvailable;
-  // 排队默认动作与干预按钮同门禁：有草稿但附件未就绪/存在失败附件时，运行中的
-  // 主按钮保持纯暂停语义，避免误触一次排队行为。
-  const canQueueDraft = sending && hasComposerDraft && !inputDisabled && !capabilityExecuting && longTaskAvailable && allReady && !hasFailedAttachments;
-  const composerSendState = paused
-    ? 'paused'
+  const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting && !switchingModelRef;
+  // Explicit long-task modes (queue/guide/interrupt/revise-goal) are only
+  // accepted by chat.send when the session has a /loop Task Ledger root; the
+  // gateway reads it from the latest checkpoint carrying one
+  // (getLatestLongTaskLedgerRootId). `available` only says the status was
+  // readable, so gating on it offered modes that ordinary Chat always rejected.
+  const longTaskModesAvailable = Boolean(longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId);
+  // A draft typed during a run can always be sent: as a long-task intervention
+  // in /loop sessions, otherwise into the renderer queue that drains when the
+  // run settles. Uploading or failed attachments hold it back either way.
+  const canSendDuringRun = sending && hasComposerDraft && allReady && !hasFailedAttachments && !inputDisabled && !capabilityExecuting && !switchingModelRef;
+  const composerSendState = sending
+    ? hasComposerDraft
+      ? 'running-with-draft'
+      : 'running'
     : runStarting
       ? 'starting'
-      : sending
-        ? hasComposerDraft
-          ? 'running-with-draft'
-          : 'running'
+      : paused
+        ? 'paused'
         : canSend
           ? 'ready'
           : 'idle';
   const sendButtonMeta = getComposerSendStateMeta(composerSendState, {
-    queueable: canQueueDraft,
+    queueable: canSendDuringRun,
     resumable: !paused || Boolean(onResumeSession),
   });
   const SendButtonIcon = sendButtonMeta.icon ?? ArrowUp;
+  const showDeliveryMenu = composerSendState === 'running-with-draft' && longTaskModesAvailable;
+  const isMacPlatform = window.electron?.platform === 'darwin';
+  useEffect(() => {
+    // The menu belongs to one pending draft in one run; never let it reopen by
+    // itself when the next draft or run brings the trigger back.
+    if (!showDeliveryMenu) setDeliveryMenuOpen(false);
+  }, [showDeliveryMenu]);
   const showInlineComposerStatus = !isGatewayUsable
     || chatComposerStatusComponents.length > 0
     || pendingMessages.length > 0
@@ -2286,7 +2334,7 @@ export function ChatInput({
           knowledgeReferences: sendKnowledgeReferences.length > 0 ? sendKnowledgeReferences : undefined,
           activeTaskNodeId,
           inputMode,
-          ...(pendingTurnModelRef ? { modelRefOverride: pendingTurnModelRef } : {}),
+          ...(effectiveModelRef && !sendTargetAgentId ? { modelRefOverride: effectiveModelRef, persistModelSelection: true } : {}),
         },
       );
     } else {
@@ -2299,26 +2347,33 @@ export function ChatInput({
           knowledgeMode: sendKnowledgeMode,
           knowledgeReferences: sendKnowledgeReferences.length > 0 ? sendKnowledgeReferences : undefined,
           activeTaskNodeId,
-          ...(pendingTurnModelRef ? { modelRefOverride: pendingTurnModelRef } : {}),
+          ...(effectiveModelRef && !sendTargetAgentId ? { modelRefOverride: effectiveModelRef, persistModelSelection: true } : {}),
         },
       );
     }
-    setPendingTurnModelRef(null);
     setTargetAgentId(null);
     setPickerOpen(false);
     setKnowledgePickerOpen(false);
     return true;
-  }, [activeTaskNodeId, captureHeroComposerPosition, onSend, pendingTurnModelRef, recordKnowledgeReferences, updateInput]);
+  }, [activeTaskNodeId, captureHeroComposerPosition, onSend, effectiveModelRef, recordKnowledgeReferences, updateInput]);
 
-  const handleInterventionSend = useCallback(async (inputMode: LongTaskInputMode) => {
+  /**
+   * Sends the draft while a run is active. In /loop sessions it is an explicit
+   * long-task intervention (`queue` unless another mode is picked). Ordinary
+   * Chat has no intervention path, so the draft goes out as a plain send, which
+   * sendMessage parks in the renderer queue until the run settles.
+   */
+  const handleRunningSend = useCallback(async (mode?: LongTaskInputMode) => {
     if (!sending) return;
     const readyAttachments = attachments.filter(a => a.status === 'ready');
     const knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
     const textToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
-    if (!textToSend || !allReady || hasFailedAttachments || capabilityExecuting) return;
+    if ((!textToSend && readyAttachments.length === 0) || !allReady || hasFailedAttachments || capabilityExecuting) return;
 
+    const inputMode = longTaskModesAvailable ? mode ?? 'queue' : undefined;
     const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
-    await completeSend(
+    setDeliveryMenuOpen(false);
+    const sent = await completeSend(
       textToSend,
       readyAttachments.length > 0 ? readyAttachments : undefined,
       targetAgentId,
@@ -2327,6 +2382,10 @@ export function ChatInput({
       knowledgeReferencesToSend,
       inputMode,
     );
+    // A renderer-queued draft leaves the composer without reaching the
+    // transcript yet; say where it went. A mention targets another session,
+    // which is not running, so that send goes out immediately.
+    if (sent && !inputMode && !targetAgentId) toast.success(t('composer.queueQueued'));
   }, [
     allReady,
     attachments,
@@ -2336,6 +2395,7 @@ export function ChatInput({
     input,
     knowledgeMode,
     knowledgeScope,
+    longTaskModesAvailable,
     selectedKnowledgeRefs,
     sending,
     t,
@@ -2355,6 +2415,12 @@ export function ChatInput({
     const promptArgs = trimmedArgs
       ? t('composer.slashCommands.promptArgs', { args: trimmedArgs })
       : '';
+
+    if (command.kind === 'storage') {
+      clearComposer();
+      navigate('/settings/storage');
+      return;
+    }
 
     if (command.kind === 'wikiSearch') {
       clearComposer();
@@ -2549,7 +2615,7 @@ export function ChatInput({
 
     if (command.kind === 'handoff') {
       if (!onHandoffSession || handoffDisabled || handoffBusy) {
-        toast.message(t('composer.handoff.disabledActiveRun'));
+        toast.message(handoffDisabledReason ?? t('composer.handoff.disabledActiveRun'));
         return;
       }
       clearComposer();
@@ -2562,8 +2628,8 @@ export function ChatInput({
         toast.message(t('composer.slashCommands.toasts.sendUnavailable'));
         return;
       }
-      clearComposer();
-      await onNewSession();
+      closeSlashMenu();
+      if (await onNewSession() === false) return;
       toast.success(t('composer.slashCommands.toasts.newSessionCreated'));
       return;
     }
@@ -2702,6 +2768,7 @@ export function ChatInput({
     forkDisabled,
     handoffBusy,
     handoffDisabled,
+    handoffDisabledReason,
     inputDisabled,
     knowledgeMode,
     knowledgeScope,
@@ -2710,6 +2777,7 @@ export function ChatInput({
     onNewSession,
     onKnowledgeModeChange,
     onKnowledgeScopeChange,
+    navigate,
     runKnowledgeSearch,
     selectedKnowledgeRefs,
     sending,
@@ -2782,6 +2850,7 @@ export function ChatInput({
               knowledgeScope: knowledgeScope === 'none' && selectedKnowledgeRefs.length > 0 ? 'wiki' : knowledgeScope,
               knowledgeMode,
               knowledgeReferences: selectedKnowledgeRefs.length > 0 ? selectedKnowledgeRefs : undefined,
+              ...(effectiveModelRef && !targetAgentId ? { modelRefOverride: effectiveModelRef, persistModelSelection: true } : {}),
             },
           );
           updateInput('');
@@ -2883,14 +2952,13 @@ export function ChatInput({
         knowledgeMode,
         knowledgeReferences: knowledgeReferencesToSend.length > 0 ? knowledgeReferencesToSend : undefined,
         activeTaskNodeId,
-        ...(pendingTurnModelRef ? { modelRefOverride: pendingTurnModelRef } : {}),
+        ...(effectiveModelRef && !targetAgentId ? { modelRefOverride: effectiveModelRef, persistModelSelection: true } : {}),
       },
     );
-    setPendingTurnModelRef(null);
     setTargetAgentId(null);
     setPickerOpen(false);
     setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, captureHeroComposerPosition, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
+  }, [input, attachments, canSend, allReady, capabilityExecuting, inputDisabled, sending, captureHeroComposerPosition, onSend, effectiveModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -2934,28 +3002,18 @@ export function ChatInput({
     }
   }, [capabilityExecuting, completeSend, confirmPromptCacheRisk, currentAgentId, pendingCapabilitySend, t, workspace?.id]);
 
-  const cancelQueuedSendClick = useCallback(() => {
-    if (sendClickTimerRef.current != null) {
-      window.clearTimeout(sendClickTimerRef.current);
-      sendClickTimerRef.current = null;
-    }
-  }, []);
-
   const handlePrimaryComposerAction = useCallback(() => {
-    cancelQueuedSendClick();
     if (paused) {
       void onResumeSession?.();
       return;
     }
-    if (composerSendState === 'running-with-draft' && canQueueDraft) {
-      // 运行中且有可排队草稿：单击默认排队（防抖），双击落到暂停。
-      sendClickTimerRef.current = window.setTimeout(() => {
-        sendClickTimerRef.current = null;
-        void handleInterventionSend('queue');
-      }, SEND_CLICK_DEBOUNCE_MS);
+    if (composerSendState === 'running-with-draft') {
+      // Stop has its own button while a draft is pending, so the primary only
+      // ever sends here — no single/double-click disambiguation delay.
+      if (canSendDuringRun) void handleRunningSend();
       return;
     }
-    if (composerSendState === 'running-with-draft' || sending) {
+    if (sending) {
       void onPauseSession?.();
       return;
     }
@@ -2975,11 +3033,10 @@ export function ChatInput({
   }, [
     beginOptimisticRunStart,
     cancelOptimisticRunStart,
-    cancelQueuedSendClick,
-    canQueueDraft,
     canSend,
+    canSendDuringRun,
     composerSendState,
-    handleInterventionSend,
+    handleRunningSend,
     handleSend,
     onPauseSession,
     onResumeSession,
@@ -2987,23 +3044,20 @@ export function ChatInput({
     sending,
   ]);
 
-  const handlePrimaryComposerDoubleClick = useCallback(() => {
-    // 在排队防抖窗口内的第二次点击：取消排队，直接暂停当前运行。
-    if (sendClickTimerRef.current == null) return;
-    cancelQueuedSendClick();
-    void onPauseSession?.();
-  }, [cancelQueuedSendClick, onPauseSession]);
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (sending && e.key === 'Enter' && (e.ctrlKey || e.metaKey || e.shiftKey)) {
+      // While a run is active, Mod+Enter guides and Mod+Shift+Enter interrupts
+      // in /loop sessions. Shift+Enter alone must stay a newline: drafting a
+      // multi-line follow-up during a run is normal and must not abort it.
+      if (sending && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
         const nativeEvent = e.nativeEvent as KeyboardEvent;
         if (isComposingRef.current || nativeEvent.isComposing || nativeEvent.keyCode === 229) {
           return;
         }
         e.preventDefault();
-        if (!canIntervene) return;
-        void handleInterventionSend(e.shiftKey ? 'interrupt' : 'guide');
+        if (!canSendDuringRun) return;
+        // Ordinary Chat has no guide/interrupt path; handleRunningSend queues.
+        void handleRunningSend(e.shiftKey ? 'interrupt' : 'guide');
         return;
       }
 
@@ -3096,6 +3150,7 @@ export function ChatInput({
         setModelPickerOpen(false);
         setWorkspaceMenuOpen(false);
         setKnowledgePickerOpen(false);
+        setDeliveryMenuOpen(false);
         return;
       }
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -3105,16 +3160,16 @@ export function ChatInput({
         }
         e.preventDefault();
         if (sending) {
-          if (canIntervene) void handleInterventionSend('queue');
+          if (canSendDuringRun) void handleRunningSend();
           return;
         }
         handleSend();
       }
     },
     [
-      canIntervene,
+      canSendDuringRun,
       findExactSlashItem,
-      handleInterventionSend,
+      handleRunningSend,
       handleSend,
       input,
       moveCaretTo,
@@ -3259,24 +3314,8 @@ export function ChatInput({
             />
           )}
 
-          {(selectedTarget || pendingTurnModelRef) && (
+          {selectedTarget && (
             <div className="flex flex-wrap gap-2 pb-1.5">
-              {pendingTurnModelRef && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => setPendingTurnModelRef(null)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 text-meta font-medium text-foreground transition-colors hover:bg-primary/10"
-                  data-testid="chat-turn-model-chip"
-                >
-                  <span>{t('composer.turnModelChip', { model: formatModelRefLabel(pendingTurnModelRef) })}</span>
-                  <X className="h-3 w-3 text-muted-foreground" />
-                </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">{t('composer.clearTurnModel')}</TooltipContent>
-                </Tooltip>
-              )}
               {selectedTarget && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -3539,7 +3578,7 @@ export function ChatInput({
                         icon: <Gauge className="h-3.5 w-3.5" />,
                         testId: 'chat-composer-action-model',
                         onSelect: () => {
-                          setExecutionSettingsSection('model');
+                          setExecutionSettingsSection(null);
                           setModelPickerOpen(true);
                         },
                       }]
@@ -3586,13 +3625,14 @@ export function ChatInput({
                         testId="chat-composer-action-model"
                         onClick={() => {
                           setActionMenuOpen(false);
-                          setExecutionSettingsSection('model');
+                          setExecutionSettingsSection(null);
                           setModelPickerOpen(true);
                         }}
                       />
                     )}
                     <TaskNodeSelector
                       selectedTaskNodeId={activeTaskNodeId}
+                      busy={taskSelectionBusy || sending}
                       onSelect={setActiveTaskNodeId}
                     />
                   </ComposerActionGroup>
@@ -3663,6 +3703,8 @@ export function ChatInput({
                           label={t('composer.actions.handoff')}
                           testId="chat-composer-action-handoff"
                           disabled={handoffDisabled || handoffBusy}
+                          title={handoffDisabledReason}
+                          description={handoffDisabledReason}
                           onClick={() => {
                             setActionMenuOpen(false);
                             void onHandoffSession();
@@ -3690,10 +3732,8 @@ export function ChatInput({
                         )}
                         onClick={() => {
                           setSlashMenuDismissed(true);
-                          setPickerOpen(false);
-                          setModelPickerOpen(false);
-                          setKnowledgePickerOpen(false);
-                          setWorkspaceMenuOpen((open) => !open);
+                          closeComposerPopovers();
+                          setWorkspaceMenuOpen(!workspaceMenuOpen);
                         }}
                         disabled={inputDisabled || sending}
                         aria-label={workspaceMenuTitle}
@@ -3719,10 +3759,8 @@ export function ChatInput({
                         )}
                         onClick={() => {
                           setSlashMenuDismissed(true);
-                          setPickerOpen(false);
-                          setModelPickerOpen(false);
-                          setKnowledgePickerOpen(false);
-                          setWorkspaceMenuOpen((open) => !open);
+                          closeComposerPopovers();
+                          setWorkspaceMenuOpen(!workspaceMenuOpen);
                         }}
                         disabled={inputDisabled || sending}
                         aria-label={workspaceMenuTitle}
@@ -3737,36 +3775,25 @@ export function ChatInput({
                   </TooltipContent>
                 </Tooltip>
 
-                {workspaceMenuOpen && (
-                  <div
+                  <ComposerPopover open={workspaceMenuOpen}
                     data-testid="chat-composer-permission-menu"
-                    className="codex-composer-menu codex-composer-menu--approval"
+                    className="codex-composer-menu--approval"
+                    role="dialog" aria-label={workspaceMenuTitle}
                   >
                     {workspace && (
-                      <div className="codex-composer-menu__label codex-composer-menu__label--divider">
-                        <span className="truncate text-foreground">
+                      <div className="codex-composer-menu__context" title={workspace.rootPath || undefined}>
+                        <FolderGit2 className="codex-composer-menu__context-icon" aria-hidden="true" />
+                        <span className="codex-composer-menu__context-name">
                           {workspace.name || t('composer.workspaceActions')}
                         </span>
                         {workspace.rootPath && (
-                          <span className="truncate font-mono text-[11px] text-muted-foreground">
-                            {workspace.rootPath}
-                          </span>
+                          <span className="codex-composer-menu__context-path">{workspace.rootPath}</span>
                         )}
                       </div>
                     )}
 
                     {workspace && onPermissionModeChange && (
                       <>
-                        <div className="codex-composer-menu__label">
-                          <span>{t('composer.permissionMenuTitle')}</span>
-                          <button
-                            type="button"
-                            className="codex-composer-menu__label-action"
-                            onClick={() => handleWorkspaceAction(() => setWorkspaceMenuOpen(false))}
-                          >
-                            {t('composer.permissionLearnMore')}
-                          </button>
-                        </div>
                         {WORKSPACE_PERMISSION_MODES.map((mode) => {
                           const selected = activePermissionMode === mode;
                           const isFull = mode === 'fullAccess';
@@ -3780,6 +3807,8 @@ export function ChatInput({
                                 isFull && 'codex-composer-menu__option--warning',
                               )}
                               data-testid={`chat-composer-permission-option-${mode}`}
+                              aria-pressed={selected}
+                              data-selected={selected}
                               onClick={() => handleWorkspaceAction(() => onPermissionModeChange(mode))}
                             >
                               <span className="codex-composer-menu__icon">
@@ -3863,8 +3892,7 @@ export function ChatInput({
                         })}
                       </div>
                     )}
-                  </div>
-                )}
+                  </ComposerPopover>
               </div>
             )}
 
@@ -3878,17 +3906,17 @@ export function ChatInput({
                   size="icon"
                   data-testid="chat-composer-agent"
                   className={cn(
-                    'h-8 w-8 rounded-lg text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground transition-colors',
-                    (pickerOpen || selectedTarget) && 'bg-primary/10 text-primary hover:bg-primary/20'
+                    'codex-composer-control w-8 justify-center px-0',
+                    (pickerOpen || selectedTarget) && 'is-active'
                   )}
                   onClick={() => {
-                    setWorkspaceMenuOpen(false);
-                    setModelPickerOpen(false);
-                    setKnowledgePickerOpen(false);
-                    setPickerOpen((open) => !open);
+                    closeComposerPopovers();
+                    setPickerOpen(!pickerOpen);
                   }}
                   disabled={inputDisabled || sending}
                   aria-label={t('composer.pickAgent')}
+                  aria-expanded={pickerOpen}
+                  aria-haspopup="dialog"
                 >
                   <AtSign className="h-3.5 w-3.5" />
                 </Button>
@@ -3896,9 +3924,8 @@ export function ChatInput({
                   </TooltipTrigger>
                   <TooltipContent side="top" collisionPadding={8}>{t('composer.pickAgent')}</TooltipContent>
                 </Tooltip>
-                {pickerOpen && (
-                  <div className="absolute left-0 bottom-full z-20 mb-2 w-72 overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10">
-                    <div className="px-3 py-2 text-tiny font-medium text-muted-foreground/80">
+                  <ComposerPopover open={pickerOpen} className="codex-composer-menu--approval" data-testid="chat-composer-agent-menu" role="dialog" aria-label={t('composer.pickAgent')}>
+                    <div className="codex-composer-menu__label">
                       {t('composer.agentPickerTitle', { currentAgent: currentAgentName })}
                     </div>
                     <div className="max-h-64 overflow-y-auto">
@@ -3915,8 +3942,7 @@ export function ChatInput({
                         />
                       ))}
                     </div>
-                  </div>
-                )}
+                  </ComposerPopover>
               </div>
             )}
 
@@ -3936,38 +3962,31 @@ export function ChatInput({
                 disabled={inputDisabled || sending}
                 onClick={() => {
                   const nextOpen = !knowledgePickerOpen;
-                  setActionMenuOpen(false);
-                  setWorkspaceMenuOpen(false);
-                  setPickerOpen(false);
-                  setModelPickerOpen(false);
+                  closeComposerPopovers();
                   setKnowledgePickerOpen(nextOpen);
                 }}
               >
                 <BookOpen className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">{t(`composer.knowledgeScope.${knowledgeScope}`)}</span>
-                <ChevronDown className={cn('h-3 w-3 shrink-0 transition-transform', knowledgePickerOpen && 'rotate-180')} />
+                <ChevronDown className={cn('codex-composer-chevron', knowledgePickerOpen && 'is-open')} />
               </button>
                 </TooltipTrigger>
                 <TooltipContent side="top" collisionPadding={8}>{t('composer.knowledgeScopeTitle')}</TooltipContent>
               </Tooltip>
-              {knowledgePickerOpen && (
-                <div
-                  className="codex-composer-menu codex-composer-menu--approval codex-composer-menu--knowledge"
+                <ComposerPopover open={knowledgePickerOpen}
+                  className="codex-composer-menu--approval codex-composer-menu--knowledge"
                   data-testid="chat-knowledge-scope-menu"
+                  role="dialog" aria-label={t('composer.knowledgeScopeTitle')}
                 >
-                  <div className="codex-composer-menu__label">
-                    <span>{t('composer.knowledgeScopeTitle')}</span>
-                  </div>
                   {KNOWLEDGE_SCOPES.map((scope) => {
                     const isActive = scope === knowledgeScope;
                     return (
                     <button
                       key={scope}
                       type="button"
-                      className={cn(
-                        'codex-composer-menu__item codex-composer-menu__option',
-                        !isActive && 'opacity-80',
-                      )}
+                      className="codex-composer-menu__item codex-composer-menu__option"
+                      aria-pressed={isActive}
+                      data-selected={isActive}
                       data-testid={`chat-knowledge-scope-${scope}`}
                       onClick={() => {
                         void onKnowledgeScopeChange?.(scope);
@@ -3976,31 +3995,28 @@ export function ChatInput({
                       }}
                     >
                       <span className="codex-composer-menu__icon">
-                        {isActive && <Check className="h-4 w-4" />}
+                        {scope === 'none' ? <CircleSlash /> : scope === 'wiki' ? <BookOpen /> : scope === 'memory' ? <History /> : <Database />}
                       </span>
                       <span className="codex-composer-menu__option-text">
                         <b>{t(`composer.knowledgeScope.${scope}`)}</b>
                         <small>{t(`composer.knowledgeScopeDescription.${scope}`)}</small>
                       </span>
+                      <span className="codex-composer-menu__check" data-hidden={isActive ? undefined : 'true'}><Check /></span>
                     </button>
                     );
                   })}
                   <div className="codex-composer-menu__label codex-composer-menu__label--divider">
                     <span>{t('composer.knowledgeModeTitle')}</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-1 px-2 pb-2">
+                  <div className="codex-composer-segmented">
                     {KNOWLEDGE_MODES.map((mode) => {
                       const isActive = mode === knowledgeMode;
                       return (
                         <button
                           key={mode}
                           type="button"
-                          className={cn(
-                            'h-8 rounded-lg px-2 text-tiny font-medium transition-colors',
-                            isActive
-                              ? 'bg-black/5 text-foreground dark:bg-white/10'
-                              : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
-                          )}
+                          className={cn(isActive && 'is-active')}
+                          aria-pressed={isActive}
                           data-testid={`chat-knowledge-mode-${mode}`}
                           onClick={() => {
                             void onKnowledgeModeChange?.(mode);
@@ -4012,13 +4028,11 @@ export function ChatInput({
                       );
                     })}
                   </div>
-                  <div className="my-1.5 h-px bg-border/70" />
+                  <div className="codex-composer-menu__divider" />
                   <button
                     type="button"
-                    className={cn(
-                      'codex-composer-menu__item codex-composer-menu__option',
-                      !runtimeLessonsSourceEnabled && 'opacity-80',
-                    )}
+                    className="codex-composer-menu__item codex-composer-menu__option"
+                    data-selected={runtimeLessonsSourceEnabled}
                     data-testid="chat-knowledge-runtime-lessons-toggle"
                     aria-pressed={runtimeLessonsSourceEnabled}
                     onClick={() => {
@@ -4027,24 +4041,22 @@ export function ChatInput({
                     }}
                   >
                     <span className="codex-composer-menu__icon">
-                      {runtimeLessonsSourceEnabled && <Check className="h-4 w-4" />}
+                      <Sparkles />
                     </span>
                     <span className="codex-composer-menu__option-text">
                       <b>{t('composer.knowledgeRuntimeLessons.title')}</b>
                       <small>{t('composer.knowledgeRuntimeLessons.description')}</small>
                     </span>
+                    <span className="codex-composer-menu__check" data-hidden={runtimeLessonsSourceEnabled ? undefined : 'true'}><Check /></span>
                   </button>
-                  <div className="my-1.5 h-px bg-border/70" />
-                  <div className="px-3 py-2">
-                    <div className="mb-2 flex items-center justify-between gap-2">
-                      <span className="text-tiny font-medium text-muted-foreground/80">{t('composer.knowledgeAttach.title')}</span>
-                      {selectedKnowledgeRefs.length > 0 && (
-                        <Badge variant="outline" className="rounded-full border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-2xs font-semibold text-emerald-700 dark:text-emerald-400">
-                          {selectedKnowledgeRefs.length}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-2 dark:border-white/10 dark:bg-white/[0.04] focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all duration-200">
+                  <div className="codex-composer-menu__label codex-composer-menu__label--divider">
+                    <span>{t('composer.knowledgeAttach.title')}</span>
+                    {selectedKnowledgeRefs.length > 0 && (
+                      <span className="codex-composer-menu__count">{selectedKnowledgeRefs.length}</span>
+                    )}
+                  </div>
+                  <div className="px-1.5 pb-1.5">
+                    <div className="codex-composer-search">
                       <Search className="h-3.5 w-3.5 text-muted-foreground/60" />
                       <input
                         value={knowledgeQuery}
@@ -4109,8 +4121,7 @@ export function ChatInput({
                       })
                     )}
                   </div>
-                </div>
-              )}
+                </ComposerPopover>
             </div>
 
             <div className="codex-composer-control-group ml-auto flex min-w-0 shrink-0 items-center gap-1">
@@ -4126,8 +4137,13 @@ export function ChatInput({
                   aria-label={`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}
                   aria-expanded={modelPickerOpen}
                   disabled={inputDisabled || sending}
-                  onClick={() => setModelPickerOpen((open) => !open)}
+                  onClick={() => {
+                    closeComposerPopovers();
+                    setModelPickerOpen(!modelPickerOpen);
+                  }}
                 >
+                  <ModelBrandIcon modelRef={effectiveModelRef} size={15} className="codex-model-picker-brand" />
+                  <span className="codex-model-picker-label" data-testid="chat-model-picker-label">{effectiveModelDisplay.name}</span>
                   <span
                     data-testid="chat-agent-effort-button"
                     className={cn(
@@ -4136,65 +4152,57 @@ export function ChatInput({
                     )}
                     onClick={(event) => {
                       event.stopPropagation();
+                      closeComposerPopovers();
                       setModelPickerOpen(true);
                       setExecutionSettingsSection('effort');
                     }}
                   >
                     <Flame className="h-3.5 w-3.5 shrink-0" />
                   </span>
-                  <span className="codex-model-picker-label max-w-[138px] truncate">{effectiveModelLabel}</span>
-                  <ChevronDown className={cn('codex-model-picker-chevron h-3.5 w-3.5 transition-transform', modelPickerOpen && 'rotate-180')} />
+                  <ChevronDown className={cn('codex-composer-chevron codex-model-picker-chevron', modelPickerOpen && 'is-open')} />
                 </button>
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent side="top" collisionPadding={8}>{`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}</TooltipContent>
+                  <TooltipContent side="top" collisionPadding={8} className="max-w-xs">
+                    <span className="block font-medium">{effectiveModelLabel}</span>
+                    {effectiveModelDisplay.source && <span className="block text-muted-foreground">{effectiveModelDisplay.source}</span>}
+                  </TooltipContent>
                 </Tooltip>
-                {modelPickerOpen && (
-                  <div
-                    className="codex-composer-menu codex-composer-menu--model codex-execution-settings"
+                  <ComposerPopover open={modelPickerOpen} align="right"
+                    className="codex-composer-menu--model codex-execution-settings"
                     data-testid="chat-model-picker-menu"
+                    role="dialog" aria-label={`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}
                   >
-                    <div className="flex gap-1 p-2" data-testid="chat-model-scope-selector">
-                      {(['turn', 'session', 'persistent'] as const).map((scope) => (
-                        <button key={scope} type="button" data-testid={`chat-model-scope-${scope}`} aria-pressed={modelScope === scope}
-                          className={cn('rounded-md px-2 py-1 text-xs hover:bg-black/5 dark:hover:bg-white/10', modelScope === scope && 'bg-black/5 dark:bg-white/10')}
-                          onClick={() => { setModelScope(scope); setExecutionSettingsSection('model'); }}>
-                          {t(`composer.modelScope.${scope}`)}
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      className="codex-execution-settings__row"
-                      aria-expanded={executionSettingsSection === 'model'}
-                      onClick={() => setExecutionSettingsSection((section) => section === 'model' ? null : 'model')}
-                    >
-                      <span>{t('composer.actions.model')}</span>
-                      <span className="codex-execution-settings__value">{effectiveModelLabel}</span>
-                      <ChevronRight className={cn('codex-execution-settings__chevron', executionSettingsSection === 'model' && 'rotate-90')} />
-                    </button>
-                    {executionSettingsSection === 'model' && (
-                      <div className="codex-execution-settings__section" data-testid="chat-model-options">
+                      <div className="codex-model-options" data-testid="chat-model-options">
                         {pickerModelOptions.map((option) => {
                           const isActive = option.modelRef === effectiveModelRef;
+                          const display = describeModelRef(option.modelRef);
                           return (
                             <button
                               key={option.modelRef}
                               type="button"
                               onClick={() => void handleSelectModel(option.modelRef)}
-                              className={cn('codex-composer-menu__item', isActive && 'is-active')}
+                              disabled={Boolean(switchingModelRef)}
+                              className={cn('codex-composer-menu__item codex-model-option', isActive && 'is-active')}
                               data-testid={`chat-model-picker-option-${option.label}`}
+                              data-selected={isActive}
+                              aria-pressed={isActive}
+                              aria-label={option.label}
+                              title={option.modelRef}
                             >
-                              <Gauge className="h-4 w-4 shrink-0 text-muted-foreground" />
-                              <span className="min-w-0 flex-1 truncate">{option.label}</span>
-                              <span className="codex-composer-menu__check" data-hidden={isActive ? undefined : 'true'}>
-                                <Check className="h-3.5 w-3.5" />
+                              <ModelBrandIcon modelRef={option.modelRef} size={18} className="codex-model-option__brand" />
+                              <span className="codex-model-option__text">
+                                <span className="codex-model-option__name">{display.name}</span>
+                                {display.source && <span className="codex-model-option__source">{display.source}</span>}
+                              </span>
+                              <span className="codex-composer-menu__check" data-hidden={isActive || switchingModelRef === option.modelRef ? undefined : 'true'}>
+                                {switchingModelRef === option.modelRef ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
                               </span>
                             </button>
                           );
                         })}
                       </div>
-                    )}
+                    <div className="codex-composer-menu__divider" />
                     <button
                       type="button"
                       className="codex-execution-settings__row"
@@ -4210,105 +4218,58 @@ export function ChatInput({
                       </span>
                       <ChevronRight className={cn('codex-execution-settings__chevron', executionSettingsSection === 'effort' && 'rotate-90')} />
                     </button>
-                    {executionSettingsSection === 'effort' && currentAgentId && (
-                      <div className="codex-execution-settings__section codex-execution-settings__section--effort">
-                        <ChatAgentEffortPanel
-                          agentId={currentAgent?.id ?? currentAgentId}
-                          disabled={inputDisabled || sending}
-                          onEffortChange={setExecutionEffortPreview}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
+                    <AnimatePresence initial={false}>
+                      {executionSettingsSection === 'effort' && currentAgentId && (
+                        <motion.div
+                          key="effort"
+                          className="codex-execution-settings__disclosure"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={prefersReducedMotion
+                            ? { duration: 0 }
+                            : { height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.18 } }}
+                        >
+                          <div className="codex-execution-settings__section codex-execution-settings__section--effort">
+                            <ChatAgentEffortPanel
+                              agentId={currentAgent?.id ?? currentAgentId}
+                              disabled={inputDisabled || sending}
+                              onEffortChange={setExecutionEffortPreview}
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </ComposerPopover>
               </div>
             )}
-            {sending && !paused && hasComposerDraft && (
-              <div className="composer-intervention-controls" data-testid="chat-intervention-controls">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid="chat-intervention-guide"
-                        className="composer-intervention-button"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('guide')}
-                        aria-label={t('composer.intervention.guide')}
-                      >
-                        <Navigation className="h-4 w-4" />
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.guideTooltip')}</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid="chat-intervention-revise-goal"
-                        className="composer-intervention-button"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('revise-goal')}
-                        aria-label={t('composer.intervention.reviseGoal')}
-                      >
-                        <PencilLine className="h-4 w-4" />
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.reviseGoalTooltip')}</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid="chat-intervention-queue"
-                        className="composer-intervention-button composer-intervention-button--queue"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('queue')}
-                        aria-label={t('composer.intervention.queue')}
-                      >
-                        <ListPlus className="h-4 w-4" />
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.queueTooltip')}</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid="chat-intervention-interrupt"
-                        className="composer-intervention-button composer-intervention-button--interrupt"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('interrupt')}
-                        aria-label={t('composer.intervention.interrupt')}
-                      >
-                        <Square className="h-3.5 w-3.5 fill-current" />
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.interruptTooltip')}</TooltipContent>
-                </Tooltip>
-              </div>
+            {composerSendState === 'running-with-draft' && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex">
+                    <button
+                      type="button"
+                      data-testid="chat-composer-stop"
+                      className="composer-run-stop"
+                      onClick={() => void onPauseSession?.()}
+                      aria-label={t('composer.stop')}
+                    >
+                      <Square className="h-3 w-3 fill-current" />
+                    </button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" collisionPadding={8}>{t('composer.pauseTooltip')}</TooltipContent>
+              </Tooltip>
             )}
+            <div
+              ref={deliveryMenuRef}
+              className={cn('composer-send-group', showDeliveryMenu && 'has-delivery-menu')}
+            >
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="inline-flex">
               <Button
                 onClick={handlePrimaryComposerAction}
-                onDoubleClick={handlePrimaryComposerDoubleClick}
                 disabled={sendButtonMeta.disabled}
                 size="icon"
                 data-testid="chat-composer-send"
@@ -4323,8 +4284,82 @@ export function ChatInput({
               </TooltipTrigger>
               <TooltipContent side="top" collisionPadding={8}>
                 {t(sendButtonMeta.tooltipKey)}
+                {composerSendState === 'running-with-draft' && (
+                  <span className="ml-1.5 opacity-60">{formatDeliveryShortcut('enter', isMacPlatform)}</span>
+                )}
               </TooltipContent>
             </Tooltip>
+            {showDeliveryMenu && (
+              <>
+                <button
+                  type="button"
+                  data-testid="chat-intervention-menu-trigger"
+                  className={cn('composer-send-menu-trigger', deliveryMenuOpen && 'is-open')}
+                  aria-haspopup="menu"
+                  aria-expanded={deliveryMenuOpen}
+                  aria-label={t('composer.intervention.menu')}
+                  disabled={!canSendDuringRun}
+                  onClick={() => {
+                    const next = !deliveryMenuOpen;
+                    closeComposerPopovers();
+                    setDeliveryMenuOpen(next);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+                    event.preventDefault();
+                    closeComposerPopovers();
+                    setDeliveryMenuOpen(true);
+                    requestAnimationFrame(() => {
+                      deliveryMenuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]:not(:disabled)')?.focus();
+                    });
+                  }}
+                >
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </button>
+                <ComposerPopover
+                  open={deliveryMenuOpen}
+                  align="right"
+                  className="codex-composer-menu--approval composer-delivery-menu"
+                  data-testid="chat-intervention-controls"
+                  role="menu"
+                  aria-label={t('composer.intervention.menu')}
+                  onKeyDown={(event) => {
+                    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+                    const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not(:disabled)'));
+                    if (items.length === 0) return;
+                    event.preventDefault();
+                    const index = items.indexOf(document.activeElement as HTMLButtonElement);
+                    const step = event.key === 'ArrowDown' ? 1 : -1;
+                    items[(index + step + items.length) % items.length]?.focus();
+                  }}
+                >
+                  <div className="codex-composer-menu__label">{t('composer.intervention.menu')}</div>
+                  {DELIVERY_MODE_OPTIONS.map(({ mode, icon: Icon, labelKey, hintKey, shortcut }) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      role="menuitem"
+                      data-testid={`chat-intervention-${mode}`}
+                      className="codex-composer-menu__item codex-composer-menu__option composer-delivery-option"
+                      disabled={!canSendDuringRun}
+                      onClick={() => void handleRunningSend(mode)}
+                    >
+                      <span className="codex-composer-menu__icon">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="codex-composer-menu__option-text">
+                        <b>{t(labelKey)}</b>
+                        <small>{t(hintKey)}</small>
+                      </span>
+                      {shortcut
+                        ? <kbd className="composer-kbd">{formatDeliveryShortcut(shortcut, isMacPlatform)}</kbd>
+                        : <span aria-hidden="true" />}
+                    </button>
+                  ))}
+                </ComposerPopover>
+              </>
+            )}
+            </div>
             </div>
           </div>
         </div>
@@ -4700,6 +4735,7 @@ export function ChatInput({
             <Button
               type="button"
               data-testid="chat-compaction-confirm"
+              title={compactDisabledReason ?? undefined}
               onClick={() => void handleConfirmCompaction()}
               disabled={compactDisabled || compactionBusy}
             >

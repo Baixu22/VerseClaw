@@ -4,8 +4,8 @@
   "class": "structural-reconciliation",
   "rule": "exemption-registration",
   "expect": "[semantic-authority/exemption-registration] structural-unregistered: flag-granularity flag 'isolation-request' is observed in the registries but no structural exemption (X-01) registers it",
-  "expectIssueCount": 54,
-  "description": "The whole exemptions section disappears (key renamed). Every one of the 54 observed structural pairs is now unregistered and reported individually, located at the registry header: structural exemptions carry weight, an empty or missing list cannot pass (TF-0638 reconciliation 1).",
+  "expectIssueCount": 55,
+  "description": "The whole exemptions section disappears (key renamed). Every one of the 55 observed structural pairs is now unregistered and reported individually, located at the registry header: structural exemptions carry weight, an empty or missing list cannot pass (TF-0638 reconciliation 1).",
   "mutations": [
     {
       "file": "scripts/check-semantic-authority-adjudication.json",

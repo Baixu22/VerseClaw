@@ -2,6 +2,13 @@ import type { AgentMessage } from "../../agents/runtime/index.js";
 import type { ContextInjector } from "./retrieval-engine.js";
 import type { TrajectoryCapture } from "./trajectory-capture.js";
 import type { RuntimeLineage } from "../../runtime-core/lineage.js";
+import { Type } from "typebox";
+import type { ToolDefinition } from "../../agents/sessions/extensions/types.js";
+import type { KnowledgeStore } from "./knowledge-store.js";
+import {
+  getPrincipleVersion, SEKB_ATTRIBUTION_SCHEMA,
+  type Principle, type SekbAdoptionEvidence, type SekbRunIdentity,
+} from "./types.js";
 
 export type SekbTaskClassification = {
   task_intent: string;
@@ -18,12 +25,15 @@ export type SekbTaskClassifier = (event: {
 export type SekbHarnessHookTarget = {
   on(type: string, handler: (event: unknown, context?: unknown) => unknown): () => void;
   subscribe?: (listener: (event: unknown) => unknown) => () => void;
+  registerTool?: (definition: ToolDefinition) => void;
 };
 
 export type InstallSekbHarnessHooksOptions = {
   enabled: boolean;
   capture: TrajectoryCapture;
   injector: ContextInjector;
+  store?: KnowledgeStore;
+  identity?: SekbRunIdentity | (() => SekbRunIdentity);
   classifyTask?: SekbTaskClassifier;
   lineage?: RuntimeLineage | (() => RuntimeLineage | undefined);
   onError?: (error: unknown) => void;
@@ -33,6 +43,9 @@ type ActiveSekbRun = {
   trajectoryId: string;
   tags: string[];
   rawError: string | null;
+  identity: SekbRunIdentity;
+  exposed: Map<string, { principleId: string; version: string }>;
+  operations: Map<string, NonNullable<SekbAdoptionEvidence["operation"]>>;
 };
 
 type TextBlock = { type: "text"; text: string };
@@ -65,6 +78,16 @@ type AgentEndPayload = {
 };
 
 const DEFAULT_RUN_KEY = "__sekb_default_run__";
+const ADOPTION_TOOL_NAME = "record_sekb_adoption";
+const EMPTY_IDENTITY: SekbRunIdentity = {
+  taskId: null, runId: null, sessionId: null, sessionKey: null, experimentId: null, arm: null, repeat: null,
+};
+const adoptionParameters = Type.Object({
+  principleId: Type.String({ minLength: 1, maxLength: 256 }),
+  principleVersion: Type.String({ pattern: "^[a-f0-9]{64}$" }),
+  trigger: Type.String({ enum: ["cited", "adopted"] }),
+  operationToolCallId: Type.Optional(Type.String({ minLength: 1, maxLength: 256 })),
+}, { additionalProperties: false });
 
 export function installSekbHarnessHooks(
   target: SekbHarnessHookTarget,
@@ -75,9 +98,42 @@ export function installSekbHarnessHooks(
   }
 
   const activeRuns = new Map<string, ActiveSekbRun>();
-  const toolCallRunKeys = new Map<string, string>();
+  const toolCallRunKeys = new Map<string, { runKey: string; toolName: string }>();
   let lastActiveRunKey: string | null = null;
   const classify = options.classifyTask ?? defaultSekbTaskClassifier;
+  if (options.store && target.registerTool) {
+    const definition: ToolDefinition<typeof adoptionParameters> = {
+      name: ADOPTION_TOOL_NAME, label: "Record SEKB attribution",
+      description: "Cite an exposed principle, or attribute an observed successful tool operation to its exact id and content version. This records agent attribution, not causal benefit or task success.",
+      promptSnippet: "Record explicit use of a recalled SEKB principle with its id and version.",
+      parameters: adoptionParameters,
+      risk: "readonly", writeRiskProfile: { kind: "durable_state", ownerStore: "sekb_attribution_events", requiresApproval: false },
+      async execute(_toolCallId, params, signal) {
+        signal?.throwIfAborted();
+        if (!isRecord(params) || Object.keys(params).some((key) => !["principleId", "principleVersion", "trigger", "operationToolCallId"].includes(key)) ||
+          !readStringField(params, "principleId") || !/^[a-f0-9]{64}$/u.test(params.principleVersion) ||
+          (params.trigger !== "cited" && params.trigger !== "adopted") ||
+          (params.operationToolCallId !== undefined && !readStringField(params, "operationToolCallId"))) {
+          throw new Error("Invalid record_sekb_adoption arguments");
+        }
+        // The closure owns run identity. Model arguments cannot select another task or experiment arm.
+        const configured = resolveRunIdentity(options.identity);
+        const active = configured.runId ? activeRuns.get(configured.runId) : activeRuns.size === 1 ? [...activeRuns.values()][0] : undefined;
+        const operation = params.trigger === "adopted" && params.operationToolCallId
+          ? active?.operations.get(params.operationToolCallId) ?? { toolCallId: params.operationToolCallId, toolName: null, observed: false, succeeded: null }
+          : null;
+        const result = options.store!.record_adoption(params.principleId, {
+          ...attributionEvidence(active, params.principleVersion), trigger: params.trigger, source: "agent", operation,
+        });
+        const details = result.disposition === "conflict"
+          ? { status: "rejected", reason: "conflicting-replay", disposition: result.disposition,
+              eventId: result.eventId, conflictCount: result.conflictCount }
+          : result;
+        return { content: [{ type: "text", text: JSON.stringify(details) }], details };
+      },
+    };
+    target.registerTool(definition);
+  }
   const unsubs = [
     target.on("before_agent_start", (event, context) =>
       safe(options, () => {
@@ -86,10 +142,19 @@ export function installSekbHarnessHooks(
           return undefined;
         }
         const classification = classify(payload);
-        const runKey = readRunKey(event, context) ?? DEFAULT_RUN_KEY;
+        const configured = resolveRunIdentity(options.identity);
+        const eventRunId = readRunKey(event, context);
+        if (configured.runId && eventRunId && configured.runId !== eventRunId) throw new Error("SEKB run identity mismatch");
+        const identity = {
+          ...configured, runId: configured.runId ?? eventRunId,
+          sessionId: configured.sessionId ?? readStringField(context, "sessionId"),
+          sessionKey: configured.sessionKey ?? readStringField(context, "sessionKey"),
+        };
+        const runKey = identity.runId ?? DEFAULT_RUN_KEY;
         const lineage = resolveConfiguredLineage(options.lineage);
         const metadata = {
           sekbCaptureOrigin: "agent_end" as const,
+          ...(identity.sessionId ? { sessionId: identity.sessionId } : {}),
           ...(lineage ? { runtimeLineage: lineage } : {}),
         };
         activeRuns.set(runKey, {
@@ -101,8 +166,10 @@ export function installSekbHarnessHooks(
           ),
           tags: classification.context_tags,
           rawError: null,
+          identity, exposed: new Map(), operations: new Map(),
         });
         lastActiveRunKey = runKey;
+        const onRetrieved = (principles: readonly Principle[]) => recordExposure(options, activeRuns.get(runKey)!, principles);
         if (payload.hasSystemPrompt) {
           return {
             systemPrompt: options.injector.for_task(
@@ -110,6 +177,7 @@ export function installSekbHarnessHooks(
               classification.task_intent,
               classification.task_type,
               classification.context_tags,
+              onRetrieved,
             ),
           };
         }
@@ -119,6 +187,7 @@ export function installSekbHarnessHooks(
             classification.task_intent,
             classification.task_type,
             classification.context_tags,
+            onRetrieved,
           )
           .trim();
         return appendContext ? { appendContext } : undefined;
@@ -166,7 +235,7 @@ export function installSekbHarnessHooks(
           return undefined;
         }
         finishActiveRun(
-          options.capture,
+          options,
           active,
           readAgentEndEvent(event),
           resolveConfiguredLineage(options.lineage),
@@ -192,7 +261,7 @@ export function installSekbHarnessHooks(
           }
           if (type === "agent_end") {
             finishActiveRun(
-              options.capture,
+              options,
               active,
               readAgentEndEvent(event),
               resolveConfiguredLineage(options.lineage),
@@ -205,7 +274,7 @@ export function installSekbHarnessHooks(
           }
           if (type === "abort") {
             finishActiveRun(
-              options.capture,
+              options,
               active,
               { success: false, error: null },
               resolveConfiguredLineage(options.lineage),
@@ -235,7 +304,7 @@ function handleToolCallEvent(
   context: unknown,
   options: InstallSekbHarnessHooksOptions,
   activeRuns: Map<string, ActiveSekbRun>,
-  toolCallRunKeys: Map<string, string>,
+  toolCallRunKeys: Map<string, { runKey: string; toolName: string }>,
   lastActiveRunKey: string | null,
 ): undefined {
   const payload = readToolCallEvent(event, context);
@@ -244,7 +313,7 @@ function handleToolCallEvent(
   if (!active || !payload) {
     return undefined;
   }
-  toolCallRunKeys.set(payload.toolCallId, runKey);
+  toolCallRunKeys.set(payload.toolCallId, { runKey, toolName: payload.toolName });
   options.capture.log_step(active.trajectoryId, "tool.call", payload.input, {
     toolName: payload.toolName,
     toolCallId: payload.toolCallId,
@@ -257,12 +326,12 @@ function handleToolResultEvent(
   context: unknown,
   options: InstallSekbHarnessHooksOptions,
   activeRuns: Map<string, ActiveSekbRun>,
-  toolCallRunKeys: Map<string, string>,
+  toolCallRunKeys: Map<string, { runKey: string; toolName: string }>,
   lastActiveRunKey: string | null,
 ): { content?: ContentBlock[]; message?: ToolResultMessage } | undefined {
   const payload = readToolResultEvent(event, context);
   const runKey =
-    (payload?.toolCallId ? toolCallRunKeys.get(payload.toolCallId) : undefined) ??
+    (payload?.toolCallId ? toolCallRunKeys.get(payload.toolCallId)?.runKey : undefined) ??
     readRunKey(event, context) ??
     lastActiveRunKey ??
     DEFAULT_RUN_KEY;
@@ -277,12 +346,27 @@ function handleToolResultEvent(
     content: payload.content,
     details: payload.details,
   });
+  // An attribution tool cannot endorse its own bookkeeping call as an adopted operation.
+  if (payload.toolName !== ADOPTION_TOOL_NAME) {
+    const call = toolCallRunKeys.get(payload.toolCallId);
+    const explicitRunId = readRunKey(event, context);
+    const observed = call?.toolName === payload.toolName && (!explicitRunId || explicitRunId === call.runKey);
+    const errorObserved = isRecord(event) && typeof event.isError === "boolean" ? event.isError :
+      payload.message && typeof payload.message.isError === "boolean" ? payload.message.isError : null;
+    const operation = { toolCallId: payload.toolCallId, toolName: payload.toolName,
+      observed, succeeded: observed && errorObserved !== null ? !errorObserved : null };
+    active.operations.set(payload.toolCallId, operation);
+    for (const exposed of active.exposed.values()) safe(options, () => options.store?.record_adoption(exposed.principleId, {
+      ...attributionEvidence(active, exposed.version), trigger: "operation", operation,
+      observationId: readEventType(event) ?? "tool_result",
+    }));
+  }
   if (!payload.isError) {
     return undefined;
   }
   active.rawError = textFromContent(payload.content) || `${payload.toolName} failed`;
   const signature = options.capture.extract_error_signature(active.rawError);
-  const advice = options.injector.for_error(signature, active.tags);
+  const advice = options.injector.for_error(signature, active.tags, (principles) => recordExposure(options, active, principles));
   if (!advice) {
     return undefined;
   }
@@ -292,12 +376,13 @@ function handleToolResultEvent(
 }
 
 function finishActiveRun(
-  capture: TrajectoryCapture,
+  options: InstallSekbHarnessHooksOptions,
   active: ActiveSekbRun,
   payload: AgentEndPayload | null,
   lineage?: RuntimeLineage,
   forcedOutcome?: "partial",
 ): void {
+  const capture = options.capture;
   if (lineage && typeof capture.update_active_metadata === "function") {
     capture.update_active_metadata(active.trajectoryId, { runtimeLineage: lineage });
   }
@@ -310,8 +395,32 @@ function finishActiveRun(
         ? "failure"
         : payload?.success === false
           ? "partial"
-          : "success");
+          : "partial");
   capture.finish_trajectory(active.trajectoryId, outcome, rawError);
+  const operationalOutcome = forcedOutcome ? "unknown" : payload?.success === true ? "success" :
+    payload?.success === false || payload?.error ? "failure" : "unknown";
+  for (const exposed of active.exposed.values()) safe(options, () => options.store?.record_adoption(exposed.principleId, {
+    ...attributionEvidence(active, exposed.version), trigger: "outcome", outcomeKind: "operational",
+    outcome: operationalOutcome, observationId: `agent_end:${active.trajectoryId}`,
+  }));
+}
+
+function resolveRunIdentity(identity: InstallSekbHarnessHooksOptions["identity"]): SekbRunIdentity {
+  return identity ? typeof identity === "function" ? identity() : identity : EMPTY_IDENTITY;
+}
+
+function attributionEvidence(active: ActiveSekbRun | undefined, version: string): SekbAdoptionEvidence {
+  return { ...(active?.identity ?? EMPTY_IDENTITY), schemaVersion: SEKB_ATTRIBUTION_SCHEMA,
+    principleVersion: version, trajectoryId: active?.trajectoryId ?? null, trigger: "retrieved", source: "runtime",
+    outcome: "unknown", outcomeKind: null, observationId: null, operation: null, actor: "embedded-agent", driven_by: "agent" };
+}
+
+function recordExposure(options: InstallSekbHarnessHooksOptions, active: ActiveSekbRun, principles: readonly Principle[]): void {
+  for (const principle of principles) {
+    const version = getPrincipleVersion(principle);
+    active.exposed.set(`${principle.principle_id}@${version}`, { principleId: principle.principle_id, version });
+    safe(options, () => options.store?.record_adoption(principle.principle_id, attributionEvidence(active, version)));
+  }
 }
 
 function resolveConfiguredLineage(
@@ -320,9 +429,9 @@ function resolveConfiguredLineage(
   return typeof lineage === "function" ? lineage() : lineage;
 }
 
-function clearToolCallsForRun(toolCallRunKeys: Map<string, string>, runKey: string): void {
+function clearToolCallsForRun(toolCallRunKeys: Map<string, { runKey: string; toolName: string }>, runKey: string): void {
   for (const [toolCallId, mappedRunKey] of toolCallRunKeys) {
-    if (mappedRunKey === runKey) {
+    if (mappedRunKey.runKey === runKey) {
       toolCallRunKeys.delete(toolCallId);
     }
   }

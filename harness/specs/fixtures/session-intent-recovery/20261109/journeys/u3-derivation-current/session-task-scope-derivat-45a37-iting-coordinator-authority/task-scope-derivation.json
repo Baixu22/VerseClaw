@@ -1,0 +1,298 @@
+{
+  "schema": "clawx.session-task-scope-derivation-e2e/v1",
+  "driven_by": "agent",
+  "actor": "codex-session-task-scope-derivation-e2e",
+  "candidate": {
+    "commit": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+    "tree": "263afc104f5fae2c73c7676c5aa0e20e7a554441",
+    "dirty": false
+  },
+  "startedAt": "2026-11-09T06:26:17.860Z",
+  "status": "passed",
+  "source": {
+    "workspaceId": "default",
+    "sessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+    "generation": "da84003c-5af3-47f3-ab02-25b4447fcb5f",
+    "task": {
+      "id": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+      "title": "Preserve this explicit task",
+      "kind": "task",
+      "parentId": null,
+      "status": "done",
+      "owner": "user",
+      "priority": "normal",
+      "tags": [],
+      "createdAt": "2026-11-09T06:26:53.246Z",
+      "updatedAt": "2026-11-09T06:26:53.246Z",
+      "completedAt": "2026-11-09T06:26:53.246Z"
+    },
+    "binding": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "default",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "sessionGeneration": "da84003c-5af3-47f3-ab02-25b4447fcb5f",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-7oWx9a\\verse-claw-e2e-home-BAorCZ\\.openclaw\\workspace",
+          "backend": "git",
+          "branch": "codex/session-intent-recovery-20261109",
+          "detachedHead": false,
+          "setupProfile": "default"
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 1,
+        "invalidationReason": null,
+        "createdAt": "2026-11-09T06:26:55.420Z",
+        "updatedAt": "2026-11-09T06:26:55.420Z"
+      },
+      "recovery": {
+        "state": "ready",
+        "reason": null,
+        "bindingRevision": 1
+      }
+    }
+  },
+  "fork": {
+    "result": {
+      "success": true,
+      "sourceSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+      "sessionKey": "agent:main:dashboard:52cc3a53-d93c-4d8f-a260-083437981822",
+      "agentId": "main",
+      "workspaceId": "default",
+      "forkedFromParent": true,
+      "warnings": []
+    },
+    "generation": "b581e544-60d1-407b-8eeb-ec1ba9bb71ce",
+    "links": [
+      {
+        "id": "308f4549-abaa-4be1-ba8d-6a37883ee5cd",
+        "sessionKey": "agent:main:dashboard:52cc3a53-d93c-4d8f-a260-083437981822",
+        "agentId": "main",
+        "relation": "forked_from",
+        "sourceSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "sessionGeneration": "b581e544-60d1-407b-8eeb-ec1ba9bb71ce",
+        "createdAt": "2026-11-09T06:26:55.713Z"
+      },
+      {
+        "id": "308f4549-abaa-4be1-ba8d-6a37883ee5cd:task:51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+        "sessionKey": "agent:main:dashboard:52cc3a53-d93c-4d8f-a260-083437981822",
+        "agentId": "main",
+        "relation": "forked_from",
+        "sourceSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "sessionGeneration": "b581e544-60d1-407b-8eeb-ec1ba9bb71ce",
+        "createdAt": "2026-11-09T06:26:55.713Z",
+        "nodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011"
+      }
+    ],
+    "binding": {
+      "success": true,
+      "binding": null,
+      "recovery": {
+        "state": "missing",
+        "reason": "coordinator-binding-missing",
+        "bindingRevision": null
+      }
+    },
+    "admission": {
+      "success": false,
+      "status": "rejected",
+      "error": "Coordinator binding is missing: coordinator-binding-missing"
+    }
+  },
+  "handoff": {
+    "result": {
+      "success": true,
+      "sessionKey": "agent:main:session-1794205616112-4022437f-60a",
+      "operation": {
+        "id": "4022437f-60a9-4c49-8e51-f831d54e182a",
+        "workspaceId": "default",
+        "agentId": "main",
+        "sourceSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "sourceGeneration": "da84003c-5af3-47f3-ab02-25b4447fcb5f",
+        "sessionKey": "agent:main:session-1794205616112-4022437f-60a",
+        "sessionGeneration": "036a5fce-afbd-467b-b334-03444ad646fa",
+        "draftInput": "Continue the explicitly linked task.",
+        "draftDigest": "632b8547c137a1528e278c8c3b3973387507d7f1377ca0da0dfd91032c67e684",
+        "firstSendIdempotencyKey": "handoff-first:4022437f-60a9-4c49-8e51-f831d54e182a",
+        "phase": "ready",
+        "handoffDepth": 1,
+        "handoffRootSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "rootHandoffId": "4022437f-60a9-4c49-8e51-f831d54e182a",
+        "createdAt": "2026-11-09T06:26:56.112Z",
+        "updatedAt": "2026-11-09T06:26:56.506Z"
+      },
+      "handoffDepth": 1,
+      "handoffParentSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+      "handoffRootSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+      "rootHandoffId": "4022437f-60a9-4c49-8e51-f831d54e182a"
+    },
+    "links": [
+      {
+        "id": "4022437f-60a9-4c49-8e51-f831d54e182a",
+        "sessionKey": "agent:main:session-1794205616112-4022437f-60a",
+        "agentId": "main",
+        "relation": "handoff_from",
+        "sourceSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "sessionGeneration": "036a5fce-afbd-467b-b334-03444ad646fa",
+        "handoffDepth": 1,
+        "handoffParentSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "handoffRootSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "rootHandoffId": "4022437f-60a9-4c49-8e51-f831d54e182a",
+        "createdAt": "2026-11-09T06:26:56.219Z"
+      },
+      {
+        "id": "4022437f-60a9-4c49-8e51-f831d54e182a:task:51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+        "sessionKey": "agent:main:session-1794205616112-4022437f-60a",
+        "agentId": "main",
+        "relation": "handoff_from",
+        "sourceSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "sessionGeneration": "036a5fce-afbd-467b-b334-03444ad646fa",
+        "handoffDepth": 1,
+        "handoffParentSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "handoffRootSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "rootHandoffId": "4022437f-60a9-4c49-8e51-f831d54e182a",
+        "createdAt": "2026-11-09T06:26:56.219Z",
+        "nodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011"
+      }
+    ],
+    "sourceBinding": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "default",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "sessionGeneration": "da84003c-5af3-47f3-ab02-25b4447fcb5f",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-7oWx9a\\verse-claw-e2e-home-BAorCZ\\.openclaw\\workspace",
+          "backend": "git",
+          "branch": "codex/session-intent-recovery-20261109",
+          "detachedHead": false,
+          "setupProfile": "default"
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "paused",
+        "bindingRevision": 2,
+        "invalidationReason": "handoff-to-new-session",
+        "createdAt": "2026-11-09T06:26:55.420Z",
+        "updatedAt": "2026-11-09T06:26:56.479Z"
+      },
+      "recovery": {
+        "state": "paused",
+        "reason": "handoff-to-new-session",
+        "bindingRevision": 2
+      }
+    },
+    "owner": {
+      "session": {
+        "key": "agent:main:session-1794205616112-4022437f-60a",
+        "kind": "direct",
+        "updatedAt": 1794205616132,
+        "sessionId": "036a5fce-afbd-467b-b334-03444ad646fa",
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          },
+          {
+            "id": "xhigh",
+            "label": "xhigh"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high",
+          "xhigh"
+        ],
+        "thinkingDefault": "off",
+        "totalTokensFresh": false,
+        "parentSessionKey": "agent:main:dashboard:fa06225f-1f8b-4411-a7cc-920d7e6c9045",
+        "modelProvider": "openai",
+        "model": "gpt-5.5",
+        "agentRuntime": {
+          "id": "codex",
+          "source": "implicit"
+        },
+        "hasActiveRun": false
+      }
+    },
+    "active": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "default",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794205616112-4022437f-60a",
+        "sessionGeneration": "036a5fce-afbd-467b-b334-03444ad646fa",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-7oWx9a\\verse-claw-e2e-home-BAorCZ\\.openclaw\\workspace",
+          "backend": "git",
+          "branch": "codex/session-intent-recovery-20261109",
+          "detachedHead": false,
+          "setupProfile": "default"
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 3,
+        "invalidationReason": null,
+        "createdAt": "2026-11-09T06:26:56.479Z",
+        "updatedAt": "2026-11-09T06:26:56.493Z"
+      },
+      "recovery": {
+        "state": "ready",
+        "reason": null,
+        "bindingRevision": 3
+      }
+    }
+  },
+  "finishedAt": "2026-11-09T06:26:57.064Z"
+}

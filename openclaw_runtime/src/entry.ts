@@ -24,7 +24,7 @@ if (args.length === 1 && ["--version", "-V"].includes(args[0])) {
   console.log(help);
 } else if (args[0] === "doctor") {
   const { runSourceDoctor } = await import("./infra/source-doctor.js");
-  process.exitCode = await runSourceDoctor(args.slice(1));
+  process.exit(await runSourceDoctor(args.slice(1)));
 } else if (args[0] === "goal-wake-helper-run") {
   // Internal Phase 4 detached helper entry. The payload (raw argv/env/cwd) is
   // read from stdin and never persisted in the runDir file protocol.

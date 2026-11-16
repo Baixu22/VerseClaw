@@ -154,6 +154,8 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
             latestCheckpoint: {
               id: 'ltcp-e2e',
               sessionKey: MAIN_SESSION_KEY,
+              // A /loop root: chat.send only accepts explicit input modes with one.
+              taskLedgerRootId: 'ledger-root-e2e',
               trigger: 'queue_drain',
               status: 'active',
               checkpoint: {
@@ -344,18 +346,24 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
        */
       await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running');
       /*
-       * The intervention strip is the composer's "a run is in flight AND there
-       * is a draft to intervene WITH" surface — every button in it (steer,
-       * queue, interrupt-and-replace) consumes the draft, which is why it is
-       * gated on `hasComposerDraft`. Sending clears the composer, so the strip
-       * appears with the NEXT draft rather than on send.
+       * A draft typed during a run swaps the lone Stop for a quiet Stop beside
+       * the Send/Queue pill. In a /loop session the pill carries a chevron that
+       * opens the explicit modes (queue, guide, interrupt, revise goal) as one
+       * labelled menu instead of a strip of icon buttons. Sending clears the
+       * composer, so these controls appear with the NEXT draft rather than on send.
        */
-      await expect(page.getByTestId('chat-intervention-controls')).toHaveCount(0);
+      await expect(page.getByTestId('chat-intervention-menu-trigger')).toHaveCount(0);
       await page.getByTestId('chat-composer-input').fill('queue this after the active validation run');
+      await expect(page.getByTestId('chat-composer-stop')).toBeVisible();
+      await expect(page.getByTestId('chat-intervention-controls')).toHaveCount(0);
+      await page.getByTestId('chat-intervention-menu-trigger').click();
       await expect(page.getByTestId('chat-intervention-controls')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-guide')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-interrupt')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-queue')).toBeVisible();
+      await expect(page.getByTestId('chat-intervention-revise-goal')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(page.getByTestId('chat-intervention-controls')).toHaveCount(0);
       /* The button's label lives on `aria-label` (the visible hint is a
          Tooltip, not a `title` attribute). */
       await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Queue');

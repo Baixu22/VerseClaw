@@ -102,6 +102,7 @@ const onRuntimeApprovalEvent = <E extends HostEventName<'runtimeApprovals'>>(
 ) => onIpc(HOST_EVENT_CHANNELS.runtimeApprovals[event], handler);
 
 export const hostEvents = {
+  onWorkspaceNavigationChanged: (handler: HostEventHandler<'chat','workspaceNavigationChanged'>) => onChatEvent('workspaceNavigationChanged',handler),
   onGatewayStatus: (handler: HostEventHandler<'gateway', 'statusChanged'>) => (
     onGatewayEvent('statusChanged', handler)
   ),
@@ -190,6 +191,7 @@ export const hostEvents = {
     onWebPreviewEvent('devServerOutput', handler)
   ),
   onNavigate: (handler: HostEventHandler<'app', 'navigate'>) => onAppEvent('navigate', handler),
+  onWindowVisibility: (handler: HostEventHandler<'app', 'windowVisibility'>) => onAppEvent('windowVisibility', handler),
   onNewChat: (handler: HostEventHandler<'app', 'newChat'>) => onAppEvent('newChat', handler),
   onOpenClawCliInstalled: (
     handler: HostEventHandler<'app', 'openClawCliInstalled'>,

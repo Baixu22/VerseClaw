@@ -1,0 +1,55 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "unit-r7-candidate-serial",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/context-inline-spill-benefit-strategy.test.ts",
+    "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts",
+    "tests/unit/context-inline-spill-benefit-input.test.ts",
+    "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+    "tests/unit/context-inline-spill-retention.test.ts",
+    "tests/unit/context-inline-spill-eval-provider.test.ts",
+    "tests/unit/harness-spec-lifecycle.test.ts",
+    "--maxWorkers=1"
+  ],
+  "startedAt": "2026-11-13T08:49:28.453Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "tree": "59dee145966a5c4c437a9a81c50a528a35a7d151",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T08:52:30.206Z",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "tree": "59dee145966a5c4c437a9a81c50a528a35a7d151",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\unit-r7-candidate-serial.stdout.txt",
+      "bytes": 443,
+      "sha256": "121eb905d94459e2a5db06030e84cf40d21ad374740c314c27cdd7a05398715c"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\unit-r7-candidate-serial.stderr.txt",
+      "bytes": 1873,
+      "sha256": "3b01897ed6df9aba14d6c3acfb3fbd45c996df313ade561c7ec3afad4c93482e"
+    }
+  }
+}

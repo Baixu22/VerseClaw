@@ -1,0 +1,69 @@
+[ext-bridge] No external extensions configured — empty stubs generated.
+electron/gateway/agent-browser-bridge.ts(11,42): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+electron/services/agent-browser-api.ts(32,8): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+electron/services/agent-browser-api.ts(361,28): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(367,22): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(372,28): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(446,24): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(453,22): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(453,45): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(458,42): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(459,61): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'object'.
+electron/services/agent-browser-api.ts(463,49): error TS2698: Spread types may only be created from object types.
+electron/services/agent-browser-api.ts(463,93): error TS7006: Parameter 'url' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(463,98): error TS7006: Parameter 'options' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(495,30): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(524,62): error TS2554: Expected 0 arguments, but got 1.
+electron/services/long-session-resource-reclamation.ts(49,34): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/long-session-resource-reclamation.ts(173,74): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/long-session-resource-reclamation.ts(233,40): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/resource-envelope.ts(56,23): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/session-storage-api.ts(78,41): error TS7006: Parameter 'row' implicitly has an 'any' type.
+[ELIFECYCLE] Command failed with exit code 2.
+{
+  "success": false,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 2,
+    "durationMs": 16749,
+    "observationMode": false,
+    "errorCount": 48,
+    "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\g7-inline-spill-integration-20261113\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": null,
+    "inputCount": 0,
+    "report": "C:\\Users\\27933\\.codex\\worktrees\\g7-inline-spill-integration-20261113\\ClawX\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 31987,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 103
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 2,
+      "durationMs": 15129
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 11588
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 2,
+      "durationMs": 16749,
+      "observationMode": false,
+      "errorCount": 48,
+      "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\g7-inline-spill-integration-20261113\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}
+[ELIFECYCLE] Command failed with exit code 1.

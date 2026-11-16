@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0275-e02-2-sekb-confirmed",
+    "caseId": "tf-0275-e02",
+    "repeat": 2,
+    "arm": "sekb-confirmed",
+    "caseDigest": "e16c3fd640bdc0a8cf76ac4327ea60634d6c8756a8821a07ebfc72b4a5125332",
+    "pairSeed": 5,
+    "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+    "position": 12
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.\n[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---",
+    "input": "{\n  \"prompt\": \"E02 用一个可逆、非安全的真实组件（Phase-4 type-aware eviction）在真实 RuntimeMemoryStore 上做 baseline vs leave-one-out 的配对消融，给出 pass^k、p50/p95、tokens 代理、误拦截、安全违规、效应量与 95% 区间；零/负效应如实记录，不伪造收益，不改产品默认/锁。\",\n  \"acceptanceCriteria\": [\n    \"选一个可逆、非安全、opt-in 的真实组件：Phase-4 type-aware eviction（treatment）对前 Phase-4 FIFO（baseline / leave-one-out），生产消费者为真实 RuntimeMemoryStore。\",\n    \"先验证组件生效 / 移除痕迹：baseline 与 treatment 的保留/淘汰集合至少在一处不同。\",\n    \"语料为确定性本地 fixture（无真实 provider）：>=20 case x 3 重复 x 2 条件，配对 seed，隔离 store，逐 case 固定插入顺序。\",\n    \"报告同时给出成功、pass^k（复用 E01 口径）、p50/p95 延迟、tokens 代理、误拦截、安全违规、效应量与 95% 区间；主指标与退化预算在 fixture 预登记。\",\n    \"零/负效应是有效结果，不得事后挑赢家；组件有益也仅用于内部报告，不改产品默认、产品锁或 approval。\",\n    \"干净候选定向单测与 runtime/core 类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读；已复核 README 四语：本包仅内部评测，无用户可见变化，故不改。\"\n  ],\n  \"targetScope\": [\n    \"scripts/lib/paired-ablation.mjs\",\n    \"scripts/lib/paired-ablation.d.mts\",\n    \"shared/agent-dev/paired-ablation-fixture.json\",\n    \"harness/specs/tasks/harness-gap-paired-ablation.md\",\n    \"harness/specs/rules/paired-ablation-boundary.md\",\n    \"docs/dev/harness-gap-closure/e02-paired-ablation.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/lib/paired-ablation.mjs\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"scripts/lib/paired-ablation.d.mts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"shared/agent-dev/paired-ablation-fixture.json\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-paired-ablation.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/rules/paired-ablation-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/e02-paired-ablation.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "852436cd3702df3af991cba2e17edc4cbbe866afb76630aeb50640c8489b57e9",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": true
+    },
+    "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d",
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0275-e02-2-sekb-confirmed",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "crash",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 38989,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 12,
+    "startedAt": "2026-11-06T12:07:35.074Z",
+    "endedAt": "2026-11-06T12:08:14.063Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses request failed with HTTP 502"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.\n[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---",
+        "input": "{\n  \"prompt\": \"E02 用一个可逆、非安全的真实组件（Phase-4 type-aware eviction）在真实 RuntimeMemoryStore 上做 baseline vs leave-one-out 的配对消融，给出 pass^k、p50/p95、tokens 代理、误拦截、安全违规、效应量与 95% 区间；零/负效应如实记录，不伪造收益，不改产品默认/锁。\",\n  \"acceptanceCriteria\": [\n    \"选一个可逆、非安全、opt-in 的真实组件：Phase-4 type-aware eviction（treatment）对前 Phase-4 FIFO（baseline / leave-one-out），生产消费者为真实 RuntimeMemoryStore。\",\n    \"先验证组件生效 / 移除痕迹：baseline 与 treatment 的保留/淘汰集合至少在一处不同。\",\n    \"语料为确定性本地 fixture（无真实 provider）：>=20 case x 3 重复 x 2 条件，配对 seed，隔离 store，逐 case 固定插入顺序。\",\n    \"报告同时给出成功、pass^k（复用 E01 口径）、p50/p95 延迟、tokens 代理、误拦截、安全违规、效应量与 95% 区间；主指标与退化预算在 fixture 预登记。\",\n    \"零/负效应是有效结果，不得事后挑赢家；组件有益也仅用于内部报告，不改产品默认、产品锁或 approval。\",\n    \"干净候选定向单测与 runtime/core 类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读；已复核 README 四语：本包仅内部评测，无用户可见变化，故不改。\"\n  ],\n  \"targetScope\": [\n    \"scripts/lib/paired-ablation.mjs\",\n    \"scripts/lib/paired-ablation.d.mts\",\n    \"shared/agent-dev/paired-ablation-fixture.json\",\n    \"harness/specs/tasks/harness-gap-paired-ablation.md\",\n    \"harness/specs/rules/paired-ablation-boundary.md\",\n    \"docs/dev/harness-gap-closure/e02-paired-ablation.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/lib/paired-ablation.mjs\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"scripts/lib/paired-ablation.d.mts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"shared/agent-dev/paired-ablation-fixture.json\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-paired-ablation.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/rules/paired-ablation-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/e02-paired-ablation.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

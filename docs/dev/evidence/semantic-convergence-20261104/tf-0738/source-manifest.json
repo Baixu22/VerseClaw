@@ -1,0 +1,48 @@
+{
+  "schema": "PromptAccountingSources/v1",
+  "candidate": {
+    "commit": "65b8be15bf37039d2a7c9089d81b86df45bc644b",
+    "tree": "28733902bd2dcce227c4116e88674928cfd2336b",
+    "dirty": false
+  },
+  "sourceHashes": {
+    "README.ja-JP.md": "57e57c5fb8393fdaeeec34db0678bf6b805b74eb7de7a9bf25a9adc6c068f748",
+    "README.md": "9a06645b747ac1236941d28f42a2f6f43ad93bf5c27f83f272556d3f05e2f035",
+    "README.zh-CN.md": "a866ec084358b38d58755a44c1b5247b0656b11926814a0dc332e929c47fc65e",
+    "docs/dev/context-orchestrator.md": "bcffd4c17a78bb82985e50f5d03e59ce03d71b20b598dd168d42940353d04355",
+    "harness/specs/rules/prompt-injection-accounting.md": "8c1a191ec6a681f33e1cc3743e0118f6f9b151fba06bcf1bb32f7900669d67c1",
+    "harness/specs/tasks/semantic-convergence-remediation.md": "c37c69e75eb96d6dcfbff533713f7d2d46d3cbb6732c859c22ae46cc5153caa7",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "f68d658a1221582707ea9ae920fe650c26286b29f7b92fa218fa65d5b83d8d47",
+    "openclaw_runtime/src/context-engine/context-final-snapshot.ts": "4413438bae87910f3d4ccbf97f55f6fe7db081da8825bd8bc7795ae209141277",
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts": "cf6b6e04eebd71e8ed77aea893274ea1e9bb93299653c06b0a6b1ffe07cabd4b",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.ts": "8f6aa04cd7c61d26c2d50a8fcf1a86c84bfa0da274e0b696721f73ef8ea595e7",
+    "scripts/semantic-convergence-baseline.mjs": "a91c47f24ca7df3249b1809a841feab8a3b66b4f06c08b3e84f1db5a828bb086",
+    "tests/unit/semantic-convergence-prompt-budget.test.ts": "0936e42d1e7b86189eabbaa9401c7ffd4604730d78a855ffb2fe2d77c6c47d2a"
+  },
+  "unchangedFailureSources": [
+    {
+      "path": "tests/unit/rsi-sekb-arms.test.ts",
+      "beforeBlob": "ffce1df01612e7b438a011e201c94abc75ee9d11",
+      "afterBlob": "ffce1df01612e7b438a011e201c94abc75ee9d11"
+    },
+    {
+      "path": "scripts/rsi-sekb-arms.mjs",
+      "beforeBlob": "d8858a66adfda5c460ff8fb90b40cabcf6f80aa6",
+      "afterBlob": "d8858a66adfda5c460ff8fb90b40cabcf6f80aa6"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts",
+      "beforeBlob": "0655596bacadd8c62cb282009ca43bab46c2ddde",
+      "afterBlob": "0655596bacadd8c62cb282009ca43bab46c2ddde"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "beforeBlob": "903e089e9c1f837e7355222614314d4e0fda5dd8",
+      "afterBlob": "903e089e9c1f837e7355222614314d4e0fda5dd8"
+    }
+  ],
+  "externalInputs": {
+    "scopeTypecheckSha256": "b1f0fcfb0b083c4575e03c4ab92acca4585c48ba4172d3b76641beb70df39175",
+    "baselineConfigSha256": "6ba100bea0e77dc282eda5a9217ca9d35cf9fe7400d8f99210ee9e4cdadbcce6"
+  }
+}

@@ -424,7 +424,7 @@ describe("undo of a previewed commit (AC-1)", () => {
     expect(result.journal?.undoable).toBe(true);
     expect(await readFile(join(dir, "f.txt"), "utf-8")).toBe("one\nTWO\nthree\n");
 
-    const undone = undoLastWrites({ workspaceRoot: dir, sessionId: "undo-sess" });
+    const undone = await undoLastWrites({ workspaceRoot: dir, sessionId: "undo-sess" });
     expect(undone.errors).toEqual([]);
     expect(undone.restored).toHaveLength(1);
     // Undo is the write journal's, not the preview's: the preview never had a

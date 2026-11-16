@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-packaged-flow",
+  "driven_by": "agent",
+  "actor": "codex",
+  "exe": "D:/ClawX/.ae/verse-tools-package-20261104/win-unpacked/Verse Claw.exe",
+  "build": {
+    "schemaVersion": 1,
+    "artifacts": [
+      {
+        "path": "Verse Claw.exe",
+        "bytes": 214315008,
+        "sha256": "977cdbe80e5a64cea1501d9d6cfd5ee3d72aff6da215c71291e12aee44ab7626"
+      },
+      {
+        "path": "resources/app.asar",
+        "bytes": 306472538,
+        "sha256": "157235d76b6deaf444b30530e09288938778d62eec297bf5684390b3797cf503"
+      },
+      {
+        "path": "resources/main-runtime.asar",
+        "bytes": 730562341,
+        "sha256": "b016c09f04041cbe7c893c4f7201e7c62d4752c289907b558afbd9f60146d37c"
+      }
+    ],
+    "digest": "fa9a367c3fa7ee7217bfbd5701a91e80ce4277650dd3b934ce3754794fb675a0"
+  },
+  "fixtureUrl": "http://127.0.0.1:55255/",
+  "runId": "m10-mw28vs3t",
+  "checks": {
+    "host_bridge_present": false,
+    "private_network_default_deny": false,
+    "real_session_opened": false,
+    "sandbox_fails_closed_without_upgrade": false,
+    "runtime_mode_upgrade_ok": false,
+    "snapshot_returns_fixture_content": false,
+    "session_owned_by_requested_key": false,
+    "session_closed": false
+  },
+  "status": "fail",
+  "issues": [
+    {
+      "kind": "packaged_flow_failed",
+      "message": "electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\ClawX\\.ae\\verse-tools-package-20261104\\win-unpacked\\Verse Claw.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--remote-debugging-port=9871\" \"--user-data-dir=D:\\ClawX-work\\verse-tools-boundaries-20261104\\.tmp\\m10-packaged-flow-fbwe2x\\ud\" \"--lang=en-US\" \"--disable-gpu\"\u001b[22m\n\u001b[2m  - <launched> pid=11504\u001b[22m\n\u001b[2m  - [pid=11504][out]\u001b[22m\n\u001b[2m  - [pid=11504][err] Debugger listening on ws://127.0.0.1:55257/5f4f9f2c-3953-445b-8241-c83d983020fa\u001b[22m\n\u001b[2m  - [pid=11504][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:55257/5f4f9f2c-3953-445b-8241-c83d983020fa\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:55257/5f4f9f2c-3953-445b-8241-c83d983020fa\u001b[22m\n\u001b[2m  - [pid=11504][err] Debugger attached.\u001b[22m\n"
+    }
+  ]
+}

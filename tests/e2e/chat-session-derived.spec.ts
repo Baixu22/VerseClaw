@@ -165,6 +165,11 @@ function derivedSessionMocks() {
         activeWorkspaceId: WORKSPACE_ID,
         activeWorkspace: parentWorkspace,
       },
+      [stableStringify(['workspaces', 'update', null])]: {
+        profiles: [parentWorkspace],
+        activeWorkspaceId: WORKSPACE_ID,
+        activeWorkspace: { ...parentWorkspace, activeSessionKey: CHILD_SESSION_KEY, sessionStates: { ...parentWorkspace.sessionStates, [CHILD_SESSION_KEY]: {} } },
+      },
       [stableStringify(['workspaces', 'saveState', { id: WORKSPACE_ID, sessionKey: PARENT_SESSION_KEY, state: {} }])]: {
         success: true,
       },
@@ -226,7 +231,7 @@ test.describe('Verse Claw derived-session listing', () => {
       const childRow = page.getByTestId(`chat-session-derived-${CHILD_SESSION_KEY}`);
       await expect(childRow).toBeVisible();
       await expect(childRow).toContainText('fork-1711111111111');
-      await expect(childRow).toContainText(CHILD_SESSION_KEY);
+      await expect(childRow).toContainText('From main');
 
       await childRow.click();
 

@@ -1,0 +1,110 @@
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/README.zh-CN.md
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/before-dark.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/dark.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/draft-navigation.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/final-render.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/graphite-surfaces.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/layout-matrix.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/light.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/long-title-720.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/migration-checks.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/migration-recovery.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/more.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/navigation.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/report.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/sidebar-checks.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/README.zh-CN.md
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/before-dark.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/dark.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/draft-navigation.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/final-render.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/graphite-surfaces.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/layout-matrix.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/light.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/long-title-720.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/migration-checks.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/migration-recovery.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/more.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/navigation.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/report.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/sidebar-checks.json
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-agent-dev-quality.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-claude-ui.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-environment.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-output.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-popovers.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-startup.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-ui-material-rules.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-welcome.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-workspace.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/electron-final-yield.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-build-runtime.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-build-vite.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-comms-compare.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-comms-replay.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-harness-flow.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-harness-validate.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-i18n.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-lint.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-maintenance-units.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-repository-ci.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/final-typecheck.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-artifact-panel-store-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-artifact-panel-subject-tabs-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-artifact-panel-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-agent-effort-popover-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-artifact-panel-layout-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-input-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-load-sessions-startup-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-message-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-model-selection-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-page-execution-graph-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-render-reachability-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-session-status-rail-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-startup-hydration-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-target-routing-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-tool-card-suppression-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-chat-toolbar-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-composer-git-strip-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-execution-graph-card-badge-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-fakecoding-design-system-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-git-ui-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-history-startup-retry-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-long-session-delegation-admission-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-main-layout-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-memory-injection-panel-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-model-brand-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-rareui-interactions-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-runtime-approval-prompt-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-session-activity-panel-sections-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-session-activity-panel-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-session-environment-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-session-folder-tree-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-session-task-scope-ts.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-sidebar-render-containment-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-sidebar-session-context-menu-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-startup-loading-experience-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-tool-ui-execution-surfaces-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-welcome-branch-picker-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/unit-final-welcome-project-picker-tsx.log
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/036-6bbd18d56c1e.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/037-693448896cb9.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/038-0ff5c3ffca39.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/039-c9ef596be23b.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/040-a3e62c3b0726.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/041-77ca3296edd8.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/042-fd7ef88e8fb4.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/043-0b229b2a9269.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/044-3f5cb21d3626.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/045-6a9048adb0a3.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/046-c0622f7d5d56.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/047-13f5836e51c6.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/048-1c0d013ac40d.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/049-4c028e52a599.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/050-066604766448.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/051-4129bc7edb9b.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/052-d755b5e9bcb7.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/053-272d4a75ecdb.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/054-39a3d18f2dc4.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/055-5a36ee89b529.png
+Tracked path is ignored: harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/056-9e986f01d275.png

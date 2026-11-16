@@ -47,7 +47,7 @@ type SavedEffort = AgentReasoningEffort;
 const MAX_SLIDER_VALUE = EFFORT_OPTIONS.length - 1;
 const HIGH_INDEX = EFFORT_OPTIONS.indexOf('high');
 // Thumb geometry — must match the CSS below so dots/flame stay aligned to stops.
-const THUMB_W = 18;
+const THUMB_W = 24;
 
 function toSliderIndex(effort: SavedEffort | undefined | null): number {
   if (!effort) return 0;
@@ -337,7 +337,7 @@ function ChatAgentEffortPopoverBody({
 
           <div
             className={cn(
-              'effort-track relative h-[22px] overflow-hidden rounded-full',
+              'effort-track relative h-[28px] overflow-hidden rounded-full',
               fireActive && 'effort-track-active',
               fireActive && 'effort-track-full',
             )}
@@ -413,14 +413,14 @@ function ChatAgentEffortPopoverBody({
           </div>
 
           <div
-            className="mt-2 grid grid-cols-7 gap-1 text-center text-[10px] leading-3 opacity-40"
+            className="effort-ticks mt-2 grid grid-cols-7 gap-1 text-center text-[10px] leading-4 text-muted-foreground"
             data-testid="chat-agent-effort-ticks"
           >
             {EFFORT_OPTIONS.map((opt, i) => (
               <span
                 key={opt}
                 className={cn(
-                  'truncate transition-colors duration-200',
+                  'break-words transition-colors duration-200',
                   draftIndex === i
                     && (i >= MAX_SLIDER_VALUE
                       ? 'effort-tick-active font-semibold text-orange-600 opacity-100 dark:text-orange-300'
@@ -446,7 +446,7 @@ const EFFORT_CSS = `
       var(--color-text-foreground) 6%,
       var(--color-background-elevated-secondary-opaque)
     );
-    --effort-track-progress: color-mix(in oklab, var(--color-text-foreground) 12%, transparent);
+    --effort-track-progress: var(--color-background-effort-progress);
     --effort-track-dot: color-mix(in oklab, var(--color-text-foreground) 38%, transparent);
     --effort-thumb-background: var(--gray-0);
     --effort-thumb-border: color-mix(in oklab, var(--codex-ink) 12%, transparent);
@@ -458,20 +458,17 @@ const EFFORT_CSS = `
     --effort-thumb-border: color-mix(in oklab, var(--gray-1000) 38%, transparent);
     border-color: rgba(255, 255, 255, 0.12);
   }
-  /* Dropdown-transparent variant — matches codex-composer-menu surface
-     (CDP: bg-token-dropdown-background/90 + backdrop-blur-sm + rounded-xl 15px).
-     Uses the same --ccm-surface token so it stays in sync with the permission
-     and knowledge-scope menus. Text color follows the dropdown ink. */
+  /* Share the opaque neutral material with the adjacent composer menus. */
   .effort-card--dropdown {
-    --ccm-surface: var(--color-background-elevated-primary);
+    --ccm-surface: var(--color-background-control-panel);
     --ccm-ring: var(--color-border);
     --ccm-shadow: var(--shadow-xl-spread);
     background: var(--ccm-surface);
     color: var(--color-text-foreground);
     border: none;
     border-radius: 15px;
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     box-shadow: var(--ccm-shadow);
   }
   .effort-card--inline {
@@ -481,6 +478,8 @@ const EFFORT_CSS = `
     border-radius: 0;
     box-shadow: none;
   }
+  /* The combined menu already names the selected level above the slider. */
+  .effort-card--inline .effort-ticks { display: none; }
   .effort-header-left {
     perspective: 280px;
     perspective-origin: center 120%;
@@ -507,7 +506,7 @@ const EFFORT_CSS = `
     animation: effortFlipUp 0.42s cubic-bezier(0.33, 1, 0.68, 1) forwards;
   }
   .effort-track {
-    --effort-thumb-size: 18px;
+    --effort-thumb-size: 24px;
     border: 1px solid var(--color-border-heavy);
     border-radius: 9999px;
     box-shadow: inset 0 0 0 0.5px var(--color-border-light);

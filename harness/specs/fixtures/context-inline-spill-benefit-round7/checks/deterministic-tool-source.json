@@ -1,0 +1,62 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "deterministic-tool-source",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "deterministic",
+    "--out",
+    "D:/tmp/g7-closeout-pass-r7-01a1d34c/mechanism-tool",
+    "--repeats",
+    "1",
+    "--max-turns",
+    "8",
+    "--max-output-tokens",
+    "900",
+    "--strategy",
+    "anchored",
+    "--pressure-source",
+    "tool",
+    "--provider-timeout-ms",
+    "240000",
+    "--actor",
+    "codex-g7-inline-spill-tf0749-01a1d34c"
+  ],
+  "startedAt": "2026-11-13T08:06:53.757Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "1a16bc17a6545bc5fd9a29dd7d314964d97493f3",
+    "tree": "2fb1175859d12a3dc078bfc01c2f4d5748fd0742",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T08:07:17.412Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "1a16bc17a6545bc5fd9a29dd7d314964d97493f3",
+    "tree": "2fb1175859d12a3dc078bfc01c2f4d5748fd0742",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\deterministic-tool-source.stdout.txt",
+      "bytes": 1462,
+      "sha256": "2f297b0d15acf058ea25e7987ae7bb6f5af5cb487cdc7a06456a0b5010f75209"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\deterministic-tool-source.stderr.txt",
+      "bytes": 7008,
+      "sha256": "f3fba2dde9019b0d451f41650ec4070255e59408505ffeeb762d297ba6581fd7"
+    }
+  }
+}

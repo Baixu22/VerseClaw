@@ -195,8 +195,8 @@ export function createAgentBrowserApi(
       await getVault().delete(payload.credentialId);
       return { success: true };
     },
-    close: (payload) => {
-      service.close(payload.sessionId);
+    close: async (payload) => {
+      await service.close(payload.sessionId);
       return { success: true };
     },
     takeSnapshot: async (payload) => ({

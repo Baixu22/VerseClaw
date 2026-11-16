@@ -1,13 +1,12 @@
 import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
-import { randomUUID } from 'node:crypto';
-import { HOST_ACTION_LONG_TIMEOUT_MS } from '../../shared/host-api/host-action-timeouts';
+import { createHash, randomUUID } from 'node:crypto';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
 import type { GitRepositoryStatus } from '@shared/types/git';
 import type { ObservabilityTrace } from '@shared/types/observability';
-import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
+import type { TaskLedgerEventInput, TaskLedgerNode, TaskLedgerSessionLink, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
 import { logger } from '../utils/logger';
 import { resolveHostOpenClawStateDir } from './knowledge-api';
@@ -18,10 +17,12 @@ import {
   buildSessionMutationRequestDigest,
   clearSessionDeleteGate,
   findSessionDeleteGateBySession,
+  listSessionMutationGates,
   persistSessionDeleteGate,
   persistSessionMutationGate,
   updateSessionDeleteGate,
   withSessionDeleteGateLock,
+  type SessionDeleteGateRecord,
 } from './session-delete-gate';
 import { buildResumeCheckpoint, renderResumeCheckpointSummary } from '../../shared/types/long-task-control';
 import type {
@@ -47,10 +48,16 @@ import type {
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
-import { createWorkspacesApi, getActiveWorkspaceProfile, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
+import { assertManagedTaskAdmission, persistentTaskChatContext } from './task-system-service';
+import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
+  getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
+import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
+import { normalizeRunScope } from '@shared/types/identity-scope';
+import { classifyDerivation } from '@shared/types/session-derivation';
 import {
   executeSessionDelegation,
   hashDelegationRequest,
+  type SessionDelegationDependencies,
   validateSessionDelegationPayload,
 } from './session-delegation-admission';
 import {
@@ -61,6 +68,7 @@ import {
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
+import { getDefaultAgentBrowserService } from './agent-browser-api';
 import { reclaimLongSessionOwnerResources } from './long-session-resource-reclamation';
 import { getObservabilityTraceBuffer } from './observability-service';
 import {
@@ -77,7 +85,7 @@ import {
   describeContextFoldingStatus,
   projectContextFoldResultForParent,
 } from '../../shared/types/context-folding';
-import type { SessionArchiveEntry } from '@shared/types/workspace';
+import type { SessionArchiveEntry, SessionPendingMutation } from '@shared/types/workspace';
 
 // ponytail: serialize desktop handoff writes; use per-workspace queues if throughput requires it.
 let handoffCreationTail: Promise<unknown> = Promise.resolve();
@@ -109,9 +117,43 @@ function readRuntimeConfigForContextFolding(): unknown {
 }
 
 async function readHandoffDecision(sessionKey: string, workspaceId: string | null) {
-  const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+  const snapshot = await loadTaskLedgerSnapshot(workspaceId).catch((cause: unknown) => {
+    throw new Error('Handoff ancestry unavailable: Task Ledger could not be read', { cause });
+  });
   if (snapshot.warnings.length) throw new Error('Handoff ancestry unavailable: Task Ledger contains unreadable events');
   return evaluateHandoffDerivation({ links: snapshot.sessionLinks, sessionKey, ...resolveConfiguredHandoffPolicy() });
+}
+
+async function readDerivationTaskIds(
+  snapshot: TaskLedgerSnapshot,
+  sourceSessionKey: string,
+  gatewayManager?: GatewayManager,
+): Promise<string[]> {
+  if (snapshot.warnings.length) throw new Error('Task scope unavailable: Task Ledger contains unreadable events');
+  const taskIds = new Set(snapshot.nodes.filter((node) => node.kind === 'task').map((node) => node.id));
+  const links = snapshot.sessionLinks.filter((link) =>
+    link.sessionKey === sourceSessionKey && link.nodeId && taskIds.has(link.nodeId),
+  );
+  let generation: string | null = null;
+  if (links.some((link) => link.sessionGeneration)) {
+    if (!gatewayManager) throw new Error('Task scope unavailable: source generation cannot be verified');
+    const result = await gatewayManager.rpc<{ session?: { sessionId?: string } }>(
+      'sessions.describe', { key: sourceSessionKey }, 15_000,
+    );
+    generation = result.session?.sessionId?.trim() || null;
+    if (!generation) throw new Error('Task scope unavailable: source session generation is missing');
+  }
+  return [...new Set(links
+    .filter((link) => !link.sessionGeneration || link.sessionGeneration === generation)
+    .map((link) => link.nodeId!))];
+}
+
+function sessionDerivationEvents(link: TaskLedgerSessionLink, taskNodeIds: string[]): TaskLedgerEventInput[] {
+  return [link, ...taskNodeIds.map((nodeId) => ({ ...link, id: `${link.id}:task:${nodeId}`, nodeId }))]
+    .map((sessionLink) => ({
+      type: 'session_linked', actor: 'system', sessionId: link.sessionKey,
+      payload: { sessionLink },
+    }));
 }
 
 const SAFE_SESSION_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
@@ -142,6 +184,7 @@ type ParsedTranscriptLine = {
 };
 
 type SessionPayload = {
+  resumeOperationId?: unknown;
   id?: unknown;
   sessionKey?: unknown;
   label?: unknown;
@@ -838,11 +881,14 @@ function mapCompactionRpcOutcome(result: Record<string, unknown>, sessionKey: st
       ? compressionDetails.warnings.filter((item): item is string => typeof item === 'string')
       : []),
   ];
-  const compacted = result.compacted === true;
+  const success = result.ok === true;
+  const pending = success && compactDetails.pending === true;
+  const compacted = success && !pending && result.compacted === true;
   const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
   return {
-    success: true,
-    status: compacted ? 'compacted' : 'skipped',
+    success,
+    status: success ? (pending ? 'pending' : compacted ? 'compacted' : 'skipped') : 'failed',
+    ...(!success && typeof result.reason === 'string' ? { error: result.reason } : {}),
     compacted,
     ...(typeof compactResult.summary === 'string' ? { summary: compactResult.summary } : {}),
     ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
@@ -1148,6 +1194,9 @@ function mapLongTaskCheckpointRecord(value: unknown): LongTaskCheckpointRecord |
     sessionKey,
     ...(typeof value.agentId === 'string' ? { agentId: value.agentId } : {}),
     ...(typeof value.workspaceId === 'string' ? { workspaceId: value.workspaceId } : {}),
+    // The /loop root is what chat.send checks before it accepts an explicit
+    // inputMode; Chat reads it here to decide whether to offer those modes.
+    ...(typeof value.taskLedgerRootId === 'string' ? { taskLedgerRootId: value.taskLedgerRootId } : {}),
     ...(typeof value.runId === 'string' ? { runId: value.runId } : {}),
     ...(typeof value.traceId === 'string' ? { traceId: value.traceId } : {}),
     ...(typeof value.clawGraphRunId === 'string' ? { clawGraphRunId: value.clawGraphRunId } : {}),
@@ -1269,14 +1318,15 @@ async function loadSessionSummary(
     return { sessionKey, firstUserText: null, lastTimestamp: null };
   }
 }
-async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>): Promise<RawMessage[] | null> {
+async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>, includeModelMetadata = true): Promise<RawMessage[] | null> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return null;
 
   // The live runtime owns transcript location (including isolated source state).
   // An empty runtime history is authoritative; never substitute another profile.
   if (gateway) {
-    const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit }, 10_000);
+    const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit,
+      ...(includeModelMetadata ? {} : { includeModelMetadata: false }) }, includeModelMetadata ? 10_000 : undefined);
     if (!Array.isArray(result?.messages)) throw new Error('Runtime history returned no messages array');
     return result.messages;
   }
@@ -1511,10 +1561,84 @@ function isDefinitiveLifecycleMutationFailure(
  * an operation id before the first RPC; any transport failure keeps the gate
  * open so a retry resumes the same journaled mutation.
  */
+type SessionMutationResult = SessionDeleteResult & {
+  sessionId?: string;
+  previousSessionId?: string;
+  operationId?: string;
+  retryable?: boolean;
+  recoveryRequired?: boolean;
+};
+type SessionMutationCommitted = (gate: SessionDeleteGateRecord) => Promise<SessionDeleteGateRecord>;
+
+async function saveMutationProgress(
+  gate: SessionDeleteGateRecord,
+  patch: Parameters<typeof updateSessionDeleteGate>[1],
+): Promise<SessionDeleteGateRecord> {
+  const saved = await updateSessionDeleteGate(gate.operationId, patch);
+  if (!saved) throw new Error('SESSION_MUTATION_CHANGED: pending operation is missing');
+  return saved;
+}
+
+async function pinMutationWorkspace(gate: SessionDeleteGateRecord, requested?: string | null): Promise<SessionDeleteGateRecord> {
+  if (gate.workspaceId !== undefined) return gate;
+  const snapshot = await createWorkspacesApi().list();
+  if (!snapshot.success) throw new Error(snapshot.error || 'Lifecycle workspace owner unavailable');
+  const archive = await readArchiveIndex(getArchiveIndexPath(gate.agentId));
+  const original = archive.entries.find(entry => entry.sessionKey === gate.sessionKey)?.originalWorkspaceId;
+  const matches = snapshot.profiles.filter(profile => profile.activeSessionKey === gate.sessionKey
+    || Object.hasOwn(profile.sessionStates ?? {}, gate.sessionKey)
+    || Object.hasOwn(profile.coordinatorBindings ?? {}, gate.sessionKey)
+    || Object.values(profile.agentBindings ?? {}).some(binding => binding.sessionKey === gate.sessionKey)
+    || profile.archivedSessionKeys?.includes(gate.sessionKey)
+    || (original && profile.id === original));
+  const preferred = requested || original;
+  const selected = preferred ? matches.find(profile => profile.id === preferred) : matches.length === 1 ? matches[0] : undefined;
+  if ((preferred && !selected) || (!preferred && matches.length > 1)) {
+    throw new Error('SESSION_MUTATION_SCOPE_UNRESOLVED: original workspace is missing or ambiguous');
+  }
+  return saveMutationProgress(gate, { workspaceId: selected?.id ?? null });
+}
+
+async function saveMutationReceipt(gate: SessionDeleteGateRecord, receipt: NonNullable<SessionDeleteGateRecord['runtimeReceipt']>) {
+  if (gate.runtimeReceipt && (gate.runtimeReceipt.sessionId !== receipt.sessionId
+    || gate.runtimeReceipt.previousSessionId !== receipt.previousSessionId)) {
+    throw new Error('SESSION_MUTATION_GENERATION_CHANGED: Runtime receipt changed on replay');
+  }
+  return saveMutationProgress(gate, {
+    runtimeReceipt: receipt,
+    expectedSessionId: receipt.previousSessionId ?? receipt.sessionId,
+  });
+}
+
+function mutationResult(gate: SessionDeleteGateRecord): SessionMutationResult {
+  return {
+    success: true,
+    operationId: gate.operationId,
+    sessionId: gate.runtimeReceipt?.sessionId,
+    expectedSessionId: gate.expectedSessionId,
+    ...(gate.runtimeReceipt?.previousSessionId ? { previousSessionId: gate.runtimeReceipt.previousSessionId } : {}),
+    ...(gate.resourceReclamationAttempts?.length ? { resourceReclamation: gate.resourceReclamationAttempts.at(-1) } : {}),
+  };
+}
+
+async function mutationFailure(gate: SessionDeleteGateRecord | undefined, error: unknown): Promise<SessionMutationResult> {
+  const message = error instanceof Error ? error.message : String(error);
+  let current = gate;
+  if (gate) {
+    // Read back progress saved by the tail before reporting its failure.
+    current = await findSessionDeleteGateBySession(gate.sessionKey).catch(() => undefined);
+    if (current?.operationId !== gate.operationId) current = gate;
+    await updateSessionDeleteGate(gate.operationId, { tailError: message }).catch(() => undefined);
+  }
+  return { ...(current ? mutationResult(current) : {}), success: false, error: message,
+    ...(current ? { operationId: current.operationId, retryable: true, recoveryRequired: true } : {}) };
+}
+
 async function archiveSession(
   payload: SessionPayload,
-  gatewayManager?: GatewayManager,
-): Promise<{ success: boolean; error?: string; sessionId?: string }> {
+  gatewayManager: GatewayManager | undefined,
+  onCommitted: SessionMutationCommitted,
+): Promise<SessionMutationResult> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
@@ -1529,8 +1653,10 @@ async function archiveSession(
       sessionKey,
       agentId: parsed.agentId,
       operationKind: 'archive',
+      expectedOperationId: payload.resumeOperationId,
       requestDigest: buildSessionMutationRequestDigest('archive', { sessionKey }),
     });
+    gate = await pinMutationWorkspace(gate, originalWorkspaceId);
     const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.archive', {
       key: sessionKey,
       operationId: gate.operationId,
@@ -1539,10 +1665,11 @@ async function archiveSession(
       ...(originalFolderId ? { originalFolderId } : {}),
     }, 30_000);
     if (result?.ok === false && result.operationId === gate.operationId && result.key === sessionKey) {
-      if (result.retryable === false || result.noMutation === true) {
+      if (!gate.runtimeReceipt && (result.retryable === false || result.noMutation === true)) {
         await clearSessionDeleteGate(gate.operationId);
+        return { success: false, error: String(result.error ?? 'Archive was refused') };
       }
-      return { success: false, error: String(result.error ?? 'Archive was refused') };
+      return mutationFailure(gate, result.error ?? 'Archive was refused');
     }
     if (
       result?.ok !== true ||
@@ -1552,23 +1679,21 @@ async function archiveSession(
       result.operationId !== gate.operationId ||
       result.journalState !== 'runtime_committed'
     ) {
-      return {
-        success: false,
-        error: 'Gateway archive returned no matching runtime_committed receipt',
-      };
+      return mutationFailure(gate, 'Gateway archive returned no matching runtime_committed receipt');
     }
+    gate = await saveMutationReceipt(gate, { key: sessionKey, operationId: gate.operationId,
+      journalState: 'runtime_committed', sessionId: result.sessionId });
+    gate = await onCommitted(gate);
     await clearSessionDeleteGate(gate.operationId);
-    return { success: true, sessionId: String(result.sessionId) };
+    return mutationResult(gate);
   } catch (error) {
     // Definitive correlated refusals can release the mirror gate. Unknown or
     // retryable outcomes retain the same operationId for journal recovery.
-    if (gate && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
+    if (gate && !gate.runtimeReceipt && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
       await clearSessionDeleteGate(gate.operationId);
+      return { success: false, error: String(error) };
     }
-    return {
-      success: false,
-      error: `Gateway archive did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return mutationFailure(gate, error);
   }
 }
 
@@ -1579,8 +1704,9 @@ async function archiveSession(
  */
 async function restoreSession(
   payload: SessionPayload,
-  gatewayManager?: GatewayManager,
-): Promise<{ success: boolean; error?: string }> {
+  gatewayManager: GatewayManager | undefined,
+  onCommitted: SessionMutationCommitted,
+): Promise<SessionMutationResult> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
@@ -1592,42 +1718,45 @@ async function restoreSession(
       sessionKey,
       agentId: parsed.agentId,
       operationKind: 'restore',
+      expectedOperationId: payload.resumeOperationId,
       requestDigest: buildSessionMutationRequestDigest('restore', { sessionKey }),
     });
+    gate = await pinMutationWorkspace(gate, getOptionalWorkspaceId(payload));
     const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.restore', {
       key: sessionKey,
       operationId: gate.operationId,
     }, 30_000);
     if (result?.ok === false && result.operationId === gate.operationId && result.key === sessionKey) {
-      if (result.retryable === false || result.noMutation === true) {
+      if (!gate.runtimeReceipt && (result.retryable === false || result.noMutation === true)) {
         await clearSessionDeleteGate(gate.operationId);
+        return { success: false, error: String(result.error ?? 'Restore was refused') };
       }
-      return { success: false, error: String(result.error ?? 'Restore was refused') };
+      return mutationFailure(gate, result.error ?? 'Restore was refused');
     }
     if (
       result?.ok !== true ||
       result.key !== sessionKey ||
       !result.entry || typeof result.entry !== 'object' ||
       typeof (result.entry as Record<string, unknown>).sessionId !== 'string' ||
+      !(result.entry as { sessionId: string }).sessionId.trim() ||
       result.operationId !== gate.operationId ||
       result.journalState !== 'runtime_committed' ||
       result.restored !== true
     ) {
-      return {
-        success: false,
-        error: 'Gateway restore returned no matching runtime_committed receipt',
-      };
+      return mutationFailure(gate, 'Gateway restore returned no matching runtime_committed receipt');
     }
+    gate = await saveMutationReceipt(gate, { key: sessionKey, operationId: gate.operationId,
+      journalState: 'runtime_committed', sessionId: (result.entry as { sessionId: string }).sessionId,
+      ...(typeof result.previousSessionId === 'string' ? { previousSessionId: result.previousSessionId } : {}) });
+    gate = await onCommitted(gate);
     await clearSessionDeleteGate(gate.operationId);
-    return { success: true };
+    return mutationResult(gate);
   } catch (error) {
-    if (gate && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
+    if (gate && !gate.runtimeReceipt && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
       await clearSessionDeleteGate(gate.operationId);
+      return { success: false, error: String(error) };
     }
-    return {
-      success: false,
-      error: `Gateway restore did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return mutationFailure(gate, error);
   }
 }
 
@@ -1701,7 +1830,7 @@ async function permanentDeleteSession(payload: SessionPayload): Promise<{ succes
  * panel. Reads only the Verse-Claw-owned archive index — does not consult
  * sessions.json, since archived entries are deliberately absent from it.
  */
-async function listArchivedSessions(payload: SessionPayload): Promise<{ success: boolean; entries: SessionArchiveEntry[] }> {
+async function listArchivedSessions(payload: SessionPayload): Promise<{ success: boolean; entries: SessionArchiveEntry[]; pendingMutations?: SessionPendingMutation[] }> {
   const agentId = typeof payload.agentId === 'string' && payload.agentId.trim()
     ? payload.agentId.trim()
     : 'main';
@@ -1710,7 +1839,9 @@ async function listArchivedSessions(payload: SessionPayload): Promise<{ success:
   }
   const archiveIndexPath = getArchiveIndexPath(agentId);
   const index = await readArchiveIndex(archiveIndexPath);
-  return { success: true, entries: index.entries };
+  const pendingMutations = (await listSessionMutationGates(agentId))
+    .map(({ operationId, operationKind, sessionKey, agentId, createdAt }) => ({ operationId, operationKind, sessionKey, agentId, createdAt }));
+  return { success: true, entries: index.entries, pendingMutations };
 }
 
 /**
@@ -1744,6 +1875,7 @@ async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean
 
 type GatewaySessionDeleteResult = {
   ok?: boolean;
+  key?: string;
   deleted?: boolean;
   archived?: string[];
   sessionId?: string;
@@ -1758,8 +1890,10 @@ const sessionDeleteRequests = new Map<string, Promise<SessionDeleteResult>>();
 async function deleteSessionViaRuntime(
   sessionKey: string,
   gatewayManager: GatewayManager,
-  terminalManager?: TerminalSessionManager,
-): Promise<SessionDeleteResult> {
+  onCommitted: SessionMutationCommitted,
+  expectedOperationId?: unknown,
+  workspaceId?: string | null,
+): Promise<SessionMutationResult> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) {
     return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
@@ -1768,9 +1902,10 @@ async function deleteSessionViaRuntime(
   // Electron mirror gate: reuse a previously persisted operationId when the
   // previous RPC failed or its outcome is unknown. A fresh operationId is
   // generated and persisted before the first RPC for a session.
-  const gate = await persistSessionDeleteGate(sessionKey, parsed.agentId);
+  let gate = await persistSessionDeleteGate(sessionKey, parsed.agentId, expectedOperationId);
 
   try {
+    gate = await pinMutationWorkspace(gate, workspaceId);
     const result = await gatewayManager.rpc<GatewaySessionDeleteResult>(
       'sessions.delete',
       { key: sessionKey, operationId: gate.operationId, deleteTranscript: true },
@@ -1781,98 +1916,78 @@ async function deleteSessionViaRuntime(
         result && (result.error || result.message)
           ? String(result.error ?? result.message)
           : JSON.stringify(result ?? {});
-      return { success: false, error: errorText };
+      return mutationFailure(gate, errorText);
     }
 
     if (
       result.deleted !== true ||
+      result.key !== sessionKey ||
       result.operationId !== gate.operationId ||
       result.journalState !== 'runtime_committed' ||
       typeof result.sessionId !== 'string' ||
       !result.sessionId.trim()
     ) {
-      return {
-        success: false,
-        error: 'Gateway delete returned no matching runtime_committed receipt',
-      };
+      return mutationFailure(gate, 'Gateway delete returned no matching runtime_committed receipt');
     }
 
     if (
       gate.expectedSessionId &&
       gate.expectedSessionId !== result.sessionId
     ) {
-      return {
-        success: false,
-        error: `Gateway delete receipt belongs to session ${result.sessionId}, expected ${gate.expectedSessionId}`,
-      };
+      return mutationFailure(gate, `Gateway delete receipt belongs to session ${result.sessionId}, expected ${gate.expectedSessionId}`);
     }
 
-    let currentGate = gate;
-    if (!currentGate.expectedSessionId) {
-      currentGate = await updateSessionDeleteGate(gate.operationId, {
-        expectedSessionId: result.sessionId,
-      }) ?? currentGate;
-    }
-    if (currentGate.terminalClosed !== true) {
-      // Runtime cleanup already proved this exact generation. The Main pass
-      // closes keep_on_leave terminals only for an explicit session delete.
-      terminalManager?.reclaimForSession({
-        sessionKey,
-        workspaceId: (await getActiveWorkspaceProfile())?.id,
-        expectedSessionId: currentGate.expectedSessionId,
-        honorKeepOnLeave: false,
-        reason: 'session-delete',
-      });
-      currentGate = await updateSessionDeleteGate(gate.operationId, {
-        terminalClosed: true,
-      }) ?? currentGate;
-    }
-    if (currentGate.localSweepCommitted !== true) {
+    gate = await saveMutationReceipt(gate, { key: sessionKey, operationId: gate.operationId,
+      journalState: 'runtime_committed', sessionId: result.sessionId });
+    if (gate.localSweepCommitted !== true) {
       const sweepResult = await deleteSession(sessionKey);
       const legacyStoreAbsent = !sweepResult.success && /Could not read sessions\.json:.*ENOENT/i.test(sweepResult.error ?? '');
       if (!sweepResult.success && !legacyStoreAbsent) {
-        return sweepResult;
+        return { ...await mutationFailure(gate, sweepResult.error ?? 'Local session sweep incomplete'),
+          partial: sweepResult.partial, remainingPaths: sweepResult.remainingPaths };
       }
-      await updateSessionDeleteGate(gate.operationId, {
+      gate = await saveMutationProgress(gate, {
         localSweepCommitted: true,
+        ...(legacyStoreAbsent ? { localSweepSkipped: 'legacy-store-absent' } : {}),
       });
     }
 
+    gate = await onCommitted(gate);
     await clearSessionDeleteGate(gate.operationId);
-    return {
-      success: true,
-      expectedSessionId: currentGate.expectedSessionId ?? result.sessionId,
-    };
+    return mutationResult(gate);
   } catch (error) {
     // RPC unknown (timeout, socket drop, reconnect): do not sweep, do not
     // release the mirror gate. The persisted operationId makes the next delete
     // a retry of the same operation.
-    return {
-      success: false,
-      error: `Gateway delete did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return mutationFailure(gate, error);
   }
 }
 
 async function deleteSessionViaRuntimeSerialized(
   sessionKey: string,
   gatewayManager: GatewayManager,
-  terminalManager?: TerminalSessionManager,
+  onCommitted: SessionMutationCommitted,
+  expectedOperationId?: unknown,
+  workspaceId?: string | null,
 ): Promise<SessionDeleteResult> {
-  const previous = sessionDeleteRequests.get(sessionKey);
+  if (expectedOperationId !== undefined && typeof expectedOperationId !== 'string') {
+    throw new Error('SESSION_MUTATION_CHANGED: invalid pending operation identity');
+  }
+  const requestKey = JSON.stringify([sessionKey, expectedOperationId ?? null]);
+  const previous = sessionDeleteRequests.get(requestKey);
   if (previous) return previous;
   const current = withSessionDeleteGateLock(
     sessionKey,
-    () => deleteSessionViaRuntime(sessionKey, gatewayManager, terminalManager),
+    () => deleteSessionViaRuntime(sessionKey, gatewayManager, onCommitted, expectedOperationId, workspaceId),
   );
-  sessionDeleteRequests.set(sessionKey, current);
+  sessionDeleteRequests.set(requestKey, current);
   void current.then(() => {
-    if (sessionDeleteRequests.get(sessionKey) === current) {
-      sessionDeleteRequests.delete(sessionKey);
+    if (sessionDeleteRequests.get(requestKey) === current) {
+      sessionDeleteRequests.delete(requestKey);
     }
   }, () => {
-    if (sessionDeleteRequests.get(sessionKey) === current) {
-      sessionDeleteRequests.delete(sessionKey);
+    if (sessionDeleteRequests.get(requestKey) === current) {
+      sessionDeleteRequests.delete(requestKey);
     }
   });
   return current;
@@ -1885,6 +2000,7 @@ export function createSessionsApi(ctx: {
   resolveCoordinator?: CompleteHostServiceRegistry['workspaces']['resolveCoordinator'];
   gatewayRpcForDelegation?: CompleteHostServiceRegistry['gateway']['rpc'];
   getActiveWorkspaceId?: () => Promise<string | null>;
+  resolveTaskScope?: SessionDelegationDependencies['resolveTaskScope'];
   delegationStore?: {
     readAdmission: typeof readSessionDelegationAdmission;
     claimAdmission: typeof claimSessionDelegationAdmission;
@@ -1898,13 +2014,88 @@ export function createSessionsApi(ctx: {
     claimAdmission: claimSessionDelegationAdmission,
     commitAdmission: commitSessionDelegationAdmission,
   };
-  const observeCoordinatorLifecycle = async (event: WorkspaceCoordinatorLifecycleEvent) => {
-    if (!ctx.coordinatorLifecycle) return;
+  const observeCoordinatorLifecycle = async (event: WorkspaceCoordinatorLifecycleEvent, required = false) => {
+    if (!ctx.coordinatorLifecycle) {
+      if (required) throw new Error('Lifecycle coordinator owner unavailable');
+      return;
+    }
     try {
       await ctx.coordinatorLifecycle(event);
     } catch (error) {
       logger.warn('[session:coordinator-lifecycle]', { event: event.type, sessionKey: event.sessionKey, error: String(error) });
+      if (required) throw error;
     }
+  };
+  const finishMutation: SessionMutationCommitted = async (initial) => {
+    let gate = initial;
+    const receipt = gate.runtimeReceipt;
+    if (!receipt) throw new Error('Lifecycle Runtime receipt is missing');
+    if (!gate.coordinatorCommitted) {
+      const binding = gate.workspaceId ? await getPersistedCoordinatorBinding(gate.workspaceId, gate.sessionKey) : null;
+      if (binding) {
+        const generation = gate.operationKind === 'restore' ? receipt.previousSessionId : receipt.sessionId;
+        if (binding.sessionGeneration && binding.sessionGeneration !== generation && binding.sessionGeneration !== receipt.sessionId) {
+          throw new Error('SESSION_MUTATION_GENERATION_CHANGED: coordinator belongs to a different generation');
+        }
+        const settled = gate.operationKind === 'restore'
+          ? (binding.archiveRestorePolicy === 'none' ? binding.state === 'invalid' && binding.invalidationReason === 'archive-retention-none'
+            : binding.state === 'active' && binding.sessionGeneration === receipt.sessionId && !binding.invalidationReason)
+          : gate.operationKind === 'delete' ? binding.state === 'invalid' && binding.invalidationReason === 'session-deleted'
+            : binding.archiveRestorePolicy === 'restore' ? binding.state === 'paused' && binding.invalidationReason === 'archived-restore-requested'
+              : binding.state === 'invalid' && binding.invalidationReason === 'archived-retention-none';
+        if (!settled) {
+          await observeCoordinatorLifecycle({ type: gate.operationKind, workspaceId: gate.workspaceId, sessionKey: gate.sessionKey }, true);
+          if (gate.operationKind === 'restore' && binding.archiveRestorePolicy === 'restore') {
+            const restored = await getPersistedCoordinatorBinding(gate.workspaceId!, gate.sessionKey);
+            if (restored?.state !== 'active' || restored.sessionGeneration !== receipt.sessionId || restored.invalidationReason) {
+              throw new Error('Coordinator restore has not confirmed the restored generation');
+            }
+          }
+        }
+      }
+      gate = await saveMutationProgress(gate, { coordinatorCommitted: true });
+    }
+    if (gate.operationKind !== 'restore' && !gate.resourcesCommitted) {
+      const tracker = getResourceTracker();
+      if (gate.operationKind === 'delete') {
+        const browsers = getDefaultAgentBrowserService().list();
+        const ports = tracker.list().resources.filter(resource => resource.ownership === 'managed');
+        const terminals = ctx.terminalManager?.listAll() ?? [];
+        const scoped = [...browsers, ...ports, ...terminals].filter(item => item.sessionKey === gate.sessionKey);
+        if (scoped.some(item => !gate.workspaceId || item.workspaceId !== gate.workspaceId)) {
+          throw new Error('SESSION_MUTATION_SCOPE_UNRESOLVED: resource workspace does not match the original operation');
+        }
+      }
+      const resourceReclamation = await reclaimLongSessionOwnerResources({
+        action: gate.operationKind === 'delete' ? 'session-delete' : 'session-archive',
+        scope: { workspaceId: gate.workspaceId ?? '', sessionKey: gate.sessionKey, expectedSessionId: receipt.sessionId },
+        terminalManager: ctx.terminalManager,
+        resourceTracker: {
+          list: () => {
+            const snapshot = tracker.list();
+            return { ...snapshot, resources: snapshot.resources.filter(resource => gate.workspaceId
+              && resource.workspaceId === gate.workspaceId && resource.sessionKey === gate.sessionKey) };
+          },
+          stopResource: async (id) => {
+            const resource = tracker.list().resources.find(item => item.id === id);
+            if (!resource) return { success: true, resourceId: id };
+            if (!gate.workspaceId || resource.workspaceId !== gate.workspaceId || resource.sessionKey !== gate.sessionKey) {
+              return { success: false, error: 'Resource ownership changed before cleanup', resourceId: id };
+            }
+            return tracker.stopResource(id);
+          },
+        },
+        runtimeCleanupSettled: true,
+      });
+      gate = await saveMutationProgress(gate, {
+        resourceReclamationAttempts: [...(gate.resourceReclamationAttempts ?? []), resourceReclamation],
+        resourcesCommitted: !resourceReclamation.recoveryRequired,
+        ...(resourceReclamation.owners.some(owner => owner.kind === 'terminal' && owner.outcome !== 'failed' && owner.outcome !== 'unknown')
+          ? { terminalClosed: true } : {}),
+      });
+      if (resourceReclamation.recoveryRequired) throw new Error('Main resource cleanup requires recovery');
+    }
+    return gate;
   };
   return {
     delegate: async (payload: SessionDelegationPayload): Promise<SessionDelegationResult> => {
@@ -1926,6 +2117,27 @@ export function createSessionsApi(ctx: {
         commitAdmission: delegationStore.commitAdmission,
         resolveCoordinator: ctx.resolveCoordinator,
         getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getActiveWorkspaceProfile())?.id ?? null),
+        resolveTaskScope: ctx.resolveTaskScope ?? (async (input) => {
+          const snapshot = await loadTaskLedgerSnapshot(input.workspaceId);
+          const task = snapshot.nodes.find((node) => node.id === input.taskRef);
+          return {
+            sessionKey: input.sessionKey,
+            workspaceId: input.workspaceId,
+            generation: input.sessionGeneration,
+            activeTaskNodeId: input.taskRef,
+            coordinatorSessionKey: input.sessionKey,
+            bindingRevision: input.bindingRevision,
+            bindingState: input.bindingState,
+            links: snapshot.sessionLinks,
+            task: task ? {
+              nodeId: task.id,
+              workspaceId: input.workspaceId,
+              nodeKind: task.kind,
+              status: task.status,
+              generation: input.sessionGeneration,
+            } : null,
+          };
+        }),
         gatewayRpc: ctx.gatewayRpcForDelegation,
         describeSessionGeneration: async (sessionKey) => {
           const described = await ctx.gatewayManager!.rpc<{
@@ -1934,6 +2146,7 @@ export function createSessionsApi(ctx: {
           const sessionId = described?.session?.sessionId;
           return typeof sessionId === 'string' && sessionId.trim() ? sessionId.trim() : null;
         },
+        assertTaskAdmission: assertManagedTaskAdmission,
         stopEpoch: (sessionKey) => delegationStopEpochs.get(sessionKey) ?? 0,
       }).finally(() => {
         delegationFlights.delete(flightKey);
@@ -1944,20 +2157,18 @@ export function createSessionsApi(ctx: {
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const workspaceId = getOptionalWorkspaceId(payload);
-      const result = ctx.gatewayManager
-        ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager)
-        : await deleteSession(sessionKey);
+      if (payload.resumeOperationId !== undefined && !ctx.gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
+      if (ctx.gatewayManager) {
+        return deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, finishMutation, payload.resumeOperationId, workspaceId);
+      }
+      const result = await deleteSession(sessionKey);
       if (!result.success) return result;
       await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
       const resourceReclamation = await reclaimLongSessionOwnerResources({
         action: 'session-delete',
-        scope: {
-          workspaceId: workspaceId ?? '',
-          sessionKey,
-          expectedSessionId: result.expectedSessionId ?? null,
-        },
+        scope: { workspaceId: workspaceId ?? '', sessionKey, expectedSessionId: result.expectedSessionId ?? null },
         terminalManager: ctx.terminalManager,
-        runtimeCleanupSettled: Boolean(ctx.gatewayManager),
+        runtimeCleanupSettled: false,
       }).catch((error) => {
         logger.warn('[resource-reclamation] delete pass failed', error);
         return undefined;
@@ -2028,9 +2239,50 @@ export function createSessionsApi(ctx: {
       const limit = getLimit(payload);
 
       if (typeof body.sessionKey === 'string' && body.sessionKey.trim()) {
-        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager);
+        type Description = { session?: { sessionId?: string; model?: string; parentSessionKey?: string; spawnedBy?: string } | null };
+        const needsFence = Boolean(payload.expectedSessionGeneration || payload.expectedParentSessionKey);
+        let described: Description | null = null;
+        if (needsFence) {
+          if (!ctx.gatewayManager) return { success: false, error: 'Transcript generation unavailable' };
+          described = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
+          if (!described.session?.sessionId || (payload.expectedSessionGeneration && described.session.sessionId !== payload.expectedSessionGeneration)
+            || (payload.expectedParentSessionKey && classifyDerivation(described.session).parentSessionKey !== payload.expectedParentSessionKey)) {
+            return { success: false, error: 'Transcript scope or generation changed' };
+          }
+        }
+        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager, !needsFence);
         if (!messages) return { success: false, error: 'Transcript not found' };
-        return { success: true, messages };
+        if (needsFence) {
+          const after = await ctx.gatewayManager!.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
+          if (after.session?.sessionId !== described?.session?.sessionId) return { success: false, error: 'Transcript generation changed during read' };
+        }
+        const executed = messages.findLast((message) => message.role === 'assistant'
+          && typeof (message as RawMessage & { model?: string }).model === 'string') as (RawMessage & { model?: string; provider?: string }) | undefined;
+        const model = executed?.model ? [executed.provider, executed.model].filter(Boolean).join('/') : undefined;
+        let workerSendReceipt: { phase: 'queued' | 'steered'; idempotencyKey: string; source: 'runtime-intervention'; queueItemId?: string } | undefined;
+        if (payload.workerSendIdempotencyKey && described?.session?.sessionId && ctx.gatewayManager) {
+          const key = payload.workerSendIdempotencyKey;
+          const history = await ctx.gatewayManager.rpc<{ events?: Array<{ idempotencyKey?: string; status?: string; payload?: { queueItemId?: string } }> }>(
+            'sessions.longTaskControlHistory', { key: body.sessionKey.trim(), limit: 200 }, 10_000);
+          const event = history.events?.find((entry) => entry.idempotencyKey === `chat:${key}:queue:event`
+            || entry.idempotencyKey === `chat:${key}:guide:event`);
+          if (event && (event.status === 'queued' || event.status === 'steered')) workerSendReceipt = {
+            phase: event.status, idempotencyKey: key, source: 'runtime-intervention',
+            ...(event.payload?.queueItemId ? { queueItemId: event.payload.queueItemId } : {}),
+          };
+          const current = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
+          if (current.session?.sessionId !== described.session.sessionId) return { success: false, error: 'Transcript generation changed during delivery read' };
+        }
+        const recordedMessages = messages as Array<RawMessage & { usage?: unknown }>;
+        const costs = recordedMessages.filter(message => message.role === 'assistant' || isRecord(message.usage)).map(message =>
+          isRecord(message.usage) && isRecord(message.usage.cost) && typeof message.usage.cost.total === 'number'
+            && Number.isFinite(message.usage.cost.total) && message.usage.cost.total >= 0 ? message.usage.cost.total : null);
+        const totalCost = costs.length > 0 && costs.every(cost => cost !== null)
+          ? costs.reduce((total, cost) => total + (cost ?? 0), 0) : Number.NaN;
+        const costUsd = Number.isFinite(totalCost) ? totalCost : undefined;
+        return { success: true, messages, ...(described?.session?.sessionId ? { sessionGeneration: described.session.sessionId } : {}), ...(model ? { model } : {}),
+          ...(costUsd !== undefined ? { costUsd } : {}),
+          ...(workerSendReceipt ? { workerSendReceipt } : {}) };
       }
 
       const agentId = typeof body.agentId === 'string' ? body.agentId.trim() : '';
@@ -2051,6 +2303,48 @@ export function createSessionsApi(ctx: {
         }
         return { success: false, error: 'Failed to load transcript' };
       }
+    },
+    sendWorker: async (payload) => {
+      if (!ctx.gatewayManager || !ctx.gatewayRpcForDelegation || !payload.message.trim() || !payload.idempotencyKey) {
+        return { success: false, phase: 'rejected', error: 'Worker communication is unavailable' };
+      }
+      const active = await getActiveWorkspaceProfile();
+      if (active?.id !== payload.workspaceId) return { success: false, phase: 'rejected', error: 'Worker workspace changed' };
+      const described = await Promise.all([payload.parentSessionKey, payload.childSessionKey].map((key) =>
+        ctx.gatewayManager!.rpc<{ session?: { sessionId?: string; parentSessionKey?: string; spawnedBy?: string } }>('sessions.describe', { key }, 15_000)));
+      const [parent, child] = described.map((entry) => entry.session);
+      if (parent?.sessionId !== payload.expectedParentGeneration || child?.sessionId !== payload.expectedChildGeneration
+        || !child || classifyDerivation(child).parentSessionKey !== payload.parentSessionKey) {
+        return { success: false, phase: 'rejected', error: 'Worker source or generation changed' };
+      }
+      try {
+        const binding = await getPersistedCoordinatorBinding(payload.workspaceId, payload.childSessionKey);
+        if (binding && (binding.state !== 'active' || binding.sessionGeneration !== payload.expectedChildGeneration)) {
+          return { success: false, phase: 'rejected', error: 'Worker task binding is not current' };
+        }
+        const origin = await ctx.gatewayManager.rpc<{ delegation?: { parentSessionKey: string; parentGeneration: string; workspaceDir: string | null } | null }>(
+          'taskScope.runState', { sessionKey: payload.childSessionKey, sessionGeneration: payload.expectedChildGeneration, runId: payload.idempotencyKey }, 10_000,
+        );
+        if (origin.delegation?.parentSessionKey !== payload.parentSessionKey || origin.delegation.parentGeneration !== payload.expectedParentGeneration) {
+          return { success: false, phase: 'rejected', error: 'Worker delegation origin is unavailable' };
+        }
+        const result = await ctx.gatewayRpcForDelegation({ method: payload.mode === 'steer' ? 'sessions.steer' : 'sessions.send',
+          expectedWorkspaceId: payload.workspaceId,
+          params: { key: payload.childSessionKey, expectedSessionId: payload.expectedChildGeneration,
+            workspaceId: payload.workspaceId, workspaceDir: binding?.environment.canonicalRoot ?? origin.delegation.workspaceDir ?? active.rootPath,
+            requesterSessionKey: payload.parentSessionKey, expectedRequesterSessionId: payload.expectedParentGeneration,
+            message: payload.message, idempotencyKey: payload.idempotencyKey }, timeoutMs: 30_000 });
+        if (isRecord(result) && (result.success === false || result.ok === false)) return { success: false, phase: 'rejected', error: String(result.error ?? 'Worker send rejected') };
+        if (isRecord(result) && (result.queued === true || result.steered === true)) return {
+          success: true, phase: result.steered === true ? 'steered' : 'queued',
+          receipt: { idempotencyKey: payload.idempotencyKey, source: 'runtime-ack' },
+        };
+        if (!isRecord(result) || typeof result.runId !== 'string') return { success: false, phase: 'unknown', error: 'Worker delivery is unconfirmed' };
+        return { success: true, phase: 'accepted', run: normalizeRunScope({ runId: result.runId,
+          scope: { workspaceId: payload.workspaceId, sessionKey: payload.childSessionKey } }) };
+      } catch (error) { return { success: false,
+        phase: error instanceof GatewayRpcError && ['INVALID_REQUEST', '-32600', '-32602'].includes(String(error.payload.code)) ? 'rejected' : 'unknown',
+        error: error instanceof Error ? error.message : String(error) }; }
     },
     patchThinking: async (payload) => {
       const sessionKey = getSessionKey(payload);
@@ -2388,6 +2682,7 @@ export function createSessionsApi(ctx: {
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.stop', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
+        ...(payload.expectedSessionId ? { expectedSessionId: payload.expectedSessionId } : {}),
       }, 30_000);
       const expectedSessionId = typeof result.sessionId === 'string' && result.sessionId.trim()
         ? result.sessionId.trim()
@@ -2435,6 +2730,7 @@ export function createSessionsApi(ctx: {
       }
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.restoreCheckpoint', {
         key: sessionKey,
+        ...(payload.expectedSessionId !== undefined ? { expectedSessionId: payload.expectedSessionId } : {}),
         ...(agentId ? { agentId } : {}),
         checkpointId,
       }, 30_000);
@@ -2510,10 +2806,11 @@ export function createSessionsApi(ctx: {
       }
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.compact', {
         key: sessionKey,
+        ...(payload.expectedSessionId !== undefined ? { expectedSessionId: payload.expectedSessionId } : {}),
         ...(agentId ? { agentId } : {}),
         customInstructions: getManualCompactionInstructions(payload),
         force: true,
-      }, HOST_ACTION_LONG_TIMEOUT_MS);
+      }, 120_000);
       return mapCompactionRpcOutcome(result, sessionKey);
     },
     /**
@@ -2533,11 +2830,12 @@ export function createSessionsApi(ctx: {
       }
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.compactRange', {
         key: sessionKey,
+        ...(payload.expectedSessionId !== undefined ? { expectedSessionId: payload.expectedSessionId } : {}),
         ...(agentId ? { agentId } : {}),
         ...(fromLeafId ? { fromLeafId } : {}),
         ...(toLeafId ? { toLeafId } : {}),
         customInstructions: getManualCompactionInstructions(payload),
-      }, HOST_ACTION_LONG_TIMEOUT_MS);
+      }, 120_000);
       return mapCompactionRpcOutcome(result, sessionKey);
     },
     prepareHandoff: async (payload) => {
@@ -2841,45 +3139,141 @@ export function createSessionsApi(ctx: {
         const workspaceId = getOptionalWorkspaceId(payload);
         const agentId = getOptionalAgentId(payload) ?? parseSessionKey(sourceSessionKey)?.agentId ?? 'main';
         if (typeof payload.draftInput !== 'string' || !payload.draftInput.trim()) throw new Error('Handoff draft cannot be empty');
+        if (!workspaceId || !ctx.gatewayManager) throw new Error('HANDOFF_OWNER_UNAVAILABLE');
+        const described = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean } }>('sessions.describe', { key: sourceSessionKey }, 15_000);
+        const sourceGeneration = described.session?.sessionId;
+        if (!sourceGeneration) throw new Error('HANDOFF_SOURCE_UNAVAILABLE');
+        if (described.session?.hasActiveRun) throw new Error('HANDOFF_SOURCE_ACTIVE');
+        const draftDigest = createHash('sha256').update(payload.draftInput).digest('hex');
+        const prior = await readWorkspaceHandoffOperation({ workspaceId, sessionKey: sourceSessionKey, operationId: payload.operationId });
+        let operation = prior && prior.sourceSessionKey === sourceSessionKey
+          && (payload.operationId || !['sent', 'accepted'].includes(prior.phase)) ? prior : null;
+        if (payload.operationId && prior && prior.sourceSessionKey !== sourceSessionKey) throw new Error('HANDOFF_OPERATION_SCOPE_MISMATCH');
+        if (operation && (operation.sourceGeneration !== sourceGeneration || operation.draftDigest !== draftDigest)) {
+          throw new Error('HANDOFF_SOURCE_OR_DRAFT_CHANGED');
+        }
         const decision = await readHandoffDecision(sourceSessionKey, workspaceId);
         if (!decision.allow) return { success: false, error: decision.error };
-        // The sidebar detects fresh sessions with /:session-\d/, so keep the
-        // timestamp prefix and use a short UUID only as the collision-resistant suffix.
-        const sessionKey = `agent:${agentId}:session-${Date.now()}-${randomUUID().slice(0, 8)}`;
-        const id = randomUUID();
+        const taskNodeIds = await readDerivationTaskIds(
+          await loadTaskLedgerSnapshot(workspaceId), sourceSessionKey, ctx.gatewayManager,
+        );
+        if (!operation) {
+          const id = payload.operationId ?? randomUUID();
+          if (!/^[a-zA-Z0-9_-]{8,128}$/.test(id)) throw new Error('HANDOFF_OPERATION_ID_INVALID');
+          const now = new Date().toISOString();
+          const intent: SessionHandoffOperation = {
+            id, workspaceId, agentId, sourceSessionKey, sourceGeneration,
+            sessionKey: `agent:${agentId}:session-${Date.now()}-${id.slice(0, 12)}`, sessionGeneration: null,
+            draftInput: payload.draftInput, draftDigest, firstSendIdempotencyKey: handoffFirstSendKey(id),
+            phase: 'creating', handoffDepth: decision.depth, handoffRootSessionKey: decision.rootSessionKey,
+            parentHandoffId: decision.parentHandoffId, rootHandoffId: decision.rootHandoffId ?? id,
+            createdAt: now, updatedAt: now,
+          };
+          operation = await updateWorkspaceHandoffOperation(workspaceId, id, (current) => {
+            if (current) throw new Error('HANDOFF_OPERATION_ID_CONFLICT');
+            return intent;
+          });
+        }
+        const { sessionKey, id } = operation;
+        let child = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; parentSessionKey?: string } | null }>('sessions.describe', { key: sessionKey }, 15_000);
+        if (!child.session) {
+          if (operation.sessionGeneration) throw new Error('HANDOFF_CHILD_GENERATION_CHANGED');
+          await ctx.gatewayManager.rpc('sessions.create', { key: sessionKey, agentId, parentSessionKey: sourceSessionKey }, 30_000);
+          child = await ctx.gatewayManager.rpc('sessions.describe', { key: sessionKey }, 15_000);
+        }
+        if (!child.session?.sessionId || child.session.parentSessionKey !== sourceSessionKey) throw new Error('HANDOFF_RUNTIME_SOURCE_MISMATCH');
+        if (operation.sessionGeneration && operation.sessionGeneration !== child.session.sessionId) throw new Error('HANDOFF_CHILD_GENERATION_CHANGED');
+        // Pin the runtime child before activation; interrupted activation must keep
+        // its creating phase and reject a reset child when the operation resumes.
+        if (!operation.sessionGeneration) {
+          operation = await updateWorkspaceHandoffOperation(workspaceId, id, (current) => ({
+            ...current!, sessionGeneration: child.session!.sessionId!,
+          }));
+        }
+        const after = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean; status?: string } }>('sessions.describe', { key: sourceSessionKey }, 15_000);
+        if (after.session?.sessionId !== sourceGeneration) throw new Error('HANDOFF_SOURCE_GENERATION_CHANGED');
+        if (after.session.hasActiveRun || after.session.status === 'running') throw new Error('HANDOFF_SOURCE_ACTIVE');
         const lineage = {
-          handoffDepth: decision.depth,
+          handoffDepth: operation.handoffDepth,
           handoffParentSessionKey: sourceSessionKey,
-          handoffRootSessionKey: decision.rootSessionKey,
-          parentHandoffId: decision.parentHandoffId,
-          rootHandoffId: decision.rootHandoffId ?? id,
+          handoffRootSessionKey: operation.handoffRootSessionKey,
+          parentHandoffId: operation.parentHandoffId,
+          rootHandoffId: operation.rootHandoffId,
         };
         // Persist lineage before activating the session. A failed workspace update can leave
         // an unused lineage record, but cannot activate an untracked session or reset depth.
-        await appendTaskLedgerEvents(workspaceId, [{
-          type: 'session_linked', actor: 'system', sessionId: sessionKey,
-          payload: { sessionLink: {
-            id, sessionKey, agentId, relation: 'handoff_from', sourceSessionKey,
-            ...lineage, createdAt: new Date().toISOString(),
-          } },
-        }], `handoff:${sourceSessionKey}:${sessionKey}`);
-        if (workspaceId) {
-          await createWorkspacesApi(ctx).update({
-            id: workspaceId, agentId, activeSessionKey: sessionKey, sessionKey,
+        await appendTaskLedgerEvents(workspaceId, sessionDerivationEvents({
+          id, sessionKey, agentId, relation: 'handoff_from', sourceSessionKey,
+          sessionGeneration: child.session.sessionId,
+          ...lineage, createdAt: new Date().toISOString(),
+        }, taskNodeIds), `handoff:${sourceSessionKey}:${sessionKey}`);
+        if (operation.phase === 'creating') {
+          const ready = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean; status?: string } }>(
+            'sessions.describe', { key: sourceSessionKey }, 15_000,
+          );
+          if (ready.session?.sessionId !== sourceGeneration) throw new Error('HANDOFF_SOURCE_GENERATION_CHANGED');
+          if (ready.session.hasActiveRun || ready.session.status === 'running') throw new Error('HANDOFF_SOURCE_ACTIVE');
+          const sourceBinding = await getPersistedCoordinatorBinding(workspaceId, sourceSessionKey);
+          const claim = sourceBinding?.writerClaim;
+          const writer = await ctx.gatewayManager.rpc<{ quiescent?: boolean }>('taskScope.runState', {
+            sessionKey: sourceSessionKey, sessionGeneration: claim?.sessionGeneration ?? sourceGeneration,
+            runId: claim?.run.runId ?? `handoff:${id}`, processScope: 'session',
+          }, 10_000);
+          if (writer.quiescent !== true) throw new Error('HANDOFF_SOURCE_WRITER_BUSY');
+          await createWorkspacesApi(ctx).saveState({
+            id: workspaceId, sessionKey,
             state: { activeTopicId: null, draftInput: payload.draftInput },
           });
+          const { handoffManagedSessionTask } = await import('./task-system-service');
+          const workspaceRoot = sourceBinding?.environment.canonicalRoot ?? await getWorkspaceRootPathById(workspaceId);
+          if (workspaceRoot) handoffManagedSessionTask({ workspaceRoot, sourceSessionKey, sourceGeneration,
+            sessionKey, generation: child.session.sessionId });
+          // Ready enables first delivery, so activation must be confirmed by its owner.
           await observeCoordinatorLifecycle({
             type: 'handoff',
             workspaceId,
             sourceSessionKey,
             sessionKey,
             agentId,
-          });
+            sessionGeneration: child.session.sessionId,
+          }, true);
         }
-        return { success: true, sessionKey, ...lineage };
+        operation = await updateWorkspaceHandoffOperation(workspaceId, id, (current) => ({
+          ...current!, sessionGeneration: child.session!.sessionId!,
+          phase: current!.phase === 'creating' ? 'ready' : current!.phase,
+        }));
+        return { success: true, sessionKey, operation, ...lineage };
       });
       handoffCreationTail = creation.catch(() => undefined);
       return creation;
+    },
+    handoffOperation: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const workspaceId = getOptionalWorkspaceId(payload);
+      if (!workspaceId) return { success: false, operation: null, error: 'HANDOFF_WORKSPACE_MISSING' };
+      let operation = await readWorkspaceHandoffOperation({ workspaceId, sessionKey, operationId: payload.operationId });
+      if (operation && payload.reconcile && ['sending', 'accepted', 'unknown'].includes(operation.phase)) {
+        const current = operation;
+        try {
+          if (!ctx.gatewayManager) throw new Error('Gateway unavailable');
+          const child = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: current.sessionKey }, 15_000);
+          if (child.session?.sessionId !== current.sessionGeneration) throw new Error('Handoff child generation changed');
+          const messages = await loadSessionTranscriptByKey(current.sessionKey, 1000, ctx.gatewayManager);
+          const delivered = messages?.some((message) => message.role === 'user'
+            && (message as RawMessage & { idempotencyKey?: string }).idempotencyKey === `${current.firstSendIdempotencyKey}:user`);
+          operation = await updateWorkspaceHandoffOperation(workspaceId, current.id, (latest) => ({
+            ...latest!, phase: delivered ? 'sent' : latest!.phase === 'accepted' || latest!.phase === 'sent' ? latest!.phase : 'unknown',
+            ...(delivered ? { error: null, receipt: { source: 'transcript', run: normalizeRunScope({
+              runId: current.firstSendIdempotencyKey, scope: { workspaceId, sessionKey: current.sessionKey },
+            }) } } : {}),
+          }));
+        } catch (error) {
+          operation = await updateWorkspaceHandoffOperation(workspaceId, current.id, (latest) => ({
+            ...latest!, phase: latest!.phase === 'sent' ? 'sent' : 'unknown', error: String(error),
+          }));
+        }
+      }
+      return { success: true, operation };
     },
     fork: async (payload) => {
       const sessionKey = getSessionKey(payload);
@@ -2903,6 +3297,8 @@ export function createSessionsApi(ctx: {
           warnings: ['gateway_unavailable'],
         };
       }
+      const taskSnapshot = await loadTaskLedgerSnapshot(workspaceId);
+      await readDerivationTaskIds(taskSnapshot, sessionKey, ctx.gatewayManager);
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.fork', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
@@ -2923,6 +3319,27 @@ export function createSessionsApi(ctx: {
           forkedFromParent: result.forkedFromParent === true,
         };
       }
+      // Re-read the generation after cloning: a reset may race with sessions.fork.
+      const taskNodeIds = await readDerivationTaskIds(taskSnapshot, sourceSessionKey, ctx.gatewayManager);
+      if (sourceSessionKey !== sessionKey) {
+        taskNodeIds.push(...await readDerivationTaskIds(taskSnapshot, sessionKey, ctx.gatewayManager));
+      }
+      const entry = isRecord(result.entry) ? result.entry : undefined;
+      const generation = typeof result.sessionId === 'string' ? result.sessionId.trim()
+        : typeof entry?.sessionId === 'string' ? entry.sessionId.trim() : null;
+      if (taskNodeIds.length && !generation) {
+        return {
+          success: false, sourceSessionKey, sessionKey: nextSessionKey, agentId, workspaceId,
+          error: 'Task scope unavailable: fork session generation is missing',
+          warnings: ['fork_task_scope_unavailable'],
+        };
+      }
+      await appendTaskLedgerEvents(workspaceId, sessionDerivationEvents({
+        id: randomUUID(), sessionKey: nextSessionKey, agentId,
+        relation: 'forked_from', sourceSessionKey, sessionGeneration: generation || null,
+        createdAt: new Date().toISOString(),
+      }, [...new Set(taskNodeIds)]), `session-fork:${sourceSessionKey}:${nextSessionKey}`);
+      if (workspaceId) await persistentTaskChatContext(workspaceId,nextSessionKey,ctx.gatewayManager,(await getWorkspaceRootPathById(workspaceId))??undefined);
       return {
         success: true,
         sourceSessionKey,
@@ -2946,50 +3363,16 @@ export function createSessionsApi(ctx: {
     archive: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};
       const sessionKey = getSessionKey(payload);
-      return withSessionDeleteGateLock(sessionKey, async () => {
-      const result = await archiveSession({
+      return withSessionDeleteGateLock(sessionKey, () => archiveSession({
         id: sessionKey,
         label: body.label,
         originalWorkspaceId: body.originalWorkspaceId,
         originalFolderId: body.originalFolderId,
-      }, ctx.gatewayManager);
-      if (result.success) {
-        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
-        await observeCoordinatorLifecycle({
-          type: 'archive',
-          workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : null,
-          sessionKey,
-        });
-        const resourceReclamation = await reclaimLongSessionOwnerResources({
-          action: 'session-archive',
-          scope: {
-            workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : '',
-            sessionKey,
-            expectedSessionId: result.sessionId ?? null,
-          },
-          terminalManager: ctx.terminalManager,
-          runtimeCleanupSettled: Boolean(ctx.gatewayManager),
-        }).catch((error) => {
-          logger.warn('[resource-reclamation] archive pass failed', error);
-          return undefined;
-        });
-        if (resourceReclamation?.recoveryRequired) {
-          logger.warn('[resource-reclamation] archive recovery required', {
-            recoveryId: resourceReclamation.recoveryId,
-            activeResidue: resourceReclamation.activeResidue,
-          });
-        }
-        return { ...result, ...(resourceReclamation ? { resourceReclamation } : {}) };
-      }
-      return result;
-      });
+        resumeOperationId: body.resumeOperationId,
+      }, ctx.gatewayManager, finishMutation));
     },
-    restore: async (payload) => withSessionDeleteGateLock(getSessionKey(payload), async () => {
-      const sessionKey = getSessionKey(payload);
-      const result = await restoreSession({ id: sessionKey }, ctx.gatewayManager);
-      if (result.success) await observeCoordinatorLifecycle({ type: 'restore', workspaceId: getOptionalWorkspaceId(payload), sessionKey });
-      return result;
-    }),
+    restore: async (payload) => withSessionDeleteGateLock(getSessionKey(payload), () =>
+      restoreSession(payload, ctx.gatewayManager, finishMutation)),
     permanentDelete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const workspaceId = getOptionalWorkspaceId(payload);

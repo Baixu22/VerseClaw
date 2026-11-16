@@ -1,0 +1,9 @@
+{
+  "id": "principle-6a070a8e50248d9fbd7e8ec1",
+  "kind": "confirmed-sekb",
+  "sourceCaseIds": [
+    "rsi-training-json-roundtrip-v1",
+    "rsi-training-array-copy-v1"
+  ],
+  "context": "[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---"
+}

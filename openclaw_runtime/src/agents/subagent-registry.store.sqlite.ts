@@ -24,12 +24,30 @@ import type {
   SubagentExecutionState,
   SubagentRunRecord,
 } from "./subagent-registry.types.js";
+import { countActiveRunsForSessionFromRuns } from './subagent-registry-queries.js';
 
 type SubagentRunsTable = OpenClawStateKyselyDatabase["subagent_runs"];
 type SubagentRegistryDatabase = Pick<OpenClawStateKyselyDatabase, "subagent_runs">;
 type SubagentRunSqliteRow = Selectable<SubagentRunsTable>;
 type SubagentRunSqliteInsert = Insertable<SubagentRunsTable>;
 type SubagentRunSqliteUpdate = Updateable<SubagentRunsTable>;
+type RegistrySnapshot = { path: string; rows: Map<string, { row: string; memory: string }> };
+const registrySnapshots = new WeakMap<Map<string, SubagentRunRecord>, RegistrySnapshot>();
+
+function snapshotFor(runs: Map<string, SubagentRunRecord>, rows: SubagentRunSqliteRow[]): RegistrySnapshot {
+  return { path: openOpenClawStateDatabase().path, rows: new Map(rows.filter(row => runs.has(row.run_id)).map(row =>
+    [row.run_id, { row: JSON.stringify(row), memory: String(subagentRunRecordToSqliteInsert(runs.get(row.run_id)!).payload_json) }])) };
+}
+
+/** Carries read versions into the existing live map for compare-and-swap writes. */
+export function adoptSubagentRegistrySnapshot(runs: Map<string, SubagentRunRecord>, restored: Map<string, SubagentRunRecord>): void {
+  const source = registrySnapshots.get(restored);
+  if (!source) return;
+  const previous = registrySnapshots.get(runs);
+  const rows = new Map(previous?.path === source.path ? previous.rows : []);
+  for (const [id, version] of source.rows) if (runs.get(id) === restored.get(id)) rows.set(id, version);
+  registrySnapshots.set(runs, { path: source.path, rows });
+}
 
 /** Converts undefined to null so optional record fields round-trip through sqlite columns. */
 function jsonStringify(value: unknown): string | null {
@@ -276,12 +294,14 @@ function removeLegacySubagentRegistryFile(): void {
 
 function loadSubagentRegistryFromSqliteOnly(): Map<string, SubagentRunRecord> {
   const runs = new Map<string, SubagentRunRecord>();
-  for (const row of readSubagentRegistryRows()) {
+  const rows = readSubagentRegistryRows();
+  for (const row of rows) {
     const entry = rowToSubagentRunRecord(row);
     if (entry) {
       runs.set(entry.runId, entry);
     }
   }
+  registrySnapshots.set(runs, snapshotFor(runs, rows));
   return runs;
 }
 
@@ -300,14 +320,46 @@ export function loadSubagentRegistryFromSqlite(): Map<string, SubagentRunRecord>
   return loadSubagentRegistryFromSqliteOnly();
 }
 
-/** Saves the complete subagent run snapshot to sqlite and prunes rows not in the snapshot. */
+/** Writes changed rows against their read versions; unrelated gateway rows remain intact. */
 export function saveSubagentRegistryToSqlite(runs: Map<string, SubagentRunRecord>): void {
-  runOpenClawStateWriteTransaction(({ db }) => {
+  const saved = runOpenClawStateWriteTransaction(({ db, path: databasePath }) => {
     const stateDb = getNodeSqliteKysely<SubagentRegistryDatabase>(db);
-    const runIds: string[] = [];
-    for (const entry of runs.values()) {
+    const previous = registrySnapshots.get(runs);
+    const versions = previous?.path === databasePath ? previous.rows : new Map<string, { row: string; memory: string }>();
+    const current = new Map(readSubagentRegistryRows().map(row => [row.run_id, row]));
+    const next = new Map(runs);
+    const writes: SubagentRunSqliteInsert[] = [];
+    const deletions: string[] = [];
+    for (const [id, entry] of runs) {
+      if (id !== entry.runId) throw new Error('subagent registry identity conflict');
       const values = subagentRunRecordToSqliteInsert(entry);
-      runIds.push(values.run_id);
+      const old = versions.get(id), row = current.get(id);
+      if (old && old.memory === values.payload_json) {
+        if (!row) next.delete(id);
+        else if (JSON.stringify(row) !== old.row) {
+          const fresh = rowToSubagentRunRecord(row);
+          if (!fresh) throw new Error('invalid persisted subagent owner record');
+          next.set(id, fresh);
+        }
+        continue;
+      }
+      if ((row && (!old || JSON.stringify(row) !== old.row)) || (!row && old)) {
+        throw new Error(`subagent registry write conflict: ${id}`);
+      }
+      if (row && (values.child_session_key !== row.child_session_key
+        || values.requester_session_key !== row.requester_session_key
+        || (values.controller_session_key ?? values.requester_session_key) !== (row.controller_session_key ?? row.requester_session_key)
+        || rowToSubagentRunRecord(row)?.requesterSessionId !== entry.requesterSessionId)) {
+        throw new Error(`subagent registry scope conflict: ${id}`);
+      }
+      writes.push(values);
+    }
+    for (const [id, old] of versions) if (!runs.has(id)) {
+      const row = current.get(id);
+      if (row && JSON.stringify(row) !== old.row) throw new Error(`subagent registry delete conflict: ${id}`);
+      if (row) deletions.push(id);
+    }
+    for (const values of writes) {
       executeSqliteQuerySync(
         db,
         stateDb
@@ -318,10 +370,34 @@ export function saveSubagentRegistryToSqlite(runs: Map<string, SubagentRunRecord
           ),
       );
     }
-    const deleteQuery =
-      runIds.length === 0
-        ? stateDb.deleteFrom("subagent_runs")
-        : stateDb.deleteFrom("subagent_runs").where("run_id", "not in", runIds);
-    executeSqliteQuerySync(db, deleteQuery);
+    for (const id of deletions) executeSqliteQuerySync(db, stateDb.deleteFrom('subagent_runs').where('run_id', '=', id));
+    return { next, snapshot: snapshotFor(next, readSubagentRegistryRows()) };
+  });
+  for (const id of runs.keys()) if (!saved.next.has(id)) runs.delete(id);
+  for (const [id, entry] of saved.next) if (runs.get(id) !== entry) runs.set(id, entry);
+  registrySnapshots.set(runs, saved.snapshot);
+}
+
+/** Reconciles the live map with committed peer records before queue decisions. */
+export function refreshSubagentRegistrySnapshot(runs: Map<string, SubagentRunRecord>): void {
+  saveSubagentRegistryToSqlite(runs);
+  const current = loadSubagentRegistryFromSqlite();
+  for (const [id, entry] of current) if (!runs.has(id)) runs.set(id, entry);
+  adoptSubagentRegistrySnapshot(runs, current);
+}
+
+/** The shared SQLite transaction owns both capacity observation and the persisted claim. */
+export function withSubagentRegistryCapacity(input: { controller: string; maxChildren: number; queuedRunId?: string }, reserve: () => void): boolean {
+  if (!input.controller.trim() || !Number.isSafeInteger(input.maxChildren) || input.maxChildren < 1) throw new Error('invalid subagent capacity scope');
+  return runOpenClawStateWriteTransaction(() => {
+    const current = loadSubagentRegistryFromSqlite();
+    if (input.queuedRunId) {
+      const row = current.get(input.queuedRunId);
+      if (!row?.queuedDispatch || row.dispatchPending || Number.isFinite(row.endedAt)) return false;
+      if ((row.controllerSessionKey ?? row.requesterSessionKey) !== input.controller.trim()) return false;
+    }
+    if (countActiveRunsForSessionFromRuns(current, input.controller) >= input.maxChildren) return false;
+    reserve();
+    return true;
   });
 }

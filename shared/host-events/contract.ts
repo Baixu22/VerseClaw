@@ -102,6 +102,7 @@ export type ChannelSuccessEvent = {
 export type ChannelErrorEvent = string | { message?: string };
 
 export type TerminalSessionEvent = {
+  expectedSessionId?: string | null;
   workspaceId: string;
   sessionKey: string;
   sessionId: string;
@@ -223,6 +224,7 @@ export type HostEventContract = {
   chat: {
     runtimeEvent: (payload: ChatRuntimeEvent) => void;
     queueStatus: (payload: ChatQueueStatusEvent) => void;
+    workspaceNavigationChanged: () => void;
   };
   subagent: {
     lifecycle: (payload: SubagentRuntimeLifecycleEvent) => void;
@@ -265,6 +267,7 @@ export type HostEventContract = {
     devServerOutput: (payload: WebPreviewDevServerOutputEvent) => void;
   };
   app: {
+    windowVisibility: (visible: boolean) => void;
     navigate: (path: string) => void;
     newChat: () => void;
     openClawCliInstalled: (installedPath: string) => void;
@@ -301,6 +304,7 @@ export const HOST_EVENT_CHANNELS = {
   chat: {
     runtimeEvent: 'chat:runtime-event',
     queueStatus: 'chat:queue-status',
+    workspaceNavigationChanged: 'chat:workspace-navigation-changed',
   },
   subagent: {
     lifecycle: 'agent:subagent-lifecycle',
@@ -339,6 +343,7 @@ export const HOST_EVENT_CHANNELS = {
     devServerOutput: 'web-preview:dev-server-output',
   },
   app: {
+    windowVisibility: 'window:visibility',
     navigate: 'navigate',
     newChat: 'new-chat',
     openClawCliInstalled: 'openclaw:cli-installed',

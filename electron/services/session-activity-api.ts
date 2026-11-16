@@ -13,6 +13,7 @@ import { createGitApi } from './git-api';
 import { createTaskLedgerApi } from './task-ledger-api';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import { collectLongSessionResourceInventory } from './long-session-resource-reclamation';
+import { buildSessionHostReadiness } from '../gateway/session-host-readiness';
 
 type RuntimeActivityResponse = {
   snapshot?: Partial<SessionActivitySnapshot> & {
@@ -103,6 +104,8 @@ function mergeRuntimeSnapshot(
     goals: Array.isArray(runtime.goals) ? runtime.goals : snapshot.goals,
     processes: Array.isArray(runtime.processes) ? runtime.processes : snapshot.processes,
     lineage: Array.isArray(runtime.lineage) ? runtime.lineage : snapshot.lineage,
+    ...(runtime.stage ? { stage: runtime.stage } : {}),
+    ...(runtime.derivation ? { derivation: runtime.derivation } : {}),
     ...(runtime.policy ? { policy: runtime.policy } : {}),
     ...(runtime.resources ? { resources: runtime.resources } : {}),
     continuity: { ...snapshot.continuity, ...(runtime.continuity ?? {}) },
@@ -211,6 +214,30 @@ export function createSessionActivityApi({
         runtimeInventory: snapshot.resources ?? null,
       });
       snapshot.backgroundRead = backgroundRead;
+      if (snapshot.policy) {
+        const before = gatewayManager.getStatus().connectedAt;
+        const [ack, cron] = await Promise.allSettled([
+          gatewayManager.rpc<{ gatewayGeneration?: unknown; childPid?: unknown }>('runtime.flags.ack', {}, 3_000),
+          gatewayManager.rpc<{ enabled?: unknown }>('cron.status', {}, 3_000),
+        ]);
+        const current = gatewayManager.getStatus();
+        const runtimeGeneration = ack.status === 'fulfilled'
+          && typeof ack.value.gatewayGeneration === 'string' && ack.value.gatewayGeneration.trim()
+          && typeof ack.value.childPid === 'number' && ack.value.childPid > 0
+          ? ack.value.gatewayGeneration : null;
+        snapshot.policy = {
+          ...snapshot.policy,
+          host: buildSessionHostReadiness({
+            workspaceId: payload.workspaceId?.trim() ?? '', sessionKey,
+            sessionId: snapshot.session.sessionId ?? null,
+            policy: snapshot.policy,
+            gateway: gatewayManager.getCapabilitySnapshot(),
+            runtimeGeneration,
+            cronEnabled: cron.status === 'fulfilled' && typeof cron.value.enabled === 'boolean' ? cron.value.enabled : null,
+            connectionUnchanged: typeof before === 'number' && before === current.connectedAt,
+          }),
+        };
+      }
       snapshot.capturedAt = Date.now();
 
       return { success: true, snapshot, runtimeAvailable };

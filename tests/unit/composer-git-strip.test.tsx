@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { toast } from 'sonner';
 import { ComposerGitStrip } from '@/pages/Chat/ComposerGitStrip';
@@ -36,6 +36,7 @@ vi.mock('react-i18next', () => ({
         'composer.git.worktreeLabel': 'Worktree',
         'composer.git.clean': 'Clean',
         'composer.git.dirty': `${String(options?.count)} changes`,
+        'composer.git.filesChanged': `${String(options?.count)} files changed`,
         'composer.git.conflicts': `${String(options?.count)} conflicts`,
         'composer.git.detached': 'Detached',
         'composer.git.unknownBranch': 'Unknown branch',
@@ -96,7 +97,11 @@ function mockGitContext() {
       unstagedCount: 2,
       untrackedCount: 0,
       conflictedCount: 0,
-      changes: [],
+      changes: [
+        {path:'a.ts',absolutePath:'/workspace/demo/a.ts',status:'M',staged:true,unstaged:false,untracked:false,conflicted:false,bucket:'staged'},
+        {path:'b.ts',absolutePath:'/workspace/demo/b.ts',status:'M',staged:false,unstaged:true,untracked:false,conflicted:false,bucket:'unstaged'},
+        {path:'c.ts',absolutePath:'/workspace/demo/c.ts',status:'M',staged:false,unstaged:true,untracked:false,conflicted:false,bucket:'unstaged'},
+      ],
     },
   });
   hostApiMock.git.branches.mockResolvedValue({
@@ -120,7 +125,7 @@ describe('ComposerGitStrip', () => {
     mockGitContext();
   });
 
-  it('renders branch, dirty state, sync state, and current worktree context', async () => {
+  it('shows only the changed-file summary until details are explicitly opened', async () => {
     render(
       <ComposerGitStrip
         workspace={workspace()}
@@ -129,10 +134,28 @@ describe('ComposerGitStrip', () => {
       />,
     );
 
-    expect(await screen.findByTestId('composer-git-strip')).toHaveTextContent('feature/current');
-    expect(screen.getByTestId('composer-git-strip')).toHaveTextContent('3 changes');
-    expect(screen.getByTestId('composer-git-strip')).toHaveTextContent('ahead 2 / behind 1');
-    expect(screen.getByTestId('composer-git-strip')).toHaveTextContent('demo');
+    expect(await screen.findByTestId('composer-git-strip')).toHaveTextContent('3 files changed');
+    expect(screen.getByTestId('composer-git-strip')).not.toHaveTextContent('feature/current');
+    expect(hostApiMock.git.branches).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('composer-git-trigger'));
+    expect(await screen.findByTestId('composer-git-menu')).toHaveTextContent('feature/current');
+    expect(screen.getByTestId('composer-git-menu')).toHaveTextContent('ahead 2 / behind 1');
+  });
+
+  it('ignores a late Git response from the previous workspace', async () => {
+    const original = await hostApiMock.git.status();
+    let complete!: (value: typeof original) => void;
+    hostApiMock.git.status.mockReturnValueOnce(new Promise((resolve) => { complete = resolve; }));
+    hostApiMock.git.status.mockResolvedValue({ ...original, status: {
+      ...original.status, workspaceRoot: '/workspace/next', repoRoot: '/workspace/next',
+      changes: [...original.status.changes, { ...original.status.changes[0], path: 'next.ts' }],
+    } });
+    const props = { onOpenGitPanel: vi.fn(), onSwitchWorktreeWorkspace: vi.fn() };
+    const view = render(<ComposerGitStrip {...props} workspace={workspace()} />);
+    view.rerender(<ComposerGitStrip {...props} workspace={{ ...workspace(), id: 'next-workspace', rootPath: '/workspace/next' }} />);
+    expect(await screen.findByTestId('composer-git-trigger')).toHaveTextContent('4 files changed');
+    await act(async () => { complete({ ...original, status: { ...original.status, branch: 'old-workspace-branch' } }); });
+    expect(screen.getByTestId('composer-git-trigger')).toHaveTextContent('4 files changed');
   });
 
   it('hides when the active workspace is not a repository', async () => {
@@ -162,6 +185,18 @@ describe('ComposerGitStrip', () => {
 
     await waitFor(() => expect(hostApiMock.git.status).toHaveBeenCalled());
     expect(screen.queryByTestId('composer-git-strip')).not.toBeInTheDocument();
+  });
+  it('stays hidden before work starts and on a clean repository',async()=>{
+    const {rerender}=render(<ComposerGitStrip workspace={workspace()} active={false} onOpenGitPanel={vi.fn()} onSwitchWorktreeWorkspace={vi.fn()}/>);
+    expect(hostApiMock.git.status).not.toHaveBeenCalled();expect(screen.queryByTestId('composer-git-strip')).toBeNull();
+    hostApiMock.git.status.mockResolvedValue({status:{isRepository:true,workspaceRoot:'/workspace/demo',clean:true,changes:[],stagedCount:0,unstagedCount:0,untrackedCount:0,conflictedCount:0}});
+    rerender(<ComposerGitStrip workspace={workspace()} active onOpenGitPanel={vi.fn()} onSwitchWorktreeWorkspace={vi.fn()}/>);
+    await waitFor(()=>expect(hostApiMock.git.status).toHaveBeenCalled());expect(screen.queryByTestId('composer-git-strip')).toBeNull();
+  });
+  it('counts a file once when it appears in both staged and unstaged buckets',async()=>{
+    const original=await hostApiMock.git.status();original.status.changes=[original.status.changes[0],{...original.status.changes[0],staged:false,unstaged:true,bucket:'unstaged'}];hostApiMock.git.status.mockResolvedValue(original);
+    render(<ComposerGitStrip workspace={workspace()} onOpenGitPanel={vi.fn()} onSwitchWorktreeWorkspace={vi.fn()}/>);
+    expect(await screen.findByTestId('composer-git-trigger')).toHaveTextContent('1 files changed');
   });
 
   it('checks out a branch through the host Git API and refreshes context', async () => {
@@ -238,7 +273,7 @@ describe('ComposerGitStrip', () => {
 
     fireEvent.click(await screen.findByTestId('composer-git-trigger'));
     fireEvent.change(screen.getByTestId('composer-git-worktree-branch'), { target: { value: 'feature/current' } });
-    expect(screen.getByTestId('composer-git-worktree-blocked')).toHaveTextContent('Branch already exists');
+    expect(await screen.findByTestId('composer-git-worktree-blocked')).toHaveTextContent('Branch already exists');
     expect(screen.getByTestId('composer-git-add-worktree')).toBeDisabled();
 
     fireEvent.change(screen.getByTestId('composer-git-worktree-branch'), { target: { value: 'feature/new-worktree' } });

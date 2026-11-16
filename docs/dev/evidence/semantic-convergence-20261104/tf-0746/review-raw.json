@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "title": "Settings 400 assertion requires a request the validation flow never makes",
+      "body": "The provider validation request is a `/models` request, as demonstrated by the supplied Setup journey whose successful validation is served only from `/models`. For the 400 response, validation stops at that failed request, so this test never issues a `/chat/completions` request. Consequently, the assertion at line 41 fails even when Main correctly maps the 400 to protocol-error and preserves the unverified state. Assert that the 400 occurred on the provider-validation path (for example, `/models`), or explicitly exercise inference separately if a chat request is intended.",
+      "priority": "P1",
+      "confidence": 0.97,
+      "category": "bug",
+      "code_location": {
+        "file_path": "tests/e2e/semantic-convergence-provider-readiness.spec.ts",
+        "line": 41
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The PID capture and tree teardown changes, net-policy aliasing, and local HTTP retry coverage are otherwise coherent. However, the new Settings E2E test deterministically fails because it requires a 400 `/chat/completions` request even though the exercised provider-validation path stops at `/models`. This blocks the required E2E gate despite the application behavior being correct.",
+  "overall_confidence": 0.96
+}

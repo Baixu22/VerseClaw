@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "AgentFirstTaskCorpusValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-corpus-owner",
+  "candidate": {
+    "commit": "ff3eecbd909e0bf61f6a565eae53c85818abbd3a",
+    "tree": "a4b5d8b6fbd71e52b2e9af10b8bd2896f8749eed",
+    "dirty": false,
+    "dirtyPaths": [],
+    "unrelatedDirtyPaths": [],
+    "sourceHashes": {
+      "scripts/rsi-historical-task-corpus.mjs": "ef5f3644c3d9ea279fe4d9ca0a1e02c2790992cf83cf82960137ccd6899604fa",
+      "scripts/rsi-historical-task-corpus.d.mts": "e57bc4f0ab00b9567183f7ccc89fb9da64e34e5f2035ad3f51300aa4715ad35b",
+      "scripts/lib/rsi-historical-task-corpus.mjs": "310a033adcb083c44e28139a8243671517429ed3ccb27b838ea44458edcc4792",
+      "scripts/lib/rsi-historical-task-corpus.d.mts": "43156741a909994f933c99973ecc941e0a45caef13dcc4ac8f48327a2e58955a",
+      "scripts/lib/agent-first-graders.mjs": "16073b5108f5118cd1ac8285837205942136bd5e3f069dce13512b2da16d6a0e",
+      "scripts/lib/agent-first-graders.d.mts": "730c6865c5f16202e35272245f499505a6fe1d9bb2e16caf9ed196192f5d7a97",
+      "scripts/lib/evidence-binding.mjs": "745240fbc6b75c7c03a6596b381b4871079427a74acdcd7b2f0cfb571fae830b",
+      "scripts/lib/evidence-binding.d.mts": "65c6e917f1b740516a635f954e32f26b9e8f774a674ec700544a1efbfcc81a4f",
+      "tests/unit/rsi-historical-task-corpus.test.ts": "e2c968c78742c6d17eed500950b7a92932b4caadcd67d1491ec4792a1b0533b8",
+      "tests/unit/agent-first-graders.test.ts": "54eb094f7d6af69439b10cf6c5f5963d89eec7b99b49d51b4e7fe926aad63dfb",
+      "tests/unit/agent-first-evaluation-framework.test.ts": "3d01944ec3d056105d2fd4ae5e6c13538deee95f07b21d3fd96ee7c8f2f0ce40",
+      "tests/unit/agent-first-evaluation-loop.test.ts": "aafa24981f08f1cfd43278c17e0507aee9d854ad3bd6b322f4fb3a1a4fce2059",
+      "harness/specs/tasks/agent-first-task-corpus-calibration.md": "45777f95e66881651d3ed699d2c2af2e9d32617b420d7d3dc0626e67f183ee56",
+      "harness/specs/guides/agent-first-acceptance.md": "b62bf239dc25e251869a872ca0f771ac683de3e2dbe0024f7a9b560bee4509c7",
+      "scripts/lib/agent-first-evaluation-framework.mjs": "3fab68930689b379c50296e58dbe30a55e86f7adc01f6f4dd7f72d127ed750f2",
+      "scripts/lib/agent-first-evaluation-loop.mjs": "84ca20bbe6e997b6dc6ac58ca49edef291e7449be5e4c82a5671ce9ac8b3c76e",
+      "package.json": "f82adc8c38bb41c60521a3352582f5022775b1bef893ea9e5e3d244c978843fc",
+      "docs/README.md": "308b217c9a977cc6ae45eed0e1932f2f498f343fd62bd0ed0a05509a995b85e9",
+      "docs/dev/rsi-capability-and-boundaries.md": "2d1abb862f3fdc621dcefe1c3ef517f06972f4de43dfe5b15bbd639149fd09d4"
+    }
+  },
+  "corpus": {
+    "passed": true,
+    "errors": []
+  },
+  "taskCount": 24,
+  "distribution": {
+    "capability": 4,
+    "regression": 6,
+    "negative": 5,
+    "adversarial": 3,
+    "recovery": 4,
+    "efficiency": 2
+  },
+  "calibration": {
+    "passed": true,
+    "rowCount": 16,
+    "rubricRunStatus": "provider-calibration-recorded"
+  },
+  "claims": {
+    "realHuman": false,
+    "actualSystemBaselineRun": false,
+    "liveModelCalibration": true,
+    "rsiCandidateGenerated": false,
+    "productLocksChanged": false
+  }
+}

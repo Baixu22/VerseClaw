@@ -3,7 +3,7 @@ import { sanitizeForLog } from "../../packages/terminal-core/src/ansi.js";
 import type { OpenClawConfig } from "../config/types.js";
 import { defaultSlotIdForKey } from "../plugins/slots.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
-import { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "./types.js";
+import { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "./cvk/identity.js";
 import type {
   AssembleResult,
   BootstrapResult,

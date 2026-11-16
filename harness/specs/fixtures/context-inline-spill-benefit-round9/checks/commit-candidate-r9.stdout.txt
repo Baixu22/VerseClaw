@@ -1,0 +1,5 @@
+[codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c 27c1a91dd] fix(context-eval): recover original locators from visible question bookmarks
+ 12 files changed, 235 insertions(+), 23 deletions(-)
+ create mode 100644 harness/specs/tasks/inline-spill-real-benefit-eval-round9.md
+ create mode 100644 scripts/context-inline-spill-benefit-round9-verify.mts
+ create mode 100644 tests/unit/context-inline-spill-benefit-bookmark.test.ts

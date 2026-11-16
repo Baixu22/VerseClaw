@@ -1,0 +1,138 @@
+[
+  {
+    "path": "electron/services/session-storage-api.ts",
+    "sha256": "f907361ac49adf1d03c1bb5179d8ab408cad333543c825508523797fdcfc64b0"
+  },
+  {
+    "path": "electron/services/git-api.ts",
+    "sha256": "991ed87fa9b781a99a932462847c0e1a560ea456adbc66813d1db104f7832ec4"
+  },
+  {
+    "path": "electron/main/ipc-handlers.ts",
+    "sha256": "5a0b6551b416ae23a854634fbfd856f7c6afbf8bde9ff641539a49adf6422d0f"
+  },
+  {
+    "path": "shared/host-api/contract.ts",
+    "sha256": "c95c827f68d4d0c93bc39062f6c23e48ffcff416f4238e0114e189b679d102ff"
+  },
+  {
+    "path": "shared/types/git.ts",
+    "sha256": "5fcd62b19eeb3e46d459f062143ec0eb4a11c28bb4dace44ac8b5e60038d2784"
+  },
+  {
+    "path": "shared/types/session-storage.ts",
+    "sha256": "8d098ccfc037cdc9ea7bb08f0a4d264d4a1ca90ecc43b80b9f230d867e895b99"
+  },
+  {
+    "path": "src/lib/host-api.ts",
+    "sha256": "a4463ce149baf71363ffe1283ccb7fce6d9bb8c6ce50194bf60cc69aa64e2b42"
+  },
+  {
+    "path": "src/components/chat/SessionWorkspacePicker.tsx",
+    "sha256": "e69b29a97e6e2754584ee848789db6850768eaceba3c644ec9e90841390d34d7"
+  },
+  {
+    "path": "src/pages/Settings/sections/StorageSection.tsx",
+    "sha256": "171bf6c5fd2bcb749604cf1c6132a6b87ac7a6a68907578f9136d975cee42bb0"
+  },
+  {
+    "path": "src/pages/Settings/route-config.ts",
+    "sha256": "df2a0a8ac1086e5d324eb686b9ed20e08906a6392d6f84fdf324cc4d9969eb29"
+  },
+  {
+    "path": "src/pages/Settings/SettingsRoute.tsx",
+    "sha256": "73cdb43f2a277ba52f442cbcc0188fc1a4aa84eac7347152ca179978511967a9"
+  },
+  {
+    "path": "src/pages/Settings/SettingsSidebar.tsx",
+    "sha256": "1590f15852cd8f0d19d443b696a8a61e9fee45ba416c0f359b5832599c1842e0"
+  },
+  {
+    "path": "src/pages/Settings/SettingsDrawerRoute.tsx",
+    "sha256": "dcaee563c0d1fd9b73840f972b6317e366f2d52a18782481b5d73abcd8b41f74"
+  },
+  {
+    "path": "src/pages/Settings/index.tsx",
+    "sha256": "c15a89d03a6c496f789ff64eaa13533faf5109d4057dd889649bc87acd042e60"
+  },
+  {
+    "path": "src/pages/Chat/index.tsx",
+    "sha256": "d9c38bafeb44c876fe80f5b35e2699a9375aa83937b0734efdf20f94dfdcd5ca"
+  },
+  {
+    "path": "src/pages/Chat/ChatInput.tsx",
+    "sha256": "39bc64b69d1b6079aeb6911a8eb3d05e136df37e5b77840f0db3b226490108a5"
+  },
+  {
+    "path": "src/pages/Chat/ComposerGitStrip.tsx",
+    "sha256": "f5d253fc7207a59d5b850dc94c038fa64bfdee7ee2406cd563dbcf65ebd2692c"
+  },
+  {
+    "path": "tests/unit/session-storage-api.test.ts",
+    "sha256": "4843e86373fa5c053a54bf20e4f5ef02fd49016f6e9a29527a013ee0434b5ad2"
+  },
+  {
+    "path": "tests/e2e/session-worktree-storage.spec.ts",
+    "sha256": "b534ff6e61645ac5a19f607febc2bf6c628fa9e5296e1389b18c9192939a7229"
+  },
+  {
+    "path": "harness/specs/tasks/session-worktree-storage.md",
+    "sha256": "6af8e42a5423c9094a23ff90db6ce61bd2e39f7495326abc47771c336dea7b88"
+  },
+  {
+    "path": "harness/specs/rules/session-storage-ownership.md",
+    "sha256": "b144ea278cf2ec2fdbd78b0c9abd9829c7cf2c787701eba1c88fb884641628c7"
+  },
+  {
+    "path": "docs/dev/session-worktree-storage.md",
+    "sha256": "c0e5e462fec705350637a8d9e5cb0b670c2459d8250c951c7f9e0df79c47b99c"
+  },
+  {
+    "path": "README.md",
+    "sha256": "ee10ecdcd7cb6d423519e2e5f48076d6ead722258b5176042177f63da973f7c0"
+  },
+  {
+    "path": "README.zh-CN.md",
+    "sha256": "715dc402f36c30d55c063f3e4dae65cc3be42188f212746b96c6f75edda7ba8a"
+  },
+  {
+    "path": "README.ja-JP.md",
+    "sha256": "b09869d90540b54c05eb8b7d6a6e0d1fdaf8b19717b2c9ae5a20396eed905cf1"
+  },
+  {
+    "path": "README.ru-RU.md",
+    "sha256": "f7ef307831ba47c5b8c059f40ac3904fcfbc031d947db1884c8a04fc92f59fea"
+  },
+  {
+    "path": "shared/i18n/locales/en/chat.json",
+    "sha256": "84dae01c01815cece8973ee1f0c639f67483cbcdeabae3822967b8a5181dc3ee"
+  },
+  {
+    "path": "shared/i18n/locales/en/settings.json",
+    "sha256": "c5c7902471b48341bd80720cb98de5c43a3b723447378f96f775473d3eca5fbf"
+  },
+  {
+    "path": "shared/i18n/locales/zh/chat.json",
+    "sha256": "808d69362e9dff9aa0a30d54846901706a0a449137ff2c7027860038451504d2"
+  },
+  {
+    "path": "shared/i18n/locales/zh/settings.json",
+    "sha256": "ca2dfce8daec1cf3a7e7055b5a11ea3c6a8b9979469c4d14f20630cff8fb9d72"
+  },
+  {
+    "path": "shared/i18n/locales/ja/chat.json",
+    "sha256": "1e570a49d9e066bb1268d16f6a156b7f9f5a67cd19d036d944a9571fc06d1341"
+  },
+  {
+    "path": "shared/i18n/locales/ja/settings.json",
+    "sha256": "7cfd66809a6b82ca277c7807fef30297a89aeb4c629c665e4382f1a67241cb13"
+  },
+  {
+    "path": "shared/i18n/locales/ru/chat.json",
+    "sha256": "57149c56930191a38b7dfb0178c2869237601db4c53bc5680170c505e297dceb"
+  },
+  {
+    "path": "shared/i18n/locales/ru/settings.json",
+    "sha256": "dcb314e06ba2e8386558014ecb5fa78f4e6aaca6bf82cbefbed1614d2bca243e"
+  }
+]

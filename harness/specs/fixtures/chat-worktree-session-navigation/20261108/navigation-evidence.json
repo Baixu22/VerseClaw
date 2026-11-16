@@ -1,0 +1,241 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "git": "real",
+  "workspaceStorage": "real",
+  "gateway": "fixture",
+  "profiles": [
+    {
+      "id": "default",
+      "name": "默认工作区",
+      "rootPath": "D:\\ClawX\\.tmp\\nav-ui-frozen\\verse-claw-e2e-run-qsQLBu\\verse-claw-e2e-home-U1eFx6\\.openclaw\\workspace",
+      "agentId": "main",
+      "selectedAgentId": "main",
+      "activeSessionKey": "agent:main:main",
+      "agentBindings": {
+        "main": {
+          "workspaceId": "default",
+          "agentId": "main",
+          "sessionKey": "agent:main:main"
+        }
+      },
+      "permissionMode": "readOnly",
+      "createdAt": 1794135450322,
+      "updatedAt": 1794135478934,
+      "lastOpenedAt": 1794135450322,
+      "state": {
+        "chatFooter": {
+          "contextRangeVisible": true,
+          "tokenUsageVisible": true,
+          "workContextVisible": true
+        },
+        "draftInput": "",
+        "composerRunState": "idle",
+        "activeTopicId": null,
+        "knowledgeScope": "none",
+        "knowledgeMode": "suggest",
+        "artifactPanel": {
+          "open": false,
+          "expanded": false,
+          "tabs": []
+        },
+        "turnSummaryExpanded": {},
+        "turnSummaryStepDetailsExpanded": {}
+      },
+      "sessionStates": {
+        "agent:main:main": {
+          "chatFooter": {
+            "contextRangeVisible": true,
+            "tokenUsageVisible": true,
+            "workContextVisible": true
+          },
+          "draftInput": "",
+          "composerRunState": "idle",
+          "activeTopicId": null,
+          "knowledgeScope": "none",
+          "knowledgeMode": "suggest",
+          "artifactPanel": {
+            "open": false,
+            "expanded": false,
+            "tabs": []
+          },
+          "turnSummaryExpanded": {},
+          "turnSummaryStepDetailsExpanded": {}
+        }
+      },
+      "sessionFolders": [],
+      "sessionFolderAssignments": {}
+    },
+    {
+      "id": "navigation-main",
+      "name": "Navigation · main",
+      "rootPath": "D:\\ClawX\\.tmp\\session-navigation-EuqMMW\\main",
+      "agentId": "main",
+      "selectedAgentId": "main",
+      "activeSessionKey": "agent:main:nav-main",
+      "agentBindings": {
+        "main": {
+          "workspaceId": "navigation-main",
+          "agentId": "main",
+          "sessionKey": "agent:main:nav-main"
+        }
+      },
+      "permissionMode": "acceptEdits",
+      "createdAt": 1794135478977,
+      "updatedAt": 1794135488918,
+      "lastOpenedAt": 1794135487698,
+      "state": {
+        "chatFooter": {
+          "contextRangeVisible": true,
+          "tokenUsageVisible": true,
+          "workContextVisible": true
+        },
+        "draftInput": "Main draft immediately before switching",
+        "composerRunState": "idle",
+        "activeTopicId": null,
+        "knowledgeScope": "none",
+        "knowledgeMode": "suggest",
+        "artifactPanel": {
+          "open": false,
+          "expanded": false,
+          "tabs": []
+        },
+        "turnSummaryExpanded": {},
+        "turnSummaryStepDetailsExpanded": {},
+        "sessionList": {
+          "unread": false,
+          "lastReadAt": 1794135487585
+        }
+      },
+      "sessionStates": {
+        "agent:main:nav-main": {
+          "chatFooter": {
+            "contextRangeVisible": true,
+            "tokenUsageVisible": true,
+            "workContextVisible": true
+          },
+          "draftInput": "Main draft immediately before switching",
+          "composerRunState": "idle",
+          "activeTopicId": null,
+          "knowledgeScope": "none",
+          "knowledgeMode": "suggest",
+          "artifactPanel": {
+            "open": false,
+            "expanded": false,
+            "tabs": []
+          },
+          "turnSummaryExpanded": {},
+          "turnSummaryStepDetailsExpanded": {},
+          "sessionList": {
+            "unread": false,
+            "lastReadAt": 1794135487585
+          }
+        },
+        "agent:main:nav-child": {
+          "draftInput": "Child draft",
+          "composerRunState": "idle",
+          "activeTopicId": null,
+          "knowledgeScope": "none",
+          "knowledgeMode": "suggest",
+          "artifactPanel": {
+            "open": false,
+            "expanded": false,
+            "tabs": []
+          },
+          "turnSummaryExpanded": {},
+          "turnSummaryStepDetailsExpanded": {}
+        },
+        "agent:main:nav-unfiled": {
+          "draftInput": "",
+          "composerRunState": "idle",
+          "activeTopicId": null,
+          "knowledgeScope": "none",
+          "knowledgeMode": "suggest",
+          "artifactPanel": {
+            "open": false,
+            "expanded": false,
+            "tabs": []
+          },
+          "turnSummaryExpanded": {},
+          "turnSummaryStepDetailsExpanded": {}
+        }
+      },
+      "sessionFolders": [],
+      "sessionFolderAssignments": {}
+    },
+    {
+      "id": "navigation-worktree",
+      "name": "Navigation · worktree",
+      "rootPath": "D:\\ClawX\\.tmp\\session-navigation-EuqMMW\\worktree",
+      "agentId": "main",
+      "selectedAgentId": "main",
+      "activeSessionKey": "agent:main:nav-older",
+      "agentBindings": {
+        "main": {
+          "workspaceId": "navigation-worktree",
+          "agentId": "main",
+          "sessionKey": "agent:main:nav-older"
+        }
+      },
+      "permissionMode": "acceptEdits",
+      "createdAt": 1794135479458,
+      "updatedAt": 1794135489441,
+      "lastOpenedAt": 1794135488850,
+      "state": {
+        "draftInput": "Older draft",
+        "sessionList": {
+          "unread": false,
+          "lastReadAt": 1794135484749
+        },
+        "composerRunState": "idle",
+        "activeTopicId": null,
+        "knowledgeScope": "none",
+        "knowledgeMode": "suggest",
+        "artifactPanel": {
+          "open": false,
+          "expanded": false,
+          "tabs": []
+        },
+        "turnSummaryExpanded": {},
+        "turnSummaryStepDetailsExpanded": {}
+      },
+      "sessionStates": {
+        "agent:main:nav-tree": {
+          "chatFooter": {
+            "contextRangeVisible": true,
+            "tokenUsageVisible": true,
+            "workContextVisible": true
+          },
+          "draftInput": "Worktree draft"
+        },
+        "agent:main:nav-older": {
+          "draftInput": "Older draft",
+          "sessionList": {
+            "unread": false,
+            "lastReadAt": 1794135484749
+          },
+          "composerRunState": "idle",
+          "activeTopicId": null,
+          "knowledgeScope": "none",
+          "knowledgeMode": "suggest",
+          "artifactPanel": {
+            "open": false,
+            "expanded": false,
+            "tabs": []
+          },
+          "turnSummaryExpanded": {},
+          "turnSummaryStepDetailsExpanded": {}
+        }
+      },
+      "sessionFolders": [],
+      "sessionFolderAssignments": {}
+    }
+  ],
+  "sessionKeys": {
+    "main": "agent:main:nav-main",
+    "child": "agent:main:nav-child",
+    "unfiled": "agent:main:nav-unfiled",
+    "tree": "agent:main:nav-tree",
+    "older": "agent:main:nav-older"
+  }
+}

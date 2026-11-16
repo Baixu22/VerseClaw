@@ -15,6 +15,8 @@ import {
   type SessionDelegationReceipt,
 } from '@shared/types/session-delegation';
 import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
+import type { TaskLedgerSnapshot } from '@shared/types/task-ledger';
+import * as taskLedgerService from '../../electron/services/task-ledger-service';
 import {
   executeSessionDelegation,
   hashDelegationRequest,
@@ -23,6 +25,7 @@ import {
   type StoredSessionDelegationAdmission,
 } from '../../electron/services/session-delegation-admission';
 import { createSessionsApi } from '../../electron/services/sessions-api';
+import { scheduleResourceAwareWaves } from '../../openclaw_runtime/src/agents/orchestration-resource-scheduler';
 import { buildDelegationReceipt } from '../../openclaw_runtime/src/agents/long-session-delegation-receipt';
 import { spawnRoleSubagent, type RoleSpawnContext, type RoleSpawnParams } from '../../openclaw_runtime/src/agents/role-spawn';
 import { createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
@@ -37,6 +40,7 @@ const ROOT = 'D:\\tmp\\clawx-long-session-checkout';
 const temporaryRoots: string[] = [];
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await Promise.all(temporaryRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 
@@ -222,6 +226,17 @@ function dependencies(store = memoryStore(), overrides: Partial<SessionDelegatio
       throw new Error('unexpected gateway call');
     },
     describeSessionGeneration: async () => generation,
+    resolveTaskScope: async (input) => ({
+      sessionKey: input.sessionKey,
+      workspaceId: input.workspaceId,
+      generation: input.sessionGeneration,
+      activeTaskNodeId: input.taskRef,
+      coordinatorSessionKey: input.sessionKey,
+      bindingRevision: input.bindingRevision,
+      bindingState: input.bindingState,
+      links: [{ id: 'delegation-task-link', sessionKey: input.sessionKey, nodeId: input.taskRef, sessionGeneration: input.sessionGeneration }],
+      task: { nodeId: input.taskRef, workspaceId: input.workspaceId, nodeKind: 'task', status: 'doing', generation: input.sessionGeneration },
+    }),
     stopEpoch: () => 0,
     now: () => new Date('2026-10-24T00:00:00.000Z'),
     ...overrides,
@@ -241,7 +256,98 @@ function acceptedGatewayRpc(counter = vi.fn()) {
   return rpc;
 }
 
+describe('A4 delegation task-scope gate', () => {
+  const defaultScopeCases: Array<{
+    name: string;
+    change?: (snapshot: TaskLedgerSnapshot) => void;
+    reason?: string;
+  }> = [
+    { name: 'a current explicit task link' },
+    {
+      name: 'the requested task after an unrelated same-session link',
+      change: (snapshot) => { snapshot.sessionLinks.unshift({ ...snapshot.sessionLinks[0], id: 'other-link', nodeId: 'other-task' }); },
+    },
+    { name: 'a missing task', change: (snapshot) => { snapshot.nodes = []; }, reason: 'task-not-found' },
+    { name: 'a missing link', change: (snapshot) => { snapshot.sessionLinks = []; }, reason: 'task-ref-missing' },
+    {
+      name: 'another session link',
+      change: (snapshot) => { snapshot.sessionLinks[0].sessionKey = 'agent:main:other'; },
+      reason: 'task-ref-missing',
+    },
+    {
+      name: 'an old-generation link',
+      change: (snapshot) => { snapshot.sessionLinks[0].sessionGeneration = 'generation-old'; },
+      reason: 'task-ref-missing',
+    },
+  ];
+
+  it.each(defaultScopeCases)('uses the Main default resolver for $name', async ({ change, reason }) => {
+    const timestamp = '2026-11-07T00:00:00.000Z';
+    const snapshot = taskLedgerService.projectTaskLedgerSnapshot(WORKSPACE_ID, [
+      taskLedgerService.createTaskLedgerEvent(WORKSPACE_ID, {
+        type: 'node_created', actor: 'assistant',
+        payload: { node: { id: TASK_REF, kind: 'task', title: 'Admitted task', status: 'doing', createdAt: timestamp, updatedAt: timestamp } },
+      }),
+      taskLedgerService.createTaskLedgerEvent(WORKSPACE_ID, {
+        type: 'session_linked', actor: 'assistant',
+        payload: { sessionLink: { id: 'current-link', nodeId: TASK_REF, sessionKey: SESSION_KEY, sessionGeneration: SESSION_GENERATION, createdAt: timestamp } },
+      }),
+    ]);
+    change?.(snapshot);
+    const loadSnapshot = vi.spyOn(taskLedgerService, 'loadTaskLedgerSnapshot').mockResolvedValue(snapshot);
+    const rpc = acceptedGatewayRpc();
+    const store = memoryStore();
+    const api = createSessionsApi({
+      gatewayManager: { rpc: vi.fn(async () => ({ session: { sessionId: SESSION_GENERATION } })) } as never,
+      resolveCoordinator: async () => bindingResult(),
+      getActiveWorkspaceId: async () => WORKSPACE_ID,
+      gatewayRpcForDelegation: rpc,
+      delegationStore: store,
+    });
+    const result = await api.delegate(payload());
+    expect(loadSnapshot).toHaveBeenCalledExactlyOnceWith(WORKSPACE_ID);
+    if (reason) {
+      expect(result).toMatchObject({ success: false, status: 'rejected' });
+      expect(result.error).toContain(reason);
+      expect(rpc).not.toHaveBeenCalled();
+      expect(store.records.size).toBe(0);
+    } else {
+      expect(result).toMatchObject({ success: true, status: 'accepted' });
+      expect(result.receipt?.taskRef).toBe(TASK_REF);
+      expect(rpc).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it('rejects before Gateway delegation when the explicit task scope is unavailable', async () => {
+    const rpc = acceptedGatewayRpc();
+    const result = await executeSessionDelegation(payload({ idempotencyKey: 'delegate-scope-missing' }), dependencies(memoryStore(), {
+      gatewayRpc: rpc,
+      resolveTaskScope: async (input) => ({
+        sessionKey: input.sessionKey,
+        workspaceId: input.workspaceId,
+        generation: input.sessionGeneration,
+        activeTaskNodeId: input.taskRef,
+        coordinatorSessionKey: input.sessionKey,
+        bindingRevision: input.bindingRevision,
+        bindingState: input.bindingState,
+        links: [],
+        task: null,
+      }),
+    }));
+    expect(result).toMatchObject({ success: false, status: 'rejected' });
+    expect(result.error).toContain('task-ref-missing');
+    expect(rpc).not.toHaveBeenCalled();
+  });
+});
+
 describe('long-session delegation admission', () => {
+  it('rejects task ownership before issuing a worker dispatch',async()=>{
+    const deps=dependencies(undefined,{assertTaskAdmission:async()=>{throw new Error('TASK_DELEGATION_OWNER_MISMATCH');}});
+    const dispatch=vi.spyOn(deps,'gatewayRpc');
+    const result=await executeSessionDelegation(payload(),deps);
+    expect(result).toMatchObject({success:false,status:'rejected',error:'TASK_DELEGATION_OWNER_MISMATCH'});
+    expect(dispatch).not.toHaveBeenCalled();
+  });
   it('binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion', async () => {
     const rpc = acceptedGatewayRpc();
     const store = memoryStore();
@@ -294,6 +400,13 @@ describe('long-session delegation admission', () => {
       getActiveWorkspaceId: async () => WORKSPACE_ID,
       gatewayRpcForDelegation: gateway,
       delegationStore: store,
+      resolveTaskScope: async (input) => ({
+        sessionKey: input.sessionKey, workspaceId: input.workspaceId, generation: input.sessionGeneration,
+        activeTaskNodeId: input.taskRef, coordinatorSessionKey: input.sessionKey,
+        bindingRevision: input.bindingRevision, bindingState: input.bindingState,
+        links: [{ id: 'scope-link', sessionKey: input.sessionKey, nodeId: input.taskRef, sessionGeneration: input.sessionGeneration }],
+        task: { nodeId: input.taskRef, workspaceId: input.workspaceId, nodeKind: 'task', status: 'doing', generation: input.sessionGeneration },
+      }),
     });
     const first = api.delegate(payload());
     const second = api.delegate(payload());
@@ -377,6 +490,13 @@ describe('long-session delegation admission', () => {
       getActiveWorkspaceId: async () => WORKSPACE_ID,
       gatewayRpcForDelegation: gateway,
       delegationStore: store,
+      resolveTaskScope: async (input) => ({
+        sessionKey: input.sessionKey, workspaceId: input.workspaceId, generation: input.sessionGeneration,
+        activeTaskNodeId: input.taskRef, coordinatorSessionKey: input.sessionKey,
+        bindingRevision: input.bindingRevision, bindingState: input.bindingState,
+        links: [{ id: 'scope-link', sessionKey: input.sessionKey, nodeId: input.taskRef, sessionGeneration: input.sessionGeneration }],
+        task: { nodeId: input.taskRef, workspaceId: input.workspaceId, nodeKind: 'task', status: 'doing', generation: input.sessionGeneration },
+      }),
     });
     const result = await api.delegate(payload({ idempotencyKey: 'delegate-stop-race' }));
     expect(result.status).toBe('outcome-unknown');
@@ -432,6 +552,31 @@ describe('long-session delegation admission', () => {
       allowlist: ['read'],
       source: 'role-contract+parent-clamp',
     });
+  });
+
+  it('preserves owner scheduling reasons in the dispatch receipt without aliasing the plan', () => {
+    const nodes = ['planner-a', 'planner-b'].map(taskNodeId => ({
+      taskNodeId, roleName: 'planner', task: 'Read assigned context', phase: 'worker' as const,
+      dependsOn: [], scope: taskNodeId, requiredCapabilities: ['task-analysis'],
+      attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 }, status: 'ready' as const,
+    }));
+    const taskGraph = { graphRunId: 'capacity-fixture', mode: 'staged' as const, status: 'planned' as const, nodes, edges: [] };
+    const schedule = scheduleResourceAwareWaves({ graph: taskGraph, roles: [role('planner', ['read'])], options: { maxActiveRoles: 1 } });
+    expect(schedule.waves[0].deferredReasons).toContain('concurrency-cap');
+    const admission: SessionDelegationAdmission = {
+      schemaVersion: 'clawx.session-delegation-admission/v1', admissionId: 'capacity-admission',
+      idempotencyKey: 'capacity-intent', coordinator: { workspaceId: WORKSPACE_ID, sessionKey: SESSION_KEY,
+        sessionGeneration: SESSION_GENERATION, agentId: 'main', bindingRevision: 3 },
+      taskRef: TASK_REF, parentEnvironment: binding().environment,
+    };
+    const receipt = buildDelegationReceipt({ admission, orchestrationRunId: 'capacity-run', maxWorkers: 1,
+      result: { outcomes: [], failures: [], taskGraph, executionWaves: schedule.waves, schedulerMetrics: schedule.metrics } as never });
+    expect(receipt.scheduler!.executionWaves).toEqual(schedule.waves);
+    expect(receipt.scheduler!.executionWaves[0].reason).not.toBe('scheduled');
+    expect(receipt.scheduler!.executionWaves[0].deferredReasons).not.toBe(schedule.waves[0].deferredReasons);
+    schedule.waves[0].deferredReasons!.push('tool-contention');
+    expect(receipt.scheduler!.executionWaves[0].deferredReasons).toEqual(['concurrency-cap']);
+    expect(receipt.completionObserved).toBe(false);
   });
 
   it('marks an accepted spawn without both child session and run identifiers as rejected', async () => {
@@ -544,7 +689,8 @@ describe('long-session delegation admission', () => {
     const record = service.create('receipt-git-checkout', { writeSet: ['src/a.ts'] });
     expect(record.backend).toBe('git');
     expect(record.root).toBeTruthy();
-    expect(record.gitBranch).toBeTruthy();
+    expect(record.gitBranch).toBeUndefined(); // The owner creates a detached checkout.
+    expect(service.inspectIsolation(record.id, record.generation).status).toBe('verified');
     service.cleanup(record.id);
   });
 });

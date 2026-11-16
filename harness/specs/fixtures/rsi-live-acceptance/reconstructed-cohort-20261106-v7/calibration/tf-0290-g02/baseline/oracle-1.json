@@ -1,0 +1,80 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 3,
+  "numPassedTests": 1,
+  "numFailedTests": 2,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793930642815,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "G02 spec/doc gardening boundary"
+          ],
+          "fullName": "G02 spec/doc gardening boundary every task spec carries a valid lifecycleStatus (archive, never mechanical delete)",
+          "status": "failed",
+          "title": "every task spec carries a valid lifecycleStatus (archive, never mechanical delete)",
+          "duration": 517.2707,
+          "failureMessages": [
+            "AssertionError: missing lifecycleStatus:\nharness/specs/tasks/harness-gap-browser-effect-boundary.md\nharness/specs/tasks/harness-gap-checkpoint-attachment-binding.md\nharness/specs/tasks/harness-gap-context-pressure-recovery.md\nharness/specs/tasks/harness-gap-credential-use-boundary.md\nharness/specs/tasks/harness-gap-envelope-reject.md\nharness/specs/tasks/harness-gap-error-recovery-next-action.md\nharness/specs/tasks/harness-gap-external-write-boundary.md\nharness/specs/tasks/harness-gap-hot-file-write-owner.md\nharness/specs/tasks/harness-gap-in-run-steering.md\nharness/specs/tasks/harness-gap-memory-effect-receipt.md\nharness/specs/tasks/harness-gap-paired-ablation.md\nharness/specs/tasks/harness-gap-rate-circuit-breaker.md\nharness/specs/tasks/harness-gap-reliability-aggregation.md\nharness/specs/tasks/harness-gap-sink-ledger.md\nharness/specs/tasks/harness-gap-trace-cost-sampling.md\nharness/specs/tasks/harness-gap-verifier-completion-verdict.md\nharness/specs/tasks/harness-gap-working-context-single-source.md: expected [ …(17) ] to deeply equal []\n    at D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0290-g02/baseline/workspace/tests/unit/spec-doc-gardening.test.ts:38:72\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "G02 spec/doc gardening boundary"
+          ],
+          "fullName": "G02 spec/doc gardening boundary keeps the AGENTS.md entry routable (not an ossified spec dump)",
+          "status": "passed",
+          "title": "keeps the AGENTS.md entry routable (not an ossified spec dump)",
+          "duration": 1.977200000000039,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "G02 spec/doc gardening boundary"
+          ],
+          "fullName": "G02 spec/doc gardening boundary has a single doc-gardening rule and does not create a parallel spec list",
+          "status": "failed",
+          "title": "has a single doc-gardening rule and does not create a parallel spec list",
+          "duration": 2.414099999999962,
+          "failureMessages": [
+            "AssertionError: expected [] to deeply equal [ 'spec-doc-gardening-boundary.md' ]\n    at D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0290-g02/baseline/workspace/tests/unit/spec-doc-gardening.test.ts:54:23\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793930645500,
+      "endTime": 1793930646022.414,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0290-g02/baseline/workspace/tests/unit/spec-doc-gardening.test.ts"
+    }
+  ]
+}

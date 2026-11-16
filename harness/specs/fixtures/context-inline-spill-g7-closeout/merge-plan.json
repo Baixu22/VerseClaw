@@ -1,0 +1,54 @@
+{
+  "schema": "G7ScopedMergePlan/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "sourceRepo": "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+  "sourceHead": "4e6b5f4039c2e8006432f0ffa75e11738768d181",
+  "targetBranch": "main",
+  "selectedCommits": [
+    "6eee064950273b393240a647702d6ee5652bae35",
+    "811bdab408bef0dacd894a1e1b5cc6421523fef2",
+    "c898624dc11605877bff2cd8b76c910d86b767ee",
+    "224199e45172b3ac68d4b86aca70f0725386f578",
+    "ab8605136618bd021c1cf8772c18aac92dd83411",
+    "1ad696a8fc7089b0e9a658d65b6b144b58506ea0",
+    "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "1a16bc17a6545bc5fd9a29dd7d314964d97493f3",
+    "449192523851b3795ee6793751e78331831af047",
+    "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "1a12ad0cd23ab5873e6865f73c8e51f62ec71595",
+    "486f078abdbaefe191c83d11c620cfed67ddbbec",
+    "a5972fdc9b89ff692ef2d76a744639c620b24fa2",
+    "3e875f462ce16ca8b6ed4feb412397fe0f391311",
+    "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+    "69884a18a614886ad1712331b860465cb9a644a7",
+    "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "4e6b5f4039c2e8006432f0ffa75e11738768d181"
+  ],
+  "excludedSiblingCommits": [
+    {
+      "sha": "b0b5e6e080425217ff7e6b973d4d438b84abe88e",
+      "subject": "wip: archive interrupted worktree ClawX"
+    },
+    {
+      "sha": "2150b71b852290e82b0dceb19afaf1e9e4664d3f",
+      "subject": "test(product): bind matrix to current candidate fixtures"
+    },
+    {
+      "sha": "603e21ce5b9293778a858f81d55503798e40eb09",
+      "subject": "test(knowledge): bind semantic assertion to VL embedding"
+    },
+    {
+      "sha": "0724054e91f9dc9915397e526bb857ef56370c9e",
+      "subject": "test(product): own current matrix regression inputs"
+    },
+    {
+      "sha": "fcfd0721129c935df94a501ee4858622c38fa497",
+      "subject": "test(windows): retain current acceptance failures"
+    }
+  ],
+  "reason": "Only G7 evaluator, frozen experiments, failure evidence and documentation are applied. Source history is separately retained to preserve measured candidate identities."
+}

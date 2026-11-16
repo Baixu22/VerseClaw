@@ -10,6 +10,10 @@ import {
 } from "@openclaw/normalization-core/string-coerce";
 import type { AgentMessage } from "./runtime/index.js";
 import {
+  getRetainedArchiveRecalls,
+  type ArchiveRecallRetentionOptions,
+} from "./archive-recall-retention.js";
+import {
   extractToolCallsFromAssistant,
   extractToolResultId,
   extractToolResultIds,
@@ -262,10 +266,16 @@ type ToolUseResultPairingOptions = {
   missingToolResultText?: string;
 };
 
-export function stripToolResultDetails(messages: AgentMessage[]): AgentMessage[] {
+export function stripToolResultDetails(
+  messages: AgentMessage[],
+  archiveRecallRetention?: ArchiveRecallRetentionOptions,
+): AgentMessage[] {
+  const retainedIndexes = new Set(
+    getRetainedArchiveRecalls(messages, archiveRecallRetention).map((recall) => recall.index),
+  );
   let touched = false;
   const out: AgentMessage[] = [];
-  for (const msg of messages) {
+  for (const [index, msg] of messages.entries()) {
     if (!msg || typeof msg !== "object" || (msg as { role?: unknown }).role !== "toolResult") {
       out.push(msg);
       continue;
@@ -276,6 +286,27 @@ export function stripToolResultDetails(messages: AgentMessage[]): AgentMessage[]
     }
     const sanitized = { ...(msg as object) } as { details?: unknown };
     delete sanitized.details;
+    if (retainedIndexes.has(index) && msg.role === "toolResult") {
+      const details = msg.details as { archiveRecallOrigin: Record<string, unknown> };
+      const origin = details.archiveRecallOrigin;
+      // Internal replay keeps only verified lineage, never a second raw payload.
+      // Provider conversion calls this without retention and strips it as usual.
+      sanitized.details = {
+        ok: true,
+        archive_uri: origin.archiveUri,
+        checksum: origin.checksum,
+        offset: origin.offset,
+        archiveRecallOrigin: {
+          source: origin.source,
+          sessionId: origin.sessionId,
+          archiveUri: origin.archiveUri,
+          checksum: origin.checksum,
+          offset: origin.offset,
+          toolCallId: origin.toolCallId,
+          projectedChars: origin.projectedChars,
+        },
+      };
+    }
     touched = true;
     out.push(sanitized as unknown as AgentMessage);
   }

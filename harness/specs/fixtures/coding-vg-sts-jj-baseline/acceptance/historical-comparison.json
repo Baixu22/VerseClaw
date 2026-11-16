@@ -1,0 +1,235 @@
+{
+  "historicalCandidate": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+  "currentCandidate": "27bd9df474236a52da03fd6b63613b66d0cc6af4",
+  "currentProbesRerun": true,
+  "inputs": [
+    {
+      "path": "README.md",
+      "historicalSha256": "6166df7491aa770a1dca16780bc8be54bc6e6903d5d373f9b6a9965db4e6ebaa",
+      "currentSha256": "6166df7491aa770a1dca16780bc8be54bc6e6903d5d373f9b6a9965db4e6ebaa",
+      "unchanged": true
+    },
+    {
+      "path": "docs/dev/coding-parity-introduce-assessment.md",
+      "historicalSha256": "768c31e453fd1e93a5dc5776c629df91048e891d917f13325016490bea4ce956",
+      "currentSha256": "ef903ccca5138c0cfc0850eead4a8acc1a4a7020a75bc8d240a9a237d0071d95",
+      "unchanged": false
+    },
+    {
+      "path": "docs/dev/coding-run-protocol.md",
+      "historicalSha256": "7b48bd9bd850a8f7bcf7979b98fcf437bb8331dabbba17d2a55188b9a9f65656",
+      "currentSha256": "7b48bd9bd850a8f7bcf7979b98fcf437bb8331dabbba17d2a55188b9a9f65656",
+      "unchanged": true
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
+      "historicalSha256": "542791309ca076f64948e83ebb5858a5b2c137aabe78d02a9bb155278a9907a6",
+      "currentSha256": "542791309ca076f64948e83ebb5858a5b2c137aabe78d02a9bb155278a9907a6",
+      "unchanged": true
+    },
+    {
+      "path": "docs/dev/versegit-product-integration/TF-0517/verified-glm-20261025/acceptance.json",
+      "historicalSha256": "3f7b8607d0319301f25d575458e10b86b431b2c1c25bb616342b0438d9c4ae69",
+      "currentSha256": "3f7b8607d0319301f25d575458e10b86b431b2c1c25bb616342b0438d9c4ae69",
+      "unchanged": true
+    },
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "historicalSha256": "6df199bda1a30d4ff80ef2284ec35050686f1dcae0c3790b53ef9b1451886b0f",
+      "currentSha256": "6df199bda1a30d4ff80ef2284ec35050686f1dcae0c3790b53ef9b1451886b0f",
+      "unchanged": true
+    },
+    {
+      "path": "electron/services/mcp-api.ts",
+      "historicalSha256": "d155dca01548a332df6617e18ef0994bfb141042c1b6ab5c100b8902b90e88c2",
+      "currentSha256": "d155dca01548a332df6617e18ef0994bfb141042c1b6ab5c100b8902b90e88c2",
+      "unchanged": true
+    },
+    {
+      "path": "electron/services/tool-protocol-shadow.ts",
+      "historicalSha256": "d2de0c2c0f7c720020567ac0c1dc6e00afa0a213f6313711de1352da2f4f8433",
+      "currentSha256": "12ef570db6a3634794bef2aa1073345fcb93cf6f6cbffbb437c0303ecee6a15b",
+      "unchanged": false
+    },
+    {
+      "path": "harness/specs/fixtures/agent-first-system/mainline/candidate-report.v1.json",
+      "historicalSha256": "0e2cf6c367d331481938ffa00b7149f4db0f97ead9b66ccb96daa278f16653cf",
+      "currentSha256": "0e2cf6c367d331481938ffa00b7149f4db0f97ead9b66ccb96daa278f16653cf",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-bundle-mcp-materialize.ts",
+      "historicalSha256": "c6576c2ec40b5b2db76f172a07b5a84f4cc59d80cbbf045b79ad5624334e3a4d",
+      "currentSha256": "c6576c2ec40b5b2db76f172a07b5a84f4cc59d80cbbf045b79ad5624334e3a4d",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "historicalSha256": "7db3c579ccba7ca33221b3b5d63436dea00fb5430e63bef08bd2abb37dbfb7a2",
+      "currentSha256": "7db3c579ccba7ca33221b3b5d63436dea00fb5430e63bef08bd2abb37dbfb7a2",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+      "historicalSha256": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
+      "currentSha256": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/apply-patch-preflight.ts",
+      "historicalSha256": "cb802f8393d375ecbfc07b6a2abd893e9d2c4f8d22e70d8562a0904c1a5b03cf",
+      "currentSha256": "cb802f8393d375ecbfc07b6a2abd893e9d2c4f8d22e70d8562a0904c1a5b03cf",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-protocol.ts",
+      "historicalSha256": "d531488619c4163652e8520cb64d34967c3218b0cc08e59aaa2f8611d36c5f5c",
+      "currentSha256": "d531488619c4163652e8520cb64d34967c3218b0cc08e59aaa2f8611d36c5f5c",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+      "historicalSha256": "a725cf7a11eb9ae95b2cccbc66ca25937f4e12dc5401a801ea52bf1fb4de16e0",
+      "currentSha256": "a725cf7a11eb9ae95b2cccbc66ca25937f4e12dc5401a801ea52bf1fb4de16e0",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "historicalSha256": "2a821f3c745350f2724c12dbfad6b07bd08c2f8f4635cbc80d31f96be817f396",
+      "currentSha256": "2a821f3c745350f2724c12dbfad6b07bd08c2f8f4635cbc80d31f96be817f396",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestrator.ts",
+      "historicalSha256": "b03f55e3bad9b6e690c9a5f54bee301f6a46fb68e4d7b0f261d91f4e745925d5",
+      "currentSha256": "b03f55e3bad9b6e690c9a5f54bee301f6a46fb68e4d7b0f261d91f4e745925d5",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/path-policy.ts",
+      "historicalSha256": "59fa54fe4c4c821260dca370bd6d4f45d256f0ead57d25be3603b206c1b90e85",
+      "currentSha256": "59fa54fe4c4c821260dca370bd6d4f45d256f0ead57d25be3603b206c1b90e85",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry.ts",
+      "historicalSha256": "3484169bf3d488c2e39f436adacf3fa7f8382e7b673632425fda01936647caf6",
+      "currentSha256": "3484169bf3d488c2e39f436adacf3fa7f8382e7b673632425fda01936647caf6",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+      "historicalSha256": "8ef63c67cce5fdf356cc56c2d657b584b52704342125808e924db059954582ac",
+      "currentSha256": "8ef63c67cce5fdf356cc56c2d657b584b52704342125808e924db059954582ac",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+      "historicalSha256": "b8abcc9dda4ed98f62941930bb0fc2bba43aab83920db04fab4970bd1112a72f",
+      "currentSha256": "b8abcc9dda4ed98f62941930bb0fc2bba43aab83920db04fab4970bd1112a72f",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell-foundation-flags.ts",
+      "historicalSha256": "be873ef9d520e2b4bb6b7478752ad3ead9770bc1aaf7beab9a50c5b59cc9d340",
+      "currentSha256": "be873ef9d520e2b4bb6b7478752ad3ead9770bc1aaf7beab9a50c5b59cc9d340",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+      "historicalSha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+      "currentSha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-service.ts",
+      "historicalSha256": "d5f360aa8ac08646e0dfe0d1fa67e45ca9c2957202f674ef60ee9dec92e50f7b",
+      "currentSha256": "d5f360aa8ac08646e0dfe0d1fa67e45ca9c2957202f674ef60ee9dec92e50f7b",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/coding-runtime-flags.ts",
+      "historicalSha256": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+      "currentSha256": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/mcp-http.handlers.ts",
+      "historicalSha256": "bc2c827ed3feec27b3ee2d32b91ab390dcd5a98e6531580c70d88f1b8c3603f5",
+      "currentSha256": "bc2c827ed3feec27b3ee2d32b91ab390dcd5a98e6531580c70d88f1b8c3603f5",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/mcp-http.protocol.ts",
+      "historicalSha256": "4017ac8dcd3b18b6177332649dee02495f91d1409be28b0f2fdc829b794d248c",
+      "currentSha256": "4017ac8dcd3b18b6177332649dee02495f91d1409be28b0f2fdc829b794d248c",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+      "historicalSha256": "8b8aba68ebadb1c22a3241987f9b2ec4262b4c3b34e42afa958c43e02489c0c3",
+      "currentSha256": "8b8aba68ebadb1c22a3241987f9b2ec4262b4c3b34e42afa958c43e02489c0c3",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods-list.ts",
+      "historicalSha256": "33fc9e1f1adeaba29a5277129fb1b45d5069c72c1e36d744714b6b52abe55384",
+      "currentSha256": "33fc9e1f1adeaba29a5277129fb1b45d5069c72c1e36d744714b6b52abe55384",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+      "historicalSha256": "bfa7bed5fb78a3949c215c46026447d20373b86fcdf0466e732cf3394e2a806b",
+      "currentSha256": "bfa7bed5fb78a3949c215c46026447d20373b86fcdf0466e732cf3394e2a806b",
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/ast-edit-plan-controlled-apply-pilot.ts",
+      "historicalSha256": "8f0dfb9984e65d6a866f1694e8b5a06c8882e6100a71a9c3a62b92f5629dcdb2",
+      "currentSha256": "8f0dfb9984e65d6a866f1694e8b5a06c8882e6100a71a9c3a62b92f5629dcdb2",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/coding-run-summary.mjs",
+      "historicalSha256": "82758e106445c2ce8d425c010241d495cf21bd744543a7118c51f390c2b5caf3",
+      "currentSha256": "82758e106445c2ce8d425c010241d495cf21bd744543a7118c51f390c2b5caf3",
+      "unchanged": true
+    },
+    {
+      "path": "shared/dcs/component-disposition-catalog.ts",
+      "historicalSha256": "9a31fb00bc1de641197c3cbdca835f804d38943270c443014f29fc6ff7d01a7c",
+      "currentSha256": "9a31fb00bc1de641197c3cbdca835f804d38943270c443014f29fc6ff7d01a7c",
+      "unchanged": true
+    },
+    {
+      "path": "shared/dcs/prod-flags-catalog.ts",
+      "historicalSha256": "f377723bb962b38b02592baca5f3c1c588dc19465ab413da718e9082b7daac74",
+      "currentSha256": "f377723bb962b38b02592baca5f3c1c588dc19465ab413da718e9082b7daac74",
+      "unchanged": true
+    },
+    {
+      "path": "shared/types/coding-run.ts",
+      "historicalSha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "currentSha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "unchanged": true
+    },
+    {
+      "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+      "historicalSha256": "1a3a47d2c3cf97a1d25772d3f5b1e96c6b2810eb780f108c9036ed32c0401320",
+      "currentSha256": "1a3a47d2c3cf97a1d25772d3f5b1e96c6b2810eb780f108c9036ed32c0401320",
+      "unchanged": true
+    },
+    {
+      "path": "src/components/settings/DcsProdFlagsPanel.tsx",
+      "historicalSha256": "a70c241fe50d88287966ccab0d125ecc4b70bce4e6ba7c7e956b6280a984c9b3",
+      "currentSha256": "11e985d4ca73d4ed652602121a53c97dc627d504c54596a981e6f1181d355a0c",
+      "unchanged": false
+    },
+    {
+      "path": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+      "historicalSha256": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+      "currentSha256": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+      "unchanged": true
+    }
+  ]
+}

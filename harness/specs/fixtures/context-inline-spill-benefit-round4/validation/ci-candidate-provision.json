@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "root": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\ci-candidate",
+  "commit": "8fa33a84ef8c9eeac3086d168264e77d4560e21d",
+  "tree": "541a95b34245cf442a4b9ebdd7ea8320b35e63aa",
+  "dirty": false,
+  "reusedDependencies": "Same junctions and verified package build bytes as candidate-provision.json"
+}

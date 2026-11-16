@@ -1,0 +1,394 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/joint-validation/final-joint-e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-task-scope-completion.spec.ts",
+      "file": "session-task-scope-completion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a real isolated schedule admits its first write without replacing the project coordinator",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31492,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T22:48:06.897Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-488e9109ad4f00285dfa",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 14,
+          "column": 5
+        },
+        {
+          "title": "real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 181314,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #4\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #5\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #6\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #7\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #8\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #9\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #10\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #11\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #12\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #13\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #14\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T22:48:38.410Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-a546e14244bc50a92d24",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 67,
+          "column": 5
+        },
+        {
+          "title": "explicit UI task selection executes the newly selected canonical contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 47491,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T22:51:39.737Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-21976b247ce0e75f7b2e",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 201,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "session-worker-task-journey.spec.ts",
+      "file": "session-worker-task-journey.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a real delegated worker receives its own task, reports separately and accepts a scoped follow-up",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 143642,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #4\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #5\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #6\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #7\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #8\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T22:52:27.255Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-a090bafdf9abbcecd8e0",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 12,
+          "column": 5
+        },
+        {
+          "title": "a child writes under the canonical transfer while its parent turn remains active",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36318,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T22:54:50.906Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-d4dcb951b8e77189f132",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 320,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "unified-effect-admission.spec.ts",
+      "file": "unified-effect-admission.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "actual task effects keep one checkout writer until the owning run ends",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 44257,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T22:55:27.239Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5eb3041cb0c09726319b-aca1b65c8cd3a4d1e313",
+          "file": "unified-effect-admission.spec.ts",
+          "line": 9,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T22:48:05.836Z",
+    "duration": 487432.744,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

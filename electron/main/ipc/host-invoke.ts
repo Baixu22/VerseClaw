@@ -263,6 +263,10 @@ export function createHostInvokeDispatcher(
         error: { code: 'VALIDATION', message: 'Invalid host request format' },
       };
     }
+    const observer = options.senderAuth?.observerConstraints?.get(event?.sender?.id ?? -1);
+    if (observer && !observer.actions.has(`${request.module}.${request.action}`)) {
+      return { id: request.id, ok: false, error: { code: 'VALIDATION', message: 'Host observer action is not authorized' } };
+    }
 
     // Reject polluted request shells (module/action only; payload checked next).
     if (Object.prototype.hasOwnProperty.call(request, '__proto__')

@@ -56,7 +56,9 @@ describe('Area 5 §3.1 — KB Role Registry', () => {
     mkdirSync(root, { recursive: true });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    const mod = await import('@electron/services/knowledge-api');
+    mod.stopAllKnowledgeSourceWatches();
     closeOpenClawStateDatabaseForTest();
     rmSync(root, { recursive: true, force: true });
   });

@@ -273,7 +273,10 @@ import { loadVtokenDcsMemoryEntries } from "../../../context-engine/chat-turn-vt
 import {
   collectContextOrchestratorCandidate,
   computeContextExtraSystemPrompt,
+  composePostOrchestratorPrompt,
+  createTrackedSystemPromptSetter,
   endContextOrchestratorTurn,
+  recordPostOrchestratorMessageChange,
   recordContextOrchestratorSourceDecision,
 } from "../../../context-engine/context-orchestrator.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../../context-engine/enhancement-kill-switch.js";
@@ -422,6 +425,8 @@ import {
   shouldWarnEmbeddedRunStageSummary,
 } from "./attempt-stage-timing.js";
 import { buildAttemptSystemPrompt } from "./attempt-system-prompt.js";
+import { restoreTaskModelContext, finishPersistentTaskRun } from "../../../../../shared/task-system/runtime.js";
+import { createExecutionTaskGuard } from "../../execution-task-guard.js";
 import { flushEmbeddedAttemptTrajectoryRecorder } from "./attempt-trajectory-flush-cleanup.js";
 import {
   assembleAttemptContextEngine,
@@ -435,6 +440,7 @@ import {
 } from "./attempt.context-engine-helpers.js";
 import {
   installModelPromptTransform,
+  installProviderPromptHistoryTransform,
   installRuntimeContextMessageForPrompt,
   normalizeCurrentPromptTextForLlmBoundary,
   normalizeMessagesForCurrentPromptBoundary,
@@ -879,6 +885,10 @@ export async function runEmbeddedAttempt(
   params: EmbeddedRunAttemptParams,
 ): Promise<EmbeddedRunAttemptResult> {
   const resolvedWorkspace = resolveUserPath(params.workspaceDir);
+  const archiveRecallRetention = {
+    enabled: params.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
+    sessionId: params.sessionId,
+  };
   const runAbortController = new AbortController();
   configureEmbeddedAttemptHttpRuntime({ timeoutMs: params.timeoutMs });
 
@@ -2205,13 +2215,15 @@ export async function runEmbeddedAttempt(
       },
     );
     const orchestratedExtraSystemPrompt = contextOrchestration.extraSystemPrompt;
-    const effectiveExtraSystemPrompt = [
-      orchestratedExtraSystemPrompt,
-      runtimeIntensitySystemPrompt,
-      dcsDepsResolution.degradationNotice,
-    ]
-      .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
-      .join("\n\n");
+    const effectiveExtraSystemPrompt = composePostOrchestratorPrompt({
+      turnId: injectionTurnId,
+      basePrompt: orchestratedExtraSystemPrompt,
+      additions: [
+        { sourceId: "runtime-intensity", text: runtimeIntensitySystemPrompt },
+        { sourceId: "dcs-degradation", text: dcsDepsResolution.degradationNotice },
+      ],
+      applied: !isRawModelRun,
+    }).prompt;
     const attemptSystemPrompt = buildAttemptSystemPrompt({
       isRawModelRun,
       transformProviderSystemPrompt: (transformParams) =>
@@ -2771,10 +2783,14 @@ export async function runEmbeddedAttempt(
         ? structuredClone(activeSession.messages)
         : undefined;
       const recoveryPromptAdditions: AgentMessage[] = [];
-      const setActiveSessionSystemPrompt = (nextSystemPrompt: string) => {
-        systemPromptText = nextSystemPrompt;
-        applySystemPromptToSession(activeSession, nextSystemPrompt);
-      };
+      const setActiveSessionSystemPrompt = createTrackedSystemPromptSetter({
+        turnId: injectionTurnId,
+        basePrompt: attemptSystemPrompt.baseSystemPrompt,
+        apply: (nextSystemPrompt) => {
+          systemPromptText = nextSystemPrompt;
+          applySystemPromptToSession(activeSession, nextSystemPrompt);
+        },
+      });
       setActiveSessionSystemPrompt(systemPromptText);
       let didDeliverSourceReplyViaMessageTool = false;
       installMessageToolOnlyTerminalHook({
@@ -2884,6 +2900,7 @@ export async function runEmbeddedAttempt(
               contextTokenBudget: contextTokenBudgetForGuard,
               reserveTokens: () => settingsManager.getCompactionReserveTokens(),
               toolResultMaxChars: toolResultMaxCharsForGuard,
+              archiveRecallRetention,
               getSystemPrompt: () => systemPromptText,
               getPrePromptMessageCount: () => prePromptMessageCount,
               onMidTurnPrecheck,
@@ -3118,6 +3135,10 @@ export async function runEmbeddedAttempt(
         resolvedApiKey: params.resolvedApiKey,
       });
       activeSession.agent.streamFn = resolveEmbeddedAgentStreamFn({
+        cfg: params.config,
+        spend: { config: params.config?.runtime?.providerBudget, workspaceId: params.workspaceId,
+          sessionKey: params.sessionKey, sessionGeneration: params.sessionId, runId: params.runId, attemptIndex: params.attemptIndex,
+          sessionStorePath: params.sessionKey ? resolveStorePath(params.config?.session?.store, { agentId: sessionAgentId }) : undefined },
         currentStreamFn: defaultSessionStreamFn,
         providerStreamFn,
         sessionId: params.sessionId,
@@ -3366,6 +3387,13 @@ export async function runEmbeddedAttempt(
         );
       }
       let diagnosticModelCallSeq = 0;
+      if(!isRawModelRun){
+        const taskModelGuard=createExecutionTaskGuard(effectiveWorkspace,params.sessionKey,params.sessionId,params.runId);
+        const taskModelStream=activeSession.agent.streamFn;
+        activeSession.agent.streamFn=(model,context,options)=>taskModelStream(model,{
+          ...context,systemPrompt:restoreTaskModelContext(taskModelGuard,context.systemPrompt??'',Math.min(12_000,Math.floor((params.contextWindowInfo?.tokens??model.contextWindow??48_000)/4))),
+        },options);
+      }
       activeSession.agent.streamFn = wrapStreamFnWithDiagnosticModelCallEvents(
         activeSession.agent.streamFn,
         {
@@ -3942,6 +3970,8 @@ export async function runEmbeddedAttempt(
         cancel: (reason?: "user_abort" | "restart" | "superseded") => void;
       } = {
         kind: "embedded",
+        runId: params.runId,
+        abortSignal: runAbortController.signal,
         queueMessage: async (text: string, options) => {
           if (options?.steeringMode) {
             activeSession.agent.steeringMode = options.steeringMode;
@@ -4088,6 +4118,7 @@ export async function runEmbeddedAttempt(
             sessionManager: activeSessionManager,
             contextWindowTokens: contextTokenBudget,
             maxCharsOverride: toolResultMaxChars,
+            archiveRecallRetention: archiveRecallRetention.enabled,
             sessionFile: params.sessionFile,
             sessionId: params.sessionId,
             sessionKey: params.sessionKey,
@@ -4183,13 +4214,17 @@ export async function runEmbeddedAttempt(
           Boolean(promptBuildPrependContext?.trim()) || Boolean(promptBuildAppendContext?.trim());
         {
           if (hookResult?.prependContext) {
+            const before = effectivePrompt;
             effectivePrompt = `${hookResult.prependContext}\n\n${effectivePrompt}`;
+            recordPostOrchestratorMessageChange(injectionTurnId, before, effectivePrompt);
             log.debug(
               `hooks: prepended context to prompt (${hookResult.prependContext.length} chars)`,
             );
           }
           if (hookResult?.appendContext) {
+            const before = effectivePrompt;
             effectivePrompt = `${effectivePrompt}\n\n${hookResult.appendContext}`;
+            recordPostOrchestratorMessageChange(injectionTurnId, before, effectivePrompt);
             log.debug(
               `hooks: appended context to prompt (${hookResult.appendContext.length} chars)`,
             );
@@ -4546,6 +4581,9 @@ export async function runEmbeddedAttempt(
             contextTokenBudget,
             promptToolResultMaxChars,
             promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
+            archiveRecallRetention.enabled
+              ? { sessionId: params.sessionId, archiveRecallRetention: true }
+              : undefined,
           );
           if (promptToolResultTruncation.truncatedCount > 0) {
             promptHistoryMessages = promptToolResultTruncation.messages;
@@ -4607,6 +4645,7 @@ export async function runEmbeddedAttempt(
           let hookMessagesForCurrentPrompt = normalizeMessagesForCurrentPromptBoundary({
             messages: messagesForCurrentPrompt,
             prompt: promptForModel,
+            archiveRecallRetention,
             ...(boundaryTimezone ? { timezone: boundaryTimezone } : {}),
             ...(typeof preparedUserTurnMessage?.timestamp === "number"
               ? { currentUserTimestamp: preparedUserTurnMessage.timestamp }
@@ -5004,9 +5043,10 @@ ${addition}`
               });
           }
 
-          const llmBoundaryOptionsForPrecheck = boundaryTimezone
-            ? { timezone: boundaryTimezone }
-            : undefined;
+          const llmBoundaryOptionsForPrecheck = {
+            ...(boundaryTimezone ? { timezone: boundaryTimezone } : {}),
+            archiveRecallRetention,
+          };
           const unwindowedLlmBoundaryMessagesForPrecheck =
             preparedPromptHistory.promptAuthority === "preassembly_may_overflow" &&
             unwindowedContextEngineMessagesForPrecheck
@@ -5058,6 +5098,7 @@ ${addition}`
                 contextTokenBudget,
                 reserveTokens,
                 toolResultMaxChars: promptToolResultMaxChars,
+                archiveRecallRetention,
                 llmBoundaryTokenPressure: {
                   estimatedPromptTokens: llmBoundaryTokenPressure,
                   source: "llm_boundary_normalized_prompt",
@@ -5132,6 +5173,7 @@ ${addition}`
               sessionManager,
               contextWindowTokens: contextTokenBudget,
               maxCharsOverride: toolResultMaxChars,
+              archiveRecallRetention: archiveRecallRetention.enabled,
               sessionFile: params.sessionFile,
               sessionId: params.sessionId,
               sessionKey: params.sessionKey,
@@ -5209,37 +5251,6 @@ ${addition}`
             if (normalizedReplayMessages !== activeSession.messages) {
               activeSession.agent.state.messages = normalizedReplayMessages;
             }
-            const installProviderPromptHistoryTransform = (): (() => void) => {
-              const baseStreamFn = activeSession.agent.streamFn;
-              const providerPromptStreamFn = wrapStreamFnWithMessageTransform(
-                baseStreamFn,
-                (messages) => {
-                  if (
-                    preemptiveCompaction?.route === "observation_masking" &&
-                    observationMaskingProjection &&
-                    observationMaskingProjection.maskedCount > 0
-                  ) {
-                    return observationMaskingProjection.messages;
-                  }
-                  const providerPromptHistoryTruncation = truncateOversizedToolResultsInMessages(
-                    messages,
-                    contextTokenBudget,
-                    promptToolResultMaxChars,
-                    promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
-                    { sessionId: params.sessionId },
-                  );
-                  return providerPromptHistoryTruncation.truncatedCount > 0
-                    ? providerPromptHistoryTruncation.messages
-                    : messages;
-                },
-              );
-              activeSession.agent.streamFn = providerPromptStreamFn;
-              return () => {
-                if (activeSession.agent.streamFn === providerPromptStreamFn) {
-                  activeSession.agent.streamFn = baseStreamFn;
-                }
-              };
-            };
             finalPromptText = promptForSession;
             trajectoryRecorder?.recordEvent("prompt.submitted", {
               prompt: promptForModel,
@@ -5267,7 +5278,18 @@ ${addition}`
                 captureCurrentPromptForModel = true;
               }
             };
-            const cleanupProviderPromptHistoryTransform = installProviderPromptHistoryTransform();
+            const cleanupProviderPromptHistoryTransform = installProviderPromptHistoryTransform({
+              agent: activeSession.agent,
+              contextWindowTokens: contextTokenBudget,
+              maxChars: promptToolResultMaxChars,
+              aggregateMaxChars:
+                promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
+              archiveRecallRetention,
+              ...(preemptiveCompaction?.route === "observation_masking" &&
+              observationMaskingProjection && observationMaskingProjection.maskedCount > 0
+                ? { observationMaskingMessages: observationMaskingProjection.messages }
+                : {}),
+            });
             try {
               if (promptSubmission.runtimeOnly) {
                 await promptActiveSession(promptForSession, {
@@ -6298,6 +6320,7 @@ ${addition}`
     }
   } finally {
     removeExternalAbortSignalListener?.();
+    try{finishPersistentTaskRun(effectiveWorkspace,params.sessionKey,params.runId);}catch(error){log.warn(`task run cleanup requires recovery: ${String(error)}`);}
     if (!sessionCleanupOwnsEmbeddedResources) {
       try {
         await cleanupEmbeddedPrepResourcesAfterEarlyExit();

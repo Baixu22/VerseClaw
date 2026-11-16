@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-Xllppk",
+  "ledgerEntries": 1,
+  "reaped": [
+    {
+      "pid": 2848,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-Xllppk\\",
+    "owned": [],
+    "remaining": []
+  }
+}

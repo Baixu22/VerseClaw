@@ -10,6 +10,8 @@ import {
   type OfficeCliPathOptions,
 } from '../utils/officecli-path';
 import { nextGatewayGeneration, stampGatewayGeneration } from './generation';
+import { observeOwnedGatewayProcess } from './supervisor';
+import { resolveExecutionStatePath } from '../../openclaw_runtime/src/state/execution-state-db';
 
 /** Flags that would carry a Gateway shared secret into a child process argv. */
 const GATEWAY_SECRET_ARGUMENT_FLAGS = new Set(['--token', '--password', '--gateway-token']);
@@ -158,6 +160,8 @@ export function buildGatewayRuntimeEnv(
   // pre-existing value inherited from the user shell cannot re-enable it.
   runtimeEnv.OPENCLAW_DISABLE_BONJOUR = '1';
   runtimeEnv.CLAWX_AGENT_BROWSER_BRIDGE = '1';
+  runtimeEnv.CLAWX_TASK_SCOPE_BRIDGE = '1';
+  runtimeEnv.CLAWX_EXECUTION_STATE_PATH = resolveExecutionStatePath(process.env);
   runtimeEnv.OPENCLAW_RESOURCE_ENVELOPE_WRITE = '1';
   // Model fallback skip cache: default ON for Verse Claw with a 60s TTL.
   //
@@ -264,6 +268,10 @@ export async function launchGatewayProcess(options: {
       execArgv,
       serviceName: 'OpenClaw Gateway',
     });
+    observeOwnedGatewayProcess(child);
+    // Only stderr is forwarded, but stdout is also piped. Drain it so a full
+    // Windows pipe cannot block Gateway requests behind routine log output.
+    child.stdout?.on('data', () => {});
 
     let settled = false;
     const resolveOnce = () => {

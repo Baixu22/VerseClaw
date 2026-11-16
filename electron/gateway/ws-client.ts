@@ -20,12 +20,16 @@ import {
 export const GATEWAY_CHALLENGE_TIMEOUT_MS = 10_000;
 export const GATEWAY_CONNECT_HANDSHAKE_TIMEOUT_MS = 20_000;
 
+// The supervisor binds IPv4 loopback. Its local sockets must not wait for DNS
+// work queued by unrelated desktop requests during startup or token upgrade.
+const GATEWAY_LOOPBACK_HOST = '127.0.0.1';
+
 export async function probeGatewayReady(
   port: number,
   timeoutMs = 1500,
 ): Promise<boolean> {
   return await new Promise<boolean>((resolve) => {
-    const testWs = new WebSocket(`ws://localhost:${port}/ws`);
+    const testWs = new WebSocket(`ws://${GATEWAY_LOOPBACK_HOST}:${port}/ws`);
     let settled = false;
 
     const resolveOnce = (value: boolean) => {
@@ -188,7 +192,7 @@ export function buildGatewayConnectFrame(options: {
           mode: clientMode,
         },
         auth: options.deviceToken ? { deviceToken: options.deviceToken } : { token: options.token },
-        caps: ['tool-events', 'agent-browser-bridge'],
+        caps: ['tool-events', 'agent-browser-bridge', 'session-task-scope-bridge'],
         role,
         scopes,
         device,
@@ -213,12 +217,12 @@ export async function connectGatewaySocket(options: {
   challengeTimeoutMs?: number;
   connectTimeoutMs?: number;
 }): Promise<WebSocket> {
-  logger.debug(`Connecting Gateway WebSocket (ws://localhost:${options.port}/ws)`);
+  logger.debug(`Connecting Gateway WebSocket (ws://${GATEWAY_LOOPBACK_HOST}:${options.port}/ws)`);
   const challengeTimeoutMs = options.challengeTimeoutMs ?? GATEWAY_CHALLENGE_TIMEOUT_MS;
   const connectTimeoutMs = options.connectTimeoutMs ?? GATEWAY_CONNECT_HANDSHAKE_TIMEOUT_MS;
 
   return await new Promise<WebSocket>((resolve, reject) => {
-    const wsUrl = `ws://localhost:${options.port}/ws`;
+    const wsUrl = `ws://${GATEWAY_LOOPBACK_HOST}:${options.port}/ws`;
     const ws = new WebSocket(wsUrl);
     let handshakeComplete = false;
     let connectId: string | null = null;

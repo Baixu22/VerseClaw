@@ -1,0 +1,46 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "closeout-integrity-archived-originals",
+  "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+  "command": [
+    "node",
+    "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout-integrity.mjs",
+    "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+    "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/integrity-archived-originals.json",
+    "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/live-curated-verification.json"
+  ],
+  "startedAt": "2026-11-13T13:43:19.161Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T13:43:32.044Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-archived-originals.stdout.txt",
+      "bytes": 101,
+      "sha256": "b671f3084e693667359c4cddc526cad6a5a17cfe3dd60c117a5f646b6c33fcbc"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-archived-originals.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -119,7 +119,14 @@ export type HostSenderAuthorization = {
   allowedWebContentsIds: ReadonlySet<number>;
   /** Optional allowlist of senderFrame URL prefixes (e.g. app origin). Empty = skip URL check. */
   allowedUrlPrefixes?: readonly string[];
+  /** Main-owned read observers have an exact app entry and explicit actions. */
+  observerConstraints?: ReadonlyMap<number, { entry: string; actions: ReadonlySet<string> }>;
 };
+
+export function hostEntryUrl(value: string): string | null {
+  try { const url = new URL(value); if (!['file:', 'http:', 'https:'].includes(url.protocol)) return null;
+    url.search = ''; url.hash = ''; return url.href; } catch { return null; }
+}
 
 export type IpcSenderLike = {
   id?: number;
@@ -148,6 +155,10 @@ export function assertAuthorizedHostSender(
   const senderId = event.sender.id;
   if (typeof senderId !== 'number' || !auth.allowedWebContentsIds.has(senderId)) {
     return { code: 'VALIDATION', message: 'Host request sender is not authorized' };
+  }
+  const constraint = auth.observerConstraints?.get(senderId);
+  if (constraint && hostEntryUrl(event.senderFrame?.url || event.sender.getURL?.() || '') !== constraint.entry) {
+    return { code: 'VALIDATION', message: 'Host observer source is not authorized' };
   }
 
   const prefixes = auth.allowedUrlPrefixes ?? [];

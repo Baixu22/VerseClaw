@@ -1,0 +1,28 @@
+{
+  "baseline": "bfcf57616b361a12845014b3f054b95e31c4021c",
+  "candidate": "11adcfbdb1892618332babe6a52dd91b069a642c",
+  "protectedPaths": [
+    "electron",
+    "src",
+    "shared",
+    "openclaw_runtime",
+    "packages/versebrowser",
+    "package.json",
+    "pnpm-lock.yaml",
+    "docs/dev/default-config-matrix.md"
+  ],
+  "changedPaths": [],
+  "runtimeSourceChanges": 0,
+  "modules": 58,
+  "actions": 562,
+  "retiredChannels": 43,
+  "knownEntrySites": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "line": 381,
+      "channel": "host:invoke",
+      "expression": "'host:invoke'"
+    }
+  ],
+  "siteInventoryScope": "Retirement and typed entry files; whole-electron gate is separate."
+}

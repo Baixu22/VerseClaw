@@ -538,9 +538,10 @@ export async function resolveCronCoordinatorStatus(
 async function assertCoordinatorBindingCurrent(
   gatewayManager: GatewayManager,
   rawScope: unknown,
-): Promise<CronCoordinatorScope> {
+): Promise<CronCoordinatorScope | null | undefined> {
   const scope = normalizeCronCoordinatorScope(rawScope);
-  if (!scope) {
+  if (scope === undefined) return rawScope === null ? null : undefined;
+  if (scope === null) {
     throw new Error(
       'Coordinator follow-up requires workspaceId, coordinatorSessionKey, expectedSessionId, intent and notificationPolicy',
     );

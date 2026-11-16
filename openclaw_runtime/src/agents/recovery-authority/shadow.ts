@@ -108,4 +108,3 @@ export class RecoveryShadowSink {
 
 /** Process-wide shadow sink. Read-only: it never feeds a recovery decision. */
 export const recoveryShadowSink = new RecoveryShadowSink();
-

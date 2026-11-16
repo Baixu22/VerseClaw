@@ -78,6 +78,7 @@ describe('ArtifactPanel', () => {
     expect(screen.getByTestId('artifact-panel-launcher-terminal')).toBeVisible();
     expect(screen.getByTestId('artifact-panel-launcher-browser')).toBeVisible();
     expect(screen.getByTestId('artifact-panel-launcher-files')).toBeVisible();
+    expect(screen.queryByTestId('artifact-panel-launcher-agents')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('artifact-panel-launcher-files'));
     expect(screen.getByTestId('artifact-panel-tab-files')).toBeVisible();
@@ -121,5 +122,28 @@ describe('ArtifactPanel', () => {
     fireEvent.click(screen.getByTestId('artifact-panel-tab-close-terminal'));
     expect(useArtifactPanel.getState().open).toBe(false);
     expect(useArtifactPanel.getState().tabs).toEqual([]);
+  });
+
+  it('closes the workspace while retaining its selected tab and content', () => {
+    act(() => openWorkspacePanel({ panel: 'files', filePath: 'src/App.tsx' }));
+    const onSessionStateChange = vi.fn();
+    render(<ArtifactPanel files={[]} agent={null} onSessionStateChange={onSessionStateChange} />);
+    const content = screen.getByTestId('workspace-files-content');
+    const tabId = useArtifactPanel.getState().activeTabId;
+    fireEvent.click(screen.getByTestId('artifact-panel-close'));
+    expect(useArtifactPanel.getState()).toMatchObject({ open: false, activeTabId: tabId, selectedPath: 'src/App.tsx' });
+    expect(onSessionStateChange).toHaveBeenCalledWith({ open: false });
+    expect(screen.getByTestId('workspace-files-content')).toBe(content);
+  });
+
+  it('dismisses the portalled tab menu when the toolbar hides the retained panel', () => {
+    act(() => openWorkspacePanel({ panel: 'files' }));
+    render(<ArtifactPanel files={[]} agent={null} />);
+    fireEvent.click(screen.getByTestId('artifact-panel-new-tab'));
+    expect(screen.getByTestId('artifact-panel-new-tab-menu')).toBeVisible();
+    act(() => useArtifactPanel.getState().hide());
+    expect(screen.queryByTestId('artifact-panel-new-tab-menu')).not.toBeInTheDocument();
+    act(() => useArtifactPanel.getState().toggle());
+    expect(screen.queryByTestId('artifact-panel-new-tab-menu')).not.toBeInTheDocument();
   });
 });

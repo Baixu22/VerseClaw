@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0744",
+  "decision": "retire",
+  "scannedFiles": 6391,
+  "productionConsumers": [],
+  "permittedObservationImporter": "openclaw_runtime/src/agents/stage5-golden-run.ts",
+  "policy": "direct exports retained for historical tests/replay, no production barrel export"
+}

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 C:/Users/27933/.codex/worktrees/g7-inline-spill-integration-20261113/ClawX
+
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  02:13:02
+   Duration  6.60s (transform 113ms, setup 526ms, import 67ms, tests 5.66s, environment 0ms)
+

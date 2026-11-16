@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "u2-navigation-red",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/session-task-reading-navigation.spec.ts",
+    "--workers=1",
+    "--reporter=list,json",
+    "--output=D:/tmp/unified-management-20261109/interaction-validation/u2-navigation-red-results"
+  ],
+  "startedAt": "2026-11-09T00:23:15.684Z",
+  "finishedAt": "2026-11-09T00:25:08.607Z",
+  "durationMs": 112915,
+  "exitCode": 1,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "0ed2befe7c9b753228978586d4130cc05ec3a371",
+    "tree": "038043c64e8c56d6e733d397330928729075925d",
+    "dirty": "",
+    "files": [
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "11e3e141225e17843f6592a452bc64f783d6d294ed0fe45b8bc8afe722d826ab"
+      }
+    ]
+  },
+  "after": {
+    "commit": "0ed2befe7c9b753228978586d4130cc05ec3a371",
+    "tree": "038043c64e8c56d6e733d397330928729075925d",
+    "dirty": "",
+    "files": [
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "11e3e141225e17843f6592a452bc64f783d6d294ed0fe45b8bc8afe722d826ab"
+      }
+    ]
+  },
+  "tests": {
+    "startTime": "2026-11-09T00:23:17.063Z",
+    "duration": 110658.777,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-navigation-red.log",
+    "sha256": "b1fc15f6a113794f1cd520b577bf2d604c0eab0eb650b224c069205819b777dd"
+  }
+}

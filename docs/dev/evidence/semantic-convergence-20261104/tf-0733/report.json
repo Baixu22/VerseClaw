@@ -1,0 +1,87 @@
+{
+  "schema": "SemanticConvergenceNodeReport/v1",
+  "node": "TF-0733",
+  "title": "拆分 provider validation 状态并修正 UI 语义",
+  "generatedAt": "2026-11-04T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex/mainline",
+  "base": {
+    "parentCommit": "35a2f6aae"
+  },
+  "metrics": {
+    "VALID-1": {
+      "before": 3,
+      "after": 0,
+      "unit": "collapsed classes",
+      "method": "static"
+    },
+    "VALID-2": {
+      "before": 1,
+      "after": 6,
+      "unit": "dimensions",
+      "method": "static"
+    },
+    "false_ready_rate": {
+      "before": "2/12",
+      "after": "0/12",
+      "unit": "scenarios",
+      "method": "behavioral"
+    },
+    "state_dimension_coverage": {
+      "before": "1/6",
+      "after": "6/6",
+      "unit": "dimensions"
+    }
+  },
+  "tests": {
+    "providerValidationSuites": {
+      "files": 6,
+      "total": 75,
+      "failed": 0
+    },
+    "matrixScenarios": 12,
+    "matrixFalseReady": 0
+  },
+  "staticChecks": {
+    "typecheckNode": "passed",
+    "typecheckWeb": "passed",
+    "buildVite": "passed",
+    "eslintTargeted": "passed",
+    "i18nLint": "passed",
+    "contractCheck": "passed",
+    "harnessValidate": "passed"
+  },
+  "evidence": {
+    "staticBefore": "artifacts/runs/semantic-convergence-20261104/tf-0733/validation-before.json",
+    "staticAfter": "artifacts/runs/semantic-convergence-20261104/tf-0733/validation-after.json",
+    "behavioralMatrix": "tests/unit/semantic-convergence-provider-validation-matrix.test.ts",
+    "unitTests": "artifacts/runs/semantic-convergence-20261104/tf-0733/unit-tests.json",
+    "e2eSpec": "tests/e2e/setup-first-run-fp-p1-01.spec.ts"
+  },
+  "changes": [
+    "ProviderValidationResult now carries reachable/auth/protocol/model/rateLimited/retryAfterMs/ready/reason plus status and the one-release compat valid field.",
+    "429 is classified as rate-limited with Retry-After parsed to retryAfterMs; it never reports ready or valid.",
+    "Non-auth 400 on the fallback probe is protocol-error; model-shaped 400/404 is model-unavailable.",
+    "A /models 200 with an empty model list proves the credential but reports model-unavailable and stays not-ready until the Model step confirms a model.",
+    "Transport failures are split into timeout / dns-error / blocked / network-error.",
+    "Setup creates the account without writing metadata.validation=valid; that record is written only after a model is confirmed.",
+    "Setup and Settings render structured copy: 429 shows the retry window, 400 shows protocol guidance, and only ready=true shows Credentials verified.",
+    "Four locales (en/zh/ja/ru) gained the new copy."
+  ],
+  "limitations": [
+    "The matrix drives the real classifier but with stub HTTP responses; no live third-party provider was contacted.",
+    "SSRF-blocked is classified from the transport error text because policy parity lands in TF-0734.",
+    "The extended Electron E2E spec (429 and non-auth 400) was not executed in this worktree because the Electron binary is not installed here; it is typechecked and ready for the Windows E2E gate."
+  ],
+  "notChanged": [
+    "No product lock, default value, or release status changed.",
+    "No real-human evidence is claimed."
+  ],
+  "candidate": {
+    "commit": "7330d18db",
+    "branch": "codex/semantic-convergence-20261104",
+    "worktree": "D:\\ClawX-work\\semantic-convergence-20261104",
+    "dirty": false,
+    "note": "Code/tests candidate. These evidence files are curated in a follow-up commit on the same branch."
+  }
+}

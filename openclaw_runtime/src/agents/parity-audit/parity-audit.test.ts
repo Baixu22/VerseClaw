@@ -130,7 +130,7 @@ describe("能力2 checkpoint 回滚: journal 时间戳过滤边界", () => {
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it("J1 同毫秒(修复后): seq 边界下 checkpoint 前同毫秒的写入不再被误伤", () => {
+  it("J1 同毫秒(修复后): seq 边界下 checkpoint 前同毫秒的写入不再被误伤", async () => {
     repoRoot = mkdtempSync(path.join(tmpdir(), "parity-j1-"));
     const file = path.join(repoRoot, "f.ts");
     writeFileSync(file, "v0\n", "utf8");
@@ -150,7 +150,7 @@ describe("能力2 checkpoint 回滚: journal 时间戳过滤边界", () => {
     const record = makeCheckpointRecord(checkpointAt, { journalSeq: entry!.seq });
     vi.useRealTimers();
 
-    const outcome = applyCheckpointToJournal({
+    const outcome = await applyCheckpointToJournal({
       workspaceRoot: repoRoot,
       checkpoint: record,
       sessionId: journalSessionId,
@@ -181,7 +181,7 @@ describe("能力2 checkpoint 回滚: journal 时间戳过滤边界", () => {
     rmSync(entry!.snapshotPath, { force: true });
 
     const record = makeCheckpointRecord(checkpointAt);
-    const outcome = applyCheckpointToJournal({
+    const outcome = await applyCheckpointToJournal({
       workspaceRoot: repoRoot,
       checkpoint: record,
       sessionId: journalSessionId,
@@ -262,7 +262,7 @@ describe("能力2 checkpoint 回滚: journal 时间戳过滤边界", () => {
         validateCheckpoint: async (c) => validateCheckpointRecord(c),
         applyCheckpoint: async (c) => {
           const r = c as LongTaskCheckpointRecord;
-          const outcome = applyCheckpointToJournal({
+          const outcome = await applyCheckpointToJournal({
             workspaceRoot: repoRoot,
             checkpoint: r,
             sessionId: journalSessionId,

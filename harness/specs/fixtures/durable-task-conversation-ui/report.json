@@ -1,0 +1,74 @@
+{
+  "schema": "DurableTaskConversationUI/v1",
+  "driven_by": "agent",
+  "sourceCandidate": "6a22ac2174d85619fac8888fbcaade875081bace",
+  "taskNode": "TF-0860",
+  "implementationWorktree": "D:/ClawX-work/durable-task-system-20261107",
+  "taskTests": {
+    "passed": 62,
+    "total": 62
+  },
+  "chatTests": {
+    "passed": 45,
+    "total": 45
+  },
+  "electron": {
+    "startTime": "2026-11-08T09:46:08.695Z",
+    "duration": 49059.882999999994,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "runtimeBuild": {
+    "status": "finished",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 433996,
+    "args": [
+      "scripts/build-all.mjs"
+    ]
+  },
+  "behavior": [
+    "No task panel for empty or unidentified conversation",
+    "Atomic task_control.start and runtime-owned generation readback",
+    "Compact progress row above composer; explicit expand, hide and reopen",
+    "Per-workspace/session/task preferences, no execution mutation on hide",
+    "Coalesced event refresh; out-of-order results discarded; no interval polling",
+    "Original user message kept intact; no manual coordinator setup for ordinary bound task",
+    "Four locales and narrow viewport"
+  ],
+  "validationScope": "Actual Main, Gateway session ownership, production task start and rendered Electron UI; model-generated recognition is guided by the tool contract and is not scored by this UI test",
+  "mainIntegration": {
+    "commit": "20b394c734999b3162e73f74e652914d2f6df486",
+    "installedMatches": 61,
+    "unrelatedPreserved": 2748,
+    "checks": {
+      "main-core": {
+        "passed": 62,
+        "total": 62,
+        "sha256": "41df946a0fdd96ffdebc768d7873a2ecaac2c4f3e34c1ae117c0f386c7eab1d1",
+        "rawPath": "D:/tmp/durable-task-conversation-20261108/main-core.json"
+      },
+      "main-ui-final": {
+        "passed": 49,
+        "total": 49,
+        "sha256": "cd6a50f10984f638beae6902c332da74f275040559368f1ee766bad310bcf326",
+        "rawPath": "D:/tmp/durable-task-conversation-20261108/main-ui-final.json"
+      },
+      "main-sidebar-dedup": {
+        "passed": 8,
+        "total": 8,
+        "sha256": "4f8e31c466f5b7bb5ceeb2539efb3b952c3c441b18975e38412d2a13314709d1",
+        "rawPath": "D:/tmp/durable-task-conversation-20261108/main-sidebar-dedup.json"
+      },
+      "source-sidebar-final": {
+        "passed": 6,
+        "total": 6,
+        "sha256": "983b781190340a8b31b03e271db7341131742efdb6d9d90b6d58e60e28367413",
+        "rawPath": "D:/tmp/durable-task-conversation-20261108/source-sidebar-final.json"
+      }
+    }
+  }
+}

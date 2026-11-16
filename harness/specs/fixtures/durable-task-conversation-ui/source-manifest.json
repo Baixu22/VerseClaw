@@ -1,0 +1,125 @@
+{
+  "candidate": "6a22ac2174d85619fac8888fbcaade875081bace",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "011629d2e7debdac1894600051008d940e1b94114da589890536ae8ad376006f"
+    },
+    {
+      "path": "README.md",
+      "sha256": "cf82da7057a1ba64dfaf1d5975502fb37c1ce5671f70670157f9408c9895dafe"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "71b00550a8f12ef13a4d6d401d3423897690909d3e1dfbd35bdf6db68fce3378"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "f54a62b1977f4e59b967608e76b40cec25d7221496c65f518b5bdb1d9d650455"
+    },
+    {
+      "path": "docs/dev/durable-task-system/DESIGN.md",
+      "sha256": "cc721bfc1d1d53e7590feb6b4bdbbab583114a4e68c50f01ac4b1f9e19bf8650"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "e20179cc03707146b9f8c2cfa51fefd848bd17c64a52d644d1bcd30fb48b9591"
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "6b4854029a958176ae8daeec8d1af9d9874caac391c09a0b680b1dd2321e7e72"
+    },
+    {
+      "path": "electron/services/task-ledger-api.ts",
+      "sha256": "8a2118c76d07e9a88e22404317e5bd8ab09db3f79cfd5f6b292da6af1a073e22"
+    },
+    {
+      "path": "electron/services/task-system-service.ts",
+      "sha256": "12f1a36b079c598f6d327553fc1c0142823917578928a64dbfe3b20854b76bae"
+    },
+    {
+      "path": "harness/specs/tasks/durable-task-conversation-ui.md",
+      "sha256": "37c2b1b236c9f0d21b53329af999a73d92e6ca5f07b01d23fa23efc9f2519840"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+      "sha256": "0eb8faa3d458c4a49b2832f014d6a90ad2d7e7e000e476437d59b4339d2c3758"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "8302b774af5e1d86837b34403573227c39ff6f1f865ab943cfad79d8d7d6c15b"
+    },
+    {
+      "path": "shared/i18n/locales/en/taskLedger.json",
+      "sha256": "9cf223f04aa0886419be4d124be6006a842d17b86d4ca3ae8d360e6aa9e0c270"
+    },
+    {
+      "path": "shared/i18n/locales/ja/taskLedger.json",
+      "sha256": "bfd3c8d910d99d2cfc36b4afc8f1bb54db9ded68e6c6e8ee5ffffebcf7532358"
+    },
+    {
+      "path": "shared/i18n/locales/ru/taskLedger.json",
+      "sha256": "cd396584a10ce75429b745cf8d2d7ba653137604ea409c955297bb15576d7436"
+    },
+    {
+      "path": "shared/i18n/locales/zh/taskLedger.json",
+      "sha256": "c04ba77e85bd90949701d0f7d77c37a0b5ea4336f776b24ecf849e097574d4a9"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "c21c5bec78c08773ffb7fe9500c3830a0487673abb3f769f916a878e3120f367"
+    },
+    {
+      "path": "shared/task-system/types.ts",
+      "sha256": "530e919fb4f801fc8f583d93d8dc97e4c3ea0b86f970b2c7b0ac6c0580c055df"
+    },
+    {
+      "path": "src/components/tool-ui/plan-view.tsx",
+      "sha256": "223ba84e98593bf38a1c36d614115a0dcf8520fbca3de2ab5b6ecb3826f1e884"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "a6b991d2b8d5a60855a49fd3e04021082b47a7e4edb9dc930a1e3a3dcea147b0"
+    },
+    {
+      "path": "src/pages/Chat/SessionTaskDock.tsx",
+      "sha256": "716e14f30c7b7b607013b68d774da99bc580664bece5fb0565a66a55c656d4ac"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "81c2cbd673854b23417f089492dffe76f2709db1277535fc40443174d2cfc50d"
+    },
+    {
+      "path": "src/pages/TaskLedger/ManagedTasks.tsx",
+      "sha256": "509aeb3a244b872cc224123398ca1f6012f3b1ed6ddc939cc1bcfd16a92104b1"
+    },
+    {
+      "path": "tests/e2e/durable-task-conversation.spec.ts",
+      "sha256": "b4063813f73d9a5b2ae3ae083b8ba971370de1547165873825f7e22ec440d887"
+    },
+    {
+      "path": "tests/e2e/durable-task-system.spec.ts",
+      "sha256": "7c36493b27ba85f35af8dc854be33a8a4eae3aa342e9da30cc20a2c6ed7326aa"
+    },
+    {
+      "path": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "sha256": "8253b432f73f492c5158cfc5dd33bf9d1b2681eb976d0bb71579c9ae00113f3c"
+    },
+    {
+      "path": "tests/unit/chat-session-status-rail.test.tsx",
+      "sha256": "d8df49440c876adf9d0f0a6e1d35b678eb55f2c18dccf35a31235000c11c8047"
+    },
+    {
+      "path": "tests/unit/durable-task-start.test.ts",
+      "sha256": "83b4bbf397a39e4bb0e20b03fb14f02ec03ae3ee17d3a01d2187a7b4be2b4de0"
+    },
+    {
+      "path": "tests/unit/durable-task-system.test.ts",
+      "sha256": "0e5d49a8b64ef39919279327a5b0f47127563070bc5b1ff13ebb08afd31af28c"
+    },
+    {
+      "path": "tests/unit/session-task-dock.test.tsx",
+      "sha256": "4de748c017b126be7158bb9f91965f7a19ba293d4cfdd0c71deb268a58fb38a1"
+    }
+  ]
+}

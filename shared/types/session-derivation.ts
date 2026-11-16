@@ -39,6 +39,7 @@ export type SessionDerivationHop = {
   forkedFromTimestamp?: number;
   /** True when the parent entry itself was found in the store. */
   parentFound: boolean;
+  diagnostics?: Array<'parent-spawn-conflict' | 'fork-parent-missing'>;
 };
 
 export type SessionDerivation = {
@@ -79,23 +80,41 @@ function nonEmpty(value: unknown): value is string {
 /**
  * Classify one child entry's derivation kind and the parent key it names.
  *
- * Precedence matches the stage projection: a fork triple proves a fork, a
- * parent key without fork facts proves a handoff, and `spawnedBy` proves a
- * spawn. A child that names no parent at all is `unknown`, not a root.
+ * Fork facts outrank spawn facts; spawnedBy outranks a generic parent key.
+ * Conflicting source fields remain available to diagnostics.
  */
 export function classifyDerivation(entry: SessionDerivationEntryFacts): {
   kind: SessionDerivationKind;
   parentSessionKey?: string;
+  diagnostics?: SessionDerivationHop['diagnostics'];
 } {
   const parentKey = nonEmpty(entry.parentSessionKey) ? entry.parentSessionKey.trim() : undefined;
   const spawnedBy = nonEmpty(entry.spawnedBy) ? entry.spawnedBy.trim() : undefined;
+  const diagnostics: NonNullable<SessionDerivationHop['diagnostics']> = [];
+  if (parentKey && spawnedBy && parentKey !== spawnedBy) diagnostics.push('parent-spawn-conflict');
+  const diagnosticFields = () => diagnostics.length ? { diagnostics } : {};
 
   if (entry.forkedFromParent === true || (nonEmpty(entry.forkedFromLeafId) && parentKey)) {
-    return { kind: 'fork', ...(parentKey ? { parentSessionKey: parentKey } : {}) };
+    if (!parentKey) diagnostics.push('fork-parent-missing');
+    return { kind: 'fork', ...(parentKey ? { parentSessionKey: parentKey } : {}), ...diagnosticFields() };
   }
+  if (spawnedBy) return { kind: 'spawn', parentSessionKey: spawnedBy, ...diagnosticFields() };
   if (parentKey) return { kind: 'handoff', parentSessionKey: parentKey };
-  if (spawnedBy) return { kind: 'spawn', parentSessionKey: spawnedBy };
+  if (nonEmpty(entry.forkedFromLeafId)) return { kind: 'unknown', diagnostics: ['fork-parent-missing'] };
   return { kind: 'unknown' };
+}
+
+/** The production sessions.list consumer uses this mapping before any UI projection. */
+export function readSessionDerivationFacts(row: Record<string, unknown>) {
+  return {
+    sessionId: nonEmpty(row.sessionId) ? row.sessionId : undefined,
+    parentSessionKey: nonEmpty(row.parentSessionKey) ? row.parentSessionKey : undefined,
+    spawnedBy: nonEmpty(row.spawnedBy) ? row.spawnedBy : undefined,
+    forkedFromParent: typeof row.forkedFromParent === 'boolean' ? row.forkedFromParent : undefined,
+    forkedFromLeafId: nonEmpty(row.forkedFromLeafId) ? row.forkedFromLeafId : undefined,
+    forkedFromTimestamp: typeof row.forkedFromTimestamp === 'number' && Number.isFinite(row.forkedFromTimestamp)
+      ? row.forkedFromTimestamp : undefined,
+  };
 }
 
 /**
@@ -121,7 +140,7 @@ export function deriveSessionLineage(input: SessionDerivationInput): SessionDeri
     const entry = input.readEntry(currentKey);
     if (!entry) break;
 
-    const { kind, parentSessionKey } = classifyDerivation(entry);
+    const { kind, parentSessionKey, diagnostics } = classifyDerivation(entry);
     chain.push({
       sessionKey: currentKey,
       ...(nonEmpty(entry.sessionId) ? { sessionId: entry.sessionId.trim() } : {}),
@@ -145,6 +164,7 @@ export function deriveSessionLineage(input: SessionDerivationInput): SessionDeri
           ? { forkedFromTimestamp: entry.forkedFromTimestamp }
           : {}),
         parentFound: true,
+        ...(diagnostics ? { diagnostics } : {}),
       });
       break;
     }
@@ -161,6 +181,7 @@ export function deriveSessionLineage(input: SessionDerivationInput): SessionDeri
         ? { forkedFromTimestamp: entry.forkedFromTimestamp }
         : {}),
       parentFound: Boolean(parentEntry),
+      ...(diagnostics ? { diagnostics } : {}),
     });
 
     if (!parentEntry) break;

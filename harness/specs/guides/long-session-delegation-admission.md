@@ -34,6 +34,7 @@ C2 does not introduce another executor, scheduler, Task Ledger writer, or role r
 - the C1 coordinator binding is active and ready;
 - the caller's binding revision and session generation still match;
 - `taskRef` is present in the binding;
+- when the workspace has managed task storage, the task has a live claim owned by the same session and physical generation;
 - the existing Gateway permission owner authorizes the call;
 - the backend is `subagent`;
 - the requested worker role exists.
@@ -54,6 +55,8 @@ An expired or revoked approval is not cached as authority. A retry after the per
 - bounded process and subagent/background-terminal facts.
 
 An accepted child uses `runState: "accepted-not-completed"` and `completionObserved: false`. A successful spawn receipt is acceptance evidence only. Completion must arrive later from the existing subagent completion owner.
+
+Claiming a managed task puts it in `doing`. Spawn acknowledgement and worker completion preserve the separate business-task acceptance checks.
 
 A role missing either the child session key or child run ID is rejected even if the lower spawn layer said `accepted`.
 
@@ -81,12 +84,14 @@ The C2 fixture directory contains the curated E2E receipt and the permission/iso
 harness/specs/fixtures/long-session-development/c2/
 ```
 
-The built Electron E2E uses isolated `userData` and run roots, launches actual Main/Gateway/runtime owners, verifies the child session, repeats the same admission within the owner and after restart, and checks stale-generation rejection.
+The built Electron E2E uses isolated project directories, task authorities, `userData` and run roots, launches actual Main/Gateway/runtime owners, verifies the child session, repeats the same admission within the owner and after restart, and checks stale-generation rejection.
 ## Completion batches
 
 The session activity owner derives a read-only completion batch from the persisted subagent registry rows that share one `orchestrationRunId`. A batch remains `collecting` until every expected worker is terminal. It then produces one deterministic consolidated receipt ID and counts completed, failed, cancelled, and unknown workers separately. Delivery remains owned by the existing durable subagent delivery state, so a pending or suspended intent is never reported as delivered.
 
 The batch is fenced by the original requester session generation. A reset, handoff, archive/pause lifecycle, or stale completion can therefore expose `fenced` instead of continuing into the new generation. Restart replay derives the same batch identity from persisted rows; model output text is not used as completion authority.
+
+Activity reads reload the persisted generation without the shared session-store cache. After a reset, a previously completed batch projects as `fenced` with no current consolidated receipt; its original worker rows remain available for history.
 ## Coordination surface
 
 The Chat toolbar exposes the active session through the existing resource chip. When a Task Ledger node is selected, the user can explicitly create the coordinator binding; bound sessions show their canonical environment, backend and revision, coordinator recovery state, Task Ledger references, completion batches and delivery state, plus observed CPU, RSS, process, slot, background-terminal and queued-work totals. Pause and resume call the typed Workspace owner, while worker rows switch to the existing child transcript. The chip keeps observed resources separate from resources it can actually terminate.

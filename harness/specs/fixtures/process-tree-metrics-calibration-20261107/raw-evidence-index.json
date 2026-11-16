@@ -1,0 +1,120 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "files": [
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\commands.json",
+      "sha256": "6bcb2b4936ccb914ee2c797e231cfff5c95a1ee19289c2a0875f002e855b1070"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\comms\\compare-report.json",
+      "sha256": "adf16872d5834a92c99909107b9179c943d3571726e029f7697f280a1bd1171f"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\comms\\compare-report.md",
+      "sha256": "c173cd160039014ae629c1808119e7c926e03c23fb321beb2e16950db4158086"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\comms\\current-metrics.json",
+      "sha256": "21c0b63bd3db53d7e69b2b531f0835270b21e2df9308fa5217b798753ea34bbf"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\comms-compare.log",
+      "sha256": "f67f326d2c1b4d9b8b44a493fb6b726666cfe961b514071d6f178d77e7dc29ec"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\comms-replay.log",
+      "sha256": "2e8e284f51058aaf3ab8cee6afa32fc5c54e4caa69a08f3a46e2d04fb09caff3"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\diff.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\harness-context.log",
+      "sha256": "035b649b979b884332bc9311e6ceb9ba18530a61d80f225b43a9d7d7e5264497"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\harness-run.log",
+      "sha256": "30974247ceed4b99b04b970d1cf28a879caafda964767f9ddf687567ac95713e"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\harness-validate.log",
+      "sha256": "8fbc565cc43c6cf5034f81ca1136830c5a33875d9e7080f755573631bbd19141"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\lint.json",
+      "sha256": "4a8bbfca6a8bf1758563b25ec5a3a52b36f8d142774438a5096c595550a9b722"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\live-child.json",
+      "sha256": "262c460b138d1878326801086465cdb219b4e3108c254710e8e983ad6fda65ef"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\report.json",
+      "sha256": "fb9af5b1b41cd4e91c5e2e960fc7af847c6f1462de623fa0009678326674308b"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\retention.log",
+      "sha256": "0839bab836d435f874cce69c480aad557692a3dea7fc5083bcedc7d2d67115e1"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\runtime-tests.json",
+      "sha256": "98adc565ba49fa2a7baebc9921449852d9d58e95658aaffdf92dd80b1d66791f"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\runtime-tests.log",
+      "sha256": "bc108ed852109753a1e6a37e9f6fc14020918af37674a069b5efebec31600ef6"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\tests.json",
+      "sha256": "683b376e0a3675c390b4d49127635bd0332c871155c9816873113744b0e1528f"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\tests.log",
+      "sha256": "9f226b1ee8d476c0ea13bd468eef12a22b9df7d5b1a5b00670b27d51677e6838"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\acceptance\\types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\negative.json",
+      "sha256": "d3749662428fc63fb963b95f48b6e47240af56b8a3b56881424604f65f44540d"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\negative.log",
+      "sha256": "212e7e747ae2284a8209e2fc18dc2ba408eef906954b5ef09d124889ec41c90e"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\negative.exit",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\dev-metrics3.json",
+      "sha256": "e474f1b96dbf0e60e476bb903466c36c6416647a5e534fe6a3b3a1d7a2f048ea"
+    },
+    {
+      "path": "D:\\tmp\\tf0831\\live-probe2.json",
+      "sha256": "5c7f92a1b1e88f8d03d18eff35c2b033d04576f3f38648b040fca9541d6bebdc"
+    }
+  ],
+  "driver": {
+    "path": "D:\\tmp\\tf0831\\verify.py",
+    "sha256": "cf1f6c16a4967f72a4d206627792a3af5fc7e1653f4bc943e21db9ab37d1e306"
+  },
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "GOMEMLIMIT": "1GiB",
+    "GOMAXPROCS": "2"
+  },
+  "dependencies": {
+    "root": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules"
+  }
+}

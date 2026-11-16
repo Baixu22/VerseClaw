@@ -1,0 +1,47 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-curated-evidence-reader",
+  "candidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "node": "TF-0679",
+  "originalRequirements": [
+    "骨架层：L1 资源owner + L4 admission",
+    "受控写集/复用点：electron/services/resource-fabric.ts；electron/services/resource-tracker.ts；openclaw_runtime/src/agents/orchestration-resource-scheduler.ts；shared/types/session-delegation.ts",
+    "资源清单为Git/Browser/Process/Provider owner投影；owner-issued lease/fence，不建第二资源事实库。",
+    "复用已有Fabric/capacity/wave原语，以宿主/项目/会话分层预留和reconcile扩展缺口。",
+    "多资源固定顺序/失败补偿，排队公平和等待老化；控制/取消通道不被工作队列占满。"
+  ],
+  "originalAcceptance": [
+    "已有writeSet缺失推迟逻辑保留；隔离证明从实际worktree owner获得，不能只信调用者bool。",
+    "并发预算reserve无超额双花；unknown成本单列；资源等待可归因且无饥饿。",
+    "lease过期先fence和确认旧执行隔离再重分配；可读占用和真实effective cap。",
+    "负例：TTL过期即允许双writer；未测上限当无限安全；资源申请死锁",
+    "证据包含driven_by:agent、真实actor、source/candidate/输入配置版本、命令/exit/count、artifact hash、负例与未测范围；不以stdout或模型自述收口。",
+    "ControlAction/resource统一层仅有envelope、相关ID和可重建索引；清空其缓存后可从owner重建，不能凭中央缓存空闲或TTL过期释放真实资源。"
+  ],
+  "requiredRequirements": 5,
+  "requiredAcceptance": 6,
+  "status": "accepted-original-r1-contract",
+  "fullGoalStatus": "active",
+  "proofFiles": [
+    "gates.json",
+    "source-inputs.json",
+    "owner-store-readback.json",
+    "effective-resource-limits.json",
+    "lease-ledger-refs.json",
+    "fairness-contention.json",
+    "owner-projection.json",
+    "raw-run-index.json",
+    "contract-audit.json",
+    "ci-boundary.json",
+    "credential-scan.json",
+    "SHA256SUMS",
+    "pending-synthesis.png"
+  ],
+  "verifiedRequirements": 5,
+  "verifiedAcceptance": 6,
+  "fullProjectCI": "blocked-typecheck-performance"
+}

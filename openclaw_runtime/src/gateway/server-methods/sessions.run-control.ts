@@ -22,16 +22,11 @@ import {
 import { renderRecoveryContextProjection } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { createCheckpointRollbackDeps } from "../../agents/checkpoint-rollback-executor.js";
-import {
-  executeReplayRollback,
-} from "../../agents/replay-rollback-authority.js";
+import { executeReplayRollback } from "../../agents/replay-rollback-authority.js";
 import { getLongTaskCheckpointById } from "../../agents/long-task-control/store.js";
 import { checkpointContentDiff } from "../../agents/checkpoint-diff.js";
-import { type SessionEntry } from "../../config/sessions.js";
-import {
-  normalizeAgentId,
-  parseAgentSessionKey,
-} from "../../routing/session-key.js";
+import { updateSessionStore, type SessionEntry } from "../../config/sessions.js";
+import { normalizeAgentId, parseAgentSessionKey } from "../../routing/session-key.js";
 import { resolveSessionKeyForRun } from "../server-session-key.js";
 import { resolveSessionStoreAgentId } from "../session-store-key.js";
 import { listSessionCompactionCheckpoints } from "../session-compaction-checkpoints.js";
@@ -44,11 +39,13 @@ import {
 } from "../../agents/subagent-registry.js";
 import {
   loadSessionEntry,
+  resolveGatewaySessionStoreTarget,
+  resolveFreshestSessionEntryFromStoreKeys,
   readSessionMessageCountAsync,
   resolveDeletedAgentIdFromSessionKey,
 } from "../session-utils.js";
 import { setGatewayDedupeEntry } from "./agent-wait-dedupe.js";
-import { acquireSessionAdmissionPermit } from "../../sessions/session-admission-registry.js";
+import { acquireSessionAdmissionPermit, sessionAdmissionRegistry } from "../../sessions/session-admission-registry.js";
 import {
   drainQueuedUserMessagesForSession,
   installQueueDrainCallback,
@@ -82,6 +79,7 @@ import {
   resolveRequestedGlobalAgentId,
   resolveGatewaySessionTargetFromKey,
   interruptSessionRunIfActive,
+  isSessionBusyForManualCompaction,
   compressionArtifactFromCheckpoint,
   estimateProjectionTokens,
   loadSessionsRuntimeModule,
@@ -194,6 +192,29 @@ async function handleSessionSend(params: {
   const requestedAgentId = requestedAgent.agentId;
   const loaded = loadSessionEntry(key, { agentId: requestedAgentId });
   let { entry, canonicalKey, storePath } = loaded;
+  if (typeof p.expectedSessionId === "string" && entry?.sessionId !== p.expectedSessionId) {
+    params.respond(
+      false,
+      undefined,
+      errorShape(ErrorCodes.INVALID_REQUEST, "Worker session generation changed"),
+    );
+    return;
+  }
+  if (p.requesterSessionKey || p.expectedRequesterSessionId) {
+    if (
+      typeof p.requesterSessionKey !== "string" ||
+      typeof p.expectedRequesterSessionId !== "string" ||
+      loadSessionEntry(p.requesterSessionKey).entry?.sessionId !== p.expectedRequesterSessionId ||
+      (entry?.spawnedBy ?? entry?.parentSessionKey) !== p.requesterSessionKey
+    ) {
+      params.respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "Worker requester generation changed"),
+      );
+      return;
+    }
+  }
   // Reject sends/steers targeting sessions whose owning agent was deleted (#65524).
   const deletedAgentId = resolveDeletedAgentIdFromSessionKey(cfg, canonicalKey);
   if (deletedAgentId !== null) {
@@ -290,6 +311,17 @@ async function handleSessionSend(params: {
         sessionKey: canonicalKey,
         ...(canonicalKey === "global" && requestedAgentId ? { agentId: requestedAgentId } : {}),
         message: (p as { message: string }).message,
+        ...(typeof p.expectedSessionId === "string"
+          ? { expectedSessionGeneration: p.expectedSessionId }
+          : {}),
+        ...(typeof p.requesterSessionKey === "string"
+          ? { requesterSessionKey: p.requesterSessionKey }
+          : {}),
+        ...(typeof p.expectedRequesterSessionId === "string"
+          ? { expectedRequesterSessionId: p.expectedRequesterSessionId }
+          : {}),
+        ...(typeof p.workspaceId === "string" ? { workspaceId: p.workspaceId } : {}),
+        ...(typeof p.workspaceDir === "string" ? { workspaceDir: p.workspaceDir } : {}),
         thinking: (p as { thinking?: string }).thinking,
         attachments: (p as { attachments?: unknown[] }).attachments,
         timeoutMs: (p as { timeoutMs?: number }).timeoutMs,
@@ -408,7 +440,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
         : 1400;
     const projection = artifact
       ? renderRecoveryContextProjection(artifact, budgetTokens)
-      : checkpoint.summary ?? "";
+      : (checkpoint.summary ?? "");
     if (!artifact) {
       warnings.push("legacy_summary_fallback");
     }
@@ -565,71 +597,102 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       agentId: requestedAgent.agentId,
     });
     const { canonicalKey } = loaded;
-    // Restore requires the checkpoint to exist; replay-rollback authority is
-    // invoked with the legacy checkpoint target (event-log replay is not
-    // implemented). The journal root is the agent workspace.
-    const checkpoint = getLongTaskCheckpointById(p.checkpointId);
-    if (!checkpoint || checkpoint.sessionKey !== canonicalKey) {
-      respond(
-        false,
-        undefined,
-        errorShape(ErrorCodes.NOT_FOUND, `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`),
-      );
-      return;
-    }
-    const workspaceRoot = resolveAgentWorkspaceDir(cfg, resolveSessionStoreAgentId(cfg, canonicalKey));
-    // #176: prefer the journal identity stamped on the checkpoint itself; older
-    // checkpoints predate that stamp and fall back to the session store's
-    // transcript UUID. The canonical session key addresses a *different*
-    // journal directory and used to yield a "successful" restore that changed
-    // nothing on disk.
-    const journalSessionId = resolveCheckpointJournalSessionId(checkpoint, loaded.entry?.sessionId);
-    if (!journalSessionId) {
-      respond(
-        false,
-        undefined,
-        errorShape(
-          ErrorCodes.INVALID_REQUEST,
-          `cannot restore checkpoint "${p.checkpointId}": no session id is recorded for ${canonicalKey}, and the write-journal is keyed by the session UUID. No files were restored.`,
-        ),
-      );
-      return;
-    }
-    const rollbackDeps = createCheckpointRollbackDeps({
-      workspaceRoot,
-      sessionId: journalSessionId,
+    const sessionId = loaded.entry?.sessionId;
+    const agentId = requestedAgent.agentId ?? resolveSessionStoreAgentId(cfg, canonicalKey);
+    const generationError = errorShape(ErrorCodes.INVALID_REQUEST, "Session generation changed before checkpoint restore.", {
+      details: { reason: "generation-mismatch" },
     });
-    const result = await executeReplayRollback(
-      {
-        decision: "repair",
-        repairStrategy: "replay_rollback",
-        reason: `manual restore of checkpoint ${p.checkpointId}`,
-        requestedAtTick: 0,
-      },
-      { enabled: false, reason: "event-log replay not implemented; legacy checkpoint fallback" },
-      { kind: "checkpoint", checkpointId: p.checkpointId },
-      rollbackDeps,
-    );
-    if (!result.ok) {
-      respond(
-        false,
-        undefined,
-        errorShape(ErrorCodes.UNAVAILABLE, `checkpoint restore failed: ${result.reason} (${result.detail})`),
-      );
+    if (!sessionId || (p.expectedSessionId !== undefined && sessionId !== p.expectedSessionId)) {
+      respond(false, undefined, generationError);
       return;
     }
-    respond(
-      true,
-      {
-        ok: true,
-        key: canonicalKey,
-        checkpointId: p.checkpointId,
-        rolledBackTo: result.rolledBackTo,
-        mode: result.mode,
-        evidenceSummary: result.evidenceSummary,
-      },
-      undefined,
-    );
+    const identity = { agentId, canonicalSessionKey: canonicalKey, expectedSessionId: sessionId };
+    const admission = sessionAdmissionRegistry.snapshot(identity);
+    if (admission?.active || admission?.fenced || isSessionBusyForManualCompaction({
+      context, cfg, requestedKey: key, canonicalKey, agentId, sessionId,
+    })) {
+      respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "Session is active or fenced; restore after the current operation finishes."));
+      return;
+    }
+    const fence = await sessionAdmissionRegistry.fence(identity, { operation: "session-restore-checkpoint" });
+    try {
+      // Hold the existing store barrier through the journal's file leases and undo.
+      await updateSessionStore(loaded.storePath, async (store) => {
+        const target = resolveGatewaySessionStoreTarget({ cfg, key, store, agentId });
+        const current = resolveFreshestSessionEntryFromStoreKeys(store, target.storeKeys);
+        if (current?.sessionId !== sessionId) {
+          respond(false, undefined, generationError);
+          return;
+        }
+        // Restore requires the checkpoint to exist; replay-rollback authority is
+        // invoked with the legacy checkpoint target (event-log replay is not
+        // implemented). The journal follows this session generation's execution directory.
+        const checkpoint = getLongTaskCheckpointById(p.checkpointId);
+        if (!checkpoint || checkpoint.sessionKey !== canonicalKey || (checkpoint.agentId && checkpoint.agentId !== agentId)) {
+          respond(
+            false,
+            undefined,
+            errorShape(
+              ErrorCodes.NOT_FOUND,
+              `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`,
+            ),
+          );
+          return;
+        }
+        const workspaceRoot = current.workspaceDir?.trim() || current.spawnedWorkspaceDir?.trim() || resolveAgentWorkspaceDir(cfg, agentId);
+        // Restore must use the journal identity stamped by the checkpoint owner.
+        const journalSessionId = resolveCheckpointJournalSessionId(checkpoint, undefined);
+        if (!journalSessionId || journalSessionId !== sessionId) {
+          const message = journalSessionId
+            ? "Checkpoint write-journal belongs to a different session generation."
+            : "Checkpoint has no recorded write-journal session UUID; restore cannot verify its source generation.";
+          respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, message, {
+            details: { reason: journalSessionId ? "checkpoint-generation-mismatch" : "checkpoint-journal-identity-missing" },
+          }));
+          return;
+        }
+        const rollbackDeps = createCheckpointRollbackDeps({
+          workspaceRoot,
+          sessionId: journalSessionId,
+        });
+        const result = await executeReplayRollback(
+          {
+            decision: "repair",
+            repairStrategy: "replay_rollback",
+            reason: `manual restore of checkpoint ${p.checkpointId}`,
+            requestedAtTick: 0,
+          },
+          { enabled: false, reason: "event-log replay not implemented; legacy checkpoint fallback" },
+          { kind: "checkpoint", checkpointId: p.checkpointId },
+          { ...rollbackDeps, loadCheckpoint: async () => checkpoint },
+        );
+        if (!result.ok) {
+          respond(
+            false,
+            undefined,
+            errorShape(
+              ErrorCodes.UNAVAILABLE,
+              `checkpoint restore failed: ${result.reason} (${result.detail})`,
+            ),
+          );
+          return;
+        }
+        respond(
+          true,
+          {
+            ok: true,
+            key: canonicalKey,
+            checkpointId: p.checkpointId,
+            rolledBackTo: result.rolledBackTo,
+            mode: result.mode,
+            evidenceSummary: result.evidenceSummary,
+          },
+          undefined,
+        );
+      }, { skipSaveWhenResult: () => true });
+    } finally {
+      fence.release();
+    }
   },
 
   "sessions.checkpointDiff": async ({ params, respond, context }) => {
@@ -663,11 +726,16 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.NOT_FOUND, `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`),
+        errorShape(
+          ErrorCodes.NOT_FOUND,
+          `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`,
+        ),
       );
       return;
     }
-    const workspaceRoot = resolveAgentWorkspaceDir(cfg, resolveSessionStoreAgentId(cfg, canonicalKey));
+    const workspaceRoot = loaded.entry?.workspaceDir?.trim() || loaded.entry?.spawnedWorkspaceDir?.trim() || resolveAgentWorkspaceDir(
+      cfg, requestedAgent.agentId ?? resolveSessionStoreAgentId(cfg, canonicalKey),
+    );
     const journalSessionId = resolveCheckpointJournalSessionId(checkpoint, loaded.entry?.sessionId);
     if (!journalSessionId) {
       respond(
@@ -700,12 +768,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
 
   "sessions.queueDrain": async ({ params, respond, context }) => {
     if (
-      !assertValidParams(
-        params,
-        validateSessionsQueueDrainParams,
-        "sessions.queueDrain",
-        respond,
-      )
+      !assertValidParams(params, validateSessionsQueueDrainParams, "sessions.queueDrain", respond)
     ) {
       return;
     }
@@ -1168,6 +1231,18 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       agentId: requestedAgent.agentId,
     });
     const { stopSessionRuntime } = await loadSessionsRuntimeModule();
+    if (
+      params.expectedSessionId &&
+      loadSessionEntry(key, { agentId: requestedAgent.agentId }).entry?.sessionId !==
+        params.expectedSessionId
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "Session generation changed before stop"),
+      );
+      return;
+    }
     const result = await stopSessionRuntime({
       cfg,
       key,

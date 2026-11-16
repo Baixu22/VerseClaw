@@ -1,0 +1,26 @@
+{
+  "startedAt": "2026-11-06T23:13:28.0706819+08:00",
+  "driven_by": "agent",
+  "exitCode": 0,
+  "command": "node node_modules/vitest/vitest.mjs run <18 RSI unit files> --maxWorkers=1 --reporter=json",
+  "actor": "codex/rsi-relay-verifier",
+  "endedAt": "2026-11-06T23:17:21.4383148+08:00",
+  "files": [
+    "tests/unit\\rsi-coding-collector.test.ts",
+    "tests/unit\\rsi-evidence-loop-contract.test.ts",
+    "tests/unit\\rsi-decision-check.test.ts",
+    "tests/unit\\rsi-feedback-pilot.test.ts",
+    "tests/unit\\rsi-historical-task-corpus.test.ts",
+    "tests/unit\\rsi-feedback-export.test.ts",
+    "tests/unit\\rsi-measurement-archive.test.ts",
+    "tests/unit\\rsi-sekb-arms.test.ts",
+    "tests/unit\\rsi-live-grader.test.ts",
+    "tests/unit\\rsi-sekb-arms-decision.test.ts",
+    "tests/unit\\rsi-responses-provider.test.ts",
+    "tests/unit\\rsi-tf0592-statistical-adjudication.test.ts",
+    "tests/unit\\rsi-tf0604-baseline.test.ts",
+    "tests/unit\\rsi-live-acceptance.test.ts",
+    "tests/unit\\rsi-benefit-eval.test.ts"
+  ],
+  "candidate": "c7573ec11095b541f3a4a9c5470bf4e0727489bc"
+}

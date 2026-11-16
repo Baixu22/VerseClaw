@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 
 // Area 5 §3.2 — Semantic Steward pass tests. The semantic pass is opt-in
 // (classification: 'semantic'), default-off, and degrades gracefully to the
@@ -99,12 +100,18 @@ function useInvoker(invoker: Parameters<typeof knowledgeApi.setSemanticStewardIn
 }
 
 describe('Area 5 §3.2 — Semantic Steward pass', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    closeOpenClawStateDatabaseForTest();
+    const mod = await importApi(); knowledgeApi = mod;
+    mod.__resetKnowledgeGovernanceForTests();
+    mod.__resetGovernanceWriterQueueForTests();
     rmSync(root, { recursive: true, force: true });
     mkdirSync(root, { recursive: true });
   });
 
   afterEach(() => {
+    knowledgeApi?.stopAllKnowledgeSourceWatches();
+    closeOpenClawStateDatabaseForTest();
     rmSync(root, { recursive: true, force: true });
     // Clean up the module-level invoker between tests so files don't
     // cross-contaminate. Awaited (not fire-and-forget) so the reset cannot
@@ -166,6 +173,57 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
   });
 
   describe('stewardReview handler — semantic pass integration', () => {
+    it('reads admitted originals, passes reviewFocus and binds each exact finding to source versions', async () => {
+      writeSemanticRegistry();
+      const mod = await importApi(); mod.__resetRoleRegistryCacheForTests(); knowledgeApi = mod;
+      const rpc = vi.fn(async (method: string, payload: { lookup?: string }) => method === 'wiki.search'
+        ? { results: [{ pagePath: 'runbook.md', title: 'Runbook', snippet: 'UNTRUSTED_SEARCH_SNIPPET' }, { pagePath: 'secret.md' }] }
+        : { corpus: 'wiki', path: payload.lookup, title: 'Runbook', revision: 7, updatedAt: '2026-11-05T00:00:00Z',
+          content: payload.lookup === 'secret.md' ? 'NEVER_SEND_SECRET' : 'Keep the rollback procedure.', privacyTier: payload.lookup === 'secret.md' ? 'secret' : 'workspace' });
+      const api = mod.createKnowledgeApi({ gatewayManager: { rpc } as never });
+      useInvoker(async context => {
+        expect(context.reviewFocus).toEqual(['classification', 'conflicts']);
+        expect(context.evidence?.[0].content).toBe('Keep the rollback procedure.');
+        expect(JSON.stringify(context)).not.toContain('NEVER_SEND_SECRET');
+        expect(mod.buildSemanticStewardPrompt(context)).not.toContain('UNTRUSTED_SEARCH_SNIPPET');
+        return { type: 'decision', tags: [], warnings: [], confidence: 0.8, findings: [
+          { kind: 'conflict', severity: 'error', message: 'Rollback conflict', citations: [
+            { sourceId: context.draftBinding!.sourceId, quote: 'Remove rollback' },
+            { sourceId: 'memory-wiki:runbook.md', quote: 'Keep the rollback procedure.' },
+          ] },
+          { kind: 'conflict', severity: 'warning', message: 'Forged', citations: [{ sourceId: 'memory-wiki:runbook.md', quote: 'Fabricated quotation' }] },
+          { kind: 'duplicate', severity: 'info', message: 'Out of focus', citations: [] },
+        ] };
+      });
+      const result = await api.stewardReview({ title: 'Rollback policy', body: 'Remove rollback', sourceIds: [], tags: [] });
+      expect(result.findings?.find(f => f.message === 'Rollback conflict')).toMatchObject({ verified: true,
+        citations: [expect.objectContaining({ revision: '1' }), expect.objectContaining({ revision: '7', contentDigest: expect.any(String) })] });
+      expect(result.findings?.find(f => f.message === 'Forged')?.verified).toBe(false);
+      expect(result.findings?.some(f => f.message === 'Out of focus')).toBe(false);
+      expect(result.reviewEvidence).toMatchObject({ driven_by: 'agent', actor: 'knowledge-steward', modelStatus: 'completed', reviewFocus: ['classification', 'conflicts'] });
+      expect(rpc.mock.calls.some(([method]) => method.includes('apply'))).toBe(false);
+    });
+
+    it('refuses stale review persistence when a draft changes during model work', async () => {
+      writeSemanticRegistry();
+      const api = await getApi();
+      let release!: () => void; let invoked!: () => void;
+      const entered = new Promise<void>(resolve => { invoked = resolve; });
+      useInvoker(async () => {
+        invoked(); await new Promise<void>(resolve => { release = resolve; });
+        return { type: 'decision', tags: [], warnings: [], findings: [], confidence: 0.9 };
+      });
+      const created = await api.createDraft({ title: 'Initial', body: 'Original draft body with a source.', createdBy: 'agent' });
+      const pending = api.stewardReview({ draftId: created.draft!.id });
+      await entered;
+      await api.updateDraft({ id: created.draft!.id, body: 'Updated while the model was reviewing.' });
+      release();
+      expect(await pending).toMatchObject({ success: false, error: 'draft_changed_during_steward_review' });
+      const current = await api.getDraft({ id: created.draft!.id });
+      expect(current.draft?.body).toBe('Updated while the model was reviewing.');
+      expect(current.draft?.metadata?.stewardReviewEvidence).toBeUndefined();
+    });
+
     it('runs heuristic only when classification is heuristic (default-off)', async () => {
       writeHeuristicRegistry();
       const api = await getApi();

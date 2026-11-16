@@ -3,6 +3,13 @@ import type { AgentMessage, AgentTool } from "../agents/runtime/index.js";
 import type { MemoryCitationsMode } from "../config/types.memory.js";
 import type { ContextItem } from "../runtime-core/types.js";
 
+export type {
+  PromptContributionAuthority,
+  PromptContributionDeclaration,
+  PromptContributionScope,
+  PromptContributionAdmission,
+} from "./prompt-contribution-authority.js";
+
 // Result types
 
 export type AssembleResult = {
@@ -434,4 +441,4 @@ export interface ContextEngine {
    */
   dispose?(): Promise<void>;
 }
-export const CONTEXT_RUNTIME_KIT_ENGINE_ID = "context-runtime-kit";
+export { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "./cvk/identity.js";

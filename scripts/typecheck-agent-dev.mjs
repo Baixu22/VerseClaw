@@ -65,9 +65,7 @@ const bridge = await run('node', ['scripts/generate-ext-bridge.mjs']);
 if (bridge.exitCode !== 0) {
   process.exitCode = bridge.exitCode;
 } else {
-  const fingerprint = cacheEnabled
-    ? await createTypecheckFingerprint()
-    : { key: null, files: [] };
+  const fingerprint = cacheEnabled ? await createTypecheckFingerprint() : { key: null, files: [] };
   const cached = cacheEnabled && !force
     ? await readUsableCache(fingerprint.key)
     : null;
@@ -76,11 +74,12 @@ if (bridge.exitCode !== 0) {
     const report = createCacheHitReport({ bridge, cached, fingerprint, startedAt });
     console.log(JSON.stringify(report, null, 2));
   } else {
-    const [nodeCheck, webCheck, testCheck] = await Promise.all([
+    const [nodeCheck, webCheck] = await Promise.all([
       run('pnpm', ['run', 'typecheck:node']),
       run('pnpm', ['run', 'typecheck:web']),
-      runTestCheck('pnpm', ['run', 'typecheck:test']),
     ]);
+    // Avoid loading the app and test compiler graphs into memory together.
+    const testCheck = await runTestCheck('pnpm', ['run', 'typecheck:test']);
     const results = [bridge, nodeCheck, webCheck, testCheck];
     const success = results.every((result) => result.exitCode === 0);
     const report = {

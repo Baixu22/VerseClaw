@@ -2466,7 +2466,11 @@ export function createPluginRegistry(registryParams: PluginRegistryParams) {
     record: PluginRecord,
     hookName: K,
     handler: PluginHookHandlerMap[K],
-    opts?: { priority?: number; timeoutMs?: number },
+    opts?: {
+      priority?: number;
+      timeoutMs?: number;
+      promptContribution?: import("../context-engine/prompt-contribution-authority.js").PromptContributionDeclaration;
+    },
     policy?: PluginTypedHookPolicy,
   ) => {
     if (!isPluginHookName(hookName)) {
@@ -2548,6 +2552,13 @@ export function createPluginRegistry(registryParams: PluginRegistryParams) {
       hookName: effectiveHookName,
       handler: effectiveHandler,
       priority: opts?.priority,
+      ...(opts?.promptContribution ? {
+        promptContribution: Object.freeze({
+          ...opts.promptContribution,
+          authority: Object.freeze([...opts.promptContribution.authority]),
+          scope: Object.freeze([...opts.promptContribution.scope]),
+        }),
+      } : {}),
       ...(timeoutMs !== undefined ? { timeoutMs } : {}),
       source: record.source,
     } as TypedPluginHookRegistration);

@@ -277,6 +277,7 @@ export const RELATION_RULE_PROBES = Object.freeze([
   { rule: 'duplicate-relation', candidates: [{ ...PROBE_RELATION }, { ...PROBE_RELATION }] },
   { rule: 'missing-evidence', candidates: [{ ...PROBE_RELATION, evidenceRefs: [] }] },
   { rule: 'kind-boundary-mismatch', candidates: [{ ...PROBE_RELATION, authorityBoundary: 'advisory-only' }] },
+  { rule: 'relation-endpoint-mismatch', candidates: [{ from: 'routing-memo', kind: 'quality-gated-by', to: 'chat', authorityBoundary: 'same-session-scorecard', evidenceRefs: ['docs/clawx-product-semantics.md'] }] },
   { rule: 'reverse-task-authority', candidates: [{ ...PROBE_RELATION, from: 'task-ledger', to: 'chat' }] },
   { rule: 'forged-grant-field', candidates: [{ ...PROBE_RELATION, grants: ['write'] }] },
   { rule: 'cross-session-quality', candidates: [{ from: 'routing-memo', kind: 'quality-gated-by', to: 'task-loop', authorityBoundary: 'same-session-scorecard', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md'] }], context: { sessionScope: 'cross-session' } },
@@ -397,15 +398,17 @@ export function buildEvidenceReport({ root, registry, candidate, actor, command,
  * root, be part of the candidate commit, unescaped and with both digests equal
  * to the candidate blob's. When the live registry is supplied, the report must
  * also still describe it: one result per registry relation, the registry's own
- * evidenceRefs as that relation's sources, and the closed rule set — so a report
+ * evidenceRefs as that relation's sources, and the closed rule set. The live
+ * relations and rule probes are executed again — so a report
  * that was trimmed, re-pointed or generated against other sources cannot verify.
  * The report file itself is never modified.
  */
 export function verifyEvidenceReport(report, { root, contractVersion, candidate, rewrites = {}, readPaths = new Set(), registry = null }) {
   const diagnostics = [];
+  const observedRules = [];
   const add = (field, rule, message, extra = {}) => diagnostics.push({ relationKey: null, field, rule, message, ...extra });
   const missing = (field, expectation) => add(field, 'report-field-missing', `${field} ${expectation}.`);
-  const finish = () => ({ status: diagnostics.length === 0 ? 'valid' : 'invalid', diagnostics, rulesEvaluated: [...SOURCE_DIAGNOSTIC_RULES] });
+  const finish = () => ({ status: diagnostics.length === 0 ? 'valid' : 'invalid', diagnostics, rulesEvaluated: [...observedRules, ...SOURCE_DIAGNOSTIC_RULES] });
 
   if (!isPlainObject(report)) {
     missing('report', 'must be a JSON object');
@@ -460,6 +463,15 @@ export function verifyEvidenceReport(report, { root, contractVersion, candidate,
     const unknownRules = report.rulesEvaluated.filter((rule) => !expectedRules.includes(rule));
     if (missingRules.length > 0 || unknownRules.length > 0) {
       missing('rulesEvaluated', `does not match the closed rule set this checker binds (missing: ${missingRules.join(', ') || 'none'}; unknown: ${unknownRules.join(', ') || 'none'})`);
+    }
+  }
+  if (registry) {
+    const liveDiagnostics = registry.validateProductSemanticRelations(registry.PRODUCT_SEMANTIC_RELATIONS).diagnostics;
+    diagnostics.push(...liveDiagnostics);
+    const observation = observeRelationRules(registry, liveDiagnostics);
+    observedRules.push(...observation.observed);
+    if (observation.missing.length > 0 || observation.unknown.length > 0) {
+      missing('rulesEvaluated', `cannot be verified by the current registry validator probes (missing: ${observation.missing.join(', ') || 'none'}; unknown: ${observation.unknown.join(', ') || 'none'})`);
     }
   }
   if (!Array.isArray(report.diagnostics)) missing('diagnostics', 'must be an array');

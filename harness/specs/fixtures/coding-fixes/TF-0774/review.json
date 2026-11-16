@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.98,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The completion path now examines every expected legacy worker. When any legacy worker has no recorded apply status, it marks only those pending workers blocked and returns before verifier startup; previously applied siblings retain their status and metadata regardless of ordering. If a legacy worker has a recorded non-applied status, verifier progress remains blocked. The added regression cases cover both mixed sibling orderings through finalizeInterruptedSubagentRun. Tests were not run, as requested."
+}

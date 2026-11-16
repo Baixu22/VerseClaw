@@ -41,7 +41,9 @@ gates as noise — the opposite of an anti-tamper control.
 
 - The candidate commit must be an ancestor of `HEAD`, and its recorded tree must
   match.
-- The worktree must be clean when a final readback runs.
+- Judged inputs and the pack manifest must be clean when a final readback runs.
+  Unrelated working-tree edits are warnings. Renames check both paths, and a Git
+  status failure is an error rather than a clean result.
 - Every bound input is hashed against disk, so the bytes the numbers were
   produced from are still pinned.
 - `changedPathsBetween` (in `scripts/lib/evidence-binding.mjs`) reports any bound
@@ -55,7 +57,7 @@ node scripts/rsi-historical-task-corpus.mjs --check
 node scripts/rsi-tf0592-statistical-adjudication.mjs --check --json
 ```
 
-A `dirty-candidate` / `dirty-workspace` error means the checkout is mid-edit; it
+A `dirty-candidate` / `dirty-workspace` error means a judged input is mid-edit; it
 is not a judgement about the evidence. Reseal only after a bound input actually
 changed:
 
@@ -64,7 +66,10 @@ node scripts/rsi-historical-task-corpus.mjs --write   # corpus first
 node scripts/rsi-tf0592-statistical-adjudication.mjs --write --json   # instrument last
 ```
 
-Resealing in that order keeps each pack's own commit range evidence-only.
+Commit reviewed source changes before producing a sealed pack, then commit the
+generated pack before final readback. The source must never be described as
+clean by deleting dirty flags or bypassing validation. Resealing in that order
+keeps each pack's own commit range evidence-only.
 
 ## Not authorised by this guide
 

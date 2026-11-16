@@ -1,4 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { TaskLoopRunResult } from '../../openclaw_runtime/src/agents/task-loop-controller';
 import type {
   MissionControllerDeps,
@@ -117,6 +120,12 @@ function createDeps(params?: {
 }
 
 describe('Mission Control controller', () => {
+  let stateRoot: string;
+  beforeEach(() => {
+    stateRoot = mkdtempSync(join(tmpdir(), 'mission-controller-test-'));
+    vi.stubEnv('OPENCLAW_STATE_DIR', stateRoot);
+  });
+  afterEach(() => { vi.unstubAllEnvs(); rmSync(stateRoot, { recursive: true, force: true }); });
   beforeEach(() => {
     vi.clearAllMocks();
   });

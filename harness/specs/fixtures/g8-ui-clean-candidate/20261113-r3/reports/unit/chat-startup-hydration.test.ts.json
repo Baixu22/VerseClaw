@@ -1,0 +1,180 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-startup-hydration-ts.json",
+  "sourceSha256": "dee7700b2ce7e02decc514e149ec67f502aa6d0a1cd64cc723e1284824cea406",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 11,
+    "numPassedTests": 11,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563301387,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration coalesces concurrent forced session refreshes into one follow-up owner read",
+            "status": "passed",
+            "title": "coalesces concurrent forced session refreshes into one follow-up owner read",
+            "duration": 539.4837,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration waits without showing an empty ready state before the gateway is ready",
+            "status": "passed",
+            "title": "waits without showing an empty ready state before the gateway is ready",
+            "duration": 13.966300000000047,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration clears a stale connection error while the gateway is starting",
+            "status": "passed",
+            "title": "clears a stale connection error while the gateway is starting",
+            "duration": 14.772300000000087,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration loads sessions before history and confirms an empty conversation",
+            "status": "passed",
+            "title": "loads sessions before history and confirms an empty conversation",
+            "duration": 16.28710000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration keeps cached messages ready while refreshing in the background",
+            "status": "passed",
+            "title": "keeps cached messages ready while refreshing in the background",
+            "duration": 15.317299999999932,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration keeps a confirmed empty session ready while disconnected and reloads after restart",
+            "status": "passed",
+            "title": "keeps a confirmed empty session ready while disconnected and reloads after restart",
+            "duration": 15.71289999999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration exposes a retryable startup error when no history source succeeds",
+            "status": "passed",
+            "title": "exposes a retryable startup error when no history source succeeds",
+            "duration": 15.27780000000007,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration keeps an exhausted startup timeout in error when the transcript fallback is empty",
+            "status": "passed",
+            "title": "keeps an exhausted startup timeout in error when the transcript fallback is empty",
+            "duration": 15.15059999999994,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration clears a startup error after switching to a session whose history loads successfully",
+            "status": "passed",
+            "title": "clears a startup error after switching to a session whose history loads successfully",
+            "duration": 77.59730000000013,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration makes a new empty session ready after a startup error",
+            "status": "passed",
+            "title": "makes a new empty session ready after a startup error",
+            "duration": 15.691299999999956,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat startup hydration"
+            ],
+            "fullName": "chat startup hydration hydrates the new gateway runtime after an older runtime changes while pending",
+            "status": "passed",
+            "title": "hydrates the new gateway runtime after an older runtime changes while pending",
+            "duration": 14.924400000000105,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563302358,
+        "endTime": 1794563303111.9243,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-startup-hydration.test.ts"
+      }
+    ]
+  }
+}

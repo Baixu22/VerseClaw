@@ -1,0 +1,56 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "candidate": {
+    "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+    "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+    "dirty": false
+  },
+  "scope": "In-memory static CLI controls, not runtime exploitation.",
+  "results": [
+    {
+      "fixture": "flat-ipc-bypass-registry",
+      "argv": [
+        "scripts/contract-check.mjs",
+        "--fixture",
+        "tests/fixtures/contract-check/flat-ipc-bypass-registry.json"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Contract check fixtures applied: flat-ipc-bypass-registry\nContract check failed:\n- electron/main/ipc/host-invoke.ts:386: [flat-ipc/bypass-registry] ipcMain.handle('rogue:bypass') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry\n"
+    },
+    {
+      "fixture": "flat-ipc-computed-handle",
+      "argv": [
+        "scripts/contract-check.mjs",
+        "--fixture",
+        "tests/fixtures/contract-check/flat-ipc-computed-handle.json"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Contract check fixtures applied: flat-ipc-computed-handle\nContract check failed:\n- electron/main/ipc/host-invoke.ts:386: [flat-ipc/bypass-registry] ipcMain.handle('rogue:ast') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry\n"
+    },
+    {
+      "fixture": "flat-ipc-spaced-handle",
+      "argv": [
+        "scripts/contract-check.mjs",
+        "--fixture",
+        "tests/fixtures/contract-check/flat-ipc-spaced-handle.json"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Contract check fixtures applied: flat-ipc-spaced-handle\nContract check failed:\n- electron/main/ipc/host-invoke.ts:386: [flat-ipc/bypass-registry] ipcMain.handle('rogue:ast') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry\n"
+    },
+    {
+      "fixture": "flat-ipc-template-before-namespace",
+      "argv": [
+        "scripts/contract-check.mjs",
+        "--fixture",
+        "tests/fixtures/contract-check/flat-ipc-template-before-namespace.json"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Contract check fixtures applied: flat-ipc-template-before-namespace\nContract check failed:\n- electron/contract-check-template-probe.cjs:3: [flat-ipc/bypass-registry] ipcMain.handle('rogue:template') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry\n"
+    }
+  ]
+}

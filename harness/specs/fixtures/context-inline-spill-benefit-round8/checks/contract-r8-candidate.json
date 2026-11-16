@@ -1,0 +1,46 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "contract-r8-candidate",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "run",
+    "contract:check"
+  ],
+  "startedAt": "2026-11-13T10:41:27.379Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "a5972fdc9b89ff692ef2d76a744639c620b24fa2",
+    "tree": "f148b4cbf71916ad73180dac1b2b3c97f1201665",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T10:41:48.564Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "a5972fdc9b89ff692ef2d76a744639c620b24fa2",
+    "tree": "f148b4cbf71916ad73180dac1b2b3c97f1201665",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\checks\\contract-r8-candidate.stdout.txt",
+      "bytes": 23,
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\checks\\contract-r8-candidate.stderr.txt",
+      "bytes": 34,
+      "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schema": "ContextInlineSpillRecoveryIndex/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "archive_root": "archives",
+  "archives": [
+    {
+      "uri": "context-archive://01a1a1fa-2a5b-7643-86c3-10c9c052faa6/01a1a1fa-2a5b-7643-86c3-10c9c052faa6-observation-message-0-acbf9935d291e094.context-archive.json",
+      "checksum": "sha256:acbf9935d291e0940de743791eed47c695e7f61a158e5bcc4cf94c89f0c7bd36",
+      "byte_length": 8503,
+      "path": "archives/01a1a1fa-2a5b-7643-86c3-10c9c052faa6/01a1a1fa-2a5b-7643-86c3-10c9c052faa6-observation-message-0-acbf9935d291e094.context-archive.json",
+      "sha256": "bf6eb890523515113459483ff68c5163b0d9378af1b1f26cb753540ee1675cd1"
+    },
+    {
+      "uri": "context-archive://01a1a1fa-2a5b-7643-86c3-10c9c052faa6/01a1a1fa-2a5b-7643-86c3-10c9c052faa6-observation-message-1-409107baf41abc9f.context-archive.json",
+      "checksum": "sha256:409107baf41abc9f5c488d306d7ca57ecf803a668cc9f87c16a71481a8f306a3",
+      "byte_length": 3079,
+      "path": "archives/01a1a1fa-2a5b-7643-86c3-10c9c052faa6/01a1a1fa-2a5b-7643-86c3-10c9c052faa6-observation-message-1-409107baf41abc9f.context-archive.json",
+      "sha256": "705f658a15ba418e8827a38a79647d571b8ca7a046328d07ccfb4f12850a19ff"
+    },
+    {
+      "uri": "context-archive://01a1a1fa-2a5b-7643-86c3-10c9c052faa6/context-inline-spill-eval-observation-30a1349b459465f3.context-archive.json",
+      "checksum": "sha256:30a1349b459465f3fc10df7ccf68e9dc3db398f3d35d9083416e6f8d920daf10",
+      "byte_length": 8058,
+      "path": "archives/01a1a1fa-2a5b-7643-86c3-10c9c052faa6/context-inline-spill-eval-observation-30a1349b459465f3.context-archive.json",
+      "sha256": "149b825d0bc45581bfa2b8f4967e62c2e7fbd9e71c30dfe4de2e02a6988640c5"
+    },
+    {
+      "uri": "context-archive://session-inline-spill-retention/inline-spill-retention-observation-5193f84cda71bcb2.context-archive.json",
+      "checksum": "sha256:5193f84cda71bcb25e767f9c5fe09e9c1630db073a1abd35ecea707f83797f50",
+      "byte_length": 4057,
+      "path": "archives/session-inline-spill-retention/inline-spill-retention-observation-5193f84cda71bcb2.context-archive.json",
+      "sha256": "51c123f1b2cdb3ae42a719d2fddf21f4ce3ede91c4d8329e74e14bf81141e2dc"
+    }
+  ],
+  "transcripts": [
+    {
+      "session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+      "path": "sessions/2026-11-03T15-14-49-051Z_01a1a1fa-2a5b-7643-86c3-10c9c052faa6.jsonl",
+      "sha256": "b8b80665d8179d951cb4eeda6a8ca0a933478c83271b71c8e2bea961b579b2e3"
+    },
+    {
+      "session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+      "path": "sessions/baseline.jsonl",
+      "sha256": "62db90d9ba73f3ec4bf54420189d20c48cf2dc67f0746afc7b45eda45e89158d"
+    },
+    {
+      "session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+      "path": "sessions/recall-stable.jsonl",
+      "sha256": "6a58842d79759b55332c54e00fc9c6226be84c013f5d389cbe67e44a08576883"
+    },
+    {
+      "session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+      "path": "sessions/reference-visible.jsonl",
+      "sha256": "4e21f16c2bd0ffddae96abd82930751ae07f97ad0e1559068426eb850ee0d24e"
+    },
+    {
+      "session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+      "path": "sessions/retention-off.jsonl",
+      "sha256": "0e3408ed6cd0463b338e6c05151272368f482352120b763ba66f0beeaaf0f9c8"
+    }
+  ]
+}

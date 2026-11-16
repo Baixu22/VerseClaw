@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.94,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "No actionable defects found. The stored workload promise remains awaited and preserves failures. Work quantity, receipt verification, child exits, full-stream text, draft retention, terminal state, and overlap checks remain intact; composer-target assertions strengthen validation. Review was read-only; tests were not run."
+}

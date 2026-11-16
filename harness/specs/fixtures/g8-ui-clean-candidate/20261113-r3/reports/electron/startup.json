@@ -1,0 +1,301 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\startup\\results.json",
+  "sourceSha256": "5dec344ebef14b5d139eed3f8f48b303da51448be32252fa23ec0ff90a715f89",
+  "result": {
+    "config": {
+      "configFile": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\playwright.config.ts",
+      "rootDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+      "forbidOnly": false,
+      "fullyParallel": false,
+      "globalSetup": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+      "globalTeardown": null,
+      "globalTimeout": 0,
+      "grep": {},
+      "grepInvert": null,
+      "maxFailures": 0,
+      "metadata": {
+        "actualWorkers": 1
+      },
+      "preserveOutput": "always",
+      "projects": [
+        {
+          "outputDir": "D:/tmp/g8-ui-r3-20261113-01a1d351/electron/final/startup/output",
+          "repeatEach": 1,
+          "retries": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "id": "",
+          "name": "",
+          "testDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+          "testIgnore": [
+            "**/resource-lifecycle-soak.spec.ts",
+            "**/product-acceptance-space-bunny.spec.ts",
+            "**/product-acceptance-moyu.spec.ts"
+          ],
+          "testMatch": [
+            "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+          ],
+          "timeout": 90000
+        }
+      ],
+      "quiet": false,
+      "reporter": [
+        [
+          "line"
+        ],
+        [
+          "json"
+        ]
+      ],
+      "reportSlowTests": {
+        "max": 5,
+        "threshold": 300000
+      },
+      "shard": null,
+      "tags": [],
+      "updateSnapshots": "missing",
+      "updateSourceMethod": "patch",
+      "version": "1.59.0",
+      "workers": 1,
+      "webServer": null
+    },
+    "suites": [
+      {
+        "title": "startup-loading-experience.spec.ts",
+        "file": "startup-loading-experience.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [
+          {
+            "title": "keeps a gateway-startup connection failure inside the Chat skeleton",
+            "ok": true,
+            "tags": [],
+            "tests": [
+              {
+                "timeout": 90000,
+                "annotations": [],
+                "expectedStatus": "passed",
+                "projectId": "",
+                "projectName": "",
+                "results": [
+                  {
+                    "workerIndex": 0,
+                    "parallelIndex": 0,
+                    "status": "passed",
+                    "duration": 6922,
+                    "errors": [],
+                    "stdout": [],
+                    "stderr": [],
+                    "retry": 0,
+                    "startTime": "2026-11-13T10:10:58.408Z",
+                    "annotations": [],
+                    "attachments": []
+                  }
+                ],
+                "status": "expected"
+              }
+            ],
+            "id": "81b501e99f29bdb9bb65-98f9389e6f0725365ff7",
+            "file": "startup-loading-experience.spec.ts",
+            "line": 155,
+            "column": 5
+          },
+          {
+            "title": "keeps the loading skeleton centered when an active workspace has no rail content",
+            "ok": true,
+            "tags": [],
+            "tests": [
+              {
+                "timeout": 90000,
+                "annotations": [],
+                "expectedStatus": "passed",
+                "projectId": "",
+                "projectName": "",
+                "results": [
+                  {
+                    "workerIndex": 0,
+                    "parallelIndex": 0,
+                    "status": "passed",
+                    "duration": 7769,
+                    "errors": [],
+                    "stdout": [],
+                    "stderr": [],
+                    "retry": 0,
+                    "startTime": "2026-11-13T10:11:05.342Z",
+                    "annotations": [],
+                    "attachments": []
+                  }
+                ],
+                "status": "expected"
+              }
+            ],
+            "id": "81b501e99f29bdb9bb65-f7f8c1aa2a8c0601bf5c",
+            "file": "startup-loading-experience.spec.ts",
+            "line": 180,
+            "column": 5
+          }
+        ],
+        "suites": [
+          {
+            "title": "startup and route loading experience",
+            "file": "startup-loading-experience.spec.ts",
+            "line": 18,
+            "column": 6,
+            "specs": [
+              {
+                "title": "shows the branded boot shell until the React shell is ready",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 9360,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:10:24.250Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "81b501e99f29bdb9bb65-77df74e5bc491c2bb3fe",
+                "file": "startup-loading-experience.spec.ts",
+                "line": 19,
+                "column": 7
+              },
+              {
+                "title": "disables boot-shell looping animation when reduced motion is requested",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 5715,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:10:33.628Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "81b501e99f29bdb9bb65-f542cd63d77c3ac4c358",
+                "file": "startup-loading-experience.spec.ts",
+                "line": 47,
+                "column": 7
+              },
+              {
+                "title": "keeps the Settings shell stable while a lazy section loads",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 10431,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:10:39.353Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "81b501e99f29bdb9bb65-e714f526f2b4f9b407de",
+                "file": "startup-loading-experience.spec.ts",
+                "line": 72,
+                "column": 7
+              },
+              {
+                "title": "shows a Chat skeleton and never the welcome state before empty history is confirmed",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8597,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:10:49.797Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "81b501e99f29bdb9bb65-001e69265b0fa842873c",
+                "file": "startup-loading-experience.spec.ts",
+                "line": 99,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "stats": {
+      "startTime": "2026-11-13T10:10:23.322Z",
+      "duration": 50633.693,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+}

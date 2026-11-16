@@ -1,0 +1,50 @@
+{
+  "dirty": false,
+  "files": [
+    {
+      "sha256": "cba2b7a32c7f61a3950faad7c53913b3ee2cd4a7b3bd4dae49ab31bc7e9ea844",
+      "path": "docs/dev/memory-control-plane.md"
+    },
+    {
+      "sha256": "5abb29ecc96a11a737041e3c2f61972052210485eb70b858b374d55ea1dd60a8",
+      "path": "harness/specs/rules/memory-self-edit-provenance.md"
+    },
+    {
+      "sha256": "4bd724690ee33fdda934ff7e0f0b3021f0e9e0d2a372c3c5c76932542de7bfed",
+      "path": "harness/specs/tasks/memory-self-edit-provenance.md"
+    },
+    {
+      "sha256": "d99af54a0881938fc9174ace10a5f8c3a781f4e06b994f4b5d8c7fc0d69630d5",
+      "path": "openclaw_runtime/src/runtime-core/memory-context.ts"
+    },
+    {
+      "sha256": "6dfe7ffe6ec16eb2d240aeb49c14a92cf5262d70b6c083bdfdcc2828db2b8942",
+      "path": "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts"
+    },
+    {
+      "sha256": "3f70519c30f81c58bfd87d0bee9897ad771f3a49cb21fc1e5575fdf2594dbe3b",
+      "path": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts"
+    },
+    {
+      "sha256": "c819c508d537cb4862b7f4965f513281d6571ccf8a1ae4cc609bf85bf334c2b0",
+      "path": "tests/unit/memory-self-edit-provenance.test.ts"
+    },
+    {
+      "sha256": "9b2672e24d6de368f12af5252653e5b1b128f2350e79ae5676841a526c26e5f5",
+      "path": "tests/unit/runtime-memory-context-contracts.test.ts"
+    },
+    {
+      "sha256": "5b584038ae5723a36fd4834020d6653c05ce36c6f61ea8a0172d102683571d5f",
+      "path": "tests/unit/runtime-memory-self-edit-persistence.test.ts"
+    },
+    {
+      "sha256": "d19a1f3b1ca920c3a5e663271eebb5aebd5c4c17478c1cca8f98e2562701b19f",
+      "path": "tests/unit/runtime-memory-self-edit.test.ts"
+    }
+  ],
+  "actor": "codex/tf0741-memory-provenance",
+  "driven_by": "agent",
+  "sourceStable": true,
+  "candidate": "1e6e03cc73dc9da6b34f6555b5efd3cb630cd231",
+  "base": "7abbf58a3e1d4404f26076c54fd7ea00d75e26a3"
+}

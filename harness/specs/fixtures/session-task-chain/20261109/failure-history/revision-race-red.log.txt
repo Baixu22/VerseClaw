@@ -1,0 +1,90 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-unified-relay-20261109
+
+ ❯ tests/unit/session-task-scope-completion.test.ts (33 tests | 1 failed | 32 skipped) 215ms
+     ↓ admits an owned child while the fenced parent run remains active
+     ↓ rejects missing and incomplete contracts without creating a Legacy business task
+     ↓ starts a complete canonical contract through task_control without requiring a session bridge
+     ↓ associates a live isolated scheduled run with its canonical contract without replacing the project coordinator
+     ↓ uses a decomposed scheduled child contract under the recorded parent TaskRef
+     ↓ rejects a missing scheduled coordinator before claiming another task
+     ↓ rejects a stale scheduled coordinator before claiming another task
+     ↓ rejects a paused scheduled coordinator before claiming another task
+     ↓ rejects an isolated schedule from another workspace or agent before creating a task
+     ↓ consumes a canonical business contract after a failed turn left a diagnostic deviation link
+     ↓ selects an existing completed task and preserves its status and historical links
+     ↓ uses the captured worker parent TaskRef with a real child contract despite a later parent selection
+     ↓ pauses new dispatch while retaining the already admitted writer and workgroup ownership
+     ↓ keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary
+     ↓ rejects effects on a completed canonical task, including after owner reconstruction
+     ↓ rejects a Legacy done node without creating a canonical replacement or changing it to doing
+     ↓ keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token
+     ↓ does not release a live canonical claim because a new API instance or response settled
+     ↓ rejects an old claim after canonical epoch rotation even when the Workspace cache still has it
+     ↓ preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface
+     ↓ rejects unknown session before writing a task
+     ↓ rejects wrong root before writing a task
+     ↓ rejects stale generation before writing a task
+     ↓ rejects forged claim before writing a task
+     ↓ rejects foreign workspace identity and a changed session generation without manufacturing a replacement
+     ↓ fences a generation change while admission is awaiting its final live owner read
+     ↓ leaves a selected task unclaimed when the final run check fails
+     × rejects a contract revision changed after resolution without claiming the revised task 214ms
+     ↓ blocks task selection and rebinding on session resources even without a Workspace writer
+     ↓ requires explicit canonical selection for multiple links and rejects an external reference as a task
+     ↓ does not silently switch a running canonical task through coordinator rebinding
+     ↓ requires admission for unknown MCP effects and checks cancellation before execution
+     ↓ cancels an effect after Main admission without releasing or upgrading its canonical claim
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/session-task-scope-completion.test.ts > first effect consumes the canonical execution contract > rejects a contract revision changed after resolution without claiming the revised task
+AssertionError: promise resolved "{ status: 'granted', …(2) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "bindingRevision": 1,
++   "claim": {
++     "createdAt": "2026-11-08T19:19:00.258Z",
++     "credential": {
++       "epoch": 1,
++       "generation": "generation-parent",
++       "sessionKey": "agent:main:parent",
++       "taskNodeId": "a4dff78d-16dd-4a9e-adb6-9c38e5e90f76",
++     },
++     "id": "43867c7d-7eb8-4101-8106-fbc9c8f233d5",
++     "run": {
++       "runId": "run-parent",
++       "scope": {
++         "projectId": "workspace-a",
++         "sessionKey": "agent:main:parent",
++         "workspaceId": "workspace-a",
++       },
++     },
++     "sessionGeneration": "generation-parent",
++     "taskNodeId": "a4dff78d-16dd-4a9e-adb6-9c38e5e90f76",
++   },
++   "status": "granted",
+  }
+
+ ❯ tests/unit/session-task-scope-completion.test.ts:497:50
+    495|       if (readCount === 2) tasks.revise(task.contract.taskNodeId, task…
+    496|     });
+    497|     await expect(owner.admitTaskEffect(request())).rejects.toThrow('TA…
+       |                                                  ^
+    498|     expect(tasks.get(task.contract.taskNodeId).claim).toBeNull();
+    499|     expect(tasks.get(task.contract.taskNodeId).contract.revision).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 32 skipped (33)
+   Start at  03:18:58
+   Duration  1.89s (transform 353ms, setup 217ms, import 1.11s, tests 215ms, environment 0ms)
+
+JSON report written to D:/tmp/unified-management-20261109/session-task-validation/revision-race-red.tests.json

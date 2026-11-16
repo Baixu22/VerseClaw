@@ -52,6 +52,25 @@ describe('chat startup hydration', () => {
     runtimeStatus.connectedAt += 1;
   });
 
+  it('coalesces concurrent forced session refreshes into one follow-up owner read',async()=>{
+    const {useChatStore}=await import('@/stores/chat');
+    useChatStore.setState({currentSessionKey:'agent:main:main',sessions:[{key:'agent:main:main'}]});
+    let release!:()=>void,reads=0,active=0,maxActive=0;
+    gatewayRpcMock.mockImplementation(async(method:string)=>{
+      if(method!=='sessions.list')return{};
+      reads++;active++;maxActive=Math.max(active,maxActive);
+      if(reads===1)await new Promise<void>(resolve=>{release=resolve;});
+      else await new Promise(resolve=>setTimeout(resolve,10));
+      active--;return {sessions:[{key:'agent:main:main',label:'Main',updatedAt:reads}]};
+    });
+    const first=useChatStore.getState().loadSessions({force:true});
+    await vi.waitFor(()=>expect(reads).toBe(1));
+    const waiting=Array.from({length:20},()=>useChatStore.getState().loadSessions({force:true}));
+    release();await Promise.all([first,...waiting]);
+    expect(reads).toBe(2);expect(maxActive).toBe(1);
+    expect(useChatStore.getState().currentSessionKey).toBe('agent:main:main');
+  });
+
   it('waits without showing an empty ready state before the gateway is ready', async () => {
     runtimeStatus.gatewayReady = false;
     const { useChatStore } = await import('@/stores/chat');
@@ -134,6 +153,33 @@ describe('chat startup hydration', () => {
     await hydration;
     expect(useChatStore.getState().startupPhase).toBe('ready');
     expect(useChatStore.getState().messages[0]?.content).toBe('fresh');
+  });
+
+  it('keeps a confirmed empty session ready while disconnected and reloads after restart', async () => {
+    let history: Array<{ role: string; content: string }> = [];
+    gatewayRpcMock.mockImplementation(async (method: string) => {
+      if (method === 'sessions.list') return { sessions: [{ key: 'agent:main:main' }] };
+      if (method === 'chat.history') return { messages: history };
+      throw new Error(`Unexpected gateway RPC: ${method}`);
+    });
+    const { useChatStore } = await import('@/stores/chat');
+    await useChatStore.getState().hydrateStartup();
+    expect(useChatStore.getState()).toMatchObject({ startupPhase: 'ready', messages: [] });
+    const readsBeforeDisconnect = gatewayRpcMock.mock.calls.length;
+
+    runtimeStatus.state = 'stopped';
+    runtimeStatus.gatewayReady = false;
+    await useChatStore.getState().hydrateStartup();
+    expect(useChatStore.getState()).toMatchObject({ startupPhase: 'ready', messages: [], loading: false });
+    expect(gatewayRpcMock).toHaveBeenCalledTimes(readsBeforeDisconnect);
+
+    history = [{ role: 'assistant', content: 'History from the restarted gateway' }];
+    runtimeStatus.state = 'running';
+    runtimeStatus.gatewayReady = true;
+    runtimeStatus.connectedAt += 1;
+    await useChatStore.getState().hydrateStartup();
+    expect(useChatStore.getState().startupPhase).toBe('ready');
+    expect(useChatStore.getState().messages[0]?.content).toBe(history[0].content);
   });
 
   it('exposes a retryable startup error when no history source succeeds', async () => {

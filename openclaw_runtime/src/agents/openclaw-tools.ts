@@ -613,6 +613,11 @@ export function createOpenClawTools(
             agentSessionKey: options?.agentSessionKey,
             config: resolvedConfig,
             requesterAgentIdOverride: options?.requesterAgentIdOverride,
+            managedTask: {
+              workspaceRoot: spawnWorkspaceDir ?? workspaceDir,
+              sessionGeneration: options?.sessionId ?? '',
+              required: process.env.CLAWX_TASK_SCOPE_BRIDGE === '1',
+            },
             deps: {
               rollback:
                 resolvedConfig?.runtime?.mission?.rollback?.enabled === true
@@ -640,6 +645,7 @@ export function createOpenClawTools(
           }),
           createTeamOrchestrateTool({
             agentSessionKey: options?.agentSessionKey,
+            expectedSessionGeneration: options?.sessionId,
             completionOwnerKey: options?.runSessionKey,
             agentChannel: options?.agentChannel,
             agentAccountId: options?.agentAccountId,

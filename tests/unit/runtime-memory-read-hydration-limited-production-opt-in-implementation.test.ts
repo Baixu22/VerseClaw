@@ -6,7 +6,6 @@ import {
   clearTaskLoopRunsForTests,
   runTaskLoop,
   type TaskLoopControllerDeps,
-  type TaskLoopRunResult,
 } from "../../openclaw_runtime/src/agents/task-loop-controller";
 import { formatTaskLoopContextPackForReviewer } from "../../openclaw_runtime/src/agents/task-loop-context";
 import type {
@@ -579,18 +578,6 @@ function getEvidenceRun(runId?: string, childSessionKey?: string) {
         `pnpm exec vitest run ${runId}.test.ts passed`,
       ].join("\n"),
     },
-  };
-}
-
-function decisionSurface(result: TaskLoopRunResult) {
-  return {
-    status: result.status,
-    phase: result.phase,
-    finalSummary: result.finalSummary,
-    nextActions: result.nextActions,
-    evidenceGateStatus: result.evidenceGate?.status,
-    iterationCount: result.iterations.length,
-    selfCheckDecision: result.iterations.at(-1)?.selfCheck?.decision,
   };
 }
 

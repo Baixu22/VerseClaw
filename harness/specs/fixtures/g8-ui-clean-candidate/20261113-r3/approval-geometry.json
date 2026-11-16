@@ -1,0 +1,160 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\approval-geometry.json",
+  "sourceSha256": "d693621c5efdafef099aa88ba86f7008f3b97f2612f49949292233ec6a1fef69",
+  "result": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+    "layouts": [
+      {
+        "layout": "light",
+        "driven_by": "agent",
+        "actor": "codex-g8-ui-01a1d351",
+        "realHumanEvidence": false,
+        "geometry": {
+          "inViewport": true,
+          "noHorizontalOverflow": true,
+          "controls": [
+            {
+              "testId": "runtime-approval-command",
+              "left": 16.666656494140625,
+              "right": 16.666656494140625,
+              "bottom": 125.33332061767578
+            },
+            {
+              "testId": "runtime-approval-deny",
+              "left": 16.666656494140625,
+              "right": 663.572925567627,
+              "bottom": 12.666656494140625
+            },
+            {
+              "testId": "runtime-approval-allow-always",
+              "left": 519.8958435058594,
+              "right": 115.06248474121094,
+              "bottom": 12.666656494140625
+            },
+            {
+              "testId": "runtime-approval-allow-once",
+              "left": 628.9375305175781,
+              "right": 16.66663360595703,
+              "bottom": 12.666656494140625
+            }
+          ]
+        }
+      },
+      {
+        "layout": "dark",
+        "driven_by": "agent",
+        "actor": "codex-g8-ui-01a1d351",
+        "realHumanEvidence": false,
+        "geometry": {
+          "inViewport": true,
+          "noHorizontalOverflow": true,
+          "controls": [
+            {
+              "testId": "runtime-approval-command",
+              "left": 16.666656494140625,
+              "right": 16.666656494140625,
+              "bottom": 125.33332061767578
+            },
+            {
+              "testId": "runtime-approval-deny",
+              "left": 16.666656494140625,
+              "right": 663.572925567627,
+              "bottom": 12.666656494140625
+            },
+            {
+              "testId": "runtime-approval-allow-always",
+              "left": 519.8958435058594,
+              "right": 115.06248474121094,
+              "bottom": 12.666656494140625
+            },
+            {
+              "testId": "runtime-approval-allow-once",
+              "left": 628.9375305175781,
+              "right": 16.66663360595703,
+              "bottom": 12.666656494140625
+            }
+          ]
+        }
+      },
+      {
+        "layout": "narrow",
+        "driven_by": "agent",
+        "actor": "codex-g8-ui-01a1d351",
+        "realHumanEvidence": false,
+        "geometry": {
+          "inViewport": true,
+          "noHorizontalOverflow": true,
+          "controls": [
+            {
+              "testId": "runtime-approval-command",
+              "left": 16.666664123535156,
+              "right": 16.666709899902344,
+              "bottom": 125.3333511352539
+            },
+            {
+              "testId": "runtime-approval-deny",
+              "left": 16.666664123535156,
+              "right": 463.4062919616699,
+              "bottom": 12.666656494140625
+            },
+            {
+              "testId": "runtime-approval-allow-always",
+              "left": 319.7291717529297,
+              "right": 115.06253051757812,
+              "bottom": 12.666656494140625
+            },
+            {
+              "testId": "runtime-approval-allow-once",
+              "left": 428.7708282470703,
+              "right": 16.666709899902344,
+              "bottom": 12.666656494140625
+            }
+          ]
+        }
+      },
+      {
+        "layout": "zoom150",
+        "driven_by": "agent",
+        "actor": "codex-g8-ui-01a1d351",
+        "realHumanEvidence": false,
+        "geometry": {
+          "inViewport": true,
+          "noHorizontalOverflow": true,
+          "controls": [
+            {
+              "testId": "runtime-approval-command",
+              "left": 16.888885498046875,
+              "right": 23.5555419921875,
+              "bottom": 118.66665267944336
+            },
+            {
+              "testId": "runtime-approval-deny",
+              "left": 16.888885498046875,
+              "right": 256.6805534362793,
+              "bottom": 12.888900756835938
+            },
+            {
+              "testId": "runtime-approval-allow-always",
+              "left": 112.56249237060547,
+              "right": 115.72916412353516,
+              "bottom": 12.888900756835938
+            },
+            {
+              "testId": "runtime-approval-allow-once",
+              "left": 222.0486068725586,
+              "right": 16.888885498046875,
+              "bottom": 12.888900756835938
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

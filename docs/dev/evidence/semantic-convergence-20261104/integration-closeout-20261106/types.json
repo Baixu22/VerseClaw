@@ -1,0 +1,53 @@
+[
+  {
+    "project": "node",
+    "command": [
+      "node",
+      "node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.node.json",
+      "--composite",
+      "false",
+      "--singleThreaded",
+      "--checkers",
+      "1"
+    ],
+    "exitCode": 0,
+    "durationMs": 31719
+  },
+  {
+    "project": "web",
+    "command": [
+      "node",
+      "node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.web.json",
+      "--composite",
+      "false",
+      "--singleThreaded",
+      "--checkers",
+      "1"
+    ],
+    "exitCode": 0,
+    "durationMs": 13546
+  },
+  {
+    "project": "test",
+    "command": [
+      "node",
+      "node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.test.json",
+      "--composite",
+      "false",
+      "--singleThreaded",
+      "--checkers",
+      "1"
+    ],
+    "exitCode": 0,
+    "durationMs": 66114
+  }
+]

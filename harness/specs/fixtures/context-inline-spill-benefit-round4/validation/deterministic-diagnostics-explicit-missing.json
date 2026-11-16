@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "deterministic-diagnostics-explicit-missing",
+  "cwd": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\candidate",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX\\harness\\specs\\fixtures\\context-inline-spill-benefit-round4\\diagnose-run.mjs",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\deterministic\\2026-11-08T05-04-24-794Z-deterministic",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\deterministic-diagnostics-explicit-missing.json"
+  ],
+  "started_at": "2026-11-08T06:08:36.706653+00:00",
+  "duration_seconds": 0.156,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\deterministic-diagnostics-explicit-missing.stdout.txt",
+      "bytes": 1143,
+      "sha256": "465232fde8dbf9204527431db3663cfa225213f7992c5cbdd3ee91d1c6ebc98f"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\deterministic-diagnostics-explicit-missing.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

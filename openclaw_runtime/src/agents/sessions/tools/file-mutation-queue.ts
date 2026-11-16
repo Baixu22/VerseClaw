@@ -10,13 +10,15 @@
  * holder rather than failing a legitimate long write.
  */
 import { normalizeWorkspaceLeaseKey, withWorkspaceResourceLease } from "../../resource-leases.js";
+import type { ResourceWaitOptions } from "../../../../../shared/resources/wait.js";
 
 /**
  * Serialize file mutation operations targeting the same file.
  * Operations for different files still run in parallel.
  */
-export async function withFileMutationQueue<T>(filePath: string, fn: () => Promise<T>): Promise<T> {
+export async function withFileMutationQueue<T>(filePath: string, fn: () => Promise<T>, options: ResourceWaitOptions = {}): Promise<T> {
   return withWorkspaceResourceLease("fileMutation", normalizeWorkspaceLeaseKey(filePath), fn, {
     timeoutMs: 0,
+    ...options,
   });
 }

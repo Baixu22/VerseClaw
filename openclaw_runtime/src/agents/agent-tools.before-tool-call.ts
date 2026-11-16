@@ -72,6 +72,7 @@ import {
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import { normalizeToolName } from "./tool-policy.js";
 import type { AnyAgentTool } from "./tools/common.js";
+import { createExecutionTaskGuard } from "./execution-task-guard.js";
 import { callGatewayTool } from "./tools/gateway.js";
 import type { ToolLoopTerminationObserver } from "./tool-loop-termination.js";
 
@@ -104,6 +105,8 @@ export type HookContext = {
   cwd?: string;
   /** Host workspace used to resolve relative tool params for diagnostics only. */
   workspaceDir?: string;
+  /** Logical host project, supplied by the sandbox owner rather than tool arguments. */
+  taskScopeProjectWorkspaceDir?: string;
   sessionKey?: string;
   /** Ephemeral session UUID — regenerated on /new and /reset. */
   sessionId?: string;
@@ -147,6 +150,7 @@ type HookOutcome =
       blocked: true;
       kind?: HookBlockedKind;
       deniedReason?: HookBlockedReason;
+      approvalState?: "waiting" | "denied" | "timeout" | "unavailable";
       reason: string;
       params?: unknown;
     }
@@ -514,6 +518,7 @@ async function requestPluginToolApproval(params: {
         kind: "failure",
         deniedReason: "plugin-approval",
         reason: approval.description || "Plugin approval request failed",
+        approvalState: "unavailable",
         params: params.baseParams,
       };
     }
@@ -528,6 +533,7 @@ async function requestPluginToolApproval(params: {
           kind: "failure",
           deniedReason: "plugin-approval",
           reason: "Plugin approval unavailable (no approval route)",
+          approvalState: "unavailable",
           params: params.baseParams,
         };
       }
@@ -570,6 +576,7 @@ async function requestPluginToolApproval(params: {
         kind: "failure",
         deniedReason: "plugin-approval",
         reason: "Denied by user",
+        approvalState: "denied",
         params: params.baseParams,
       };
     }
@@ -586,6 +593,7 @@ async function requestPluginToolApproval(params: {
       kind: "failure",
       deniedReason: "plugin-approval",
       reason: "Approval timed out",
+      approvalState: "timeout",
       params: params.baseParams,
     };
   } catch (err) {
@@ -599,6 +607,7 @@ async function requestPluginToolApproval(params: {
       kind: "failure",
       deniedReason: "plugin-approval",
       reason: "Plugin approval required (gateway unavailable)",
+      approvalState: "unavailable",
       params: params.baseParams,
     };
   }
@@ -662,6 +671,7 @@ async function resolveBeforeToolCallApprovalOutcome(params: {
       kind: "failure",
       deniedReason: "plugin-approval",
       reason: approval.description || approval.title || "Plugin approval required",
+      approvalState: "waiting",
       params: params.baseParams,
     };
   }
@@ -805,8 +815,8 @@ async function recordLoopOutcome(args: {
   }
 }
 
-/** Run the full before_tool_call policy chain for a pending tool call. */
-export async function runBeforeToolCallHook(args: {
+/** Run the policy chain; executable owners provide the task effect boundary. */
+async function runBeforeToolCallHookImpl(args: {
   toolName: string;
   params: unknown;
   toolKind?: PluginHookToolKind;
@@ -815,6 +825,7 @@ export async function runBeforeToolCallHook(args: {
   ctx?: HookContext;
   signal?: AbortSignal;
   approvalMode?: "request" | "report" | "defer";
+  taskScopeHandled?: boolean;
 }): Promise<HookOutcome> {
   args.signal?.throwIfAborted();
   const toolName = normalizeToolName(args.toolName || "tool");
@@ -1168,6 +1179,25 @@ export async function runBeforeToolCallHook(args: {
   }
 }
 
+/** A preflight-only or client-hosted caller cannot authorize an untracked effect. */
+export async function runBeforeToolCallHook(
+  args: Parameters<typeof runBeforeToolCallHookImpl>[0],
+): Promise<HookOutcome> {
+  const requiresOwner = async (params: unknown) =>
+    process.env.CLAWX_TASK_SCOPE_BRIDGE === "1" &&
+    !args.taskScopeHandled &&
+    (await import("./tool-mutation.js")).requiresSessionTaskScope(args.toolName, params);
+  const unavailable: HookOutcome = {
+    blocked: true,
+    kind: "failure",
+    reason: "TASK_SCOPE_EFFECT_OWNER_UNAVAILABLE",
+    params: args.params,
+  };
+  if (await requiresOwner(args.params)) return unavailable;
+  const outcome = await runBeforeToolCallHookImpl(args);
+  return !outcome.blocked && (await requiresOwner(outcome.params)) ? unavailable : outcome;
+}
+
 /** Wrap a tool execute function with before_tool_call hooks and diagnostics. */
 export function wrapToolWithBeforeToolCallHook(
   tool: AnyAgentTool,
@@ -1179,6 +1209,7 @@ export function wrapToolWithBeforeToolCallHook(
     return tool;
   }
   const toolName = tool.name || "tool";
+  const taskGuard = createExecutionTaskGuard(ctx?.workspaceDir ?? ctx?.cwd, ctx?.sessionKey, ctx?.sessionId,ctx?.runId);
   const diagnosticIdentity = resolveToolDiagnosticIdentity(tool);
   const hookOptions: BeforeToolCallWrapperOptions = {
     ...(options.approvalMode ? { approvalMode: options.approvalMode } : {}),
@@ -1205,6 +1236,7 @@ export function wrapToolWithBeforeToolCallHook(
       const hookParams = normalizeCodeModeExecBeforeHookParams({ tool, params: preparedParams });
       const hookMetadata = getCodeModeExecBeforeHookMetadata({ tool, params: preparedParams });
       const outcome = await runBeforeToolCallHook({
+        taskScopeHandled: true,
         toolName,
         params: hookParams,
         ...hookMetadata,
@@ -1217,7 +1249,10 @@ export function wrapToolWithBeforeToolCallHook(
       signal?.throwIfAborted();
       if (outcome.blocked) {
         if (outcome.kind !== "veto") {
-          throw new Error(outcome.reason);
+          throw Object.assign(new Error(outcome.reason), {
+            deniedReason: outcome.deniedReason,
+            approvalState: outcome.approvalState,
+          });
         }
         const normalizedToolName = normalizeToolName(toolName || "tool");
         const trace = resolveToolDiagnosticTrace(ctx);
@@ -1306,7 +1341,9 @@ export function wrapToolWithBeforeToolCallHook(
             }) as typeof onUpdate)
           : onUpdate;
       try {
-        const result = await execute(toolCallId, executeParams, signal, guardedOnUpdate);
+        const { executeManagedTaskTool } = await import("./execution-checkout-tools.js");
+        const result = await executeManagedTaskTool(ctx, taskGuard, toolCallId, normalizedToolName, executeParams, signal,
+          () => execute(toolCallId, executeParams, signal, guardedOnUpdate));
         updatesOpen = false;
         signal?.throwIfAborted();
         const durationMs = Date.now() - startedAt;

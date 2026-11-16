@@ -1,0 +1,17 @@
+{
+  "extends": "D:/ClawX-work/semantic-convergence-20261104/tsconfig.test.json",
+  "include": [
+    "D:/ClawX-work/semantic-convergence-20261104/tests/unit/semantic-convergence-prompt-authority.test.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/src/vite-env.d.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/src/types/electron.d.ts"
+  ],
+  "exclude": [],
+  "compilerOptions": {
+    "composite": false,
+    "typeRoots": [
+      "D:/ClawX-work/semantic-convergence-20261104/node_modules/@types",
+      "D:/ClawX-work/semantic-convergence-20261104/node_modules"
+    ]
+  }
+}

@@ -364,7 +364,14 @@ export const sessionsReadHandlers: GatewayRequestHandlers = {
       includeLastMessage: p.includeLastMessage,
       transcriptUsageMaxBytes: 64 * 1024,
     });
-    respond(true, { session: row }, undefined);
+    const hasActiveRun = hasTrackedActiveSessionRun({
+      context,
+      requestedKey: key,
+      canonicalKey: target.canonicalKey,
+      ...(target.canonicalKey === "global" ? { agentId: target.agentId } : {}),
+      defaultAgentId: resolveDefaultAgentId(cfg),
+    });
+    respond(true, { session: { ...row, hasActiveRun } }, undefined);
   },
   "sessions.resolve": async ({ params, respond, context }) => {
     if (!assertValidParams(params, validateSessionsResolveParams, "sessions.resolve", respond)) {

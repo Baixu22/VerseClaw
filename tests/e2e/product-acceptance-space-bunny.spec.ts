@@ -8,6 +8,7 @@ import type { ProviderAccount } from '../../electron/shared/providers/types';
 import { HOST_EVENT_CHANNELS } from '../../shared/host-events/contract';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { allocatePort } from './fixtures/fp-p1-harness';
+import { assertFreshProductBuildProof, readProductCandidate } from './fixtures/product-candidate';
 import { probeSpaceBunny, readSpaceBunnyResource, redactSpaceBunny, startSpaceBunnyProxy, type ResponsesFault } from './fixtures/space-bunny-responses';
 
 type Json = Record<string, unknown>;
@@ -23,56 +24,28 @@ async function save(name: string, value: unknown) {
 }
 
 async function candidate() {
-  const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 }).trim();
-  const commit = git('rev-parse', 'HEAD');
-  const dirty = git('status', '--porcelain').length > 0;
+  const { files, ...inputs } = readProductCandidate();
+  const { commit, dirty, runtimeBuildStamp: stamp } = inputs;
   const operational = process.env.CLAWX_SPACE_BUNNY_OPERATIONAL === '1';
   assert(!dirty || process.env.CLAWX_SPACE_BUNNY_PREFLIGHT === '1', 'Acceptance requires a clean committed candidate');
-  const files: Array<{ path: string; sha256: string; bytes: number }> = [];
-  const sources = git('ls-files').split('\n').filter(file =>
-    /^(?:src\/|electron\/|shared\/|openclaw_runtime\/(?:src|packages)\/|tests\/e2e\/fixtures\/)/.test(file)
-    || /^(?:package.json|pnpm-lock.yaml|vite.config.ts|playwright.config.ts|openclaw_runtime\/(?:package.json|pnpm-lock.yaml|tsdown.config.ts))$/.test(file));
-  sources.push('tests/e2e/product-acceptance-space-bunny.spec.ts', 'tests/e2e/fixtures/space-bunny-responses.ts',
-    'harness/specs/tasks/product-acceptance-space-bunny.md', 'harness/specs/tasks/product-acceptance-closeout.md');
-  const addFile = async (file: string) => {
-    const bytes = await readFile(file);
-    files.push({ path: file.replaceAll('\\', '/'), sha256: createHash('sha256').update(bytes).digest('hex'), bytes: bytes.length });
-  };
-  for (const file of [...new Set(sources)].sort()) await addFile(file);
-  const sourceCount = files.length;
-  const walk = async (directory: string) => {
-    for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
-      const file = join(directory, entry.name);
-      if (entry.isDirectory()) await walk(file);
-      else if (entry.isFile()) await addFile(file);
-    }
-  };
-  for (const directory of ['dist', 'dist-electron', 'openclaw_runtime/dist', 'openclaw_runtime/dist-runtime']) await walk(directory);
-  const stamp = JSON.parse(await readFile('openclaw_runtime/dist/.buildstamp', 'utf8'));
+  if (process.env.CLAWX_SPACE_BUNNY_FAULTS?.trim()) {
+    assert(operational || (dirty && process.env.CLAWX_SPACE_BUNNY_PREFLIGHT === '1'), 'Fault selection is diagnostic-only');
+  }
   if (!dirty && process.env.CLAWX_SPACE_BUNNY_PREFLIGHT !== '1' && stamp.head !== commit) {
     assert(operational, 'Runtime build is not bound to the clean candidate');
-    const changed = git('diff', '--name-only', `${stamp.head}..${commit}`).split('\n').filter(Boolean);
+    const changed = execFileSync('git', ['diff', '--name-only', `${stamp.head}..${commit}`], {
+      encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024,
+    }).trim().split('\n').filter(Boolean);
     assert(changed.length > 0 && changed.every(file => /^(?:tests|harness)\//u.test(file)),
       'Runtime build is stale for non-test sources');
   }
-  const binding = { commit, tree: git('rev-parse', 'HEAD^{tree}'), dirty,
-    grade: dirty ? 'diagnostic-preflight-not-acceptance' : operational ? 'source-host-operational' : 'source-host-acceptance',
-    sourceCount, buildCount: files.length - sourceCount, runtimeBuildStamp: stamp,
-    inputDigest: createHash('sha256').update(JSON.stringify(files)).digest('hex') };
+  const binding = { ...inputs,
+    grade: dirty ? 'diagnostic-preflight-not-acceptance' : operational ? 'source-host-operational' : 'source-host-acceptance' };
   if (!dirty && !operational) {
     const proofPath = process.env.CLAWX_SPACE_BUNNY_BUILD_PROOF;
     assert(proofPath, 'A sealed fresh-build proof is required for acceptance');
     const proof = JSON.parse(await readFile(proofPath, 'utf8'));
-    expect(proof.schema).toBe('TF0580FreshBuild/v1');
-    expect(proof.candidate).toEqual({ commit, tree: binding.tree, dirty: false });
-    expect(proof.inputDigest).toBe(binding.inputDigest);
-    expect(proof.buildCommands.map((command: Json) => command.command)).toEqual([
-      ['pnpm', 'run', 'build:vite'], ['pnpm', 'run', 'build:runtime'],
-    ]);
-    for (const command of proof.buildCommands) {
-      expect(command.exitCode).toBe(0);
-      expect(command.candidate).toEqual(proof.candidate);
-    }
+    assertFreshProductBuildProof(proof, binding);
   }
   await save(`candidate-inputs-${binding.inputDigest}.json`, { ...binding, files });
   return binding;
@@ -425,7 +398,7 @@ test.describe('space-bunny Responses acceptance', () => {
         expect(providerCalls(proxy.observations.slice(isolatedStart))).toHaveLength(0);
         expect(finalText(isolated)).toContain('NO_PRIOR_TOOL_RESULT');
         expect((isolated.messages ?? []).some(message => terminalFailure([message]))).toBe(false);
-        await expect(page.getByTestId('chat-assistant-avatar').locator('..').last()).toContainText('NO_PRIOR_TOOL_RESULT');
+        await expect(page.locator('.codex-markdown').last()).toContainText('NO_PRIOR_TOOL_RESULT');
         receipt.isolation = { sessionKey: isolatedSessionKey, history: isolated, previousResultInProviderInput: false };
         expect(await readFile(join(workspace, 'probe.txt'), 'utf8')).toBe(marker + '\n');
         expect(await trajectoryTools(userDataDir)).toEqual(tools);
@@ -438,12 +411,14 @@ test.describe('space-bunny Responses acceptance', () => {
     });
   }
 
-  test('provider faults and cancellation fail visibly, then the next turn recovers', async ({ homeDir, userDataDir, launchElectronApp }) => {
+  [1, 2, 3].forEach(repetition => test(repetition === 1
+    ? 'provider faults and cancellation fail visibly, then the next turn recovers'
+    : `cancellation repetition ${repetition}: the same session resumes without late effects`, async ({ homeDir, userDataDir, launchElectronApp }) => {
     const workspace = join(homeDir, 'responses-fault-workspace');
     await seed(homeDir, userDataDir, workspace);
     const binding = await candidate();
     const proxy = await startSpaceBunnyProxy('NO_TOOL_EFFECT_EXPECTED');
-    const receipt: Json = { actor, driven_by: 'agent', candidate: binding, cases: [], status: 'running' };
+    const receipt: Json = { actor, driven_by: 'agent', candidate: binding, repetition, cases: [], status: 'running' };
     let app: ElectronApplication | undefined;
     let passed = false;
     try {
@@ -452,7 +427,8 @@ test.describe('space-bunny Responses acceptance', () => {
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
       await prepare(page, proxy, workspace);
       await observeRuntime(page);
-      const allFaultTypes: ResponsesFault[] = ['timeout', 'cancel', '401', '404', '429', '500', '504', 'malformed', 'drop'];
+      const allFaultTypes: ResponsesFault[] = repetition === 1
+        ? ['timeout', 'cancel', '401', '404', '429', '500', '504', 'malformed', 'drop'] : ['cancel'];
       const requestedFaults = (process.env.CLAWX_SPACE_BUNNY_FAULTS ?? '').split(',').map((value) => value.trim()).filter(Boolean);
       const faultTypes = requestedFaults.length > 0 ? allFaultTypes.filter((type) => requestedFaults.includes(type)) : allFaultTypes;
       expect(faultTypes.length).toBeGreaterThan(0);
@@ -520,7 +496,7 @@ test.describe('space-bunny Responses acceptance', () => {
           lateDelivery = await replayLateCancelledEvents(app, sessionKey, String(aborted!.runId), lateMarker);
           await expect(page.locator('body')).not.toContainText(lateMarker);
         }
-        await page.getByTestId('sidebar-new-chat').click();
+        if (type !== 'cancel') await page.getByTestId('sidebar-new-chat').click();
         const recoveryStart = proxy.observations.length;
         const recovered = `RECOVER_${randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase()}`;
         await send(page, `Without tools, copy this opaque identifier exactly: ${recovered}`);
@@ -530,8 +506,10 @@ test.describe('space-bunny Responses acceptance', () => {
         await expect.poll(() => proxy.observations.slice(recoveryStart).some(observation => observation.events
           .some(event => (event.response as Json | undefined)?.text?.toString().includes(recovered))), { timeout: 120_000 }).toBe(true);
         await idle(page);
-        await expect(page.getByTestId('chat-assistant-avatar').locator('..').last()).toContainText(recovered);
-        const recoveryHistory = await waitForFinal(page, await latestSession(page), recovered);
+        await expect(page.locator('.codex-markdown').last()).toContainText(recovered);
+        const recoverySessionKey = await latestSession(page);
+        if (type === 'cancel') expect(recoverySessionKey).toBe(sessionKey);
+        const recoveryHistory = await waitForFinal(page, recoverySessionKey, recovered);
         expect(finalText(recoveryHistory)).toContain(recovered);
         expect(providerCalls(proxy.observations.slice(recoveryStart))).toHaveLength(0);
         expect(await trajectoryTools(userDataDir)).toHaveLength(0);
@@ -540,7 +518,8 @@ test.describe('space-bunny Responses acceptance', () => {
         await expect(page.locator('body')).not.toContainText(lateMarker);
         expect(await readdir(workspace)).not.toContain('late-effect.txt');
         expect(proxy.observations.slice(recoveryStart).every(observation => !JSON.stringify(observation.inputItems).includes(lateMarker))).toBe(true);
-        (receipt.cases as Json[]).push({ type, marker, sessionKey, faultRequests: faultRequests.length,
+        if (type === 'cancel') await page.screenshot({ path: join(root, `cancellation-${repetition}.png`) });
+        (receipt.cases as Json[]).push({ type, marker, sessionKey, recoverySessionKey, sameSessionRecovery: recoverySessionKey === sessionKey, faultRequests: faultRequests.length,
           elapsedMs: Date.now() - began, failed: settledFailure, settlement, runtimeEvents: (await runtimeEvents(page)).slice(eventStart),
           lateDelivery, cancelledAfterRecovery, lateEffectExists: false,
           recovery: await history(page, await latestSession(page)), status: 'pass', runtimeProbe: {
@@ -554,7 +533,7 @@ test.describe('space-bunny Responses acceptance', () => {
       }
       passed = true;
     } finally {
-      await finishReceipt(receipt, passed, app, proxy, 'faults.json');
+      await finishReceipt(receipt, passed, app, proxy, repetition === 1 ? 'faults.json' : `faults-cancel-${repetition}.json`);
     }
-  });
+  }));
 });

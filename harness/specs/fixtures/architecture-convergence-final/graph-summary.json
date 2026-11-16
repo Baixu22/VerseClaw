@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "ec2053701bfc5f0126760507c8ff5045f60cdb47",
+    "tree": "b5bca90ffa3d81ffc5af1e92d75db3c936777d51",
+    "dirty": false
+  },
+  "application": {
+    "files": 826,
+    "valueEdges": 2375,
+    "components": [],
+    "forbiddenLayerEdges": [],
+    "scope": "Tracked src/electron/shared static value imports and re-exports resolved with existing tsconfig; dynamic import/require/package edges excluded."
+  },
+  "runtime": {
+    "files": 9159,
+    "components": [],
+    "scope": "Original unchanged checker for static relative value imports/re-exports; dynamic/require/package boundaries excluded."
+  },
+  "fullGraphArtifacts": [
+    {
+      "file": "D:\\tmp\\architecture-final-20261105\\app-graph.json",
+      "sha256": "88d2b1eeb09474b2fca97581adc7bad34f56b8d03ed59adce10b2d9ddc643342"
+    },
+    {
+      "file": "D:\\tmp\\architecture-final-20261105\\runtime-graph.json",
+      "sha256": "493a27719f3c475ad66a1643b23e7e0fcc9ce826d29c38d1ab77742f9bd39e2f"
+    }
+  ]
+}

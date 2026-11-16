@@ -14,7 +14,16 @@ vi.mock('@electron/utils/paths', async (importOriginal) => {
 });
 
 vi.mock('@electron/services/resource-tracker', () => ({
-  getResourceTracker: () => ({ unregisterBySession: state.unregister }),
+  getResourceTracker: () => ({ unregisterBySession: state.unregister, list: () => ({ resources: [] }) }),
+}));
+
+vi.mock('@electron/services/workspaces-api', async (original) => ({
+  ...await original<typeof import('@electron/services/workspaces-api')>(),
+  createWorkspacesApi: () => ({ list: async () => ({ success: true, profiles: [{
+    id: 'workspace-a', activeSessionKey: 'agent:main:main', sessionStates: { 'agent:main:metadata-retry': {} },
+  }] }) }),
+  getPersistedCoordinatorBinding: async (_workspaceId: string, key: string) => key === 'agent:main:main'
+    ? { state: 'active', archiveRestorePolicy: 'restore', sessionGeneration: 'generation-1' } : null,
 }));
 
 const roots: string[] = [];
@@ -70,7 +79,8 @@ describe('long-session Main lifecycle barrier', () => {
       30_000,
     );
     expect(await readGates()).toEqual({});
-    expect(state.unregister).toHaveBeenCalledWith('agent:main:main');
+    // The original archive reclamation contract preserves managed user resources.
+    expect(state.unregister).not.toHaveBeenCalled();
     expect(coordinatorLifecycle).toHaveBeenCalledWith({ type: 'archive', workspaceId: 'workspace-a', sessionKey: 'agent:main:main' });
   });
 

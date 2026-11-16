@@ -1,0 +1,23 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "name": "runtime",
+  "argv": [
+    "C:/Program Files/nodejs/node.exe",
+    "scripts/run-vitest.mjs",
+    "run",
+    "src/gateway/mcp-http.runtime.test.ts",
+    "src/agents/agent-bundle-mcp-runtime.test.ts",
+    "src/agents/agent-tools.before-tool-call.cancellation.test.ts",
+    "src/agents/agent-tools.before-tool-call.reliability.test.ts",
+    "--maxWorkers=1",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile.json=D:\\tmp\\coding-relay-01a1b4da\\tf0773-final\\runtime.json"
+  ],
+  "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+  "exitCode": 0,
+  "seconds": 49.43230581283569,
+  "log": "runtime.log",
+  "output": "\n\n\n\n\n\n\n\n RUN  v4.1.7 D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime\n\n \u2713 |agents-core| ../../src/agents/agent-bundle-mcp-runtime.test.ts (6 tests) 3803ms\n     \u2713 drops a server's tools from the declared surface after its transport closes  1190ms\n     \u2713 fails callTool fast after close removes the session  492ms\n     \u2713 keeps the other servers' cached tools when one transport closes  494ms\n     \u2713 leaves list_changed invalidation working (req-3 regression guard)  563ms\n     \u2713 keeps the session reusable after a recoverable onerror  568ms\n     \u2713 does not invalidate again after dispose (idempotent, no generation churn)  492ms\nstderr | ../../src/agents/agent-tools.before-tool-call.reliability.test.ts:356:42 > tool wrapper lifecycle > TF-0199 adapter closes progress after uncancelled failure\n[tools] read failed: ordinary failure raw_params={}\n\n \u2713 |agents-core| ../../src/agents/agent-tools.before-tool-call.reliability.test.ts (30 tests) 532ms\n \u2713 |agents-core| ../../src/agents/agent-tools.before-tool-call.cancellation.test.ts (7 tests) 386ms\n     \u2713 does not record cancelled executions in loop history  377ms\n \u2713 |gateway-core| ../../src/gateway/mcp-http.runtime.test.ts (2 tests) 158ms\n\n Test Files  4 passed (4)\n      Tests  45 passed (45)\n   Start at  23:55:26\n   Duration  19.91s (transform 10.78s, setup 1.06s, import 13.11s, tests 4.88s, environment 0ms)\n\nJSON report written to D:/tmp/coding-relay-01a1b4da/tf0773-final/runtime.json\n"
+}

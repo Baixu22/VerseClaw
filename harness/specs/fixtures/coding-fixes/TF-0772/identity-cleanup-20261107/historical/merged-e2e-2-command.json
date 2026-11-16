@@ -1,0 +1,8 @@
+{
+  "candidate": "b1968005025cc7927fd7c808a1d2b1edd4c68573",
+  "startedAt": "2026-11-07T09:13:52.1132740Z",
+  "finishedAt": "2026-11-07T09:16:01.7718268Z",
+  "exitCode": 1,
+  "driven_by": "agent",
+  "actor": "codex-01a1b4da"
+}

@@ -1,27 +1,12 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-11-02T03:44:19.960Z",
+  "generatedAt": "2026-11-13T09:13:48.007Z",
   "success": true,
   "buildReuse": {
-    "mode": "reuse",
-    "status": "reused",
-    "reusable": true,
-    "reason": "all required build artifacts are newer than relevant Agent Dev sources",
-    "oldestArtifact": "dist/index.html",
-    "artifacts": [
-      {
-        "path": "dist/index.html",
-        "mtimeMs": 1793590970685.2112
-      },
-      {
-        "path": "dist-electron/main/index.js",
-        "mtimeMs": 1793590974971.6165
-      },
-      {
-        "path": "dist-electron/preload/index.js",
-        "mtimeMs": 1793590975003.365
-      }
-    ],
+    "mode": "fresh",
+    "status": "fresh",
+    "reusable": false,
+    "reason": "fresh build mode always runs pnpm run build:vite",
     "requiredArtifacts": [
       "dist/index.html",
       "dist-electron/main/index.js",
@@ -38,58 +23,71 @@
     ]
   },
   "decision": {
-    "status": "needs-full-gate",
-    "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+    "status": "daily-loop-ok",
+    "reason": "All selected Agent Dev gates passed within hard limits.",
     "dailyLoopReady": true,
-    "releaseReady": false,
-    "fullGateComplete": false,
+    "releaseReady": true,
+    "fullGateComplete": true,
     "budgetStatus": "watch",
-    "fastPathModes": [
-      "reuse-build",
-      "cached-typecheck",
-      "smoke-e2e"
-    ],
-    "requiredFullGates": [
-      "pnpm run build:vite",
-      "pnpm run typecheck",
-      "pnpm test:e2e:agent-dev-quality"
-    ],
+    "fastPathModes": [],
+    "requiredFullGates": [],
     "watchSteps": [
-      "playwright-agent-dev"
+      "e2e-build",
+      "vitest-agent-dev",
+      "contract",
+      "typecheck"
     ],
     "limitSteps": []
   },
   "unitMode": "full",
-  "typecheckMode": "cached",
-  "e2eMode": "smoke",
+  "typecheckMode": "full",
+  "e2eMode": "full",
   "build": {
     "ok": true,
-    "durationMs": 1,
-    "commandLine": "reuse existing build",
-    "reused": true,
-    "skipped": true,
-    "reuseStatus": "reused"
+    "durationMs": 53963,
+    "commandLine": "pnpm run build:vite",
+    "reused": false,
+    "skipped": false,
+    "reuseStatus": "fresh"
   },
   "playwright": {
     "ok": true,
-    "durationMs": 23299,
-    "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+    "durationMs": 20158,
+    "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
-    "mode": "smoke",
-    "expectedTests": 1,
+    "mode": "full",
+    "expectedTests": 4,
     "diagnostics": {
       "kind": "playwright",
-      "passed": 1,
-      "reportedDurationMs": 22000,
+      "passed": 4,
+      "reportedDurationMs": 19000,
       "tests": [
         {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+          "durationMs": 8900
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+          "durationMs": 8900
+        },
+        {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 17900
+          "durationMs": 8300
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+          "durationMs": 7200
         }
       ]
     },
     "evidence": [
+      "seeded scenario accessibility report",
+      "assistant-ui welcome suggestions visual artifact",
+      "seeded scenario visual artifact",
       "Settings > Developer Agent Dev Workbench host-api record path"
     ]
-  }
+  },
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false
 }

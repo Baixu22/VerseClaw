@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "boundary": "real Electron UI -> host-api -> Main validation -> local HTTP",
+  "requests": [
+    {
+      "status": 429,
+      "path": "/v1/models?limit=1"
+    },
+    {
+      "status": 400,
+      "path": "/v1/models?limit=1"
+    },
+    {
+      "status": 400,
+      "path": "/v1/chat/completions"
+    }
+  ],
+  "rateLimitedVerified": false,
+  "parameterErrorVerified": false
+}

@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "case": "Runtime prepare after-copy",
+  "breakPoint": "after-copy",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "tf0866-target-generation",
+  "operation": null,
+  "journal": {
+    "state": "store_committed",
+    "requestDigest": "de739dbd7169643e2c99946b32ceca02b2da31c8b9314a95e11c9ef620941429",
+    "manifestDigest": "056e7f855d2078d73a89f21944f89bb2919c6fa8c4b02ed6c1d67cf1c701338c"
+  },
+  "session": {
+    "sessionId": "tf0866-target-generation",
+    "workspaceDir": "D:\\tmp\\tf0866-process-puGyos\\target",
+    "migrationState": "prepared"
+  },
+  "artifactHashes": [
+    {
+      "path": "result.txt",
+      "sha256": "missing:result.txt"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 25460,
+      "breakPoint": "after-copy",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 24336,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:15:25.137Z",
+        "pid": 25460,
+        "kind": "runtime-prepare-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "after-copy"
+      },
+      {
+        "at": "2026-11-09T00:15:25.229Z",
+        "pid": 25460,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "after-copy",
+        "stage": "runtime-after-copy",
+        "sessionKey": "agent:main:tf0866-process-proof",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:27.916Z",
+        "pid": 24336,
+        "kind": "runtime-prepare-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:28.004Z",
+        "pid": 24336,
+        "kind": "runtime-prepare-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "state": "prepared"
+      }
+    ],
+    "breakSignal": {
+      "pid": 25460,
+      "point": "after-copy",
+      "at": "2026-11-09T00:15:25.228Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "runtime-after-copy",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "operationId": "tf0866-process-operation"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "state": "prepared",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "tf0866-target-generation",
+      "taskNodeId": "6b55f4de-548c-4473-81e9-6a7411db7e84",
+      "pid": 24336,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

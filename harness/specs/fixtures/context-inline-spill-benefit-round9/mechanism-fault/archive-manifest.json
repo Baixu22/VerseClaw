@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "count": 192,
+  "sha256": "038851dcc6464eefdedeacb0f0e22736e6f88f93a777eb53fe15414c1b0e081e",
+  "diagnostic": true,
+  "liveBenefitEvaluated": false
+}

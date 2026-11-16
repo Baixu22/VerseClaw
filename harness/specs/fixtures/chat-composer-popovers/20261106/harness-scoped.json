@@ -1,0 +1,31 @@
+{
+  "scope": "task changed paths",
+  "files": [
+    "src/components/chat/ComposerPopover.tsx",
+    "src/pages/Chat/ChatInput.tsx",
+    "src/styles/codex-composer-menu.css",
+    "tests/e2e/chat-composer-popovers.spec.ts",
+    "harness/specs/tasks/chat-composer-popovers.md",
+    "harness/specs/scenarios/windows-ui-v2.md",
+    "harness/specs/rules/ui-motion-material-system.md",
+    "README.md",
+    "README.zh-CN.md",
+    "README.ja-JP.md",
+    "src/styles/plus-menu-morph.css",
+    "src/lib/chat-model-selection.ts",
+    "src/stores/settings.ts",
+    "src/stores/chat.ts",
+    "src/pages/Chat/index.tsx",
+    "shared/chat/types.ts",
+    "tests/unit/chat-model-selection.test.ts",
+    "tests/unit/chat-target-routing.test.ts",
+    "tests/unit/chat-input.test.tsx",
+    "docs/dev/chat-model-selection.md",
+    "tests/e2e/chat-model-picker.spec.ts",
+    "tests/e2e/chat-model-picker-tiers.spec.ts",
+    "tests/e2e/chat-agent-effort.spec.ts",
+    ".gitignore"
+  ],
+  "failures": [],
+  "exitCode": 0
+}

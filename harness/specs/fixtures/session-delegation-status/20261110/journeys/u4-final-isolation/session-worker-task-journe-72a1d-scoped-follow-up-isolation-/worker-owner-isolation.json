@@ -1,0 +1,644 @@
+{
+  "secondAgent": {
+    "id": "independent-coordinator",
+    "name": "Independent coordinator",
+    "isDefault": false,
+    "modelDisplay": "mock-coder",
+    "modelRef": "custom-sessionc/mock-coder",
+    "overrideModelRef": null,
+    "inheritedModel": true,
+    "reasoningEffort": "auto",
+    "workspace": "~/.openclaw/workspace-independent-coordinator",
+    "agentDir": "~/.openclaw/agents/independent-coordinator/agent",
+    "mainSessionKey": "agent:independent-coordinator:main",
+    "channelTypes": [],
+    "emoji": "??",
+    "avatar": {
+      "kind": "dicebear",
+      "source": "config",
+      "preset": {
+        "style": "lorelei-neutral",
+        "seed": "independent-coordinator",
+        "backgroundColor": "#dbeafe"
+      },
+      "revision": "ebc4f291"
+    }
+  },
+  "second": {
+    "ok": true,
+    "key": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+    "sessionId": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+    "entry": {
+      "sessionId": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+      "sessionFile": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-user-data-EVtDlZ\\openclaw-source-state\\agents\\independent-coordinator\\sessions\\c2f52574-5e40-44bf-a744-a7c6f778ff37.jsonl",
+      "updatedAt": 1794302757012,
+      "label": "Independent coordinator"
+    },
+    "runStarted": false
+  },
+  "secondTask": {
+    "id": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+    "title": "Independent coordinator task"
+  },
+  "readOnly": {
+    "success": true,
+    "status": "accepted",
+    "receipt": {
+      "schemaVersion": "clawx.session-delegation-receipt/v1",
+      "admissionId": "b9aa5ad8-0547-4268-bb9b-1e598a0e4809",
+      "idempotencyKey": "read-only-worker-admission",
+      "status": "accepted",
+      "orchestrationRunId": "orch_98944151-cce4-4f6e-a997-bc5846624369",
+      "acceptedAt": "2026-11-10T09:26:07.674Z",
+      "coordinator": {
+        "workspaceId": "worker-project",
+        "agentId": "independent-coordinator",
+        "sessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+        "bindingRevision": 1,
+        "sessionGeneration": "c2f52574-5e40-44bf-a744-a7c6f778ff37"
+      },
+      "taskRef": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+      "parentEnvironment": {
+        "kind": "local",
+        "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+        "backend": "git",
+        "branch": "master",
+        "detachedHead": false,
+        "setupProfile": null
+      },
+      "parentEnvironmentRevision": 1,
+      "authorization": {
+        "approvalId": null,
+        "grantState": "authorized",
+        "owner": "gateway-permission"
+      },
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 5,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "scheduler": {
+        "executionWaves": [
+          {
+            "wave": 1,
+            "taskNodeIds": [
+              "reviewer-1"
+            ],
+            "roles": [
+              "reviewer"
+            ],
+            "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+          }
+        ],
+        "metrics": {
+          "queued": 0,
+          "running": 0,
+          "scheduled": 1,
+          "skipped": 0,
+          "concurrencyCap": 5,
+          "budgetEstimate": 3
+        }
+      },
+      "children": [
+        {
+          "roleName": "reviewer",
+          "taskNodeId": "reviewer-1",
+          "roleInstanceId": "orch_98944151-cce4-4f6e-a997-bc5846624369:reviewer-1:reviewer:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:independent-coordinator:subagent:efbedb56-e06d-4ec3-b82c-7860a6102416",
+          "childRunId": "7dfa60a4-09ce-4626-82d7-a46b3c1dfc66",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "reviewer",
+            "effectiveRoleName": "reviewer",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "glob",
+              "grep"
+            ],
+            "denylist": [
+              "write",
+              "edit",
+              "apply_patch",
+              "undo_write",
+              "team_orchestrate",
+              "task_loop",
+              "mission_loop",
+              "exec",
+              "bash",
+              "__role_capability:mcp_write",
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ],
+            "permissionDecisionCount": 16
+          },
+          "isolation": {
+            "mode": "shared",
+            "backend": "shared-inprocess",
+            "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+            "branch": null,
+            "detachedHead": false,
+            "verifiedCheckout": false
+          },
+          "schedulerWave": 1,
+          "error": null
+        }
+      ],
+      "errors": [],
+      "completionObserved": false,
+      "recoveryRequired": false
+    }
+  },
+  "readOnlyDescription": {
+    "session": {
+      "key": "agent:independent-coordinator:subagent:efbedb56-e06d-4ec3-b82c-7860a6102416",
+      "spawnedBy": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+      "spawnedWorkspaceDir": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+      "spawnDepth": 1,
+      "spawnRootSessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+      "subagentRole": "leaf",
+      "subagentControlScope": "none",
+      "kind": "direct",
+      "label": "Reviewer",
+      "displayName": "Reviewer",
+      "updatedAt": 1794302828319,
+      "sessionId": "22ddca30-eed7-4758-bb5d-8e5e52b9381f",
+      "abortedLastRun": false,
+      "thinkingLevel": "high",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "subagentRunState": "historical",
+      "hasActiveSubagentRun": false,
+      "startedAt": 1794302807303,
+      "endedAt": 1794302827464,
+      "runtimeMs": 20161,
+      "parentSessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "modelRefOverride": "custom-sessionc/mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "observerOwnerBefore": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Independent coordinator task",
+        "constraints": [
+          "Preserve the project coordinator"
+        ],
+        "acceptance": [
+          {
+            "id": "worker-artifact",
+            "description": "Exact assigned output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "worker.txt",
+              "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e"
+            }
+          }
+        ],
+        "target": "Read the recorded transcript",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "observer-task"
+        },
+        "taskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "domain": "ddf802070c1d28f1cf39b49efa437994951003200d2bca212f60044fc9de2fbe",
+        "revision": 1,
+        "digest": "a28f4bb3072dff5f01cb21029bf7b0123e218558a67d51ca6e2ca0da9ec74363",
+        "state": "doing",
+        "createdAt": 1794302757394,
+        "updatedAt": 1794302760506
+      },
+      "claim": {
+        "taskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "sessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+        "generation": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+        "epoch": 1,
+        "attemptId": "23394166-852b-46c6-b1fe-9b3a59bc6b7a",
+        "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/workspace",
+        "contractRevision": 1,
+        "expiresAt": 1794302880506,
+        "state": "active"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": [],
+    "verificationReceipts": []
+  },
+  "observerDuringRun": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Independent coordinator task",
+        "constraints": [
+          "Preserve the project coordinator"
+        ],
+        "acceptance": [
+          {
+            "id": "worker-artifact",
+            "description": "Exact assigned output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "worker.txt",
+              "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e"
+            }
+          }
+        ],
+        "target": "Read the recorded transcript",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "observer-task"
+        },
+        "taskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "domain": "ddf802070c1d28f1cf39b49efa437994951003200d2bca212f60044fc9de2fbe",
+        "revision": 1,
+        "digest": "a28f4bb3072dff5f01cb21029bf7b0123e218558a67d51ca6e2ca0da9ec74363",
+        "state": "doing",
+        "createdAt": 1794302757394,
+        "updatedAt": 1794302760506
+      },
+      "claim": {
+        "taskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "sessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+        "generation": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+        "epoch": 1,
+        "attemptId": "23394166-852b-46c6-b1fe-9b3a59bc6b7a",
+        "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/workspace",
+        "contractRevision": 1,
+        "expiresAt": 1794302880506,
+        "state": "active"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": [],
+      "referenceOnly": true
+    },
+    "children": [],
+    "verificationReceipts": []
+  },
+  "firstOrigin": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Produce the assigned worker artifact",
+        "constraints": [
+          "Preserve the project coordinator"
+        ],
+        "acceptance": [
+          {
+            "id": "worker-artifact",
+            "description": "Exact assigned output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "worker.txt",
+              "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e"
+            }
+          }
+        ],
+        "target": "worker.txt",
+        "dependencies": [],
+        "businessKey": "parent:d80aa338-6668-4fde-a181-9c40bb0282a0:worker-output",
+        "origin": {
+          "source": "task-decomposition",
+          "sessionKey": "agent:main:session-1794302681378-workerproject",
+          "requestId": "worker-plan:worker-output"
+        },
+        "taskNodeId": "04919c78-f6e5-4a7b-bbb9-3aa3f9d94650",
+        "domain": "ddf802070c1d28f1cf39b49efa437994951003200d2bca212f60044fc9de2fbe",
+        "revision": 2,
+        "digest": "21df777e957ba785d5ed70f47a73aef3a1fcee87be1e173e479361c0a092b552",
+        "state": "doing",
+        "createdAt": 1794302701961,
+        "updatedAt": 1794302703184
+      },
+      "claim": {
+        "taskNodeId": "04919c78-f6e5-4a7b-bbb9-3aa3f9d94650",
+        "sessionKey": "agent:main:session-1794302681378-workerproject",
+        "generation": "bfc0afea-b66e-4ec9-a5f1-71261a6c4a40",
+        "epoch": 3,
+        "attemptId": "965a7c15-e2e3-41c2-9740-503b45d6165d",
+        "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/workspace",
+        "contractRevision": 2,
+        "expiresAt": 1794302854039,
+        "state": "active"
+      },
+      "checkpoint": {
+        "nextAction": "Verify the business task",
+        "completed": [
+          "Read back the assigned worker artifact"
+        ],
+        "unresolved": [
+          "Business task acceptance"
+        ],
+        "artifacts": [
+          {
+            "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace\\worker.txt",
+            "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e"
+          }
+        ]
+      },
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "parentTaskNodeId": "d80aa338-6668-4fde-a181-9c40bb0282a0",
+      "childTaskNodeIds": [],
+      "referenceOnly": true
+    },
+    "children": [],
+    "verificationReceipts": []
+  },
+  "secondOrigin": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Independent coordinator task",
+        "constraints": [
+          "Preserve the project coordinator"
+        ],
+        "acceptance": [
+          {
+            "id": "worker-artifact",
+            "description": "Exact assigned output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "worker.txt",
+              "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e"
+            }
+          }
+        ],
+        "target": "Read the recorded transcript",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "observer-task"
+        },
+        "taskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "domain": "ddf802070c1d28f1cf39b49efa437994951003200d2bca212f60044fc9de2fbe",
+        "revision": 1,
+        "digest": "a28f4bb3072dff5f01cb21029bf7b0123e218558a67d51ca6e2ca0da9ec74363",
+        "state": "doing",
+        "createdAt": 1794302757394,
+        "updatedAt": 1794302760506
+      },
+      "claim": {
+        "taskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "sessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+        "generation": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+        "epoch": 1,
+        "attemptId": "23394166-852b-46c6-b1fe-9b3a59bc6b7a",
+        "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/workspace",
+        "contractRevision": 1,
+        "expiresAt": 1794302880506,
+        "state": "active"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": [],
+      "referenceOnly": true
+    },
+    "children": [],
+    "verificationReceipts": []
+  },
+  "crossed": {
+    "success": false,
+    "phase": "rejected",
+    "error": "Worker source or generation changed"
+  },
+  "currentProject": {
+    "id": "worker-project",
+    "name": "Worker project",
+    "rootPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+    "agentId": "independent-coordinator",
+    "selectedAgentId": "independent-coordinator",
+    "activeSessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+    "projectCoordinatorSessionKey": "agent:main:session-1794302681378-workerproject",
+    "agentBindings": {
+      "main": {
+        "workspaceId": "worker-project",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794302681378-workerproject"
+      },
+      "independent-coordinator": {
+        "workspaceId": "worker-project",
+        "agentId": "independent-coordinator",
+        "sessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5"
+      }
+    },
+    "permissionMode": "fullAccess",
+    "createdAt": 1794302681383,
+    "updatedAt": 1794302759094,
+    "lastOpenedAt": 1794302681383,
+    "state": {},
+    "sessionStates": {
+      "agent:main:session-1794302681378-workerproject": {
+        "chatFooter": {
+          "contextRangeVisible": true,
+          "tokenUsageVisible": true,
+          "workContextVisible": true
+        },
+        "draftInput": "",
+        "composerRunState": "idle",
+        "activeTopicId": null,
+        "knowledgeScope": "none",
+        "knowledgeMode": "suggest",
+        "artifactPanel": {
+          "open": true,
+          "expanded": false,
+          "tabs": [
+            {
+              "kind": "subagent"
+            }
+          ],
+          "activeTabKind": "subagent"
+        },
+        "turnSummaryExpanded": {},
+        "turnSummaryStepDetailsExpanded": {},
+        "readingPosition": {
+          "scrollTop": 0,
+          "messageKey": "msg-0",
+          "offset": 0,
+          "pinned": true
+        }
+      },
+      "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5": {}
+    },
+    "sessionFolders": [],
+    "sessionFolderAssignments": {},
+    "coordinatorBindings": {
+      "agent:main:session-1794302681378-workerproject": {
+        "schemaVersion": 1,
+        "workspaceId": "worker-project",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794302681378-workerproject",
+        "sessionGeneration": "bfc0afea-b66e-4ec9-a5f1-71261a6c4a40",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "04919c78-f6e5-4a7b-bbb9-3aa3f9d94650",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "04919c78-f6e5-4a7b-bbb9-3aa3f9d94650",
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+          "backend": "local-workspace",
+          "branch": null,
+          "detachedHead": false,
+          "setupProfile": null
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 2,
+        "invalidationReason": null,
+        "createdAt": "2026-11-10T09:25:00.694Z",
+        "updatedAt": "2026-11-10T09:25:02.861Z"
+      },
+      "agent:main:subagent:49dee44f-4c04-498e-9439-5efb4104497b": {
+        "schemaVersion": 1,
+        "workspaceId": "worker-project",
+        "agentId": "main",
+        "sessionKey": "agent:main:subagent:49dee44f-4c04-498e-9439-5efb4104497b",
+        "sessionGeneration": "4e259ea1-9afa-4df0-9f77-fa486ba1aba8",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "04919c78-f6e5-4a7b-bbb9-3aa3f9d94650",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "04919c78-f6e5-4a7b-bbb9-3aa3f9d94650",
+        "writerClaim": {
+          "id": "b2c42ef3-f3a1-4bf8-b996-200f846fc6fb",
+          "run": {
+            "runId": "68529199-9bdd-4199-9ed8-38b8892aa584",
+            "scope": {
+              "workspaceId": "worker-project",
+              "projectId": "worker-project",
+              "sessionKey": "agent:main:subagent:49dee44f-4c04-498e-9439-5efb4104497b"
+            }
+          },
+          "taskNodeId": "04919c78-f6e5-4a7b-bbb9-3aa3f9d94650",
+          "sessionGeneration": "4e259ea1-9afa-4df0-9f77-fa486ba1aba8",
+          "createdAt": "2026-11-10T09:25:20.219Z",
+          "executionRevision": 1,
+          "credential": {
+            "taskNodeId": "04919c78-f6e5-4a7b-bbb9-3aa3f9d94650",
+            "sessionKey": "agent:main:subagent:49dee44f-4c04-498e-9439-5efb4104497b",
+            "generation": "4e259ea1-9afa-4df0-9f77-fa486ba1aba8",
+            "epoch": 2
+          }
+        },
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+          "backend": "git",
+          "branch": "master",
+          "detachedHead": false,
+          "setupProfile": null
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 1,
+        "invalidationReason": null,
+        "createdAt": "2026-11-10T09:25:20.219Z",
+        "updatedAt": "2026-11-10T09:25:20.219Z"
+      },
+      "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5": {
+        "schemaVersion": 1,
+        "workspaceId": "worker-project",
+        "agentId": "independent-coordinator",
+        "sessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+        "sessionGeneration": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+          "backend": "git",
+          "branch": "master",
+          "detachedHead": false,
+          "setupProfile": null
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 1,
+        "invalidationReason": null,
+        "createdAt": "2026-11-10T09:25:59.060Z",
+        "updatedAt": "2026-11-10T09:25:59.060Z"
+      }
+    }
+  }
+}

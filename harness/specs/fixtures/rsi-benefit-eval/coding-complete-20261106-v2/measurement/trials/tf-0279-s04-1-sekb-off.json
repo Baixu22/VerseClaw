@@ -1,0 +1,1246 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0279-s04-1-sekb-off",
+    "caseId": "tf-0279-s04",
+    "repeat": 1,
+    "arm": "sekb-off",
+    "caseDigest": "53acbb398016f50dd2149abcb71ddc5c177e5e47155e6f3982a636436f8f42b1",
+    "pairSeed": 43,
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "position": 127
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"S04 核验 agent_browser 的来源与会话归属边界：external/unknown 来源不得选择外部连接模式；click/type 额外要求 Main-owned managed 会话；逐 action 记录覆盖与残余，不弱化 SSRF/private-network/kill switch，不新建第三套策略。\",\n  \"acceptanceCriteria\": [\n    \"external/derived-untrusted/missing/invalid 来源不得选择 auto-connect / cdp / external-profile；managed 放行；trusted system/direct operator 不受该闸门限制。\",\n    \"click / type 在 external/unknown 来源下必须要求 Main-owned managed 会话，否则拒绝。\",\n    \"逐 action 记录覆盖：navigate/status/waitForSelector/screenshot/getConsoleMessages 只过连接模式闸门，click/type 另加会话归属闸门。\",\n    \"evaluate / command / close 属副作用型但**未**接入会话归属闸门，显式记为 residual，不冒充已覆盖。\",\n    \"不弱化 SSRF / private-network / kill switch；不新建第三套策略。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\n    \"harness/specs/tasks/harness-gap-browser-effect-boundary.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-browser-effect-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "059d73296e779dc65dd87b2a6a067c227b9cecdc838408e284537937304b575d",
+  "runtime": {
+    "flags": {
+      "enabled": false,
+      "shadowEvaluation": false,
+      "injection": false
+    },
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0279-s04-1-sekb-off",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [
+    {
+      "path": "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md",
+      "content": "# S04 browser effect boundary\n\n## 目标\n\n核验 `agent_browser` 的来源与会话归属边界，并将结论落入可审计的 action 覆盖矩阵。该工作只描述和复用现有连接模式策略、会话归属策略以及 SSRF、private-network、kill switch，不引入第三套策略。\n\n## 来源分级\n\n浏览器来源采用既有可信度语义，不另建来源策略：\n\n- `trusted-system`：由受信系统组件产生。\n- `direct-operator`：由操作者直接发起。\n- `managed`：符合 Main-owned managed 会话要求的受管来源。\n- `external`、`derived-untrusted`、`missing`、`invalid`：外部或无法可靠判定信任级别的来源。\n\n来源缺失、格式无效或派生后不可信时，必须按 `unknown` 处理，不能因字段缺失而获得放行。\n\n## 连接模式闸门\n\n以下来源不得选择 `auto-connect`、`cdp` 或 `external-profile`：\n\n- `external`\n- `derived-untrusted`\n- `missing`\n- `invalid`\n\n`managed` 来源可以按既有策略选择受支持的连接模式。`trusted-system` 与 `direct-operator` 不受本来源闸门限制，但仍须服从其他既有安全控制。\n\n该闸门不得替代或绕过以下控制：\n\n- SSRF 防护；\n- private-network 防护；\n- kill switch；\n- 现有权限、目标地址和连接策略。\n\n## 会话归属闸门\n\n`click` 与 `type` 除通过连接模式闸门外，还必须使用 Main-owned managed 会话。外部、未知、缺失或无效来源即使选择了受支持的连接模式，只要会话不是 Main-owned managed，就必须拒绝 action。\n\n“Main-owned managed 会话”沿用现有会话归属与生命周期定义，不创建新的会话类型或策略。拒绝时应保留可审计的拒绝原因，且不得以重连、降级连接或隐式创建会话的方式规避闸门。\n\n## 逐 action 覆盖矩阵\n\n| action | 连接模式闸门 | Main-owned managed 会话闸门 | 覆盖结论 | residual |\n|---|---|---|---|---|\n| `navigate` | 是 | 否 | 已覆盖连接模式闸门 | 其他既有网络、权限与 kill-switch 控制仍有效 |\n| `status` | 是 | 否 | 已覆盖连接模式闸门 | 状态读取本身不建立会话归属保证 |\n| `waitForSelector` | 是 | 否 | 已覆盖连接模式闸门 | 等待成功不表示会话归属已验证 |\n| `screenshot` | 是 | 否 | 已覆盖连接模式闸门 | 截图不证明会话归属 |\n| `getConsoleMessages` | 是 | 否 | 已覆盖连接模式闸门 | 控制台读取不证明会话归属 |\n| `click` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\n| `type` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\n| `evaluate` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\n| `command` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\n| `close` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\n\n“逐 action 记录覆盖”必须区分：连接模式闸门已覆盖、会话归属闸门已覆盖，以及尚未接入的 residual。不得将 `evaluate`、`command`、`close` 描述为已经覆盖会话归属边界。\n\n## 决策顺序与安全不变量\n\n1. 解析来源；缺失或无效来源归为 `unknown`。\n2. 对 `external`、`unknown` 来源应用连接模式闸门，拒绝 `auto-connect`、`cdp`、`external-profile`。\n3. 对 `click`、`type` 验证现有会话是否由 Main 拥有且为 managed；不满足则拒绝。\n4. 执行 action，并继续应用既有 SSRF、private-network、kill switch、权限和审计控制。\n\n任何异常、超时、验证失败或策略结果不确定时均不得扩大放行范围。连接模式闸门与会话归属闸门是叠加关系，不是替代关系。\n\n## 审计记录\n\n每次 action 记录至少应能区分以下事实：\n\n- action 名称；\n- 原始来源及其规范化结果（若已存在）；\n- 请求的连接模式与是否通过连接模式闸门；\n- 对 `click`、`type` 的 Main-owned managed 会话判定与通过/拒绝结果；\n- 适用的既有安全控制及拒绝原因；\n- 是否存在尚未接入会话归属闸门的 residual。\n\n不得在记录中把未执行的检查写成通过，也不得把 residual 隐藏为已覆盖。\n\n## 验证要求\n\n定向验证应证明：\n\n1. `external`、`derived-untrusted`、`missing`、`invalid` 对 `auto-connect`、`cdp`、`external-profile` 均被拒绝；`managed` 放行；`trusted-system`、`direct-operator` 不受该来源闸门额外限制。\n2. `click`、`type` 在 external/unknown 来源下必须具备 Main-owned managed 会话，否则拒绝。\n3. 逐 action 记录与上表一致，`evaluate`、`command`、`close` 明确保留 residual。\n4. SSRF、private-network 与 kill switch 行为未被弱化。\n5. 实现未引入第三套连接模式或会话归属策略。\n\n仓库级验证还应包含干净候选上的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare、凭据扫描零命中，以及 `SHA256SUMS` 可回读。上述验证只作为发布证据，不改变运行时对测试、网络或进程行为的依赖。\n\n## 非目标\n\n- 不重新设计连接模式选择策略。\n- 不重新设计 managed 会话模型或 Main 所有权模型。\n- 不以本说明替代 SSRF、private-network、kill switch 或权限实现。\n- 不声称已为 `evaluate`、`command`、`close` 接入会话归属闸门。\n"
+    },
+    {
+      "path": "harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+      "content": "# Harness gap task: browser effect boundary\n\n## 状态\n\nS04 的目标是为 `agent_browser` 固化来源门禁、Main-owned managed 会话门禁及逐 action 覆盖记录。边界以现有连接模式和会话归属策略为准，不建立第三套策略。\n\n## 行为契约\n\n### 来源与连接模式\n\n对来源执行以下映射：\n\n| 来源 | `auto-connect` / `cdp` / `external-profile` | 说明 |\n|---|---|---|\n| `managed` | 按既有策略允许 | 受管来源 |\n| `trusted-system` | 不受本来源闸门限制 | 受信系统来源 |\n| `direct-operator` | 不受本来源闸门限制 | 操作者直接来源 |\n| `external` | 拒绝 | 外部来源 |\n| `derived-untrusted` | 拒绝 | 派生后不可信 |\n| `missing` | 拒绝 | 来源缺失，按 unknown 处理 |\n| `invalid` | 拒绝 | 来源无效，按 unknown 处理 |\n\n来源缺失和无效不得默认视为可信。`trusted-system` 与 `direct-operator` 仅表示不受此连接模式来源闸门额外限制，不表示可以绕过其他权限或安全控制。\n\n### `click` 与 `type`\n\n`click` 和 `type` 必须同时满足：\n\n1. 通过现有连接模式来源闸门；\n2. 当前会话为 Main-owned managed 会话。\n\n在 external 或 unknown 来源下，缺少 Main-owned managed 会话时必须拒绝 action。仅满足第一项不能放行。不得通过自动降级、隐式新建或转移会话所有权绕过检查。\n\n### 其他 action\n\n- `navigate`、`status`、`waitForSelector`、`screenshot`、`getConsoleMessages` 只要求通过连接模式来源闸门。\n- `evaluate`、`command`、`close` 属于副作用型 action，但当前尚未接入会话归属闸门，必须显式记录为 residual。\n\n## Action 覆盖清单\n\n| action | 来源/连接模式门禁 | Main-owned managed 会话门禁 | 记录状态 |\n|---|---|---|---|\n| `navigate` | 已接入 | 不适用 | 完整记录连接模式判定 |\n| `status` | 已接入 | 不适用 | 完整记录连接模式判定 |\n| `waitForSelector` | 已接入 | 不适用 | 完整记录连接模式判定 |\n| `screenshot` | 已接入 | 不适用 | 完整记录连接模式判定 |\n| `getConsoleMessages` | 已接入 | 不适用 | 完整记录连接模式判定 |\n| `click` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\n| `type` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\n| `evaluate` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\n| `command` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\n| `close` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\n\n逐 action 的审计记录必须反映实际接入状态。不能因为 action 具有副作用就推断其会话归属已经受控，也不能把 `evaluate`、`command`、`close` 冒充为完整覆盖。\n\n## 不变量\n\n实现与评审必须保持：\n\n- SSRF 防护不被绕过或降级；\n- private-network 防护不被绕过或降级；\n- kill switch 始终有效并优先于浏览器 action 放行；\n- 现有权限和目标校验保持不变；\n- 只复用现有连接模式策略和 Main-owned managed 会话策略；\n- 不新增第三套来源、连接模式或会话归属策略；\n- 失败、异常或状态不确定时采取拒绝或维持既有 fail-closed 行为，不扩大放行。\n\n## 审计要求\n\n每个 action 的记录应可区分：\n\n- action；\n- 来源类别以及来源缺失/无效时的 unknown 归一化；\n- 请求的连接模式；\n- 连接模式门禁的通过或拒绝结果；\n- 仅对 `click`、`type` 记录 Main-owned managed 会话检查结果；\n- 拒绝原因；\n- 对尚未接入会话归属门禁的 action 标记 residual。\n\n记录不得包含凭据或敏感会话材料；不得把未执行检查记录为成功。\n\n## 验收场景\n\n### 来源门禁\n\n- external 来源请求 `auto-connect`：拒绝。\n- external 来源请求 `cdp`：拒绝。\n- external 来源请求 `external-profile`：拒绝。\n- derived-untrusted、missing、invalid 来源请求上述模式：均拒绝。\n- managed 来源按既有策略放行。\n- trusted-system 与 direct-operator 不因该来源门禁被拒绝。\n\n### 会话归属\n\n- external/unknown 来源执行 `click`，会话不是 Main-owned managed：拒绝。\n- external/unknown 来源执行 `type`，会话不是 Main-owned managed：拒绝。\n- `click`、`type` 满足全部既有门禁时：按既有权限执行。\n\n### 覆盖与 residual\n\n- navigate/status/waitForSelector/screenshot/getConsoleMessages 的记录只声称连接模式门禁已覆盖。\n- click/type 的记录同时声称连接模式门禁和会话归属门禁已覆盖。\n- evaluate/command/close 的记录明确标记会话归属 residual。\n\n### 安全回归\n\n- 非法或受限目标仍受 SSRF 与 private-network 防护约束。\n- kill switch 开启时，受影响 action 不执行。\n- 新逻辑未创建额外连接模式或额外会话所有权策略。\n\n## 验证交付\n\n在干净候选上完成并保存以下证据：\n\n1. 针对来源映射、`click`/`type` 会话归属和逐 action 审计的定向测试通过；\n2. 类型检查通过；\n3. scoped lint 通过；\n4. harness validate 与 dry-run 通过；\n5. comms replay/compare 通过；\n6. 凭据扫描为零命中；\n7. `SHA256SUMS` 可回读且校验一致。\n\n运行时实现不得依赖读取测试、发起网络请求或执行进程副作用来完成上述验证。\n\n## 完成判定\n\n仅当行为契约、逐 action 覆盖矩阵、安全不变量和验证交付均满足时，S04 才可标记完成。明确记录的 residual 可作为当前边界的一部分，但不能被描述为已覆盖；后续扩展必须单独设计并验证。\n"
+    }
+  ],
+  "execution": {
+    "status": "completed",
+    "failureClass": null,
+    "failureCategory": null,
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 107137,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 127,
+    "startedAt": "2026-11-06T15:18:10.171Z",
+    "endedAt": "2026-11-06T15:19:57.308Z",
+    "measurementBasis": "live-provider",
+    "note": "Single JSON-edits request; independent reference-bound final-state grading."
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793978303,
+    "created_at": 1793978291,
+    "error": null,
+    "id": "01a1b17051a579f1ba9192f52cdce98c",
+    "incomplete_details": null,
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "max_output_tokens": 16000,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_f779a8b9e5a04c64dcbabf7c947b4efb",
+        "summary": [
+          {
+            "text": "We need create docs only. Need infer Chinese. Strict JSON. Include comprehensive contract. Two files. No markdown fences outside, content can markdown. Ensure only paths.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\"content\":\"# S04 browser effect boundary\\n\\n## 目标\\n\\n核验 `agent_browser` 的来源与会话归属边界，并将结论落入可审计的 action 覆盖矩阵。该工作只描述和复用现有连接模式策略、会话归属策略以及 SSRF、private-network、kill switch，不引入第三套策略。\\n\\n## 来源分级\\n\\n浏览器来源采用既有可信度语义，不另建来源策略：\\n\\n- `trusted-system`：由受信系统组件产生。\\n- `direct-operator`：由操作者直接发起。\\n- `managed`：符合 Main-owned managed 会话要求的受管来源。\\n- `external`、`derived-untrusted`、`missing`、`invalid`：外部或无法可靠判定信任级别的来源。\\n\\n来源缺失、格式无效或派生后不可信时，必须按 `unknown` 处理，不能因字段缺失而获得放行。\\n\\n## 连接模式闸门\\n\\n以下来源不得选择 `auto-connect`、`cdp` 或 `external-profile`：\\n\\n- `external`\\n- `derived-untrusted`\\n- `missing`\\n- `invalid`\\n\\n`managed` 来源可以按既有策略选择受支持的连接模式。`trusted-system` 与 `direct-operator` 不受本来源闸门限制，但仍须服从其他既有安全控制。\\n\\n该闸门不得替代或绕过以下控制：\\n\\n- SSRF 防护；\\n- private-network 防护；\\n- kill switch；\\n- 现有权限、目标地址和连接策略。\\n\\n## 会话归属闸门\\n\\n`click` 与 `type` 除通过连接模式闸门外，还必须使用 Main-owned managed 会话。外部、未知、缺失或无效来源即使选择了受支持的连接模式，只要会话不是 Main-owned managed，就必须拒绝 action。\\n\\n“Main-owned managed 会话”沿用现有会话归属与生命周期定义，不创建新的会话类型或策略。拒绝时应保留可审计的拒绝原因，且不得以重连、降级连接或隐式创建会话的方式规避闸门。\\n\\n## 逐 action 覆盖矩阵\\n\\n| action | 连接模式闸门 | Main-owned managed 会话闸门 | 覆盖结论 | residual |\\n|---|---|---|---|---|\\n| `navigate` | 是 | 否 | 已覆盖连接模式闸门 | 其他既有网络、权限与 kill-switch 控制仍有效 |\\n| `status` | 是 | 否 | 已覆盖连接模式闸门 | 状态读取本身不建立会话归属保证 |\\n| `waitForSelector` | 是 | 否 | 已覆盖连接模式闸门 | 等待成功不表示会话归属已验证 |\\n| `screenshot` | 是 | 否 | 已覆盖连接模式闸门 | 截图不证明会话归属 |\\n| `getConsoleMessages` | 是 | 否 | 已覆盖连接模式闸门 | 控制台读取不证明会话归属 |\\n| `click` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `type` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `evaluate` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `command` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `close` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n\\n“逐 action 记录覆盖”必须区分：连接模式闸门已覆盖、会话归属闸门已覆盖，以及尚未接入的 residual。不得将 `evaluate`、`command`、`close` 描述为已经覆盖会话归属边界。\\n\\n## 决策顺序与安全不变量\\n\\n1. 解析来源；缺失或无效来源归为 `unknown`。\\n2. 对 `external`、`unknown` 来源应用连接模式闸门，拒绝 `auto-connect`、`cdp`、`external-profile`。\\n3. 对 `click`、`type` 验证现有会话是否由 Main 拥有且为 managed；不满足则拒绝。\\n4. 执行 action，并继续应用既有 SSRF、private-network、kill switch、权限和审计控制。\\n\\n任何异常、超时、验证失败或策略结果不确定时均不得扩大放行范围。连接模式闸门与会话归属闸门是叠加关系，不是替代关系。\\n\\n## 审计记录\\n\\n每次 action 记录至少应能区分以下事实：\\n\\n- action 名称；\\n- 原始来源及其规范化结果（若已存在）；\\n- 请求的连接模式与是否通过连接模式闸门；\\n- 对 `click`、`type` 的 Main-owned managed 会话判定与通过/拒绝结果；\\n- 适用的既有安全控制及拒绝原因；\\n- 是否存在尚未接入会话归属闸门的 residual。\\n\\n不得在记录中把未执行的检查写成通过，也不得把 residual 隐藏为已覆盖。\\n\\n## 验证要求\\n\\n定向验证应证明：\\n\\n1. `external`、`derived-untrusted`、`missing`、`invalid` 对 `auto-connect`、`cdp`、`external-profile` 均被拒绝；`managed` 放行；`trusted-system`、`direct-operator` 不受该来源闸门额外限制。\\n2. `click`、`type` 在 external/unknown 来源下必须具备 Main-owned managed 会话，否则拒绝。\\n3. 逐 action 记录与上表一致，`evaluate`、`command`、`close` 明确保留 residual。\\n4. SSRF、private-network 与 kill switch 行为未被弱化。\\n5. 实现未引入第三套连接模式或会话归属策略。\\n\\n仓库级验证还应包含干净候选上的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare、凭据扫描零命中，以及 `SHA256SUMS` 可回读。上述验证只作为发布证据，不改变运行时对测试、网络或进程行为的依赖。\\n\\n## 非目标\\n\\n- 不重新设计连接模式选择策略。\\n- 不重新设计 managed 会话模型或 Main 所有权模型。\\n- 不以本说明替代 SSRF、private-network、kill switch 或权限实现。\\n- 不声称已为 `evaluate`、`command`、`close` 接入会话归属闸门。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-browser-effect-boundary.md\",\"content\":\"# Harness gap task: browser effect boundary\\n\\n## 状态\\n\\nS04 的目标是为 `agent_browser` 固化来源门禁、Main-owned managed 会话门禁及逐 action 覆盖记录。边界以现有连接模式和会话归属策略为准，不建立第三套策略。\\n\\n## 行为契约\\n\\n### 来源与连接模式\\n\\n对来源执行以下映射：\\n\\n| 来源 | `auto-connect` / `cdp` / `external-profile` | 说明 |\\n|---|---|---|\\n| `managed` | 按既有策略允许 | 受管来源 |\\n| `trusted-system` | 不受本来源闸门限制 | 受信系统来源 |\\n| `direct-operator` | 不受本来源闸门限制 | 操作者直接来源 |\\n| `external` | 拒绝 | 外部来源 |\\n| `derived-untrusted` | 拒绝 | 派生后不可信 |\\n| `missing` | 拒绝 | 来源缺失，按 unknown 处理 |\\n| `invalid` | 拒绝 | 来源无效，按 unknown 处理 |\\n\\n来源缺失和无效不得默认视为可信。`trusted-system` 与 `direct-operator` 仅表示不受此连接模式来源闸门额外限制，不表示可以绕过其他权限或安全控制。\\n\\n### `click` 与 `type`\\n\\n`click` 和 `type` 必须同时满足：\\n\\n1. 通过现有连接模式来源闸门；\\n2. 当前会话为 Main-owned managed 会话。\\n\\n在 external 或 unknown 来源下，缺少 Main-owned managed 会话时必须拒绝 action。仅满足第一项不能放行。不得通过自动降级、隐式新建或转移会话所有权绕过检查。\\n\\n### 其他 action\\n\\n- `navigate`、`status`、`waitForSelector`、`screenshot`、`getConsoleMessages` 只要求通过连接模式来源闸门。\\n- `evaluate`、`command`、`close` 属于副作用型 action，但当前尚未接入会话归属闸门，必须显式记录为 residual。\\n\\n## Action 覆盖清单\\n\\n| action | 来源/连接模式门禁 | Main-owned managed 会话门禁 | 记录状态 |\\n|---|---|---|---|\\n| `navigate` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `status` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `waitForSelector` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `screenshot` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `getConsoleMessages` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `click` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `type` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `evaluate` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `command` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `close` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n\\n逐 action 的审计记录必须反映实际接入状态。不能因为 action 具有副作用就推断其会话归属已经受控，也不能把 `evaluate`、`command`、`close` 冒充为完整覆盖。\\n\\n## 不变量\\n\\n实现与评审必须保持：\\n\\n- SSRF 防护不被绕过或降级；\\n- private-network 防护不被绕过或降级；\\n- kill switch 始终有效并优先于浏览器 action 放行；\\n- 现有权限和目标校验保持不变；\\n- 只复用现有连接模式策略和 Main-owned managed 会话策略；\\n- 不新增第三套来源、连接模式或会话归属策略；\\n- 失败、异常或状态不确定时采取拒绝或维持既有 fail-closed 行为，不扩大放行。\\n\\n## 审计要求\\n\\n每个 action 的记录应可区分：\\n\\n- action；\\n- 来源类别以及来源缺失/无效时的 unknown 归一化；\\n- 请求的连接模式；\\n- 连接模式门禁的通过或拒绝结果；\\n- 仅对 `click`、`type` 记录 Main-owned managed 会话检查结果；\\n- 拒绝原因；\\n- 对尚未接入会话归属门禁的 action 标记 residual。\\n\\n记录不得包含凭据或敏感会话材料；不得把未执行检查记录为成功。\\n\\n## 验收场景\\n\\n### 来源门禁\\n\\n- external 来源请求 `auto-connect`：拒绝。\\n- external 来源请求 `cdp`：拒绝。\\n- external 来源请求 `external-profile`：拒绝。\\n- derived-untrusted、missing、invalid 来源请求上述模式：均拒绝。\\n- managed 来源按既有策略放行。\\n- trusted-system 与 direct-operator 不因该来源门禁被拒绝。\\n\\n### 会话归属\\n\\n- external/unknown 来源执行 `click`，会话不是 Main-owned managed：拒绝。\\n- external/unknown 来源执行 `type`，会话不是 Main-owned managed：拒绝。\\n- `click`、`type` 满足全部既有门禁时：按既有权限执行。\\n\\n### 覆盖与 residual\\n\\n- navigate/status/waitForSelector/screenshot/getConsoleMessages 的记录只声称连接模式门禁已覆盖。\\n- click/type 的记录同时声称连接模式门禁和会话归属门禁已覆盖。\\n- evaluate/command/close 的记录明确标记会话归属 residual。\\n\\n### 安全回归\\n\\n- 非法或受限目标仍受 SSRF 与 private-network 防护约束。\\n- kill switch 开启时，受影响 action 不执行。\\n- 新逻辑未创建额外连接模式或额外会话所有权策略。\\n\\n## 验证交付\\n\\n在干净候选上完成并保存以下证据：\\n\\n1. 针对来源映射、`click`/`type` 会话归属和逐 action 审计的定向测试通过；\\n2. 类型检查通过；\\n3. scoped lint 通过；\\n4. harness validate 与 dry-run 通过；\\n5. comms replay/compare 通过；\\n6. 凭据扫描为零命中；\\n7. `SHA256SUMS` 可回读且校验一致。\\n\\n运行时实现不得依赖读取测试、发起网络请求或执行进程副作用来完成上述验证。\\n\\n## 完成判定\\n\\n仅当行为契约、逐 action 覆盖矩阵、安全不变量和验证交付均满足时，S04 才可标记完成。明确记录的 residual 可作为当前边界的一部分，但不能被描述为已覆盖；后续扩展必须单独设计并验证。\\n\"}]}",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_075d83968cddd781f6e1a037b3672d13",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\"content\":\"# S04 browser effect boundary\\n\\n## 目标\\n\\n核验 `agent_browser` 的来源与会话归属边界，并将结论落入可审计的 action 覆盖矩阵。该工作只描述和复用现有连接模式策略、会话归属策略以及 SSRF、private-network、kill switch，不引入第三套策略。\\n\\n## 来源分级\\n\\n浏览器来源采用既有可信度语义，不另建来源策略：\\n\\n- `trusted-system`：由受信系统组件产生。\\n- `direct-operator`：由操作者直接发起。\\n- `managed`：符合 Main-owned managed 会话要求的受管来源。\\n- `external`、`derived-untrusted`、`missing`、`invalid`：外部或无法可靠判定信任级别的来源。\\n\\n来源缺失、格式无效或派生后不可信时，必须按 `unknown` 处理，不能因字段缺失而获得放行。\\n\\n## 连接模式闸门\\n\\n以下来源不得选择 `auto-connect`、`cdp` 或 `external-profile`：\\n\\n- `external`\\n- `derived-untrusted`\\n- `missing`\\n- `invalid`\\n\\n`managed` 来源可以按既有策略选择受支持的连接模式。`trusted-system` 与 `direct-operator` 不受本来源闸门限制，但仍须服从其他既有安全控制。\\n\\n该闸门不得替代或绕过以下控制：\\n\\n- SSRF 防护；\\n- private-network 防护；\\n- kill switch；\\n- 现有权限、目标地址和连接策略。\\n\\n## 会话归属闸门\\n\\n`click` 与 `type` 除通过连接模式闸门外，还必须使用 Main-owned managed 会话。外部、未知、缺失或无效来源即使选择了受支持的连接模式，只要会话不是 Main-owned managed，就必须拒绝 action。\\n\\n“Main-owned managed 会话”沿用现有会话归属与生命周期定义，不创建新的会话类型或策略。拒绝时应保留可审计的拒绝原因，且不得以重连、降级连接或隐式创建会话的方式规避闸门。\\n\\n## 逐 action 覆盖矩阵\\n\\n| action | 连接模式闸门 | Main-owned managed 会话闸门 | 覆盖结论 | residual |\\n|---|---|---|---|---|\\n| `navigate` | 是 | 否 | 已覆盖连接模式闸门 | 其他既有网络、权限与 kill-switch 控制仍有效 |\\n| `status` | 是 | 否 | 已覆盖连接模式闸门 | 状态读取本身不建立会话归属保证 |\\n| `waitForSelector` | 是 | 否 | 已覆盖连接模式闸门 | 等待成功不表示会话归属已验证 |\\n| `screenshot` | 是 | 否 | 已覆盖连接模式闸门 | 截图不证明会话归属 |\\n| `getConsoleMessages` | 是 | 否 | 已覆盖连接模式闸门 | 控制台读取不证明会话归属 |\\n| `click` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `type` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `evaluate` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `command` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `close` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n\\n“逐 action 记录覆盖”必须区分：连接模式闸门已覆盖、会话归属闸门已覆盖，以及尚未接入的 residual。不得将 `evaluate`、`command`、`close` 描述为已经覆盖会话归属边界。\\n\\n## 决策顺序与安全不变量\\n\\n1. 解析来源；缺失或无效来源归为 `unknown`。\\n2. 对 `external`、`unknown` 来源应用连接模式闸门，拒绝 `auto-connect`、`cdp`、`external-profile`。\\n3. 对 `click`、`type` 验证现有会话是否由 Main 拥有且为 managed；不满足则拒绝。\\n4. 执行 action，并继续应用既有 SSRF、private-network、kill switch、权限和审计控制。\\n\\n任何异常、超时、验证失败或策略结果不确定时均不得扩大放行范围。连接模式闸门与会话归属闸门是叠加关系，不是替代关系。\\n\\n## 审计记录\\n\\n每次 action 记录至少应能区分以下事实：\\n\\n- action 名称；\\n- 原始来源及其规范化结果（若已存在）；\\n- 请求的连接模式与是否通过连接模式闸门；\\n- 对 `click`、`type` 的 Main-owned managed 会话判定与通过/拒绝结果；\\n- 适用的既有安全控制及拒绝原因；\\n- 是否存在尚未接入会话归属闸门的 residual。\\n\\n不得在记录中把未执行的检查写成通过，也不得把 residual 隐藏为已覆盖。\\n\\n## 验证要求\\n\\n定向验证应证明：\\n\\n1. `external`、`derived-untrusted`、`missing`、`invalid` 对 `auto-connect`、`cdp`、`external-profile` 均被拒绝；`managed` 放行；`trusted-system`、`direct-operator` 不受该来源闸门额外限制。\\n2. `click`、`type` 在 external/unknown 来源下必须具备 Main-owned managed 会话，否则拒绝。\\n3. 逐 action 记录与上表一致，`evaluate`、`command`、`close` 明确保留 residual。\\n4. SSRF、private-network 与 kill switch 行为未被弱化。\\n5. 实现未引入第三套连接模式或会话归属策略。\\n\\n仓库级验证还应包含干净候选上的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare、凭据扫描零命中，以及 `SHA256SUMS` 可回读。上述验证只作为发布证据，不改变运行时对测试、网络或进程行为的依赖。\\n\\n## 非目标\\n\\n- 不重新设计连接模式选择策略。\\n- 不重新设计 managed 会话模型或 Main 所有权模型。\\n- 不以本说明替代 SSRF、private-network、kill switch 或权限实现。\\n- 不声称已为 `evaluate`、`command`、`close` 接入会话归属闸门。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-browser-effect-boundary.md\",\"content\":\"# Harness gap task: browser effect boundary\\n\\n## 状态\\n\\nS04 的目标是为 `agent_browser` 固化来源门禁、Main-owned managed 会话门禁及逐 action 覆盖记录。边界以现有连接模式和会话归属策略为准，不建立第三套策略。\\n\\n## 行为契约\\n\\n### 来源与连接模式\\n\\n对来源执行以下映射：\\n\\n| 来源 | `auto-connect` / `cdp` / `external-profile` | 说明 |\\n|---|---|---|\\n| `managed` | 按既有策略允许 | 受管来源 |\\n| `trusted-system` | 不受本来源闸门限制 | 受信系统来源 |\\n| `direct-operator` | 不受本来源闸门限制 | 操作者直接来源 |\\n| `external` | 拒绝 | 外部来源 |\\n| `derived-untrusted` | 拒绝 | 派生后不可信 |\\n| `missing` | 拒绝 | 来源缺失，按 unknown 处理 |\\n| `invalid` | 拒绝 | 来源无效，按 unknown 处理 |\\n\\n来源缺失和无效不得默认视为可信。`trusted-system` 与 `direct-operator` 仅表示不受此连接模式来源闸门额外限制，不表示可以绕过其他权限或安全控制。\\n\\n### `click` 与 `type`\\n\\n`click` 和 `type` 必须同时满足：\\n\\n1. 通过现有连接模式来源闸门；\\n2. 当前会话为 Main-owned managed 会话。\\n\\n在 external 或 unknown 来源下，缺少 Main-owned managed 会话时必须拒绝 action。仅满足第一项不能放行。不得通过自动降级、隐式新建或转移会话所有权绕过检查。\\n\\n### 其他 action\\n\\n- `navigate`、`status`、`waitForSelector`、`screenshot`、`getConsoleMessages` 只要求通过连接模式来源闸门。\\n- `evaluate`、`command`、`close` 属于副作用型 action，但当前尚未接入会话归属闸门，必须显式记录为 residual。\\n\\n## Action 覆盖清单\\n\\n| action | 来源/连接模式门禁 | Main-owned managed 会话门禁 | 记录状态 |\\n|---|---|---|---|\\n| `navigate` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `status` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `waitForSelector` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `screenshot` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `getConsoleMessages` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `click` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `type` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `evaluate` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `command` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `close` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n\\n逐 action 的审计记录必须反映实际接入状态。不能因为 action 具有副作用就推断其会话归属已经受控，也不能把 `evaluate`、`command`、`close` 冒充为完整覆盖。\\n\\n## 不变量\\n\\n实现与评审必须保持：\\n\\n- SSRF 防护不被绕过或降级；\\n- private-network 防护不被绕过或降级；\\n- kill switch 始终有效并优先于浏览器 action 放行；\\n- 现有权限和目标校验保持不变；\\n- 只复用现有连接模式策略和 Main-owned managed 会话策略；\\n- 不新增第三套来源、连接模式或会话归属策略；\\n- 失败、异常或状态不确定时采取拒绝或维持既有 fail-closed 行为，不扩大放行。\\n\\n## 审计要求\\n\\n每个 action 的记录应可区分：\\n\\n- action；\\n- 来源类别以及来源缺失/无效时的 unknown 归一化；\\n- 请求的连接模式；\\n- 连接模式门禁的通过或拒绝结果；\\n- 仅对 `click`、`type` 记录 Main-owned managed 会话检查结果；\\n- 拒绝原因；\\n- 对尚未接入会话归属门禁的 action 标记 residual。\\n\\n记录不得包含凭据或敏感会话材料；不得把未执行检查记录为成功。\\n\\n## 验收场景\\n\\n### 来源门禁\\n\\n- external 来源请求 `auto-connect`：拒绝。\\n- external 来源请求 `cdp`：拒绝。\\n- external 来源请求 `external-profile`：拒绝。\\n- derived-untrusted、missing、invalid 来源请求上述模式：均拒绝。\\n- managed 来源按既有策略放行。\\n- trusted-system 与 direct-operator 不因该来源门禁被拒绝。\\n\\n### 会话归属\\n\\n- external/unknown 来源执行 `click`，会话不是 Main-owned managed：拒绝。\\n- external/unknown 来源执行 `type`，会话不是 Main-owned managed：拒绝。\\n- `click`、`type` 满足全部既有门禁时：按既有权限执行。\\n\\n### 覆盖与 residual\\n\\n- navigate/status/waitForSelector/screenshot/getConsoleMessages 的记录只声称连接模式门禁已覆盖。\\n- click/type 的记录同时声称连接模式门禁和会话归属门禁已覆盖。\\n- evaluate/command/close 的记录明确标记会话归属 residual。\\n\\n### 安全回归\\n\\n- 非法或受限目标仍受 SSRF 与 private-network 防护约束。\\n- kill switch 开启时，受影响 action 不执行。\\n- 新逻辑未创建额外连接模式或额外会话所有权策略。\\n\\n## 验证交付\\n\\n在干净候选上完成并保存以下证据：\\n\\n1. 针对来源映射、`click`/`type` 会话归属和逐 action 审计的定向测试通过；\\n2. 类型检查通过；\\n3. scoped lint 通过；\\n4. harness validate 与 dry-run 通过；\\n5. comms replay/compare 通过；\\n6. 凭据扫描为零命中；\\n7. `SHA256SUMS` 可回读且校验一致。\\n\\n运行时实现不得依赖读取测试、发起网络请求或执行进程副作用来完成上述验证。\\n\\n## 完成判定\\n\\n仅当行为契约、逐 action 覆盖矩阵、安全不变量和验证交付均满足时，S04 才可标记完成。明确记录的 residual 可作为当前边界的一部分，但不能被描述为已覆盖；后续扩展必须单独设计并验证。\\n\"}]}",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": "low",
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "name": "rsi_coding_edits",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "edits": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "type": "object"
+              },
+              "maxItems": 32,
+              "type": "array"
+            }
+          },
+          "required": [
+            "edits"
+          ],
+          "type": "object"
+        },
+        "strict": true,
+        "type": "json_schema"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 782,
+      "input_tokens_details": {
+        "cached_tokens": 128
+      },
+      "output_tokens": 2914,
+      "output_tokens_details": {
+        "reasoning_tokens": 35
+      },
+      "total_tokens": 3696
+    },
+    "user": null
+  },
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"S04 核验 agent_browser 的来源与会话归属边界：external/unknown 来源不得选择外部连接模式；click/type 额外要求 Main-owned managed 会话；逐 action 记录覆盖与残余，不弱化 SSRF/private-network/kill switch，不新建第三套策略。\",\n  \"acceptanceCriteria\": [\n    \"external/derived-untrusted/missing/invalid 来源不得选择 auto-connect / cdp / external-profile；managed 放行；trusted system/direct operator 不受该闸门限制。\",\n    \"click / type 在 external/unknown 来源下必须要求 Main-owned managed 会话，否则拒绝。\",\n    \"逐 action 记录覆盖：navigate/status/waitForSelector/screenshot/getConsoleMessages 只过连接模式闸门，click/type 另加会话归属闸门。\",\n    \"evaluate / command / close 属副作用型但**未**接入会话归属闸门，显式记为 residual，不冒充已覆盖。\",\n    \"不弱化 SSRF / private-network / kill switch；不新建第三套策略。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\n    \"harness/specs/tasks/harness-gap-browser-effect-boundary.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-browser-effect-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": {
+        "background": false,
+        "completed_at": 1793978303,
+        "created_at": 1793978291,
+        "error": null,
+        "id": "01a1b17051a579f1ba9192f52cdce98c",
+        "incomplete_details": null,
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "max_output_tokens": 16000,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "id": "rs_f779a8b9e5a04c64dcbabf7c947b4efb",
+            "summary": [
+              {
+                "text": "We need create docs only. Need infer Chinese. Strict JSON. Include comprehensive contract. Two files. No markdown fences outside, content can markdown. Ensure only paths.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\"content\":\"# S04 browser effect boundary\\n\\n## 目标\\n\\n核验 `agent_browser` 的来源与会话归属边界，并将结论落入可审计的 action 覆盖矩阵。该工作只描述和复用现有连接模式策略、会话归属策略以及 SSRF、private-network、kill switch，不引入第三套策略。\\n\\n## 来源分级\\n\\n浏览器来源采用既有可信度语义，不另建来源策略：\\n\\n- `trusted-system`：由受信系统组件产生。\\n- `direct-operator`：由操作者直接发起。\\n- `managed`：符合 Main-owned managed 会话要求的受管来源。\\n- `external`、`derived-untrusted`、`missing`、`invalid`：外部或无法可靠判定信任级别的来源。\\n\\n来源缺失、格式无效或派生后不可信时，必须按 `unknown` 处理，不能因字段缺失而获得放行。\\n\\n## 连接模式闸门\\n\\n以下来源不得选择 `auto-connect`、`cdp` 或 `external-profile`：\\n\\n- `external`\\n- `derived-untrusted`\\n- `missing`\\n- `invalid`\\n\\n`managed` 来源可以按既有策略选择受支持的连接模式。`trusted-system` 与 `direct-operator` 不受本来源闸门限制，但仍须服从其他既有安全控制。\\n\\n该闸门不得替代或绕过以下控制：\\n\\n- SSRF 防护；\\n- private-network 防护；\\n- kill switch；\\n- 现有权限、目标地址和连接策略。\\n\\n## 会话归属闸门\\n\\n`click` 与 `type` 除通过连接模式闸门外，还必须使用 Main-owned managed 会话。外部、未知、缺失或无效来源即使选择了受支持的连接模式，只要会话不是 Main-owned managed，就必须拒绝 action。\\n\\n“Main-owned managed 会话”沿用现有会话归属与生命周期定义，不创建新的会话类型或策略。拒绝时应保留可审计的拒绝原因，且不得以重连、降级连接或隐式创建会话的方式规避闸门。\\n\\n## 逐 action 覆盖矩阵\\n\\n| action | 连接模式闸门 | Main-owned managed 会话闸门 | 覆盖结论 | residual |\\n|---|---|---|---|---|\\n| `navigate` | 是 | 否 | 已覆盖连接模式闸门 | 其他既有网络、权限与 kill-switch 控制仍有效 |\\n| `status` | 是 | 否 | 已覆盖连接模式闸门 | 状态读取本身不建立会话归属保证 |\\n| `waitForSelector` | 是 | 否 | 已覆盖连接模式闸门 | 等待成功不表示会话归属已验证 |\\n| `screenshot` | 是 | 否 | 已覆盖连接模式闸门 | 截图不证明会话归属 |\\n| `getConsoleMessages` | 是 | 否 | 已覆盖连接模式闸门 | 控制台读取不证明会话归属 |\\n| `click` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `type` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `evaluate` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `command` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `close` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n\\n“逐 action 记录覆盖”必须区分：连接模式闸门已覆盖、会话归属闸门已覆盖，以及尚未接入的 residual。不得将 `evaluate`、`command`、`close` 描述为已经覆盖会话归属边界。\\n\\n## 决策顺序与安全不变量\\n\\n1. 解析来源；缺失或无效来源归为 `unknown`。\\n2. 对 `external`、`unknown` 来源应用连接模式闸门，拒绝 `auto-connect`、`cdp`、`external-profile`。\\n3. 对 `click`、`type` 验证现有会话是否由 Main 拥有且为 managed；不满足则拒绝。\\n4. 执行 action，并继续应用既有 SSRF、private-network、kill switch、权限和审计控制。\\n\\n任何异常、超时、验证失败或策略结果不确定时均不得扩大放行范围。连接模式闸门与会话归属闸门是叠加关系，不是替代关系。\\n\\n## 审计记录\\n\\n每次 action 记录至少应能区分以下事实：\\n\\n- action 名称；\\n- 原始来源及其规范化结果（若已存在）；\\n- 请求的连接模式与是否通过连接模式闸门；\\n- 对 `click`、`type` 的 Main-owned managed 会话判定与通过/拒绝结果；\\n- 适用的既有安全控制及拒绝原因；\\n- 是否存在尚未接入会话归属闸门的 residual。\\n\\n不得在记录中把未执行的检查写成通过，也不得把 residual 隐藏为已覆盖。\\n\\n## 验证要求\\n\\n定向验证应证明：\\n\\n1. `external`、`derived-untrusted`、`missing`、`invalid` 对 `auto-connect`、`cdp`、`external-profile` 均被拒绝；`managed` 放行；`trusted-system`、`direct-operator` 不受该来源闸门额外限制。\\n2. `click`、`type` 在 external/unknown 来源下必须具备 Main-owned managed 会话，否则拒绝。\\n3. 逐 action 记录与上表一致，`evaluate`、`command`、`close` 明确保留 residual。\\n4. SSRF、private-network 与 kill switch 行为未被弱化。\\n5. 实现未引入第三套连接模式或会话归属策略。\\n\\n仓库级验证还应包含干净候选上的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare、凭据扫描零命中，以及 `SHA256SUMS` 可回读。上述验证只作为发布证据，不改变运行时对测试、网络或进程行为的依赖。\\n\\n## 非目标\\n\\n- 不重新设计连接模式选择策略。\\n- 不重新设计 managed 会话模型或 Main 所有权模型。\\n- 不以本说明替代 SSRF、private-network、kill switch 或权限实现。\\n- 不声称已为 `evaluate`、`command`、`close` 接入会话归属闸门。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-browser-effect-boundary.md\",\"content\":\"# Harness gap task: browser effect boundary\\n\\n## 状态\\n\\nS04 的目标是为 `agent_browser` 固化来源门禁、Main-owned managed 会话门禁及逐 action 覆盖记录。边界以现有连接模式和会话归属策略为准，不建立第三套策略。\\n\\n## 行为契约\\n\\n### 来源与连接模式\\n\\n对来源执行以下映射：\\n\\n| 来源 | `auto-connect` / `cdp` / `external-profile` | 说明 |\\n|---|---|---|\\n| `managed` | 按既有策略允许 | 受管来源 |\\n| `trusted-system` | 不受本来源闸门限制 | 受信系统来源 |\\n| `direct-operator` | 不受本来源闸门限制 | 操作者直接来源 |\\n| `external` | 拒绝 | 外部来源 |\\n| `derived-untrusted` | 拒绝 | 派生后不可信 |\\n| `missing` | 拒绝 | 来源缺失，按 unknown 处理 |\\n| `invalid` | 拒绝 | 来源无效，按 unknown 处理 |\\n\\n来源缺失和无效不得默认视为可信。`trusted-system` 与 `direct-operator` 仅表示不受此连接模式来源闸门额外限制，不表示可以绕过其他权限或安全控制。\\n\\n### `click` 与 `type`\\n\\n`click` 和 `type` 必须同时满足：\\n\\n1. 通过现有连接模式来源闸门；\\n2. 当前会话为 Main-owned managed 会话。\\n\\n在 external 或 unknown 来源下，缺少 Main-owned managed 会话时必须拒绝 action。仅满足第一项不能放行。不得通过自动降级、隐式新建或转移会话所有权绕过检查。\\n\\n### 其他 action\\n\\n- `navigate`、`status`、`waitForSelector`、`screenshot`、`getConsoleMessages` 只要求通过连接模式来源闸门。\\n- `evaluate`、`command`、`close` 属于副作用型 action，但当前尚未接入会话归属闸门，必须显式记录为 residual。\\n\\n## Action 覆盖清单\\n\\n| action | 来源/连接模式门禁 | Main-owned managed 会话门禁 | 记录状态 |\\n|---|---|---|---|\\n| `navigate` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `status` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `waitForSelector` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `screenshot` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `getConsoleMessages` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `click` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `type` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `evaluate` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `command` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `close` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n\\n逐 action 的审计记录必须反映实际接入状态。不能因为 action 具有副作用就推断其会话归属已经受控，也不能把 `evaluate`、`command`、`close` 冒充为完整覆盖。\\n\\n## 不变量\\n\\n实现与评审必须保持：\\n\\n- SSRF 防护不被绕过或降级；\\n- private-network 防护不被绕过或降级；\\n- kill switch 始终有效并优先于浏览器 action 放行；\\n- 现有权限和目标校验保持不变；\\n- 只复用现有连接模式策略和 Main-owned managed 会话策略；\\n- 不新增第三套来源、连接模式或会话归属策略；\\n- 失败、异常或状态不确定时采取拒绝或维持既有 fail-closed 行为，不扩大放行。\\n\\n## 审计要求\\n\\n每个 action 的记录应可区分：\\n\\n- action；\\n- 来源类别以及来源缺失/无效时的 unknown 归一化；\\n- 请求的连接模式；\\n- 连接模式门禁的通过或拒绝结果；\\n- 仅对 `click`、`type` 记录 Main-owned managed 会话检查结果；\\n- 拒绝原因；\\n- 对尚未接入会话归属门禁的 action 标记 residual。\\n\\n记录不得包含凭据或敏感会话材料；不得把未执行检查记录为成功。\\n\\n## 验收场景\\n\\n### 来源门禁\\n\\n- external 来源请求 `auto-connect`：拒绝。\\n- external 来源请求 `cdp`：拒绝。\\n- external 来源请求 `external-profile`：拒绝。\\n- derived-untrusted、missing、invalid 来源请求上述模式：均拒绝。\\n- managed 来源按既有策略放行。\\n- trusted-system 与 direct-operator 不因该来源门禁被拒绝。\\n\\n### 会话归属\\n\\n- external/unknown 来源执行 `click`，会话不是 Main-owned managed：拒绝。\\n- external/unknown 来源执行 `type`，会话不是 Main-owned managed：拒绝。\\n- `click`、`type` 满足全部既有门禁时：按既有权限执行。\\n\\n### 覆盖与 residual\\n\\n- navigate/status/waitForSelector/screenshot/getConsoleMessages 的记录只声称连接模式门禁已覆盖。\\n- click/type 的记录同时声称连接模式门禁和会话归属门禁已覆盖。\\n- evaluate/command/close 的记录明确标记会话归属 residual。\\n\\n### 安全回归\\n\\n- 非法或受限目标仍受 SSRF 与 private-network 防护约束。\\n- kill switch 开启时，受影响 action 不执行。\\n- 新逻辑未创建额外连接模式或额外会话所有权策略。\\n\\n## 验证交付\\n\\n在干净候选上完成并保存以下证据：\\n\\n1. 针对来源映射、`click`/`type` 会话归属和逐 action 审计的定向测试通过；\\n2. 类型检查通过；\\n3. scoped lint 通过；\\n4. harness validate 与 dry-run 通过；\\n5. comms replay/compare 通过；\\n6. 凭据扫描为零命中；\\n7. `SHA256SUMS` 可回读且校验一致。\\n\\n运行时实现不得依赖读取测试、发起网络请求或执行进程副作用来完成上述验证。\\n\\n## 完成判定\\n\\n仅当行为契约、逐 action 覆盖矩阵、安全不变量和验证交付均满足时，S04 才可标记完成。明确记录的 residual 可作为当前边界的一部分，但不能被描述为已覆盖；后续扩展必须单独设计并验证。\\n\"}]}",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_075d83968cddd781f6e1a037b3672d13",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "output_text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\"content\":\"# S04 browser effect boundary\\n\\n## 目标\\n\\n核验 `agent_browser` 的来源与会话归属边界，并将结论落入可审计的 action 覆盖矩阵。该工作只描述和复用现有连接模式策略、会话归属策略以及 SSRF、private-network、kill switch，不引入第三套策略。\\n\\n## 来源分级\\n\\n浏览器来源采用既有可信度语义，不另建来源策略：\\n\\n- `trusted-system`：由受信系统组件产生。\\n- `direct-operator`：由操作者直接发起。\\n- `managed`：符合 Main-owned managed 会话要求的受管来源。\\n- `external`、`derived-untrusted`、`missing`、`invalid`：外部或无法可靠判定信任级别的来源。\\n\\n来源缺失、格式无效或派生后不可信时，必须按 `unknown` 处理，不能因字段缺失而获得放行。\\n\\n## 连接模式闸门\\n\\n以下来源不得选择 `auto-connect`、`cdp` 或 `external-profile`：\\n\\n- `external`\\n- `derived-untrusted`\\n- `missing`\\n- `invalid`\\n\\n`managed` 来源可以按既有策略选择受支持的连接模式。`trusted-system` 与 `direct-operator` 不受本来源闸门限制，但仍须服从其他既有安全控制。\\n\\n该闸门不得替代或绕过以下控制：\\n\\n- SSRF 防护；\\n- private-network 防护；\\n- kill switch；\\n- 现有权限、目标地址和连接策略。\\n\\n## 会话归属闸门\\n\\n`click` 与 `type` 除通过连接模式闸门外，还必须使用 Main-owned managed 会话。外部、未知、缺失或无效来源即使选择了受支持的连接模式，只要会话不是 Main-owned managed，就必须拒绝 action。\\n\\n“Main-owned managed 会话”沿用现有会话归属与生命周期定义，不创建新的会话类型或策略。拒绝时应保留可审计的拒绝原因，且不得以重连、降级连接或隐式创建会话的方式规避闸门。\\n\\n## 逐 action 覆盖矩阵\\n\\n| action | 连接模式闸门 | Main-owned managed 会话闸门 | 覆盖结论 | residual |\\n|---|---|---|---|---|\\n| `navigate` | 是 | 否 | 已覆盖连接模式闸门 | 其他既有网络、权限与 kill-switch 控制仍有效 |\\n| `status` | 是 | 否 | 已覆盖连接模式闸门 | 状态读取本身不建立会话归属保证 |\\n| `waitForSelector` | 是 | 否 | 已覆盖连接模式闸门 | 等待成功不表示会话归属已验证 |\\n| `screenshot` | 是 | 否 | 已覆盖连接模式闸门 | 截图不证明会话归属 |\\n| `getConsoleMessages` | 是 | 否 | 已覆盖连接模式闸门 | 控制台读取不证明会话归属 |\\n| `click` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `type` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `evaluate` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `command` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `close` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n\\n“逐 action 记录覆盖”必须区分：连接模式闸门已覆盖、会话归属闸门已覆盖，以及尚未接入的 residual。不得将 `evaluate`、`command`、`close` 描述为已经覆盖会话归属边界。\\n\\n## 决策顺序与安全不变量\\n\\n1. 解析来源；缺失或无效来源归为 `unknown`。\\n2. 对 `external`、`unknown` 来源应用连接模式闸门，拒绝 `auto-connect`、`cdp`、`external-profile`。\\n3. 对 `click`、`type` 验证现有会话是否由 Main 拥有且为 managed；不满足则拒绝。\\n4. 执行 action，并继续应用既有 SSRF、private-network、kill switch、权限和审计控制。\\n\\n任何异常、超时、验证失败或策略结果不确定时均不得扩大放行范围。连接模式闸门与会话归属闸门是叠加关系，不是替代关系。\\n\\n## 审计记录\\n\\n每次 action 记录至少应能区分以下事实：\\n\\n- action 名称；\\n- 原始来源及其规范化结果（若已存在）；\\n- 请求的连接模式与是否通过连接模式闸门；\\n- 对 `click`、`type` 的 Main-owned managed 会话判定与通过/拒绝结果；\\n- 适用的既有安全控制及拒绝原因；\\n- 是否存在尚未接入会话归属闸门的 residual。\\n\\n不得在记录中把未执行的检查写成通过，也不得把 residual 隐藏为已覆盖。\\n\\n## 验证要求\\n\\n定向验证应证明：\\n\\n1. `external`、`derived-untrusted`、`missing`、`invalid` 对 `auto-connect`、`cdp`、`external-profile` 均被拒绝；`managed` 放行；`trusted-system`、`direct-operator` 不受该来源闸门额外限制。\\n2. `click`、`type` 在 external/unknown 来源下必须具备 Main-owned managed 会话，否则拒绝。\\n3. 逐 action 记录与上表一致，`evaluate`、`command`、`close` 明确保留 residual。\\n4. SSRF、private-network 与 kill switch 行为未被弱化。\\n5. 实现未引入第三套连接模式或会话归属策略。\\n\\n仓库级验证还应包含干净候选上的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare、凭据扫描零命中，以及 `SHA256SUMS` 可回读。上述验证只作为发布证据，不改变运行时对测试、网络或进程行为的依赖。\\n\\n## 非目标\\n\\n- 不重新设计连接模式选择策略。\\n- 不重新设计 managed 会话模型或 Main 所有权模型。\\n- 不以本说明替代 SSRF、private-network、kill switch 或权限实现。\\n- 不声称已为 `evaluate`、`command`、`close` 接入会话归属闸门。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-browser-effect-boundary.md\",\"content\":\"# Harness gap task: browser effect boundary\\n\\n## 状态\\n\\nS04 的目标是为 `agent_browser` 固化来源门禁、Main-owned managed 会话门禁及逐 action 覆盖记录。边界以现有连接模式和会话归属策略为准，不建立第三套策略。\\n\\n## 行为契约\\n\\n### 来源与连接模式\\n\\n对来源执行以下映射：\\n\\n| 来源 | `auto-connect` / `cdp` / `external-profile` | 说明 |\\n|---|---|---|\\n| `managed` | 按既有策略允许 | 受管来源 |\\n| `trusted-system` | 不受本来源闸门限制 | 受信系统来源 |\\n| `direct-operator` | 不受本来源闸门限制 | 操作者直接来源 |\\n| `external` | 拒绝 | 外部来源 |\\n| `derived-untrusted` | 拒绝 | 派生后不可信 |\\n| `missing` | 拒绝 | 来源缺失，按 unknown 处理 |\\n| `invalid` | 拒绝 | 来源无效，按 unknown 处理 |\\n\\n来源缺失和无效不得默认视为可信。`trusted-system` 与 `direct-operator` 仅表示不受此连接模式来源闸门额外限制，不表示可以绕过其他权限或安全控制。\\n\\n### `click` 与 `type`\\n\\n`click` 和 `type` 必须同时满足：\\n\\n1. 通过现有连接模式来源闸门；\\n2. 当前会话为 Main-owned managed 会话。\\n\\n在 external 或 unknown 来源下，缺少 Main-owned managed 会话时必须拒绝 action。仅满足第一项不能放行。不得通过自动降级、隐式新建或转移会话所有权绕过检查。\\n\\n### 其他 action\\n\\n- `navigate`、`status`、`waitForSelector`、`screenshot`、`getConsoleMessages` 只要求通过连接模式来源闸门。\\n- `evaluate`、`command`、`close` 属于副作用型 action，但当前尚未接入会话归属闸门，必须显式记录为 residual。\\n\\n## Action 覆盖清单\\n\\n| action | 来源/连接模式门禁 | Main-owned managed 会话门禁 | 记录状态 |\\n|---|---|---|---|\\n| `navigate` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `status` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `waitForSelector` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `screenshot` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `getConsoleMessages` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `click` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `type` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `evaluate` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `command` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `close` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n\\n逐 action 的审计记录必须反映实际接入状态。不能因为 action 具有副作用就推断其会话归属已经受控，也不能把 `evaluate`、`command`、`close` 冒充为完整覆盖。\\n\\n## 不变量\\n\\n实现与评审必须保持：\\n\\n- SSRF 防护不被绕过或降级；\\n- private-network 防护不被绕过或降级；\\n- kill switch 始终有效并优先于浏览器 action 放行；\\n- 现有权限和目标校验保持不变；\\n- 只复用现有连接模式策略和 Main-owned managed 会话策略；\\n- 不新增第三套来源、连接模式或会话归属策略；\\n- 失败、异常或状态不确定时采取拒绝或维持既有 fail-closed 行为，不扩大放行。\\n\\n## 审计要求\\n\\n每个 action 的记录应可区分：\\n\\n- action；\\n- 来源类别以及来源缺失/无效时的 unknown 归一化；\\n- 请求的连接模式；\\n- 连接模式门禁的通过或拒绝结果；\\n- 仅对 `click`、`type` 记录 Main-owned managed 会话检查结果；\\n- 拒绝原因；\\n- 对尚未接入会话归属门禁的 action 标记 residual。\\n\\n记录不得包含凭据或敏感会话材料；不得把未执行检查记录为成功。\\n\\n## 验收场景\\n\\n### 来源门禁\\n\\n- external 来源请求 `auto-connect`：拒绝。\\n- external 来源请求 `cdp`：拒绝。\\n- external 来源请求 `external-profile`：拒绝。\\n- derived-untrusted、missing、invalid 来源请求上述模式：均拒绝。\\n- managed 来源按既有策略放行。\\n- trusted-system 与 direct-operator 不因该来源门禁被拒绝。\\n\\n### 会话归属\\n\\n- external/unknown 来源执行 `click`，会话不是 Main-owned managed：拒绝。\\n- external/unknown 来源执行 `type`，会话不是 Main-owned managed：拒绝。\\n- `click`、`type` 满足全部既有门禁时：按既有权限执行。\\n\\n### 覆盖与 residual\\n\\n- navigate/status/waitForSelector/screenshot/getConsoleMessages 的记录只声称连接模式门禁已覆盖。\\n- click/type 的记录同时声称连接模式门禁和会话归属门禁已覆盖。\\n- evaluate/command/close 的记录明确标记会话归属 residual。\\n\\n### 安全回归\\n\\n- 非法或受限目标仍受 SSRF 与 private-network 防护约束。\\n- kill switch 开启时，受影响 action 不执行。\\n- 新逻辑未创建额外连接模式或额外会话所有权策略。\\n\\n## 验证交付\\n\\n在干净候选上完成并保存以下证据：\\n\\n1. 针对来源映射、`click`/`type` 会话归属和逐 action 审计的定向测试通过；\\n2. 类型检查通过；\\n3. scoped lint 通过；\\n4. harness validate 与 dry-run 通过；\\n5. comms replay/compare 通过；\\n6. 凭据扫描为零命中；\\n7. `SHA256SUMS` 可回读且校验一致。\\n\\n运行时实现不得依赖读取测试、发起网络请求或执行进程副作用来完成上述验证。\\n\\n## 完成判定\\n\\n仅当行为契约、逐 action 覆盖矩阵、安全不变量和验证交付均满足时，S04 才可标记完成。明确记录的 residual 可作为当前边界的一部分，但不能被描述为已覆盖；后续扩展必须单独设计并验证。\\n\"}]}",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": "low",
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "name": "rsi_coding_edits",
+            "schema": {
+              "additionalProperties": false,
+              "properties": {
+                "edits": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 32,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "edits"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "json_schema"
+          }
+        },
+        "tool_choice": "auto",
+        "tools": [],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 782,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          },
+          "output_tokens": 2914,
+          "output_tokens_details": {
+            "reasoning_tokens": 35
+          },
+          "total_tokens": 3696
+        },
+        "user": null
+      },
+      "parsedResponse": {
+        "id": "01a1b17051a579f1ba9192f52cdce98c",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s04-browser-effect-boundary.md\",\"content\":\"# S04 browser effect boundary\\n\\n## 目标\\n\\n核验 `agent_browser` 的来源与会话归属边界，并将结论落入可审计的 action 覆盖矩阵。该工作只描述和复用现有连接模式策略、会话归属策略以及 SSRF、private-network、kill switch，不引入第三套策略。\\n\\n## 来源分级\\n\\n浏览器来源采用既有可信度语义，不另建来源策略：\\n\\n- `trusted-system`：由受信系统组件产生。\\n- `direct-operator`：由操作者直接发起。\\n- `managed`：符合 Main-owned managed 会话要求的受管来源。\\n- `external`、`derived-untrusted`、`missing`、`invalid`：外部或无法可靠判定信任级别的来源。\\n\\n来源缺失、格式无效或派生后不可信时，必须按 `unknown` 处理，不能因字段缺失而获得放行。\\n\\n## 连接模式闸门\\n\\n以下来源不得选择 `auto-connect`、`cdp` 或 `external-profile`：\\n\\n- `external`\\n- `derived-untrusted`\\n- `missing`\\n- `invalid`\\n\\n`managed` 来源可以按既有策略选择受支持的连接模式。`trusted-system` 与 `direct-operator` 不受本来源闸门限制，但仍须服从其他既有安全控制。\\n\\n该闸门不得替代或绕过以下控制：\\n\\n- SSRF 防护；\\n- private-network 防护；\\n- kill switch；\\n- 现有权限、目标地址和连接策略。\\n\\n## 会话归属闸门\\n\\n`click` 与 `type` 除通过连接模式闸门外，还必须使用 Main-owned managed 会话。外部、未知、缺失或无效来源即使选择了受支持的连接模式，只要会话不是 Main-owned managed，就必须拒绝 action。\\n\\n“Main-owned managed 会话”沿用现有会话归属与生命周期定义，不创建新的会话类型或策略。拒绝时应保留可审计的拒绝原因，且不得以重连、降级连接或隐式创建会话的方式规避闸门。\\n\\n## 逐 action 覆盖矩阵\\n\\n| action | 连接模式闸门 | Main-owned managed 会话闸门 | 覆盖结论 | residual |\\n|---|---|---|---|---|\\n| `navigate` | 是 | 否 | 已覆盖连接模式闸门 | 其他既有网络、权限与 kill-switch 控制仍有效 |\\n| `status` | 是 | 否 | 已覆盖连接模式闸门 | 状态读取本身不建立会话归属保证 |\\n| `waitForSelector` | 是 | 否 | 已覆盖连接模式闸门 | 等待成功不表示会话归属已验证 |\\n| `screenshot` | 是 | 否 | 已覆盖连接模式闸门 | 截图不证明会话归属 |\\n| `getConsoleMessages` | 是 | 否 | 已覆盖连接模式闸门 | 控制台读取不证明会话归属 |\\n| `click` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `type` | 是 | 是 | 已覆盖连接模式与会话归属闸门 | 其他既有权限和安全控制仍有效 |\\n| `evaluate` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `command` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n| `close` | 是 | 否 | 仅覆盖连接模式闸门 | 副作用型 action，尚未接入会话归属闸门，明确为 residual |\\n\\n“逐 action 记录覆盖”必须区分：连接模式闸门已覆盖、会话归属闸门已覆盖，以及尚未接入的 residual。不得将 `evaluate`、`command`、`close` 描述为已经覆盖会话归属边界。\\n\\n## 决策顺序与安全不变量\\n\\n1. 解析来源；缺失或无效来源归为 `unknown`。\\n2. 对 `external`、`unknown` 来源应用连接模式闸门，拒绝 `auto-connect`、`cdp`、`external-profile`。\\n3. 对 `click`、`type` 验证现有会话是否由 Main 拥有且为 managed；不满足则拒绝。\\n4. 执行 action，并继续应用既有 SSRF、private-network、kill switch、权限和审计控制。\\n\\n任何异常、超时、验证失败或策略结果不确定时均不得扩大放行范围。连接模式闸门与会话归属闸门是叠加关系，不是替代关系。\\n\\n## 审计记录\\n\\n每次 action 记录至少应能区分以下事实：\\n\\n- action 名称；\\n- 原始来源及其规范化结果（若已存在）；\\n- 请求的连接模式与是否通过连接模式闸门；\\n- 对 `click`、`type` 的 Main-owned managed 会话判定与通过/拒绝结果；\\n- 适用的既有安全控制及拒绝原因；\\n- 是否存在尚未接入会话归属闸门的 residual。\\n\\n不得在记录中把未执行的检查写成通过，也不得把 residual 隐藏为已覆盖。\\n\\n## 验证要求\\n\\n定向验证应证明：\\n\\n1. `external`、`derived-untrusted`、`missing`、`invalid` 对 `auto-connect`、`cdp`、`external-profile` 均被拒绝；`managed` 放行；`trusted-system`、`direct-operator` 不受该来源闸门额外限制。\\n2. `click`、`type` 在 external/unknown 来源下必须具备 Main-owned managed 会话，否则拒绝。\\n3. 逐 action 记录与上表一致，`evaluate`、`command`、`close` 明确保留 residual。\\n4. SSRF、private-network 与 kill switch 行为未被弱化。\\n5. 实现未引入第三套连接模式或会话归属策略。\\n\\n仓库级验证还应包含干净候选上的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare、凭据扫描零命中，以及 `SHA256SUMS` 可回读。上述验证只作为发布证据，不改变运行时对测试、网络或进程行为的依赖。\\n\\n## 非目标\\n\\n- 不重新设计连接模式选择策略。\\n- 不重新设计 managed 会话模型或 Main 所有权模型。\\n- 不以本说明替代 SSRF、private-network、kill switch 或权限实现。\\n- 不声称已为 `evaluate`、`command`、`close` 接入会话归属闸门。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-browser-effect-boundary.md\",\"content\":\"# Harness gap task: browser effect boundary\\n\\n## 状态\\n\\nS04 的目标是为 `agent_browser` 固化来源门禁、Main-owned managed 会话门禁及逐 action 覆盖记录。边界以现有连接模式和会话归属策略为准，不建立第三套策略。\\n\\n## 行为契约\\n\\n### 来源与连接模式\\n\\n对来源执行以下映射：\\n\\n| 来源 | `auto-connect` / `cdp` / `external-profile` | 说明 |\\n|---|---|---|\\n| `managed` | 按既有策略允许 | 受管来源 |\\n| `trusted-system` | 不受本来源闸门限制 | 受信系统来源 |\\n| `direct-operator` | 不受本来源闸门限制 | 操作者直接来源 |\\n| `external` | 拒绝 | 外部来源 |\\n| `derived-untrusted` | 拒绝 | 派生后不可信 |\\n| `missing` | 拒绝 | 来源缺失，按 unknown 处理 |\\n| `invalid` | 拒绝 | 来源无效，按 unknown 处理 |\\n\\n来源缺失和无效不得默认视为可信。`trusted-system` 与 `direct-operator` 仅表示不受此连接模式来源闸门额外限制，不表示可以绕过其他权限或安全控制。\\n\\n### `click` 与 `type`\\n\\n`click` 和 `type` 必须同时满足：\\n\\n1. 通过现有连接模式来源闸门；\\n2. 当前会话为 Main-owned managed 会话。\\n\\n在 external 或 unknown 来源下，缺少 Main-owned managed 会话时必须拒绝 action。仅满足第一项不能放行。不得通过自动降级、隐式新建或转移会话所有权绕过检查。\\n\\n### 其他 action\\n\\n- `navigate`、`status`、`waitForSelector`、`screenshot`、`getConsoleMessages` 只要求通过连接模式来源闸门。\\n- `evaluate`、`command`、`close` 属于副作用型 action，但当前尚未接入会话归属闸门，必须显式记录为 residual。\\n\\n## Action 覆盖清单\\n\\n| action | 来源/连接模式门禁 | Main-owned managed 会话门禁 | 记录状态 |\\n|---|---|---|---|\\n| `navigate` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `status` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `waitForSelector` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `screenshot` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `getConsoleMessages` | 已接入 | 不适用 | 完整记录连接模式判定 |\\n| `click` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `type` | 已接入 | 已接入 | 记录连接模式与会话归属结果 |\\n| `evaluate` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `command` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n| `close` | 已接入 | 未接入 | 记录连接模式结果并标记 session-ownership residual |\\n\\n逐 action 的审计记录必须反映实际接入状态。不能因为 action 具有副作用就推断其会话归属已经受控，也不能把 `evaluate`、`command`、`close` 冒充为完整覆盖。\\n\\n## 不变量\\n\\n实现与评审必须保持：\\n\\n- SSRF 防护不被绕过或降级；\\n- private-network 防护不被绕过或降级；\\n- kill switch 始终有效并优先于浏览器 action 放行；\\n- 现有权限和目标校验保持不变；\\n- 只复用现有连接模式策略和 Main-owned managed 会话策略；\\n- 不新增第三套来源、连接模式或会话归属策略；\\n- 失败、异常或状态不确定时采取拒绝或维持既有 fail-closed 行为，不扩大放行。\\n\\n## 审计要求\\n\\n每个 action 的记录应可区分：\\n\\n- action；\\n- 来源类别以及来源缺失/无效时的 unknown 归一化；\\n- 请求的连接模式；\\n- 连接模式门禁的通过或拒绝结果；\\n- 仅对 `click`、`type` 记录 Main-owned managed 会话检查结果；\\n- 拒绝原因；\\n- 对尚未接入会话归属门禁的 action 标记 residual。\\n\\n记录不得包含凭据或敏感会话材料；不得把未执行检查记录为成功。\\n\\n## 验收场景\\n\\n### 来源门禁\\n\\n- external 来源请求 `auto-connect`：拒绝。\\n- external 来源请求 `cdp`：拒绝。\\n- external 来源请求 `external-profile`：拒绝。\\n- derived-untrusted、missing、invalid 来源请求上述模式：均拒绝。\\n- managed 来源按既有策略放行。\\n- trusted-system 与 direct-operator 不因该来源门禁被拒绝。\\n\\n### 会话归属\\n\\n- external/unknown 来源执行 `click`，会话不是 Main-owned managed：拒绝。\\n- external/unknown 来源执行 `type`，会话不是 Main-owned managed：拒绝。\\n- `click`、`type` 满足全部既有门禁时：按既有权限执行。\\n\\n### 覆盖与 residual\\n\\n- navigate/status/waitForSelector/screenshot/getConsoleMessages 的记录只声称连接模式门禁已覆盖。\\n- click/type 的记录同时声称连接模式门禁和会话归属门禁已覆盖。\\n- evaluate/command/close 的记录明确标记会话归属 residual。\\n\\n### 安全回归\\n\\n- 非法或受限目标仍受 SSRF 与 private-network 防护约束。\\n- kill switch 开启时，受影响 action 不执行。\\n- 新逻辑未创建额外连接模式或额外会话所有权策略。\\n\\n## 验证交付\\n\\n在干净候选上完成并保存以下证据：\\n\\n1. 针对来源映射、`click`/`type` 会话归属和逐 action 审计的定向测试通过；\\n2. 类型检查通过；\\n3. scoped lint 通过；\\n4. harness validate 与 dry-run 通过；\\n5. comms replay/compare 通过；\\n6. 凭据扫描为零命中；\\n7. `SHA256SUMS` 可回读且校验一致。\\n\\n运行时实现不得依赖读取测试、发起网络请求或执行进程副作用来完成上述验证。\\n\\n## 完成判定\\n\\n仅当行为契约、逐 action 覆盖矩阵、安全不变量和验证交付均满足时，S04 才可标记完成。明确记录的 residual 可作为当前边界的一部分，但不能被描述为已覆盖；后续扩展必须单独设计并验证。\\n\"}]}",
+        "usage": {
+          "inputTokens": 782,
+          "outputTokens": 2914,
+          "totalTokens": 3696
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      }
+    }
+  ],
+  "grader": {
+    "schemaVersion": "RsiBenefitGrader/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-independent-final-state-grader",
+    "workspaceRevision": "ca413cdc436c00f7eddb06584783fd98996939c9",
+    "baselineSetup": null,
+    "oracleDigest": "d33007607918a850a3f0d8feb500944f319ea7da9fb904e1dff2174dc4e00b6f",
+    "oracleRevision": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+    "oracleTestDigests": {
+      "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts": "fbb24d2415a938e5589a8b788e6b2ad9e9a38b341bec891b1ac47c100dd60b17",
+      "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts": "f4f58babd79ab30f593a05044bf7f7b96c2086bc19c6f86096bd3978e256befd",
+      "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts": "9b443a49873b8f1046f14f44f94454ff2a33caa6fe7389665026ab91aa60e9c9",
+      "tests/unit/browser-effect-boundary-ledger.test.ts": "42d481e78e431e7c9d05e52ab6e4779dc1d882b2419c22a2f95ce13a13119b1e"
+    },
+    "oracleUnchanged": true,
+    "failureClass": null,
+    "diagnostics": [],
+    "commands": [
+      "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1"
+    ],
+    "responseDigest": "9c40bf7edec74046cd0e5aca6be84e406db3ed1d31cfc8b263b35dcdf725270c",
+    "editsDigest": "c1017b6f324bdd0a7c2f0a16729e70cb38b95b2b68c894535feb8a2d83df5b66",
+    "isolation": {
+      "hiddenOracleVisible": false,
+      "unapprovedEgress": false,
+      "candidateChangedEvaluator": false
+    },
+    "reports": [
+      {
+        "command": "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 0,
+        "report": {
+          "numTotalTestSuites": 2,
+          "numPassedTestSuites": 2,
+          "numFailedTestSuites": 0,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 5,
+          "numPassedTests": 5,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793978320599,
+          "success": true,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "S04 browser effect boundary ledger"
+                  ],
+                  "fullName": "S04 browser effect boundary ledger denies external/unknown provenance the external connection modes, allows managed",
+                  "status": "passed",
+                  "title": "denies external/unknown provenance the external connection modes, allows managed",
+                  "duration": 2.377299999999991,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S04 browser effect boundary ledger"
+                  ],
+                  "fullName": "S04 browser effect boundary ledger allows trusted provenance every connection mode",
+                  "status": "passed",
+                  "title": "allows trusted provenance every connection mode",
+                  "duration": 0.2901999999999134,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S04 browser effect boundary ledger"
+                  ],
+                  "fullName": "S04 browser effect boundary ledger requires a Main-owned managed session for click/type under external/unknown provenance",
+                  "status": "passed",
+                  "title": "requires a Main-owned managed session for click/type under external/unknown provenance",
+                  "duration": 1.1298000000000457,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S04 browser effect boundary ledger"
+                  ],
+                  "fullName": "S04 browser effect boundary ledger pins the wiring: external-access on every action, session gate only on click/type",
+                  "status": "passed",
+                  "title": "pins the wiring: external-access on every action, session gate only on click/type",
+                  "duration": 0.7264000000000124,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S04 browser effect boundary ledger"
+                  ],
+                  "fullName": "S04 browser effect boundary ledger records every action and the residual session-gate gap in the ledger doc",
+                  "status": "passed",
+                  "title": "records every action and the residual session-gate gap in the ledger doc",
+                  "duration": 1.0570999999999913,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793978321370,
+              "endTime": 1793978321376.0571,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0279-s04-1-sekb-off/workspace/tests/unit/browser-effect-boundary-ledger.test.ts"
+            }
+          ]
+        }
+      },
+      {
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 0,
+        "report": {
+          "numTotalTestSuites": 8,
+          "numPassedTestSuites": 8,
+          "numFailedTestSuites": 0,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 42,
+          "numPassedTests": 42,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793978356952,
+          "success": true,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "agent_browser provenance wiring"
+                  ],
+                  "fullName": "agent_browser provenance wiring passes the authoritative run sidecar into the external browser boundary",
+                  "status": "passed",
+                  "title": "passes the authoritative run sidecar into the external browser boundary",
+                  "duration": 2396.9440999999933,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 13,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793978386754,
+              "endTime": 1793978389150.944,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0279-s04-1-sekb-off/workspace/openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "agent_browser external-access provenance boundary"
+                  ],
+                  "fullName": "agent_browser external-access provenance boundary denies an external open request before bridge invocation",
+                  "status": "passed",
+                  "title": "denies an external open request before bridge invocation",
+                  "duration": 124.40699999999924,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 34,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser external-access provenance boundary"
+                  ],
+                  "fullName": "agent_browser external-access provenance boundary denies an external command request before bridge invocation",
+                  "status": "passed",
+                  "title": "denies an external command request before bridge invocation",
+                  "duration": 0.5760000000009313,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 34,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser external-access provenance boundary"
+                  ],
+                  "fullName": "agent_browser external-access provenance boundary fails closed when provenance is missing",
+                  "status": "passed",
+                  "title": "fails closed when provenance is missing",
+                  "duration": 0.40570000000298023,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 48,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser external-access provenance boundary"
+                  ],
+                  "fullName": "agent_browser external-access provenance boundary keeps managed browsing usable even when allowExternalBrowser is present",
+                  "status": "passed",
+                  "title": "keeps managed browsing usable even when allowExternalBrowser is present",
+                  "duration": 0.7322000000058324,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 63,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser external-access provenance boundary"
+                  ],
+                  "fullName": "agent_browser external-access provenance boundary preserves direct operator external browser selection",
+                  "status": "passed",
+                  "title": "preserves direct operator external browser selection",
+                  "duration": 1.581899999997404,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 87,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary allows external content to click a Main-verified managed session",
+                  "status": "passed",
+                  "title": "allows external content to click a Main-verified managed session",
+                  "duration": 0.9300999999977648,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 116,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing auto-connect session",
+                  "status": "passed",
+                  "title": "denies external content clicking an existing auto-connect session",
+                  "duration": 0.667699999998149,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 139,
+                    "column": 54
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing cdp session",
+                  "status": "passed",
+                  "title": "denies external content clicking an existing cdp session",
+                  "duration": 0.38779999999678694,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 139,
+                    "column": 54
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing external-profile session",
+                  "status": "passed",
+                  "title": "denies external content clicking an existing external-profile session",
+                  "duration": 0.45679999999993015,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 139,
+                    "column": 54
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing session status metadata",
+                  "status": "passed",
+                  "title": "fails closed for missing session status metadata",
+                  "duration": 0.6503999999986263,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 172,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing connection status metadata",
+                  "status": "passed",
+                  "title": "fails closed for missing connection status metadata",
+                  "duration": 0.5904999999984284,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 172,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails closed for malformed response status metadata",
+                  "status": "passed",
+                  "title": "fails closed for malformed response status metadata",
+                  "duration": 0.4201000000030035,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 172,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing success marker status metadata",
+                  "status": "passed",
+                  "title": "fails closed for missing success marker status metadata",
+                  "duration": 0.4245999999984633,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 172,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails closed for failed response status metadata",
+                  "status": "passed",
+                  "title": "fails closed for failed response status metadata",
+                  "duration": 0.4808999999950174,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 172,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails closed when the status lookup fails",
+                  "status": "passed",
+                  "title": "fails closed when the status lookup fails",
+                  "duration": 0.5358999999953085,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 186,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary keeps direct operator clicks on the existing path without a preflight",
+                  "status": "passed",
+                  "title": "keeps direct operator clicks on the existing path without a preflight",
+                  "duration": 0.40499999999883585,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 205,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary allows external content to type into a Main-verified managed session without exposing text to status",
+                  "status": "passed",
+                  "title": "allows external content to type into a Main-verified managed session without exposing text to status",
+                  "duration": 0.3907000000035623,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 227,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary denies external content typing into an existing external session before sending text",
+                  "status": "passed",
+                  "title": "denies external content typing into an existing external session before sending text",
+                  "duration": 0.5688000000009197,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 255,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing session status metadata",
+                  "status": "passed",
+                  "title": "fails type closed for missing session status metadata",
+                  "duration": 0.36929999999847496,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 289,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing connection status metadata",
+                  "status": "passed",
+                  "title": "fails type closed for missing connection status metadata",
+                  "duration": 0.29720000000088476,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 289,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails type closed for malformed response status metadata",
+                  "status": "passed",
+                  "title": "fails type closed for malformed response status metadata",
+                  "duration": 0.21050000000104774,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 289,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing success marker status metadata",
+                  "status": "passed",
+                  "title": "fails type closed for missing success marker status metadata",
+                  "duration": 0.23739999999816064,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 289,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails type closed for failed response status metadata",
+                  "status": "passed",
+                  "title": "fails type closed for failed response status metadata",
+                  "duration": 0.30389999999897555,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 289,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent_browser existing-session effect provenance boundary"
+                  ],
+                  "fullName": "agent_browser existing-session effect provenance boundary fails type closed when the status lookup fails",
+                  "status": "passed",
+                  "title": "fails type closed when the status lookup fails",
+                  "duration": 0.4614999999976135,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 304,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793978390536,
+              "endTime": 1793978390673.4614,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0279-s04-1-sekb-off/workspace/openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "agent browser external-access provenance policy"
+                  ],
+                  "fullName": "agent browser external-access provenance policy denies every external connection mode for untrusted provenance",
+                  "status": "passed",
+                  "title": "denies every external connection mode for untrusted provenance",
+                  "duration": 2.0745999999999185,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 40,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser external-access provenance policy"
+                  ],
+                  "fullName": "agent browser external-access provenance policy denies every external connection mode for derived-untrusted provenance",
+                  "status": "passed",
+                  "title": "denies every external connection mode for derived-untrusted provenance",
+                  "duration": 0.5777999999991152,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 40,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser external-access provenance policy"
+                  ],
+                  "fullName": "agent browser external-access provenance policy denies every external connection mode for missing provenance",
+                  "status": "passed",
+                  "title": "denies every external connection mode for missing provenance",
+                  "duration": 0.292699999999968,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 40,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser external-access provenance policy"
+                  ],
+                  "fullName": "agent browser external-access provenance policy denies every external connection mode for invalid provenance",
+                  "status": "passed",
+                  "title": "denies every external connection mode for invalid provenance",
+                  "duration": 0.2725000000009459,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 40,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser external-access provenance policy"
+                  ],
+                  "fullName": "agent browser external-access provenance policy keeps managed and omitted connection modes available for external provenance",
+                  "status": "passed",
+                  "title": "keeps managed and omitted connection modes available for external provenance",
+                  "duration": 0.21490000000085274,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 48,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser external-access provenance policy"
+                  ],
+                  "fullName": "agent browser external-access provenance policy keeps external modes available for trusted system and direct operator provenance",
+                  "status": "passed",
+                  "title": "keeps external modes available for trusted system and direct operator provenance",
+                  "duration": 0.20420000000012806,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 59,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser external-access provenance policy"
+                  ],
+                  "fullName": "agent browser external-access provenance policy does not treat an ordinary trust field as an operator boundary",
+                  "status": "passed",
+                  "title": "does not treat an ordinary trust field as an operator boundary",
+                  "duration": 0.13980000000083237,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 76,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy requires a Main status preflight for untrusted provenance",
+                  "status": "passed",
+                  "title": "requires a Main status preflight for untrusted provenance",
+                  "duration": 0.21409999999923457,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 97,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy requires a Main status preflight for derived-untrusted provenance",
+                  "status": "passed",
+                  "title": "requires a Main status preflight for derived-untrusted provenance",
+                  "duration": 0.12730000000010477,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 97,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy requires a Main status preflight for missing provenance",
+                  "status": "passed",
+                  "title": "requires a Main status preflight for missing provenance",
+                  "duration": 0.11440000000038708,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 97,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy requires a Main status preflight for invalid provenance",
+                  "status": "passed",
+                  "title": "requires a Main status preflight for invalid provenance",
+                  "duration": 0.07380000000011933,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 97,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy denies risky provenance for session mode auto-connect",
+                  "status": "passed",
+                  "title": "denies risky provenance for session mode auto-connect",
+                  "duration": 0.10279999999875145,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 108,
+                    "column": 81
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy denies risky provenance for session mode cdp",
+                  "status": "passed",
+                  "title": "denies risky provenance for session mode cdp",
+                  "duration": 0.06469999999899301,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 108,
+                    "column": 81
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy denies risky provenance for session mode external-profile",
+                  "status": "passed",
+                  "title": "denies risky provenance for session mode external-profile",
+                  "duration": 0.08840000000054715,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 108,
+                    "column": 81
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy denies risky provenance for session mode undefined",
+                  "status": "passed",
+                  "title": "denies risky provenance for session mode undefined",
+                  "duration": 0.07939999999871361,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 108,
+                    "column": 81
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy denies risky provenance for session mode invalid-mode",
+                  "status": "passed",
+                  "title": "denies risky provenance for session mode invalid-mode",
+                  "duration": 0.05639999999948486,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 108,
+                    "column": 81
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "agent browser existing-session effect policy"
+                  ],
+                  "fullName": "agent browser existing-session effect policy keeps trusted system and direct operator clicks unchanged",
+                  "status": "passed",
+                  "title": "keeps trusted system and direct operator clicks unchanged",
+                  "duration": 0.1878000000015163,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 121,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793978357369,
+              "endTime": 1793978357374.1877,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0279-s04-1-sekb-off/workspace/openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

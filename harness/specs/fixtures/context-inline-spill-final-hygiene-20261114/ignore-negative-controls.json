@@ -1,0 +1,15 @@
+{
+  "schema": "G7RetentionIgnoreControls/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "all95RetainedFilesAddable": true,
+  "newOutputsIgnored": true,
+  "probes": [
+    ".gitignore:232:/harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/*\tharness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/future-debug.txt",
+    ".gitignore:232:/harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/*\tharness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/logs/future-run.log",
+    ".gitignore:234:/harness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/*\tharness/specs/fixtures/g8-ui-clean-candidate/20261113-r3/screenshots/output/future-capture.png",
+    ".gitignore:320:/docs/**\tdocs/dev/evidence/ui-hierarchy-20261112/future-report.json"
+  ],
+  "filesCreated": false
+}

@@ -1,0 +1,76 @@
+{
+  "driven_by": "agent",
+  "source": "Production atomic start and Main read API; controlled chat history and runtime event delivery",
+  "task": {
+    "contract": {
+      "objective": "Fix and verify the export",
+      "constraints": [
+        "Preserve the existing format"
+      ],
+      "acceptance": [
+        {
+          "id": "test",
+          "description": "Export regression checks pass",
+          "verification": {
+            "kind": "tool-result",
+            "tool": "exec",
+            "command": "node test-export.cjs",
+            "files": [
+              "test-export.cjs"
+            ],
+            "exitCode": 0
+          }
+        }
+      ],
+      "target": "src/export.ts",
+      "dependencies": [],
+      "origin": {
+        "source": "runtime-task-tool",
+        "sessionKey": "agent:main:dashboard:1ea9c167-40bf-4e63-9e3c-78d0ecdced7f",
+        "requestId": "conversation-start:create"
+      },
+      "taskNodeId": "ebeaea4f-37a6-4249-a677-728e6a5cc66d",
+      "domain": "34189385c4c5f4cac06d26e8be5a51a2b68841a5b7632ae03232d4f991042287",
+      "revision": 1,
+      "digest": "9cf54487353e976eea7e06b8f6c839148a2be1c180ca6a55140a9c66bb521398",
+      "state": "doing",
+      "createdAt": 1794263820477,
+      "updatedAt": 1794263820478
+    },
+    "claim": {
+      "taskNodeId": "ebeaea4f-37a6-4249-a677-728e6a5cc66d",
+      "sessionKey": "agent:main:dashboard:1ea9c167-40bf-4e63-9e3c-78d0ecdced7f",
+      "generation": "ed5039ff-8332-4da8-b36c-4ebec2277715",
+      "epoch": 1,
+      "attemptId": "790f63e2-e01d-4162-9bf8-c27fb9f2905c",
+      "worktree": "d:/clawx/.local/e2e-run-base/verse-claw-e2e-run-got3k3/verse-claw-e2e-home-wg01fh/conversation-task",
+      "contractRevision": 1,
+      "expiresAt": 1794263940478,
+      "state": "active"
+    },
+    "checkpoint": {
+      "nextAction": "Run checks",
+      "completed": [
+        "Inspect export"
+      ],
+      "unresolved": [],
+      "artifacts": []
+    },
+    "pendingOperations": 0,
+    "pendingOperationDetails": [],
+    "childTaskNodeIds": []
+  },
+  "default": "collapsed",
+  "hiddenPersists": true,
+  "hidePreservesClaim": true,
+  "languages": [
+    "en",
+    "zh",
+    "ja",
+    "ru"
+  ],
+  "keyboardToggle": true,
+  "idChip": true,
+  "ledgerLinkCarriesTaskId": true,
+  "layout": "task dock above composer; task scope chip in header row; changed-file chip below composer; plain canvas"
+}

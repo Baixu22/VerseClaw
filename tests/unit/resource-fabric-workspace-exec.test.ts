@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  ResourceFabric,
   TerminalResourceLeaseTimeoutError,
   isTerminalResourceLeaseTimeoutError,
   resetTerminalResourceLeasesForTest,
   withWorkspaceExecLease,
+  resourceFabric,
 } from '../../electron/services/resource-fabric';
 import { getResourceEnvelopeLedger, resetResourceEnvelopeLedgerForTest } from '../../openclaw_runtime/src/resources/resource-envelope';
 
@@ -22,12 +24,15 @@ function deferred() {
 describe('workspace exec lease', () => {
   it('preserves FIFO, capacity and queuedMs for 200 queued requests', async () => {
     vi.useFakeTimers();
+    // Keep the 200-success FIFO workload within an explicitly sized queue;
+    // resource-fabric-bounded-waiting covers overflow at the production 64 cap.
+    const fabric = new ResourceFabric({ accounts: { workspaceExec: { queueLength: 200 } } });
     const started: number[] = [];
     const queuedMs: number[] = [];
     let active = 0;
     let peak = 0;
     const runs = Array.from({ length: 200 }, (_, id) =>
-      withWorkspaceExecLease('burst', 5_000, async (lease) => {
+      fabric.runResource('workspaceExec', 'burst', { timeoutMs: 5_000 }, async (lease) => {
         started.push(id);
         queuedMs.push(lease.queuedMs);
         peak = Math.max(peak, ++active);
@@ -94,7 +99,7 @@ describe('workspace exec lease', () => {
     firstLease!.release();
     firstLease!.release();
     await Promise.resolve();
-    expect(started).toEqual([0, 1, 2, 3]);
+    expect(started).toEqual([0, 1, 2]);
     gates.forEach((gate) => gate.resolve());
     await Promise.all(runs);
     expect(started).toEqual([0, 1, 2, 3]);
@@ -149,8 +154,8 @@ describe('workspace exec lease', () => {
     gate.resolve();
     await Promise.all(runs);
     const idle = getResourceEnvelopeLedger().get('main:terminal-exec:envelope-ws');
-    expect(idle).toMatchObject({ activeSlots: 0, queuedCount: 0, limits: { concurrencySlots: 3 } });
-    expect(idle?.limitHistory).toHaveLength(1);
+    expect(idle).toBeUndefined();
+    expect(resourceFabric.getDiagnostics().accounts['workspaceExec:envelope-ws']).toMatchObject({ active: 0, queued: 0, limit: 2 });
   });
   it('rejects with a typed timeout error when the slot never frees', async () => {
     const gate = deferred();

@@ -167,6 +167,7 @@ function withWorkspaceSearchLease(
     execute: (toolCallId, params, signal, onUpdate, ctx) =>
       withWorkspaceResourceLease("workspaceSearch", normalizeWorkspaceLeaseKey(cwd), () =>
         execute(toolCallId, params, signal, onUpdate, ctx),
+        { signal },
       ),
   };
 }
@@ -217,8 +218,8 @@ function buildFindToolDefinition(
           fn();
         };
         const onAbort = () => {
+          // Keep the lease until the child closes or the custom operation settles.
           stopChild?.();
-          settle(() => reject(new Error("Operation aborted")));
         };
         signal?.addEventListener("abort", onAbort, { once: true });
 
@@ -314,6 +315,7 @@ function buildFindToolDefinition(
             const rl = createInterface({ input: child.stdout });
             let stderr = "";
             const lines: string[] = [];
+            let childError: Error | undefined;
 
             stopChild = () => {
               if (!child.killed) {
@@ -334,6 +336,7 @@ function buildFindToolDefinition(
             });
 
             child.on("error", (error) => {
+              if (child.pid) { childError = error; return; }
               cleanup();
               settle(() => reject(new Error(`Failed to run fd: ${error.message}`)));
             });
@@ -344,6 +347,7 @@ function buildFindToolDefinition(
                 settle(() => reject(new Error("Operation aborted")));
                 return;
               }
+              if (childError) { settle(() => reject(childError)); return; }
               const output = lines.join("\n");
               if (code !== 0) {
                 const errorMsg = stderr.trim() || `fd exited with code ${code}`;

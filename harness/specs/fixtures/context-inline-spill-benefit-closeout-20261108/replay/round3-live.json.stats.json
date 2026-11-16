@@ -1,0 +1,151 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r3",
+  "mode": "live",
+  "records": 96,
+  "allSummaryNumbersRecomputed": true,
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 5,
+      "successRate": 0.20833333333333334,
+      "wilson95": [
+        0.09244825352851857,
+        0.40470453253188665
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.8333333333333334,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 0,
+      "meanTurns": 4.083333333333333,
+      "meanMainContextChars": 2163.9583333333335,
+      "meanInputTokens": 3293.0833333333335,
+      "meanOutputTokens": 1134.2916666666667,
+      "meanTotalTokens": 4427.375,
+      "p50LatencyMs": 17331.325,
+      "p95LatencyMs": 26755.375,
+      "failureClasses": {
+        "answer_mismatch": 15,
+        "schema_invalid": 4,
+        "none": 5
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 7,
+      "successRate": 0.2916666666666667,
+      "wilson95": [
+        0.14914648196960875,
+        0.49167693664496637
+      ],
+      "evidenceSuccessRate": 0.05555555555555555,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.9583333333333335,
+      "meanMainContextChars": 18386.75,
+      "meanInputTokens": 12136.666666666666,
+      "meanOutputTokens": 1426.3333333333333,
+      "meanTotalTokens": 13563,
+      "p50LatencyMs": 22138.403,
+      "p95LatencyMs": 31033.832,
+      "failureClasses": {
+        "recalled_text_evicted": 6,
+        "schema_invalid": 11,
+        "none": 7
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 5,
+      "successRate": 0.20833333333333334,
+      "wilson95": [
+        0.09244825352851857,
+        0.40470453253188665
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.8333333333333334,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.5833333333333335,
+      "meanMainContextChars": 48122.458333333336,
+      "meanInputTokens": 19906.041666666668,
+      "meanOutputTokens": 1742.375,
+      "meanTotalTokens": 21648.416666666668,
+      "p50LatencyMs": 24056.561,
+      "p95LatencyMs": 36808.552,
+      "failureClasses": {
+        "schema_invalid": 18,
+        "recalled_text_evicted": 1,
+        "none": 5
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 4,
+      "successRate": 0.16666666666666666,
+      "wilson95": [
+        0.06678676328632951,
+        0.3585307064969906
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.6666666666666666,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.375,
+      "meanMainContextChars": 45630.291666666664,
+      "meanInputTokens": 18316.208333333332,
+      "meanOutputTokens": 1587.9166666666667,
+      "meanTotalTokens": 19904.125,
+      "p50LatencyMs": 18658.105,
+      "p95LatencyMs": 32598.019,
+      "failureClasses": {
+        "schema_invalid": 19,
+        "recalled_text_evicted": 1,
+        "none": 4
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 4,
+      "onlyA": 1,
+      "onlyB": 1,
+      "neither": 18,
+      "p": 1
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 4,
+      "onlyA": 1,
+      "onlyB": 0,
+      "neither": 19,
+      "p": 1
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 5,
+      "onlyA": 0,
+      "onlyB": 2,
+      "neither": 17,
+      "p": 0.5
+    }
+  },
+  "decisions": {
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": false,
+    "b6_budget": false,
+    "contextGrowthChars": 2492.1666666666715,
+    "tokenGrowthPct": 0.5961377767947111
+  },
+  "wire": null
+}

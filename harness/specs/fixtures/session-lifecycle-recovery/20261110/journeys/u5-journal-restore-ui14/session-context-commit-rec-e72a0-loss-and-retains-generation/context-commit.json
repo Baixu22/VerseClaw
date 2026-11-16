@@ -1,0 +1,2975 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-context-commit",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "backend_identity": null,
+  "provider": "local-scripted",
+  "status": "passed",
+  "sourceHead": "3774c3bad9531a06c49f0c74e7dd4ed81eb6e7f8",
+  "project": {
+    "workspaceId": "u5-commit-restore",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace",
+    "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+    "generation": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c"
+  },
+  "seed": {
+    "source": "source-owner-seed",
+    "stateDir": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-wmpRPo\\verse-claw-e2e-user-data-eqIsTf\\openclaw-source-state",
+    "sqlitePath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-wmpRPo\\verse-claw-e2e-user-data-eqIsTf\\openclaw-source-state\\state\\openclaw.sqlite",
+    "record": {
+      "id": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+      "idempotencyKey": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+      "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+      "agentId": "main",
+      "workspaceId": "u5-commit-restore",
+      "runId": "write-v1",
+      "trigger": "manual_review",
+      "status": "checkpointed",
+      "checkpoint": {
+        "schemaVersion": 1,
+        "trigger": "manual_review",
+        "openBlockers": [],
+        "decisions": [],
+        "deviations": [],
+        "filesTouched": [
+          "result.txt"
+        ],
+        "testsRun": [],
+        "reviewNeededItems": [],
+        "evidenceRefs": [
+          {
+            "type": "session",
+            "ref": "agent:main:session-1794273157043-ucommitrestore"
+          }
+        ],
+        "createdAt": "2026-11-10T01:13:45.827Z",
+        "id": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+        "workspaceId": "u5-commit-restore",
+        "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+        "agentId": "main",
+        "activeTask": "Agent-seeded restore boundary after real v1 write",
+        "metadata": {
+          "journalSessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+          "journalSeq": 1,
+          "driven_by": "agent",
+          "seedSource": "test-process-original-checkpoint-owner"
+        }
+      },
+      "createdAt": 1794273225828,
+      "updatedAt": 1794273225828
+    },
+    "journal": {
+      "entries": [
+        {
+          "seq": 1,
+          "relPath": "result.txt",
+          "absPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+          "snapshotPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\.openclaw\\journal\\b2ee1d8f-1bae-4b01-9cdf-4de66371897c\\0001-result.txt.pre",
+          "hadPrior": false,
+          "toolName": "write",
+          "createdAtMs": 1794273203930,
+          "lineage": {
+            "sessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+            "workspaceRoot": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace",
+            "gatewayGeneration": "1",
+            "requestId": "u5commitwritev1",
+            "flags": {
+              "parseOnTouch": true,
+              "staleWriteGuard": false,
+              "writeJournal": true,
+              "symbolLease": false
+            }
+          }
+        }
+      ],
+      "seq": 1,
+      "preimageSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metaSha256": "3d7ac4b49d8c8f6fad8839caa03a736335cc7a56713a591de9a26a320f576f76"
+    },
+    "recordSha256": "c189a9b0f23e8bcf4ddd6301f5b9afd2d306ab19d82c2e5b8650fcfc2ee119e4"
+  },
+  "writeJournal": {
+    "entries": [
+      {
+        "seq": 1,
+        "relPath": "result.txt",
+        "absPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+        "snapshotPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\.openclaw\\journal\\b2ee1d8f-1bae-4b01-9cdf-4de66371897c\\0001-result.txt.pre",
+        "hadPrior": false,
+        "toolName": "write",
+        "createdAtMs": 1794273203930,
+        "lineage": {
+          "sessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+          "workspaceRoot": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace",
+          "gatewayGeneration": "1",
+          "requestId": "u5commitwritev1",
+          "flags": {
+            "parseOnTouch": true,
+            "staleWriteGuard": false,
+            "writeJournal": true,
+            "symbolLease": false
+          }
+        }
+      },
+      {
+        "seq": 2,
+        "relPath": "result.txt",
+        "absPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+        "snapshotPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\.openclaw\\journal\\b2ee1d8f-1bae-4b01-9cdf-4de66371897c\\0002-result.txt.pre",
+        "hadPrior": true,
+        "toolName": "write",
+        "createdAtMs": 1794273239061,
+        "lineage": {
+          "sessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+          "workspaceRoot": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace",
+          "gatewayGeneration": "1",
+          "requestId": "u5commitwritev2",
+          "flags": {
+            "parseOnTouch": true,
+            "staleWriteGuard": false,
+            "writeJournal": true,
+            "symbolLease": false
+          }
+        }
+      }
+    ],
+    "v2PreimageSha256": "2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf",
+    "v2MetaSha256": "6aa62bb0a89acbc1fd8dd5a11427beaff2228bf663e9c4f05aca97e15d354994",
+    "v2FileSha256": "81db67b6a5702b9b68f0016f061c409bf3fb16d062fc854d1b424bb4e9c28c56"
+  },
+  "staleOwnerRefusal": {
+    "stale": {
+      "error": "Error: [INTERNAL] Session generation changed before checkpoint restore."
+    },
+    "refusalDiff": {
+      "success": true,
+      "key": "agent:main:session-1794273157043-ucommitrestore",
+      "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+      "files": [
+        {
+          "filePath": "result.txt",
+          "status": "modified",
+          "unifiedDiff": "--- result.txt\n+++ result.txt\n@@ -1,1 +1,1 @@\n-v1\n+v2\n"
+        }
+      ],
+      "errors": []
+    },
+    "fileSha256": "81db67b6a5702b9b68f0016f061c409bf3fb16d062fc854d1b424bb4e9c28c56"
+  },
+  "restoreBefore": {
+    "described": {
+      "session": {
+        "key": "agent:main:session-1794273157043-ucommitrestore",
+        "kind": "direct",
+        "label": "U5 commit restore coordinator",
+        "displayName": "U5 commit restore coordinator",
+        "chatType": "direct",
+        "origin": {
+          "label": "Verse Claw",
+          "provider": "webchat",
+          "surface": "webchat",
+          "chatType": "direct"
+        },
+        "updatedAt": 1794273249000,
+        "sessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+        "systemSent": true,
+        "abortedLastRun": false,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "thinkingDefault": "medium",
+        "inputTokens": 360,
+        "outputTokens": 90,
+        "totalTokens": 120,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "status": "done",
+        "startedAt": 1794273231407,
+        "endedAt": 1794273241629,
+        "runtimeMs": 10222,
+        "modelProvider": "custom-sessionc",
+        "model": "mock-coder",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 128000,
+        "deliveryContext": {
+          "channel": "webchat"
+        },
+        "lastChannel": "webchat",
+        "hasActiveRun": false
+      }
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "user",
+          "content": "U5_WRITE_V1",
+          "timestamp": 1794273179454,
+          "idempotencyKey": "write-v1:user",
+          "__openclaw": {
+            "id": "734b51ff",
+            "recordTimestampMs": 1794273188548,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "u5taskstart",
+              "name": "task_control",
+              "arguments": {
+                "action": "start",
+                "requestId": "u5taskstart",
+                "contract": {
+                  "objective": "Verify recovery of the journaled file",
+                  "target": "result.txt",
+                  "constraints": [
+                    "Preserve the restore checkpoint"
+                  ],
+                  "acceptance": [
+                    {
+                      "id": "restored",
+                      "description": "The recovered file contains v1",
+                      "verification": {
+                        "kind": "file-sha256",
+                        "path": "result.txt",
+                        "sha256": "2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1794273190469,
+          "__openclaw": {
+            "id": "016f6df8",
+            "recordTimestampMs": 1794273190554,
+            "seq": 2
+          }
+        },
+        {
+          "role": "toolResult",
+          "toolCallId": "u5taskstart",
+          "toolName": "task_control",
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"contract\":{\"objective\":\"Verify recovery of the journaled file\",\"constraints\":[\"Preserve the restore checkpoint\"],\"acceptance\":[{\"id\":\"restored\",\"description\":\"The recovered file contains v1\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf\"}}],\"target\":\"result.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"requestId\":\"u5taskstart:create\"},\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"domain\":\"9b450546271757925d97c4c5b1760f389b490fcd7e7be073cd0feccea40c311e\",\"revision\":1,\"digest\":\"36354effcef560a4134750a79eb1a6a588a069fa6d4174da0e7b02cd8d96a5c4\",\"state\":\"doing\",\"createdAt\":1794273192557,\"updatedAt\":1794273192563},\"claim\":{\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"generation\":\"b2ee1d8f-1bae-4b01-9cdf-4de66371897c\",\"epoch\":1,\"attemptId\":\"4afede91-a4c2-4a7e-922a-1a94dea15ee5\",\"worktree\":\"d:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui14-results/session-context-commit-rec-e72a0-loss-and-retains-generation/workspace\",\"contractRevision\":1,\"expiresAt\":1794273312562,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+            }
+          ],
+          "isError": false,
+          "timestamp": 1794273194218,
+          "__openclaw": {
+            "id": "adfddaf9",
+            "recordTimestampMs": 1794273194232,
+            "seq": 3
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "u5commitwritev1",
+              "name": "write",
+              "arguments": {
+                "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+                "content": "v1\n"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1794273194356,
+          "__openclaw": {
+            "id": "8c3a210f",
+            "recordTimestampMs": 1794273194412,
+            "seq": 4
+          }
+        },
+        {
+          "role": "toolResult",
+          "toolCallId": "u5commitwritev1",
+          "toolName": "write",
+          "content": [
+            {
+              "type": "text",
+              "text": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+            },
+            {
+              "type": "text",
+              "text": "verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+            }
+          ],
+          "isError": false,
+          "timestamp": 1794273205162,
+          "__openclaw": {
+            "id": "0fc5456e",
+            "recordTimestampMs": 1794273205167,
+            "seq": 5
+          },
+          "details": {
+            "patchArtifacts": [
+              {
+                "schema": "GitPatchArtifact/v1",
+                "file": "result.txt",
+                "status": "added",
+                "contentKind": "text",
+                "hunks": [
+                  {
+                    "oldStart": 0,
+                    "oldLines": 0,
+                    "newStart": 1,
+                    "newLines": 1,
+                    "lines": [
+                      {
+                        "kind": "addition",
+                        "text": "v1",
+                        "oldLine": null,
+                        "newLine": 1
+                      }
+                    ]
+                  }
+                ],
+                "patch": "--- /dev/null\n+++ result.txt\n@@ -0,0 +1,1 @@\n+v1\n",
+                "completeness": "complete",
+                "lineage": {
+                  "requestId": "u5commitwritev1",
+                  "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:1"
+                }
+              }
+            ],
+            "write_journal": {
+              "undoable": true,
+              "snapshots": [
+                {
+                  "seq": 1,
+                  "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:1",
+                  "path": "result.txt",
+                  "hadPrior": false
+                }
+              ]
+            },
+            "verify_tests": {
+              "detected": false,
+              "skipReason": "no-manifest",
+              "message": "No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+              "rendered": "skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+            }
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5_v1_DONE"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794273205219,
+          "__openclaw": {
+            "id": "4a55cfc6",
+            "recordTimestampMs": 1794273205286,
+            "seq": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=unknown; complete=false; bindingRevision=1; chars=0/1800; truncated=false\n- No accepted continuity items were available. Do not infer task completion or missing facts.\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:session-1794273157043-ucommitrestore; taskLedger=task-ledger:u5-commit-restore; taskLedgerEvents=5; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\n\nU5_WRITE_V2",
+          "timestamp": 1794273228601,
+          "idempotencyKey": "write-v2:user",
+          "__openclaw": {
+            "id": "28fad579",
+            "recordTimestampMs": 1794273232610,
+            "seq": 7
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "u5commitreadv1",
+              "name": "read",
+              "arguments": {
+                "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1794273234804,
+          "__openclaw": {
+            "id": "db05fcd8",
+            "recordTimestampMs": 1794273234843,
+            "seq": 8
+          }
+        },
+        {
+          "role": "toolResult",
+          "toolCallId": "u5commitreadv1",
+          "toolName": "read",
+          "content": [
+            {
+              "type": "text",
+              "text": "v1\n"
+            }
+          ],
+          "isError": false,
+          "timestamp": 1794273237019,
+          "__openclaw": {
+            "id": "1207732c",
+            "recordTimestampMs": 1794273237025,
+            "seq": 9
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "u5commitwritev2",
+              "name": "write",
+              "arguments": {
+                "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+                "content": "v2\n"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1794273237062,
+          "__openclaw": {
+            "id": "7f538ad0",
+            "recordTimestampMs": 1794273237089,
+            "seq": 10
+          }
+        },
+        {
+          "role": "toolResult",
+          "toolCallId": "u5commitwritev2",
+          "toolName": "write",
+          "content": [
+            {
+              "type": "text",
+              "text": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+            },
+            {
+              "type": "text",
+              "text": "verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+            }
+          ],
+          "isError": false,
+          "timestamp": 1794273239978,
+          "__openclaw": {
+            "id": "2656361e",
+            "recordTimestampMs": 1794273239988,
+            "seq": 11
+          },
+          "details": {
+            "patchArtifacts": [
+              {
+                "schema": "GitPatchArtifact/v1",
+                "file": "result.txt",
+                "status": "modified",
+                "contentKind": "text",
+                "hunks": [
+                  {
+                    "oldStart": 1,
+                    "oldLines": 1,
+                    "newStart": 1,
+                    "newLines": 1,
+                    "lines": [
+                      {
+                        "kind": "deletion",
+                        "text": "v1",
+                        "oldLine": 1,
+                        "newLine": null
+                      },
+                      {
+                        "kind": "addition",
+                        "text": "v2",
+                        "oldLine": null,
+                        "newLine": 1
+                      }
+                    ]
+                  }
+                ],
+                "patch": "--- result.txt\n+++ result.txt\n@@ -1,1 +1,1 @@\n-v1\n+v2\n",
+                "completeness": "complete",
+                "lineage": {
+                  "requestId": "u5commitwritev2",
+                  "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:2"
+                }
+              }
+            ],
+            "write_journal": {
+              "undoable": true,
+              "snapshots": [
+                {
+                  "seq": 2,
+                  "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:2",
+                  "path": "result.txt",
+                  "hadPrior": true
+                }
+              ]
+            },
+            "verify_tests": {
+              "detected": false,
+              "skipReason": "no-manifest",
+              "message": "No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+              "rendered": "skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+            }
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5_v2_DONE"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794273240071,
+          "__openclaw": {
+            "id": "44b8d70f",
+            "recordTimestampMs": 1794273240130,
+            "seq": 12
+          }
+        }
+      ],
+      "sessionGeneration": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+      "model": "custom-sessionc/mock-coder"
+    },
+    "compactions": {
+      "ok": true,
+      "key": "agent:main:session-1794273157043-ucommitrestore",
+      "checkpoints": []
+    },
+    "checkpoints": {
+      "success": true,
+      "key": "agent:main:session-1794273157043-ucommitrestore",
+      "checkpoints": [
+        {
+          "id": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+          "idempotencyKey": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "workspaceId": "u5-commit-restore",
+          "runId": "write-v1",
+          "trigger": "manual_review",
+          "status": "checkpointed",
+          "checkpoint": {
+            "schemaVersion": 1,
+            "trigger": "manual_review",
+            "openBlockers": [],
+            "decisions": [],
+            "deviations": [],
+            "filesTouched": [
+              "result.txt"
+            ],
+            "testsRun": [],
+            "reviewNeededItems": [],
+            "evidenceRefs": [
+              {
+                "type": "session",
+                "ref": "agent:main:session-1794273157043-ucommitrestore"
+              }
+            ],
+            "createdAt": "2026-11-10T01:13:45.827Z",
+            "id": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+            "workspaceId": "u5-commit-restore",
+            "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+            "agentId": "main",
+            "activeTask": "Agent-seeded restore boundary after real v1 write",
+            "metadata": {
+              "journalSessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+              "journalSeq": 1,
+              "driven_by": "agent",
+              "seedSource": "test-process-original-checkpoint-owner"
+            }
+          },
+          "createdAt": 1794273225828,
+          "updatedAt": 1794273225828
+        }
+      ]
+    },
+    "compactionHistory": {
+      "success": true,
+      "entries": []
+    },
+    "compactionStatus": {
+      "success": true,
+      "available": true,
+      "canCompact": true,
+      "inProgress": false,
+      "usedTokens": 120,
+      "maxTokens": 128000,
+      "remainingTokens": 127880,
+      "pressure": "low",
+      "truncatedMessageCount": 0,
+      "warnings": [
+        "context_budget_unknown"
+      ]
+    },
+    "sessionKeys": [
+      "agent:main:session-1794273157043-ucommitrestore"
+    ]
+  },
+  "restore": {
+    "before": {
+      "described": {
+        "session": {
+          "key": "agent:main:session-1794273157043-ucommitrestore",
+          "kind": "direct",
+          "label": "U5 commit restore coordinator",
+          "displayName": "U5 commit restore coordinator",
+          "chatType": "direct",
+          "origin": {
+            "label": "Verse Claw",
+            "provider": "webchat",
+            "surface": "webchat",
+            "chatType": "direct"
+          },
+          "updatedAt": 1794273249000,
+          "sessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+          "systemSent": true,
+          "abortedLastRun": false,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            },
+            {
+              "id": "minimal",
+              "label": "minimal"
+            },
+            {
+              "id": "low",
+              "label": "low"
+            },
+            {
+              "id": "medium",
+              "label": "medium"
+            },
+            {
+              "id": "high",
+              "label": "high"
+            }
+          ],
+          "thinkingOptions": [
+            "off",
+            "minimal",
+            "low",
+            "medium",
+            "high"
+          ],
+          "thinkingDefault": "medium",
+          "inputTokens": 360,
+          "outputTokens": 90,
+          "totalTokens": 120,
+          "totalTokensFresh": true,
+          "estimatedCostUsd": 0,
+          "status": "done",
+          "startedAt": 1794273231407,
+          "endedAt": 1794273241629,
+          "runtimeMs": 10222,
+          "modelProvider": "custom-sessionc",
+          "model": "mock-coder",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 128000,
+          "deliveryContext": {
+            "channel": "webchat"
+          },
+          "lastChannel": "webchat",
+          "hasActiveRun": false
+        }
+      },
+      "history": {
+        "success": true,
+        "messages": [
+          {
+            "role": "user",
+            "content": "U5_WRITE_V1",
+            "timestamp": 1794273179454,
+            "idempotencyKey": "write-v1:user",
+            "__openclaw": {
+              "id": "734b51ff",
+              "recordTimestampMs": 1794273188548,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "u5taskstart",
+                "name": "task_control",
+                "arguments": {
+                  "action": "start",
+                  "requestId": "u5taskstart",
+                  "contract": {
+                    "objective": "Verify recovery of the journaled file",
+                    "target": "result.txt",
+                    "constraints": [
+                      "Preserve the restore checkpoint"
+                    ],
+                    "acceptance": [
+                      {
+                        "id": "restored",
+                        "description": "The recovered file contains v1",
+                        "verification": {
+                          "kind": "file-sha256",
+                          "path": "result.txt",
+                          "sha256": "2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1794273190469,
+            "__openclaw": {
+              "id": "016f6df8",
+              "recordTimestampMs": 1794273190554,
+              "seq": 2
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "u5taskstart",
+            "toolName": "task_control",
+            "content": [
+              {
+                "type": "text",
+                "text": "{\"contract\":{\"objective\":\"Verify recovery of the journaled file\",\"constraints\":[\"Preserve the restore checkpoint\"],\"acceptance\":[{\"id\":\"restored\",\"description\":\"The recovered file contains v1\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf\"}}],\"target\":\"result.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"requestId\":\"u5taskstart:create\"},\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"domain\":\"9b450546271757925d97c4c5b1760f389b490fcd7e7be073cd0feccea40c311e\",\"revision\":1,\"digest\":\"36354effcef560a4134750a79eb1a6a588a069fa6d4174da0e7b02cd8d96a5c4\",\"state\":\"doing\",\"createdAt\":1794273192557,\"updatedAt\":1794273192563},\"claim\":{\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"generation\":\"b2ee1d8f-1bae-4b01-9cdf-4de66371897c\",\"epoch\":1,\"attemptId\":\"4afede91-a4c2-4a7e-922a-1a94dea15ee5\",\"worktree\":\"d:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui14-results/session-context-commit-rec-e72a0-loss-and-retains-generation/workspace\",\"contractRevision\":1,\"expiresAt\":1794273312562,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+              }
+            ],
+            "isError": false,
+            "timestamp": 1794273194218,
+            "__openclaw": {
+              "id": "adfddaf9",
+              "recordTimestampMs": 1794273194232,
+              "seq": 3
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "u5commitwritev1",
+                "name": "write",
+                "arguments": {
+                  "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+                  "content": "v1\n"
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1794273194356,
+            "__openclaw": {
+              "id": "8c3a210f",
+              "recordTimestampMs": 1794273194412,
+              "seq": 4
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "u5commitwritev1",
+            "toolName": "write",
+            "content": [
+              {
+                "type": "text",
+                "text": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+              },
+              {
+                "type": "text",
+                "text": "verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+              }
+            ],
+            "isError": false,
+            "timestamp": 1794273205162,
+            "__openclaw": {
+              "id": "0fc5456e",
+              "recordTimestampMs": 1794273205167,
+              "seq": 5
+            },
+            "details": {
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "result.txt",
+                  "status": "added",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 0,
+                      "oldLines": 0,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "addition",
+                          "text": "v1",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "--- /dev/null\n+++ result.txt\n@@ -0,0 +1,1 @@\n+v1\n",
+                  "completeness": "complete",
+                  "lineage": {
+                    "requestId": "u5commitwritev1",
+                    "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:1"
+                  }
+                }
+              ],
+              "write_journal": {
+                "undoable": true,
+                "snapshots": [
+                  {
+                    "seq": 1,
+                    "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:1",
+                    "path": "result.txt",
+                    "hadPrior": false
+                  }
+                ]
+              },
+              "verify_tests": {
+                "detected": false,
+                "skipReason": "no-manifest",
+                "message": "No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+                "rendered": "skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+              }
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "U5_v1_DONE"
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "stop",
+            "timestamp": 1794273205219,
+            "__openclaw": {
+              "id": "4a55cfc6",
+              "recordTimestampMs": 1794273205286,
+              "seq": 6
+            }
+          },
+          {
+            "role": "user",
+            "content": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=unknown; complete=false; bindingRevision=1; chars=0/1800; truncated=false\n- No accepted continuity items were available. Do not infer task completion or missing facts.\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:session-1794273157043-ucommitrestore; taskLedger=task-ledger:u5-commit-restore; taskLedgerEvents=5; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\n\nU5_WRITE_V2",
+            "timestamp": 1794273228601,
+            "idempotencyKey": "write-v2:user",
+            "__openclaw": {
+              "id": "28fad579",
+              "recordTimestampMs": 1794273232610,
+              "seq": 7
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "u5commitreadv1",
+                "name": "read",
+                "arguments": {
+                  "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1794273234804,
+            "__openclaw": {
+              "id": "db05fcd8",
+              "recordTimestampMs": 1794273234843,
+              "seq": 8
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "u5commitreadv1",
+            "toolName": "read",
+            "content": [
+              {
+                "type": "text",
+                "text": "v1\n"
+              }
+            ],
+            "isError": false,
+            "timestamp": 1794273237019,
+            "__openclaw": {
+              "id": "1207732c",
+              "recordTimestampMs": 1794273237025,
+              "seq": 9
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "u5commitwritev2",
+                "name": "write",
+                "arguments": {
+                  "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+                  "content": "v2\n"
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1794273237062,
+            "__openclaw": {
+              "id": "7f538ad0",
+              "recordTimestampMs": 1794273237089,
+              "seq": 10
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "u5commitwritev2",
+            "toolName": "write",
+            "content": [
+              {
+                "type": "text",
+                "text": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+              },
+              {
+                "type": "text",
+                "text": "verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+              }
+            ],
+            "isError": false,
+            "timestamp": 1794273239978,
+            "__openclaw": {
+              "id": "2656361e",
+              "recordTimestampMs": 1794273239988,
+              "seq": 11
+            },
+            "details": {
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "result.txt",
+                  "status": "modified",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 1,
+                      "oldLines": 1,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "deletion",
+                          "text": "v1",
+                          "oldLine": 1,
+                          "newLine": null
+                        },
+                        {
+                          "kind": "addition",
+                          "text": "v2",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "--- result.txt\n+++ result.txt\n@@ -1,1 +1,1 @@\n-v1\n+v2\n",
+                  "completeness": "complete",
+                  "lineage": {
+                    "requestId": "u5commitwritev2",
+                    "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:2"
+                  }
+                }
+              ],
+              "write_journal": {
+                "undoable": true,
+                "snapshots": [
+                  {
+                    "seq": 2,
+                    "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:2",
+                    "path": "result.txt",
+                    "hadPrior": true
+                  }
+                ]
+              },
+              "verify_tests": {
+                "detected": false,
+                "skipReason": "no-manifest",
+                "message": "No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+                "rendered": "skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+              }
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "U5_v2_DONE"
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "stop",
+            "timestamp": 1794273240071,
+            "__openclaw": {
+              "id": "44b8d70f",
+              "recordTimestampMs": 1794273240130,
+              "seq": 12
+            }
+          }
+        ],
+        "sessionGeneration": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+        "model": "custom-sessionc/mock-coder"
+      },
+      "compactions": {
+        "ok": true,
+        "key": "agent:main:session-1794273157043-ucommitrestore",
+        "checkpoints": []
+      },
+      "checkpoints": {
+        "success": true,
+        "key": "agent:main:session-1794273157043-ucommitrestore",
+        "checkpoints": [
+          {
+            "id": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+            "idempotencyKey": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+            "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+            "agentId": "main",
+            "workspaceId": "u5-commit-restore",
+            "runId": "write-v1",
+            "trigger": "manual_review",
+            "status": "checkpointed",
+            "checkpoint": {
+              "schemaVersion": 1,
+              "trigger": "manual_review",
+              "openBlockers": [],
+              "decisions": [],
+              "deviations": [],
+              "filesTouched": [
+                "result.txt"
+              ],
+              "testsRun": [],
+              "reviewNeededItems": [],
+              "evidenceRefs": [
+                {
+                  "type": "session",
+                  "ref": "agent:main:session-1794273157043-ucommitrestore"
+                }
+              ],
+              "createdAt": "2026-11-10T01:13:45.827Z",
+              "id": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+              "workspaceId": "u5-commit-restore",
+              "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+              "agentId": "main",
+              "activeTask": "Agent-seeded restore boundary after real v1 write",
+              "metadata": {
+                "journalSessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+                "journalSeq": 1,
+                "driven_by": "agent",
+                "seedSource": "test-process-original-checkpoint-owner"
+              }
+            },
+            "createdAt": 1794273225828,
+            "updatedAt": 1794273225828
+          }
+        ]
+      },
+      "compactionHistory": {
+        "success": true,
+        "entries": []
+      },
+      "compactionStatus": {
+        "success": true,
+        "available": true,
+        "canCompact": true,
+        "inProgress": false,
+        "usedTokens": 120,
+        "maxTokens": 128000,
+        "remainingTokens": 127880,
+        "pressure": "low",
+        "truncatedMessageCount": 0,
+        "warnings": [
+          "context_budget_unknown"
+        ]
+      },
+      "sessionKeys": [
+        "agent:main:session-1794273157043-ucommitrestore"
+      ]
+    },
+    "after": {
+      "described": {
+        "session": {
+          "key": "agent:main:session-1794273157043-ucommitrestore",
+          "kind": "direct",
+          "label": "U5 commit restore coordinator",
+          "displayName": "U5 commit restore coordinator",
+          "chatType": "direct",
+          "origin": {
+            "label": "Verse Claw",
+            "provider": "webchat",
+            "surface": "webchat",
+            "chatType": "direct"
+          },
+          "updatedAt": 1794273249000,
+          "sessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+          "systemSent": true,
+          "abortedLastRun": false,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            },
+            {
+              "id": "minimal",
+              "label": "minimal"
+            },
+            {
+              "id": "low",
+              "label": "low"
+            },
+            {
+              "id": "medium",
+              "label": "medium"
+            },
+            {
+              "id": "high",
+              "label": "high"
+            }
+          ],
+          "thinkingOptions": [
+            "off",
+            "minimal",
+            "low",
+            "medium",
+            "high"
+          ],
+          "thinkingDefault": "medium",
+          "inputTokens": 360,
+          "outputTokens": 90,
+          "totalTokens": 120,
+          "totalTokensFresh": true,
+          "estimatedCostUsd": 0,
+          "status": "done",
+          "startedAt": 1794273231407,
+          "endedAt": 1794273241629,
+          "runtimeMs": 10222,
+          "modelProvider": "custom-sessionc",
+          "model": "mock-coder",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 128000,
+          "deliveryContext": {
+            "channel": "webchat"
+          },
+          "lastChannel": "webchat",
+          "hasActiveRun": false
+        }
+      },
+      "history": {
+        "success": true,
+        "messages": [
+          {
+            "role": "user",
+            "content": "U5_WRITE_V1",
+            "timestamp": 1794273179454,
+            "idempotencyKey": "write-v1:user",
+            "__openclaw": {
+              "id": "734b51ff",
+              "recordTimestampMs": 1794273188548,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "u5taskstart",
+                "name": "task_control",
+                "arguments": {
+                  "action": "start",
+                  "requestId": "u5taskstart",
+                  "contract": {
+                    "objective": "Verify recovery of the journaled file",
+                    "target": "result.txt",
+                    "constraints": [
+                      "Preserve the restore checkpoint"
+                    ],
+                    "acceptance": [
+                      {
+                        "id": "restored",
+                        "description": "The recovered file contains v1",
+                        "verification": {
+                          "kind": "file-sha256",
+                          "path": "result.txt",
+                          "sha256": "2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1794273190469,
+            "__openclaw": {
+              "id": "016f6df8",
+              "recordTimestampMs": 1794273190554,
+              "seq": 2
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "u5taskstart",
+            "toolName": "task_control",
+            "content": [
+              {
+                "type": "text",
+                "text": "{\"contract\":{\"objective\":\"Verify recovery of the journaled file\",\"constraints\":[\"Preserve the restore checkpoint\"],\"acceptance\":[{\"id\":\"restored\",\"description\":\"The recovered file contains v1\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf\"}}],\"target\":\"result.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"requestId\":\"u5taskstart:create\"},\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"domain\":\"9b450546271757925d97c4c5b1760f389b490fcd7e7be073cd0feccea40c311e\",\"revision\":1,\"digest\":\"36354effcef560a4134750a79eb1a6a588a069fa6d4174da0e7b02cd8d96a5c4\",\"state\":\"doing\",\"createdAt\":1794273192557,\"updatedAt\":1794273192563},\"claim\":{\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"generation\":\"b2ee1d8f-1bae-4b01-9cdf-4de66371897c\",\"epoch\":1,\"attemptId\":\"4afede91-a4c2-4a7e-922a-1a94dea15ee5\",\"worktree\":\"d:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui14-results/session-context-commit-rec-e72a0-loss-and-retains-generation/workspace\",\"contractRevision\":1,\"expiresAt\":1794273312562,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+              }
+            ],
+            "isError": false,
+            "timestamp": 1794273194218,
+            "__openclaw": {
+              "id": "adfddaf9",
+              "recordTimestampMs": 1794273194232,
+              "seq": 3
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "u5commitwritev1",
+                "name": "write",
+                "arguments": {
+                  "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+                  "content": "v1\n"
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1794273194356,
+            "__openclaw": {
+              "id": "8c3a210f",
+              "recordTimestampMs": 1794273194412,
+              "seq": 4
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "u5commitwritev1",
+            "toolName": "write",
+            "content": [
+              {
+                "type": "text",
+                "text": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+              },
+              {
+                "type": "text",
+                "text": "verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+              }
+            ],
+            "isError": false,
+            "timestamp": 1794273205162,
+            "__openclaw": {
+              "id": "0fc5456e",
+              "recordTimestampMs": 1794273205167,
+              "seq": 5
+            },
+            "details": {
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "result.txt",
+                  "status": "added",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 0,
+                      "oldLines": 0,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "addition",
+                          "text": "v1",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "--- /dev/null\n+++ result.txt\n@@ -0,0 +1,1 @@\n+v1\n",
+                  "completeness": "complete",
+                  "lineage": {
+                    "requestId": "u5commitwritev1",
+                    "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:1"
+                  }
+                }
+              ],
+              "write_journal": {
+                "undoable": true,
+                "snapshots": [
+                  {
+                    "seq": 1,
+                    "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:1",
+                    "path": "result.txt",
+                    "hadPrior": false
+                  }
+                ]
+              },
+              "verify_tests": {
+                "detected": false,
+                "skipReason": "no-manifest",
+                "message": "No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+                "rendered": "skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+              }
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "U5_v1_DONE"
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "stop",
+            "timestamp": 1794273205219,
+            "__openclaw": {
+              "id": "4a55cfc6",
+              "recordTimestampMs": 1794273205286,
+              "seq": 6
+            }
+          },
+          {
+            "role": "user",
+            "content": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=unknown; complete=false; bindingRevision=1; chars=0/1800; truncated=false\n- No accepted continuity items were available. Do not infer task completion or missing facts.\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:session-1794273157043-ucommitrestore; taskLedger=task-ledger:u5-commit-restore; taskLedgerEvents=5; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\n\nU5_WRITE_V2",
+            "timestamp": 1794273228601,
+            "idempotencyKey": "write-v2:user",
+            "__openclaw": {
+              "id": "28fad579",
+              "recordTimestampMs": 1794273232610,
+              "seq": 7
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "u5commitreadv1",
+                "name": "read",
+                "arguments": {
+                  "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1794273234804,
+            "__openclaw": {
+              "id": "db05fcd8",
+              "recordTimestampMs": 1794273234843,
+              "seq": 8
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "u5commitreadv1",
+            "toolName": "read",
+            "content": [
+              {
+                "type": "text",
+                "text": "v1\n"
+              }
+            ],
+            "isError": false,
+            "timestamp": 1794273237019,
+            "__openclaw": {
+              "id": "1207732c",
+              "recordTimestampMs": 1794273237025,
+              "seq": 9
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "u5commitwritev2",
+                "name": "write",
+                "arguments": {
+                  "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt",
+                  "content": "v2\n"
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1794273237062,
+            "__openclaw": {
+              "id": "7f538ad0",
+              "recordTimestampMs": 1794273237089,
+              "seq": 10
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "u5commitwritev2",
+            "toolName": "write",
+            "content": [
+              {
+                "type": "text",
+                "text": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt"
+              },
+              {
+                "type": "text",
+                "text": "verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+              }
+            ],
+            "isError": false,
+            "timestamp": 1794273239978,
+            "__openclaw": {
+              "id": "2656361e",
+              "recordTimestampMs": 1794273239988,
+              "seq": 11
+            },
+            "details": {
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "result.txt",
+                  "status": "modified",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 1,
+                      "oldLines": 1,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "deletion",
+                          "text": "v1",
+                          "oldLine": 1,
+                          "newLine": null
+                        },
+                        {
+                          "kind": "addition",
+                          "text": "v2",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "--- result.txt\n+++ result.txt\n@@ -1,1 +1,1 @@\n-v1\n+v2\n",
+                  "completeness": "complete",
+                  "lineage": {
+                    "requestId": "u5commitwritev2",
+                    "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:2"
+                  }
+                }
+              ],
+              "write_journal": {
+                "undoable": true,
+                "snapshots": [
+                  {
+                    "seq": 2,
+                    "journalEntryId": "write-journal:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:2",
+                    "path": "result.txt",
+                    "hadPrior": true
+                  }
+                ]
+              },
+              "verify_tests": {
+                "detected": false,
+                "skipReason": "no-manifest",
+                "message": "No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+                "rendered": "skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+              }
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "U5_v2_DONE"
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "stop",
+            "timestamp": 1794273240071,
+            "__openclaw": {
+              "id": "44b8d70f",
+              "recordTimestampMs": 1794273240130,
+              "seq": 12
+            }
+          }
+        ],
+        "sessionGeneration": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+        "model": "custom-sessionc/mock-coder"
+      },
+      "compactions": {
+        "ok": true,
+        "key": "agent:main:session-1794273157043-ucommitrestore",
+        "checkpoints": []
+      },
+      "checkpoints": {
+        "success": true,
+        "key": "agent:main:session-1794273157043-ucommitrestore",
+        "checkpoints": [
+          {
+            "id": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+            "idempotencyKey": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+            "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+            "agentId": "main",
+            "workspaceId": "u5-commit-restore",
+            "runId": "write-v1",
+            "trigger": "manual_review",
+            "status": "checkpointed",
+            "checkpoint": {
+              "schemaVersion": 1,
+              "trigger": "manual_review",
+              "openBlockers": [],
+              "decisions": [],
+              "deviations": [],
+              "filesTouched": [
+                "result.txt"
+              ],
+              "testsRun": [],
+              "reviewNeededItems": [],
+              "evidenceRefs": [
+                {
+                  "type": "session",
+                  "ref": "agent:main:session-1794273157043-ucommitrestore"
+                }
+              ],
+              "createdAt": "2026-11-10T01:13:45.827Z",
+              "id": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+              "workspaceId": "u5-commit-restore",
+              "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+              "agentId": "main",
+              "activeTask": "Agent-seeded restore boundary after real v1 write",
+              "metadata": {
+                "journalSessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+                "journalSeq": 1,
+                "driven_by": "agent",
+                "seedSource": "test-process-original-checkpoint-owner"
+              }
+            },
+            "createdAt": 1794273225828,
+            "updatedAt": 1794273225828
+          }
+        ]
+      },
+      "compactionHistory": {
+        "success": true,
+        "entries": []
+      },
+      "compactionStatus": {
+        "success": true,
+        "available": true,
+        "canCompact": true,
+        "inProgress": false,
+        "usedTokens": 120,
+        "maxTokens": 128000,
+        "remainingTokens": 127880,
+        "pressure": "low",
+        "truncatedMessageCount": 0,
+        "warnings": [
+          "context_budget_unknown"
+        ]
+      },
+      "sessionKeys": [
+        "agent:main:session-1794273157043-ucommitrestore"
+      ]
+    },
+    "lost": {
+      "action": "restoreCheckpoint",
+      "payload": {
+        "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+        "expectedSessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+        "agentId": "main",
+        "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+      },
+      "startedAt": 1794273261277,
+      "ownerReply": {
+        "id": "cd09cc04-8883-4085-9176-06d123076b7d",
+        "ok": true,
+        "data": {
+          "success": true,
+          "key": "agent:main:session-1794273157043-ucommitrestore",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+          "rolledBackTo": "checkpoint:u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+          "mode": "legacy_checkpoint_fallback",
+          "evidenceSummary": "Restored from checkpoint \"u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1\" at tick 0; file writes were rolled back via the write-journal, but runtime state and external side effects are not restored (event-log replay not implemented)"
+        }
+      },
+      "completed": true,
+      "completedAt": 1794273261798,
+      "fileSha256": "2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf",
+      "dropped": true,
+      "error": "Error: U5_POST_COMMIT_REPLY_LOSS:restoreCheckpoint"
+    },
+    "diffBefore": {
+      "success": true,
+      "key": "agent:main:session-1794273157043-ucommitrestore",
+      "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+      "files": [
+        {
+          "filePath": "result.txt",
+          "status": "modified",
+          "unifiedDiff": "--- result.txt\n+++ result.txt\n@@ -1,1 +1,1 @@\n-v1\n+v2\n"
+        }
+      ],
+      "errors": []
+    },
+    "diffAfter": {
+      "success": true,
+      "key": "agent:main:session-1794273157043-ucommitrestore",
+      "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+      "files": [],
+      "errors": []
+    },
+    "restoredFileSha256": "2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf",
+    "source": "source-owner-seed",
+    "translations": [
+      {
+        "language": "en",
+        "title": "Session checkpoints",
+        "emptyDiff": "No file changes to undo for this checkpoint."
+      },
+      {
+        "language": "zh",
+        "title": "会话检查点",
+        "emptyDiff": "该检查点没有可撤销的文件改动。"
+      },
+      {
+        "language": "ja",
+        "title": "セッションのチェックポイント",
+        "emptyDiff": "このチェックポイントに元に戻す変更はありません。"
+      },
+      {
+        "language": "ru",
+        "title": "Контрольные точки сессии",
+        "emptyDiff": "Нет изменений для отката для этой контрольной точки."
+      }
+    ],
+    "naturalProductCheckpoint": false,
+    "automaticRedispatches": 0,
+    "clientOperationIdConfirmed": false
+  },
+  "fault": {
+    "calls": [
+      {
+        "action": "restoreCheckpoint",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "expectedSessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+          "agentId": "main",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+        },
+        "startedAt": 1794273261277,
+        "ownerReply": {
+          "id": "cd09cc04-8883-4085-9176-06d123076b7d",
+          "ok": true,
+          "data": {
+            "success": true,
+            "key": "agent:main:session-1794273157043-ucommitrestore",
+            "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+            "rolledBackTo": "checkpoint:u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1",
+            "mode": "legacy_checkpoint_fallback",
+            "evidenceSummary": "Restored from checkpoint \"u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1\" at tick 0; file writes were rolled back via the write-journal, but runtime state and external side effects are not restored (event-log replay not implemented)"
+          }
+        },
+        "completed": true,
+        "completedAt": 1794273261798,
+        "fileSha256": "2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf",
+        "dropped": true,
+        "error": "Error: U5_POST_COMMIT_REPLY_LOSS:restoreCheckpoint"
+      }
+    ],
+    "reads": [
+      {
+        "id": "dfda4621-762e-4c88-9cfa-109e079d20d6",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273314549,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "dfda4621-762e-4c88-9cfa-109e079d20d6"
+        }
+      },
+      {
+        "id": "79f3c359-1d48-4400-a77d-1c2c4462d648",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273315054,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "79f3c359-1d48-4400-a77d-1c2c4462d648"
+        }
+      },
+      {
+        "id": "180e3455-ba52-4cf7-9bf0-83754133beeb",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273315054,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "180e3455-ba52-4cf7-9bf0-83754133beeb"
+        }
+      },
+      {
+        "id": "b87bb108-8552-496b-88b5-71efffd984f2",
+        "module": "sessions",
+        "action": "resumeCheckpoints",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 20
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273315849,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "b87bb108-8552-496b-88b5-71efffd984f2"
+        }
+      },
+      {
+        "id": "2178a15b-9e24-4779-8f50-430cbe7ac7c1",
+        "module": "sessions",
+        "action": "history",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "limit": 200
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273316038,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "2178a15b-9e24-4779-8f50-430cbe7ac7c1"
+        }
+      },
+      {
+        "id": "88e749af-95a5-4f42-9e3e-0743c9751b98",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273319432,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "88e749af-95a5-4f42-9e3e-0743c9751b98"
+        }
+      },
+      {
+        "id": "9c70419f-acf8-4e20-8b09-6a8767f99739",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273319432,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "9c70419f-acf8-4e20-8b09-6a8767f99739"
+        }
+      },
+      {
+        "id": "fe0fddda-9ba6-46f7-b50c-0a1fe07b3e6f",
+        "module": "sessions",
+        "action": "resumeCheckpoints",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 20
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273320518,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "fe0fddda-9ba6-46f7-b50c-0a1fe07b3e6f"
+        }
+      },
+      {
+        "id": "8d4fddc7-3427-496c-b56f-a7d6fc48d582",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273320518,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "8d4fddc7-3427-496c-b56f-a7d6fc48d582"
+        }
+      },
+      {
+        "id": "d67bf4a7-e859-443f-a244-3196358f19be",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273321022,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "d67bf4a7-e859-443f-a244-3196358f19be"
+        }
+      },
+      {
+        "id": "0325dc64-0b1e-42ed-89de-74a0b020512f",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273321022,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "0325dc64-0b1e-42ed-89de-74a0b020512f"
+        }
+      },
+      {
+        "id": "645075a3-fee2-4295-99e0-4a130e363784",
+        "module": "sessions",
+        "action": "resumeCheckpoints",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 20
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273322241,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "645075a3-fee2-4295-99e0-4a130e363784"
+        }
+      },
+      {
+        "id": "6ea9afe8-674f-4cd1-a75c-8d5f04ce4624",
+        "module": "sessions",
+        "action": "checkpointDiff",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273322308,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "6ea9afe8-674f-4cd1-a75c-8d5f04ce4624"
+        }
+      },
+      {
+        "id": "fp-p1-1794273262954-0.045482748354075064",
+        "module": "sessions",
+        "action": "history",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "expectedSessionGeneration": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+          "limit": 100
+        }
+      },
+      {
+        "id": "fp-p1-1794273265399-0.18180064286965858",
+        "module": "sessions",
+        "action": "resumeCheckpoints",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 100
+        }
+      },
+      {
+        "id": "fp-p1-1794273265406-0.22066730548238334",
+        "module": "sessions",
+        "action": "compactionHistory",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 100
+        }
+      },
+      {
+        "id": "fp-p1-1794273265412-0.15108217543214386",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        }
+      },
+      {
+        "id": "fp-p1-1794273266536-0.06095028226404242",
+        "module": "sessions",
+        "action": "checkpointDiff",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+        }
+      },
+      {
+        "id": "883494f4-a980-4785-8a98-be01e293714c",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273328368,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "883494f4-a980-4785-8a98-be01e293714c"
+        }
+      },
+      {
+        "id": "4d433e69-d54f-4873-9a9f-a7427f72b3ed",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273328871,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "4d433e69-d54f-4873-9a9f-a7427f72b3ed"
+        }
+      },
+      {
+        "id": "f389b3f8-ce5d-44f0-960a-2716b65178b2",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273328871,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "f389b3f8-ce5d-44f0-960a-2716b65178b2"
+        }
+      },
+      {
+        "id": "d54d36aa-5339-49de-badb-d4e6298e9f62",
+        "module": "sessions",
+        "action": "history",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "limit": 200
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273329853,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "d54d36aa-5339-49de-badb-d4e6298e9f62"
+        }
+      },
+      {
+        "id": "a0d64a5c-90c7-4a92-92e9-e0d1bf4e8b6c",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273332871,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "a0d64a5c-90c7-4a92-92e9-e0d1bf4e8b6c"
+        }
+      },
+      {
+        "id": "047e17f0-9885-4df4-aaa9-405c6f62b11b",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273333372,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "047e17f0-9885-4df4-aaa9-405c6f62b11b"
+        }
+      },
+      {
+        "id": "911fa416-c956-4481-9da5-4e49b3c5599f",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273333372,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "911fa416-c956-4481-9da5-4e49b3c5599f"
+        }
+      },
+      {
+        "id": "4631bc0d-ddd1-4cff-88ad-585774207ae2",
+        "module": "sessions",
+        "action": "resumeCheckpoints",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 20
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273334103,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "4631bc0d-ddd1-4cff-88ad-585774207ae2"
+        }
+      },
+      {
+        "id": "ea48ba68-d5c9-48c1-b088-e1406cc4f1ac",
+        "module": "sessions",
+        "action": "checkpointDiff",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273335533,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "ea48ba68-d5c9-48c1-b088-e1406cc4f1ac"
+        }
+      },
+      {
+        "id": "222c7bd3-fe0e-49c4-b8a9-af650fc88c1c",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273335608,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "222c7bd3-fe0e-49c4-b8a9-af650fc88c1c"
+        }
+      },
+      {
+        "id": "917257a1-76bd-47d6-a6d4-8c73101f6ab8",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273335608,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "917257a1-76bd-47d6-a6d4-8c73101f6ab8"
+        }
+      },
+      {
+        "id": "e2ce031e-80b8-4cec-acbe-086618dbc730",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273338785,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "e2ce031e-80b8-4cec-acbe-086618dbc730"
+        }
+      },
+      {
+        "id": "f385f8ce-6ae3-4fcc-a3dd-c2b8956fbcdb",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273339286,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "f385f8ce-6ae3-4fcc-a3dd-c2b8956fbcdb"
+        }
+      },
+      {
+        "id": "e0dd5034-f599-4f76-9a4f-e92d675410c1",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273339286,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "e0dd5034-f599-4f76-9a4f-e92d675410c1"
+        }
+      },
+      {
+        "id": "83eaba5f-df8e-4c90-9c45-3a066ae1b480",
+        "module": "sessions",
+        "action": "history",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "limit": 200
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273340271,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "83eaba5f-df8e-4c90-9c45-3a066ae1b480"
+        }
+      },
+      {
+        "id": "b14b2a96-6e9a-4301-9e66-1074943bfa94",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273344282,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "b14b2a96-6e9a-4301-9e66-1074943bfa94"
+        }
+      },
+      {
+        "id": "3c97e7b2-6aea-40fb-8a5b-609ef60a13f9",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273344785,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "3c97e7b2-6aea-40fb-8a5b-609ef60a13f9"
+        }
+      },
+      {
+        "id": "eeb84ecb-aca6-4801-9701-45c4ea12f795",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273344785,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "eeb84ecb-aca6-4801-9701-45c4ea12f795"
+        }
+      },
+      {
+        "id": "7387f660-42cd-4490-8889-484afb65bb87",
+        "module": "sessions",
+        "action": "resumeCheckpoints",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 20
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273345555,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "7387f660-42cd-4490-8889-484afb65bb87"
+        }
+      },
+      {
+        "id": "88b25383-3f9a-42f1-80f7-af55ec6b97d3",
+        "module": "sessions",
+        "action": "checkpointDiff",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273346229,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "88b25383-3f9a-42f1-80f7-af55ec6b97d3"
+        }
+      },
+      {
+        "id": "fda9d27d-6a8d-4ab8-87aa-d7a3836dd261",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273346292,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "fda9d27d-6a8d-4ab8-87aa-d7a3836dd261"
+        }
+      },
+      {
+        "id": "90a99110-e5ea-43e5-8149-4afe926f7918",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273346292,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "90a99110-e5ea-43e5-8149-4afe926f7918"
+        }
+      },
+      {
+        "id": "3cfd4a3b-3f2e-4920-a690-055130918a26",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273348736,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "3cfd4a3b-3f2e-4920-a690-055130918a26"
+        }
+      },
+      {
+        "id": "f09cf54b-d49e-4e09-9231-613f9af611a8",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273349297,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "f09cf54b-d49e-4e09-9231-613f9af611a8"
+        }
+      },
+      {
+        "id": "3508faa0-e933-44f5-9285-5fcc65ba8b28",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273349297,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "3508faa0-e933-44f5-9285-5fcc65ba8b28"
+        }
+      },
+      {
+        "id": "cf5b2305-ee3c-47f9-8afe-19a2395ce695",
+        "module": "sessions",
+        "action": "history",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "limit": 200
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273350229,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "cf5b2305-ee3c-47f9-8afe-19a2395ce695"
+        }
+      },
+      {
+        "id": "b318bbcd-86ae-4ca7-9c8d-3e2db1397e81",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273352908,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "b318bbcd-86ae-4ca7-9c8d-3e2db1397e81"
+        }
+      },
+      {
+        "id": "6f4c406f-2388-41cd-9c0e-1ef91e0593f7",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273353409,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "6f4c406f-2388-41cd-9c0e-1ef91e0593f7"
+        }
+      },
+      {
+        "id": "af3603fa-91bd-4cb0-9e66-2d713c773966",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273353409,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "af3603fa-91bd-4cb0-9e66-2d713c773966"
+        }
+      },
+      {
+        "id": "457e4da2-b6bd-43d8-b08d-529950143776",
+        "module": "sessions",
+        "action": "resumeCheckpoints",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 20
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273353840,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "457e4da2-b6bd-43d8-b08d-529950143776"
+        }
+      },
+      {
+        "id": "3e0b2c5c-9c46-4af5-a3e9-b13fac2b0b74",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273354964,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "3e0b2c5c-9c46-4af5-a3e9-b13fac2b0b74"
+        }
+      },
+      {
+        "id": "4dc180be-b4b9-4919-80e4-a537e58c9574",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273354965,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "4dc180be-b4b9-4919-80e4-a537e58c9574"
+        }
+      },
+      {
+        "id": "008c5cf1-1192-4b91-88b3-1a9c8bf48fe8",
+        "module": "sessions",
+        "action": "checkpointDiff",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273357919,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "008c5cf1-1192-4b91-88b3-1a9c8bf48fe8"
+        }
+      },
+      {
+        "id": "6671457e-3587-488e-a790-7a926df26181",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273359088,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "6671457e-3587-488e-a790-7a926df26181"
+        }
+      },
+      {
+        "id": "7554b9a0-9a5b-434a-be91-e3ef252f47bd",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273359596,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "7554b9a0-9a5b-434a-be91-e3ef252f47bd"
+        }
+      },
+      {
+        "id": "471536fd-92d0-4216-820d-2f95b66716ed",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273359599,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "471536fd-92d0-4216-820d-2f95b66716ed"
+        }
+      },
+      {
+        "id": "92477ef4-b720-4ddf-a0ba-88ae4f31accb",
+        "module": "sessions",
+        "action": "history",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "limit": 200
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273360573,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "92477ef4-b720-4ddf-a0ba-88ae4f31accb"
+        }
+      },
+      {
+        "id": "6ccd1689-3bea-4a33-acef-0a0e78cbc2c2",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-commit-restore",
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273364527,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "6ccd1689-3bea-4a33-acef-0a0e78cbc2c2"
+        }
+      },
+      {
+        "id": "ce342d12-7dc5-4aef-ba0c-43e40d52022b",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273365028,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "ce342d12-7dc5-4aef-ba0c-43e40d52022b"
+        }
+      },
+      {
+        "id": "513890f5-aecd-4f88-8d0a-fb981b880061",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273365028,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "513890f5-aecd-4f88-8d0a-fb981b880061"
+        }
+      },
+      {
+        "id": "4e0d6249-9a98-446d-ae4b-cd4494311d47",
+        "module": "sessions",
+        "action": "resumeCheckpoints",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "limit": 20
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273365743,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "4e0d6249-9a98-446d-ae4b-cd4494311d47"
+        }
+      },
+      {
+        "id": "6e1b7985-1259-4c7c-8efb-8f087912b5ee",
+        "module": "sessions",
+        "action": "checkpointDiff",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273366426,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "6e1b7985-1259-4c7c-8efb-8f087912b5ee"
+        }
+      },
+      {
+        "id": "c560df24-c9a1-466a-b7a4-8dd501b8ea30",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273366522,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "c560df24-c9a1-466a-b7a4-8dd501b8ea30"
+        }
+      },
+      {
+        "id": "dbe7d7ad-3792-4368-89c7-da0699f233c1",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273366522,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "dbe7d7ad-3792-4368-89c7-da0699f233c1"
+        }
+      }
+    ],
+    "observedMutations": [
+      {
+        "id": "cd09cc04-8883-4085-9176-06d123076b7d",
+        "module": "sessions",
+        "action": "restoreCheckpoint",
+        "payload": {
+          "sessionKey": "agent:main:session-1794273157043-ucommitrestore",
+          "expectedSessionId": "b2ee1d8f-1bae-4b01-9cdf-4de66371897c",
+          "agentId": "main",
+          "checkpointId": "u5-commit:b2ee1d8f-1bae-4b01-9cdf-4de66371897c:v1"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794273321277,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "cd09cc04-8883-4085-9176-06d123076b7d"
+        }
+      }
+    ]
+  },
+  "providerLog": [
+    {
+      "turn": "[Tue 2026-11-10 09:12 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "u5taskstart"
+    },
+    {
+      "turn": "[Tue 2026-11-10 09:12 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "u5taskstart": "{\"contract\":{\"objective\":\"Verify recovery of the journaled file\",\"constraints\":[\"Preserve the restore checkpoint\"],\"acceptance\":[{\"id\":\"restored\",\"description\":\"The recovered file contains v1\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf\"}}],\"target\":\"result.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"requestId\":\"u5taskstart:create\"},\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"domain\":\"9b450546271757925d97c4c5b1760f389b490fcd7e7be073cd0feccea40c311e\",\"revision\":1,\"digest\":\"36354effcef560a4134750a79eb1a6a588a069fa6d4174da0e7b02cd8d96a5c4\",\"state\":\"doing\",\"createdAt\":1794273192557,\"updatedAt\":1794273192563},\"claim\":{\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"generation\":\"b2ee1d8f-1bae-4b01-9cdf-4de66371897c\",\"epoch\":1,\"attemptId\":\"4afede91-a4c2-4a7e-922a-1a94dea15ee5\",\"worktree\":\"d:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui14-results/session-context-commit-rec-e72a0-loss-and-retains-generation/workspace\",\"contractRevision\":1,\"expiresAt\":1794273312562,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+      },
+      "issued": "u5commitwritev1"
+    },
+    {
+      "turn": "[Tue 2026-11-10 09:12 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "u5taskstart": "{\"contract\":{\"objective\":\"Verify recovery of the journaled file\",\"constraints\":[\"Preserve the restore checkpoint\"],\"acceptance\":[{\"id\":\"restored\",\"description\":\"The recovered file contains v1\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf\"}}],\"target\":\"result.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"requestId\":\"u5taskstart:create\"},\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"domain\":\"9b450546271757925d97c4c5b1760f389b490fcd7e7be073cd0feccea40c311e\",\"revision\":1,\"digest\":\"36354effcef560a4134750a79eb1a6a588a069fa6d4174da0e7b02cd8d96a5c4\",\"state\":\"doing\",\"createdAt\":1794273192557,\"updatedAt\":1794273192563},\"claim\":{\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"generation\":\"b2ee1d8f-1bae-4b01-9cdf-4de66371897c\",\"epoch\":1,\"attemptId\":\"4afede91-a4c2-4a7e-922a-1a94dea15ee5\",\"worktree\":\"d:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui14-results/session-context-commit-rec-e72a0-loss-and-retains-generation/workspace\",\"contractRevision\":1,\"expiresAt\":1794273312562,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "u5commitwritev1": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:U5_v1_DONE"
+    },
+    {
+      "turn": "[Tue 2026-11-10 09:12 GMT+8] U5_WRITE_V1\n[Tue 2026-11-10 09:",
+      "toolResults": {
+        "u5taskstart": "{\"contract\":{\"objective\":\"Verify recovery of the journaled file\",\"constraints\":[\"Preserve the restore checkpoint\"],\"acceptance\":[{\"id\":\"restored\",\"description\":\"The recovered file contains v1\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf\"}}],\"target\":\"result.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"requestId\":\"u5taskstart:create\"},\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"domain\":\"9b450546271757925d97c4c5b1760f389b490fcd7e7be073cd0feccea40c311e\",\"revision\":1,\"digest\":\"36354effcef560a4134750a79eb1a6a588a069fa6d4174da0e7b02cd8d96a5c4\",\"state\":\"doing\",\"createdAt\":1794273192557,\"updatedAt\":1794273192563},\"claim\":{\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"generation\":\"b2ee1d8f-1bae-4b01-9cdf-4de66371897c\",\"epoch\":1,\"attemptId\":\"4afede91-a4c2-4a7e-922a-1a94dea15ee5\",\"worktree\":\"d:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui14-results/session-context-commit-rec-e72a0-loss-and-retains-generation/workspace\",\"contractRevision\":1,\"expiresAt\":1794273312562,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "u5commitwritev1": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "u5commitreadv1"
+    },
+    {
+      "turn": "[Tue 2026-11-10 09:12 GMT+8] U5_WRITE_V1\n[Tue 2026-11-10 09:",
+      "toolResults": {
+        "u5taskstart": "{\"contract\":{\"objective\":\"Verify recovery of the journaled file\",\"constraints\":[\"Preserve the restore checkpoint\"],\"acceptance\":[{\"id\":\"restored\",\"description\":\"The recovered file contains v1\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf\"}}],\"target\":\"result.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"requestId\":\"u5taskstart:create\"},\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"domain\":\"9b450546271757925d97c4c5b1760f389b490fcd7e7be073cd0feccea40c311e\",\"revision\":1,\"digest\":\"36354effcef560a4134750a79eb1a6a588a069fa6d4174da0e7b02cd8d96a5c4\",\"state\":\"doing\",\"createdAt\":1794273192557,\"updatedAt\":1794273192563},\"claim\":{\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"generation\":\"b2ee1d8f-1bae-4b01-9cdf-4de66371897c\",\"epoch\":1,\"attemptId\":\"4afede91-a4c2-4a7e-922a-1a94dea15ee5\",\"worktree\":\"d:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui14-results/session-context-commit-rec-e72a0-loss-and-retains-generation/workspace\",\"contractRevision\":1,\"expiresAt\":1794273312562,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "u5commitwritev1": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+        "u5commitreadv1": "v1\n"
+      },
+      "issued": "u5commitwritev2"
+    },
+    {
+      "turn": "[Tue 2026-11-10 09:12 GMT+8] U5_WRITE_V1\n[Tue 2026-11-10 09:",
+      "toolResults": {
+        "u5taskstart": "{\"contract\":{\"objective\":\"Verify recovery of the journaled file\",\"constraints\":[\"Preserve the restore checkpoint\"],\"acceptance\":[{\"id\":\"restored\",\"description\":\"The recovered file contains v1\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf\"}}],\"target\":\"result.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"requestId\":\"u5taskstart:create\"},\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"domain\":\"9b450546271757925d97c4c5b1760f389b490fcd7e7be073cd0feccea40c311e\",\"revision\":1,\"digest\":\"36354effcef560a4134750a79eb1a6a588a069fa6d4174da0e7b02cd8d96a5c4\",\"state\":\"doing\",\"createdAt\":1794273192557,\"updatedAt\":1794273192563},\"claim\":{\"taskNodeId\":\"3cae68ca-cefc-4eee-b788-f4ea826eb55b\",\"sessionKey\":\"agent:main:session-1794273157043-ucommitrestore\",\"generation\":\"b2ee1d8f-1bae-4b01-9cdf-4de66371897c\",\"epoch\":1,\"attemptId\":\"4afede91-a4c2-4a7e-922a-1a94dea15ee5\",\"worktree\":\"d:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui14-results/session-context-commit-rec-e72a0-loss-and-retains-generation/workspace\",\"contractRevision\":1,\"expiresAt\":1794273312562,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "u5commitwritev1": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+        "u5commitreadv1": "v1\n",
+        "u5commitwritev2": "Successfully wrote 3 bytes to D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui14-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\result.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:U5_v2_DONE"
+    }
+  ],
+  "observationErrors": [],
+  "uiEvents": []
+}

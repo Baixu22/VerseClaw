@@ -483,6 +483,8 @@
   max-height: 328px;
   flex-direction: column;
   overflow-y: auto;
+  opacity: 1;
+  isolation: isolate;
   border-radius: var(--radius-xl);
   padding: 4px;
   background: var(--sp-menu-bg);
@@ -667,8 +669,8 @@
    * welcome stage. Both surfaces intentionally share this opaque token. */
   background: var(--color-background-elevated-primary-opaque);
   box-shadow: 0 0 0 0.5px var(--sp-menu-ring), 0 8px 16px -4px rgb(0 0 0 / 0.12);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 .codex-header-menu__label {
   padding: 6px 8px 4px;

@@ -1,0 +1,2806 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "commands": [
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-typecheck",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-11-13T09:45:27.983831+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-typecheck.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "GOMAXPROCS": "8",
+        "GOMEMLIMIT": "4GiB"
+      },
+      "pid": 27452,
+      "finishedAt": "2026-11-13T09:46:10.973609+00:00",
+      "durationSeconds": 42.984,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "8230c41ea680a09b045c1d5ad04125f057240789c911de2b03782e9a6221023c"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-i18n",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "i18n:lint"
+      ],
+      "startedAt": "2026-11-13T09:46:12.457863+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-i18n.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 17284,
+      "finishedAt": "2026-11-13T09:46:13.731617+00:00",
+      "durationSeconds": 1.281,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "7dcd6b3579b0480e13f2f9fc44b9c81cebe8ec45b0b06d24192d568710809661"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-lint",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "src/components/brand/BrandLogo.tsx",
+        "src/components/chat/MemoryInjectionPanel.tsx",
+        "src/components/layout/Sidebar.tsx",
+        "src/components/layout/TitleBar.tsx",
+        "src/components/rareui/CompletionActivityMenu.tsx",
+        "src/components/rareui/NotificationBell.tsx",
+        "src/pages/Chat/ChatToolbar.tsx",
+        "src/pages/Chat/SessionActivityPanel.tsx",
+        "src/pages/Chat/index.tsx",
+        "src/stores/chat.ts",
+        "tests/e2e/chat-agent-effort.spec.ts",
+        "tests/e2e/chat-composer-git-strip.spec.ts",
+        "tests/e2e/chat-composer-popovers.spec.ts",
+        "tests/e2e/chat-task-visualizer.spec.ts",
+        "tests/e2e/chat-welcome-hero-fakecoding.spec.ts",
+        "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+        "tests/e2e/main-navigation.spec.ts",
+        "tests/e2e/rareui-interactions.spec.ts",
+        "tests/e2e/runtime-approval-bridge.spec.ts",
+        "tests/e2e/session-activity-background-read.spec.ts",
+        "tests/e2e/sidebar-session-row-polish.spec.ts",
+        "tests/e2e/windows-ui-v2.spec.ts",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-startup-hydration.test.ts",
+        "tests/unit/rareui-interactions.test.tsx",
+        "--format",
+        "json",
+        "--output-file",
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\final-lint.json"
+      ],
+      "startedAt": "2026-11-13T09:46:14.785641+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-lint.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 21348,
+      "finishedAt": "2026-11-13T09:46:23.110231+00:00",
+      "durationSeconds": 8.328,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-artifact-panel-store-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/artifact-panel-store.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\artifact-panel-store-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:46:24.207005+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-artifact-panel-store-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 46092,
+      "finishedAt": "2026-11-13T09:46:31.601270+00:00",
+      "durationSeconds": 7.39,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "ae05eeb819447b169072133d457e816e6f892aa01ac5b99c761c0bff3fa29a19"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-artifact-panel-subject-tabs-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/artifact-panel-subject-tabs.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\artifact-panel-subject-tabs-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:46:34.616257+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-artifact-panel-subject-tabs-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 44928,
+      "finishedAt": "2026-11-13T09:46:37.897636+00:00",
+      "durationSeconds": 3.281,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "3dcba9d9cfc40d406ddd46d4b60b05f5e075eca187afc6a5c9ed99d00677bf12"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-artifact-panel-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/artifact-panel.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\artifact-panel-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:46:39.333648+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-artifact-panel-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 3772,
+      "finishedAt": "2026-11-13T09:46:48.888320+00:00",
+      "durationSeconds": 9.562,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "9fefce066265e219b6b5d50668db3892bdb401335e8cd9b2f87fa636cb9e46ae"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-agent-effort-popover-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-agent-effort-popover.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-agent-effort-popover-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:46:50.035631+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-agent-effort-popover-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 24684,
+      "finishedAt": "2026-11-13T09:46:53.055836+00:00",
+      "durationSeconds": 3.015,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "b70f7fd1cd8f0081b5a5e7219fe8868a5e3bf29097b3ed54a60aecba933c00aa"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-artifact-panel-layout-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-artifact-panel-layout.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-artifact-panel-layout-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:46:54.089753+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-artifact-panel-layout-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 46580,
+      "finishedAt": "2026-11-13T09:47:03.359526+00:00",
+      "durationSeconds": 9.281,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "c26d8eaaaa4d0b9358268d18bf1ba7ece9854d51351c299bcb848879bcf71d60"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-input-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-input.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-input-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:47:04.392618+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-input-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 22328,
+      "finishedAt": "2026-11-13T09:47:25.827593+00:00",
+      "durationSeconds": 21.438,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "57c3cf65c5ebebb34dba1fc9a4072b84fd6ed2acb79d2a02561f258e91593b43"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-load-sessions-startup-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-load-sessions-startup.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-load-sessions-startup-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:47:26.921257+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-load-sessions-startup-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 22172,
+      "finishedAt": "2026-11-13T09:47:29.899833+00:00",
+      "durationSeconds": 2.969,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "fac813049c679086438acc76298115da53a6fd952220e1f4fd11d8886f6138ab"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-message-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-message.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-message-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:47:30.923144+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-message-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 44372,
+      "finishedAt": "2026-11-13T09:47:38.559328+00:00",
+      "durationSeconds": 7.641,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "4310bcca43282b77ee93afc8dff4581e3c609d922862304c7df80d7aeceaff2a"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-model-selection-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-model-selection.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-model-selection-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:47:39.695189+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-model-selection-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 39640,
+      "finishedAt": "2026-11-13T09:47:42.109483+00:00",
+      "durationSeconds": 2.422,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "182eab78df6aecb77f8be86aaaf2370d22421082ef978fb351c2d430664bf79d"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-page-execution-graph-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-page-execution-graph-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:47:43.344206+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-page-execution-graph-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 41156,
+      "finishedAt": "2026-11-13T09:47:59.366304+00:00",
+      "durationSeconds": 16.016,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "bb02e0aed54f6435bc5ad3995614268de3bc5a55d2e42ac22713f07a20c95cd5"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-render-reachability-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-render-reachability-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:48:00.291760+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-render-reachability-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 1872,
+      "finishedAt": "2026-11-13T09:48:11.203525+00:00",
+      "durationSeconds": 10.922,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "f3bb524abf85d1a3bd6147fbd1c1d69d0a1019ed7997535bac675f6a94ddfdf9"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-session-status-rail-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-session-status-rail.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-session-status-rail-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:48:12.158259+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-session-status-rail-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 10188,
+      "finishedAt": "2026-11-13T09:48:19.659706+00:00",
+      "durationSeconds": 7.5,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "42213942ad79fcbdb21fb04ae4a1f07bc0ef33d07619e7e79a80401eb2324cf0"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-startup-hydration-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-startup-hydration.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-startup-hydration-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:48:20.552204+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-startup-hydration-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 19672,
+      "finishedAt": "2026-11-13T09:48:23.171256+00:00",
+      "durationSeconds": 2.625,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "891d3ff38b935909751f7cef6dfdb57cea037e52d5ec71a329f2f63f4d694cb4"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-target-routing-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-target-routing.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-target-routing-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:48:23.990613+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-target-routing-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 24764,
+      "finishedAt": "2026-11-13T09:48:26.427481+00:00",
+      "durationSeconds": 2.437,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "71fac4a638ae3876b2553d3d08aa40539d19b8f5b00a26877282222efd8a364e"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-tool-card-suppression-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-tool-card-suppression.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-tool-card-suppression-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:48:27.257300+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-tool-card-suppression-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 26964,
+      "finishedAt": "2026-11-13T09:48:33.639149+00:00",
+      "durationSeconds": 6.391,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "4c8578764f0e5d983d5808f7a89e1eca444e7f3a1c487968b7ddee0c5b2bcd2c"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-chat-toolbar-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-toolbar.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-toolbar-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:48:34.433318+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-chat-toolbar-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 45560,
+      "finishedAt": "2026-11-13T09:48:37.068009+00:00",
+      "durationSeconds": 2.641,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "0a76595acd2bbed62db738ae485c243a473ac1241ff118035c3218adf54e035f"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-composer-git-strip-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/composer-git-strip.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\composer-git-strip-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:48:37.867631+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-composer-git-strip-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 35700,
+      "finishedAt": "2026-11-13T09:48:40.302564+00:00",
+      "durationSeconds": 2.437,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "ca8e0bdf07cd9a9cbf472e01b0b6803e93c33b23fc2f6a5628ee84f501006cb1"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-execution-graph-card-badge-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/execution-graph-card-badge.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\execution-graph-card-badge-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:48:41.164779+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-execution-graph-card-badge-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 44440,
+      "finishedAt": "2026-11-13T09:48:43.769022+00:00",
+      "durationSeconds": 2.609,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "3348f8a402fccfa25e16b20211584524ae3d32846e9fd59914f2f3fcd9cbc096"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-fakecoding-design-system-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/fakecoding-design-system.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\fakecoding-design-system-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:48:44.577319+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-fakecoding-design-system-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 34296,
+      "finishedAt": "2026-11-13T09:48:46.336267+00:00",
+      "durationSeconds": 1.75,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "ad207b2dc8476976946358f36a123c4315e5f77d5b4a3549f457006cff48bf4d"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-git-ui-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/git-ui.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\git-ui-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:48:47.142845+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-git-ui-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 46480,
+      "finishedAt": "2026-11-13T09:48:48.941702+00:00",
+      "durationSeconds": 1.797,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "38ccdef93e0e3632aaafedc9bb7d1d795e23814c782d8431f28a9396b2753573"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-history-startup-retry-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/history-startup-retry.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\history-startup-retry-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:48:49.719075+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-history-startup-retry-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 46884,
+      "finishedAt": "2026-11-13T09:48:51.477566+00:00",
+      "durationSeconds": 1.75,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "5bd3252ba6f192c7445fc1f7bc5b65f562133a48d30e486bce97a58c56708f4a"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-long-session-delegation-admission-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\long-session-delegation-admission-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:48:52.291565+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-long-session-delegation-admission-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 11272,
+      "finishedAt": "2026-11-13T09:49:01.663679+00:00",
+      "durationSeconds": 9.375,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "f75d7fe167a44d71b5cfffd1b9437855ed7001130ee7f88dbc2f9e3578787003"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-main-layout-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/main-layout.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\main-layout-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:02.445460+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-main-layout-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 32012,
+      "finishedAt": "2026-11-13T09:49:04.952709+00:00",
+      "durationSeconds": 2.516,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "053030bde83bb37e01d53704cf07c0c6ff685ec1bd21c20d8c8c0f8399a61d0e"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-memory-injection-panel-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/memory-injection-panel.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\memory-injection-panel-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:05.734043+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-memory-injection-panel-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 47060,
+      "finishedAt": "2026-11-13T09:49:08.101729+00:00",
+      "durationSeconds": 2.359,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "d73dcc1d74c28d0451f1335a3f6e3c918c7f87cd45ca1c3f256144ebf08d211f"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-model-brand-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/model-brand.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\model-brand-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:49:08.919521+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-model-brand-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 42096,
+      "finishedAt": "2026-11-13T09:49:10.763954+00:00",
+      "durationSeconds": 1.844,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "ba0feddef0546cca82f536c83d6f0057b9f4b64da4bfc5992d4bc68920233a19"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-rareui-interactions-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/rareui-interactions.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\rareui-interactions-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:11.513701+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-rareui-interactions-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 34920,
+      "finishedAt": "2026-11-13T09:49:15.917076+00:00",
+      "durationSeconds": 4.391,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "7d14d6b65d1ffa15b633e8b1a00797d23e70eae5d6c33794a126c0c14c3ded72"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-runtime-approval-prompt-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/runtime-approval-prompt.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\runtime-approval-prompt-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:16.714906+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-runtime-approval-prompt-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 16444,
+      "finishedAt": "2026-11-13T09:49:19.587544+00:00",
+      "durationSeconds": 2.875,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "e605075d35795111acf0238a028e4b5b834cd4bedf3d196c0aaf0cc29efccc31"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-session-activity-panel-sections-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-activity-panel-sections.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\session-activity-panel-sections-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:20.382435+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-session-activity-panel-sections-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 42856,
+      "finishedAt": "2026-11-13T09:49:23.213653+00:00",
+      "durationSeconds": 2.829,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "63161497a97e21dc9388cab66454155ca4c78956e52dd86b265d38f2e37b57fa"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-session-activity-panel-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-activity-panel.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\session-activity-panel-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:24.015683+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-session-activity-panel-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 36944,
+      "finishedAt": "2026-11-13T09:49:26.592463+00:00",
+      "durationSeconds": 2.578,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "b1fe2f4b6a2a83ded3c056860f3ee9ccc148a92f4cfebc6fae38129fdfb42434"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-session-environment-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-environment.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\session-environment-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:49:27.417451+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-session-environment-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 34152,
+      "finishedAt": "2026-11-13T09:49:29.410273+00:00",
+      "durationSeconds": 2.0,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "aea4e9a618cd6e4f3c975f046662e5c877145008957eba42b282cbc8ff3207e9"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-session-folder-tree-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-folder-tree.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\session-folder-tree-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:30.149181+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-session-folder-tree-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 34272,
+      "finishedAt": "2026-11-13T09:49:32.346038+00:00",
+      "durationSeconds": 2.203,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "2104247a6796e65dd319c34a3c11d2133d92f003b79431854e65ef035d8e4d74"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-session-task-scope-ts",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-task-scope.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\session-task-scope-ts.json"
+      ],
+      "startedAt": "2026-11-13T09:49:33.079255+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-session-task-scope-ts.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 37280,
+      "finishedAt": "2026-11-13T09:49:34.854866+00:00",
+      "durationSeconds": 1.765,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "e5c750e092c7a38ab8c60063cc9af97741afa24aa5b8a45a3771772f7fe84ce4"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-sidebar-render-containment-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/sidebar-render-containment.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\sidebar-render-containment-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:35.704835+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-sidebar-render-containment-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 30684,
+      "finishedAt": "2026-11-13T09:49:42.476033+00:00",
+      "durationSeconds": 6.765,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "4ff74efa61d97717b04db3095cfd831dca75b477d7c1dd7d7edad74451b7ab54"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-sidebar-session-context-menu-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/sidebar-session-context-menu.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\sidebar-session-context-menu-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:43.262831+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-sidebar-session-context-menu-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 45068,
+      "finishedAt": "2026-11-13T09:49:47.263757+00:00",
+      "durationSeconds": 4.0,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "5b778ec08dbdc6641807c013439500a838b013ffd2009b00a5cce5624faa3b97"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-startup-loading-experience-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/startup-loading-experience.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\startup-loading-experience-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:48.041092+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-startup-loading-experience-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 27952,
+      "finishedAt": "2026-11-13T09:49:50.719849+00:00",
+      "durationSeconds": 2.687,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "cf6761e3dab55031a5121cbe15560db44b4cc1e964275a13d91a00efd5f57def"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-tool-ui-execution-surfaces-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/tool-ui-execution-surfaces.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\tool-ui-execution-surfaces-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:51.459085+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-tool-ui-execution-surfaces-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 13952,
+      "finishedAt": "2026-11-13T09:49:55.395898+00:00",
+      "durationSeconds": 3.937,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "1ecd9f0d6f10de666d0167bc7dcb1e10de12afb583ec3d09cff00c5f0716955b"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-welcome-branch-picker-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/welcome-branch-picker.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\welcome-branch-picker-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:56.155574+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-welcome-branch-picker-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 25068,
+      "finishedAt": "2026-11-13T09:49:58.701169+00:00",
+      "durationSeconds": 2.547,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "aa9e6dada7832d1f8e342fabbaffbb708964bd5053de98cf689a8a03ef08a369"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "unit-final-welcome-project-picker-tsx",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/welcome-project-picker.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\welcome-project-picker-tsx.json"
+      ],
+      "startedAt": "2026-11-13T09:49:59.447882+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\unit-final-welcome-project-picker-tsx.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 26644,
+      "finishedAt": "2026-11-13T09:50:02.457423+00:00",
+      "durationSeconds": 3.016,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "9d8b68765b64c4e467ae4ed32386fc283f437e4c0421df2ab1fcafc65bb773b7"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-maintenance-units",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.agent-dev.node.config.ts",
+        "tests/unit/agent-dev-api.test.ts",
+        "tests/unit/agent-dev-regularization.test.ts",
+        "tests/unit/agent-dev-scenario-composer.test.ts",
+        "tests/unit/agent-dev-schemas.test.ts",
+        "tests/unit/contract-check.test.ts",
+        "tests/unit/i18n-lint.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/typecheck-gate.test.ts",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\final-maintenance-units.json"
+      ],
+      "startedAt": "2026-11-13T09:50:03.196604+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-maintenance-units.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "2"
+      },
+      "pid": 46072,
+      "finishedAt": "2026-11-13T09:50:17.989118+00:00",
+      "durationSeconds": 14.797,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "51763fb23973ce849d73f29ab9b248ebeef0791f333786a6fcb4cce202565eb5"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-build-runtime",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "build:runtime"
+      ],
+      "startedAt": "2026-11-13T09:50:18.782450+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-build-runtime.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 14928,
+      "finishedAt": "2026-11-13T09:51:00.659051+00:00",
+      "durationSeconds": 41.875,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "1f4333cbc588855e2e6938a0eabebce3ffc28150c71a53e518350c70a2f7febe"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-build-vite",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "build:vite"
+      ],
+      "startedAt": "2026-11-13T09:51:01.569474+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-build-vite.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 23888,
+      "finishedAt": "2026-11-13T09:52:52.904328+00:00",
+      "durationSeconds": 111.344,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "d50a3b3b71d675b7178952ebf0cb623c7cf3da7ded2d81081687bccf297e2ca9"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-comms-replay",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "comms:replay"
+      ],
+      "startedAt": "2026-11-13T09:52:54.977288+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-comms-replay.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 24132,
+      "finishedAt": "2026-11-13T09:52:56.251188+00:00",
+      "durationSeconds": 1.281,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "0f6822eec04bd51b815c6f61349d9f676c0a1b430727d0a49b5a387b34bd1a05"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-comms-compare",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "comms:compare"
+      ],
+      "startedAt": "2026-11-13T09:52:57.450539+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-comms-compare.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 42656,
+      "finishedAt": "2026-11-13T09:52:58.478288+00:00",
+      "durationSeconds": 1.015,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "0a6d5251bb5be390e6875a517843f80a0c09ea1a776202326d43d6df85fc06c8"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-harness-validate",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/g8-ui-clean-candidate.md",
+        "--since",
+        "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6"
+      ],
+      "startedAt": "2026-11-13T09:52:59.691075+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-harness-validate.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 10904,
+      "finishedAt": "2026-11-13T09:53:02.502121+00:00",
+      "durationSeconds": 2.812,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "71ae7738c95afa7487db93f1cd2944401a7ac8087d3a2323dcb671fe8e2bb2ad"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-harness-flow",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/g8-ui-clean-candidate.md",
+        "--since",
+        "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-13T09:53:03.680958+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-harness-flow.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 300,
+      "finishedAt": "2026-11-13T09:53:06.087366+00:00",
+      "durationSeconds": 2.407,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "46fd41ccc337cc981909450e602ddea054bc1f58740306d6d7106aa29e296fae"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "final-repository-ci",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "harness:ci"
+      ],
+      "startedAt": "2026-11-13T09:53:07.081825+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\final-repository-ci.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1"
+      },
+      "pid": 31876,
+      "finishedAt": "2026-11-13T09:53:58.200666+00:00",
+      "durationSeconds": 51.125,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "9d02eeedb23b9ead83b1715c4e389b0c4e02426a656378178d221bb06cf3b3cc"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-popovers",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-composer-popovers.spec.ts",
+        "tests/e2e/chat-model-picker.spec.ts",
+        "tests/e2e/chat-model-picker-tiers.spec.ts",
+        "tests/e2e/chat-agent-effort.spec.ts",
+        "tests/e2e/chat-composer-git-strip.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output"
+      ],
+      "startedAt": "2026-11-13T09:54:51.181954+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-popovers.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\artifacts"
+      },
+      "pid": 43908,
+      "finishedAt": "2026-11-13T09:58:31.220386+00:00",
+      "durationSeconds": 220.063,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "e744d3c172ca21c9afb79e851f2492a53d598a29e9b71ab56831e9c5f6a440b8"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-environment",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-activity-background-read.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output"
+      ],
+      "startedAt": "2026-11-13T09:58:32.397958+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-environment.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\artifacts"
+      },
+      "pid": 37012,
+      "finishedAt": "2026-11-13T10:00:03.219767+00:00",
+      "durationSeconds": 90.828,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "b01f9fc6d9e01f121c2e076dc1840cb32d411329813102811d1cb7b9d316a882"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-workspace",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-artifact-panel.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\output",
+        "--grep",
+        "conversation column|owned Windows child"
+      ],
+      "startedAt": "2026-11-13T10:00:04.205772+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-workspace.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\artifacts"
+      },
+      "pid": 24636,
+      "finishedAt": "2026-11-13T10:00:26.713845+00:00",
+      "durationSeconds": 22.5,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "44f693e283b0d47c2ddecb964699404eb65b9a344e50aab5582e0c3bc8ca79a4"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-output",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-turn-summary-collapse.spec.ts",
+        "tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+        "tests/e2e/chat-file-changes.spec.ts",
+        "tests/e2e/runtime-approval-bridge.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output"
+      ],
+      "startedAt": "2026-11-13T10:00:27.567928+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-output.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\artifacts"
+      },
+      "pid": 14340,
+      "finishedAt": "2026-11-13T10:04:02.543547+00:00",
+      "durationSeconds": 214.984,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "f69fcb85d25dc1472d6c0be7cb6876050d2da77129a736307a08238a0ef594ba"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-welcome",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-welcome-hero-fakecoding.spec.ts",
+        "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\output"
+      ],
+      "startedAt": "2026-11-13T10:04:03.629527+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-welcome.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\artifacts"
+      },
+      "pid": 46908,
+      "finishedAt": "2026-11-13T10:05:28.747243+00:00",
+      "durationSeconds": 85.125,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "2a2afb00a48b3bd7c63262d9646396bcad8dcdfa4f85c4825c1aae96bd2be655"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-yield",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-task-visualizer.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output",
+        "--grep",
+        "internal yield"
+      ],
+      "startedAt": "2026-11-13T10:05:29.725615+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-yield.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\artifacts"
+      },
+      "pid": 4320,
+      "finishedAt": "2026-11-13T10:05:40.864086+00:00",
+      "durationSeconds": 11.141,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "cb91694de4cacda7cd19c935bdfb9a32d516cac53cbb3a6234556ccc1de4c397"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-claude-ui",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/sidebar-session-row-polish.spec.ts",
+        "tests/e2e/sidebar-session-folders-archive.spec.ts",
+        "tests/e2e/rareui-interactions.spec.ts",
+        "tests/e2e/main-navigation.spec.ts",
+        "tests/e2e/chat-memory-injection-panel.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output"
+      ],
+      "startedAt": "2026-11-13T10:05:41.750470+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-claude-ui.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\artifacts"
+      },
+      "pid": 13268,
+      "finishedAt": "2026-11-13T10:09:01.494903+00:00",
+      "durationSeconds": 199.766,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "9a033b6cfa51640903aeede95c5877f3cbdb7ea24450ac18d3d66d5af65b9e4c"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-ui-material-rules",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/windows-ui-v2.spec.ts",
+        "tests/e2e/settings-drawer.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\output"
+      ],
+      "startedAt": "2026-11-13T10:09:04.009597+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-ui-material-rules.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\artifacts"
+      },
+      "pid": 22152,
+      "finishedAt": "2026-11-13T10:10:21.640355+00:00",
+      "durationSeconds": 77.641,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "e4852e6326b64fbc47444b94cdede671cd515098c461ff68ab1855a94a3f85bb"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-startup",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/startup-loading-experience.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\startup\\output"
+      ],
+      "startedAt": "2026-11-13T10:10:22.506720+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-startup.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\startup\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\startup\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\startup\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\startup\\artifacts"
+      },
+      "pid": 35088,
+      "finishedAt": "2026-11-13T10:11:13.984413+00:00",
+      "durationSeconds": 51.485,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "715ea0757b1b4237de668d4742e969b8e4e559ab182c2554186595760b44c4a4"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-g8-ui-01a1d351",
+      "realHumanEvidence": false,
+      "name": "electron-final-agent-dev-quality",
+      "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/agent-dev-quality.spec.ts",
+        "--workers=2",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output"
+      ],
+      "startedAt": "2026-11-13T10:11:14.941050+00:00",
+      "before": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "log": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\gates\\electron-final-agent-dev-quality.log",
+      "exitCode": 0,
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "TMPDIR": "D:/tmp",
+        "VITEST_MAX_WORKERS": "1",
+        "PLAYWRIGHT_JSON_OUTPUT_NAME": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\results.json",
+        "CLAWX_RAREUI_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\rareui\\screenshots",
+        "CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\sidebar\\screenshots",
+        "CLAWX_E2E_EVIDENCE_ROOT": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\artifacts"
+      },
+      "pid": 11548,
+      "finishedAt": "2026-11-13T10:11:34.493697+00:00",
+      "durationSeconds": 19.547,
+      "after": {
+        "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+        "head": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+        "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+        "branch": "codex/g8-ui-closeout-20261113",
+        "status": ""
+      },
+      "candidateUnchanged": true,
+      "cleanCandidate": true,
+      "logSha256": "c2e6bb77879d56e25e00e035fd32acc7439f169dd3853901fa399c8c3bf2ddbc"
+    }
+  ]
+}

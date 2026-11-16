@@ -1,0 +1,103 @@
+{
+  "files": 19,
+  "implementationFiles": 12,
+  "implementationLines": 3525,
+  "archiveHashesVerified": 19,
+  "deletedFiles": [
+    {
+      "file": "src/stores/chat/internal.ts",
+      "sha256": "08ba0db713b7a0e1181c6378b8ff6ba0146c8ce671438e999eb412d8f448f374",
+      "lines": 86
+    },
+    {
+      "file": "src/stores/chat/runtime-actions.ts",
+      "sha256": "ad1e82e34f5d4f7d762e80a2ac7c12c2df38b72c7e1a74876f0268f798f2d307",
+      "lines": 27
+    },
+    {
+      "file": "src/stores/chat/runtime-send-actions.ts",
+      "sha256": "3ac99f2d080a931c3f63e704d2e786970a5c34cc182ada63017b242fac3320e0",
+      "lines": 372
+    },
+    {
+      "file": "src/stores/chat/runtime-event-actions.ts",
+      "sha256": "6bb6292de50fb0da45380e24b26227c43bb15a545a8615d441c913fcf5a67d00",
+      "lines": 82
+    },
+    {
+      "file": "src/stores/chat/runtime-event-handlers.ts",
+      "sha256": "43839daf6475762621d85ac6b64654f85c67828078a175abd4b6a0f8cf4a4b24",
+      "lines": 475
+    },
+    {
+      "file": "src/stores/chat/runtime-ui-actions.ts",
+      "sha256": "e97c623d6536e5d96ea9ba25d2618a4924aff3f1747df3ec43e65291b809ffee",
+      "lines": 14
+    },
+    {
+      "file": "src/stores/chat/session-history-actions.ts",
+      "sha256": "153c579a0462e777ea9a02a70325e9e532aed324d55e25561692cc116e5f943e",
+      "lines": 10
+    },
+    {
+      "file": "src/stores/chat/session-actions.ts",
+      "sha256": "5c6427d83441015ab7d57b3538d7ddd1c424ff08ae970baee5c78d7a6e0694f4",
+      "lines": 574
+    },
+    {
+      "file": "src/stores/chat/history-actions.ts",
+      "sha256": "de4464cc04a32eab79bc764b021abf3f6e8fb0b5f26bedaf2c2bf26182bd6b63",
+      "lines": 423
+    },
+    {
+      "file": "src/pages/Browser/index.tsx",
+      "sha256": "8d5039fd201f98e862afbfcabb542d714a189e1c27b25e69daa2fb679f7594a2",
+      "lines": 420
+    },
+    {
+      "file": "src/pages/RemoteTasks/index.tsx",
+      "sha256": "cc6ac5f77073080456c6f4f354258e5a53b5a7bb4772859763ddfe38d44ad8ba",
+      "lines": 375
+    },
+    {
+      "file": "src/pages/Dreams/index.tsx",
+      "sha256": "5b7e97b8f83894ee764aa0f2ae1c9fe7674fa4f6c3485d7e0c1f63db0bd7a2fe",
+      "lines": 667
+    },
+    {
+      "file": "tests/unit/chat-history-actions.test.ts",
+      "sha256": "1882f0fc7eee161fca4a18c5afdaa380011cc253af426079ef73c394bc8ff191",
+      "lines": 870
+    },
+    {
+      "file": "tests/unit/chat-runtime-event-handlers.test.ts",
+      "sha256": "1e1b2f2035c1a44a090196e89197f267ea045fa501451ec47eed4c177d38590b",
+      "lines": 513
+    },
+    {
+      "file": "tests/unit/chat-session-actions.test.ts",
+      "sha256": "75c158cf4a7334fbdb0adee235691b32e04f1afa5d04e1cd55f9a49860441f60",
+      "lines": 447
+    },
+    {
+      "file": "tests/unit/session-label-fetch.test.ts",
+      "sha256": "2cb66621e7548e7611175156c4d20415c4d0f1dc1fbe00f4b8d27b49b71bd0dc",
+      "lines": 181
+    },
+    {
+      "file": "tests/unit/browser-workbench.test.tsx",
+      "sha256": "4687c4168c4ddbf3f2b257f3a390bcde03d55f160ce5fcb77c5bf5af9e74f993",
+      "lines": 131
+    },
+    {
+      "file": "tests/unit/remote-tasks-page.test.tsx",
+      "sha256": "89e86dc02edbd410867656751e7b485e6bafe4b775aa73b82179176d9da5cf8e",
+      "lines": 109
+    },
+    {
+      "file": "tests/unit/dreams-page.test.tsx",
+      "sha256": "1fa5fb4814a2c27bd4d799959c9aa52f40da9979e5d6c563c2ddce91ebe4a15b",
+      "lines": 113
+    }
+  ]
+}

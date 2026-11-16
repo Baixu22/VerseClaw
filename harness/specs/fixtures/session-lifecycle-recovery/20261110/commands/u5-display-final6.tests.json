@@ -1,0 +1,586 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-display-final6-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-context-pressure.spec.ts",
+      "file": "chat-context-pressure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat context pressure",
+          "file": "chat-context-pressure.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows session context, cache-served tokens and warm hit rate in the composer",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 59759,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:err] [43784:1110/030023.964:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[43784:1110/030023.964:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:24.118Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:24.119Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:24.119Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:00:24.119Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:24.833Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:24.835Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:24.920Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:24.920Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:00:24.920Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:00:24.920Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:27.019Z] [INFO] Gateway stop requested\n[2026-11-09T19:00:27.019Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:64081/96e03616-6093-4fda-ab30-0afd6b3af967\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:27.103Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:27.104Z] [INFO] [ResourceTracker] Stopped\n[2026-11-09T19:00:27.104Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:27.104Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:27.104Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-09T18:59:38.623Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7970d0a6f8af0c6eb6c0-65f2b7fbb8191596fa13",
+              "file": "chat-context-pressure.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "shows the session row but omits optional metrics the runtime did not report",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26730,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:52.890Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:52.891Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T19:00:52.891Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=50228, ppid=37768\n[2026-11-09T19:00:52.891Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:53.169Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:53.169Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T19:00:53.169Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T19:00:53.169Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:53.239Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:53.240Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [50228:1110/030053.536:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[50228:1110/030053.536:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:53.822Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:00:53.822Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:00:53.823Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:00:53.823Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:53.834Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:00:53.835Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:00:53.835Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:00:53.835Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:54.212Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:54.213Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:56.439Z] [INFO] Gateway stop requested\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:56.440Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:56991/128a9a11-ef51-454b-8bf5-f890f0662cf6\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:56.508Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:56.508Z] [INFO] [ResourceTracker] Stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:56.509Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:56.509Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:00:56.509Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-09T19:00:38.405Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7970d0a6f8af0c6eb6c0-04ec628c6735b9ea8acf",
+              "file": "chat-context-pressure.spec.ts",
+              "line": 164,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-slash-session-lifecycle.spec.ts",
+      "file": "chat-slash-session-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "slash /rename renames the current session through the host API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29038,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:15.109Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:15.110Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T19:01:15.110Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=44692, ppid=32732\n[2026-11-09T19:01:15.111Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:01:15.946Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:01:15.946Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T19:01:15.947Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T19:01:15.947Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:16.190Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:16.190Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [44692:1110/030116.400:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[44692:1110/030116.400:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:01:17.087Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:01:17.087Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:01:17.087Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:01:17.087Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:19.198Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:19.240Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:20.750Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:20.750Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:51624/6bcae6b6-aa96-4266-9c16-f2ed543667e7\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:20.826Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:20.827Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:20.827Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:20.827Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:20.827Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T19:01:05.174Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1560b8bfb4b44fe713ea-682cc5828f9cc174cf62",
+          "file": "chat-slash-session-lifecycle.spec.ts",
+          "line": 95,
+          "column": 5
+        },
+        {
+          "title": "slash /clear resets the local message view",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27464,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:46.287Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:46.288Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T19:01:46.288Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=2424, ppid=21500\n[2026-11-09T19:01:46.288Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:01:49.113Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:01:49.113Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T19:01:49.114Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T19:01:49.114Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:50.879Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:50.880Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [2424:1110/030152.742:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[2424:1110/030152.742:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:53.532Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:53.533Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:01:53.533Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:01:53.533Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:01:53.534Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:01:53.534Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:54.883Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:54.883Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:56635/15742593-22e5-4ac3-88c0-77f5b9ab52c3\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:54.934Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:54.935Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:54.935Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:54.935Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:01:54.935Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T19:01:34.225Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1560b8bfb4b44fe713ea-e00650372c88a8b37b74",
+          "file": "chat-slash-session-lifecycle.spec.ts",
+          "line": 125,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "memory-surface.spec.ts",
+      "file": "memory-surface.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TF-0498 unified Memory surface",
+          "file": "memory-surface.spec.ts",
+          "line": 177,
+          "column": 6,
+          "specs": [
+            {
+              "title": "exposes candidate review, export and tombstone deletion in one panel",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26998,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:12.387Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:12.388Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T19:02:12.388Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=37496, ppid=35504\n[2026-11-09T19:02:12.388Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:12.702Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:12.702Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T19:02:12.702Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T19:02:12.702Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:12.750Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:12.750Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [37496:1110/030212.847:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[37496:1110/030212.847:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:13.010Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:13.015Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:13.016Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:13.016Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:02:13.017Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:13.017Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:13.018Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:13.018Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:02:13.018Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:02:13.018Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:14.332Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:14.332Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:02:14.332Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:02:14.332Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:14.447Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:14.447Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:02:14.447Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:02:14.447Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:16.700Z] [INFO] Gateway stop requested\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:16.700Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:50978/5342300d-9ffb-4be4-ae24-5bf9a719470b\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:16.728Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:16.729Z] [INFO] [ResourceTracker] Stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:16.729Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:16.729Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:16.729Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-09T19:02:01.714Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "memory-export.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJzY2hlbWFWZXJzaW9uIjogIk1lbW9yeUV4cG9ydC92MSIsCiAgImdlbmVyYXRlZEF0IjogIjIwMjYtMTEtMDlUMTk6MDI6MTUuMDAyWiIsCiAgInByb2R1Y3RTdXJmYWNlIjogewogICAgInNjaGVtYVZlcnNpb24iOiAiTWVtb3J5UHJvZHVjdFN1cmZhY2UvdjEiLAogICAgInN1cmZhY2VJZCI6ICJhZ2VudHMubWVtb3J5IiwKICAgICJwcm9kdWN0Q29uY2VwdCI6ICJtZW1vcnkiLAogICAgImFjdGlvbnMiOiBbCiAgICAgICJ2aWV3IiwKICAgICAgInJldmlldyIsCiAgICAgICJhcHByb3ZlIiwKICAgICAgImRlbGV0ZSIsCiAgICAgICJleHBvcnQiLAogICAgICAicmVtZW1iZXIiCiAgICBdLAogICAgIm1hc3RlclN3aXRjaCI6IHsKICAgICAgImlkIjogInJvbGVNZW1vcnlFbmFibGVkIiwKICAgICAgIm9mZkJsb2Nrc1JlYWQiOiB0cnVlLAogICAgICAib2ZmQmxvY2tzV3JpdGUiOiB0cnVlLAogICAgICAib2ZmQmxvY2tzSW5qZWN0aW9uIjogdHJ1ZSwKICAgICAgImRlbGV0ZXNTdG9yZWRNZW1vcnkiOiBmYWxzZQogICAgfSwKICAgICJ3cml0ZUdhdGUiOiB7CiAgICAgICJhdXRvbWF0aWNDYXB0dXJlIjogImNhbmRpZGF0ZS1xdWV1ZS1vbmx5IiwKICAgICAgImV4cGxpY2l0UmVtZW1iZXIiOiAic2FtZS1yZXZpZXctYXV0aG9yaXR5IiwKICAgICAgImF1dG9tYXRpY0FjY2VwdGFuY2UiOiBmYWxzZQogICAgfSwKICAgICJyZWFkR2F0ZSI6IHsKICAgICAgImFjY2VwdGVkT25seSI6IHRydWUsCiAgICAgICJhY2NlcHRlZFN0YXR1c2VzIjogWwogICAgICAgICJhY3RpdmUiLAogICAgICAgICJjb2xkIgogICAgICBdLAogICAgICAidW5hcHByb3ZlZENhbmRpZGF0ZVJldHJpZXZhYmxlIjogZmFsc2UsCiAgICAgICJ1bmFwcHJvdmVkQ2FuZGlkYXRlSW5qZWN0YWJsZSI6IGZhbHNlCiAgICB9LAogICAgImNhbmRpZGF0ZVF1ZXVlIjogewogICAgICAicGVyc2lzdGVudCI6IHRydWUsCiAgICAgICJyZXZpZXdSZXF1aXJlZCI6IHRydWUsCiAgICAgICJhY2NlcHRlZFN0YXR1cyI6ICJhY3RpdmUiLAogICAgICAibW9kZWxWaXNpYmxlQmVmb3JlQXBwcm92YWwiOiBmYWxzZQogICAgfSwKICAgICJsZWdhY3lGYWxsYmFjayI6IHsKICAgICAgIm5hdGl2ZU9wZW5DbGF3TWVtb3J5IjogInVuY2hhbmdlZC1hbmQtb3V0c2lkZS10aGlzLXN1cmZhY2UiLAogICAgICAiZXhpc3RpbmdNYW5hZ2VkQ2FyZHNXaGVuT2ZmIjogInJldGFpbmVkLW9uLWRpc2stbm90LWluamVjdGVkIiwKICAgICAgIm1vZGVsRXhwbGFuYXRpb24iOiAiT25seSBhY2NlcHRlZCBtZW1vcnkgaXMgcmVjYWxsZWQgb3IgaW5qZWN0ZWQ7IGNhbmRpZGF0ZXMgYXJlIHJldmlldyBtYXRlcmlhbCBhbmQgbXVzdCBub3QgYmUgZGVzY3JpYmVkIGFzIHJlbWVtYmVyZWQgZmFjdHMuIgogICAgfSwKICAgICJkZWxldGlvbiI6IHsKICAgICAgInVzZXJBY3Rpb24iOiAiZGVsZXRlIiwKICAgICAgIm1lY2hhbmlzbSI6ICJ0b21ic3RvbmUiLAogICAgICAiaGFyZERlbGV0ZSI6IGZhbHNlLAogICAgICAiYXVkaXRIaXN0b3J5UmV0YWluZWQiOiB0cnVlLAogICAgICAicmV0cmlldmFibGVPckluamVjdGFibGVBZnRlckRlbGV0ZSI6IGZhbHNlCiAgICB9LAogICAgIm1vZGVsVmlzaWJpbGl0eSI6IHsKICAgICAgImFwcHJvdmVkT25seSI6IHRydWUsCiAgICAgICJjYW5kaWRhdGVFeHBsYW5hdGlvbiI6ICJDYW5kaWRhdGUgbWVtb3J5IGlzIHN0b3JlZCBmb3IgcmV2aWV3IG9ubHkgYW5kIGlzIG5vdCBhY2NlcHRlZCwgcmV0cmlldmFibGUsIG9yIGluamVjdGFibGUgbWVtb3J5LiIKICAgIH0KICB9LAogICJyb2xlTmFtZSI6ICJhcmNoaXRlY3QiLAogICJjb3VudHMiOiB7CiAgICAiYWNjZXB0ZWQiOiAxLAogICAgImNhbmRpZGF0ZXMiOiAxLAogICAgInByb3Bvc2FsSGlzdG9yeSI6IDAsCiAgICAiaW5qZWN0aW9ucyI6IDAKICB9LAogICJhY2NlcHRlZE1lbW9yeSI6IFsKICAgIHsKICAgICAgImlkIjogIm1lbS1hY2NlcHRlZCIsCiAgICAgICJ0eXBlIjogInByb2NlZHVyZSIsCiAgICAgICJzY29wZSI6ICJyb2xlIiwKICAgICAgInNjb3BlS2V5IjogbnVsbCwKICAgICAgInN0YXR1cyI6ICJhY3RpdmUiLAogICAgICAiY29udGVudCI6ICJLZWVwIG1pZ3JhdGlvbiBub3RlcyBiZWZvcmUgc2NoZW1hIGNoYW5nZXMuIiwKICAgICAgInJvbGVUYWdzIjogWwogICAgICAgICJhcmNoaXRlY3QiCiAgICAgIF0sCiAgICAgICJzb3VyY2UiOiAidXNlciIsCiAgICAgICJzZW5zaXRpdml0eSI6ICJub3JtYWwiLAogICAgICAiY29uZmlkZW5jZSI6IDAuOSwKICAgICAgImltcG9ydGFuY2UiOiAwLjcsCiAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0xMC0yMVQwMDowMDowMC4wMDBaIiwKICAgICAgInVwZGF0ZWRBdCI6ICIyMDI2LTEwLTIxVDAwOjAwOjAwLjAwMFoiLAogICAgICAiZXZpZGVuY2VSZWZzIjogWwogICAgICAgIHsKICAgICAgICAgICJ0eXBlIjogIm1hbnVhbCIsCiAgICAgICAgICAicmVmIjogImFjY2VwdGFuY2UtZml4dHVyZSIKICAgICAgICB9CiAgICAgIF0KICAgIH0KICBdLAogICJjYW5kaWRhdGVRdWV1ZSI6IFsKICAgIHsKICAgICAgImlkIjogInByb3Bvc2FsLWNhbmRpZGF0ZSIsCiAgICAgICJvcGVyYXRpb24iOiAiY3JlYXRlIiwKICAgICAgInN0YXR1cyI6ICJuZWVkc19yZXZpZXciLAogICAgICAiZGVjaXNpb24iOiAibmVlZHNfcmV2aWV3IiwKICAgICAgInJpc2tMZXZlbCI6ICJsb3ciLAogICAgICAiaW1wYWN0U2NvcGUiOiAicm9sZSIsCiAgICAgICJzdWdnZXN0ZWRBY3Rpb24iOiAiYXBwcm92ZSIsCiAgICAgICJldmlkZW5jZVN0YXR1cyI6ICJ1bmNoZWNrZWQiLAogICAgICAiY3JlYXRlZEF0IjogIjIwMjYtMTAtMjFUMDA6MDA6MDAuMDAwWiIsCiAgICAgICJwcm9wb3NhbCI6IHsKICAgICAgICAiY29udGVudCI6ICJDYW5kaWRhdGUgbWVtb3J5IG11c3QgYmUgcmV2aWV3ZWQgYmVmb3JlIGluamVjdGlvbi4iLAogICAgICAgICJzb3VyY2UiOiAic2Vzc2lvbl9zdW1tYXJ5IiwKICAgICAgICAidGl0bGUiOiAiQ2FuZGlkYXRlIG1lbW9yeSIKICAgICAgfQogICAgfQogIF0sCiAgInByb3Bvc2FsSGlzdG9yeSI6IFtdLAogICJpbmplY3Rpb25IaXN0b3J5IjogW10KfQ=="
+                        },
+                        {
+                          "name": "memory-download.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJhY3RvciI6ICJwbGF5d3JpZ2h0LW1lbW9yeS1zdXJmYWNlIiwKICAiZHJpdmVuX2J5IjogImFnZW50IiwKICAiZG93bmxvYWRzIjogWwogICAgewogICAgICAiZmlsZW5hbWUiOiAiY2xhd3gtbWVtb3J5LWFyY2hpdGVjdC0yMDI2LTExLTA5VDE5LTAyLTE1LTA1M1ouanNvbiIsCiAgICAgICJzdGF0ZSI6ICJjb21wbGV0ZWQiLAogICAgICAicmVjZWl2ZWRCeXRlcyI6IDMwODUKICAgIH0KICBdCn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3588834ea4b0dcb4ef31-39cc4dafc32d09377384",
+              "file": "memory-surface.spec.ts",
+              "line": 178,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-09T18:59:37.413Z",
+    "duration": 177273.695,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

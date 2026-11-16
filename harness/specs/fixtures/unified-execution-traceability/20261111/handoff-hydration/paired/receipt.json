@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "driven_by": "agent",
+  "actor": "u6-paired-runner",
+  "run_id": "u6-paired-hydration-20261110",
+  "status": "failed",
+  "started_at": "2026-11-10T15:24:58.656Z",
+  "finished_at": "2026-11-10T15:47:27.986Z",
+  "baseline": {
+    "root": "D:/ClawX-work/unified-management-baseline-20261110",
+    "expected_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976"
+  },
+  "candidate": {
+    "root": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+    "expected_head": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2"
+  },
+  "baseline_initial_status": [
+    "M tests/e2e/fixtures/electron-process-cleanup.ts",
+    "M tests/e2e/fixtures/electron.ts",
+    "M tests/e2e/fixtures/windows-process.ts",
+    "?? tests/e2e/u6-interaction-metrics.final.spec.ts",
+    "?? tests/e2e/u6-interaction-metrics.spec.ts"
+  ],
+  "candidate_initial_status": [],
+  "baseline_final_status": [
+    "M tests/e2e/fixtures/electron-process-cleanup.ts",
+    " M tests/e2e/fixtures/electron.ts",
+    " M tests/e2e/fixtures/fp-p1-harness.ts",
+    " M tests/e2e/fixtures/session-task-chain.ts",
+    " M tests/e2e/fixtures/windows-process.ts",
+    "?? tests/e2e/u6-interaction-metrics.final.spec.ts",
+    "?? tests/e2e/u6-interaction-metrics.spec.ts"
+  ],
+  "candidate_final_status": [],
+  "frozen": {
+    "driver_sha256": "79876ca2952852bcc78b3e195cef5199400335885b30fd97f0be05d8420d8732",
+    "helpers": {
+      "electron.ts": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf",
+      "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+      "session-task-chain.ts": "f2a284662312c70f5b0e3d3208ca348aeaa0840ab351af597c99942eba02e69e",
+      "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+      "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+    },
+    "baseline_build": {
+      "path": "D:\\tmp\\unified-management-20261109\\baseline-validation\\build-manifest.json",
+      "sha256": "1053afd2ed00ee48d5532f1ab8f7f35f2db3610343f7f70145226f9d7ecaf549"
+    },
+    "candidate_build": {
+      "path": "D:\\tmp\\unified-management-20261109\\traceability-validation\\build-manifest-handoff-ui3.json",
+      "sha256": "11aaa605039deff050b51a4eb9a8c68717b6057f25787edb36ea4661a5e9d16b"
+    }
+  },
+  "sides": {
+    "baseline": {
+      "schema_version": 1,
+      "driven_by": "agent",
+      "actor": "u6-paired-runner",
+      "run_id": "u6-paired-hydration-20261110",
+      "side": "baseline",
+      "started_at": "2026-11-10T15:25:03.794Z",
+      "finished_at": "2026-11-10T15:40:07.497Z",
+      "duration_ms": 903702,
+      "head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+      "driver_sha256": "79876ca2952852bcc78b3e195cef5199400335885b30fd97f0be05d8420d8732",
+      "helpers": {
+        "electron.ts": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf",
+        "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+        "session-task-chain.ts": "f2a284662312c70f5b0e3d3208ca348aeaa0840ab351af597c99942eba02e69e",
+        "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+        "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+      },
+      "build_manifest": {
+        "path": "D:\\tmp\\unified-management-20261109\\baseline-validation\\build-manifest.json",
+        "sha256": "1053afd2ed00ee48d5532f1ab8f7f35f2db3610343f7f70145226f9d7ecaf549",
+        "artifacts": {
+          "main_sha256": "8765c7bb76e0e0c44199b8230da6e00d148fb8b95a93e3f631be9368e01c8201",
+          "renderer_sha256": "6c4e9972be89c6b9c3ea07d78f9c15d42b617d651ae9c0b33962723e1849ab42",
+          "runtime_entry_sha256": "e2ca863305b66a323508c0caa73c3509647d01b6b2629059cce5af6cf999e7d5"
+        }
+      },
+      "playwright": {
+        "cli": "D:\\ClawX-work\\unified-management-baseline-20261110\\node_modules\\@playwright\\test\\cli.js",
+        "exit_code": 1,
+        "signal": null,
+        "log_path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\playwright.log",
+        "log_sha256": "2ffe9105624564ab96697846b58e67eed4bc6b22751904fe5d747811a54b061a"
+      },
+      "cleanup_passed": true,
+      "cleanup_receipt": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\cleanup-receipt.json",
+      "evidence": [
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\.last-run.json",
+          "sha256": "8078445e24c20869a28bc4a83194e36dfe7551a7d2dec7eaf4580b6ad12ec1ee",
+          "relative_path": "results\\.last-run.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\interaction-metrics.json",
+          "sha256": "721e93b5daa419cb0e90deb13e3b7f3cdf4f9ad49c2a93f1bfe9d381d4bda4a0",
+          "relative_path": "results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\interaction-metrics.json",
+          "sha256": "f17d829d3312d8b1009ebb4a9bbd947431fba42f052d406280522d4a8efc8968",
+          "relative_path": "results\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\interaction-metrics.json",
+          "sha256": "5bacbe0bbe5319a4c773a70caae78fbe48194abf400c5ca0173b736ce4073aea",
+          "relative_path": "results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-continue\\interaction-metrics.json",
+          "sha256": "2d539bf04de2541dc41c678ffa19f617fc2e13ad8a7643c8f24066f3897d9c6c",
+          "relative_path": "results\\u6-interaction-metrics.final-U6-interaction-metrics-continue\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json",
+          "sha256": "ff30b775258714c00809b41035bc05999228be2b79119cdd3f60962f70a0883d",
+          "relative_path": "results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-new-task\\interaction-metrics.json",
+          "sha256": "14d48492bd2273be96d95fb4d63d0d1973af2e27a2e4beb1a8d108e46f71cae2",
+          "relative_path": "results\\u6-interaction-metrics.final-U6-interaction-metrics-new-task\\interaction-metrics.json"
+        }
+      ]
+    },
+    "candidate": {
+      "schema_version": 1,
+      "driven_by": "agent",
+      "actor": "u6-paired-runner",
+      "run_id": "u6-paired-hydration-20261110",
+      "side": "candidate",
+      "started_at": "2026-11-10T15:40:08.577Z",
+      "finished_at": "2026-11-10T15:47:21.706Z",
+      "duration_ms": 433129,
+      "head": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+      "driver_sha256": "79876ca2952852bcc78b3e195cef5199400335885b30fd97f0be05d8420d8732",
+      "helpers": {
+        "electron.ts": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf",
+        "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+        "session-task-chain.ts": "f2a284662312c70f5b0e3d3208ca348aeaa0840ab351af597c99942eba02e69e",
+        "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+        "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+      },
+      "build_manifest": {
+        "path": "D:\\tmp\\unified-management-20261109\\traceability-validation\\build-manifest-handoff-ui3.json",
+        "sha256": "11aaa605039deff050b51a4eb9a8c68717b6057f25787edb36ea4661a5e9d16b",
+        "artifacts": {
+          "main_sha256": "0314828c81e31c303641ef7c5fd0c029f6bc84040ce2c670ce2e371fb799168b",
+          "renderer_sha256": "1f6362edfc5737177d1a73e708c49df19bc260a24cbc5bf25f18535769441070",
+          "runtime_entry_sha256": "3d93459e1f65145818ddca8c8505c73a912559b3da4c668f296972c4314ef355"
+        }
+      },
+      "playwright": {
+        "cli": "D:\\ClawX-work\\session-task-unified-relay-20261109\\node_modules\\@playwright\\test\\cli.js",
+        "exit_code": 0,
+        "signal": null,
+        "log_path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\playwright.log",
+        "log_sha256": "4b58eacca340b02233f650923cddfee2384009f8e0745c329186e53df5f84794"
+      },
+      "cleanup_passed": true,
+      "cleanup_receipt": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\cleanup-receipt.json",
+      "evidence": [
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\.last-run.json",
+          "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+          "relative_path": "results\\.last-run.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\interaction-metrics.json",
+          "sha256": "1eb9f8ca11f4ea7e39f728158fffde6aabf77b757532b005455a3917da627d4f",
+          "relative_path": "results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\interaction-metrics.json",
+          "sha256": "5d6038d34e5f0f449f2b49aa0c05ae3e67e86fd41c180d77c541903cfc2d1b86",
+          "relative_path": "results\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\interaction-metrics.json",
+          "sha256": "1d104effc308afcc51f560ddb600cbda4b9824628a94b94391464c174013e0d6",
+          "relative_path": "results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-continue\\interaction-metrics.json",
+          "sha256": "b07b9ade5f74497d95e4af150486bd6f2ff8cbbc3008460a68d6596ea9f07ce4",
+          "relative_path": "results\\u6-interaction-metrics.final-U6-interaction-metrics-continue\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json",
+          "sha256": "a03136ccc472607df7d9879ef1df193087da7aff92ad8e070be9c63df36f01fb",
+          "relative_path": "results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json"
+        },
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-new-task\\interaction-metrics.json",
+          "sha256": "dcc7b32ba172d4137d5dd075f87ce1a217258fdd6712880e3d02cc9b6d5d579b",
+          "relative_path": "results\\u6-interaction-metrics.final-U6-interaction-metrics-new-task\\interaction-metrics.json"
+        }
+      ]
+    }
+  },
+  "errors": []
+}

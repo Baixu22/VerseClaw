@@ -17,6 +17,7 @@ export type ConditionSummary = {
   caseCount: number;
   successRate: number | null;
   passK: number | null;
+  passAtK: number | null;
   p50LatencyMs: number | null;
   p95LatencyMs: number | null;
   meanTokens: number | null;
@@ -30,6 +31,7 @@ export type ConditionSummary = {
   maxFlakeCases: number | null;
   safety: {
     requiredCaseCount: number;
+    completeCaseCount: number;
     skippedCount: number;
     flakeCount: number;
     violated: boolean;
@@ -39,6 +41,7 @@ export type ConditionSummary = {
     positivePassed: number;
     negativeCaseCount: number;
     negativeRejected: number;
+    untestedCaseCount: number;
     violated: boolean;
   };
   gate: 'pass' | 'insufficient-sample' | 'fail';

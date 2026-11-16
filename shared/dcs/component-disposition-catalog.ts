@@ -158,9 +158,9 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     remainingGap: [],
   }),
   entry({
-    id: 'component.vtoken-bridge', label: 'VToken internal host bridge', disposition: 'internal', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('Internal diagnostics boundary only; the renderer has no VToken bridge switch or independent product panel.'),
-    currentConsumers: ['internal diagnostics', 'vtoken package tests'], evidenceRefs: CONTEXT_EVIDENCE,
+    id: 'component.vtoken-bridge', label: 'VToken retired host bridge', disposition: 'retired', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'retired', targetDefaultMode: 'retired',
+    ...retired('TF-0496 disabled the bridge and refuses enabling it; the compatibility API and package tests remain, without a runnable sidecar or renderer switch.'),
+    currentConsumers: ['retired compatibility API', 'vtoken package tests'], evidenceRefs: [...CONTEXT_EVIDENCE, 'docs/dev/vtoken-retirement-decision.md'],
     coverage: { authorityComponentIds: ['vtoken-bridge'] },
   }),
   entry({
@@ -259,8 +259,9 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'component.coding-execution-backend', label: 'Coding execution backend', disposition: 'default', owner: 'coding-execution-backend', implementationNodeId: 'TF-0510', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('model tool, shell and file execution'),
-    currentConsumers: ['agent tools', 'DCS coding loop', 'write/edit/exec'], evidenceRefs: [...EXECUTION_EVIDENCE, SETTINGS],
-    coverage: { authorityComponentIds: ['coding-execution-backend'] },
+    currentConsumers: ['agent tools', 'DCS coding loop', 'write/edit/exec', 'ProviderOutboundBudget model-call admission'],
+    evidenceRefs: [...EXECUTION_EVIDENCE, SETTINGS, 'harness/specs/tasks/autonomy-resource-admission.md', 'openclaw_runtime/src/agents/provider-spend-budget.ts'],
+    coverage: { authorityComponentIds: ['coding-execution-backend'], runtimeLeafPatterns: ['providerBudget.*'] },
   }),
   entry({
     id: 'component.verseshell-execution-adapter', label: 'VerseShell execution adapter', disposition: 'internal', owner: 'verseshell-execution-adapter', implementationNodeId: 'TF-0504', currentMode: 'opt-in', targetDefaultMode: 'internal',
@@ -319,10 +320,10 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.renderer-ui-surface', label: 'Renderer UI surface', disposition: 'default', owner: 'renderer-ui-surface', implementationNodeId: 'TF-0505', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('application shell and Settings'),
     currentConsumers: ['Chat shell', 'Settings', 'workspace panels'], evidenceRefs: UI_EVIDENCE,
-    coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived', 'models'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/setup/*', '/', '/settings', '/settings/*', '/models'] },
+    coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived', 'models', 'storage'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/setup/*', '/', '/settings', '/settings/*', '/models', '/projects/:workspaceId'] },
   }),
   entry({
-    id: 'component.retired-surface-registry', label: 'Retired surface registry', disposition: 'internal', owner: 'retired-surface-registry', implementationNodeId: 'TF-0505', currentMode: 'baseline', targetDefaultMode: 'retired',
+    id: 'component.retired-surface-registry', label: 'Retired surface registry', disposition: 'internal', owner: 'retired-surface-registry', implementationNodeId: 'TF-0505', currentMode: 'baseline', targetDefaultMode: 'internal',
     ...internal('Internal classification source that prevents removed surfaces from returning as claims.'),
     currentConsumers: ['retirement checks', 'product claim scan'], evidenceRefs: [...UI_EVIDENCE, SEMANTICS],
     coverage: { authorityComponentIds: ['retired-surface-registry'] },
@@ -346,13 +347,13 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'feature.symbol-lease', label: 'Symbol lease', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',
     ...retired('Retired by TF-0510: isolated git worktrees plus the merge queue are the supported answer to concurrent writers. A measured 4-process benchmark showed the lease serialises correctly but denies 75% of attempts (12 wins / 36 denials), so it throttles throughput without adding safety over worktree isolation. Code is retained and unreachable; no user data is migrated.'),
-    currentConsumers: ['retired symbol-lease guard', 'retired multi-writer coding guard'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    currentConsumers: [], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
     coverage: { dcsFlagIds: ['symbol-lease', 'symbol-lease-mode'], runtimeLeafPatterns: ['coding.symbolLease.*'] },
   }),
   entry({
     id: 'feature.patch-flow', label: 'Patch flow', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',
     ...retired('Retired by TF-0510: no evidence shows serial fenced patch application improves coding outcomes over ordinary tool writes, and the concurrency case it targeted is covered by worktree isolation plus the merge queue. The gate could only ever recommend, never demonstrate a benefit. Code is retained and unreachable; the write journal remains the mutation authority.'),
-    currentConsumers: ['retired patch-flow orchestration', 'write journal recovery path'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    currentConsumers: [], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
     coverage: { dcsFlagIds: ['patch-flow'], runtimeLeafPatterns: ['coding.patchFlow.*'] },
   }),
   entry({

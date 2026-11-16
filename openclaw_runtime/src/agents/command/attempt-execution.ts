@@ -720,6 +720,7 @@ export function runAgentAttempt(params: {
     sessionFile: params.sessionFile,
     sessionStorePath: params.opts.sessionEffects === "internal" ? undefined : params.storePath,
     workspaceDir: params.workspaceDir,
+    workspaceId: params.sessionEntry?.workspaceId,
     cwd: params.cwd,
     config: params.cfg,
     agentHarnessId: embeddedAgentHarnessOverride,

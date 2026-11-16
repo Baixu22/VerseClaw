@@ -208,6 +208,8 @@ export async function applyPatch(
       modifiedFiles: batchResult.modifiedFiles,
       summary: batchResult.summary,
       journal: batchResult.journal,
+      effectApplied: batchResult.effectApplied,
+      journalStatePersisted: batchResult.journalStatePersisted,
     });
     throw err;
   }

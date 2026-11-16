@@ -1,0 +1,522 @@
+{
+  "schema": "PromptBudgetObservations/v1",
+  "driven_by": "agent",
+  "actor": "codex/prompt-budget",
+  "scope": "Deterministic real composer/setter/finalizer API calls; no provider request",
+  "observations": [
+    {
+      "turnId": "observed-0",
+      "modelCallIndex": 0,
+      "budget": {
+        "turnId": "observed-0",
+        "promptAccounting": {
+          "managedSystemChars": 1,
+          "postOrchestrator": {
+            "runtime-intensity": {
+              "target": "system_prompt",
+              "charsApplied": 22
+            },
+            "dcs-degradation": {
+              "target": "system_prompt",
+              "charsApplied": 20
+            },
+            "runtime-system_prompt": {
+              "target": "system_prompt",
+              "charsApplied": 21
+            },
+            "projection-joining:0:0": {
+              "target": "system_prompt",
+              "charsApplied": 2
+            }
+          },
+          "basePromptChars": 21
+        },
+        "total": 6000,
+        "charsApplied": 1,
+        "charsRequested": 1,
+        "charsDropped": 0,
+        "charsTruncated": 0,
+        "remaining": 5999,
+        "dropRatio": 0,
+        "alert": false,
+        "killed": false,
+        "byChannel": {
+          "knowledge": {
+            "requested": 1,
+            "applied": 1,
+            "disposition": "applied"
+          }
+        },
+        "degradationOrder": [],
+        "crossInjectionDuplicateChars": 0,
+        "crossInjectionDuplicationRatio": 0
+      },
+      "coverage": {
+        "managedChars": 1,
+        "postOrchestratorChars": 65,
+        "totalPromptChars": 87,
+        "basePromptChars": 21,
+        "unaccountedChars": 0,
+        "overaccountedChars": 0,
+        "unbudgeted": false
+      },
+      "providerRequestDigest": "sha256:50f40ea4eb5453f60e9eaba577d03b850af79c826741f5da6d35142b40a4e3d6"
+    },
+    {
+      "turnId": "observed-1",
+      "modelCallIndex": 1,
+      "budget": {
+        "turnId": "observed-1",
+        "promptAccounting": {
+          "managedSystemChars": 1001,
+          "postOrchestrator": {
+            "runtime-intensity": {
+              "target": "system_prompt",
+              "charsApplied": 22
+            },
+            "dcs-degradation": {
+              "target": "system_prompt",
+              "charsApplied": 20
+            },
+            "runtime-system_prompt": {
+              "target": "system_prompt",
+              "charsApplied": 21
+            },
+            "projection-joining:0:0": {
+              "target": "system_prompt",
+              "charsApplied": 0
+            },
+            "projection-joining:0:1": {
+              "target": "system_prompt",
+              "charsApplied": 2
+            }
+          },
+          "basePromptChars": 21
+        },
+        "total": 6000,
+        "charsApplied": 1001,
+        "charsRequested": 1001,
+        "charsDropped": 0,
+        "charsTruncated": 0,
+        "remaining": 4999,
+        "dropRatio": 0,
+        "alert": false,
+        "killed": false,
+        "byChannel": {
+          "knowledge": {
+            "requested": 1001,
+            "applied": 1001,
+            "disposition": "applied"
+          }
+        },
+        "degradationOrder": [],
+        "crossInjectionDuplicateChars": 0,
+        "crossInjectionDuplicationRatio": 0
+      },
+      "coverage": {
+        "managedChars": 1001,
+        "postOrchestratorChars": 65,
+        "totalPromptChars": 1087,
+        "basePromptChars": 21,
+        "unaccountedChars": 0,
+        "overaccountedChars": 0,
+        "unbudgeted": false
+      },
+      "providerRequestDigest": "sha256:95595ebfebaf7fe5ba1aea80fd5675d0a35daa89d88f98bb0cc9ef2f8b69a28c"
+    },
+    {
+      "turnId": "observed-2",
+      "modelCallIndex": 2,
+      "budget": {
+        "turnId": "observed-2",
+        "promptAccounting": {
+          "managedSystemChars": 2001,
+          "postOrchestrator": {
+            "runtime-intensity": {
+              "target": "system_prompt",
+              "charsApplied": 22
+            },
+            "dcs-degradation": {
+              "target": "system_prompt",
+              "charsApplied": 20
+            },
+            "runtime-system_prompt": {
+              "target": "system_prompt",
+              "charsApplied": 21
+            },
+            "projection-joining:0:0": {
+              "target": "system_prompt",
+              "charsApplied": 0
+            },
+            "projection-joining:0:2": {
+              "target": "system_prompt",
+              "charsApplied": 2
+            }
+          },
+          "basePromptChars": 21
+        },
+        "total": 6000,
+        "charsApplied": 2001,
+        "charsRequested": 2001,
+        "charsDropped": 0,
+        "charsTruncated": 0,
+        "remaining": 3999,
+        "dropRatio": 0,
+        "alert": false,
+        "killed": false,
+        "byChannel": {
+          "knowledge": {
+            "requested": 2001,
+            "applied": 2001,
+            "disposition": "applied"
+          }
+        },
+        "degradationOrder": [],
+        "crossInjectionDuplicateChars": 0,
+        "crossInjectionDuplicationRatio": 0
+      },
+      "coverage": {
+        "managedChars": 2001,
+        "postOrchestratorChars": 65,
+        "totalPromptChars": 2087,
+        "basePromptChars": 21,
+        "unaccountedChars": 0,
+        "overaccountedChars": 0,
+        "unbudgeted": false
+      },
+      "providerRequestDigest": "sha256:beb0933cf6768981f25f0c165c3aca5dffcb31bbb5d193231027ad99a2d18866"
+    },
+    {
+      "turnId": "observed-3",
+      "modelCallIndex": 3,
+      "budget": {
+        "turnId": "observed-3",
+        "promptAccounting": {
+          "managedSystemChars": 3001,
+          "postOrchestrator": {
+            "runtime-intensity": {
+              "target": "system_prompt",
+              "charsApplied": 22
+            },
+            "dcs-degradation": {
+              "target": "system_prompt",
+              "charsApplied": 20
+            },
+            "runtime-system_prompt": {
+              "target": "system_prompt",
+              "charsApplied": 21
+            },
+            "projection-joining:0:0": {
+              "target": "system_prompt",
+              "charsApplied": 0
+            },
+            "projection-joining:0:3": {
+              "target": "system_prompt",
+              "charsApplied": 2
+            }
+          },
+          "basePromptChars": 21
+        },
+        "total": 6000,
+        "charsApplied": 3001,
+        "charsRequested": 3001,
+        "charsDropped": 0,
+        "charsTruncated": 0,
+        "remaining": 2999,
+        "dropRatio": 0,
+        "alert": false,
+        "killed": false,
+        "byChannel": {
+          "knowledge": {
+            "requested": 3001,
+            "applied": 3001,
+            "disposition": "applied"
+          }
+        },
+        "degradationOrder": [],
+        "crossInjectionDuplicateChars": 0,
+        "crossInjectionDuplicationRatio": 0
+      },
+      "coverage": {
+        "managedChars": 3001,
+        "postOrchestratorChars": 65,
+        "totalPromptChars": 3087,
+        "basePromptChars": 21,
+        "unaccountedChars": 0,
+        "overaccountedChars": 0,
+        "unbudgeted": false
+      },
+      "providerRequestDigest": "sha256:8da6ded27dc6c54a1fbdc2b77262f57fd080fc36945743f1ae82cd3ad5def6e4"
+    },
+    {
+      "turnId": "observed-4",
+      "modelCallIndex": 4,
+      "budget": {
+        "turnId": "observed-4",
+        "promptAccounting": {
+          "managedSystemChars": 4001,
+          "postOrchestrator": {
+            "runtime-intensity": {
+              "target": "system_prompt",
+              "charsApplied": 22
+            },
+            "dcs-degradation": {
+              "target": "system_prompt",
+              "charsApplied": 20
+            },
+            "runtime-system_prompt": {
+              "target": "system_prompt",
+              "charsApplied": 21
+            },
+            "projection-joining:0:0": {
+              "target": "system_prompt",
+              "charsApplied": 0
+            },
+            "projection-joining:0:4": {
+              "target": "system_prompt",
+              "charsApplied": 2
+            }
+          },
+          "basePromptChars": 21
+        },
+        "total": 6000,
+        "charsApplied": 4001,
+        "charsRequested": 4001,
+        "charsDropped": 0,
+        "charsTruncated": 0,
+        "remaining": 1999,
+        "dropRatio": 0,
+        "alert": false,
+        "killed": false,
+        "byChannel": {
+          "knowledge": {
+            "requested": 4001,
+            "applied": 4001,
+            "disposition": "applied"
+          }
+        },
+        "degradationOrder": [],
+        "crossInjectionDuplicateChars": 0,
+        "crossInjectionDuplicationRatio": 0
+      },
+      "coverage": {
+        "managedChars": 4001,
+        "postOrchestratorChars": 65,
+        "totalPromptChars": 4087,
+        "basePromptChars": 21,
+        "unaccountedChars": 0,
+        "overaccountedChars": 0,
+        "unbudgeted": false
+      },
+      "providerRequestDigest": "sha256:76676370272878f4a1353d8b93ae6342ee5de22876ee584dd9abb217c90f09e8"
+    },
+    {
+      "turnId": "observed-5",
+      "modelCallIndex": 5,
+      "budget": {
+        "turnId": "observed-5",
+        "promptAccounting": {
+          "managedSystemChars": 5001,
+          "postOrchestrator": {
+            "runtime-intensity": {
+              "target": "system_prompt",
+              "charsApplied": 22
+            },
+            "dcs-degradation": {
+              "target": "system_prompt",
+              "charsApplied": 20
+            },
+            "runtime-system_prompt": {
+              "target": "system_prompt",
+              "charsApplied": 21
+            },
+            "projection-joining:0:0": {
+              "target": "system_prompt",
+              "charsApplied": 0
+            },
+            "projection-joining:0:5": {
+              "target": "system_prompt",
+              "charsApplied": 2
+            }
+          },
+          "basePromptChars": 21
+        },
+        "total": 6000,
+        "charsApplied": 5001,
+        "charsRequested": 5001,
+        "charsDropped": 0,
+        "charsTruncated": 0,
+        "remaining": 999,
+        "dropRatio": 0,
+        "alert": false,
+        "killed": false,
+        "byChannel": {
+          "knowledge": {
+            "requested": 5001,
+            "applied": 5001,
+            "disposition": "applied"
+          }
+        },
+        "degradationOrder": [],
+        "crossInjectionDuplicateChars": 0,
+        "crossInjectionDuplicationRatio": 0
+      },
+      "coverage": {
+        "managedChars": 5001,
+        "postOrchestratorChars": 65,
+        "totalPromptChars": 5087,
+        "basePromptChars": 21,
+        "unaccountedChars": 0,
+        "overaccountedChars": 0,
+        "unbudgeted": false
+      },
+      "providerRequestDigest": "sha256:3787a58e1c305994ecafed240b5fae8e0d39b7d99b55de6efe84e287eb833dc3"
+    },
+    {
+      "turnId": "observed-6",
+      "modelCallIndex": 6,
+      "budget": {
+        "turnId": "observed-6",
+        "promptAccounting": {
+          "managedSystemChars": 6000,
+          "postOrchestrator": {
+            "runtime-intensity": {
+              "target": "system_prompt",
+              "charsApplied": 22
+            },
+            "dcs-degradation": {
+              "target": "system_prompt",
+              "charsApplied": 20
+            },
+            "runtime-system_prompt": {
+              "target": "system_prompt",
+              "charsApplied": 21
+            },
+            "projection-joining:0:0": {
+              "target": "system_prompt",
+              "charsApplied": 0
+            },
+            "projection-joining:0:6": {
+              "target": "system_prompt",
+              "charsApplied": 2
+            }
+          },
+          "basePromptChars": 21
+        },
+        "total": 6000,
+        "charsApplied": 6000,
+        "charsRequested": 6001,
+        "charsDropped": 0,
+        "charsTruncated": 1,
+        "remaining": 0,
+        "dropRatio": 0.00016666666666666666,
+        "alert": false,
+        "killed": false,
+        "byChannel": {
+          "knowledge": {
+            "requested": 6001,
+            "applied": 6000,
+            "disposition": "truncate"
+          }
+        },
+        "degradationOrder": [
+          {
+            "channel": "knowledge",
+            "disposition": "truncate"
+          }
+        ],
+        "crossInjectionDuplicateChars": 0,
+        "crossInjectionDuplicationRatio": 0
+      },
+      "coverage": {
+        "managedChars": 6000,
+        "postOrchestratorChars": 65,
+        "totalPromptChars": 6086,
+        "basePromptChars": 21,
+        "unaccountedChars": 0,
+        "overaccountedChars": 0,
+        "unbudgeted": false
+      },
+      "providerRequestDigest": "sha256:5257e231864ac623ae10dac6e791c2967bdf674ee6e118bc77740403d943abf1"
+    },
+    {
+      "turnId": "observed-7",
+      "modelCallIndex": 7,
+      "budget": {
+        "turnId": "observed-7",
+        "promptAccounting": {
+          "managedSystemChars": 6000,
+          "postOrchestrator": {
+            "runtime-intensity": {
+              "target": "system_prompt",
+              "charsApplied": 22
+            },
+            "dcs-degradation": {
+              "target": "system_prompt",
+              "charsApplied": 20
+            },
+            "runtime-system_prompt": {
+              "target": "system_prompt",
+              "charsApplied": 21
+            },
+            "projection-joining:0:0": {
+              "target": "system_prompt",
+              "charsApplied": 0
+            },
+            "projection-joining:0:7": {
+              "target": "system_prompt",
+              "charsApplied": 2
+            }
+          },
+          "basePromptChars": 21
+        },
+        "total": 6000,
+        "charsApplied": 6000,
+        "charsRequested": 7001,
+        "charsDropped": 0,
+        "charsTruncated": 1001,
+        "remaining": 0,
+        "dropRatio": 0.16683333333333333,
+        "alert": true,
+        "killed": false,
+        "byChannel": {
+          "knowledge": {
+            "requested": 7001,
+            "applied": 6000,
+            "disposition": "truncate"
+          }
+        },
+        "degradationOrder": [
+          {
+            "channel": "knowledge",
+            "disposition": "truncate"
+          }
+        ],
+        "crossInjectionDuplicateChars": 0,
+        "crossInjectionDuplicationRatio": 0
+      },
+      "coverage": {
+        "managedChars": 6000,
+        "postOrchestratorChars": 65,
+        "totalPromptChars": 6086,
+        "basePromptChars": 21,
+        "unaccountedChars": 0,
+        "overaccountedChars": 0,
+        "unbudgeted": false
+      },
+      "providerRequestDigest": "sha256:5257e231864ac623ae10dac6e791c2967bdf674ee6e118bc77740403d943abf1"
+    }
+  ],
+  "negativeControl": {
+    "coverage": {
+      "managedChars": 5,
+      "postOrchestratorChars": 65,
+      "totalPromptChars": 111,
+      "basePromptChars": 21,
+      "unaccountedChars": 20,
+      "overaccountedChars": 0,
+      "unbudgeted": false
+    },
+    "expectedUnknownChars": 20
+  }
+}

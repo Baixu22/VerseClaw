@@ -1,10 +1,12 @@
 // R5: runId 贯通 —— Cron 执行 id → Browser 结果 runId → runner runId(收据 run_id 唯一上游)三处同值。
 import { describe, expect, it } from "vitest";
 import { createCronExecutionId } from "../run-id.js";
+import { getAgentRunContext, registerAgentRunContext } from "../../infra/agent-events.js";
 import {
   loadRunCronIsolatedAgentTurn,
   mockRunCronFallbackPassthrough,
   runEmbeddedAgentMock,
+  registerAgentRunContextMock,
 } from "./run.test-harness.js";
 import {
   makeIsolatedAgentTurnParams,
@@ -14,6 +16,45 @@ import {
 setupRunCronIsolatedAgentTurnSuite({ fast: true });
 
 describe("cron runId 贯通 (R5-1)", () => {
+  it.each([false, true])(
+    "records the scheduled owner only during embedded execution (failed=%s)",
+    async (failed) => {
+      mockRunCronFallbackPassthrough();
+      registerAgentRunContextMock.mockImplementation(registerAgentRunContext);
+      let runId = "";
+      runEmbeddedAgentMock.mockImplementation(
+        async (args: {
+          runId: string;
+          sessionKey: string;
+          sessionId: string;
+          workspaceDir: string;
+        }) => {
+          runId = args.runId;
+          expect(getAgentRunContext(runId)).toMatchObject({
+            sessionKey: args.sessionKey,
+            sessionId: args.sessionId,
+            cronTaskScope: { jobId: "scheduled-owner", workspaceDir: args.workspaceDir },
+          });
+          if (failed) throw new Error("Scheduled execution failed");
+          return { payloads: [{ text: "ok" }], meta: { agentMeta: {} } };
+        },
+      );
+      const run = await loadRunCronIsolatedAgentTurn();
+      const result = await run(
+        makeIsolatedAgentTurnParams({
+          job: {
+            id: "scheduled-owner",
+            sessionTarget: "isolated",
+            payload: { kind: "agentTurn", message: "Scheduled owner check" },
+          },
+        }) as never,
+      );
+      expect(result.status).toBe(failed ? "error" : "ok");
+      expect(runId).not.toBe("");
+      expect(getAgentRunContext(runId)).toBeUndefined();
+      registerAgentRunContextMock.mockReset();
+    },
+  );
   it("threads one canonical execution id through the browser result and the runner runId (receipt run_id source)", async () => {
     // 注入点 = 模型依赖边界(runEmbeddedAgentMock);run.ts / run-executor 全真。
     mockRunCronFallbackPassthrough();
@@ -37,14 +78,16 @@ describe("cron runId 贯通 (R5-1)", () => {
     });
 
     const run = await loadRunCronIsolatedAgentTurn();
-    const result = await run(makeIsolatedAgentTurnParams({
-      job: {
-        id: "job-r5",
-        name: "R5 browser",
-        sessionTarget: "isolated",
-        payload: { kind: "agentTurn", message: "go", toolsAllow: ["agent_browser"] },
-      },
-    }) as never);
+    const result = await run(
+      makeIsolatedAgentTurnParams({
+        job: {
+          id: "job-r5",
+          name: "R5 browser",
+          sessionTarget: "isolated",
+          payload: { kind: "agentTurn", message: "go", toolsAllow: ["agent_browser"] },
+        },
+      }) as never,
+    );
 
     // ① Browser 结果 runId = canonical 工厂值(用结果自身的 startedAt 回推,不 mock 时间)。
     expect(result.browserAutomationResult).toBeDefined();

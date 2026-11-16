@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "RsiCandidateEvolutionIntegration/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-evolution-integration",
+  "paidProviderCalls": 0,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "vitest.rsi-adoption.config.ts",
+    "tests/unit/rsi-candidate-evolution.test.ts",
+    "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+    "tests/unit/tf0018-sekb-no-auto-writeback.test.ts",
+    "--reporter=json",
+    "--outputFile=D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\tests.json"
+  ],
+  "elapsedMs": 115924,
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "passed": true,
+  "paths": {
+    "tests": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\tests.json",
+    "export": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\export.v1.json",
+    "training": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\training-execution.v1.json",
+    "events": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\events.v1.json",
+    "database": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\state.sqlite",
+    "result": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\result.v1.json"
+  },
+  "tests": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "pending": 0
+  },
+  "exportValidation": {
+    "passed": true,
+    "errors": [],
+    "entries": 7,
+    "generations": 2
+  },
+  "databaseReadbackMatches": true,
+  "generations": [
+    {
+      "id": "rsi-prompt-b019fed2489cacc6a0d19637",
+      "parent": {
+        "id": "principle-6a070a8e50248d9fbd7e8ec1",
+        "version": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d"
+      },
+      "status": "generated",
+      "usage": {
+        "providerCalls": 0,
+        "tokens": 0,
+        "costUsd": 0
+      }
+    },
+    {
+      "id": "rsi-prompt-4fb74767a8b13b831edd60f3",
+      "parent": {
+        "id": "rsi-prompt-b019fed2489cacc6a0d19637",
+        "version": "04e842b2eb9400445fb25a3b2c548fcea1c580653108f487cf887daa9370966b"
+      },
+      "status": "generated",
+      "usage": {
+        "providerCalls": 0,
+        "tokens": 0,
+        "costUsd": 0
+      }
+    }
+  ],
+  "verdicts": [
+    {
+      "status": "eliminate",
+      "numerical": "hold"
+    },
+    {
+      "status": "hold",
+      "numerical": "promote"
+    }
+  ],
+  "heldOutDigest": "01b05ac42fa2fd57d61a6af6e88887220a65a58952dfd5f0aa0e5a241feff501",
+  "measurementCandidateId": "rsi-prompt-4fb74767a8b13b831edd60f3",
+  "rollback": {
+    "offBeforeDigest": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d",
+    "onDigest": "04e842b2eb9400445fb25a3b2c548fcea1c580653108f487cf887daa9370966b",
+    "offAfterDigest": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d"
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0743",
+  "observations": [
+    {
+      "case": "self-edit-query-recall",
+      "before": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "1:2:4",
+          "scope": "sqlite-connection-snapshot",
+          "stale": false
+        }
+      },
+      "updated": {
+        "ok": true,
+        "tool": "memory_update",
+        "message": "Fact old superseded by old_superseded_5000.",
+        "data": {
+          "oldFactId": "old",
+          "newFactId": "old_superseded_5000",
+          "updatedFields": {
+            "objectSummary": "green color"
+          }
+        },
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "1:2:5",
+          "scope": "sqlite-connection-snapshot",
+          "stale": true
+        }
+      },
+      "after": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old_superseded_5000",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "green color",
+            "confidence": 0.8,
+            "validAt": 5000
+          }
+        ],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "1:2:13",
+          "scope": "sqlite-connection-snapshot",
+          "stale": false
+        }
+      },
+      "recall": {
+        "ok": true,
+        "tool": "memory_recall",
+        "message": "Found 1 fact(s).",
+        "data": [
+          {
+            "factId": "old_superseded_5000",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "green color",
+            "verificationStatus": "agent_approved",
+            "memoryType": "semantic",
+            "valid_at": 5000
+          }
+        ],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "1:2:14",
+          "scope": "sqlite-connection-snapshot",
+          "stale": false
+        }
+      },
+      "elapsedMs": 0
+    },
+    {
+      "case": "forget-query",
+      "after": {
+        "ok": false,
+        "message": "Memory store is empty or not enabled.",
+        "count": 0,
+        "facts": [],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "2:2:8",
+          "scope": "sqlite-connection-snapshot",
+          "stale": false
+        }
+      },
+      "elapsedMs": 0
+    },
+    {
+      "case": "external-connection",
+      "before": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "5:2:4",
+          "scope": "sqlite-connection-snapshot",
+          "stale": false
+        }
+      },
+      "after": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "violet color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "5:3:5",
+          "scope": "sqlite-connection-snapshot",
+          "stale": false
+        }
+      },
+      "elapsedMs": 0
+    },
+    {
+      "case": "external-process",
+      "after": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "orange color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "6:3:5",
+          "scope": "sqlite-connection-snapshot",
+          "stale": false
+        }
+      },
+      "elapsedMs": 0
+    },
+    {
+      "case": "changed-during-retrieval",
+      "during": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "7:2:4",
+          "scope": "sqlite-connection-snapshot",
+          "stale": true
+        }
+      }
+    },
+    {
+      "case": "changed-after-snapshot-commit",
+      "raced": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ],
+        "freshness": {
+          "loadedAt": 5000,
+          "sourceRevision": "8:2:4",
+          "scope": "sqlite-connection-snapshot",
+          "stale": true
+        }
+      }
+    }
+  ]
+}

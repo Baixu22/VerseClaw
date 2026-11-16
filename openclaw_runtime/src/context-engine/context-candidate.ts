@@ -3,6 +3,13 @@ import { isDeepStrictEqual } from "node:util";
 import type { AgentMessage } from "../agents/runtime/index.js";
 import { computeNovelty } from "./context-health-monitor.js";
 import {
+  admitPromptContribution,
+  getBuiltinPromptContributionDeclaration,
+  resolvePromptAuthorityMode,
+  type PromptContributionAdmission,
+  type PromptContributionAuthority,
+} from "./prompt-contribution-authority.js";
+import {
   chargeTurnInjection,
   precedenceIndexOf,
   type TurnInjectionChannel,
@@ -13,6 +20,12 @@ import {
 export const CONTEXT_CANDIDATE_SCHEMA = "ContextCandidate/v1" as const;
 
 export type ContextCandidateTarget = "system_prompt" | "message" | "message_replacement";
+
+export const CONTEXT_CANDIDATE_AUTHORITIES = {
+  system_prompt: "append_instruction",
+  message: "append_data",
+  message_replacement: "replace_messages",
+} as const satisfies Record<ContextCandidateTarget, PromptContributionAuthority>;
 
 export type ContextMessageReplacement = {
   original: AgentMessage[];
@@ -48,6 +61,7 @@ export type ContextCandidateLineageReason =
   | "skip-channel";
 
 export type ContextCandidateLineage = {
+  promptAuthority?: "declared" | "default-data" | "warned";
   candidateId: string;
   dedupKey: string;
   sourceId: string;
@@ -276,12 +290,29 @@ export function reopenContextCandidateCollection(turnId: string): ContextCandida
 export function collectContextCandidate(
   turnId: string,
   candidate: ContextCandidate,
+  admission?: PromptContributionAdmission,
 ): ContextCandidateLineage {
   const collection = beginContextCandidateCollection(turnId);
   if (collection.diagnostics.finalized) {
     throw new Error(`context candidate collection already finalized: ${turnId}`);
   }
+  // Admission precedes collection and budget charging; a rejected replacement
+  // cannot enter a cached projection or masquerade as appended data.
+  const requiredAuthority = CONTEXT_CANDIDATE_AUTHORITIES[candidate.target];
+  const resolvedAdmission: PromptContributionAdmission = {
+    ...admission,
+    mode: admission?.mode ?? resolvePromptAuthorityMode(process.env.OPENCLAW_PROMPT_AUTHORITY_MODE),
+    declaration:
+      admission?.declaration ?? getBuiltinPromptContributionDeclaration(candidate.sourceId),
+  };
+  const promptAuthority = admitPromptContribution(
+    candidate.sourceId,
+    candidate.target,
+    requiredAuthority,
+    resolvedAdmission,
+  );
   const lineage: ContextCandidateLineage = {
+    promptAuthority,
     candidateId: candidate.candidateId,
     dedupKey: candidate.dedupKey,
     sourceId: candidate.sourceId,

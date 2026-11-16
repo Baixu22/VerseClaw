@@ -44,6 +44,7 @@ import {
   type ContextCandidateTarget,
 } from "./context-candidate.js";
 import { recordContextFinalSnapshot } from "./context-final-snapshot.js";
+import type { PromptContributionAdmission } from "./prompt-contribution-authority.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import { applySessionStartInjection } from "./session-start-injection.js";
 import {
@@ -56,14 +57,19 @@ import type {
 } from "../../../shared/types/session-start-injection.js";
 import {
   runRc03SealHook,
-  resolveRc03SealState,
+  resolveCurrentRc03SealState,
   recordRc03SystemPromptContribution,
+  clearRc03SealPlan,
   type Rc03SealHookResult,
 } from "./rc03-seal-hook.js";
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
   endTurnInjectionBudget,
+  observeTurnSystemPromptBase,
+  recordManagedSystemChars,
+  recordPostOrchestratorChange,
+  recordPostOrchestratorContribution,
   reserveTurnInjectionCapacity,
   skipTurnInjection,
   summarizeTurnInjection,
@@ -124,6 +130,7 @@ export type ContextOrchestratorSource = {
 };
 
 export type ContextOrchestratorLineage = {
+  unbudgeted: boolean;
   turnId?: string;
   sessionId?: string;
   sessionKey?: string;
@@ -224,6 +231,47 @@ export type ContextOrchestratorResult = {
   lineage: ContextOrchestratorLineage;
 };
 
+/** Compose the real post-orchestrator component without spending or widening the managed limit. */
+export function composePostOrchestratorPrompt(params: {
+  turnId?: string;
+  basePrompt?: string;
+  additions: readonly { sourceId: string; text?: string }[];
+  applied?: boolean;
+}): { prompt: string; unbudgeted: boolean; postOrchestratorChars: number } {
+  const included = (text: string | undefined): text is string => typeof text === "string" && text.trim().length > 0;
+  let prompt = included(params.basePrompt) ? params.basePrompt : "";
+  let postOrchestratorChars = 0;
+  const ledger = params.turnId ? beginTurnInjectionBudget({ turnId: params.turnId }) : undefined;
+  for (const { sourceId, text } of params.additions) {
+    const written = included(text) ? (prompt ? `\n\n${text}` : text) : "";
+    prompt += written;
+    postOrchestratorChars += written.length;
+    if (ledger) recordPostOrchestratorContribution(ledger, sourceId, params.applied === false ? 0 : written.length);
+  }
+  return { prompt, unbudgeted: !params.turnId,
+    postOrchestratorChars: params.applied === false ? 0 : postOrchestratorChars };
+}
+
+/** Same setter used by the embedded runner, with accounting after successful application. */
+export function createTrackedSystemPromptSetter(params: {
+  turnId: string;
+  basePrompt: string;
+  apply: (prompt: string) => void;
+}): (prompt: string) => void {
+  const ledger = beginTurnInjectionBudget({ turnId: params.turnId });
+  let current = params.basePrompt;
+  observeTurnSystemPromptBase(ledger, current);
+  return next => {
+    params.apply(next);
+    recordPostOrchestratorChange(ledger, current, next, "system_prompt");
+    current = next;
+  };
+}
+
+export function recordPostOrchestratorMessageChange(turnId: string, before: string, after: string): void {
+  recordPostOrchestratorChange(beginTurnInjectionBudget({ turnId }), before, after, "message");
+}
+
 function resolveMemoryLineageSourceId(providerIds: readonly string[] | undefined): string {
   const ids = [...new Set((providerIds ?? []).map((id) => id.trim()).filter(Boolean))].toSorted();
   return ids.length > 0 ? `memory-inject-pilot:${ids.join("+")}` : "memory-inject-pilot";
@@ -300,8 +348,9 @@ export type ContextOrchestratorCandidateInput = Omit<
 export function collectContextOrchestratorCandidate(
   turnId: string,
   input: ContextOrchestratorCandidateInput,
+  admission?: PromptContributionAdmission,
 ): ContextCandidateLineage {
-  return collectContextCandidate(turnId, createContextCandidate(input));
+  return collectContextCandidate(turnId, createContextCandidate(input), admission);
 }
 
 export function recordContextOrchestratorSourceDecision(
@@ -383,6 +432,17 @@ export function finalizeContextOrchestratorTurn(params: {
     messages: params.messages,
     priorDedupKeys: params.priorDedupKeys,
   });
+  const managedSystemChars = projected.projection.lineage
+    .filter(entry => entry.target === "system_prompt")
+    .reduce((sum, entry) => sum + entry.charsApplied, 0);
+  if (!wasFinalized) recordManagedSystemChars(ledger, managedSystemChars);
+  const systemAddition = projected.projection.systemPromptAddition;
+  if (systemAddition) {
+    const joiningChars = systemAddition.length - managedSystemChars +
+      (params.systemPrompt?.endsWith(`\n\n${systemAddition}`) ? 2 : 0);
+    recordPostOrchestratorContribution(ledger,
+      `projection-joining:${params.attemptIndex ?? 0}:${params.modelCallIndex ?? 0}`, joiningChars);
+  }
   // The first projection precedes the model-call seal. Register the charged
   // text, so a later reopened collection still attributes the actual prompt.
   for (const contribution of projected.projection.systemPromptContributions ?? []) {
@@ -396,14 +456,16 @@ export function finalizeContextOrchestratorTurn(params: {
   // DCS semantic producers are registered (zero-bypass), seals the immutable
   // ContextBundle, and persists a ContextReceipt/v1. When off, this is a no-op
   // and the legacy path is byte-identical.
+  const rc03State = resolveCurrentRc03SealState(params.cfg);
   const rc03Enabled =
     params.seal !== false &&
-    (params.rc03Seal?.enabled === true || resolveRc03SealState(params.cfg).enabled);
+    !rc03State.killed &&
+    (params.rc03Seal?.enabled === true || rc03State.enabled);
   let sealResult: Rc03SealHookResult | undefined;
   if (rc03Enabled) {
     sealResult = runRc03SealHook(projected.projection, projected.messages, {
       enabled: true,
-      killed: lineageByTurn.get(params.turnId)?.killSwitchEngaged,
+      killed: rc03State.killed,
       sessionKey: params.sessionKey,
       runId: params.runId,
       providerId: params.providerId,
@@ -412,6 +474,8 @@ export function finalizeContextOrchestratorTurn(params: {
       systemPrompt: params.systemPrompt,
       database: params.rc03Seal?.database,
     });
+  } else if (params.seal !== false) {
+    clearRc03SealPlan(params.runId);
   }
   if (params.seal !== false) {
     const providerSystemPrompt = params.systemPrompt ?? projected.projection.systemPromptAddition;
@@ -640,6 +704,7 @@ function chargeAppendedSegment(
   const head = text.slice(0, beforeLen);
   const segment = text.slice(beforeLen);
   const charged = chargeTurnInjection(ledger, channel, segment);
+  recordManagedSystemChars(ledger, charged.charsApplied);
   if (!charged.text) {
     return {
       text: head.length > 0 ? head : undefined,
@@ -667,6 +732,7 @@ export async function computeContextExtraSystemPrompt(
   const hasNativeDeclaration = nativeContext.nativeMemory || nativeContext.nativeContextGating;
   rememberNativeNegotiation(input.turnId, nativeContext);
   const lineage: ContextOrchestratorLineage = {
+    unbudgeted: !input.turnId,
     turnId: input.turnId,
     sessionId: input.sessionId,
     sessionKey: input.sessionKey,
@@ -830,11 +896,10 @@ export async function computeContextExtraSystemPrompt(
           {
             workspace: input.workspaceDir,
             taskId: input.taskId,
+            goal: input.taskHint,
             ...(input.roleName ? { roleName: input.roleName } : {}),
-            // #182: COMPASS retrieval already selected these fact ids for this
-            // turn and renders them on the `knowledge` channel, which charges
-            // the budget first. Re-injecting the same facts as `memory_pilot`
-            // items would spend bytes on content the model already has.
+            // COMPASS already renders these facts on the higher-precedence knowledge
+            // channel; avoid charging or injecting them again through the memory pilot.
             dedupeFactIds: input.compassContext?.injection.injectedFactIds,
           },
         );

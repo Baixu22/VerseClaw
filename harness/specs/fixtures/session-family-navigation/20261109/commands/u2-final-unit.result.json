@@ -1,0 +1,470 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "u2-final-unit",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/unit/gateway-events.test.ts",
+    "tests/unit/gateway-event-dispatch.test.ts",
+    "tests/unit/host-events.test.ts",
+    "tests/unit/chat-startup-hydration.test.ts",
+    "tests/unit/chat-event-dedupe.test.ts",
+    "tests/unit/workspaces-api.test.ts",
+    "tests/unit/workspaces-store.test.ts",
+    "tests/unit/sidebar-render-containment.test.tsx",
+    "tests/unit/sidebar-session-buckets.test.ts",
+    "tests/unit/session-family-navigation.test.tsx",
+    "tests/unit/session-folder-tree.test.tsx",
+    "tests/unit/session-family-read-model.test.ts",
+    "tests/unit/session-derivation-lineage.test.ts",
+    "tests/unit/session-reading-scroll-owner.test.tsx",
+    "tests/unit/chat-viewport.test.tsx",
+    "tests/unit/session-task-state-guidance.test.tsx",
+    "tests/unit/long-session-delegation-admission.test.ts",
+    "tests/unit/session-delegation-status.test.tsx",
+    "tests/unit/workspace-agents-panel-failure.test.tsx",
+    "tests/unit/session-chain-panels.test.tsx",
+    "tests/unit/gateway-manager-diagnostics.test.ts",
+    "tests/unit/gateway-manager-heartbeat.test.ts",
+    "tests/unit/gateway-manager-restart-recovery.test.ts",
+    "tests/unit/gateway-manager-reload-policy-refresh.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=json",
+    "--outputFile=D:\\tmp\\unified-management-20261109\\interaction-validation/u2-final-unit.tests.json"
+  ],
+  "startedAt": "2026-11-09T04:42:48.068Z",
+  "finishedAt": "2026-11-09T04:43:40.727Z",
+  "durationMs": 52657,
+  "exitCode": 0,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+    "tree": "48b9352fda97b0b7596ad972382f5dec9c09d96b",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/gateway/chat-runtime-events.ts",
+        "sha256": "826c3d843b0a7ea552ca671c712a746661c7525de02d33d8627105df14bb1e24"
+      },
+      {
+        "file": "electron/gateway/event-dispatch.ts",
+        "sha256": "c76d5b0587e7ccd5aa5fafc53225c4707b748310653f9fd31cd2712425a9b2a1"
+      },
+      {
+        "file": "electron/gateway/manager.ts",
+        "sha256": "ab67a97dd1edfe0570b12657928ea3da41c4c879563cbaceb927ea92c345d562"
+      },
+      {
+        "file": "electron/main/ipc-handlers.ts",
+        "sha256": "3d38ff393d3bca51ee0aee63a5e896a76963fbdda2b1b3912c095a5b104d67d6"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "ffc1f7577cdb7e03ad4d47dcf961ece82d4908a0f3d6cc4e5411bdd1a4d3f1ae"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+        "sha256": "dc37f4fe8b00833a6777bbf1b9bb942969be5be4727df834e90b118255329d67"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "sha256": "e88bc2bbe4bebcbe4a440aa99f6ea3258b242fa927a7695b23e8909855920be4"
+      },
+      {
+        "file": "shared/host-events/contract.ts",
+        "sha256": "90d9049e5a78c921a7e14d1cb3073807bb6ba51382c4b846aa0f41889f3fb96d"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "cdda2bee32c0e4e3d7d27e2aa960cba97800e753da722eb0bc5a12de22d5755f"
+      },
+      {
+        "file": "shared/i18n/locales/en/taskLedger.json",
+        "sha256": "96dd8a4247829a48ed0801e0bbc055baa53805471c1d0690d50402bf266033a8"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "d167c5dc6e6468cc1db7250ab988d6fb5c5996f14c8ac41528df6a11872e7a97"
+      },
+      {
+        "file": "shared/i18n/locales/ja/taskLedger.json",
+        "sha256": "44386547ece8ce43b6b072dcbae7a1f6c6ef904d5c0d6219c26408d27ba9700a"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "5249cd4650e5c422d92a72e75e3d06cf98960af984e0ec59e82869d5c5b69bfd"
+      },
+      {
+        "file": "shared/i18n/locales/ru/taskLedger.json",
+        "sha256": "b9a77c63f7b59f5a35fc4df4a5db875ab08948d0574b2ac013e42012468fd6de"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "a1ce3c6eabc7a1f5e62acd9c340ca6076546543ba3ead471cfc7e63d7891dad4"
+      },
+      {
+        "file": "shared/i18n/locales/zh/taskLedger.json",
+        "sha256": "e33c2c510068fc7c30882cd976ba4bbb78e5440b5d0d5c610269ee598126e32f"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "9dcd02931e63f2f64658a11ba33fa5c247501e98f38dba9d59aaccf47bcb357d"
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "6dfec2aa7c3bdb402255a13b7c2f24e26f8b74ce52166e69803a49e98289ffd7"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "ad6457964c3e9986d70c017bfd74c89fda6358f9ea8751469d6ef0a275a66d80"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "9a42bf1804bed6c98662b7b6e7b26e317e3860cda07fdb6a6ab93bc8db0d7a5c"
+      },
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "880ef4b8c585c20168631c4dd4273d36fc15c7a4a26852521fc899bedc8e4c0a"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "2d29cdc5b257cf7e75c797f67dda84595b52e46146a2105e53da0074af34c268"
+      },
+      {
+        "file": "src/components/layout/session-buckets.ts",
+        "sha256": "ce699527133ac60cf06d840dd4ea699b257e4c19ec40070fe749e6bc89d9564b"
+      },
+      {
+        "file": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "5f0a0f474997bd6ef2f368726d312058cb6c9e860bb52e773442f64ba0faef09"
+      },
+      {
+        "file": "src/hooks/use-message-viewport.ts",
+        "sha256": "a152b62ff5d537fca2fd36ffeccdfcb3108a2b366aede1bd45a97331b0afa753"
+      },
+      {
+        "file": "src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+      },
+      {
+        "file": "src/lib/host-events.ts",
+        "sha256": "fdec1cd7df9e74341772b59aeb4f5b69ba69ede6c39bb3988377c9c6b499af1a"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "9f8555ba1cec07f1196c279dbff3d77b3c6ce1a2d6e3f0ee4ed828af2dc3715e"
+      },
+      {
+        "file": "src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "c89c24e22e21f472e507efef631b77e10ad88d1464efac1070ad62dbb82c7ae6"
+      },
+      {
+        "file": "src/pages/Projects/index.tsx",
+        "sha256": "a49639af58311ebd39f1838df0a77f480e09c3b610f8c0e850b0fa749e286048"
+      },
+      {
+        "file": "src/pages/TaskLedger/ManagedTasks.tsx",
+        "sha256": "a7c2d0c058c5ea5b3b0ef81b728ab04405f0691446019a732b08a545364d5891"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "f1dbdd6a28b19414a41041ef2e67a7d3430cfec6c984a94a8b82c1ded109380b"
+      },
+      {
+        "file": "src/stores/gateway.ts",
+        "sha256": "2312797232f108cb5da2c92874e830cefff006e47afaca0f901760414f9e8cee"
+      },
+      {
+        "file": "tests/e2e/session-delegation-capacity.spec.ts",
+        "sha256": "e2bd7acf51e96b3250cc4ea530255989bba43da0617f46487e25b14587773d3c"
+      },
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "0ea81eaf5e959e508bd8832c1f8f867ec149a07f68c1128a452d0d54085e2a01"
+      },
+      {
+        "file": "tests/e2e/session-task-state-guidance.spec.ts",
+        "sha256": "9dfaa07e190cd97cf6b03a9198f98f3304d9f1b149bed6e83b96dffc1c8a0ae9"
+      },
+      {
+        "file": "tests/unit/chat-startup-hydration.test.ts",
+        "sha256": "d3284f8217ca6fda7d098f5a7d8c392b0b64179382ba4617c846be1c15adb069"
+      },
+      {
+        "file": "tests/unit/chat-viewport.test.tsx",
+        "sha256": "30969869ccdaddb0dd039163918384282265e16efeacbd201238d731e80f4d06"
+      },
+      {
+        "file": "tests/unit/gateway-event-dispatch.test.ts",
+        "sha256": "643ec2220d2940ef8cf7ee7a18dd7e4da942bdf8351af2fc4af5571ef8329ad8"
+      },
+      {
+        "file": "tests/unit/gateway-events.test.ts",
+        "sha256": "867761576d36f04091f96ed1e240c4109552ac29549a7f22cafd1ae2713e6826"
+      },
+      {
+        "file": "tests/unit/long-session-delegation-admission.test.ts",
+        "sha256": "e3bb6ff235563aa1fa35a7ed76335b4779602b384907148a341cae528f32526c"
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "sha256": "b6465082f9b2ba52c197ab6cf260155aeb961bbbacfa7489ccfa31a1047544e8"
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "sha256": "7ff319e5a13ffad68a56668a36c90854012763852a0cf8d9544c6246d1a6af9f"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "c28dca21774cf69778dbe6295fd0f4ee211384f1ddac69a327ee0bbee6c38830"
+      },
+      {
+        "file": "tests/unit/session-reading-scroll-owner.test.tsx",
+        "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+      },
+      {
+        "file": "tests/unit/session-task-state-guidance.test.tsx",
+        "sha256": "87a9c62e0cef1f36dc4288920095b83294bb4f61467520806f3896484071a9aa"
+      },
+      {
+        "file": "tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "22b6c28521fafeec66a0a1671897b6999f6c6c49217da03b171df5a5de7a6624"
+      },
+      {
+        "file": "tests/unit/sidebar-session-buckets.test.ts",
+        "sha256": "3c761fecf40ced3bea68a8b9bb9d114439cedfc23e71a3254264d9d656fa3f94"
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "sha256": "d166a6abdd6634ae0d6f84fc31399a364dede2ae5deba1292efe9aa111807bc9"
+      },
+      {
+        "file": "tests/unit/workspaces-api.test.ts",
+        "sha256": "e0f9b3ec293d0a8e9a42ccad01b7adc639553c4368d10bd1b0e8608d9ba68b77"
+      }
+    ]
+  },
+  "after": {
+    "commit": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+    "tree": "48b9352fda97b0b7596ad972382f5dec9c09d96b",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/gateway/chat-runtime-events.ts",
+        "sha256": "826c3d843b0a7ea552ca671c712a746661c7525de02d33d8627105df14bb1e24"
+      },
+      {
+        "file": "electron/gateway/event-dispatch.ts",
+        "sha256": "c76d5b0587e7ccd5aa5fafc53225c4707b748310653f9fd31cd2712425a9b2a1"
+      },
+      {
+        "file": "electron/gateway/manager.ts",
+        "sha256": "ab67a97dd1edfe0570b12657928ea3da41c4c879563cbaceb927ea92c345d562"
+      },
+      {
+        "file": "electron/main/ipc-handlers.ts",
+        "sha256": "3d38ff393d3bca51ee0aee63a5e896a76963fbdda2b1b3912c095a5b104d67d6"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "ffc1f7577cdb7e03ad4d47dcf961ece82d4908a0f3d6cc4e5411bdd1a4d3f1ae"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+        "sha256": "dc37f4fe8b00833a6777bbf1b9bb942969be5be4727df834e90b118255329d67"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "sha256": "e88bc2bbe4bebcbe4a440aa99f6ea3258b242fa927a7695b23e8909855920be4"
+      },
+      {
+        "file": "shared/host-events/contract.ts",
+        "sha256": "90d9049e5a78c921a7e14d1cb3073807bb6ba51382c4b846aa0f41889f3fb96d"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "cdda2bee32c0e4e3d7d27e2aa960cba97800e753da722eb0bc5a12de22d5755f"
+      },
+      {
+        "file": "shared/i18n/locales/en/taskLedger.json",
+        "sha256": "96dd8a4247829a48ed0801e0bbc055baa53805471c1d0690d50402bf266033a8"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "d167c5dc6e6468cc1db7250ab988d6fb5c5996f14c8ac41528df6a11872e7a97"
+      },
+      {
+        "file": "shared/i18n/locales/ja/taskLedger.json",
+        "sha256": "44386547ece8ce43b6b072dcbae7a1f6c6ef904d5c0d6219c26408d27ba9700a"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "5249cd4650e5c422d92a72e75e3d06cf98960af984e0ec59e82869d5c5b69bfd"
+      },
+      {
+        "file": "shared/i18n/locales/ru/taskLedger.json",
+        "sha256": "b9a77c63f7b59f5a35fc4df4a5db875ab08948d0574b2ac013e42012468fd6de"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "a1ce3c6eabc7a1f5e62acd9c340ca6076546543ba3ead471cfc7e63d7891dad4"
+      },
+      {
+        "file": "shared/i18n/locales/zh/taskLedger.json",
+        "sha256": "e33c2c510068fc7c30882cd976ba4bbb78e5440b5d0d5c610269ee598126e32f"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "9dcd02931e63f2f64658a11ba33fa5c247501e98f38dba9d59aaccf47bcb357d"
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "6dfec2aa7c3bdb402255a13b7c2f24e26f8b74ce52166e69803a49e98289ffd7"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "ad6457964c3e9986d70c017bfd74c89fda6358f9ea8751469d6ef0a275a66d80"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "9a42bf1804bed6c98662b7b6e7b26e317e3860cda07fdb6a6ab93bc8db0d7a5c"
+      },
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "880ef4b8c585c20168631c4dd4273d36fc15c7a4a26852521fc899bedc8e4c0a"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "2d29cdc5b257cf7e75c797f67dda84595b52e46146a2105e53da0074af34c268"
+      },
+      {
+        "file": "src/components/layout/session-buckets.ts",
+        "sha256": "ce699527133ac60cf06d840dd4ea699b257e4c19ec40070fe749e6bc89d9564b"
+      },
+      {
+        "file": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "5f0a0f474997bd6ef2f368726d312058cb6c9e860bb52e773442f64ba0faef09"
+      },
+      {
+        "file": "src/hooks/use-message-viewport.ts",
+        "sha256": "a152b62ff5d537fca2fd36ffeccdfcb3108a2b366aede1bd45a97331b0afa753"
+      },
+      {
+        "file": "src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+      },
+      {
+        "file": "src/lib/host-events.ts",
+        "sha256": "fdec1cd7df9e74341772b59aeb4f5b69ba69ede6c39bb3988377c9c6b499af1a"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "9f8555ba1cec07f1196c279dbff3d77b3c6ce1a2d6e3f0ee4ed828af2dc3715e"
+      },
+      {
+        "file": "src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "c89c24e22e21f472e507efef631b77e10ad88d1464efac1070ad62dbb82c7ae6"
+      },
+      {
+        "file": "src/pages/Projects/index.tsx",
+        "sha256": "a49639af58311ebd39f1838df0a77f480e09c3b610f8c0e850b0fa749e286048"
+      },
+      {
+        "file": "src/pages/TaskLedger/ManagedTasks.tsx",
+        "sha256": "a7c2d0c058c5ea5b3b0ef81b728ab04405f0691446019a732b08a545364d5891"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "f1dbdd6a28b19414a41041ef2e67a7d3430cfec6c984a94a8b82c1ded109380b"
+      },
+      {
+        "file": "src/stores/gateway.ts",
+        "sha256": "2312797232f108cb5da2c92874e830cefff006e47afaca0f901760414f9e8cee"
+      },
+      {
+        "file": "tests/e2e/session-delegation-capacity.spec.ts",
+        "sha256": "e2bd7acf51e96b3250cc4ea530255989bba43da0617f46487e25b14587773d3c"
+      },
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "0ea81eaf5e959e508bd8832c1f8f867ec149a07f68c1128a452d0d54085e2a01"
+      },
+      {
+        "file": "tests/e2e/session-task-state-guidance.spec.ts",
+        "sha256": "9dfaa07e190cd97cf6b03a9198f98f3304d9f1b149bed6e83b96dffc1c8a0ae9"
+      },
+      {
+        "file": "tests/unit/chat-startup-hydration.test.ts",
+        "sha256": "d3284f8217ca6fda7d098f5a7d8c392b0b64179382ba4617c846be1c15adb069"
+      },
+      {
+        "file": "tests/unit/chat-viewport.test.tsx",
+        "sha256": "30969869ccdaddb0dd039163918384282265e16efeacbd201238d731e80f4d06"
+      },
+      {
+        "file": "tests/unit/gateway-event-dispatch.test.ts",
+        "sha256": "643ec2220d2940ef8cf7ee7a18dd7e4da942bdf8351af2fc4af5571ef8329ad8"
+      },
+      {
+        "file": "tests/unit/gateway-events.test.ts",
+        "sha256": "867761576d36f04091f96ed1e240c4109552ac29549a7f22cafd1ae2713e6826"
+      },
+      {
+        "file": "tests/unit/long-session-delegation-admission.test.ts",
+        "sha256": "e3bb6ff235563aa1fa35a7ed76335b4779602b384907148a341cae528f32526c"
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "sha256": "b6465082f9b2ba52c197ab6cf260155aeb961bbbacfa7489ccfa31a1047544e8"
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "sha256": "7ff319e5a13ffad68a56668a36c90854012763852a0cf8d9544c6246d1a6af9f"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "c28dca21774cf69778dbe6295fd0f4ee211384f1ddac69a327ee0bbee6c38830"
+      },
+      {
+        "file": "tests/unit/session-reading-scroll-owner.test.tsx",
+        "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+      },
+      {
+        "file": "tests/unit/session-task-state-guidance.test.tsx",
+        "sha256": "87a9c62e0cef1f36dc4288920095b83294bb4f61467520806f3896484071a9aa"
+      },
+      {
+        "file": "tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "22b6c28521fafeec66a0a1671897b6999f6c6c49217da03b171df5a5de7a6624"
+      },
+      {
+        "file": "tests/unit/sidebar-session-buckets.test.ts",
+        "sha256": "3c761fecf40ced3bea68a8b9bb9d114439cedfc23e71a3254264d9d656fa3f94"
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "sha256": "d166a6abdd6634ae0d6f84fc31399a364dede2ae5deba1292efe9aa111807bc9"
+      },
+      {
+        "file": "tests/unit/workspaces-api.test.ts",
+        "sha256": "e0f9b3ec293d0a8e9a42ccad01b7adc639553c4368d10bd1b0e8608d9ba68b77"
+      }
+    ]
+  },
+  "tests": {
+    "total": 230,
+    "passed": 230,
+    "failed": 0,
+    "pending": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-unit.log",
+    "sha256": "e70cf8591fa193e91b4946f223d252c6307b4c080db2cef320eabac78075599f"
+  }
+}

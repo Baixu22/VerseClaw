@@ -27,6 +27,7 @@ import {
   normalizeThinkLevel,
 } from "../../auto-reply/thinking.js";
 import { updateSessionStore } from "../../config/sessions.js";
+import { sessionAdmissionRegistry } from "../../sessions/session-admission-registry.js";
 import { verifyContextArchiveHandle } from "../../context-engine/registry/context-item-registry.js";
 import { normalizeArchiveHandle } from "../../../../shared/types/context-family.js";
 import { formatErrorMessage } from "../../infra/errors.js";
@@ -41,6 +42,7 @@ import {
   migrateAndPruneGatewaySessionStoreKey,
   readRecentSessionTranscriptLines,
   resolveGatewaySessionStoreTarget,
+  resolveFreshestSessionEntryFromStoreKeys,
   resolveSessionModelRef,
   resolveSessionTranscriptCandidates,
 } from "../session-utils.js";
@@ -633,6 +635,14 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
       );
       return;
     }
+    const sessionId = entry.sessionId;
+    const generationError = errorShape(ErrorCodes.INVALID_REQUEST, "Session generation changed before checkpoint transcript restore.", {
+      details: { reason: "generation-mismatch" },
+    });
+    if (p.expectedSessionId !== undefined && p.expectedSessionId !== sessionId) {
+      respond(false, undefined, generationError);
+      return;
+    }
     const checkpoint = getSessionCompactionCheckpoint({ entry, checkpointId });
     const forkSource = checkpoint ? resolveCheckpointForkSource(checkpoint) : null;
     if (!checkpoint || !forkSource) {
@@ -643,64 +653,86 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    const interruptResult = await interruptSessionRunIfActive({
-      req,
-      context,
-      client,
-      isWebchatConnect,
-      requestedKey: key,
-      canonicalKey,
-      agentId: requestedAgent.agentId,
-      sessionId: entry.sessionId,
-    });
-    if (interruptResult.error) {
-      respond(false, undefined, interruptResult.error);
+    const target = resolveGatewaySessionStoreTarget({ cfg, key, agentId: requestedAgent.agentId });
+    const identity = { agentId: target.agentId, canonicalSessionKey: canonicalKey, expectedSessionId: sessionId };
+    if (sessionAdmissionRegistry.isFenced(identity)) {
+      respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "Session is fenced by another lifecycle operation."));
       return;
     }
-
-    const restoredSession = await forkCompactionCheckpointTranscriptAsync({
-      sourceFile: forkSource.sourceFile,
-      sourceLeafId: forkSource.sourceLeafId,
-      sessionDir: path.dirname(forkSource.sourceFile),
-    });
-    if (!restoredSession?.sessionFile) {
+    // Preserve the legacy interrupt entry; pinned callers reject an active run.
+    if (p.expectedSessionId === undefined) {
+      const interruptResult = await interruptSessionRunIfActive({
+        req, context, client, isWebchatConnect,
+        requestedKey: key, canonicalKey, agentId: requestedAgent.agentId, sessionId,
+      });
+      if (interruptResult.error) {
+        respond(false, undefined, interruptResult.error);
+        return;
+      }
+    }
+    const admission = sessionAdmissionRegistry.snapshot(identity);
+    if (admission?.active || admission?.fenced || isSessionBusyForManualCompaction({
+      context, cfg, requestedKey: key, canonicalKey, agentId: requestedAgent.agentId, sessionId,
+    })) {
+      respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "Session is active or fenced; restore after the current operation finishes."));
+      return;
+    }
+    const fence = await sessionAdmissionRegistry.fence(identity, { operation: "session-compaction-restore" });
+    try {
+      // The fork does not write the store; keep the original writer queue until publication.
+      const restored = await updateSessionStore(storePath, async (store) => {
+        const currentTarget = resolveGatewaySessionStoreTarget({ cfg, key, agentId: requestedAgent.agentId, store });
+        const current = resolveFreshestSessionEntryFromStoreKeys(store, currentTarget.storeKeys);
+        if (current?.sessionId !== sessionId) return { error: generationError };
+        const currentCheckpoint = getSessionCompactionCheckpoint({ entry: current, checkpointId });
+        const currentSource = currentCheckpoint ? resolveCheckpointForkSource(currentCheckpoint) : null;
+        if (!currentCheckpoint || !currentSource) {
+          return { error: errorShape(ErrorCodes.INVALID_REQUEST, "Checkpoint is no longer available for this session.") };
+        }
+        const restoredSession = await forkCompactionCheckpointTranscriptAsync({
+          sourceFile: currentSource.sourceFile,
+          sourceLeafId: currentSource.sourceLeafId,
+          sessionDir: path.dirname(currentSource.sourceFile),
+        });
+        if (!restoredSession?.sessionFile) {
+          return { error: errorShape(ErrorCodes.UNAVAILABLE, "failed to restore checkpoint transcript") };
+        }
+        const nextEntry = cloneCheckpointSessionEntry({
+          currentEntry: current,
+          nextSessionId: restoredSession.sessionId,
+          nextSessionFile: restoredSession.sessionFile,
+          totalTokens: currentSource.totalTokens,
+          preserveCompactionCheckpoints: true,
+        });
+        migrateAndPruneGatewaySessionStoreKey({ cfg, key, agentId: requestedAgent.agentId, store });
+        store[canonicalKey] = nextEntry;
+        return { entry: nextEntry, checkpoint: currentCheckpoint };
+      }, { skipSaveWhenResult: (result) => "error" in result });
+      if ("error" in restored) {
+        respond(false, undefined, restored.error);
+        return;
+      }
       respond(
-        false,
+        true,
+        {
+          ok: true,
+          key: canonicalKey,
+          sessionId: restored.entry.sessionId,
+          checkpoint: restored.checkpoint,
+          entry: restored.entry,
+        },
         undefined,
-        errorShape(ErrorCodes.UNAVAILABLE, "failed to restore checkpoint transcript"),
       );
-      return;
+      emitSessionsChanged(context, {
+        sessionKey: canonicalKey,
+        ...(canonicalKey === "global" && requestedAgent.agentId
+          ? { agentId: requestedAgent.agentId }
+          : {}),
+        reason: "checkpoint-restore",
+      });
+    } finally {
+      fence.release();
     }
-    const nextEntry = cloneCheckpointSessionEntry({
-      currentEntry: entry,
-      nextSessionId: restoredSession.sessionId,
-      nextSessionFile: restoredSession.sessionFile,
-      totalTokens: forkSource.totalTokens,
-      preserveCompactionCheckpoints: true,
-    });
-
-    await updateSessionStore(storePath, (store) => {
-      store[canonicalKey] = nextEntry;
-    });
-
-    respond(
-      true,
-      {
-        ok: true,
-        key: canonicalKey,
-        sessionId: nextEntry.sessionId,
-        checkpoint,
-        entry: nextEntry,
-      },
-      undefined,
-    );
-    emitSessionsChanged(context, {
-      sessionKey: canonicalKey,
-      ...(canonicalKey === "global" && requestedAgent.agentId
-        ? { agentId: requestedAgent.agentId }
-        : {}),
-      reason: "checkpoint-restore",
-    });
   },
   /**
    * #178: summarize a located stretch of the transcript and keep the untouched
@@ -750,15 +782,14 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
     const { target, storePath } = resolveGatewaySessionTargetFromKey(key, cfg, {
       agentId: requestedAgentId,
     });
-    const compactTarget = await updateSessionStore(storePath, (store) => {
-      const { entry, primaryKey } = migrateAndPruneGatewaySessionStoreKey({
-        cfg,
-        key,
-        store,
-        agentId: requestedAgentId,
-      });
-      return { entry, primaryKey };
+    const compactTarget = loadSessionEntry(key, { agentId: requestedAgentId });
+    const generationError = errorShape(ErrorCodes.INVALID_REQUEST, "Session generation changed before compaction.", {
+      details: { reason: "generation-mismatch" },
     });
+    if (p.expectedSessionId !== undefined && compactTarget.entry?.sessionId !== p.expectedSessionId) {
+      respond(false, undefined, generationError);
+      return;
+    }
     const sessionId = compactTarget.entry?.sessionId;
     if (!sessionId) {
       respond(
@@ -823,6 +854,7 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
           ? { customInstructions: normalizeOptionalString(p.customInstructions) }
           : {}),
         keepFromEntryId,
+        expectedSessionId: sessionId,
       } as never,
     });
   },
@@ -854,16 +886,15 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
     const { target, storePath } = resolveGatewaySessionTargetFromKey(key, cfg, {
       agentId: requestedAgentId,
     });
-    // Lock + read in a short critical section; transcript work happens outside.
-    const compactTarget = await updateSessionStore(storePath, (store) => {
-      const { entry, primaryKey } = migrateAndPruneGatewaySessionStoreKey({
-        cfg,
-        key,
-        store,
-        agentId: requestedAgentId,
-      });
-      return { entry, primaryKey };
+    // Read without alias migration so a stale request has no store effects.
+    const compactTarget = loadSessionEntry(key, { agentId: requestedAgentId });
+    const generationError = errorShape(ErrorCodes.INVALID_REQUEST, "Session generation changed before compaction.", {
+      details: { reason: "generation-mismatch" },
     });
+    if (p.expectedSessionId !== undefined && compactTarget.entry?.sessionId !== p.expectedSessionId) {
+      respond(false, undefined, generationError);
+      return;
+    }
     const entry = compactTarget.entry;
     const sessionId = entry?.sessionId;
     if (!sessionId) {
@@ -900,258 +931,269 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
       return;
     }
 
-    if (maxLines === undefined) {
-      if (p.force) {
-        const busy = isSessionBusyForManualCompaction({
-          context,
-          cfg,
-          requestedKey: key,
-          canonicalKey: target.canonicalKey,
-          agentId: requestedAgentId,
-          sessionId,
-        });
-        if (busy) {
-          respond(
-            false,
-            undefined,
-            errorShape(
-              ErrorCodes.UNAVAILABLE,
-              `Session ${target.canonicalKey} is active; compact after the current run finishes.`,
-            ),
-          );
-          return;
-        }
-      }
-      if (!p.force) {
-        const interruptResult = await interruptSessionRunIfActive({
-          req,
-          context,
-          client,
-          isWebchatConnect,
-          requestedKey: key,
-          canonicalKey: target.canonicalKey,
-          agentId: requestedAgentId,
-          sessionId,
-        });
-        if (interruptResult.error) {
-          respond(false, undefined, interruptResult.error);
-          return;
-        }
-      }
-
-      const resolvedModel = resolveSessionModelRef(cfg, entry, target.agentId);
-      const workspaceDir =
-        normalizeOptionalString(entry?.spawnedWorkspaceDir) ||
-        resolveAgentWorkspaceDir(cfg, target.agentId);
-      const cwd = normalizeOptionalString(entry?.spawnedCwd);
-      const operationId = randomUUID();
-      emitSessionOperation(context, {
-        operationId,
-        operation: "compact",
-        phase: "start",
-        sessionKey: target.canonicalKey,
-        ...(target.canonicalKey === "global" && target.agentId ? { agentId: target.agentId } : {}),
+    // Legacy unpinned callers retain interrupt semantics; pinned UI requests reject busy.
+    if (maxLines === undefined && !p.force && p.expectedSessionId === undefined) {
+      const interruptResult = await interruptSessionRunIfActive({
+        req, context, client, isWebchatConnect,
+        requestedKey: key, canonicalKey: target.canonicalKey,
+        agentId: requestedAgentId, sessionId,
       });
-      let result: Awaited<ReturnType<typeof compactEmbeddedAgentSession>>;
-      try {
-        result = await compactEmbeddedAgentSession({
-          sessionId,
+      if (interruptResult.error) {
+        respond(false, undefined, interruptResult.error);
+        return;
+      }
+    }
+    const identity = { agentId: target.agentId, canonicalSessionKey: target.canonicalKey, expectedSessionId: sessionId };
+    const admission = sessionAdmissionRegistry.snapshot(identity);
+    if (admission?.active || admission?.fenced || isSessionBusyForManualCompaction({
+      context, cfg, requestedKey: key, canonicalKey: target.canonicalKey,
+      agentId: requestedAgentId, sessionId,
+    })) {
+      respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "Session is active or fenced; compact after the current operation finishes."));
+      return;
+    }
+    // snapshot and fence have no intervening await: refuse busy instead of draining a writer.
+    const fence = await sessionAdmissionRegistry.fence(identity, { operation: "session-compact" });
+    try {
+      const currentGeneration = await updateSessionStore(storePath, (store) => {
+        const currentTarget = resolveGatewaySessionStoreTarget({ cfg, key, store, agentId: requestedAgentId });
+        return resolveFreshestSessionEntryFromStoreKeys(store, currentTarget.storeKeys)?.sessionId;
+      }, { skipSaveWhenResult: () => true });
+      if (currentGeneration !== sessionId) {
+        respond(false, undefined, generationError);
+        return;
+      }
+      if (maxLines === undefined) {
+        const resolvedModel = resolveSessionModelRef(cfg, entry, target.agentId);
+        const workspaceDir =
+          normalizeOptionalString(entry?.spawnedWorkspaceDir) ||
+          resolveAgentWorkspaceDir(cfg, target.agentId);
+        const cwd = normalizeOptionalString(entry?.spawnedCwd);
+        const operationId = randomUUID();
+        emitSessionOperation(context, {
+          operationId,
+          operation: "compact",
+          phase: "start",
           sessionKey: target.canonicalKey,
-          agentId: target.agentId,
-          allowGatewaySubagentBinding: true,
-          sessionFile: filePath,
-          workspaceDir,
-          cwd,
-          config: cfg,
-          provider: resolvedModel.provider,
-          model: resolvedModel.model,
-          authProfileId: entry?.authProfileOverride,
-          agentHarnessId: entry?.sessionId === sessionId ? entry.agentHarnessId : undefined,
-          thinkLevel: normalizeThinkLevel(entry?.thinkingLevel),
-          reasoningLevel: normalizeReasoningLevel(entry?.reasoningLevel),
-          bashElevated: {
-            enabled: false,
-            allowed: false,
-            defaultLevel: "off",
-          },
-          customInstructions: normalizeOptionalString(p.customInstructions),
-          force: p.force === true,
-          trigger: "manual",
-          // #178: located compaction pins the retained tail (see sessions.compactRange).
-          ...(normalizeOptionalString(p.keepFromEntryId)
-            ? { keepFromEntryId: normalizeOptionalString(p.keepFromEntryId) }
-            : {}),
+          ...(target.canonicalKey === "global" && target.agentId ? { agentId: target.agentId } : {}),
         });
-      } catch (err) {
+        let result: Awaited<ReturnType<typeof compactEmbeddedAgentSession>>;
+        try {
+          result = await compactEmbeddedAgentSession({
+            sessionId,
+            sessionKey: target.canonicalKey,
+            agentId: target.agentId,
+            allowGatewaySubagentBinding: true,
+            sessionFile: filePath,
+            workspaceDir,
+            cwd,
+            config: cfg,
+            provider: resolvedModel.provider,
+            model: resolvedModel.model,
+            authProfileId: entry?.authProfileOverride,
+            agentHarnessId: entry?.sessionId === sessionId ? entry.agentHarnessId : undefined,
+            thinkLevel: normalizeThinkLevel(entry?.thinkingLevel),
+            reasoningLevel: normalizeReasoningLevel(entry?.reasoningLevel),
+            bashElevated: {
+              enabled: false,
+              allowed: false,
+              defaultLevel: "off",
+            },
+            customInstructions: normalizeOptionalString(p.customInstructions),
+            force: p.force === true,
+            trigger: "manual",
+            // #178: located compaction pins the retained tail (see sessions.compactRange).
+            ...(normalizeOptionalString(p.keepFromEntryId)
+              ? { keepFromEntryId: normalizeOptionalString(p.keepFromEntryId) }
+              : {}),
+          });
+        } catch (err) {
+          emitSessionOperation(context, {
+            operationId,
+            operation: "compact",
+            phase: "end",
+            sessionKey: target.canonicalKey,
+            ...(target.canonicalKey === "global" && target.agentId
+              ? { agentId: target.agentId }
+              : {}),
+            completed: false,
+            reason: formatErrorMessage(err),
+          });
+          throw err;
+        }
+
+        if (result.ok && result.compacted) {
+          const committed = await updateSessionStore(storePath, (store) => {
+            const currentTarget = resolveGatewaySessionStoreTarget({ cfg, key, store, agentId: requestedAgentId });
+            const current = resolveFreshestSessionEntryFromStoreKeys(store, currentTarget.storeKeys);
+            if (current?.sessionId !== sessionId) return false;
+            const { entry: entryToUpdate } = migrateAndPruneGatewaySessionStoreKey({ cfg, key, store, agentId: requestedAgentId });
+            if (!entryToUpdate) return false;
+            entryToUpdate.updatedAt = Date.now();
+            entryToUpdate.compactionCount = Math.max(0, entryToUpdate.compactionCount ?? 0) + 1;
+            if (result.result?.sessionId && result.result.sessionId !== entryToUpdate.sessionId) {
+              entryToUpdate.sessionId = result.result.sessionId;
+            }
+            if (result.result?.sessionFile) {
+              entryToUpdate.sessionFile = result.result.sessionFile;
+            }
+            delete entryToUpdate.inputTokens;
+            delete entryToUpdate.outputTokens;
+            delete entryToUpdate.contextBudgetStatus;
+            if (
+              typeof result.result?.tokensAfter === "number" &&
+              Number.isFinite(result.result.tokensAfter)
+            ) {
+              entryToUpdate.totalTokens = result.result.tokensAfter;
+              entryToUpdate.totalTokensFresh = true;
+            } else {
+              delete entryToUpdate.totalTokens;
+              delete entryToUpdate.totalTokensFresh;
+            }
+            return true;
+          }, { skipSaveWhenResult: (committed) => !committed });
+          if (!committed) {
+            emitSessionOperation(context, {
+              operationId, operation: "compact", phase: "end", sessionKey: target.canonicalKey,
+              ...(target.canonicalKey === "global" && target.agentId ? { agentId: target.agentId } : {}),
+              completed: false, reason: "generation-mismatch",
+            });
+            respond(false, undefined, generationError);
+            return;
+          }
+          const taskLedgerRootId = getLatestLongTaskLedgerRootId(target.canonicalKey);
+          if (taskLedgerRootId) {
+            const checkpoint = recordLongTaskCheckpoint({
+              idempotencyKey: `sessions:${target.canonicalKey}:compact:${operationId}:checkpoint`,
+              sessionKey: target.canonicalKey,
+              agentId: target.agentId,
+              taskLedgerRootId,
+              trigger: "compaction",
+              status: "compacted",
+              activeTask: "Current /loop session was manually compacted.",
+              nextAction: "Continue from the compaction checkpoint and preserved long-task state.",
+              evidenceRefs: [{ type: "session", ref: target.canonicalKey }],
+              metadata: {
+                summary: result.result?.summary,
+                tokensBefore: result.result?.tokensBefore,
+                tokensAfter: result.result?.tokensAfter,
+                firstKeptEntryId: result.result?.firstKeptEntryId,
+                sessionId: result.result?.sessionId,
+              },
+            });
+            recordLongTaskInterventionEvent({
+              idempotencyKey: `sessions:${target.canonicalKey}:compact:${operationId}:event`,
+              sessionKey: target.canonicalKey,
+              agentId: target.agentId,
+              taskLedgerRootId,
+              checkpointId: checkpoint.id,
+              trigger: "compaction",
+              status: "checkpointed",
+              payload: {
+                tokensBefore: result.result?.tokensBefore,
+                tokensAfter: result.result?.tokensAfter,
+                firstKeptEntryId: result.result?.firstKeptEntryId,
+              },
+            });
+          }
+        }
+
         emitSessionOperation(context, {
           operationId,
           operation: "compact",
           phase: "end",
           sessionKey: target.canonicalKey,
-          ...(target.canonicalKey === "global" && target.agentId
-            ? { agentId: target.agentId }
-            : {}),
-          completed: false,
-          reason: formatErrorMessage(err),
+          ...(target.canonicalKey === "global" && target.agentId ? { agentId: target.agentId } : {}),
+          completed: result.ok && result.compacted,
+          reason: result.reason,
         });
-        throw err;
-      }
-      emitSessionOperation(context, {
-        operationId,
-        operation: "compact",
-        phase: "end",
-        sessionKey: target.canonicalKey,
-        ...(target.canonicalKey === "global" && target.agentId ? { agentId: target.agentId } : {}),
-        completed: result.ok && result.compacted,
-        reason: result.reason,
-      });
-
-      if (result.ok && result.compacted) {
-        await updateSessionStore(storePath, (store) => {
-          const entryKey = compactTarget.primaryKey;
-          const entryToUpdate = store[entryKey];
-          if (!entryToUpdate) {
-            return;
-          }
-          entryToUpdate.updatedAt = Date.now();
-          entryToUpdate.compactionCount = Math.max(0, entryToUpdate.compactionCount ?? 0) + 1;
-          if (result.result?.sessionId && result.result.sessionId !== entryToUpdate.sessionId) {
-            entryToUpdate.sessionId = result.result.sessionId;
-          }
-          if (result.result?.sessionFile) {
-            entryToUpdate.sessionFile = result.result.sessionFile;
-          }
-          delete entryToUpdate.inputTokens;
-          delete entryToUpdate.outputTokens;
-          delete entryToUpdate.contextBudgetStatus;
-          if (
-            typeof result.result?.tokensAfter === "number" &&
-            Number.isFinite(result.result.tokensAfter)
-          ) {
-            entryToUpdate.totalTokens = result.result.tokensAfter;
-            entryToUpdate.totalTokensFresh = true;
-          } else {
-            delete entryToUpdate.totalTokens;
-            delete entryToUpdate.totalTokensFresh;
-          }
-        });
-        const taskLedgerRootId = getLatestLongTaskLedgerRootId(target.canonicalKey);
-        if (taskLedgerRootId) {
-          const checkpoint = recordLongTaskCheckpoint({
-            idempotencyKey: `sessions:${target.canonicalKey}:compact:${operationId}:checkpoint`,
+        respond(
+          true,
+          {
+            ok: result.ok,
+            key: target.canonicalKey,
+            compacted: result.compacted,
+            reason: result.reason,
+            result: result.result,
+          },
+          undefined,
+        );
+        if (result.ok) {
+          emitSessionsChanged(context, {
             sessionKey: target.canonicalKey,
-            agentId: target.agentId,
-            taskLedgerRootId,
-            trigger: "compaction",
-            status: "compacted",
-            activeTask: "Current /loop session was manually compacted.",
-            nextAction: "Continue from the compaction checkpoint and preserved long-task state.",
-            evidenceRefs: [{ type: "session", ref: target.canonicalKey }],
-            metadata: {
-              summary: result.result?.summary,
-              tokensBefore: result.result?.tokensBefore,
-              tokensAfter: result.result?.tokensAfter,
-              firstKeptEntryId: result.result?.firstKeptEntryId,
-              sessionId: result.result?.sessionId,
-            },
-          });
-          recordLongTaskInterventionEvent({
-            idempotencyKey: `sessions:${target.canonicalKey}:compact:${operationId}:event`,
-            sessionKey: target.canonicalKey,
-            agentId: target.agentId,
-            taskLedgerRootId,
-            checkpointId: checkpoint.id,
-            trigger: "compaction",
-            status: "checkpointed",
-            payload: {
-              tokensBefore: result.result?.tokensBefore,
-              tokensAfter: result.result?.tokensAfter,
-              firstKeptEntryId: result.result?.firstKeptEntryId,
-            },
+            ...(target.canonicalKey === "global" && target.agentId
+              ? { agentId: target.agentId }
+              : {}),
+            reason: "compact",
+            compacted: result.compacted,
           });
         }
+        return;
       }
 
-      respond(
-        true,
-        {
-          ok: result.ok,
-          key: target.canonicalKey,
-          compacted: result.compacted,
-          reason: result.reason,
-          result: result.result,
-        },
-        undefined,
-      );
-      if (result.ok) {
-        emitSessionsChanged(context, {
-          sessionKey: target.canonicalKey,
-          ...(target.canonicalKey === "global" && target.agentId
-            ? { agentId: target.agentId }
-            : {}),
-          reason: "compact",
-          compacted: result.compacted,
-        });
+      const tail = readRecentSessionTranscriptLines({
+        sessionId,
+        storePath,
+        sessionFile: entry?.sessionFile,
+        agentId: target.agentId,
+        maxLines,
+      });
+      const lines = tail?.lines ?? [];
+      const totalLines = tail?.totalLines ?? 0;
+      if (totalLines <= maxLines) {
+        respond(
+          true,
+          {
+            ok: true,
+            key: target.canonicalKey,
+            compacted: false,
+            kept: totalLines,
+          },
+          undefined,
+        );
+        return;
       }
-      return;
-    }
 
-    const tail = readRecentSessionTranscriptLines({
-      sessionId,
-      storePath,
-      sessionFile: entry?.sessionFile,
-      agentId: target.agentId,
-      maxLines,
-    });
-    const lines = tail?.lines ?? [];
-    const totalLines = tail?.totalLines ?? 0;
-    if (totalLines <= maxLines) {
+      const committed = await updateSessionStore(storePath, async (store) => {
+        const currentTarget = resolveGatewaySessionStoreTarget({ cfg, key, store, agentId: requestedAgentId });
+        const current = resolveFreshestSessionEntryFromStoreKeys(store, currentTarget.storeKeys);
+        if (current?.sessionId !== sessionId) return undefined;
+        const { entry: entryToUpdate } = migrateAndPruneGatewaySessionStoreKey({ cfg, key, store, agentId: requestedAgentId });
+        if (!entryToUpdate) return undefined;
+        const archived = archiveFileOnDisk(filePath, "bak");
+        await fs.promises.writeFile(filePath, `${lines.join("\n")}\n`, "utf-8");
+        delete entryToUpdate.inputTokens;
+        delete entryToUpdate.outputTokens;
+        delete entryToUpdate.totalTokens;
+        delete entryToUpdate.totalTokensFresh;
+        delete entryToUpdate.contextBudgetStatus;
+        entryToUpdate.updatedAt = Date.now();
+        return { archived };
+      }, { skipSaveWhenResult: (committed) => !committed });
+      if (!committed) {
+        respond(false, undefined, generationError);
+        return;
+      }
+
       respond(
         true,
         {
           ok: true,
           key: target.canonicalKey,
-          compacted: false,
-          kept: totalLines,
+          compacted: true,
+          archived: committed.archived,
+          kept: lines.length,
         },
         undefined,
       );
-      return;
-    }
-
-    const archived = archiveFileOnDisk(filePath, "bak");
-    await fs.promises.writeFile(filePath, `${lines.join("\n")}\n`, "utf-8");
-
-    await updateSessionStore(storePath, (store) => {
-      const entryKey = compactTarget.primaryKey;
-      const entryToUpdate = store[entryKey];
-      if (!entryToUpdate) {
-        return;
-      }
-      delete entryToUpdate.inputTokens;
-      delete entryToUpdate.outputTokens;
-      delete entryToUpdate.totalTokens;
-      delete entryToUpdate.totalTokensFresh;
-      delete entryToUpdate.contextBudgetStatus;
-      entryToUpdate.updatedAt = Date.now();
-    });
-
-    respond(
-      true,
-      {
-        ok: true,
-        key: target.canonicalKey,
+      emitSessionsChanged(context, {
+        sessionKey: target.canonicalKey,
+        ...(target.canonicalKey === "global" && target.agentId ? { agentId: target.agentId } : {}),
+        reason: "compact",
         compacted: true,
-        archived,
-        kept: lines.length,
-      },
-      undefined,
-    );
-    emitSessionsChanged(context, {
-      sessionKey: target.canonicalKey,
-      ...(target.canonicalKey === "global" && target.agentId ? { agentId: target.agentId } : {}),
-      reason: "compact",
-      compacted: true,
-    });
+      });
+    } finally {
+      fence.release();
+    }
   },
 };

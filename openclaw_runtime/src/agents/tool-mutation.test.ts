@@ -1,11 +1,23 @@
 import { describe, expect, it } from "vitest";
-import { isMutatingToolCall } from "./tool-mutation.ts";
+import { isMutatingToolCall, requiresSessionTaskScope } from "./tool-mutation.ts";
 
 function isReadOnlyExec(command: string): boolean {
   return !isMutatingToolCall("exec", { command });
 }
 
 describe("git command read-only classification", () => {
+  it("requires a task writer for output-producing modes of otherwise read-only tools", () => {
+    for (const command of [
+      "file -C -m magic",
+      "file -bC -m magic",
+      "file --compile -m magic",
+      "file --co -m magic",
+    ]) {
+      expect(requiresSessionTaskScope("exec", { command })).toBe(true);
+    }
+    expect(requiresSessionTaskScope("exec", { command: "file input.txt" })).toBe(false);
+    expect(requiresSessionTaskScope("exec", { command: "file --check -m magic" })).toBe(false);
+  });
   it("treats plain read-only subcommands as read-only", () => {
     expect(isReadOnlyExec("git status")).toBe(true);
     expect(isReadOnlyExec("git diff")).toBe(true);

@@ -1,0 +1,140 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/session-task-validation/final8-coordination-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "long-session-coordination.spec.ts",
+      "file": "long-session-coordination.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 42360,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "buffer": ""
+                    },
+                    {
+                      "buffer": ""
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:54:59.655Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coordination-ui-journey",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final8-coordination-results\\long-session-coordination--a1f27-cle-locales-and-screenshots\\attachments\\coordination-ui-journey-a6a538f5a20476ca0cd0436803ebbfc7eacaf942.json"
+                    },
+                    {
+                      "name": "coordination-ui-screenshots",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final8-coordination-results\\long-session-coordination--a1f27-cle-locales-and-screenshots\\attachments\\coordination-ui-screenshots-827903e4de15bc121b154dda2950257af4ebe3a9.json"
+                    },
+                    {
+                      "name": "coordination-wide",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final8-coordination-results\\long-session-coordination--a1f27-cle-locales-and-screenshots\\attachments\\coordination-wide-dd10a32920f96e4ce53ba6fe75a42d32a891d2cc.png"
+                    },
+                    {
+                      "name": "coordination-narrow",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final8-coordination-results\\long-session-coordination--a1f27-cle-locales-and-screenshots\\attachments\\coordination-narrow-845dfd9760516fd5db5f1e5a65cd2e4bb5a21f9e.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "212f84e7db0627c54bf1-286649cd18be12412dff",
+          "file": "long-session-coordination.spec.ts",
+          "line": 183,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T20:54:58.572Z",
+    "duration": 45178.363,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

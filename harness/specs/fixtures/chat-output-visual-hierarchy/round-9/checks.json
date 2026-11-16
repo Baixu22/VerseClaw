@@ -1,0 +1,135 @@
+[
+  {
+    "name": "workspace",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/e2e/chat-artifact-panel.spec.ts",
+      "--grep",
+      "conversation column|owned Windows child",
+      "--reporter=line,json",
+      "--output=D:/tmp/chat-environment-r9-20261105/relay-workspace-final"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "startedAt": "2026-11-05T16:06:48.231Z",
+    "durationMs": 81314,
+    "exitCode": 0,
+    "signal": null,
+    "log": "D:/tmp/chat-environment-r9-20261105/relay-workspace.log"
+  },
+  {
+    "name": "unit",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/artifact-panel-store.test.ts",
+      "tests/unit/artifact-panel-subject-tabs.test.ts",
+      "tests/unit/artifact-panel.test.tsx",
+      "tests/unit/chat-artifact-panel-layout.test.tsx",
+      "tests/unit/chat-input.test.tsx",
+      "tests/unit/chat-message.test.tsx",
+      "tests/unit/chat-page-execution-graph.test.tsx",
+      "tests/unit/chat-render-reachability.test.tsx",
+      "tests/unit/chat-session-status-rail.test.tsx",
+      "tests/unit/chat-tool-card-suppression.test.tsx",
+      "tests/unit/composer-git-strip.test.tsx",
+      "tests/unit/execution-graph-card-badge.test.tsx",
+      "tests/unit/runtime-approval-prompt.test.tsx",
+      "tests/unit/session-activity-panel-sections.test.tsx",
+      "tests/unit/session-activity-panel.test.tsx",
+      "tests/unit/session-environment.test.ts",
+      "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit.json"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "startedAt": "2026-11-05T16:08:09.556Z",
+    "durationMs": 89413,
+    "exitCode": 1,
+    "signal": null,
+    "log": "D:/tmp/chat-environment-r9-20261105/relay-unit.log"
+  },
+  {
+    "name": "web-types",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.web.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "startedAt": "2026-11-05T16:09:38.982Z",
+    "durationMs": 13711,
+    "exitCode": 0,
+    "signal": null,
+    "log": "D:/tmp/chat-environment-r9-20261105/relay-web-types.log"
+  },
+  {
+    "name": "test-types",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.test.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "startedAt": "2026-11-05T16:09:52.703Z",
+    "durationMs": 90220,
+    "exitCode": 2,
+    "signal": null,
+    "log": "D:/tmp/chat-environment-r9-20261105/relay-test-types.log"
+  },
+  {
+    "name": "i18n",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "scripts/i18n-lint.mjs"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "startedAt": "2026-11-05T16:11:23.072Z",
+    "durationMs": 2809,
+    "exitCode": 0,
+    "signal": null,
+    "log": "D:/tmp/chat-environment-r9-20261105/relay-i18n.log"
+  },
+  {
+    "name": "lint",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "node_modules/eslint/bin/eslint.js",
+      "src/components/file-preview/ArtifactPanel.tsx",
+      "src/components/file-preview/panel-tab-meta.tsx",
+      "src/pages/Chat/ChatToolbar.tsx",
+      "src/pages/Chat/index.tsx",
+      "src/pages/Chat/SessionActivityPanel.tsx",
+      "src/stores/artifact-panel.ts",
+      "tests/e2e/chat-artifact-panel.spec.ts",
+      "tests/e2e/fixtures/electron.ts",
+      "tests/e2e/session-activity-background-read.spec.ts",
+      "tests/unit/artifact-panel-store.test.ts",
+      "tests/unit/artifact-panel.test.tsx",
+      "tests/unit/chat-session-status-rail.test.tsx",
+      "tests/unit/session-activity-panel-sections.test.tsx",
+      "src/pages/Chat/session-environment.ts",
+      "tests/unit/session-environment.test.ts",
+      "-f",
+      "json",
+      "--output-file",
+      "D:/tmp/chat-environment-r9-20261105/relay-lint.json"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "startedAt": "2026-11-05T16:11:25.884Z",
+    "durationMs": 37620,
+    "exitCode": 0,
+    "signal": null,
+    "log": "D:/tmp/chat-environment-r9-20261105/relay-lint.log"
+  }
+]

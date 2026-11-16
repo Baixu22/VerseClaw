@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+  "startedAt": "2026-11-10T09:10:56.212Z",
+  "cases": [
+    {
+      "name": "u4-final-acceptance-en",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:12:41.397Z",
+      "freeMemoryMiB": 4432,
+      "observedAt": "2026-11-10T09:15:22.235Z",
+      "windows": [],
+      "startedAt": "2026-11-10T09:15:23.094Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:18:31.290Z"
+    },
+    {
+      "name": "u4-final-navigation",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:18:31.301Z",
+      "freeMemoryMiB": 4187,
+      "observedAt": "2026-11-10T09:18:31.302Z",
+      "windows": [],
+      "startedAt": "2026-11-10T09:18:32.108Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:20:59.920Z"
+    },
+    {
+      "name": "u4-final-controls",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:20:59.921Z",
+      "freeMemoryMiB": 2951,
+      "observedAt": "2026-11-10T09:20:59.921Z",
+      "windows": [],
+      "startedAt": "2026-11-10T09:21:00.613Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:24:22.534Z"
+    },
+    {
+      "name": "u4-final-isolation",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:24:22.552Z",
+      "freeMemoryMiB": 4484,
+      "observedAt": "2026-11-10T09:24:22.553Z",
+      "windows": [],
+      "startedAt": "2026-11-10T09:24:23.365Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:27:45.272Z"
+    },
+    {
+      "name": "u4-final-acceptance-zh",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:27:45.293Z",
+      "freeMemoryMiB": 4047,
+      "observedAt": "2026-11-10T09:28:32.432Z",
+      "windows": [],
+      "startedAt": "2026-11-10T09:28:33.403Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:30:48.887Z"
+    },
+    {
+      "name": "u4-final-acceptance-ja",
+      "status": "waiting-resources",
+      "queuedAt": "2026-11-10T09:30:48.888Z",
+      "freeMemoryMiB": 508,
+      "observedAt": "2026-11-10T09:34:30.293Z",
+      "windows": []
+    }
+  ],
+  "status": "failed",
+  "error": "Error: Command failed: pwsh.exe -NoProfile -NonInteractive -Command $rows=@(Get-Process -Name electron -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowHandle -ne 0} | Select-Object Id,StartTime); ConvertTo-Json -InputObject $rows -Compress\n"
+}

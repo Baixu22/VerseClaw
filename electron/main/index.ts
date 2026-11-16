@@ -4,6 +4,7 @@
  */
 import { markPerformance } from '../services/performance-metrics';
 import { app, BrowserWindow, dialog, nativeTheme, session } from 'electron';
+import { registerWindowVisibility } from './window-visibility';
 import { appendFileSync } from 'node:fs';
 import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
@@ -69,6 +70,7 @@ import { syncAllProviderAuthToRuntime } from '../services/providers/provider-run
 import { applyChatRuntimeEvent, enrichTraceTokenUsage } from '../services/observability-adapter';
 import { recordPromptCacheObservation } from '../services/usage-api';
 import { stopAllOfficeWatches } from '../services/office-tools-api';
+import { stopAllKnowledgeSourceWatches } from '../services/knowledge-api';
 import { disposeVtokenBridge } from '../services/vtoken-api';
 import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
 import { appendTaskLedgerEvents } from '../services/task-ledger-service';
@@ -897,6 +899,7 @@ async function createWindow(): Promise<BrowserWindow> {
   traceStartup('create-window-browser-window-done');
   registerZoomShortcuts(win);
   markPerformance('window-created');
+  registerWindowVisibility(win);
   if (app.isPackaged) {
     win.webContents.closeDevTools();
     win.webContents.on('before-input-event', (event, input) => {
@@ -1440,10 +1443,11 @@ if (gotTheLock) {
   app.on('will-quit', () => {
     disposeVtokenBridge();
     stopAllOfficeWatches();
+    stopAllKnowledgeSourceWatches();
     // R0-3: reclaim every live pty session and stop tracked resources
     // (shutdown() = stop timers + kill tracked processes, best-effort).
     getTerminalSessionManager()?.shutdownAll();
-    closeAllOwnedBrowserSessions();
+    void closeAllOwnedBrowserSessions();
     void getResourceTracker().shutdown();
     disposeCronMaintenance();
     // Release the efficiency sampling timer so quit never waits on it.
@@ -1611,3 +1615,4 @@ if (gotTheLock) {
 // Export for testing
 export { mainWindow, gatewayManager };
 export { approveBrowserPrivateNetwork } from '../services/agent-browser-api';
+export { createHostReadObserverWindow } from './ipc/host-window-observers';

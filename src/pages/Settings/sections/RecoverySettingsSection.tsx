@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import type { SessionCompactionStatus } from '@shared/host-api/contract';
 import { SettingsButton, SettingsRow, SettingsSection, SettingsSelect, SettingsSwitch } from '@/components/settings/primitives';
+import { Collapsible } from '@/components/ui/collapsible';
 import { hostApi } from '@/lib/host-api';
 import { useChatStore } from '@/stores/chat';
 import { useSessionActivityStore } from '@/stores/session-activity';
@@ -113,7 +114,13 @@ export function RecoverySettingsSection() {
 
   return (
     <div className="space-y-8" data-testid="recovery-settings-section">
-      <SettingsSection title={t('settings:recovery.activityTitle')}>
+      <SettingsSection title={t('settings:recovery.presentationTitle')}>
+        <SettingsRow title={t('settings:recovery.quiet.title')} description={t('settings:recovery.quiet.description')}
+          control={<SettingsButton testId="settings-session-quiet-mode"
+            disabled={settings.sessionActivityAutoExpand === 'attention' && !settings.runActivityKeepExpandedOnComplete}
+            onClick={() => { settings.setSessionActivityAutoExpand('attention'); settings.setRunActivityKeepExpandedOnComplete(false); }}>
+            {t(settings.sessionActivityAutoExpand === 'attention' && !settings.runActivityKeepExpandedOnComplete ? 'settings:recovery.quiet.active' : 'settings:recovery.quiet.apply')}
+          </SettingsButton>} />
         <SettingsRow
           title={t('settings:recovery.enabled.title')}
           description={t('settings:recovery.enabled.description')}
@@ -150,6 +157,8 @@ export function RecoverySettingsSection() {
           description={t('settings:recovery.showCommands.description')}
           control={<SettingsSwitch ariaLabel={t('settings:recovery.showCommands.title')} checked={settings.sessionActivityShowCommands} onChange={settings.setSessionActivityShowCommands} testId="settings-session-activity-show-commands" />}
         />
+      </SettingsSection>
+      <SettingsSection title={t('settings:recovery.notificationsTitle')}>
         <SettingsRow
           title={t('settings:recovery.notifications.title')}
           description={t('settings:recovery.notifications.description')}
@@ -171,7 +180,8 @@ export function RecoverySettingsSection() {
         />
       </SettingsSection>
 
-      <SettingsSection title={t('chat:sessionActivity.policy.boundaries.title')}>
+      <Collapsible title={t('chat:sessionPolicy.lifecycle.title')} data-testid="settings-recovery-boundaries"
+        className="border-0 bg-transparent" contentClassName="px-0">
         <SettingsRow
           testId="settings-recovery-boundary-abort"
           title={t('chat:sessionActivity.policy.boundaries.abort.title')}
@@ -194,7 +204,7 @@ export function RecoverySettingsSection() {
           title={t('chat:sessionActivity.policy.boundaries.fork.title')}
           description={t('chat:sessionActivity.policy.boundaries.fork.description')}
         />
-      </SettingsSection>
+      </Collapsible>
 
       <SettingsSection title={t('settings:recovery.currentTitle')}>
         <SettingsRow

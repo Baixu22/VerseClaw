@@ -536,6 +536,9 @@ test.describe('Verse Claw chat execution graph', () => {
       const execRow = page.locator('[data-testid="chat-execution-step"]').filter({ hasText: 'exec' }).first();
       await execRow.click();
       await expect(execRow.locator('pre')).toBeVisible();
+      const yieldRow = graph.getByTestId('chat-execution-step').filter({ has: page.getByText('sessions_yield', { exact: true }) }).first();
+      await yieldRow.getByTestId('chat-execution-step-toggle').press('Enter');
+      await expect(yieldRow.getByTestId('chat-execution-step-detail')).toBeVisible();
       await expect(page.locator('[data-testid="chat-execution-graph"]')).toContainText('I asked coder to break down the core blocks of ~/Velaria uncommitted changes; will give you the conclusion when it returns.');
       await expect(page.getByText('CHECKLIST.md')).toHaveCount(0);
       const screenshotPath = testInfo.outputPath('assistant-ui-ghost-execution-graph.png');

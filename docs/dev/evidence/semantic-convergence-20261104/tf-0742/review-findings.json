@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "title": "Async callback rejection lets writes escape the transaction",
+      "body": "The callback is invoked before the transaction helper detects that it returned a Promise. An async callback that writes after `await` can therefore be rolled back and rejected, then continue after `#transactionDatabase` has been cleared; a later `appendFact` can open and commit a separate transaction. The in-memory owner has the analogous post-await escape. Reject async callbacks before invoking them, rather than only inspecting the returned Promise after side effects may already have started.",
+      "priority": "P2",
+      "confidence": 0.95,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+        "line": 651
+      }
+    },
+    {
+      "title": "DELETE can report applied for a conflicting duplicate invalidation",
+      "body": "`invalidateFact` treats any existing row with the same invalidation ID as a successful duplicate without verifying its fact, verification status, or invalidation time. For example, a previously persisted candidate-status invalidation with the same predictable ID is not accepted, yet `requirePersisted` accepts the duplicate result and DELETE returns `applied` while the target remains active. A conflicting row for another target has the same problem. Verify that the deduplicated invalidation is accepted and applies to the requested target, or reject conflicting IDs.",
+      "priority": "P2",
+      "confidence": 0.88,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts",
+        "line": 228
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The synchronous SQLite savepoint and in-memory rollback paths are largely coherent, but two atomicity-contract gaps remain. Async callbacks are rejected only after invocation, allowing post-await writes to escape the intended transaction. DELETE also trusts a deduplicated invalidation result without checking that the persisted row is an accepted invalidation for the requested target, so it can report `applied` while the deletion effect is absent.",
+  "overall_confidence": 0.9
+}

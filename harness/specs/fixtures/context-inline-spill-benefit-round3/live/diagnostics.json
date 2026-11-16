@@ -1,0 +1,88 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r3",
+  "pageArgumentCounts": {
+    "1500": 1,
+    "2000": 8,
+    "2140": 1,
+    "2500": 3,
+    "3000": 2,
+    "3140": 2,
+    "3200": 3,
+    "3500": 1,
+    "3701": 1,
+    "4000": 23,
+    "4200": 3,
+    "4214": 1,
+    "4500": 2,
+    "5000": 7,
+    "6000": 18,
+    "6031": 1,
+    "6075": 4,
+    "6100": 2,
+    "6140": 1,
+    "6142": 1,
+    "8000": 15,
+    "9000": 2,
+    "9399": 11,
+    "10000": 2,
+    "11466": 1,
+    "12000": 7,
+    "14000": 1,
+    "15000": 3,
+    "16000": 2,
+    "20000": 45,
+    "20415": 1,
+    "20417": 1,
+    "20419": 1,
+    "22000": 2,
+    "40000": 6,
+    "41142": 1,
+    "41143": 2,
+    "42140": 3,
+    "42142": 2,
+    "43141": 3,
+    "43145": 3,
+    "45000": 3,
+    "45466": 4,
+    "default-12000": 62
+  },
+  "responseStatuses": {
+    "completed": 307,
+    "incomplete": 53
+  },
+  "incompleteReasons": {
+    "max_output_tokens": 53
+  },
+  "returnedModels": {
+    "space-bunny": 360
+  },
+  "completedMessageTextIgnoredByAdapter": [],
+  "byArm": {
+    "baseline-no-reference": {
+      "rawOracleHits": 0,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 0,
+      "modelRecalls": 76
+    },
+    "reference-visible": {
+      "rawOracleHits": 15,
+      "overProjectionBudgetCalls": 44,
+      "oracleDroppedBeforeNextRequest": 12,
+      "modelRecalls": 72
+    },
+    "recall-stable": {
+      "rawOracleHits": 14,
+      "overProjectionBudgetCalls": 39,
+      "oracleDroppedBeforeNextRequest": 14,
+      "modelRecalls": 62
+    },
+    "retention-off": {
+      "rawOracleHits": 13,
+      "overProjectionBudgetCalls": 37,
+      "oracleDroppedBeforeNextRequest": 13,
+      "modelRecalls": 58
+    }
+  },
+  "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
+}

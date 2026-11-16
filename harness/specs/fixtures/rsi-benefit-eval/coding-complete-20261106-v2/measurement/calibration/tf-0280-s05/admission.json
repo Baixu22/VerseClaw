@@ -1,0 +1,977 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0280-s05",
+  "source": {
+    "id": "tf-0280-s05",
+    "base": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+    "reference": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+    "productChanges": [],
+    "originalDecision": "PASS",
+    "codingBindingDigest": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+    "baselineSetup": null,
+    "targetScope": [
+      "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+      "tests/unit/provider-credential-use-boundary-ledger.test.ts",
+      "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+      "docs/dev/harness-gap-closure/s05-acceptance.json",
+      "docs/dev/harness-gap-closure/S05-SHA256SUMS"
+    ],
+    "prompt": "S05 核验 image 生成的 provider override 凭据使用窄闸门：external/unknown 来源的显式 override 只能落在 host 绑定的 provider 范围；拒绝发生在读取凭据前；策略输入不含凭据值。逐项记录覆盖与残余，不新建第二套凭据策略。",
+    "sourceRecord": "docs/dev/harness-gap-closure/s05-acceptance.json",
+    "sourceRecordDigest": "a8422e790efb7ccd9c3f3b9dbbf7c2115d56a37f2081b774d0232eceb9acc4be",
+    "oraclePaths": [
+      "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts",
+      "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts",
+      "tests/unit/provider-credential-use-boundary-ledger.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts --maxWorkers=1",
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/provider-credential-use-policy.test.ts src/agents/tools/image-generate-tool.credential-use-provenance.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0280-s05",
+      "commands": [
+        "pnpm exec vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts --maxWorkers=1",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/provider-credential-use-policy.test.ts src/agents/tools/image-generate-tool.credential-use-provenance.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-20261106\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/provider-credential-use-boundary-ledger.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 4,
+            "numPassedTests": 4,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793956041957,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S05 provider credential-use boundary ledger"
+                    ],
+                    "fullName": "S05 provider credential-use boundary ledger allows trusted provenance and no-override paths unchanged",
+                    "status": "passed",
+                    "title": "allows trusted provenance and no-override paths unchanged",
+                    "duration": 1.8629999999999995,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S05 provider credential-use boundary ledger"
+                    ],
+                    "fullName": "S05 provider credential-use boundary ledger keeps external/unknown provenance inside the bound provider scope",
+                    "status": "passed",
+                    "title": "keeps external/unknown provenance inside the bound provider scope",
+                    "duration": 0.7076000000000136,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S05 provider credential-use boundary ledger"
+                    ],
+                    "fullName": "S05 provider credential-use boundary ledger never takes credential values as policy input",
+                    "status": "passed",
+                    "title": "never takes credential values as policy input",
+                    "duration": 0.7035999999999945,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S05 provider credential-use boundary ledger"
+                    ],
+                    "fullName": "S05 provider credential-use boundary ledger pins the single call site and records the residual credential users",
+                    "status": "passed",
+                    "title": "pins the single call site and records the residual credential users",
+                    "duration": 1.0709999999999695,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793956042495,
+                "endTime": 1793956042500.071,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0280-s05/reference/workspace/tests/unit/provider-credential-use-boundary-ledger.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\01-stderr.log"
+        },
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/provider-credential-use-policy.test.ts src/agents/tools/image-generate-tool.credential-use-provenance.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/tools/provider-credential-use-policy.test.ts",
+            "src/agents/tools/image-generate-tool.credential-use-provenance.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\02-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 4,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 15,
+            "numPassedTests": 15,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793956067828,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary denies an external cross-provider override before provider execution",
+                    "status": "passed",
+                    "title": "denies an external cross-provider override before provider execution",
+                    "duration": 21.435300000001007,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 88,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary denies a discovered cross-provider override before provider credential resolution",
+                    "status": "passed",
+                    "title": "denies a discovered cross-provider override before provider credential resolution",
+                    "duration": 0.9238000000004831,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 107,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary keeps the resolved default primary provider usable without explicit config",
+                    "status": "passed",
+                    "title": "keeps the resolved default primary provider usable without explicit config",
+                    "duration": 4.588599999999133,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 123,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary keeps an operator-configured fallback provider usable",
+                    "status": "passed",
+                    "title": "keeps an operator-configured fallback provider usable",
+                    "duration": 0.8270999999986088,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 143,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary keeps a same-provider model override usable",
+                    "status": "passed",
+                    "title": "keeps a same-provider model override usable",
+                    "duration": 0.7360000000007858,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 168,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary keeps the resolved default provider and automatic fallback when no override is supplied",
+                    "status": "passed",
+                    "title": "keeps the resolved default provider and automatic fallback when no override is supplied",
+                    "duration": 0.5596999999979744,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 186,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793956087256,
+                "endTime": 1793956087284.5598,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0280-s05/reference/workspace/openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy denies an unbound provider override for untrusted provenance",
+                    "status": "passed",
+                    "title": "denies an unbound provider override for untrusted provenance",
+                    "duration": 3.203400000000329,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy denies an unbound provider override for derived-untrusted provenance",
+                    "status": "passed",
+                    "title": "denies an unbound provider override for derived-untrusted provenance",
+                    "duration": 0.4056000000000495,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy denies an unbound provider override for missing provenance",
+                    "status": "passed",
+                    "title": "denies an unbound provider override for missing provenance",
+                    "duration": 0.2407999999995809,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy denies an unbound provider override for invalid provenance",
+                    "status": "passed",
+                    "title": "denies an unbound provider override for invalid provenance",
+                    "duration": 0.18889999999919382,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy allows same-provider and explicitly configured fallback overrides",
+                    "status": "passed",
+                    "title": "allows same-provider and explicitly configured fallback overrides",
+                    "duration": 0.3294000000005326,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 38,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy fails closed when an explicit override has no resolvable provider",
+                    "status": "passed",
+                    "title": "fails closed when an explicit override has no resolvable provider",
+                    "duration": 0.17009999999936554,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 51,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy does not constrain calls without an explicit model override",
+                    "status": "passed",
+                    "title": "does not constrain calls without an explicit model override",
+                    "duration": 0.17029999999977008,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 58,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy does not constrain trusted system or direct operator provenance",
+                    "status": "passed",
+                    "title": "does not constrain trusted system or direct operator provenance",
+                    "duration": 0.2965999999996711,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 65,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy does not treat an ordinary trust field as an operator boundary",
+                    "status": "passed",
+                    "title": "does not treat an ordinary trust field as an operator boundary",
+                    "duration": 0.21160000000054424,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 81,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793956068583,
+                "endTime": 1793956068588.2966,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0280-s05/reference/workspace/openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\02-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\02-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\02-stderr.log"
+        }
+      ],
+      "numTotalTests": 19,
+      "numPassedTests": 19,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "f24569e9f31402352b172d0ff7375e0479dfe00612966135851707c858ed72a4",
+      "oracleHashAfter": "f24569e9f31402352b172d0ff7375e0479dfe00612966135851707c858ed72a4",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md": "7dd4b0679b6bc10ab5bea3a31336ce296db2c39f6538895f0ebfd2540e2a9d64",
+        "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts": "902828bfed65084508bc72f10f3e2c11b14c4e7a514dcb18026f64cf08aaef9c",
+        "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts": "1587800ab0562be008122ba56f190bf79f3d8209c9e939d9b7a54711bff02d9a",
+        "tests/unit/provider-credential-use-boundary-ledger.test.ts": "3f76e97baa0c611a7c1fd4f6b1ae4e1875044bdf02460b188efcfb44ed8d9cf5"
+      },
+      "oracleRevision": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts": "902828bfed65084508bc72f10f3e2c11b14c4e7a514dcb18026f64cf08aaef9c",
+        "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts": "1587800ab0562be008122ba56f190bf79f3d8209c9e939d9b7a54711bff02d9a",
+        "tests/unit/provider-credential-use-boundary-ledger.test.ts": "3f76e97baa0c611a7c1fd4f6b1ae4e1875044bdf02460b188efcfb44ed8d9cf5"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0280-s05",
+      "commands": [
+        "pnpm exec vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts --maxWorkers=1",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/provider-credential-use-policy.test.ts src/agents/tools/image-generate-tool.credential-use-provenance.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-20261106\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/provider-credential-use-boundary-ledger.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 4,
+            "numPassedTests": 3,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793956112332,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S05 provider credential-use boundary ledger"
+                    ],
+                    "fullName": "S05 provider credential-use boundary ledger allows trusted provenance and no-override paths unchanged",
+                    "status": "passed",
+                    "title": "allows trusted provenance and no-override paths unchanged",
+                    "duration": 3.018000000000029,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S05 provider credential-use boundary ledger"
+                    ],
+                    "fullName": "S05 provider credential-use boundary ledger keeps external/unknown provenance inside the bound provider scope",
+                    "status": "passed",
+                    "title": "keeps external/unknown provenance inside the bound provider scope",
+                    "duration": 1.165100000000166,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S05 provider credential-use boundary ledger"
+                    ],
+                    "fullName": "S05 provider credential-use boundary ledger never takes credential values as policy input",
+                    "status": "passed",
+                    "title": "never takes credential values as policy input",
+                    "duration": 1.3261999999999716,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S05 provider credential-use boundary ledger"
+                    ],
+                    "fullName": "S05 provider credential-use boundary ledger pins the single call site and records the residual credential users",
+                    "status": "failed",
+                    "title": "pins the single call site and records the residual credential users",
+                    "duration": 39.99499999999989,
+                    "failureMessages": [
+                      "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\workspace\\docs\\dev\\harness-gap-closure\\s05-credential-use-boundary.md'\n    at readFileSync (node:fs:483:20)\n    at read (D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0280-s05/baseline/workspace/tests/unit/provider-credential-use-boundary-ledger.test.ts:32:10)\n    at D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0280-s05/baseline/workspace/tests/unit/provider-credential-use-boundary-ledger.test.ts:79:17\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793956116719,
+                "endTime": 1793956116764.995,
+                "status": "failed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0280-s05/baseline/workspace/tests/unit/provider-credential-use-boundary-ledger.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\01-stderr.log"
+        },
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/provider-credential-use-policy.test.ts src/agents/tools/image-generate-tool.credential-use-provenance.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/tools/provider-credential-use-policy.test.ts",
+            "src/agents/tools/image-generate-tool.credential-use-provenance.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\02-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 4,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 15,
+            "numPassedTests": 15,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793956196583,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary denies an external cross-provider override before provider execution",
+                    "status": "passed",
+                    "title": "denies an external cross-provider override before provider execution",
+                    "duration": 56.00749999999971,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 88,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary denies a discovered cross-provider override before provider credential resolution",
+                    "status": "passed",
+                    "title": "denies a discovered cross-provider override before provider credential resolution",
+                    "duration": 1.1442000000024564,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 107,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary keeps the resolved default primary provider usable without explicit config",
+                    "status": "passed",
+                    "title": "keeps the resolved default primary provider usable without explicit config",
+                    "duration": 6.461699999999837,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 123,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary keeps an operator-configured fallback provider usable",
+                    "status": "passed",
+                    "title": "keeps an operator-configured fallback provider usable",
+                    "duration": 0.8873999999996158,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 143,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary keeps a same-provider model override usable",
+                    "status": "passed",
+                    "title": "keeps a same-provider model override usable",
+                    "duration": 0.9268000000010943,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 168,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "image_generate credential-use provenance boundary"
+                    ],
+                    "fullName": "image_generate credential-use provenance boundary keeps the resolved default provider and automatic fallback when no override is supplied",
+                    "status": "passed",
+                    "title": "keeps the resolved default provider and automatic fallback when no override is supplied",
+                    "duration": 0.6859000000040396,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 186,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793956218816,
+                "endTime": 1793956218881.6858,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0280-s05/baseline/workspace/openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy denies an unbound provider override for untrusted provenance",
+                    "status": "passed",
+                    "title": "denies an unbound provider override for untrusted provenance",
+                    "duration": 3.003600000000006,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy denies an unbound provider override for derived-untrusted provenance",
+                    "status": "passed",
+                    "title": "denies an unbound provider override for derived-untrusted provenance",
+                    "duration": 0.3122000000003027,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy denies an unbound provider override for missing provenance",
+                    "status": "passed",
+                    "title": "denies an unbound provider override for missing provenance",
+                    "duration": 0.2242999999980384,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy denies an unbound provider override for invalid provenance",
+                    "status": "passed",
+                    "title": "denies an unbound provider override for invalid provenance",
+                    "duration": 0.16550000000279397,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy allows same-provider and explicitly configured fallback overrides",
+                    "status": "passed",
+                    "title": "allows same-provider and explicitly configured fallback overrides",
+                    "duration": 0.3070000000006985,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 38,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy fails closed when an explicit override has no resolvable provider",
+                    "status": "passed",
+                    "title": "fails closed when an explicit override has no resolvable provider",
+                    "duration": 0.1687999999994645,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 51,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy does not constrain calls without an explicit model override",
+                    "status": "passed",
+                    "title": "does not constrain calls without an explicit model override",
+                    "duration": 0.1705999999976484,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 58,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy does not constrain trusted system or direct operator provenance",
+                    "status": "passed",
+                    "title": "does not constrain trusted system or direct operator provenance",
+                    "duration": 0.3499999999985448,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 65,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "provider credential-use provenance policy"
+                    ],
+                    "fullName": "provider credential-use provenance policy does not treat an ordinary trust field as an operator boundary",
+                    "status": "passed",
+                    "title": "does not treat an ordinary trust field as an operator boundary",
+                    "duration": 0.2628000000004249,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 81,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793956197886,
+                "endTime": 1793956197891.2627,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0280-s05/baseline/workspace/openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\02-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\02-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\02-stderr.log"
+        }
+      ],
+      "numTotalTests": 19,
+      "numPassedTests": 18,
+      "numFailedTests": 1,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "assertion",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "f24569e9f31402352b172d0ff7375e0479dfe00612966135851707c858ed72a4",
+      "oracleHashAfter": "f24569e9f31402352b172d0ff7375e0479dfe00612966135851707c858ed72a4",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md": "7dd4b0679b6bc10ab5bea3a31336ce296db2c39f6538895f0ebfd2540e2a9d64",
+        "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts": "902828bfed65084508bc72f10f3e2c11b14c4e7a514dcb18026f64cf08aaef9c",
+        "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts": "1587800ab0562be008122ba56f190bf79f3d8209c9e939d9b7a54711bff02d9a",
+        "tests/unit/provider-credential-use-boundary-ledger.test.ts": "3f76e97baa0c611a7c1fd4f6b1ae4e1875044bdf02460b188efcfb44ed8d9cf5"
+      },
+      "oracleRevision": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts": "902828bfed65084508bc72f10f3e2c11b14c4e7a514dcb18026f64cf08aaef9c",
+        "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts": "1587800ab0562be008122ba56f190bf79f3d8209c9e939d9b7a54711bff02d9a",
+        "tests/unit/provider-credential-use-boundary-ledger.test.ts": "3f76e97baa0c611a7c1fd4f6b1ae4e1875044bdf02460b188efcfb44ed8d9cf5"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0280-s05\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": []
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

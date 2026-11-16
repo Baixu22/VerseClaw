@@ -1,0 +1,4 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/g8-ui-clean-candidate.md" "--since" "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/g8-ui-clean-candidate.md" "--since" "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6" "--dry-run"
+Harness report: D:\ClawX-work\g8-ui-closeout-20261113-01a1d351\artifacts\harness\latest.md
+Harness result: pass

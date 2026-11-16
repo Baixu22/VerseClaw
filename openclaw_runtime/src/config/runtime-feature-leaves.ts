@@ -31,6 +31,7 @@ export const SCHEMA_PARITY_INTENTIONAL_GAPS: ReadonlyArray<{ path: string; reaso
 
 /** One sample value per leaf; values must satisfy the zod value constraints. */
 export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
+  providerBudget: { host: { maxTokens: 1000000, maxCostUsd: 100 }, project: { maxTokens: 100000, maxCostUsd: 10 }, session: { maxTokens: 10000, maxCostUsd: 1 } },
   handoff: { enabled: true, maxDepth: 3 },
   verseShellFoundation: {
     killSwitch: false,
@@ -87,6 +88,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
   },
   contextRuntimeKit: { enabled: true, shadow: true },
   contextFamily: {
+    archiveRecallRetention: { enabled: false },
     observationMasking: { enabled: true, minChars: 2000, preserveNewestObservationCount: 2 },
     contextStatus: { enabled: true },
   },

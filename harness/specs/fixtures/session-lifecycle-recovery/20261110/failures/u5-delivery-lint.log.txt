@@ -1,0 +1,37 @@
+
+D:\ClawX-work\session-task-unified-relay-20261109\src\components\layout\SessionFolderTree.tsx
+  318:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\ClawX-work\session-task-unified-relay-20261109\src\components\layout\SessionFolderTree.tsx:318:21
+  316 |     if (keys.length) setInteractionOrder(current => current ?? keys);
+  317 |   };
+> 318 |   useEffect(() => { setInteractionOrder(null); }, [workspace.id, currentSessionKey, sessionSort]);
+      |                     ^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  319 |   useEffect(() => {
+  320 |     if (!interactionOrder) return;
+  321 |     const releaseOutside = (event: PointerEvent) => {                                                                      react-hooks/set-state-in-effect
+  364:25  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\ClawX-work\session-task-unified-relay-20261109\src\components\layout\SessionFolderTree.tsx:364:25
+  362 |     revealedSelection.current = currentSessionKey;
+  363 |     const row = threadSessionsByLineage(group).find((entry) => entry.entry.session.key === currentSessionKey);
+> 364 |     if (row?.originKey) setExpandedFamilies((current) => ({ ...current, [row.originKey!]: true }));
+      |                         ^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  365 |   }, [currentSessionKey, groups]);
+  366 |
+  367 |   const sessionNameByKey = useMemo(() => new Map(  react-hooks/set-state-in-effect
+
+✖ 2 problems (2 errors, 0 warnings)
+

@@ -1,0 +1,79 @@
+{
+  "id": "en-port",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "The deployment port is 8321.",
+    "taskComplete": true,
+    "lexicalHit": true
+  },
+  "admission": {
+    "sources": [
+      {
+        "id": "deployment.md",
+        "lookup": "deployment.md",
+        "path": "deployment.md",
+        "title": "deployment.md",
+        "excerpt": "The deployment port is 8321.",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:deployment.md",
+          "owner": "memory-wiki",
+          "subjectId": "deployment.md",
+          "revision": "1",
+          "contentDigest": "sha256:9cfe79b5c46e44ed1c8c14342e5fe470a09dfef17d042aac5e761257657fecf2",
+          "sourceRefs": [
+            "deployment.md"
+          ]
+        }
+      }
+    ],
+    "rejections": [],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "deployment.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": true,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": true,
+  "promptHash": "f508c655691563d55999138b2143d00aecd2ff4cbcda5507e2d9c1eb31f8b64b",
+  "provider": {
+    "text": "{\"claims\":[{\"text\":\"The deployment port is 8321.\",\"citations\":[{\"sourceId\":\"memory-wiki:deployment.md\",\"quote\":\"The deployment port is 8321.\"}]}],\"unknowns\":[]}",
+    "responseId": "01a1ab5a3ce0762fbce6e47e1243abb5",
+    "model": "space-bunny",
+    "status": "completed",
+    "usage": {
+      "inputTokens": 443,
+      "outputTokens": 44,
+      "totalTokens": 487
+    }
+  },
+  "parsed": {
+    "claims": [
+      {
+        "text": "The deployment port is 8321.",
+        "citations": [
+          {
+            "sourceId": "memory-wiki:deployment.md",
+            "quote": "The deployment port is 8321."
+          }
+        ]
+      }
+    ],
+    "unknowns": []
+  },
+  "answer": "The deployment port is 8321.",
+  "durationMs": 2683
+}

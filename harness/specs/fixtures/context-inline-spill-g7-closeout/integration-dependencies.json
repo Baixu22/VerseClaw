@@ -1,0 +1,17 @@
+{
+  "schema": "G7IntegrationDependencies/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "reused": true,
+  "links": [
+    {
+      "path": "node_modules",
+      "target": "C:/Users/27933/Desktop/clawx/ClawX/node_modules"
+    },
+    {
+      "path": "openclaw_runtime/node_modules",
+      "target": "C:/Users/27933/Desktop/clawx/ClawX/openclaw_runtime/node_modules"
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "electron-migration",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/execution-migration.spec.ts",
+    "--workers=1",
+    "--reporter=list,json",
+    "--output=D:/tmp/unified-management-20261109/migration-validation/electron-migration-results"
+  ],
+  "startedAt": "2026-11-08T23:36:37.670Z",
+  "finishedAt": "2026-11-08T23:38:13.946Z",
+  "durationMs": 96274,
+  "exitCode": 1,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "1e1a1c1d4cdbd782f9af451d2570872b0cbf79d1",
+    "tree": "08d2cbc3ed2ece9d0fa4825addffc98529a84b41",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/services/execution-migration.ts",
+        "sha256": "733ad6cbb0e0a1eb8307e3afcfb0d51050ce7fb1f62ea08471cd4b7fa8a04f17"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "50f734bc0ef06da1b09028610816538c8cba5ffb3c8c7b5fd983904edeeffed6"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/execution-task-authority.ts",
+        "sha256": "0d3c152acfea032aefd4e26a74d79d729a935331f8aaab1a65cbe1d1afae5831"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+        "sha256": "cc4b2a3ee295aa704cf6ae2ef7ae4245aa251cb0e58e0ae6d61820fb6e86c9bb"
+      },
+      {
+        "file": "openclaw_runtime/src/config/sessions/types.ts",
+        "sha256": "cb8b7e19c7ae185ff649817b671352d0d12d4dfcc08547d17d2788419b0871a5"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+        "sha256": "3e9df5081ff07ce01989c2b14816e619221e7db97687e431e4b1b155cbad84d7"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods.ts",
+        "sha256": "f7ec076de437f3408671c1d75b5c6c4dc543565e8beba70dcdb2ca7eea7e3e03"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+        "sha256": "95ce4459cf9f309cc1ce160e77fd9956fe0d840097db86c3de5b4af3653711db"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-archive-service.ts",
+        "sha256": "b2cb11d9a054cccf0bfa2116c0ea0661c9cd1a69eaf7264bb17c7928e9b548d0"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-execution-migration.ts",
+        "sha256": "cc401207f7cea6263871b7abba85ab71176a14631ada01111a2c73c4a7ecf178"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts",
+        "sha256": "df7d10eff8392396a6981cbbebcb616e6cf8c887915659bda17bebeea512d34f"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-mutation-operation-journal.ts",
+        "sha256": "c0e1ddf780fea4ecec42f6b0eca7ee705110e33f6caed02a95a03045a09a48d8"
+      },
+      {
+        "file": "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+        "sha256": "cb414fb857f7b54c8bbc0502250299a118fe94fc28f7f294d226a4b48aa719a5"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "34bbc6125c7299945e134dfced439d2c85dfd0ec94d36e04b9d05896e5c3491f"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "09c29d0e094bfbc225f9d1568a2cb6d0f6faa2e02707eb3aaac5a78316e5cc82"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "0a419dd3c35d93c7ea277c5e4b13e939e888cd9b63801451ca0aea8d953e2e04"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "45e1924404472a0f2cc92d01ab78372ebee8b95b11d958a75f99e2cc635bb6da"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "bf4fdc4284863ef0cc05fe66924f091ace21972ffcc1c14603879b8506cc4633"
+      },
+      {
+        "file": "shared/types/execution-migration.ts",
+        "sha256": "5ddf53a3959089dbfa61e0fdf4c3c0eb3c7fbc232811092056f33403eebf2395"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "e337d8492ee27a1882c0c8389bd5275296da419ad53979ab292f4d8732f140d4"
+      },
+      {
+        "file": "src/lib/host-api.ts",
+        "sha256": "eb6430f723827d2583577de1f4b141e25ecc7140dc4eb595360c0450895f8a77"
+      },
+      {
+        "file": "src/pages/Chat/ExecutionMigrationControl.tsx",
+        "sha256": "675bef4ce46929e711c20d8c0343c77c53a5df8060d5e76ff64ec7c945b08749"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "b288e426c00d364a2e447018f41f40d2329620149c1e07a18de10130cabb138c"
+      },
+      {
+        "file": "tests/e2e/execution-migration.spec.ts",
+        "sha256": "1623fd57681307cbf88e6dc0dc61633c15838e7fb86a98110d0c43380c69a953"
+      },
+      {
+        "file": "tests/unit/execution-migration-runtime.test.ts",
+        "sha256": "d0e26a46f5ec9328866b777e37b000208a4526967ec3c878d81b384b1e4a3252"
+      },
+      {
+        "file": "tests/unit/execution-migration.test.ts",
+        "sha256": "0d73633b4cb03e28d838bdcd06b66167f6a6139cd3edfb6b0d5b171cd8c743ad"
+      }
+    ]
+  },
+  "after": {
+    "commit": "1e1a1c1d4cdbd782f9af451d2570872b0cbf79d1",
+    "tree": "08d2cbc3ed2ece9d0fa4825addffc98529a84b41",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/services/execution-migration.ts",
+        "sha256": "733ad6cbb0e0a1eb8307e3afcfb0d51050ce7fb1f62ea08471cd4b7fa8a04f17"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "50f734bc0ef06da1b09028610816538c8cba5ffb3c8c7b5fd983904edeeffed6"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/execution-task-authority.ts",
+        "sha256": "0d3c152acfea032aefd4e26a74d79d729a935331f8aaab1a65cbe1d1afae5831"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+        "sha256": "cc4b2a3ee295aa704cf6ae2ef7ae4245aa251cb0e58e0ae6d61820fb6e86c9bb"
+      },
+      {
+        "file": "openclaw_runtime/src/config/sessions/types.ts",
+        "sha256": "cb8b7e19c7ae185ff649817b671352d0d12d4dfcc08547d17d2788419b0871a5"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+        "sha256": "3e9df5081ff07ce01989c2b14816e619221e7db97687e431e4b1b155cbad84d7"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods.ts",
+        "sha256": "f7ec076de437f3408671c1d75b5c6c4dc543565e8beba70dcdb2ca7eea7e3e03"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+        "sha256": "95ce4459cf9f309cc1ce160e77fd9956fe0d840097db86c3de5b4af3653711db"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-archive-service.ts",
+        "sha256": "b2cb11d9a054cccf0bfa2116c0ea0661c9cd1a69eaf7264bb17c7928e9b548d0"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-execution-migration.ts",
+        "sha256": "cc401207f7cea6263871b7abba85ab71176a14631ada01111a2c73c4a7ecf178"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts",
+        "sha256": "df7d10eff8392396a6981cbbebcb616e6cf8c887915659bda17bebeea512d34f"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-mutation-operation-journal.ts",
+        "sha256": "c0e1ddf780fea4ecec42f6b0eca7ee705110e33f6caed02a95a03045a09a48d8"
+      },
+      {
+        "file": "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+        "sha256": "cb414fb857f7b54c8bbc0502250299a118fe94fc28f7f294d226a4b48aa719a5"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "34bbc6125c7299945e134dfced439d2c85dfd0ec94d36e04b9d05896e5c3491f"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "09c29d0e094bfbc225f9d1568a2cb6d0f6faa2e02707eb3aaac5a78316e5cc82"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "0a419dd3c35d93c7ea277c5e4b13e939e888cd9b63801451ca0aea8d953e2e04"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "45e1924404472a0f2cc92d01ab78372ebee8b95b11d958a75f99e2cc635bb6da"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "bf4fdc4284863ef0cc05fe66924f091ace21972ffcc1c14603879b8506cc4633"
+      },
+      {
+        "file": "shared/types/execution-migration.ts",
+        "sha256": "5ddf53a3959089dbfa61e0fdf4c3c0eb3c7fbc232811092056f33403eebf2395"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "e337d8492ee27a1882c0c8389bd5275296da419ad53979ab292f4d8732f140d4"
+      },
+      {
+        "file": "src/lib/host-api.ts",
+        "sha256": "eb6430f723827d2583577de1f4b141e25ecc7140dc4eb595360c0450895f8a77"
+      },
+      {
+        "file": "src/pages/Chat/ExecutionMigrationControl.tsx",
+        "sha256": "675bef4ce46929e711c20d8c0343c77c53a5df8060d5e76ff64ec7c945b08749"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "b288e426c00d364a2e447018f41f40d2329620149c1e07a18de10130cabb138c"
+      },
+      {
+        "file": "tests/e2e/execution-migration.spec.ts",
+        "sha256": "1623fd57681307cbf88e6dc0dc61633c15838e7fb86a98110d0c43380c69a953"
+      },
+      {
+        "file": "tests/unit/execution-migration-runtime.test.ts",
+        "sha256": "d0e26a46f5ec9328866b777e37b000208a4526967ec3c878d81b384b1e4a3252"
+      },
+      {
+        "file": "tests/unit/execution-migration.test.ts",
+        "sha256": "0d73633b4cb03e28d838bdcd06b66167f6a6139cd3edfb6b0d5b171cd8c743ad"
+      }
+    ]
+  },
+  "tests": {
+    "startTime": "2026-11-08T23:36:38.797Z",
+    "duration": 94408.372,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration.log",
+    "sha256": "92f8f26420b50ccca3c2edd5e7b6867e5c9c25f05c18d8631777b484e34aa51d"
+  }
+}

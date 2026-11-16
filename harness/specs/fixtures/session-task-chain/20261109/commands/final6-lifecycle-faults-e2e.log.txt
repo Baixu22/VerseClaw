@@ -1,0 +1,51 @@
+
+Running 5 tests using 1 worker
+
+(node:43944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\chat-manual-compaction.spec.ts:15:7 › Verse Claw chat manual compaction › opens confirmation dialog and calls the session compaction Host API (8.7s)
+  ok 2 tests\e2e\long-session-lifecycle-faults.spec.ts:104:5 › real Host and Gateway archive/restore preserves history and rotates the physical generation (16.7s)
+  x  3 tests\e2e\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive (21.8s)
+(node:44568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 4 tests\e2e\runtime-lifecycle-governance.spec.ts:42:7 › runtime lifecycle governance › delete success removes the session and conversation switch keeps the app usable (8.7s)
+  ok 5 tests\e2e\runtime-lifecycle-governance.spec.ts:122:7 › runtime lifecycle governance › delete failure keeps the persisted operationId so a retry reuses it (7.4s)
+
+
+  1) tests\e2e\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoMatch[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected pattern: [32m/workspace root/i[39m
+    Received string:  [31m"worktree owner read failed: ENOENT"[39m
+
+      283 |     expect(['known', 'unknown']).toContain(worktreeOwner?.state);
+      284 |     if (worktreeOwner?.state === 'unknown') {
+    > 285 |       expect(worktreeOwner.detail).toMatch(/workspace root/i);
+          |                                    ^
+      286 |       expect(worktreeOwner.count).toBeNull();
+      287 |     }
+      288 |     expect(worktreeOwner?.generation).toBe(sessionId);
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-lifecycle-faults.spec.ts:285:36
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final6-lifecycle-faults-e2e-results\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final6-lifecycle-faults-e2e-results\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final6-lifecycle-faults-e2e-results\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final6-lifecycle-faults-e2e-results\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive 
+  4 passed (1.1m)

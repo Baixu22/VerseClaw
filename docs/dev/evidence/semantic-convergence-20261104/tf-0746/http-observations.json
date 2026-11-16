@@ -1,0 +1,227 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "transport": "real local HTTP",
+  "observations": [
+    {
+      "statuses": [
+        503,
+        503,
+        200
+      ],
+      "maxPhysicalAttempts": 3,
+      "physicalRequests": 3,
+      "chargedAttempts": 3,
+      "attempts": [
+        {
+          "physicalAttempt": 1,
+          "layer": "provider-transport",
+          "outcome": "failure"
+        },
+        {
+          "physicalAttempt": 2,
+          "layer": "provider-transport",
+          "outcome": "failure"
+        },
+        {
+          "physicalAttempt": 3,
+          "layer": "provider-transport",
+          "outcome": "success"
+        }
+      ],
+      "recovered": true
+    },
+    {
+      "statuses": [
+        401,
+        200
+      ],
+      "maxPhysicalAttempts": 3,
+      "physicalRequests": 1,
+      "chargedAttempts": 1,
+      "attempts": [
+        {
+          "physicalAttempt": 1,
+          "layer": "provider-transport",
+          "outcome": "failure"
+        }
+      ],
+      "recovered": false,
+      "error": "local provider (401): Invalid API key [type=invalid_request_error]"
+    },
+    {
+      "statuses": [
+        403,
+        200
+      ],
+      "maxPhysicalAttempts": 3,
+      "physicalRequests": 1,
+      "chargedAttempts": 1,
+      "attempts": [
+        {
+          "physicalAttempt": 1,
+          "layer": "provider-transport",
+          "outcome": "failure"
+        }
+      ],
+      "recovered": false,
+      "error": "local provider (403): Invalid API key [type=invalid_request_error]"
+    },
+    {
+      "statuses": [
+        503,
+        503,
+        200
+      ],
+      "maxPhysicalAttempts": 2,
+      "physicalRequests": 2,
+      "chargedAttempts": 2,
+      "attempts": [
+        {
+          "physicalAttempt": 1,
+          "layer": "provider-transport",
+          "outcome": "failure"
+        },
+        {
+          "physicalAttempt": 2,
+          "layer": "provider-transport",
+          "outcome": "failure"
+        }
+      ],
+      "recovered": false,
+      "error": "local provider (503): upstream unavailable [type=server_error]"
+    },
+    {
+      "status": 429,
+      "validation": {
+        "reachable": "reachable",
+        "auth": "unknown",
+        "protocol": "unknown",
+        "model": "unknown",
+        "rateLimited": true,
+        "retryAfterMs": 0,
+        "ready": false,
+        "reason": "rate-limited",
+        "valid": false,
+        "error": "upstream unavailable",
+        "status": 429,
+        "policyFingerprint": "a07d53fdb391caae7933d89e1b3ccdcae9bbfd9a345b503eca2f0da111f944ad",
+        "stage": "models",
+        "deadlineMs": 15000
+      },
+      "inferenceReason": "rate_limit",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/v1/models?limit=1",
+          "status": 429
+        },
+        {
+          "method": "POST",
+          "path": "/v1/chat/completions",
+          "status": 429
+        }
+      ]
+    },
+    {
+      "status": 400,
+      "validation": {
+        "reachable": "reachable",
+        "auth": "valid",
+        "protocol": "incompatible",
+        "model": "unknown",
+        "rateLimited": false,
+        "ready": false,
+        "reason": "protocol-error",
+        "valid": false,
+        "error": "upstream unavailable",
+        "status": 400,
+        "policyFingerprint": "7d939e39a9ca5b16a7823476d9758d1ba9ef8836cb3b56ce1f34b11c6fbba646",
+        "stage": "probe",
+        "deadlineMs": 15000
+      },
+      "inferenceReason": "format",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/v1/models?limit=1",
+          "status": 400
+        },
+        {
+          "method": "POST",
+          "path": "/v1/chat/completions",
+          "status": 400
+        },
+        {
+          "method": "POST",
+          "path": "/v1/chat/completions",
+          "status": 400
+        }
+      ]
+    },
+    {
+      "status": 401,
+      "validation": {
+        "reachable": "reachable",
+        "auth": "invalid",
+        "protocol": "unknown",
+        "model": "unknown",
+        "rateLimited": false,
+        "ready": false,
+        "reason": "unauthorized",
+        "valid": false,
+        "error": "Invalid API key",
+        "authFailure": true,
+        "status": 401,
+        "policyFingerprint": "8258619f48a4a559fc0648915e622f05e01b9d4587701430e3356b530fbaf1cf",
+        "stage": "models",
+        "deadlineMs": 15000
+      },
+      "inferenceReason": "auth",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/v1/models?limit=1",
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/v1/chat/completions",
+          "status": 401
+        }
+      ]
+    },
+    {
+      "status": 403,
+      "validation": {
+        "reachable": "reachable",
+        "auth": "invalid",
+        "protocol": "unknown",
+        "model": "unknown",
+        "rateLimited": false,
+        "ready": false,
+        "reason": "unauthorized",
+        "valid": false,
+        "error": "Invalid API key",
+        "authFailure": true,
+        "status": 403,
+        "policyFingerprint": "530610d5e24361c459c94152a43f87ac546df805e40afbb556c7122e9ea22bd2",
+        "stage": "models",
+        "deadlineMs": 15000
+      },
+      "inferenceReason": "auth",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/v1/models?limit=1",
+          "status": 403
+        },
+        {
+          "method": "POST",
+          "path": "/v1/chat/completions",
+          "status": 403
+        }
+      ]
+    }
+  ]
+}

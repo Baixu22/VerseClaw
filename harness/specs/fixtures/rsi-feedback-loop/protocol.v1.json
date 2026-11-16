@@ -94,7 +94,7 @@
     },
     {
       "id": "missing-cost",
-      "expects": "eliminate; a null cost dimension cannot be promoted"
+      "expects": "hold; a null cost dimension cannot be promoted (D7 policy alignment)"
     },
     {
       "id": "weight-out-of-range",

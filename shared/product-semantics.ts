@@ -11,6 +11,8 @@ export {
   isTaskLoopPassed,
   normalizeRunScope,
   normalizeTaskReference,
+  normalizeAutonomySessionScope,
+  normalizeAutonomyObjectReference,
   resolveProjectIdForWorkspace,
   resolveWorkspaceIdForProject,
   type WorkspaceId,
@@ -21,6 +23,10 @@ export {
   type RunScope,
   type ScopedRunId,
   type TaskIdentityReference,
+  type AutonomyProjectScope,
+  type AutonomySessionScope,
+  type AutonomyRoleScope,
+  type AutonomyObjectReference,
   type CompletionAuthority,
   type CompletionStatus,
   type CompletionView,
@@ -187,6 +193,7 @@ export const PRODUCT_SEMANTIC_RELATION_RULES = [
   'duplicate-relation',
   'missing-evidence',
   'kind-boundary-mismatch',
+  'relation-endpoint-mismatch',
   'reverse-task-authority',
   'forged-grant-field',
   'cross-session-quality',
@@ -214,6 +221,15 @@ const PRODUCT_SEMANTIC_KIND_AUTHORITY_BOUNDARY = {
   'references-one-way': 'one-way-reference',
   'quality-gated-by': 'same-session-scorecard',
 } as const satisfies Record<ProductSemanticRelationKind, ProductSemanticAuthorityBoundary>;
+
+// Metadata constraints for the existing product relations; this grants no runtime authority.
+const PRODUCT_SEMANTIC_ENDPOINTS: Record<ProductSemanticRelationKind, { from: readonly ProductSemanticConceptId[]; to: ProductSemanticConceptId }> = {
+  'suggests-upgrade-to': { from: ['chat'], to: 'task-loop' },
+  projects: { from: ['chat', 'chat-plan'], to: 'task-ledger' },
+  'roots-in': { from: ['task-loop'], to: 'task-ledger' },
+  'references-one-way': { from: ['workboard'], to: 'task-ledger' },
+  'quality-gated-by': { from: ['routing-memo'], to: 'task-loop' },
+};
 
 const PRODUCT_SEMANTIC_RELATION_FIELDS = ['from', 'kind', 'to', 'authorityBoundary', 'evidenceRefs'] as const;
 
@@ -286,6 +302,14 @@ export function validateProductSemanticRelation(
     if (expected !== authorityBoundary) {
       add('authorityBoundary', 'kind-boundary-mismatch',
         `Kind "${kind}" is only legal with authority boundary "${expected}", not "${String(authorityBoundary)}".`);
+    }
+  }
+
+  if (kindKnown && fromKnown && toKnown && from !== to && from !== 'task-ledger') {
+    const endpoints = PRODUCT_SEMANTIC_ENDPOINTS[kind as ProductSemanticRelationKind];
+    if (!endpoints.from.includes(from as ProductSemanticConceptId) || to !== endpoints.to) {
+      add(!endpoints.from.includes(from as ProductSemanticConceptId) ? 'from' : 'to', 'relation-endpoint-mismatch',
+        `Kind "${kind}" requires source ${endpoints.from.join(' or ')} and target ${endpoints.to}; received ${from} -> ${to}.`);
     }
   }
 

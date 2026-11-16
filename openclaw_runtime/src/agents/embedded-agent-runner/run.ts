@@ -19,7 +19,7 @@ import {
 import { ensureContextEnginesInitialized } from "../../context-engine/init.js";
 import {
   beginRc03RunAttempts,
-  clearRc03SealPlan,
+  releaseRc03Run,
   endRc03RunAttempts,
   resolveRc03SealState,
 } from "../../context-engine/rc03-seal-hook.js";
@@ -1694,6 +1694,7 @@ export async function runEmbeddedAgent(
               hasRepliedRef: params.hasRepliedRef,
               sessionFile: activeSessionFile,
               workspaceDir: resolvedWorkspace,
+            workspaceId: params.workspaceId,
               cwd: params.cwd,
               agentDir,
               config: params.config,
@@ -2489,6 +2490,8 @@ export async function runEmbeddedAgent(
                       sessionKey: params.sessionKey,
                       agentId: sessionAgentId,
                       config: params.config,
+                    archiveRecallRetention:
+                      params.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
                     });
                     if (truncResult.truncated) {
                       log.info(
@@ -2552,6 +2555,8 @@ export async function runEmbeddedAgent(
                     sessionKey: params.sessionKey,
                     agentId: sessionAgentId,
                     config: params.config,
+                  archiveRecallRetention:
+                    params.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
                   });
                   if (truncResult.truncated) {
                     log.info(
@@ -3915,7 +3920,7 @@ export async function runEmbeddedAgent(
         } finally {
           forgetPromptBuildDrainCacheForRun(params.runId);
           if (rc03AttemptBase === undefined) {
-            clearRc03SealPlan(params.runId);
+          releaseRc03Run(params.runId);
           } else {
             endRc03RunAttempts(params.runId, rc03AttemptBase + runLoopIterations);
           }

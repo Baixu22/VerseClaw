@@ -75,6 +75,7 @@ import { buildReuseCandidateReport } from "../../context-engine/views/reuse-dete
 import { reviewDiff } from "../../context-engine/views/verify/review-diff-view.js";
 import { type AnyAgentTool, jsonResult, readStringParam, asToolParamsRecord } from "./common.js";
 import {
+  CONTEXT_VIEW_TOOL_NAMES,
   resolveContextViewToolSurfaceState,
   CONTEXT_UNDERSTAND_TOOL_NAME,
   CONTEXT_IMPACT_TOOL_NAME,
@@ -82,17 +83,17 @@ import {
   CONTEXT_VERIFY_TOOL_NAME,
   type ContextViewToolSurfaceState,
 } from "./context-view-tool-surface.js";
-
-export const CONTEXT_READ_TOOL_NAME = "context_read";
-export const CONTEXT_ARCHIVE_RECALL_TOOL_NAME = "context_archive_recall";
-export const CONTEXT_SEARCH_TOOL_NAME = "context_search";
-export const CONTEXT_WRITE_TOOL_NAME = "context_write";
 export {
   CONTEXT_UNDERSTAND_TOOL_NAME,
   CONTEXT_IMPACT_TOOL_NAME,
   CONTEXT_REUSE_TOOL_NAME,
   CONTEXT_VERIFY_TOOL_NAME,
 } from "./context-view-tool-surface.js";
+
+export const CONTEXT_READ_TOOL_NAME = "context_read";
+export const CONTEXT_ARCHIVE_RECALL_TOOL_NAME = "context_archive_recall";
+export const CONTEXT_SEARCH_TOOL_NAME = "context_search";
+export const CONTEXT_WRITE_TOOL_NAME = "context_write";
 export const CONTEXT_EXPAND_TOOL_NAME = "context_expand";
 /**
  * context-folding-rlm tools. Deliberately not part of DCS_ALL_CONTEXT_TOOL_NAMES:
@@ -107,12 +108,7 @@ export const DCS_CONTEXT_AGENT_TOOL_NAMES = [
   CONTEXT_WRITE_TOOL_NAME,
 ] as const;
 
-export const DCS_CONTEXT_VIEW_TOOL_NAMES = [
-  CONTEXT_UNDERSTAND_TOOL_NAME,
-  CONTEXT_IMPACT_TOOL_NAME,
-  CONTEXT_REUSE_TOOL_NAME,
-  CONTEXT_VERIFY_TOOL_NAME,
-] as const;
+export const DCS_CONTEXT_VIEW_TOOL_NAMES = [...CONTEXT_VIEW_TOOL_NAMES] as const;
 
 export const DCS_ALL_CONTEXT_TOOL_NAMES = [
   ...DCS_CONTEXT_AGENT_TOOL_NAMES,
@@ -124,6 +120,8 @@ export type DcsContextViewToolName = (typeof DCS_CONTEXT_VIEW_TOOL_NAMES)[number
 
 export type DcsContextAgentToolOptions = {
   sessionId?: string;
+  /** Opt-in recall provenance for bounded prompt retention; omitted/false preserves results. */
+  archiveRecallRetention?: boolean;
   /** Prefer live run session when sandbox session key differs. */
   runSessionKey?: string;
   agentSessionKey?: string;
@@ -402,7 +400,7 @@ export function createContextArchiveRecallTool(
       "Read only an archive handle emitted by Context observation masking. The handle must belong to the current session; output is bounded and can be paged with offset.",
     parameters: ContextArchiveRecallSchema,
     risk: "readonly",
-    execute: async (_toolCallId, args) => {
+    execute: async (toolCallId, args) => {
       const params = asToolParamsRecord(args);
       const uri = readStringParam(params, "archive_uri", { required: true })!;
       const checksum = readStringParam(params, "checksum", { required: true })!;
@@ -457,7 +455,7 @@ export function createContextArchiveRecallTool(
           : CONTEXT_ARCHIVE_RECALL_DEFAULT_MAX_CHARS;
       const text = archivePayloadToText(verified.payload);
       const content = text.slice(offset, offset + maxChars);
-      return jsonResult({
+      const payload = {
         ok: true,
         archive_uri: handle.uri,
         checksum: handle.checksum,
@@ -467,7 +465,40 @@ export function createContextArchiveRecallTool(
         char_count: text.length,
         byte_count: Buffer.byteLength(text, "utf8"),
         truncated: offset + content.length < text.length,
-      });
+      };
+      const result = jsonResult(payload);
+      if (options.archiveRecallRetention !== true) {
+        return result;
+      }
+      // Provenance is issued only after checksum and session verification.
+      // Keep it out of the text payload so retention-off output stays identical.
+      return {
+        ...result,
+        details: {
+          // Raw recalled text is already in content. Keep lineage small enough
+          // for the existing transcript details cap, including CJK pages.
+          ok: payload.ok,
+          archive_uri: payload.archive_uri,
+          checksum: payload.checksum,
+          offset: payload.offset,
+          max_chars: payload.max_chars,
+          char_count: payload.char_count,
+          byte_count: payload.byte_count,
+          truncated: payload.truncated,
+          archiveRecallOrigin: {
+            source: CONTEXT_ARCHIVE_RECALL_TOOL_NAME,
+            sessionId,
+            archiveUri: handle.uri,
+            checksum: handle.checksum,
+            offset,
+            toolCallId,
+            projectedChars: result.content.reduce(
+              (sum, block) => sum + (block.type === "text" ? block.text.length : 0),
+              0,
+            ),
+          },
+        },
+      };
     },
   };
 }

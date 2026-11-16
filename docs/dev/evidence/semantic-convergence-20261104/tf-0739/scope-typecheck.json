@@ -1,0 +1,20 @@
+{
+  "extends": "D:/ClawX-work/semantic-convergence-20261104/tsconfig.test.json",
+  "include": [
+    "D:/ClawX-work/semantic-convergence-20261104/tests/unit/rc03-seal-coverage.test.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/rc03-seal.test.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/src/vite-env.d.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/src/types/electron.d.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/tests/unit/rc03-btw-seal.test.ts",
+    "D:/ClawX-work/semantic-convergence-20261104/tests/unit/rc03-manual-compaction-seal.test.ts"
+  ],
+  "exclude": [],
+  "compilerOptions": {
+    "composite": false,
+    "typeRoots": [
+      "D:/ClawX-work/semantic-convergence-20261104/node_modules/@types",
+      "D:/ClawX-work/semantic-convergence-20261104/node_modules"
+    ]
+  }
+}

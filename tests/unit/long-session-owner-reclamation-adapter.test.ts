@@ -122,7 +122,7 @@ describe('Main owner reclamation adapter', () => {
   });
 });
 describe('desktop lifecycle helpers', () => {
-  it('workspace delete closes only browser sessions in the removed workspace', () => {
+  it('workspace delete closes only browser sessions in the removed workspace', async () => {
     const close = vi.fn();
     const service = {
       list: () => [
@@ -131,7 +131,7 @@ describe('desktop lifecycle helpers', () => {
       ],
       close,
     };
-    expect(reclaimBrowserSessionsForWorkspace('workspace-e2', service as never)).toEqual({
+    expect(await reclaimBrowserSessionsForWorkspace('workspace-e2', service as never)).toEqual({
       attempted: 1,
       reclaimed: 1,
     });
@@ -139,13 +139,13 @@ describe('desktop lifecycle helpers', () => {
     expect(close).toHaveBeenCalledWith('browser-a');
   });
 
-  it('app quit closes every process-scoped browser session', () => {
+  it('app quit closes every process-scoped browser session', async () => {
     const close = vi.fn();
     const service = {
       list: () => [{ id: 'browser-a' }, { id: 'browser-b' }],
       close,
     };
-    expect(closeAllOwnedBrowserSessions(service as never)).toBe(2);
+    expect(await closeAllOwnedBrowserSessions(service as never)).toBe(2);
     expect(close.mock.calls).toEqual([['browser-a'], ['browser-b']]);
   });
 });

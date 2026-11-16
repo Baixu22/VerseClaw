@@ -14,6 +14,7 @@ export default defineConfig({
     name: "verseshell-foundation",
     include: [
       "src/agents/verseshell/process-manager.test.ts",
+      "src/agents/verseshell/concurrent-acquisition.integration.test.ts",
       "src/agents/verseshell/governed-exec.test.ts",
       "src/agents/verseshell/governed-process.test.ts",
       "src/agents/verseshell/governed-process.real-limits.test.ts",

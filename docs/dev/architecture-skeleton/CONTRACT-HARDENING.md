@@ -578,3 +578,34 @@ HEAD `698d59d6a`）；worktree 用后 `remove --force` + `prune`，日志在 `D:
 | `rulesEvaluated` 的来源规则部分仍是检查器自己的声明 | 这 8 条由本检查器代码路径产出，不存在"被替换的校验器"问题；合同只要求关系规则观测化 | 无 |
 | `pnpm` 运行前依赖校验在本检出弹出 purge 提示 | 环境事件，非代码；以 `--config.verify-deps-before-run=false` 绕过且未安装 | 环境修复不在本叶写集 |
 | **not-run**（如实记录，不得解读为通过） | `pnpm test` 全量、E2E、`pnpm run lint` 全仓（只对两个改动的 .ts/.mjs 跑 eslint）、`pnpm agent-dev:*`、`pnpm harness run … --dry-run`、live provider / Gateway | — |
+
+
+## 14. TF-0791 关键关系端点与最终复验（2026-11-05）
+
+旧校验器接受 routing-memo --quality-gated-by--> chat：端点都在词表内、kind/boundary也合法，
+但它不表达实际scorecard权威。新增`relation-endpoint-mismatch`覆盖五kind既定domain/range，
+7×7×5=245种已知概念组合恰接受六种关系。self-loop与反向Task Ledger权威继续由原规则拒绝。
+关系形状和v1标识保持，新增规则使旧报告的规则集合验证失败；历史final/provenance证据不重签。
+
+真实报告入口增加known-wrong-endpoint负例；规则观测探针增加新规则，validator-noop负例仍验证
+实际观测而非声称已执行。原owner集合全部复跑：Task Loop根绑定/失败拒绝、Chat Plan只读投影、
+显式upgrade、Workboard单向引用及字段继承、Routing Memo同session scorecard准入。
+这些行为测试补充元数据检查，不把文件存在或关系形状当成真实执行效果。
+
+最终专项全集、类型、contract/authority/evidence、静态依赖图、runtime source六子门禁、comms、
+scoped lint和Harness以同一干净候选运行。全仓pnpm test、Electron、完整runtime build和收益指标
+不在此限定验收内；已有LOC残差保留exit1并与原候选比较。最终报告位于
+`harness/specs/fixtures/architecture-convergence-final/`，提供逐项范围、来源和实际结果。
+
+
+## 2026-11-06 合并前审查修正
+
+独立agent发现默认测试把TF-0790历史gap审计的原字节摘要/行号钉在当前工作树，
+主仓合法移动hybridSearchFacts也使测试失败。历史gap-classification原字节保留；
+日常测试检查完整gap映射、分类、数量及当前源码锚点存在，允许无关注释/行号变化，删除锚点仍拒绝。
+原摘要/行号通过原候选Git blob重放核验，不能用今天的源码重新签名历史审计。
+
+另一复现表明旧 `--verify` 仅对比声明规则列表，未重新观测validator探针；停用validator后旧有效报告仍可验证。
+修复在verify时复用现有规则观测函数，缺失或未知诊断规则立即invalid。新增真实入口validator-noop verify负例，
+原报告字节保持。此更强检查不授予运行权限，也不改六条关系和任何执行owner。
+新审查/合并证据在 `harness/specs/fixtures/architecture-review-integration/`，既有final包保留原候选。

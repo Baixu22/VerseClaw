@@ -7,6 +7,7 @@ import {
   resetManagedProcessCapacity,
   resolveManagedProcessDefaultLimits,
 } from "./managed-process-capacity.js";
+import { managedProcessReservations } from "./managed-process-reservation.js";
 
 afterEach(() => {
   resetManagedProcessCapacity();
@@ -14,10 +15,12 @@ afterEach(() => {
 
 describe("managed process capacity", () => {
   it("admits everything and allocates no counter until a capacity is declared", () => {
+    const before = new Set(managedProcessReservations().map(record => record.id));
     const first = admitManagedProcess();
     const second = admitManagedProcess();
     expect(first.ok).toBe(true);
     expect(second.ok).toBe(true);
+    expect(managedProcessReservations().filter(record => !before.has(record.id))).toEqual([]);
     expect(managedProcessCapacityStats()).toMatchObject({ live: 0 });
     expect(managedProcessCapacityStats().limit).toBeUndefined();
     if (first.ok) expect(first.lease.release()).toBe(true);
@@ -53,6 +56,23 @@ describe("managed process capacity", () => {
     if (afterRelease.ok) afterRelease.lease.release();
     if (second.ok) second.lease.release();
     expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 3, doubleRelease: 0 });
+  });
+
+  it("persists identity-only ownership without inventing a capacity limit", () => {
+    const admission = admitManagedProcess({
+      owner: "agent-1:agent:main:run-scope",
+      identity: { sessionKey: "agent:main:run-scope", sessionGeneration: "generation-1", runId: "run-1" },
+    });
+    expect(admission).toMatchObject({ ok: true, live: 1, limit: undefined });
+    const reservationId = admission.ok ? admission.lease.reservationId : undefined;
+    expect(reservationId).toBeTruthy();
+    expect(managedProcessReservations()).toContainEqual(expect.objectContaining({
+      id: reservationId, sessionKey: "agent:main:run-scope", sessionGeneration: "generation-1",
+      runId: "run-1",
+    }));
+    expect(managedProcessReservations().find(record => record.id === reservationId)?.limit).toBeUndefined();
+    if (admission.ok) admission.lease.release();
+    expect(managedProcessReservations().some(record => record.id === reservationId)).toBe(false);
   });
 
   it("counts a double release without freeing a second slot", () => {

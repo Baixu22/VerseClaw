@@ -4,10 +4,13 @@
  * Defines execution, completion, delivery, pending-delivery, and attachment state stored for child runs.
  */
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
+import type { VerseGitCandidateManifest } from "../../../shared/types/versegit.js";
+import type { SessionTaskRequesterReference } from "../../../shared/session-task-scope.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
 import type { SubagentLifecycleEndedReason } from "./subagent-lifecycle-events.js";
 import type { SpawnSubagentMode } from "./subagent-spawn.types.js";
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
+import type { WorkerOutputHandoffArtifact } from './handoff-artifacts.js';
 import type {
   CodingIsolationMode,
   OrchestrationQualityPolicy,
@@ -46,6 +49,7 @@ export type TeamPatchFlowResultSummary = {
 };
 
 export type TeamOrchestrationMetadata = {
+  verifierNoSelfRepair?: boolean;
   orchestrationRunId: string;
   templateId?: string;
   roleName: string;
@@ -58,11 +62,13 @@ export type TeamOrchestrationMetadata = {
   verifierModelRef?: string | null;
   verifierStartedRunId?: string;
   verifierSkippedReason?:
+    | "worktree-candidate-unavailable"
     | "all-workers-failed"
     | "no-verifier-role"
     | "spawn-failed"
     | "candidate-apply-host-missing"
-    | "candidate-apply-not-complete";
+    | "candidate-apply-not-complete"
+    | "retired-patch-flow";
   verifierStartedAt?: number;
   verifierSkippedAt?: number;
   /** Explicit structured verifier decision; free text alone cannot authorize pass (F-AUTH-005). */
@@ -83,19 +89,26 @@ export type TeamOrchestrationMetadata = {
   executionWaves?: OrchestrationExecutionWave[];
   isolation?: CodingIsolationMode;
   worktreeId?: string;
+  worktreeGeneration?: string;
   worktreeBackend?: WorktreeBackend;
   worktreeWriteSet?: string[];
   worktreeMergeStatus?: "merged" | "conflict" | "rework" | "missing" | "error";
   worktreeWriteSetMismatch?: string[];
   worktreeMergeReason?: string;
+  worktreeMergeBaseRoot?: string;
+  worktreeMergeJournalRef?: string;
+  worktreeMergeHashes?: Record<string, string | null>;
+  worktreeMergeRecoveryRequired?: boolean;
   worktreeMergeProcessedAt?: number;
+  worktreeVerificationCandidate?: { manifest: VerseGitCandidateManifest; materializedPath: string; baseRoot?: string };
   routeDiagnostics?: RouteDiagnostics;
   qualityPolicy?: OrchestrationQualityPolicy;
   repairPolicy?: OrchestrationRepairPolicy;
   workerCommunication?: WorkerCommunicationPolicy;
   handoffArtifactsMode?: "off" | "on";
+  handoffArtifacts?: WorkerOutputHandoffArtifact[];
   allowFollowupPlanning?: boolean;
-  /** Explicit execution-side patch-flow opt-in; advisory output alone never sets this. */
+  /** Historical execution marker; retirement prevents it from starting new effects. */
   patchFlowExecution?: true;
   /** Worker write-set provenance carried with an extracted patch proposal. */
   patchFlowWriteSet?: string[];
@@ -125,7 +138,8 @@ export type TeamOrchestrationMetadata = {
     authorizationId: string;
     baseOid: string;
     refsDigest: string;
-  };};
+  };
+};
 
 /** Optional tag that makes a child completion a ContextFoldResult delivery. */
 export type ContextFoldRunMetadata = {
@@ -163,7 +177,7 @@ export type PendingFinalDeliveryPayload = {
 };
 
 export type SubagentExecutionState = {
-  status: "running" | "interrupted" | "terminal";
+  status: "queued" | "pending" | "running" | "interrupted" | "terminal";
   startedAt?: number;
   endedAt?: number;
   outcome?: SubagentRunOutcome;
@@ -222,6 +236,16 @@ export type SubagentCompletionDeliveryState = {
 
 export type SubagentRunRecord = {
   runId: string;
+  /** Prepared agent RPC owned by this registry; retained until dispatch is acknowledged. */
+  queuedDispatch?: {
+    params: Record<string, unknown>;
+    timeoutMs: number;
+    controllerSessionId: string;
+    maxChildren: number;
+    persistentTask?:import('../../../shared/task-system/types.js').TaskDelegationIntent;
+  };
+  /** Persisted pre-dispatch reservation. Unknown dispatch never releases it by age. */
+  dispatchPending?: true;
   childSessionKey: string;
   controllerSessionKey?: string;
   requesterSessionKey: string;
@@ -231,6 +255,7 @@ export type SubagentRunRecord = {
    * reset/forked to a new generation must never steer the new generation.
    */
   requesterSessionId?: string;
+  requesterTaskReference?: SessionTaskRequesterReference;
   requesterOrigin?: DeliveryContext;
   requesterDisplayKey: string;
   task: string;

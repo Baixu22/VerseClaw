@@ -1,0 +1,17 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "name": "harness",
+  "argv": [
+    "C:/Program Files/nodejs/node.exe",
+    "harness/src/cli.mjs",
+    "validate",
+    "--spec",
+    "harness/specs/tasks/coding-mcp-result-fidelity.md"
+  ],
+  "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+  "exitCode": 0,
+  "seconds": 1.6861686706542969,
+  "log": "harness.log",
+  "output": "Spec is valid: harness\\specs\\tasks\\coding-mcp-result-fidelity.md\n"
+}

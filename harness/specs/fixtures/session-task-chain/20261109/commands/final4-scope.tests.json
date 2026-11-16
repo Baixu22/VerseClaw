@@ -1,0 +1,587 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/session-task-validation/final4-scope-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-agent-entry.spec.ts",
+      "file": "project-agent-entry.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "project entry keeps its coordinator, task scope and session drafts while disclosure only folds the list",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 49715,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:20:01.367Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f74da5c56c07aca7d8de-1d26de9fefe2ce50df25",
+          "file": "project-agent-entry.spec.ts",
+          "line": 7,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "session-chain-scope-faults.spec.ts",
+      "file": "session-chain-scope-faults.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "project Ledger warnings stay unavailable in the task drawer and preserve the current draft",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 165574,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 377
+                      },
+                      "message": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\clawx-audit-next-20261107\\candidate\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-qzB38E\\verse-claw-e2e-user-data-Vssjw2\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"--force-device-scale-factor=1\" \"D:\\ClawX-work\\session-task-unified-relay-20261109\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=47436\u001b[22m\n\u001b[2m  - [pid=47436][out]\u001b[22m\n\u001b[2m  - [pid=47436][err] Debugger listening on ws://127.0.0.1:57875/8af60772-ab4f-4093-bf5a-c616ee5d270f\u001b[22m\n\u001b[2m  - [pid=47436][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:57875/8af60772-ab4f-4093-bf5a-c616ee5d270f\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:57875/8af60772-ab4f-4093-bf5a-c616ee5d270f\u001b[22m\n\u001b[2m  - [pid=47436][err] Debugger attached.\u001b[22m\n\n\n   at fixtures\\electron.ts:377\n\n  375 |     : {};\n  376 |   const pendingLaunch = await recordElectronLaunch(userDataDir);\n> 377 |   const app = await electron.launch({\n      |               ^\n  378 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  379 |     args: [\n  380 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.\n    at launchVerseClawElectron (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts:377:15)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts:517:21\n    at withScopeFixture (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-chain-scope-faults.spec.ts:238:15)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-chain-scope-faults.spec.ts:263:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:20:51.114Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-chain-scope-faults-f1420--preserve-the-current-draft\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-chain-scope-faults-f1420--preserve-the-current-draft\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "fde67a87a790bd093b2b-66fd705f6d19a32d4ffc",
+          "file": "session-chain-scope-faults.spec.ts",
+          "line": 262,
+          "column": 5
+        },
+        {
+          "title": "Ledger transcript navigation rejects a replaced session generation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29399,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:24:18.566Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "session-chain-scope-faults",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-chain-scope-faults-e79d2-replaced-session-generation\\attachments\\session-chain-scope-faults-6ef2e23b7062a042b0f9540d0c674b24647623e7.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fde67a87a790bd093b2b-d20de734f3c998c3565d",
+          "file": "session-chain-scope-faults.spec.ts",
+          "line": 281,
+          "column": 5
+        },
+        {
+          "title": "leaving Task Ledger cancels a pending artifact navigation after a delayed Main save reply",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14106,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:24:48.104Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "session-chain-scope-faults",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-chain-scope-faults-33400-r-a-delayed-Main-save-reply\\attachments\\session-chain-scope-faults-03882124c1bcdde4217f1b90efc7b315512ae06b.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fde67a87a790bd093b2b-d11c5e5cac36db857257",
+          "file": "session-chain-scope-faults.spec.ts",
+          "line": 301,
+          "column": 7
+        },
+        {
+          "title": "leaving Task Ledger cancels a pending return-session navigation after a delayed Main save reply",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8960,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:25:02.221Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "session-chain-scope-faults",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-chain-scope-faults-41cde-r-a-delayed-Main-save-reply\\attachments\\session-chain-scope-faults-d509b7a889b69f627ca885fcdde0fb08f43130d0.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fde67a87a790bd093b2b-4edc88a7bb9bf338a0fb",
+          "file": "session-chain-scope-faults.spec.ts",
+          "line": 301,
+          "column": 7
+        },
+        {
+          "title": "automatic Handoff reconciliation ignores an old generation reply after refreshing the same session key",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11953,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:25:11.190Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "session-chain-scope-faults",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-chain-scope-faults-8046a-eshing-the-same-session-key\\attachments\\session-chain-scope-faults-7b495475d7c2ab611df3db0995143a2bb4703d7b.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fde67a87a790bd093b2b-49908c4e5d1056be9d50",
+          "file": "session-chain-scope-faults.spec.ts",
+          "line": 338,
+          "column": 5
+        },
+        {
+          "title": "manual Handoff verification keeps Project B and its input when Project A replies late",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8409,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:25:23.154Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "session-chain-scope-faults",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-chain-scope-faults-7eb7a-when-Project-A-replies-late\\attachments\\session-chain-scope-faults-9aa1ab4177b060dce3a7196d5a2b4e24afe948eb.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fde67a87a790bd093b2b-410b374de7e6e1403fbb",
+          "file": "session-chain-scope-faults.spec.ts",
+          "line": 370,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "session-family-lifecycle.spec.ts",
+      "file": "session-family-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "archiving, restoring and deleting a parent preserves child navigation, tasks and produced files",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32726,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:25:31.583Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5eb0442ece741ce6fc4e-d92e69437fd9ede579dc",
+          "file": "session-family-lifecycle.spec.ts",
+          "line": 7,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "session-task-scope-completion.spec.ts",
+      "file": "session-task-scope-completion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a real isolated schedule admits its first write without replacing the project coordinator",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30217,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:26:04.327Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-488e9109ad4f00285dfa",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 14,
+          "column": 5
+        },
+        {
+          "title": "real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 163103,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #4\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #5\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #6\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #7\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #8\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #9\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #10\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #11\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #12\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #13\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:26:34.554Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-a546e14244bc50a92d24",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 67,
+          "column": 5
+        },
+        {
+          "title": "explicit UI task selection executes the newly selected canonical contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 47072,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:29:17.665Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-21976b247ce0e75f7b2e",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 201,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T20:19:59.929Z",
+    "duration": 608459.995,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

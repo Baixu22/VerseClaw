@@ -1,0 +1,3 @@
+tests/e2e/session-context-commit-recovery.spec.ts(46,15): error TS18047: 'armed' is possibly 'null'.
+tests/e2e/session-context-commit-recovery.spec.ts(49,81): error TS18047: 'armed' is possibly 'null'.
+tests/e2e/session-context-commit-recovery.spec.ts(50,36): error TS18047: 'armed' is possibly 'null'.

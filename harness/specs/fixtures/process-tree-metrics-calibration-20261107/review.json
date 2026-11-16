@@ -1,0 +1,34 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "7088b5887a154090bd94f714236ab005de5c410d",
+    "tree": "31ba2ec29a4ad541070691a2fe85f3696fdcc7e6",
+    "dirty": false
+  },
+  "reviewedSurfaces": [
+    "ProcessTreeSampler identity/rate intervals",
+    "ResourceEnvelopeLedger physical dedup and logical leases",
+    "snapshot reader producer validation and TTL",
+    "Main/Gateway producers and event-loop publication",
+    "BackgroundWorkGate recovery after all active pressures"
+  ],
+  "resolvedFindings": [
+    "overlapping Main/Gateway process metrics counted once",
+    "PID creation-token and producer-epoch changes reset CPU baselines",
+    "fresh process-tree CPU replaces Main-only CPU input",
+    "stale/unknown samples preserve pressure holds",
+    "memory working set, private commit and machine availability remain separate"
+  ],
+  "openFindings": [],
+  "proof": {
+    "main": 58,
+    "runtime": 43,
+    "negative": 5,
+    "liveChildExit": true
+  },
+  "historicalFailure": {
+    "path": "D:/tmp/tf0831/dev-metrics3.json",
+    "status": "22 passed, 1 failed; native child sampling returned unknown. Retained separately; current clean-candidate run passed."
+  }
+}

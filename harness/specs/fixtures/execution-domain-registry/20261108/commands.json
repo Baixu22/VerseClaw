@@ -1,0 +1,192 @@
+[
+  {
+    "name": "core",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "vitest.execution-domain.config.ts",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\unified-management-20261108\\candidate-validation-final/core.json"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 39.859,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\core.log",
+    "passed": 29,
+    "failed": 0,
+    "pending": 0,
+    "total": 29,
+    "success": true
+  },
+  {
+    "name": "owners",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/orchestration-worktree-merge.test.ts",
+      "tests/unit/long-session-runtime-resource-inventory.test.ts",
+      "tests/unit/long-session-resource-reclamation.test.ts",
+      "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+      "--maxWorkers=1",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\unified-management-20261108\\candidate-validation-final/owners.json"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 44.734,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\owners.log",
+    "passed": 25,
+    "failed": 0,
+    "pending": 0,
+    "total": 25,
+    "success": true
+  },
+  {
+    "name": "types-node",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.node.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 41.922,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\types-node.log"
+  },
+  {
+    "name": "types-web",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.web.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 6.578,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\types-web.log"
+  },
+  {
+    "name": "types-test",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.test.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 50.25,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\types-test.log"
+  },
+  {
+    "name": "schema",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/generate-kysely-types.mjs",
+      "--verify"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108\\openclaw_runtime",
+    "exitCode": 0,
+    "seconds": 0.172,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\schema.log"
+  },
+  {
+    "name": "contract",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/contract-check.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 4.719,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\contract.log"
+  },
+  {
+    "name": "comms-replay",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/comms/replay.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 0.485,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\comms-replay.log"
+  },
+  {
+    "name": "comms-compare",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/comms/compare.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 0.281,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\comms-compare.log"
+  },
+  {
+    "name": "harness",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "harness/src/cli.mjs",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/execution-domain-registry.md"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 1.172,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\harness.log"
+  },
+  {
+    "name": "harness-dry-run",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "harness/src/cli.mjs",
+      "run",
+      "--spec",
+      "harness/specs/tasks/execution-domain-registry.md",
+      "--dry-run"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 1.063,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\harness-dry-run.log"
+  },
+  {
+    "name": "lint",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/eslint/bin/eslint.js",
+      "openclaw_runtime/src/agents/worktree-service.ts",
+      "openclaw_runtime/src/agents/worktree-registry.ts",
+      "openclaw_runtime/src/agents/execution-domain.ts",
+      "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+      "openclaw_runtime/src/agents/subagent-registry.ts",
+      "openclaw_runtime/src/agents/subagent-registry-lifecycle.ts",
+      "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+      "tests/unit/worktree-registry-restart.test.ts",
+      "tests/unit/execution-domain-registry.test.ts",
+      "tests/unit/orchestration-worktree-merge.test.ts",
+      "tests/fixtures/worktree-registry-process.ts",
+      "vitest.execution-domain.config.ts"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 4.515,
+    "log": "D:\\tmp\\unified-management-20261108\\candidate-validation-final\\lint.log"
+  }
+]

@@ -24,6 +24,8 @@ type GatewayStatus = { state?: string; port?: number; gatewayReady?: boolean };
 type HostSuccess = { success: boolean };
 
 const VALID_KEY = 'test-key-ok';
+const RATE_LIMITED_KEY = 'test-key-429';
+const PARAMETER_ERROR_KEY = 'test-key-400-parameter';
 const MOCK_MODELS = ['mock-coder-small', 'mock-coder-large'];
 
 async function allocatePort(): Promise<number> {
@@ -45,6 +47,18 @@ async function allocatePort(): Promise<number> {
 async function startProviderEndpoint(): Promise<{ server: Server; port: number }> {
   const server = createServer((req, res) => {
     const auth = req.headers.authorization ?? '';
+    // TF-0733: state fixtures served by the REAL endpoint, so the UI path is
+    // exercised end-to-end rather than stubbed in the renderer.
+    if (auth === `Bearer ${RATE_LIMITED_KEY}`) {
+      res.writeHead(429, { 'content-type': 'application/json', 'retry-after': '3' });
+      res.end(JSON.stringify({ error: { message: 'Too many requests' } }));
+      return;
+    }
+    if (auth === `Bearer ${PARAMETER_ERROR_KEY}`) {
+      res.writeHead(400, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ error: { message: 'unsupported parameter temperature' } }));
+      return;
+    }
     if (auth !== `Bearer ${VALID_KEY}`) {
       res.writeHead(401, { 'content-type': 'application/json' });
       res.end(JSON.stringify({ error: { message: 'Invalid API key provided' } }));
@@ -187,8 +201,31 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
       expect(await networkFailure.getAttribute('data-testid'), await networkFailure.innerText()).toBe('setup-provider-error-network');
       await expect(page.getByTestId('setup-next-button')).toBeDisabled();
 
+      // ---- failure 4: 429 rate limit (must not look verified) ----
+      await page.getByTestId('setup-provider-base-url').fill(goodBaseUrl);
+      await page.getByTestId('setup-provider-api-key').fill(RATE_LIMITED_KEY);
+      await page.getByTestId('setup-provider-validate').click();
+      await expect(page.getByTestId('setup-provider-error-rate-limited')).toBeVisible({
+        timeout: 30_000,
+      });
+      // The retry window from Retry-After is surfaced, not swallowed.
+      await expect(page.getByTestId('setup-provider-retry-after')).toContainText('3');
+      await expect(page.getByTestId('setup-provider-validated')).toHaveCount(0);
+      await expect(page.getByTestId('setup-provider-credentials-accepted')).toHaveCount(0);
+      await expect(page.getByTestId('setup-next-button')).toBeDisabled();
+
+      // ---- failure 5: non-auth 400 (protocol/parameter, not credentials) ----
+      await page.getByTestId('setup-provider-api-key').fill(PARAMETER_ERROR_KEY);
+      await page.getByTestId('setup-provider-validate').click();
+      await expect(page.getByTestId('setup-provider-error-protocol')).toBeVisible({
+        timeout: 30_000,
+      });
+      await expect(page.getByTestId('setup-provider-validated')).toHaveCount(0);
+      await expect(page.getByTestId('setup-next-button')).toBeDisabled();
+
       // ---- success: real 200 from the real endpoint ----
       await page.getByTestId('setup-provider-base-url').fill(goodBaseUrl);
+      await page.getByTestId('setup-provider-api-key').fill(VALID_KEY);
       await page.getByTestId('setup-provider-validate').click();
       await expect(page.getByTestId('setup-provider-validated')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('setup-next-button')).toBeEnabled();

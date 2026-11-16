@@ -9,7 +9,7 @@
 // 调用点: get-reply-run.ts runPreparedReply, line 617 extraSystemPromptParts 构建之前.
 // 调用方传入 sessionKey + userInputText + 可选 facts/embeddingProvider/config.
 
-import { hybridSearchFactsWithEmbedding, extractEntities, type HybridSearchHit } from "./memory-hybrid-retrieval.js";
+import { hybridSearchFactsWithEmbedding, clearHybridSearchIndexCache, extractEntities, type HybridSearchHit } from "./memory-hybrid-retrieval.js";
 import { NO_EMBEDDING_PROVIDER, type EmbeddingProviderOrNone } from "./memory-embedding-provider.js";
 import {
   createMemoryRuntimeConfig,
@@ -23,6 +23,7 @@ import {
   type RuntimeMemoryQueryableFact,
 } from "./memory-context.js";
 import { createRuntimeMemoryRuntimeIntegration } from "./memory-runtime-integration.js";
+import { subscribeRuntimeMemoryChanges } from "./memory-persistence.js";
 import {
   createInitialSSP,
   extractIntent,
@@ -775,22 +776,36 @@ function resolveFlag(
   return defaultValue;
 }
 
-// === COMPASS Facts Loading (带 TTL 缓存) ===
+// === COMPASS Facts Loading (revision-checked TTL cache) ===
 
-/**
- * Pre-reply facts 缓存: cacheKey → { facts, loadedAt }, TTL = 30 秒.
- *
- * ⚠️  单进程假设 (COMPASS 2.0 架构约束):
- * clearCompassFactsCache() 只清当前进程的缓存.
- * 多进程场景下, flush 发生在进程 A, 进程 B 的缓存不会被清除,
- * 导致进程 B 在 30 秒 TTL 内继续使用 flush 前的旧 facts.
- * → 迁移路径: cache invalidation 事件化 (pub/sub 或共享 flag 文件).
- */
+export type MemoryReadFreshness = {
+  loadedAt: number;
+  sourceRevision: string | null;
+  scope: "sqlite-connection-snapshot" | "unverified";
+  stale: boolean;
+};
+
+/** A snapshot is current only at an observed owner revision, never indefinitely. */
+export function observeMemoryReadFreshness(
+  integration: { getReadRevision?: () => string | undefined },
+  snapshot?: Pick<MemoryReadFreshness, "loadedAt" | "sourceRevision"> & Partial<Pick<MemoryReadFreshness, "scope" | "stale">>,
+): MemoryReadFreshness {
+  let revision: string | undefined;
+  try { revision = integration.getReadRevision?.(); } catch { /* Unknown stays stale. */ }
+  return {
+    loadedAt: snapshot?.loadedAt ?? Date.now(),
+    sourceRevision: snapshot ? snapshot.sourceRevision : revision ?? null,
+    scope: snapshot?.scope ?? ((snapshot ? snapshot.sourceRevision : revision) ? "sqlite-connection-snapshot" : "unverified"),
+    stale: !revision || Boolean(snapshot && (snapshot.stale || snapshot.sourceRevision !== revision)),
+  };
+}
+
 const compassFactsCache = new Map<
   string,
-  { facts: readonly RuntimeMemoryQueryableFact[]; loadedAt: number }
+  { facts: readonly RuntimeMemoryQueryableFact[]; freshness: MemoryReadFreshness }
 >();
 const COMPASS_FACTS_CACHE_TTL_MS = 30_000;
+subscribeRuntimeMemoryChanges(() => clearCompassFactsCache());
 
 /**
  * 加载 facts 语料库供 COMPASS pre-reply retrieval 使用 (带 TTL 缓存).
@@ -806,28 +821,44 @@ export function loadCompassFacts(
   cfg: unknown,
   cacheKey: string = "default",
 ): readonly RuntimeMemoryQueryableFact[] {
-  if (!runtimeMemoryFlagEnabled(cfg, "persist")) return [];
+  return loadCompassFactsSnapshot(cfg, cacheKey).facts;
+}
 
-  const now = Date.now();
-  const cached = compassFactsCache.get(cacheKey);
-  if (cached && now - cached.loadedAt < COMPASS_FACTS_CACHE_TTL_MS) {
-    return cached.facts;
-  }
+export function loadCompassFactsSnapshot(
+  cfg: unknown,
+  cacheKey: string = "default",
+): { facts: readonly RuntimeMemoryQueryableFact[]; freshness: MemoryReadFreshness } {
+  const unavailable = (): ReturnType<typeof loadCompassFactsSnapshot> => ({
+    facts: [], freshness: { loadedAt: Date.now(), sourceRevision: null, scope: "unverified", stale: true },
+  });
+  if (!runtimeMemoryFlagEnabled(cfg, "persist")) return unavailable();
 
   try {
     const integration = createRuntimeMemoryRuntimeIntegration({ config: cfg });
+    const cached = compassFactsCache.get(cacheKey);
+    if (cached && Date.now() - cached.freshness.loadedAt < COMPASS_FACTS_CACHE_TTL_MS) {
+      const freshness = observeMemoryReadFreshness(integration, cached.freshness);
+      if (!freshness.stale) return { facts: cached.facts, freshness };
+    }
+    // The retrieval index is keyed by fact identities/times, so an external
+    // edit of the same fact also has to retire the old index projection.
+    clearHybridSearchIndexCache();
     const result = integration.loadStore();
+    if (result.status !== "loaded") return unavailable();
     const facts = result.store.queryFacts().map(cloneQueryableFact);
-    compassFactsCache.set(cacheKey, { facts, loadedAt: now });
-    return facts;
+    const snapshot = { facts, freshness: observeMemoryReadFreshness(integration,
+      result.readSnapshot ?? { loadedAt: Date.now(), sourceRevision: null }) };
+    if (!snapshot.freshness.stale) compassFactsCache.set(cacheKey, snapshot);
+    return snapshot;
   } catch {
-    return [];
+    return unavailable();
   }
 }
 
-/** 清除 facts 缓存 (测试用). */
+/** Invalidate both projections after an owner commit or an explicit flush. */
 export function clearCompassFactsCache(): void {
   compassFactsCache.clear();
+  clearHybridSearchIndexCache();
 }
 
 function cloneQueryableFact(fact: unknown): RuntimeMemoryQueryableFact {

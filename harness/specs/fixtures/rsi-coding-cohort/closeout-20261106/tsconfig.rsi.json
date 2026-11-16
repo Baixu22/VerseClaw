@@ -1,0 +1,15 @@
+{
+  "extends": "D:/tmp/rsi-relay-20261106/candidate/tsconfig.test.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true
+  },
+  "include": [
+    "D:/tmp/rsi-relay-20261106/candidate/tests/unit/rsi-coding-collector.test.ts",
+    "D:/tmp/rsi-relay-20261106/candidate/tests/unit/rsi-live-grader.test.ts",
+    "D:/tmp/rsi-relay-20261106/candidate/tests/unit/rsi-live-acceptance.test.ts",
+    "D:/tmp/rsi-relay-20261106/candidate/tests/unit/rsi-benefit-eval.test.ts",
+    "D:/tmp/rsi-relay-20261106/candidate/tests/unit/rsi-responses-provider.test.ts"
+  ],
+  "exclude": []
+}

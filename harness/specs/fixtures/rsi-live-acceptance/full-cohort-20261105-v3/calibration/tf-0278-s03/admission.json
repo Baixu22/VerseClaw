@@ -1,0 +1,435 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0278-s03",
+  "source": {
+    "id": "tf-0278-s03",
+    "base": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+    "reference": "3f7060cb2bade7b693c407b70cfa71c698988444",
+    "productChanges": [],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/s03-acceptance.json",
+    "sourceRecordDigest": "6c67f99c023728eaed7c506ba24b95104de188d0ecd3eac31b27df40548d0b02",
+    "oraclePaths": [
+      "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts",
+      "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+      "openclaw_runtime/src/agents/apply-patch-consistency.test.ts",
+      "openclaw_runtime/src/agents/sessions/tools/write.test.ts",
+      "openclaw_runtime/src/agents/sessions/tools/edit.test.ts",
+      "tests/unit/external-content-provenance.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/external-content-provenance.test.ts --maxWorkers=1",
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/workspace-external-write-provenance-policy.test.ts src/agents/agent-tools.workspace-boundary.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0278-s03",
+      "commands": [
+        "pnpm exec vitest run tests/unit/external-content-provenance.test.ts --maxWorkers=1",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/workspace-external-write-provenance-policy.test.ts src/agents/agent-tools.workspace-boundary.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/external-content-provenance.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/external-content-provenance.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 1,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793853905526,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793853905526,
+                "endTime": 1793853905526,
+                "status": "failed",
+                "message": "Failed to resolve import \"typebox\" from \"openclaw_runtime/src/agents/tools/web-fetch.ts\". Does the file exist?",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/tests/unit/external-content-provenance.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\01-stderr.log"
+        },
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/workspace-external-write-provenance-policy.test.ts src/agents/agent-tools.workspace-boundary.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/workspace-external-write-provenance-policy.test.ts",
+            "src/agents/agent-tools.workspace-boundary.test.ts",
+            "src/agents/apply-patch-consistency.test.ts",
+            "src/agents/sessions/tools/write.test.ts",
+            "src/agents/sessions/tools/edit.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\02-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 5,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 5,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793853935069,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793853935069,
+                "endTime": 1793853935069,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/agents/sessions/tools/edit.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793853935069,
+                "endTime": 1793853935069,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/agents/sessions/tools/write.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793853935069,
+                "endTime": 1793853935069,
+                "status": "failed",
+                "message": "Cannot find package '@openclaw/fs-safe/config' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/infra/fs-safe-defaults.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793853935069,
+                "endTime": 1793853935069,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793853935069,
+                "endTime": 1793853935069,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/reference/workspace/openclaw_runtime/src/agents/apply-patch-consistency.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\02-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\02-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\02-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "5272fdad3d1190fe3b16eb55673a6ba63ccced7696de268d319a795c892806db",
+      "oracleHashAfter": "5272fdad3d1190fe3b16eb55673a6ba63ccced7696de268d319a795c892806db",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-external-write-boundary.md": "730fb4d519844c6ae9df5d24e4ac0de8b8b92d6b392e1d8ef50e8934123bc2a7",
+        "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts": "b6ac5977cf5bdbda57cf65a5478d0bc3a1259248ab0fa80117c79eb356bc414b",
+        "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
+        "openclaw_runtime/src/agents/apply-patch-consistency.test.ts": "7b131dc4b8abbc9c84b592fc1a15f9d8aabf0a8e85d139136f8e7f7f35b7ca28",
+        "openclaw_runtime/src/agents/sessions/tools/write.test.ts": "07e02c3c8a83e687ef7250fa9d00e7c4bdd4cf4f907ac30a617ea9c84541f883",
+        "openclaw_runtime/src/agents/sessions/tools/edit.test.ts": "69ac088add7bf0e874c4b1af32c45559422d236f56a1fe41fa214878635b99c3",
+        "tests/unit/external-content-provenance.test.ts": "c2c989f4e1c4e0e0e5a1ff0f07a66795b69b77a5492ac4ca95a44daf5883c55e"
+      },
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "typebox",
+          "importer": "tests/unit/external-content-provenance.test.ts",
+          "inTargetScope": false
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0278-s03",
+      "commands": [
+        "pnpm exec vitest run tests/unit/external-content-provenance.test.ts --maxWorkers=1",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/workspace-external-write-provenance-policy.test.ts src/agents/agent-tools.workspace-boundary.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/external-content-provenance.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/external-content-provenance.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 1,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793854001313,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793854001313,
+                "endTime": 1793854001313,
+                "status": "failed",
+                "message": "Failed to resolve import \"typebox\" from \"openclaw_runtime/src/agents/tools/web-fetch.ts\". Does the file exist?",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/tests/unit/external-content-provenance.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\01-stderr.log"
+        },
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/workspace-external-write-provenance-policy.test.ts src/agents/agent-tools.workspace-boundary.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/workspace-external-write-provenance-policy.test.ts",
+            "src/agents/agent-tools.workspace-boundary.test.ts",
+            "src/agents/apply-patch-consistency.test.ts",
+            "src/agents/sessions/tools/write.test.ts",
+            "src/agents/sessions/tools/edit.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\02-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 5,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 5,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793854042612,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793854042612,
+                "endTime": 1793854042612,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793854042612,
+                "endTime": 1793854042612,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/apply-patch-consistency.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793854042612,
+                "endTime": 1793854042612,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/sessions/tools/edit.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793854042612,
+                "endTime": 1793854042612,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/sessions/tools/write.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793854042612,
+                "endTime": 1793854042612,
+                "status": "failed",
+                "message": "Cannot find package '@openclaw/fs-safe/config' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/infra/fs-safe-defaults.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\02-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\02-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\02-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "5272fdad3d1190fe3b16eb55673a6ba63ccced7696de268d319a795c892806db",
+      "oracleHashAfter": "5272fdad3d1190fe3b16eb55673a6ba63ccced7696de268d319a795c892806db",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-external-write-boundary.md": "730fb4d519844c6ae9df5d24e4ac0de8b8b92d6b392e1d8ef50e8934123bc2a7",
+        "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts": "b6ac5977cf5bdbda57cf65a5478d0bc3a1259248ab0fa80117c79eb356bc414b",
+        "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
+        "openclaw_runtime/src/agents/apply-patch-consistency.test.ts": "7b131dc4b8abbc9c84b592fc1a15f9d8aabf0a8e85d139136f8e7f7f35b7ca28",
+        "openclaw_runtime/src/agents/sessions/tools/write.test.ts": "07e02c3c8a83e687ef7250fa9d00e7c4bdd4cf4f907ac30a617ea9c84541f883",
+        "openclaw_runtime/src/agents/sessions/tools/edit.test.ts": "69ac088add7bf0e874c4b1af32c45559422d236f56a1fe41fa214878635b99c3",
+        "tests/unit/external-content-provenance.test.ts": "c2c989f4e1c4e0e0e5a1ff0f07a66795b69b77a5492ac4ca95a44daf5883c55e"
+      },
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "typebox",
+          "importer": "tests/unit/external-content-provenance.test.ts",
+          "inTargetScope": false
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0278-s03\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": false,
+    "issues": [
+      "reference-oracle-not-passing",
+      "baseline-has-no-gradeable-failure"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

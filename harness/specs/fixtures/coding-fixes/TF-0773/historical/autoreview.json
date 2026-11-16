@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "body": "The HTTP hook uses request mode, where `requestPluginToolApproval` returns `deniedReason: \"plugin-approval\"` after explicit denial, approval timeout, or an unavailable approval route. Setting `approvalRequired` for all these outcomes makes `toMcpToolResult` report `openclaw/resultStatus: \"waiting\"` even though the approval has terminated. Carry the resolved approval outcome through this boundary and reserve waiting for pending approval.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/mcp-http.handlers.ts",
+        "line": 95
+      },
+      "confidence": 0.99,
+      "priority": "P2",
+      "title": "Preserve terminal approval outcomes"
+    },
+    {
+      "body": "`usedIds` retains the complete caller-controlled ID without a length limit. The 1 MiB request-body limit permits nearly 1 MiB string IDs, including calls to unavailable tools because registration precedes tool lookup. An authenticated local client, including a non-owner client, can therefore retain gigabytes through sequential requests before reaching the 4096-call limit, exhausting gateway memory. Limit retained ID bytes or store bounded-size digests for replay detection.",
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/mcp-http.ts",
+        "line": 268
+      },
+      "confidence": 0.98,
+      "priority": "P2",
+      "title": "Bound the size of retained request IDs"
+    }
+  ],
+  "overall_confidence": 0.98,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The current diff still misclassifies terminal approval failures and permits excessive request-ID retention. Source and installed SDK contracts were inspected; no tests were run. Retained evidence records a 37/38 precheck and a passing five-test version matrix. Full-candidate validation and evidence sealing remain unverified."
+}

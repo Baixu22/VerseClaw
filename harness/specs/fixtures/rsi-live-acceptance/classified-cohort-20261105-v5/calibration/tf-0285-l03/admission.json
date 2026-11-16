@@ -1,0 +1,406 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0285-l03",
+  "source": {
+    "id": "tf-0285-l03",
+    "base": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+    "reference": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+    "productChanges": [],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/l03-acceptance.json",
+    "sourceRecordDigest": "8afb7462ed0290f2d0899a02ab619680d276b9038cfbec276d498c3d5e9104b8",
+    "oraclePaths": [
+      "openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts"
+    ],
+    "commands": [
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-steering-queue.l03.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0285-l03",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-steering-queue.l03.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-steering-queue.l03.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/agent-steering-queue.l03.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 6,
+            "numPassedTests": 6,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793864704843,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept leases a pending completion and marks it in_progress with the lease id",
+                    "status": "passed",
+                    "title": "leases a pending completion and marks it in_progress with the lease id",
+                    "duration": 3.6120000000009895,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 45,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept acks only the matching lease and is idempotent (no double delivery)",
+                    "status": "passed",
+                    "title": "acks only the matching lease and is idempotent (no double delivery)",
+                    "duration": 0.5997000000006665,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 53,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept releases on a failed turn so the item is re-leased exactly once (no loss, no double inject)",
+                    "status": "passed",
+                    "title": "releases on a failed turn so the item is re-leased exactly once (no loss, no double inject)",
+                    "duration": 0.54490000000078,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 64,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept does not re-lease a cancelled/discarded or already-delivered completion (cancel stops further effect)",
+                    "status": "passed",
+                    "title": "does not re-lease a cancelled/discarded or already-delivered completion (cancel stops further effect)",
+                    "duration": 1.1072999999996682,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 75,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept re-leases a stale in-progress lease so a restarted turn does not strand a completion",
+                    "status": "passed",
+                    "title": "re-leases a stale in-progress lease so a restarted turn does not strand a completion",
+                    "duration": 0.35750000000007276,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 84,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept ignores completions for a different requester session",
+                    "status": "passed",
+                    "title": "ignores completions for a different requester session",
+                    "duration": 0.1879000000008091,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 92,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793864705635,
+                "endTime": 1793864705641.3574,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0285-l03/reference/workspace/openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 6,
+      "numPassedTests": 6,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "5d9def188b68da9c9974966b08ea298f86005f94b78c4e8f9e255e860a8889c8",
+      "oracleHashAfter": "5d9def188b68da9c9974966b08ea298f86005f94b78c4e8f9e255e860a8889c8",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-in-run-steering.md": "2cf3bc047237c3c878b38cc53f7afadc4b7db437430881a0170e82e49835ffe3",
+        "openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts": "1239cff17997b83b553e90395114743a839ed071c5014fd657c58e06c7b8bea8"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0285-l03",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-steering-queue.l03.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-steering-queue.l03.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/agent-steering-queue.l03.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 6,
+            "numPassedTests": 6,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793864764773,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept leases a pending completion and marks it in_progress with the lease id",
+                    "status": "passed",
+                    "title": "leases a pending completion and marks it in_progress with the lease id",
+                    "duration": 3.328699999998207,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 45,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept acks only the matching lease and is idempotent (no double delivery)",
+                    "status": "passed",
+                    "title": "acks only the matching lease and is idempotent (no double delivery)",
+                    "duration": 0.6222000000016124,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 53,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept releases on a failed turn so the item is re-leased exactly once (no loss, no double inject)",
+                    "status": "passed",
+                    "title": "releases on a failed turn so the item is re-leased exactly once (no loss, no double inject)",
+                    "duration": 0.5637000000024273,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 64,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept does not re-lease a cancelled/discarded or already-delivered completion (cancel stops further effect)",
+                    "status": "passed",
+                    "title": "does not re-lease a cancelled/discarded or already-delivered completion (cancel stops further effect)",
+                    "duration": 1.0720000000001164,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 75,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept re-leases a stale in-progress lease so a restarted turn does not strand a completion",
+                    "status": "passed",
+                    "title": "re-leases a stale in-progress lease so a restarted turn does not strand a completion",
+                    "duration": 0.2684000000008382,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 84,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L03 in-run steering accept"
+                    ],
+                    "fullName": "L03 in-run steering accept ignores completions for a different requester session",
+                    "status": "passed",
+                    "title": "ignores completions for a different requester session",
+                    "duration": 0.14440000000104192,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 92,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793864772207,
+                "endTime": 1793864772213.1443,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0285-l03/baseline/workspace/openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 6,
+      "numPassedTests": 6,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "5d9def188b68da9c9974966b08ea298f86005f94b78c4e8f9e255e860a8889c8",
+      "oracleHashAfter": "5d9def188b68da9c9974966b08ea298f86005f94b78c4e8f9e255e860a8889c8",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-in-run-steering.md": "2cf3bc047237c3c878b38cc53f7afadc4b7db437430881a0170e82e49835ffe3",
+        "openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts": "1239cff17997b83b553e90395114743a839ed071c5014fd657c58e06c7b8bea8"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0285-l03\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": false,
+    "issues": [
+      "baseline-already-passes"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

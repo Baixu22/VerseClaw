@@ -1,4 +1,5 @@
 {
+  "operationGenerationUnavailable": "The session identity is unavailable. Refresh before continuing.",
   "gatewayNotRunning": "Gateway Not Running",
   "retry": "Retry",
   "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
@@ -12,6 +13,9 @@
     "retry": "Retry loading"
   },
   "welcome": {
+    "quickStart": "Quick start",
+    "branchLoading": "Loading branches…",
+    "branchLoadFailed": "Could not load branches",
     "projectSearch": "Search projects",
     "projectEmpty": "No projects found",
     "changeProject": "Change project: {{projectName}}",
@@ -29,7 +33,7 @@
     "brainstormingDesc": "Split work across coordinated agents"
   },
   "sessionActivity": {
-    "title": "Session status",
+    "title": "Session environment",
     "description": "Live runtime, task, Git, goal, process, lineage, agent, and terminal activity for this conversation.",
     "openRecovery": "Open session recovery",
     "createMemoryDraft": "Save session to Knowledge",
@@ -49,9 +53,10 @@
       "lineage": "Lineage",
       "terminals": "Terminals",
       "continuity": "Continuity",
-      "environment": "Environment",
+      "environment": "Changes",
       "plan": "Development tasks",
-      "policy": "Runtime policy"
+      "policy": "Runtime policy",
+      "sources": "Sources"
     },
     "status": {
       "idle": "Idle",
@@ -162,7 +167,14 @@
     },
     "runningCount": "{{count}} running",
     "processes": {
-      "openOutput": "Open the output of {{command}}"
+      "recent": "Completed · {{count}}",
+      "openOutput": "Open the output of {{command}}",
+      "openInWorkspace": "Open in workspace",
+      "noOutput": "No output yet",
+      "showOutput": "Show output",
+      "hideOutput": "Hide output",
+      "duration": "{{seconds}}s",
+      "inWorkspace": "Shown in workspace"
     },
     "policy": {
       "backend": "Configured backend",
@@ -266,6 +278,25 @@
         }
       },
       "unverifiedFacts": "Unverified facts"
+    },
+    "sourceKinds": {
+      "mcp": "MCP",
+      "skill": "Skill"
+    },
+    "moreRows": "Show {{count}} more",
+    "close": "Hide environment",
+    "overview": {
+      "context": "Context",
+      "contextUsed": "Used / window",
+      "cacheRead": "Cache read",
+      "cacheHitRate": "Cache hit rate",
+      "pressure": "Pressure",
+      "connectors": "Connectors",
+      "connectorsValue": "{{count}} in use",
+      "skillsValue": "Skills: {{count}}",
+      "review": "Review",
+      "background": "Background tasks",
+      "backgroundIdle": "Nothing running"
     }
   },
   "noLogs": "(No logs available yet)",
@@ -334,9 +365,11 @@
     "copiedCode": "Copied"
   },
   "messageActions": {
+    "forkMissingBoundary": "This message has no transcript boundary. Refresh the conversation before forking.",
+    "forkUnavailable": "Fork is available when the session is connected and its current run has finished.",
     "summarizeUpToHere": "Summarize up to here",
     "summarizeFromHere": "Summarize from here",
-    "forkFromHere": "Fork from here",
+    "forkFromHere": "Ask in a new session",
     "copy": "Copy message",
     "copied": "Copied",
     "edit": "Edit",
@@ -746,7 +779,8 @@
       "expand": "Expand panel",
       "collapse": "Collapse panel",
       "moveTerminalSide": "Move terminal to side",
-      "moveTerminalBottom": "Move terminal to bottom"
+      "moveTerminalBottom": "Move terminal to bottom",
+      "close": "Close workspace"
     },
     "changes": {
       "heading": "File changes ({{count}})",
@@ -1253,6 +1287,8 @@
     }
   },
   "executionGraph": {
+    "arguments": "Arguments",
+    "result": "Result",
     "title": "Execution Graph",
     "branchLabel": "branch",
     "thinkingLabel": "Thinking",
@@ -1334,6 +1370,13 @@
     "previewUnavailable": "Image preview is temporarily unavailable"
   },
   "session": {
+    "navigation": {
+      "title": "Conversations in this workspace",
+      "search": "Find a conversation",
+      "source": "Source conversation",
+      "from": "From {{session}}",
+      "children": "Show {{count}} related conversations"
+    },
     "derived": {
       "title": "Derived sessions ({{count}})"
     },
@@ -1343,7 +1386,8 @@
     "lineage": {
       "forkedFrom": "Forked from {{session}}",
       "forkedFromAt": "Forked from {{session}} · {{time}}"
-    }
+    },
+    "manage": "Chat options"
   },
   "composer": {
     "attachFiles": "Attach files",
@@ -1359,7 +1403,7 @@
     "skillEmpty": "No matching skills found",
     "pickAgent": "Choose agent",
     "pickModel": "Choose model",
-    "abortFailed": "Failed to stop — the run is still going.",
+    "abortFailed": "Could not confirm the stop. Refresh the session to check its status.",
     "actions": {
       "add": "Add",
       "context": "Add context",
@@ -1649,6 +1693,11 @@
           "label": "Copy last response",
           "description": "Copy the last assistant response as markdown.",
           "argumentHint": ""
+        },
+        "storage": {
+          "label": "Storage",
+          "description": "Manage conversation files, running processes and Git worktrees.",
+          "argumentHint": ""
         }
       },
       "prompts": {
@@ -1721,7 +1770,7 @@
     "resumeTooltip": "Resume this paused session.",
     "resumeDisabled": "This session can no longer be resumed here.",
     "startingTooltip": "Starting… Click to cancel the pending send or pause the current run.",
-    "queueTooltip": "Queue this draft for after the current run. Double-click to pause instead.",
+    "queueTooltip": "Queue — send after the current run finishes",
     "gatewayConnected": "connected",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
     "contextStatusTitle": "Context and token status",
@@ -1743,6 +1792,7 @@
     "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
     "contextHidden": "{{count}} hidden",
     "compaction": {
+      "toastPending": "Compression request accepted. Refresh the conversation to check the result.",
       "compress": "Compress current session",
       "compressTooltip": "Compress the current session history",
       "viewEvidence": "View compression evidence",
@@ -1980,9 +2030,9 @@
       "tooltip": "Prepare a continuation draft in a new session",
       "disabledActiveRun": "Available after the current run finishes",
       "dialogTitle": "Handoff to New Conversation",
-      "dialogDescription": "Review and edit this continuation draft before creating a fresh session. It will be placed in the composer and will not be sent automatically.",
+      "dialogDescription": "Review and edit this continuation draft. Create and send opens a new session and submits the draft as its first message. If delivery is unconfirmed, the saved draft remains available for verification and recovery.",
       "draftLabel": "Handoff draft",
-      "create": "Create handoff session",
+      "create": "Create and send",
       "cancel": "Cancel",
       "toastPrepareFailed": "Failed to prepare handoff",
       "toastCreateFailed": "Failed to create handoff session",
@@ -2078,16 +2128,17 @@
     },
     "workModeRecommendedPermission": "Recommended: {{mode}}",
     "intervention": {
+      "menu": "Delivery options",
       "guide": "Guide",
-      "guideTooltip": "Inject non-interrupting guidance into the active run.",
+      "guideTooltip": "Add to the current run at its next step, without stopping it",
       "longTaskRequired": "Interrupt/guide/queue/revise-goal requires an active /loop long-task context for this session.",
       "reviseGoal": "Revise goal",
-      "reviseGoalTooltip": "Checkpoint the active run and restart from a revised user goal.",
+      "reviseGoalTooltip": "Save a checkpoint and restart with this message as the new goal",
       "queueDefault": "Running: Enter queues this message",
       "queue": "Queue",
-      "queueTooltip": "Keep the active run intact and replay this follow-up later.",
-      "interrupt": "Interrupt",
-      "interruptTooltip": "Abort or steer the active run before risky recovery actions."
+      "queueTooltip": "Send after the current run finishes",
+      "interrupt": "Interrupt & send",
+      "interruptTooltip": "Save a checkpoint, stop the run, and restart from this message"
     },
     "rollbackPlan": {
       "title": "Recovery assist",
@@ -2206,7 +2257,14 @@
       "newBranch": "New branch",
       "existingBranch": "Existing branch",
       "defaultPath": "Default path",
-      "defaultPathUnavailable": "Enter a branch name to preview its path"
+      "defaultPathUnavailable": "Enter a branch name to preview its path",
+      "kindBranch": "Branch",
+      "kindWorktree": "Worktree",
+      "kindDetached": "Detached",
+      "mainCheckout": "Main checkout",
+      "linkedWorktree": "Linked worktree",
+      "filesChanged": "{{count}} files changed",
+      "filesChanged_one": "{{count}} file changed"
     },
     "modelSwitchSessionResetFailed": "Default model saved, but this session could not be reset: {{error}}",
     "knowledgeRuntimeLessons": {
@@ -2318,6 +2376,11 @@
     "dropHint": "Drag onto another conversation to group them together"
   },
   "archive": {
+    "mutationUnconfirmed": "Could not confirm the operation. Refresh the list to check the current state.",
+    "pendingTitle": "Operations awaiting confirmation",
+    "pendingDescription": "Check the recorded operation and continue it from its saved state.",
+    "resumeMutation": "Check and continue",
+    "pendingKinds": {"archive": "Archive", "restore": "Restore", "delete": "Delete"},
     "searchPlaceholder": "Search archived conversations",
     "ungrouped": "Ungrouped",
     "noMatches": "No matching conversations",
@@ -2337,7 +2400,8 @@
     "archiveAction": "Archive",
     "emptyAll": "Empty archive",
     "emptyAllConfirm": "Click again to permanently delete all archived conversations",
-    "viewLabel": "Archived view"
+    "viewLabel": "Archived view",
+    "permanentDeleteMessage": "Permanently delete \"{{label}}\" and its conversation history?"
   },
   "questionDirectory": {
     "title": "Question directory",
@@ -2516,7 +2580,7 @@
   },
   "turnSummary": {
     "codingRun": {
-      "title": "CodingRun evidence",
+      "title": "Run diagnostics",
       "jsonl": "Read-only JSONL projection",
       "copy": "Copy",
       "copied": "Copied"
@@ -2536,6 +2600,7 @@
       "minutesSeconds": "{{minutes}}m {{seconds}}s"
     },
     "badge": {
+      "tools": "{{count}} tool calls",
       "thoughts": "{{count}} thoughts",
       "approvals": "{{count}} approvals",
       "plan": "{{count}} steps",
@@ -2776,6 +2841,145 @@
       "typeLabel": "Type",
       "hint": "This resource cannot be displayed here.",
       "copy": "Copy details"
+    }
+  },
+  "task": {
+    "steps": "Steps"
+  },
+  "sessionFamily": {
+    "toggle": "Show or hide {{count}} descendants",
+    "navigation": "Session family",
+    "kind": {
+      "fork": "Fork",
+      "handoff": "Handoff",
+      "spawn": "Worker",
+      "unknown": "Source unavailable"
+    },
+    "children": "Derived sessions ({{count}})",
+    "missing": "Source unavailable",
+    "unloaded": "Load source session",
+    "conflict": "Conflicting source fields",
+    "cycle": "Source cycle",
+    "bound-exceeded": "Source chain truncated",
+    "relations": "Relations"
+  },
+  "projectEntry": {
+    "toggle": "Expand or collapse {{name}}",
+    "loading": "Opening project coordinator…",
+    "unbound": "No coordinator bound to this project.",
+    "unavailable": "The project coordinator association is unavailable.",
+    "coordinator": "{{name}} · Project coordinator"
+  },
+  "questionFork": {
+    "title": "Ask in a new session",
+    "description": "Keep the context before this question. The new question stays as an editable draft.",
+    "question": "New question",
+    "create": "Create with draft",
+    "noAncestor": "There is no preceding assistant turn available for this fork.",
+    "sourceChanged": "The source session changed. Open the preview again."
+  },
+  "handoffRecovery": {
+    "resume": "Resume with the saved draft",
+    "check": "Check delivery",
+    "openChild": "Open child session",
+    "phase": {
+      "creating": "Handoff creation needs reconciliation",
+      "ready": "Child created · first turn not sent",
+      "sending": "First turn is being submitted",
+      "accepted": "First turn accepted · transcript not confirmed",
+      "sent": "First turn recorded",
+      "failed": "First turn rejected · draft retained",
+      "unknown": "First-turn delivery unknown · check before retrying"
+    }
+  },
+  "delegationStages": {
+    "verification": {
+      "unavailable": "Unavailable",
+      "pending": "Awaiting verifier receipts",
+      "recorded": "Verifier receipts recorded: {{count}} / {{total}}"
+    },
+    "capacity": {
+      "planTitle": "Dispatch-time plan and reasons",
+      "planDescription": "Recorded when dispatched; this is not the live queue.",
+      "recordedAt": "Receipt time: {{at}}",
+      "wave": "Wave {{wave}} · {{roles}}",
+      "reasonUnavailable": "No scheduling reason was recorded.",
+      "otherReason": "Scheduler reason: {{reason}}",
+      "reason": {
+        "concurrencyCap": "Concurrency limit",
+        "writeSetConflict": "Overlapping write scopes",
+        "writeSetProof": "Write isolation not established",
+        "toolContention": "Shared tool contention"
+      },
+      "currentTitle": "Current owner observations",
+      "currentQueue": "Current session queue: {{count}}",
+      "workerWaiting": "The worker owner reports waiting.",
+      "openResources": "View sessions and resource usage"
+    },
+    "label": {
+      "admission": "Admission",
+      "verification": "Verification",
+      "execution": "Execution",
+      "report": "Report delivery",
+      "acceptance": "Task acceptance",
+      "continuation": "Parent continuation"
+    },
+    "taskRequired": "Select an existing business task and bind its coordinator before dispatching.",
+    "model": "Runtime model: {{model}}",
+    "cost": "Recorded transcript cost: {{cost}}",
+    "costUnknown": "Unknown",
+    "taskAcceptance": {
+      "pending": "Awaiting acceptance",
+      "accepted": "Accepted",
+      "cancelled": "Cancelled"
+    },
+    "status": {
+      "unavailable": "Unavailable",
+      "in-flight": "Admission pending",
+      "approval-pending": "Awaiting permission",
+      "accepted": "Accepted",
+      "partial": "Partially accepted",
+      "rejected": "Rejected",
+      "outcome-unknown": "Outcome unknown",
+      "started": "Start recorded",
+      "yielded": "Waiting",
+      "completed": "Run completed",
+      "error": "Run failed",
+      "aborted": "Run stopped",
+      "verified": "Verifier result recorded",
+      "not_required": "Not required",
+      "pending": "Pending",
+      "in_progress": "Delivering",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "suspended": "Suspended",
+      "discarded": "Discarded",
+      "fenced": "Generation changed",
+      "waiting": "Waiting for the parent turn",
+      "unknown": "Delivery unknown",
+      "queued": "Queued",
+      "steered": "Guidance accepted"
+    }
+  },
+  "migration": {
+    "open": "Move work to another checkout",
+    "resume": "Resume migration",
+    "title": "Continue in another checkout",
+    "description": "Keep this conversation and its task. The system stops new source effects, checks unfinished work, and opens the target only after confirming the handoff.",
+    "target": "Target workspace",
+    "start": "Move and continue",
+    "cancel": "Close",
+    "retained": "Progress is saved. Resolve the reported condition, then resume.",
+    "artifactChanged": "A recorded artifact changed. Restore its checkpoint version before resuming.",
+    "phase": {
+      "intent": "Migration recorded",
+      "fenced": "Source execution closed",
+      "drained": "Source effects settled",
+      "reserved": "Target reserved",
+      "session-committed": "Session moved; checking task",
+      "task-committed": "Task ownership transferred",
+      "binding-committed": "Confirming target",
+      "confirmed": "Ready in target"
     }
   }
 }

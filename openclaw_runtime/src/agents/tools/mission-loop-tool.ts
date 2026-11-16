@@ -13,6 +13,7 @@ import {
   tickMission,
   type MissionControllerDeps,
 } from "../mission-control/controller.js";
+import type { MissionManagedTaskRuntime, MissionRunRecord } from "../mission-control/types.js";
 import type { AnyAgentTool } from "./common.js";
 import {
   jsonResult,
@@ -22,12 +23,27 @@ import {
   ToolInputError,
 } from "./common.js";
 
-type MissionLoopToolOptions = {
+export type MissionLoopToolOptions = {
   agentSessionKey?: string;
   requesterAgentIdOverride?: string;
   config?: OpenClawConfig;
   deps?: MissionControllerDeps;
+  /** Trusted runtime context. sessionKey is filled from agentSessionKey below. */
+  managedTask?: Omit<MissionManagedTaskRuntime, "sessionKey">;
 };
+
+function resultPolicy(mission: MissionRunRecord) {
+  return {
+    completion:
+      mission.metadata?.managedTask && mission.status === "complete"
+        ? ("task_owner_accepted" as const)
+        : ("mission_reviewer" as const),
+    nextAction:
+      mission.status === "complete"
+        ? "synthesize_final_response"
+        : "checkpoint_or_continue",
+  };
+}
 
 function readBoolean(value: unknown): boolean | undefined {
   return typeof value === "boolean" ? value : undefined;
@@ -83,6 +99,14 @@ export function createMissionLoopTool(opts?: MissionLoopToolOptions): AnyAgentTo
       const action = readAction(params);
       const sessionKey = opts?.agentSessionKey;
       const missionId = readMissionId(params);
+      const managedTask = opts?.managedTask
+        ? { ...opts.managedTask, sessionKey: sessionKey ?? "" }
+        : undefined;
+      if (managedTask && !sessionKey)
+        throw new ToolInputError("managed Mission requires an agent session key");
+      const deps = managedTask
+        ? { ...(opts?.deps ?? {}), managedTask }
+        : opts?.deps;
 
       if (action === "status") {
         const record = missionId
@@ -109,14 +133,11 @@ export function createMissionLoopTool(opts?: MissionLoopToolOptions): AnyAgentTo
             repairBrief: readStringParam(params, "repairBrief"),
           },
           opts?.config,
-          opts?.deps,
+          deps,
         );
         return jsonResult({
           ...mission,
-          resultPolicy: {
-            completion: "mission_reviewer",
-            nextAction: mission.status === "complete" ? "synthesize_final_response" : "checkpoint_or_continue",
-          },
+          resultPolicy: resultPolicy(mission),
         });
       }
 
@@ -128,7 +149,7 @@ export function createMissionLoopTool(opts?: MissionLoopToolOptions): AnyAgentTo
         throw new ToolInputError("mission_loop requires an agent session key");
       }
       const mission = missionId && !objective
-        ? await tickMission({ missionId, reason: "manual" }, opts?.config, opts?.deps)
+        ? await tickMission({ missionId, reason: "manual" }, opts?.config, deps)
         : await runMission(
             {
               ...(missionId ? { missionId } : {}),
@@ -153,16 +174,14 @@ export function createMissionLoopTool(opts?: MissionLoopToolOptions): AnyAgentTo
               enableSchedule: readBoolean(params.enableSchedule),
               maxTicks: readPositiveIntegerParam(params, "maxTicks"),
               maxRepairTicks: readPositiveIntegerParam(params, "maxRepairTicks"),
+              ...(managedTask ? { managedTask } : {}),
             },
             opts?.config,
-            opts?.deps,
+            deps,
           );
       return jsonResult({
         ...mission,
-        resultPolicy: {
-          completion: "mission_reviewer",
-          nextAction: mission.status === "complete" ? "synthesize_final_response" : "checkpoint_or_continue",
-        },
+        resultPolicy: resultPolicy(mission),
       });
     },
   };

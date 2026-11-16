@@ -1,0 +1,11 @@
+{
+  "extends": "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/tsconfig.test.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true,
+    "types": ["node"],
+    "typeRoots": ["C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/node_modules/@types"]
+  },
+  "include": ["C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/scripts/context-inline-spill-eval.mts"],
+  "exclude": []
+}

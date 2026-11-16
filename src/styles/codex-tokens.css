@@ -55,6 +55,14 @@
   --gray-900: #181818;
   --gray-1000: #0d0d0d;
 
+  /* Graphite surfaces from the owner's Codex dark reference (2026-11-12).
+   * HSL channels also feed Tailwind's semantic material aliases. */
+  --graphite-frame-hsl: 205.714 10.769% 12.745%;
+  --graphite-sidebar-hsl: 180 2.5% 15.686%;
+  --graphite-canvas-hsl: 60 2.273% 17.255%;
+  --graphite-elevated-hsl: 60 1.667% 23.529%;
+  --graphite-control-hsl: 60 1.429% 27.451%;
+
   --green-50: #d9f4e4;
   --green-300: #40c977;
   --green-400: #04b84c;
@@ -249,6 +257,8 @@
   --color-background-editor-opaque: var(--gray-75);
   --color-background-elevated-primary: color-mix(in oklab, var(--gray-0) 70%, transparent);
   --color-background-elevated-primary-opaque: var(--gray-0);
+  --color-background-control-panel: var(--gray-75);
+  --color-background-effort-progress: color-mix(in oklab, var(--orange-400) 65%, var(--gray-300));
   --color-background-elevated-secondary: color-mix(in oklab, var(--codex-ink) 2%, transparent);
   --color-background-elevated-secondary-opaque: var(--gray-75);
 
@@ -329,13 +339,15 @@
  * elevation step above it feel like a jump rather than a lift.
  * ────────────────────────────────────────────────────────────────────────── */
 .dark {
-  --color-background-surface: var(--gray-900);
-  --color-background-surface-under: #000000;
-  --color-background-editor-opaque: var(--gray-800);
-  --color-background-elevated-primary: color-mix(in oklab, var(--gray-800) 96%, transparent);
-  --color-background-elevated-primary-opaque: var(--gray-750);
+  --color-background-surface: hsl(var(--graphite-canvas-hsl));
+  --color-background-surface-under: hsl(var(--graphite-frame-hsl));
+  --color-background-editor-opaque: hsl(var(--graphite-control-hsl));
+  --color-background-elevated-primary: color-mix(in oklab, hsl(var(--graphite-elevated-hsl)) 96%, transparent);
+  --color-background-elevated-primary-opaque: hsl(var(--graphite-elevated-hsl));
+  --color-background-control-panel: hsl(var(--graphite-control-hsl));
+  --color-background-effort-progress: color-mix(in oklab, var(--orange-300) 65%, var(--gray-550));
   --color-background-elevated-secondary: color-mix(in oklab, var(--gray-0) 3%, transparent);
-  --color-background-elevated-secondary-opaque: var(--gray-800);
+  --color-background-elevated-secondary-opaque: hsl(var(--graphite-sidebar-hsl));
 
   --color-background-button-primary: var(--gray-1000);
   --color-background-button-primary-hover: color-mix(in oklab, var(--gray-0) 6%, transparent);

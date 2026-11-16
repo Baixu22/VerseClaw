@@ -1,0 +1,178 @@
+{
+  "candidate": "6a22ac2174d85619fac8888fbcaade875081bace",
+  "productCandidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4",
+  "validationOnlyChanges": [
+    "tests/e2e/durable-task-conversation.spec.ts"
+  ],
+  "records": [
+    {
+      "name": "core",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.task-system.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/durable-task-conversation-20261108/verified-core.json"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-core.log",
+      "pid": 30468,
+      "status": "finished",
+      "startedAt": "2026-11-08T08:57:24.639Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 29702,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "ui",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/chat-session-status-rail.test.tsx",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-api-workspace-fingerprint.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/durable-task-conversation-20261108/verified-ui.json"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-ui.log",
+      "pid": 36360,
+      "status": "finished",
+      "startedAt": "2026-11-08T08:57:54.342Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 34296,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "types",
+      "args": [
+        "scripts/typecheck-agent-dev.mjs"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-types.log",
+      "pid": 30216,
+      "status": "finished",
+      "startedAt": "2026-11-08T08:58:28.639Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 204701,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "contract",
+      "args": [
+        "scripts/contract-check.mjs"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-contract.log",
+      "pid": 40560,
+      "status": "finished",
+      "startedAt": "2026-11-08T09:01:53.351Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 2725,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "i18n",
+      "args": [
+        "scripts/i18n-lint.mjs"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-i18n.log",
+      "pid": 37880,
+      "status": "finished",
+      "startedAt": "2026-11-08T09:01:56.077Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 548,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "comms-replay",
+      "args": [
+        "scripts/comms/replay.mjs"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-comms-replay.log",
+      "pid": 30492,
+      "status": "finished",
+      "startedAt": "2026-11-08T09:01:56.626Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 441,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "comms-compare",
+      "args": [
+        "scripts/comms/compare.mjs"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-comms-compare.log",
+      "pid": 33624,
+      "status": "finished",
+      "startedAt": "2026-11-08T09:01:57.068Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 225,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "harness",
+      "args": [
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/durable-task-conversation-ui.md"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-harness.log",
+      "pid": 38728,
+      "status": "finished",
+      "startedAt": "2026-11-08T09:01:57.294Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 1022,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "desktop",
+      "args": [
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:vite"
+      ],
+      "log": "D:/tmp/durable-task-conversation-20261108/verified-desktop.log",
+      "pid": 28552,
+      "status": "finished",
+      "startedAt": "2026-11-08T09:01:58.317Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 89773,
+      "candidate": "bc6a2e806aefcbc4a138d0dade322692fc6b0fd4"
+    },
+    {
+      "name": "e2e",
+      "candidate": "32cb8949e",
+      "status": "finished",
+      "exitCode": 0,
+      "durationMs": 49059.882999999994,
+      "report": "electron.json"
+    },
+    {
+      "name": "e2e-visual",
+      "candidate": "6a22ac2174d85619fac8888fbcaade875081bace",
+      "status": "finished",
+      "exitCode": 0,
+      "durationMs": 76877.428,
+      "report": "electron-visual.json"
+    },
+    {
+      "name": "types-final-test",
+      "candidate": "32cb8949e",
+      "status": "finished",
+      "exitCode": 0,
+      "log": "final-test-types.txt"
+    }
+  ]
+}

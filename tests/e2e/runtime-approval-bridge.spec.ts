@@ -106,24 +106,32 @@ test.describe('Runtime approval bridge', () => {
           document.documentElement.classList.toggle('light', !dark);
         }, layout.dark);
         await title.focus();
+        let measuredGeometry: unknown;
         await expect.poll(async () => {
-          const box = await prompt.boundingBox();
-          const viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
-          if (!box) return false;
-          return box.x >= 12
-            && box.y >= 12
-            && box.x + box.width <= viewport.width - 12
-            && box.y + box.height <= viewport.height - 12;
+          // Resize transitions move the entire card. Sample parent and children
+          // in the same frame so their relative padding remains comparable.
+          const geometry = await prompt.evaluate(element => {
+            const box = element.getBoundingClientRect();
+            return {
+              inViewport: box.x >= 12 && box.y >= 12
+                && box.right <= innerWidth - 12 && box.bottom <= innerHeight - 12,
+              noHorizontalOverflow: element.scrollWidth <= element.clientWidth + 1,
+              controls: ['runtime-approval-command', 'runtime-approval-deny', 'runtime-approval-allow-always', 'runtime-approval-allow-once'].map(testId => {
+                const control = element.querySelector(`[data-testid="${testId}"]`);
+                if (!control) return null;
+                const bounds = control.getBoundingClientRect();
+                return { testId, left: bounds.left - box.left, right: box.right - bounds.right, bottom: box.bottom - bounds.bottom };
+              }),
+            };
+          });
+          measuredGeometry = geometry;
+          return geometry.inViewport && geometry.noHorizontalOverflow
+            && geometry.controls.every(control => control !== null && control.left >= 14 && control.right >= 14 && control.bottom >= 10);
         }, { timeout: 5_000 }).toBe(true);
-        const promptBox = (await prompt.boundingBox())!;
-        const _viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
-        expect(await prompt.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
-        for (const testId of ['runtime-approval-command', 'runtime-approval-deny', 'runtime-approval-allow-always', 'runtime-approval-allow-once']) {
-          const box = (await page.getByTestId(testId).boundingBox())!;
-          expect(box.x).toBeGreaterThanOrEqual(promptBox.x + 14);
-          expect(box.x + box.width).toBeLessThanOrEqual(promptBox.x + promptBox.width - 14);
-          expect(box.y + box.height).toBeLessThanOrEqual(promptBox.y + promptBox.height - 10);
-        }
+        await testInfo.attach(`runtime-approval-geometry-${layout.name}`, {
+          body: JSON.stringify({ driven_by: 'agent', actor: process.env.COMPASS_AGENT_NAME ?? 'agent', realHumanEvidence: false, geometry: measuredGeometry }),
+          contentType: 'application/json',
+        });
         expect(await commandView.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
         if (layout.zoom === 1) {
           await prompt.screenshot({ path: testInfo.outputPath(`runtime-approval-${layout.name}.png`) });

@@ -1,0 +1,50 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "memory-cleanup-candidate-c",
+  "command": "pnpm",
+  "args": [
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/runtime-memory-context-provider.test.ts",
+    "tests/unit/runtime-memory-eval-budget-pressure.test.ts",
+    "tests/unit/runtime-memory-eval-conflict-resolution.test.ts",
+    "tests/unit/runtime-memory-eval-temporal-evolution.test.ts",
+    "tests/unit/runtime-memory-eval-topic-drift.test.ts",
+    "tests/unit/runtime-memory-locomo-benchmark.test.ts",
+    "tests/unit/runtime-memory-proposal-shadow.test.ts",
+    "tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts",
+    "tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts",
+    "tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts",
+    "tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts",
+    "tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts",
+    "tests/unit/runtime-memory-read-hydration-shadow.test.ts",
+    "--maxWorkers=1",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=D:/tmp/context-inline-spill-closeout-20261103/memory-cleanup-candidate-c-vitest.json"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:11:59.6556533+00:00",
+  "finished_at": "2026-11-03T15:12:41.6926254+00:00",
+  "elapsed_ms": 41835,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "candidate_after": {
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\memory-cleanup-candidate-c.log",
+  "log_sha256": "7c99a1ebb536a35cc1d7fab080d0011ae56ea2a61fb48976ff5dbe28fcfeba3c"
+}

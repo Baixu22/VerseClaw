@@ -40,6 +40,8 @@ const BUCKET_ORDER: readonly ContextPackBucketName[] = [
 export type ContextPackInput = {
   memories?: MemoryCard[];
   roleName?: string;
+  /** Relevance query; only explicit taskState is rendered into the pack. */
+  queryText?: string;
   phase?: MemoryPhaseTag;
   taskState?: string;
   openConflicts?: string[];
@@ -141,14 +143,24 @@ export function selectMemoryForContextPack(input: ContextPackInput): {
 } {
   const now = new Date();
   const conflictCardIds = new Set(input.openConflictCardIds ?? []);
-  const selected: Array<{ card: MemoryCard; bucket: ContextPackBucketName; text: string; score: number }> = [];
+  const selected: Array<{
+    card: MemoryCard;
+    bucket: ContextPackBucketName;
+    text: string;
+    score: number;
+  }> = [];
   const explanations: MemoryInjectionCandidateExplain[] = [];
   const classRank = { must: 3, should: 2, may: 1, never: 0 } as const;
   for (const card of input.memories ?? []) {
     const penalties: string[] = [];
-    const taskMatch = keywordOverlap(card.content, input.taskState);
+    const taskMatch = keywordOverlap(card.content, input.queryText ?? input.taskState);
     const roleApplies = roleAppliesToCard(card, input.roleName);
-    const roleMatch = input.roleName && roleApplies ? 1 : (card.applicableRoles?.length ?? card.roleTags.length) > 0 ? 0.2 : 0.45;
+    const roleMatch =
+      input.roleName && roleApplies
+        ? 1
+        : (card.applicableRoles?.length ?? card.roleTags.length) > 0
+          ? 0.2
+          : 0.45;
     const phaseMatch = input.phase && card.phaseTags?.includes(input.phase) ? 1 : 0;
     const recency = recencyWeight(card, now);
     const conflict = conflictCardIds.has(card.id);
@@ -177,20 +189,22 @@ export function selectMemoryForContextPack(input: ContextPackInput): {
     if (conflict) penalties.push("conflict");
     if (recency.stale) penalties.push("stale");
     if (expired) penalties.push("stale");
-    const score = Number((
-      (SCOPE_WEIGHTS[card.scope] ?? 0.4) * 0.18 +
-      roleMatch * 0.18 +
-      phaseMatch * 0.1 +
-      taskMatch * 0.14 +
-      card.importance * 0.25 +
-      card.confidence * 0.15 +
-      recency.value * 0.06 +
-      Math.min(1, card.accessCount / 10) * 0.04 -
-      (card.sensitivity === "secret_adjacent" ? 0.1 : 0) -
-      (conflict ? 0.4 : 0) -
-      (recency.stale ? 0.15 : 0) +
-      classRank[classification.injectionClass] * 0.2
-    ).toFixed(4));
+    const score = Number(
+      (
+        (SCOPE_WEIGHTS[card.scope] ?? 0.4) * 0.18 +
+        roleMatch * 0.18 +
+        phaseMatch * 0.1 +
+        taskMatch * 0.14 +
+        card.importance * 0.25 +
+        card.confidence * 0.15 +
+        recency.value * 0.06 +
+        Math.min(1, card.accessCount / 10) * 0.04 -
+        (card.sensitivity === "secret_adjacent" ? 0.1 : 0) -
+        (conflict ? 0.4 : 0) -
+        (recency.stale ? 0.15 : 0) +
+        classRank[classification.injectionClass] * 0.2
+      ).toFixed(4),
+    );
     const bucket = conflict ? "openConflicts" : bucketForMemory(card, input.roleName);
     const reason = [
       `class=${classification.injectionClass}`,
@@ -210,21 +224,37 @@ export function selectMemoryForContextPack(input: ContextPackInput): {
       penalties,
       injectionClass: classification.injectionClass,
       whatWouldSelect: classification.whatWouldSelect,
-      truncatedReason: selectedCandidate ? undefined : penalties.includes("sensitivity") ? "sensitivity" : penalties.includes("stale") ? "stale" : undefined,
+      truncatedReason: selectedCandidate
+        ? undefined
+        : penalties.includes("sensitivity")
+          ? "sensitivity"
+          : penalties.includes("stale")
+            ? "stale"
+            : undefined,
     });
     if (selectedCandidate) {
       selected.push({ card, bucket, text: redactMemoryContent(card), score });
     }
   }
   selected.sort((left, right) => {
-    const leftClass = explanations.find((entry) => entry.cardId === left.card.id)?.injectionClass ?? "may";
-    const rightClass = explanations.find((entry) => entry.cardId === right.card.id)?.injectionClass ?? "may";
-    return classRank[rightClass] - classRank[leftClass] || right.score - left.score || right.card.importance - left.card.importance;
+    const leftClass =
+      explanations.find((entry) => entry.cardId === left.card.id)?.injectionClass ?? "may";
+    const rightClass =
+      explanations.find((entry) => entry.cardId === right.card.id)?.injectionClass ?? "may";
+    return (
+      classRank[rightClass] - classRank[leftClass] ||
+      right.score - left.score ||
+      right.card.importance - left.card.importance
+    );
   });
   return { selected, explanations };
 }
 
-function appendWithinBudget(bucket: string[], text: string, maxTokens: number): { tokens: number; appended: boolean } {
+function appendWithinBudget(
+  bucket: string[],
+  text: string,
+  maxTokens: number,
+): { tokens: number; appended: boolean } {
   const used = bucket.reduce((sum, item) => sum + estimateTokens(item), 0);
   const nextTokens = estimateTokens(text);
   if (used + nextTokens > maxTokens) {
@@ -251,7 +281,11 @@ export function buildContextPack(input: ContextPackInput): ContextPack {
   const explanationByCardId = new Map(explanations.map((entry) => [entry.cardId, entry]));
   const bucketItemToCardId = new Map<string, string>();
   for (const item of selection.selected) {
-    const appended = appendWithinBudget(buckets[item.bucket], item.text, budget[item.bucket]).appended;
+    const appended = appendWithinBudget(
+      buckets[item.bucket],
+      item.text,
+      budget[item.bucket],
+    ).appended;
     truncated ||= !appended;
     if (!appended) {
       const explanation = explanationByCardId.get(item.card.id);
@@ -264,10 +298,12 @@ export function buildContextPack(input: ContextPackInput): ContextPack {
     }
   }
   if (input.taskState) {
-    truncated ||= !appendWithinBudget(buckets.taskState, input.taskState, budget.taskState).appended;
+    truncated ||= !appendWithinBudget(buckets.taskState, input.taskState, budget.taskState)
+      .appended;
   }
   for (const conflict of input.openConflicts ?? []) {
-    truncated ||= !appendWithinBudget(buckets.openConflicts, conflict, budget.openConflicts).appended;
+    truncated ||= !appendWithinBudget(buckets.openConflicts, conflict, budget.openConflicts)
+      .appended;
   }
   const estimatedTokens = {
     hardConstraints: 0,

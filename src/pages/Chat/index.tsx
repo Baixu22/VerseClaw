@@ -5,9 +5,20 @@
  * are in the toolbar; messages render with markdown + streaming.
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/shallow';
-import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, GitBranch, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
-import { FileText, Laptop, ListChecks, Sparkles } from '@/components/icons/codex-icons';
+import { createChatContentCache } from '@/stores/chat/content-cache';
+import { useMessageViewport } from '@/hooks/use-message-viewport';
+import { classifyDerivation, type SessionDerivation } from '@shared/types/session-derivation';
+import { SessionFamilyNavigation } from '@/components/chat/SessionFamilyNavigation';
+import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
+import { useSessionReadingPosition } from './use-session-reading-position';
+import { getTranscriptEntryId } from '@/lib/session-read-model';
+import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
+import { MessagesSquare, Search, AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, Loader2, Pencil, RefreshCw, Users, X } from 'lucide-react';
+import { ListChecks, Sparkles } from '@/components/icons/codex-icons';
+import { usePopover } from '@/components/settings/primitives/usePopover';
+import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
 import {
   AssistantRuntimeProvider,
   AuiProvider,
@@ -22,10 +33,12 @@ import {
 import type { KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus, SessionCompressionArtifactResult } from '@shared/host-api/contract';
 import type { GitWorktree } from '@shared/types/git';
 import { ComposerGitStrip } from './ComposerGitStrip';
+import { SessionTaskDock } from './SessionTaskDock';
+import { resolveContextPressure } from '@/components/chat/ChatContextPressure';
 const CheckpointsDialog = lazy(() => import('@/components/chat/CheckpointsDialog').then((m) => ({ default: m.CheckpointsDialog })));
 const CompactionArtifactViewer = lazy(() => import('./CompactionArtifactViewer').then((m) => ({ default: m.CompactionArtifactViewer })));
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
-import { classifySessionActivity, retainRecentSessionActivity } from '@shared/types/session-activity';
+import { classifySessionActivity, createEmptySessionActivitySnapshot, retainRecentSessionActivity } from '@shared/types/session-activity';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import { useChatStore, type RawMessage } from '@/stores/chat';
 import { isInternalMessage } from '@/stores/chat/helpers';
@@ -43,30 +56,30 @@ import {
 } from '@/stores/artifact-panel';
 import { hostApi } from '@/lib/host-api';
 import { errorMessageFrom, toastUserError } from '@/lib/user-error';
-import { getAgentResourceLimits, selectMessageRenderWindow } from '../../../shared/agent-resource-limits';
+import { getAgentResourceLimits } from '../../../shared/agent-resource-limits';
 import { hostEvents } from '@/lib/host-events';
 import { VerseRouteBrand } from '@/components/loading/RouteLoadingShell';
 import { SketchBlock } from '@/components/loading/StructuralSketch';
 import { Badge } from '@/components/ui/badge';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
+import { resolveChatModelRef } from '@/lib/chat-model-selection';
 import { ExecutionGraphCard } from './ExecutionGraphCard';
 import { TeamOrchestrationCard } from './TeamOrchestrationCard';
 import { ChatToolbar } from './ChatToolbar';
 import { MessageNavRail, type MessageNavRailItem } from './MessageNavRail';
-import { HookSidebar } from '@/components/rareui/HookSidebar';
 import { buildCompletionActivity } from '@/components/rareui/completion-activity';
 import { useCompletionActivityStore } from '@/components/rareui/completion-activity-store';
-import { SessionActivityPanel } from './SessionActivityPanel';
-import { useSessionActivityStore } from '@/stores/session-activity';
+import { SessionActivityPanel, type ActiveWorkspaceSubject } from './SessionActivityPanel';
+import { collectSessionEnvironmentSources, hasSessionEnvironmentActivity } from './session-environment';
+import { useSessionActivityStore, selectSessionActivitySnapshot } from '@/stores/session-activity';
 import {
   classifySessionContinuityError,
   resolveSessionContinuityPreflight,
   type SessionContinuityErrorKind,
-  type SessionContinuityRecommendation,
 } from './session-continuity';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
-import { extractText, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
+import { extractText, isInternalProcessNarration, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
 import { mediaKindOf } from './conversation-resources';
 import { projectMessageRender } from './message-render-projection';
 import { parseSubagentCompletionInfo } from './task-visualization';
@@ -90,6 +103,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
 import {
+  activateWorkspaceSession,
+  workspaceOwnsSession,
   createFreshWorkspaceSessionKey,
   createWorkspaceScopedForkSession,
   createWorkspaceScopedHandoffSession,
@@ -108,12 +123,12 @@ import { extractAssistantReasoning, type AssistantReasoning } from '@/components
 import { PendingRunApprovals } from '@/components/tool-ui/PendingRunApprovals';
 import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
 import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
+import { CallChip } from '@/components/tool-ui/shared/call-chip';
 import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileDiff, projectRunProcesses, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
 import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
-import { WelcomeBranchPicker } from '@/components/chat/WelcomeBranchPicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -207,12 +222,6 @@ function formatTokenCountForToast(value: number): string {
   return `${compact >= 10 ? compact.toFixed(0) : compact.toFixed(1)}m`;
 }
 
-type SessionLineageOverride = {
-  relation: 'forked_from';
-  sourceSessionKey: string;
-  forkedFromTimestamp?: number;
-};
-
 const EMPTY_REASONING_ITEMS: AssistantReasoning[] = [];
 
 function hasUserFacingMediaAttachments(msg: RawMessage): boolean {
@@ -255,13 +264,9 @@ function generatedFileToTarget(file: GeneratedFile): FilePreviewTarget {
 // React state so `loadHistory` refreshes can still fall back to the previous
 // steps without tripping React's set-state-in-effect lint rule.
 const _GRAPH_STEP_CACHE_MAX = 50;
-const graphStepCacheStore = new Map<string, Record<string, GraphStepCacheEntry>>();
+const graphStepCacheStore = createChatContentCache<Record<string, GraphStepCacheEntry>>('execution-steps', _GRAPH_STEP_CACHE_MAX);
+const EMPTY_GRAPH_STEP_CACHE: Record<string, GraphStepCacheEntry> = {};
 
-function gcGraphStepCache(): void {
-  if (graphStepCacheStore.size <= _GRAPH_STEP_CACHE_MAX) return;
-  const keys = Array.from(graphStepCacheStore.keys()).slice(0, graphStepCacheStore.size - _GRAPH_STEP_CACHE_MAX);
-  for (const key of keys) graphStepCacheStore.delete(key);
-}
 const streamingTimestampStore = new Map<string, number>();
 
 function getWorkspaceSessionState(
@@ -306,31 +311,15 @@ export function resolveWorkspaceHeaderSessions({
     && allowedSessionKeys.has(session.key)
   ));
   const hasCurrent = workspaceSessions.some((session) => session.key === currentSessionKey);
-  return (hasCurrent ? workspaceSessions : [{ key: currentSessionKey, displayName: formatNewSessionDisplayName(currentSessionKey) }, ...workspaceSessions])
-    .slice(-12)
-    .reverse();
-}
-
-/** #180: the lineage line shows the fork point as a short date+time. */
-function formatLineageTimestamp(value: number): string {
-  try {
-    return new Intl.DateTimeFormat(undefined, {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(value));
-  } catch {
-    return new Date(value).toLocaleString();
-  }
+  const result: ChatSession[] = hasCurrent ? workspaceSessions : [{ key: currentSessionKey, displayName: formatNewSessionDisplayName(currentSessionKey) }, ...workspaceSessions];
+  return result
+    .sort((left, right) => Number(right.key === currentSessionKey) - Number(left.key === currentSessionKey)
+      || (right.updatedAt ?? 0) - (left.updatedAt ?? 0));
 }
 
 function formatNewSessionDisplayName(sessionKey: string): string {
   const rawId = sessionKey.split(':').pop() || sessionKey;
-  if (rawId.startsWith('session-')) {
-    return `new session ${rawId.slice('session-'.length)}`;
-  }
-  return rawId;
+  return rawId.startsWith('session-') ? `new session ${rawId.slice('session-'.length)}` : rawId;
 }
 
 export function resolveWorkspaceSessionTarget(workspace: WorkspaceProfile, currentAgentId = 'main'): {
@@ -365,13 +354,6 @@ function getContinuityErrorMessage(error: unknown, fallback: string): string {
 const HEADER_COMPLETED_STATUSES = new Set(['completed', 'success', 'done', 'finished']);
 const HEADER_ERROR_STATUSES = new Set(['failed', 'error', 'killed', 'timeout']);
 const HEADER_ABORTED_STATUSES = new Set(['aborted', 'cancelled', 'canceled']);
-const HEADER_SESSION_DOT_LABEL_KEYS: Partial<Record<OrbStatusState, string>> = {
-  streaming: 'sessionStatus.running',
-  waiting: 'sessionStatus.waiting',
-  success: 'sessionStatus.completed',
-  error: 'sessionStatus.error',
-  stopped: 'sessionStatus.aborted',
-};
 
 function getHeaderSessionDotState(input: {
   sessionKey: string;
@@ -399,58 +381,42 @@ function getHeaderSessionDotState(input: {
 }
 
 function ProjectSessionHeader({
+  showProject = true,
   workspaceId,
   projectName,
   projectPath,
   workspaceProfiles,
   switchWorkspace,
   pickWorkspaceFolder,
-  onOpenTaskLedger,
-  onOpenClawGraph,
   sessions,
   currentSessionKey,
   sessionLabels,
   workspaceSessionKeys,
   switchSession,
   renameSession,
-  onHandoffSession,
-  onForkSession,
-  onCheckpoints,
-  forkDisabled,
-  forkBusy,
-  handoffDisabled,
-  handoffBusy,
-  continuityRecommendation,
-  sessionLineage,
+  derivation,
+  onRefresh,
   runtimeRuns,
   activeRunId,
   sending,
   pendingFinal,
   runError,
 }: {
+  showProject?: boolean;
   workspaceId?: string;
   projectName: string;
   projectPath?: string;
   workspaceProfiles: Array<{ id: string; name: string; rootPath: string; lastOpenedAt?: number }>;
   switchWorkspace: (id: string) => Promise<unknown>;
   pickWorkspaceFolder: () => Promise<void>;
-  onOpenTaskLedger: () => void;
-  onOpenClawGraph: () => void;
   sessions: ChatSession[];
   currentSessionKey: string;
   sessionLabels: Record<string, string>;
   workspaceSessionKeys: string[];
   switchSession: (key: string) => void;
   renameSession: (key: string, label: string) => Promise<void>;
-  onHandoffSession: () => void | Promise<void>;
-  onForkSession: () => void | Promise<void>;
-  onCheckpoints: () => void;
-  forkDisabled?: boolean;
-  forkBusy?: boolean;
-  handoffDisabled?: boolean;
-  handoffBusy?: boolean;
-  continuityRecommendation?: SessionContinuityRecommendation;
-  sessionLineage?: Record<string, SessionLineageOverride>;
+  derivation?: SessionDerivation;
+  onRefresh: () => void;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
   activeRunId?: string | null;
   sending?: boolean;
@@ -461,69 +427,48 @@ function ProjectSessionHeader({
   const [open, setOpen] = useState<'workspace' | 'session' | null>(null);
   const [editingSession, setEditingSession] = useState(false);
   const [sessionDraft, setSessionDraft] = useState('');
+  const [sessionSearch, setSessionSearch] = useState('');
   const [renaming, setRenaming] = useState(false);
-  const [branch, setBranch] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const { triggerRef: sessionTriggerRef, layerRef: sessionLayerRef, setOpen: setSessionMenuOpen, style: sessionMenuStyle } = usePopover<HTMLButtonElement>({ align: 'left', gap: 4 });
+  const overlayContainer = useOverlayPortalContainer();
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
-  /**
-   * #180: sessions derived from the one on screen. The forked/spawned children are
-   * already in `sessions` (that is why their lineage line renders below), so this
-   * is a pure filter — no new query and no new host-api channel.
-   */
   const derivedSessions = sessions.filter((session) =>
     session.key !== currentSessionKey
-    && (session.parentSessionKey === currentSessionKey
-      || sessionLineage?.[session.key]?.sourceSessionKey === currentSessionKey),
+    && classifyDerivation(session).parentSessionKey === currentSessionKey,
   );
 
-  /* The empty state names the checkout under the composer (project · branch).
-   * Once a conversation starts that row is gone, and the header was carrying
-   * project / session only — so the branch you are about to have an agent
-   * write to stopped being visible at exactly the point it starts mattering.
-   * Same call the hero makes; the two are never mounted at once. */
-  useEffect(() => {
-    let cancelled = false;
-    void hostApi.git.status().then((result) => {
-      if (cancelled) return;
-      const status = result.status;
-      if (!status?.isRepository) {
-        setBranch(null);
-        return;
-      }
-      setBranch(status.detached ? 'detached' : status.branch || null);
-    }).catch(() => {
-      if (!cancelled) setBranch(null);
-    });
-    return () => { cancelled = true; };
-  }, [projectPath]);
-
-  const currentSessionDotState = getHeaderSessionDotState({
-    sessionKey: currentSessionKey,
-    currentSessionKey,
-    runtimeRuns,
-    activeRunId,
-    sending,
-    pendingFinal,
-    runError,
-  });
-  const currentSessionDotLabel = currentSessionDotState
-    ? t(HEADER_SESSION_DOT_LABEL_KEYS[currentSessionDotState] ?? 'sessionStatus.running')
-    : '';
   const recentSessions = useMemo(() => {
     return resolveWorkspaceHeaderSessions({ currentSessionKey, sessions, workspaceSessionKeys });
   }, [currentSessionKey, sessions, workspaceSessionKeys]);
-  const recommendedContinuityAction = continuityRecommendation?.disabled ? null : continuityRecommendation?.action;
+  const currentEntry = sessions.find((session) => session.key === currentSessionKey);
+  const currentSource = currentEntry ? classifyDerivation(currentEntry).parentSessionKey : null;
+  const sourceSession = sessions.find((session) => session.key === currentSource);
+  const derivedKeys = new Set(derivedSessions.map((session) => session.key));
+  const matchesSearch = (session: ChatSession) => getSessionDisplayName(session.key, sessions, sessionLabels).toLocaleLowerCase().includes(sessionSearch.trim().toLocaleLowerCase());
+  const matchingRecent = recentSessions.filter((session) => !derivedKeys.has(session.key) && session.key !== sourceSession?.key && matchesSearch(session));
+  const matchingDerived = derivedSessions.filter(matchesSearch);
+  const matchingSource = Boolean(sourceSession && matchesSearch(sourceSession));
+
+  useEffect(() => {
+    setSessionMenuOpen(open === 'session');
+    if (open === 'session' && sessionMenuStyle.visibility === 'visible') sessionLayerRef.current?.querySelector('input')?.focus();
+    if (open !== 'session') setSessionSearch('');
+  }, [open, sessionLayerRef, sessionMenuStyle.visibility, setSessionMenuOpen]);
 
   useEffect(() => {
     if (!open) return;
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target;
-      if (target instanceof Node && rootRef.current?.contains(target)) return;
+      if (target instanceof Node && (rootRef.current?.contains(target) || sessionLayerRef.current?.contains(target))) return;
       setOpen(null);
     };
+    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); (open === 'session' ? sessionTriggerRef : projectTriggerRef).current?.focus(); } };
     document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [open]);
+    document.addEventListener('keydown', handleKey);
+    return () => { document.removeEventListener('pointerdown', handlePointerDown); document.removeEventListener('keydown', handleKey); };
+  }, [open, sessionLayerRef, sessionTriggerRef]);
 
   const startRenameSession = () => {
     setOpen(null);
@@ -548,23 +493,42 @@ function ProjectSessionHeader({
     }
   };
 
+  const renderNavigationRow = (session: ChatSession, derived: boolean) => {
+    const source = classifyDerivation(session).parentSessionKey;
+    const dotState = getHeaderSessionDotState({ sessionKey: session.key, currentSessionKey, runtimeRuns, activeRunId, sending, pendingFinal, runError });
+    return <button key={session.key} type="button" className="codex-header-menu__item chat-session-navigation-row" data-hook-key={session.key}
+      data-derived={derived || undefined}
+      data-testid={derived ? `chat-session-derived-${session.key}` : `chat-session-item-${session.key}`}
+      aria-current={session.key === currentSessionKey ? 'page' : undefined}
+      onClick={() => { setOpen(null); setSessionSearch(''); switchSession(session.key); }}>
+      {dotState ? <OrbStatus state={dotState} className="size-4 shrink-0" /> : <MessagesSquare className="h-4 w-4 shrink-0 opacity-60" aria-hidden="true" />}
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-meta">{getSessionDisplayName(session.key, sessions, sessionLabels)}</span>
+        {source && <span className="block truncate text-2xs text-muted-foreground" data-testid="chat-session-lineage">
+          {t('session.navigation.from', { session: getSessionDisplayName(source, sessions, sessionLabels) })}
+        </span>}
+      </span>
+      {session.key === currentSessionKey && <Check className="h-3.5 w-3.5 shrink-0" aria-label={t('composer.git.current')} />}
+    </button>;
+  };
+
   return (
     <div ref={rootRef} className="chat-project-session-header flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
-      <Laptop className="order-1 h-4 w-4 shrink-0 text-muted-foreground" />
-      <div className="chat-header-environment-project relative order-4 hidden min-w-0 md:block" data-testid="chat-header-environment-project">
-        {/* Project is the ancestor, not the subject — the session is what this
-          * pane is showing, so it takes the weight and the project steps back
-          * to breadcrumb strength. */}
+      {showProject && <div className="chat-header-environment-project relative order-1 min-w-0" data-testid="chat-header-environment-project">
+        {/* Project selection stays secondary to the task header. */}
         <Tooltip>
           <TooltipTrigger asChild>
         <button
+          ref={projectTriggerRef}
           type="button"
-          className="inline-flex max-w-[200px] items-center gap-1 rounded-md px-1.5 py-1 text-xs font-normal text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+          className={cn('chat-header-dropdown-trigger chat-header-project-trigger inline-flex max-w-[144px] items-center gap-1.5 px-1.5 py-1 text-xs font-normal text-muted-foreground hover:text-foreground', open === 'workspace' && 'is-open')}
+          aria-haspopup="menu"
+          aria-expanded={open === 'workspace'}
           onClick={() => setOpen((current) => current === 'workspace' ? null : 'workspace')}
         >
-          <Folder className="h-3.5 w-3.5 shrink-0" />
+          <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span className="truncate">{projectName}</span>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <ChevronDown className="chat-header-session-chevron h-3 w-3 shrink-0 opacity-60" />
         </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{projectPath}</TooltipContent>
@@ -582,44 +546,17 @@ function ProjectSessionHeader({
               return pickWorkspaceFolder();
             }}
             menuTestId="chat-header-workspace-menu"
-            className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none"
-            extraActions={(
-              <>
-                <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
-                  <ListChecks className="h-4 w-4" />
-                  {t('workspace.actions.openTaskLedger')}
-                </button>
-                <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenClawGraph(); }}>
-                  <Workflow className="h-4 w-4" />
-                  {t('workspace.actions.openClawGraph')}
-                </button>
-              </>
-            )}
+            className="chat-header-project-menu"
           />
         )}
-      </div>
-      {/* Branch reads as a label, not a control — checking out from here would
-        * be a destructive action one stray click away from the session menu.
-        * The composer's git strip stays the place that switches branches. */}
-      {branch && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-        <span
-          className="chat-header-branch order-5 hidden min-w-0 shrink items-center gap-1 rounded-md px-1.5 py-1 text-xs text-muted-foreground lg:inline-flex"
-          data-testid="chat-header-branch"
-        >
-          <GitBranch className="h-3.5 w-3.5 shrink-0" />
-          <span className="max-w-[160px] truncate font-mono">{branch}</span>
-        </span>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{branch}</TooltipContent>
-        </Tooltip>
-      )}
-      <span className="chat-header-separator order-3 hidden text-foreground/25 md:inline" aria-hidden="true">/</span>
-      <div className="relative order-2 min-w-0">
+      </div>}
+      {showProject && <span className="chat-header-separator order-1 text-muted-foreground/30" aria-hidden="true">/</span>}
+      <div className="relative order-2 min-w-0 max-w-[360px]">
         {editingSession ? (
-          <div className="inline-flex max-w-[380px] items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
+          <div className="inline-flex max-w-full items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
             <input
+              data-testid="chat-session-rename-input"
+              aria-label={t('session.renameCurrent')}
               value={sessionDraft}
               autoFocus
               onChange={(event) => setSessionDraft(event.target.value)}
@@ -640,8 +577,11 @@ function ProjectSessionHeader({
           <Tooltip>
             <TooltipTrigger asChild>
           <button
+            ref={sessionTriggerRef}
             type="button"
-            className="inline-flex max-w-[460px] items-center gap-1 rounded-md px-1.5 py-1 font-medium text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+            className={cn('chat-header-dropdown-trigger chat-header-session-trigger inline-flex min-w-0 max-w-full items-center gap-1.5 px-1.5 py-1 text-sm font-medium text-foreground', open === 'session' && 'is-open')}
+            aria-haspopup="dialog"
+            aria-expanded={open === 'session'}
             onClick={() => setOpen((current) => current === 'session' ? null : 'session')}
             onDoubleClick={(event) => {
               event.preventDefault();
@@ -649,184 +589,60 @@ function ProjectSessionHeader({
             }}
             data-testid="chat-header-session-name"
           >
-            {currentSessionDotState && (
-              <OrbStatus
-                state={currentSessionDotState}
-                label={currentSessionDotLabel}
-                className="size-3.5 shrink-0"
-                data-testid="chat-current-session-status"
-              />
-            )}
             <span className="chat-header-session-label truncate">{sessionName}</span>
-            <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <ChevronDown className="chat-header-session-chevron h-3 w-3 shrink-0 text-muted-foreground opacity-70" />
           </button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" collisionPadding={8}>{t('session.renameHint')}</TooltipContent>
+            <TooltipContent side="bottom" collisionPadding={8} className="max-w-sm flex-col items-start gap-1">
+              <p>{sessionName}</p><p className="text-xs text-muted-foreground">{t('session.renameHint')}</p>
+            </TooltipContent>
           </Tooltip>
         )}
-        {open === 'session' && (
-            <div className="codex-header-menu motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none">
+        {open === 'session' && createPortal(
+            <div ref={sessionLayerRef} style={sessionMenuStyle} className="codex-header-menu chat-session-navigation-menu" data-testid="chat-session-navigation-menu" role="dialog" aria-label={t('session.navigation.title')}
+              onKeyDown={event => {
+                const editing = event.target instanceof HTMLInputElement;
+                if (!['ArrowDown', 'ArrowUp', ...(editing ? [] : ['Home', 'End'])].includes(event.key)) return;
+                event.preventDefault();
+                const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('.chat-session-navigation-list button:not(:disabled), .chat-session-navigation-list summary'))
+                  .filter(button => button.getClientRects().length > 0);
+                const index = items.indexOf(document.activeElement as HTMLElement);
+                const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1
+                  : index < 0 ? (event.key === 'ArrowDown' ? 0 : items.length - 1)
+                  : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+                items[next]?.focus();
+              }}>
+            <div className="flex items-center justify-between gap-2 px-1">
+            <div className="codex-header-menu__label">{t('session.navigation.title')}</div>
             <button
               type="button"
-              className="codex-header-menu__item codex-header-menu__item--muted"
+              className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
+              aria-label={t('session.renameCurrent')}
+              title={t('session.renameCurrent')}
               onClick={startRenameSession}
             >
-              <Pencil className="h-4 w-4" />
-              {t('session.renameCurrent')}
+              <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
-            <button
-              type="button"
-              className="codex-header-menu__item codex-header-menu__item--muted"
-              data-testid="chat-session-checkpoints"
-              disabled={sending || pendingFinal}
-              onClick={() => { setOpen(null); onCheckpoints(); }}
-            >
-              <ListChecks className="h-4 w-4" />
-              {t('checkpoints.title')}
-            </button>
-            <button
-              type="button"
-              className="codex-header-menu__item codex-header-menu__item--muted"
-              data-testid="chat-session-fork"
-              disabled={forkDisabled || forkBusy}
-              onClick={() => {
-                setOpen(null);
-                void onForkSession();
-              }}
-            >
-              <span className="flex min-w-0 items-center gap-2">
-                {forkBusy ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <GitBranchPlus className="h-4 w-4 shrink-0" />}
-                <span className="truncate">{t('composer.fork.action')}</span>
-              </span>
-              {recommendedContinuityAction === 'fork' && (
-                <span
-                  data-testid="chat-session-fork-recommended"
-                  className="shrink-0 rounded bg-black/5 px-1 py-0.5 text-2xs font-medium text-muted-foreground dark:bg-white/10"
-                >
-                  {t('composer.continuity.recommended')}
-                </span>
-              )}
-            </button>
-            <button
-              type="button"
-              className="codex-header-menu__item codex-header-menu__item--muted"
-              data-testid="chat-session-handoff"
-              disabled={handoffDisabled || handoffBusy}
-              onClick={() => {
-                setOpen(null);
-                void onHandoffSession();
-              }}
-            >
-              <span className="flex min-w-0 items-center gap-2">
-                {handoffBusy ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <FileText className="h-4 w-4 shrink-0" />}
-                <span className="truncate">{t('composer.handoff.action')}</span>
-              </span>
-              {recommendedContinuityAction === 'handoff' && (
-                <span
-                  data-testid="chat-session-handoff-recommended"
-                  className="shrink-0 rounded bg-black/5 px-1 py-0.5 text-2xs font-medium text-muted-foreground dark:bg-white/10"
-                >
-                  {t('composer.continuity.recommended')}
-                </span>
-              )}
-            </button>
-            <hr className="codex-header-menu__sep" />
-            <HookSidebar activeKey={currentSessionKey}>
-            {recentSessions.map((session) => {
-              const forkSourceSessionKey = session.forkedFromParent && session.parentSessionKey
-                ? session.parentSessionKey
-                : sessionLineage?.[session.key]?.relation === 'forked_from'
-                  ? sessionLineage[session.key].sourceSessionKey
-                  : null;
-              const dotState = getHeaderSessionDotState({
-                sessionKey: session.key,
-                currentSessionKey,
-                runtimeRuns,
-                activeRunId,
-                sending,
-                pendingFinal,
-                runError,
-              });
-              return (
-                <button
-                  key={session.key}
-                  type="button"
-                  className="codex-header-menu__item"
-                  data-hook-key={session.key}
-                  onClick={() => {
-                    setOpen(null);
-                    switchSession(session.key);
-                  }}
-                >
-                  {dotState ? (
-                    <OrbStatus state={dotState} className="size-4 shrink-0" />
-                  ) : (
-                    <span className="size-4 shrink-0" />
-                  )}
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-xs font-medium text-foreground">
-                      {getSessionDisplayName(session.key, sessions, sessionLabels)}
-                    </span>
-                    <span className="block truncate font-mono text-2xs text-muted-foreground">{session.key}</span>
-                    {forkSourceSessionKey && (
-                      <span
-                        className="block truncate text-2xs text-muted-foreground"
-                        data-testid="chat-session-lineage"
-                      >
-                        {(() => {
-                          const override = sessionLineage?.[session.key]?.forkedFromTimestamp;
-                          const forkTimestamp = typeof session.forkedFromTimestamp === 'number'
-                            ? session.forkedFromTimestamp
-                            : override;
-                          return typeof forkTimestamp === 'number'
-                            ? t('session.lineage.forkedFromAt', {
-                                session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
-                                time: formatLineageTimestamp(forkTimestamp),
-                              })
-                            : t('session.lineage.forkedFrom', {
-                                session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
-                              });
-                        })()}
-                      </span>
-                    )}
-                  </span>
-                </button>
-              );
-            })}
-            </HookSidebar>
-            {derivedSessions.length > 0 && (
+            </div>
+            <label className="codex-composer-search mx-1 mb-1">
+              <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <input value={sessionSearch} onChange={(event) => setSessionSearch(event.target.value)} aria-label={t('session.navigation.search')} placeholder={t('session.navigation.search')} className="min-w-0 flex-1 bg-transparent text-xs outline-none" data-testid="chat-session-navigation-search" />
+            </label>
+            <div className="chat-session-navigation-list">
+            {currentEntry && (!sessionSearch.trim() || matchingSource) && <SessionFamilyNavigation session={currentEntry} sessions={sessions} derivation={derivation}
+              onNavigate={(key) => { setOpen(null); switchSession(key); }} onRefresh={onRefresh} />}
+            {matchingRecent.map((session) => renderNavigationRow(session, false))}
+            {matchingDerived.length > 0 && (
               <>
-                <hr className="codex-header-menu__sep" />
-                <div
-                  className="px-2 py-1 text-2xs font-medium text-muted-foreground"
-                  data-testid="chat-derived-sessions-title"
-                >
-                  {t('session.derived.title', { count: derivedSessions.length })}
+                <div className="codex-composer-menu__label codex-composer-menu__label--divider" data-testid="chat-derived-sessions-title">
+                  {t('session.derived.title', { count: matchingDerived.length })}
                 </div>
-                {derivedSessions.map((session) => (
-                  <button
-                    key={`derived-${session.key}`}
-                    type="button"
-                    className="codex-header-menu__item"
-                    data-testid={`chat-session-derived-${session.key}`}
-                    onClick={() => {
-                      setOpen(null);
-                      switchSession(session.key);
-                    }}
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-xs font-medium text-foreground">
-                        {getSessionDisplayName(session.key, sessions, sessionLabels)}
-                      </span>
-                      <span className="block truncate font-mono text-2xs text-muted-foreground">
-                        {session.key}
-                      </span>
-                    </span>
-                  </button>
-                ))}
+                {matchingDerived.map((session) => renderNavigationRow(session, true))}
               </>
             )}
-          </div>
+            {matchingRecent.length === 0 && matchingDerived.length === 0 && !matchingSource && <p role="status" className="px-2 py-3 text-xs text-muted-foreground">{t('archive.noMatches')}</p>}
+            </div>
+          </div>, overlayContainer ?? document.body,
         )}
       </div>
     </div>
@@ -919,7 +735,7 @@ function KnowledgeErrorAdvisoryCard({
   );
 }
 
-export function Chat() {
+export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {}) {
   const { t } = useTranslation(['chat', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
@@ -948,7 +764,6 @@ export function Chat() {
     runtimeRuns: s.runtimeRuns ?? {},
     lastUserMessageAt: s.lastUserMessageAt,
   })));
-  const switchSession = useChatStore((s) => s.switchSession);
   const resetSessionView = useChatStore((s) => s.resetSessionView);
   const renameSession = useChatStore((s) => s.renameSession);
   const loadMoreHistory = useChatStore((s) => s.loadMoreHistory);
@@ -970,6 +785,9 @@ export function Chat() {
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const activeWorkspaceId = activeWorkspace?.id;
+  useEffect(() => {
+    if (!sending && activeWorkspaceId) void useWorkspacesStore.getState().fetchWorkspaces();
+  }, [sending, currentSessionKey, activeWorkspaceId]);
   const switchWorkspace = useWorkspacesStore((s) => s.switchWorkspace);
   const createWorkspace = useWorkspacesStore((s) => s.createWorkspace);
   const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
@@ -987,10 +805,10 @@ export function Chat() {
   const [knowledgeErrorAdvisory, setKnowledgeErrorAdvisory] = useState<KnowledgeErrorGuardAdvisory | null>(null);
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
-  const sessionActivitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
+  const sessionActivityGeneration = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
+  const sessionActivitySnapshot = useSessionActivityStore((state) => selectSessionActivitySnapshot(state, activeWorkspaceId, currentSessionKey, sessionActivityGeneration));
   const loadSessionActivity = useSessionActivityStore((state) => state.load);
   const sessionActivityPanelEnabled = useSettingsStore((state) => state.sessionActivityPanelEnabled);
-  const sessionActivityAutoExpand = useSettingsStore((state) => state.sessionActivityAutoExpand);
   const sessionActivityShowGit = useSettingsStore((state) => state.sessionActivityShowGit);
   const sessionActivityShowCommands = useSettingsStore((state) => state.sessionActivityShowCommands);
   const sessionActivityRetentionMinutes = useSettingsStore((state) => state.sessionActivityRetentionMinutes);
@@ -1007,12 +825,19 @@ export function Chat() {
     () => (agentsList ?? []).find((a) => a.id === currentAgentId) ?? null,
     [agentsList, currentAgentId],
   );
-  const fallbackModelRef = useMemo(
-    () => buildConfiguredModelOptions(providerAccounts, providerStatuses, providerDefaultAccountId)[0]?.modelRef ?? null,
+  const composerModelOptions = useMemo(
+    () => buildConfiguredModelOptions(providerAccounts, providerStatuses, providerDefaultAccountId),
     [providerAccounts, providerDefaultAccountId, providerStatuses],
   );
-  const currentModelRef = sessions.find((session) => session.key === currentSessionKey)?.modelRefOverride
-    || currentAgent?.modelRef || defaultModelRef || fallbackModelRef || null;
+  const lastChatModelRef = useSettingsStore((state) => state.lastChatModelRef);
+  const currentModelRef = resolveChatModelRef({
+    session: sessions.find((session) => session.key === currentSessionKey),
+    hasMessages: messages.length > 0,
+    lastModelRef: lastChatModelRef,
+    modelOptions: composerModelOptions,
+    agentModelRef: currentAgent?.modelRef,
+    defaultModelRef,
+  });
   const sessionPolicyRefreshKey = useMemo(() => JSON.stringify({
     agentId: currentAgentId,
     modelRef: currentModelRef,
@@ -1045,7 +870,6 @@ export function Chat() {
   const restoreArtifactPanelState = useArtifactPanel((s) => s.restoreSessionState);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
   const compactPanelLayoutRef = useRef(false);
-  const [compactToolbarLayout, setCompactToolbarLayout] = useState(false);
   const [terminalBottomHeight, setTerminalBottomHeight] = useState(280);
   const chatToolbarRef = useRef<HTMLDivElement | null>(null);
   const lastObservedSessionKeyRef = useRef(currentSessionKey);
@@ -1057,6 +881,15 @@ export function Chat() {
   });
   const skipNextWorkspaceStateSaveRef = useRef(false);
   const draftSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingWorkspaceSaveRef = useRef<{ id: string; sessionKey: string; state: WorkspaceUiState } | null>(null);
+  const pendingViewSaveRef = useRef<(() => Promise<void>) | null>(null);
+  const [gitRevision, setGitRevision] = useState(0);
+  const handleGitChanged = useCallback(() => {
+    setGitRevision((value) => value + 1);
+    const workspace = useWorkspacesStore.getState().activeWorkspace;
+    const key = useChatStore.getState().currentSessionKey;
+    if (workspace) void useSessionActivityStore.getState().refreshGit(workspace.id, key);
+  }, []);
   const lastKnowledgeAdvisorySignalKeyRef = useRef<string | null>(null);
   const knowledgeAdvisorySourceRef = useRef<KnowledgeAdvisorySource | null>(null);
   const [childTranscripts, setChildTranscripts] = useState<Record<string, RawMessage[]>>({});
@@ -1072,10 +905,7 @@ export function Chat() {
 
     const updatePanelDensity = () => {
       const width = container.clientWidth;
-      const toolbarWidth = chatToolbarRef.current?.clientWidth ?? width;
       const compact = width > 0 && width < 900;
-      const toolbarCompact = toolbarWidth > 0 && toolbarWidth < 720;
-      setCompactToolbarLayout(toolbarCompact);
       const state = useArtifactPanel.getState();
       const activeTab = state.tabs.find((tab) => tab.id === state.activeTabId);
 
@@ -1093,8 +923,12 @@ export function Chat() {
     const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updatePanelDensity) : null;
     observer?.observe(container);
     if (chatToolbarRef.current) observer?.observe(chatToolbarRef.current);
+    window.addEventListener('resize', updatePanelDensity);
     updatePanelDensity();
-    return () => observer?.disconnect();
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', updatePanelDensity);
+    };
   }, [currentSessionKey, panelOpen, setArtifactPanelExpanded, setTerminalPlacement]);
   const [compactionStatus, setCompactionStatus] = useState<SessionCompactionStatus | null>(null);
   const uiDepthMode = useSettingsStore((s) => s.uiDepthMode);
@@ -1132,12 +966,27 @@ export function Chat() {
   const [handoffDialogOpen, setHandoffDialogOpen] = useState(false);
   const [handoffResult, setHandoffResult] = useState<SessionHandoffResult | null>(null);
   const [handoffDraft, setHandoffDraft] = useState('');
+  const [handoffOperation, setHandoffOperation] = useState<SessionHandoffOperation | null>(null);
+  const handoffIntentIdRef = useRef<string | null>(null);
+  const handoffCreatingRef = useRef(false);
+  const forkCreatingRef = useRef(false);
+  const [questionFork, setQuestionFork] = useState<{ sourceSessionKey: string; generation?: string; messageId: string; draft: string } | null>(null);
   // A new visit to the same key is a new scope too: A -> B -> A must not
   // revive a response from the first visit to A.
-  const controlScope = useMemo(() => ({ sessionKey: currentSessionKey, agentId: currentAgentId, workspaceId: activeWorkspace?.id }), [currentSessionKey, currentAgentId, activeWorkspace?.id]);
+  const controlGeneration = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
+  const controlScope = useMemo(() => ({ sessionKey: currentSessionKey, agentId: currentAgentId, workspaceId: activeWorkspace?.id, generation: controlGeneration }), [currentSessionKey, currentAgentId, activeWorkspace?.id, controlGeneration]);
   const controlScopeRef = useRef<object | null>(controlScope);
   controlScopeRef.current = controlScope;
   const isCurrentControlScope = useCallback(() => controlScopeRef.current === controlScope, [controlScope]);
+  useEffect(() => {
+    let cancelled = false;
+    setHandoffOperation(null);
+    if (activeWorkspace?.id) void hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id,
+      sessionKey: currentSessionKey, reconcile: true }).then((result) => {
+      if (!cancelled && isCurrentControlScope()) setHandoffOperation(result.operation ?? null);
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [activeWorkspace?.id, currentSessionKey, isCurrentControlScope]);
   useEffect(() => {
     controlScopeRef.current = controlScope;
     setCompactionStatus(null);
@@ -1154,9 +1003,11 @@ export function Chat() {
     setHandoffBusy(false);
     return () => { if (controlScopeRef.current === controlScope) controlScopeRef.current = null; };
   }, [controlScope]);
-  const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [composerDraft, setComposerDraft] = useState('');
+  const composerDraftRevision = useRef(0);
+  const draftEditedSessionsRef = useRef(new Set<string>());
   const [composerPaused, setComposerPaused] = useState(false);
+  const pauseComposerPendingRef = useRef(false);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   const [runActivityStepDetailsExpanded, setRunActivityStepDetailsExpanded] = useState<Record<string, Record<string, boolean>>>({});
@@ -1168,7 +1019,7 @@ export function Chat() {
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
     const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
     return {
-      draftInput: draft,
+      ...(draft || draftEditedSessionsRef.current.has(currentSessionKey) ? { draftInput: draft } : {}),
       composerRunState: composerPaused ? 'paused' : 'idle',
       activeTopicId: null,
       knowledgeScope,
@@ -1198,6 +1049,21 @@ export function Chat() {
       state: captureCurrentWorkspaceSessionState(options?.draft),
     });
   }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, currentSessionKey, saveWorkspaceState]);
+
+  const openFamilySession = useCallback(async (sessionKey: string) => {
+    const target = sessions.find((session) => session.key === sessionKey);
+    if (target && classifyDerivation(target).kind === 'spawn') {
+      if (classifyDerivation(target).parentSessionKey === currentSessionKey) {
+        setSessionActivityOpenOverrides((current) => ({ ...current, [currentSessionKey]: false }));
+        openWorkspacePanel({ panel: 'subagent', sessionKey });
+        return;
+      }
+    }
+    try {
+      await persistCurrentWorkspaceSessionState();
+      if (await activateWorkspaceSession(sessionKey)) navigate('/');
+    } catch { toast.error(t('projectEntry.unavailable')); }
+  }, [sessions, currentSessionKey, openWorkspacePanel, persistCurrentWorkspaceSessionState, navigate, t]);
 
   const handleSwitchWorkspace = useCallback(async (workspaceId: string) => {
     await persistCurrentWorkspaceSessionState({
@@ -1300,11 +1166,17 @@ export function Chat() {
   ]);
 
   const handleCreateNewSession = useCallback(async () => {
-    await persistCurrentWorkspaceSessionState({
-      activeSessionKey: currentSessionKey,
-      sessionKey: currentSessionKey,
-    });
-    const nextSessionKey = await createWorkspaceScopedNewSession();
+    const visit = useChatStore.getState().viewRevision;
+    const isCurrent = () => useChatStore.getState().viewRevision === visit
+      && useChatStore.getState().currentSessionKey === currentSessionKey
+      && useWorkspacesStore.getState().activeWorkspaceId === activeWorkspace?.id;
+    let nextSessionKey: string | null;
+    try {
+      await persistCurrentWorkspaceSessionState({ activeSessionKey: currentSessionKey, sessionKey: currentSessionKey });
+      if (!isCurrent()) return false;
+      nextSessionKey = await createWorkspaceScopedNewSession();
+    } catch (error) { if (isCurrent()) toastUserError(error); return false; }
+    if (!nextSessionKey) return false;
     workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
       ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
       : null;
@@ -1317,6 +1189,7 @@ export function Chat() {
     setContextRange(null);
     setLiveUsage(null);
     setKnowledgeScope('none');
+    return true;
   }, [activeWorkspace?.id, currentSessionKey, persistCurrentWorkspaceSessionState]);
 
   // Callback for file cards in chat messages - opens the in-app preview
@@ -1386,17 +1259,16 @@ export function Chat() {
   const handleSwitchWorktreeWorkspace = async (worktree: GitWorktree) => {
     await persistCurrentWorkspaceSessionState({ activeSessionKey: currentSessionKey, sessionKey: currentSessionKey });
     const existing = workspaceProfiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizeComparablePath(worktree.path));
-    const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: basenameFromPath(worktree.path), agentId: currentAgentId });
+    const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: worktree.branch || basenameFromPath(worktree.path), agentId: currentAgentId, activeSessionKey: createFreshWorkspaceSessionKey(currentAgentId) });
     if (profile) await handleSwitchWorkspace(profile.id);
   };
   useEffect(() => {
     const previousSessionKey = lastObservedSessionKeyRef.current;
     if (previousSessionKey !== currentSessionKey) {
-      void persistCurrentWorkspaceSessionState({ sessionKey: previousSessionKey });
       lastObservedSessionKeyRef.current = currentSessionKey;
     }
-  }, [currentSessionKey, persistCurrentWorkspaceSessionState]);
-  const graphStepCache: Record<string, GraphStepCacheEntry> = graphStepCacheStore.get(currentSessionKey) ?? {};
+  }, [currentSessionKey]);
+  const graphStepCache = graphStepCacheStore.get(currentSessionKey) ?? EMPTY_GRAPH_STEP_CACHE;
 
   /**
    * Optimistic "a run is in flight" window for the transcript's scroll pin.
@@ -1422,7 +1294,13 @@ export function Chat() {
     }
   }, []);
 
-  const { contentRef, scrollRef, scrollToBottom, isAtBottom } = useStickToBottomInstant(currentSessionKey, sending || optimisticRunActive);
+  const currentSession = sessions.find((session) => session.key === currentSessionKey) ?? { key: currentSessionKey };
+  const savedReadingPosition = activeWorkspace?.sessionStates?.[currentSessionKey]?.readingPosition;
+  const preserveReadingPosition = savedReadingPosition?.generation === currentSession.sessionId
+    && Number.isFinite(savedReadingPosition?.scrollTop);
+  const { contentRef, scrollRef, scrollToBottom, isAtBottom } = useStickToBottomInstant(
+    `${currentSessionKey}:${currentSession.sessionId ?? ''}`, sending || optimisticRunActive, preserveReadingPosition,
+  );
   /**
    * The transcript scroller as a plain ref.
    *
@@ -1437,7 +1315,24 @@ export function Chat() {
    * every render, thrashing the library's own scroll listeners.
    */
   const scrollElementRef = useRef<HTMLElement | null>(null);
+  useSessionReadingPosition({ workspaceId: activeWorkspace?.id, sessionKey: currentSessionKey,
+    generation: currentSession.sessionId, loading, element: scrollElementRef });
+  /* The header shares the transcript's plane at rest; a hairline appears only
+   * once content has scrolled under it. Written straight to the DOM so a
+   * scroll never re-renders the page. */
+  const headerEdgeCleanupRef = useRef<(() => void) | null>(null);
   const attachScrollElement = useCallback((element: HTMLDivElement | null) => {
+    headerEdgeCleanupRef.current?.();
+    headerEdgeCleanupRef.current = null;
+    if (element) {
+      const syncHeaderEdge = () => {
+        const shell = chatToolbarRef.current;
+        if (shell) shell.dataset.scrolled = element.scrollTop > 2 ? 'true' : 'false';
+      };
+      element.addEventListener('scroll', syncHeaderEdge, { passive: true });
+      syncHeaderEdge();
+      headerEdgeCleanupRef.current = () => element.removeEventListener('scroll', syncHeaderEdge);
+    }
     scrollElementRef.current = element;
     if (typeof scrollRef === 'function') scrollRef(element);
     else (scrollRef as unknown as { current: HTMLElement | null }).current = element;
@@ -1515,6 +1410,7 @@ export function Chat() {
     if (!activeWorkspace?.id) return;
     const restored = workspaceStateRestoreRef.current;
     if (restored.workspaceId === activeWorkspace.id && restored.sessionKey === currentSessionKey) return;
+    if (!workspaceOwnsSession(activeWorkspace, currentSessionKey)) return;
     const sessionState = getWorkspaceSessionState(activeWorkspace, currentSessionKey);
     skipNextWorkspaceStateSaveRef.current = true;
     workspaceStateRestoreRef.current = {
@@ -1540,6 +1436,7 @@ export function Chat() {
 
   useEffect(() => {
     if (!activeWorkspace?.id || activeWorkspace.activeSessionKey === currentSessionKey) return;
+    if (!workspaceOwnsSession(activeWorkspace, currentSessionKey)) return;
     const restoreTarget = workspaceSessionRestoreTargetRef.current;
     if (restoreTarget?.workspaceId === activeWorkspace.id) {
       if (restoreTarget.sessionKey === currentSessionKey) {
@@ -1551,18 +1448,19 @@ export function Chat() {
       id: activeWorkspace.id,
       activeSessionKey: currentSessionKey,
     });
-  }, [activeWorkspace?.id, activeWorkspace?.activeSessionKey, currentSessionKey, saveWorkspaceState]);
+  }, [activeWorkspace, currentSessionKey, saveWorkspaceState]);
 
   const handleComposerDraftChange = useCallback((value: string) => {
+    draftEditedSessionsRef.current.add(currentSessionKey);
+    composerDraftRevision.current += 1;
     setComposerDraft(value);
     if (!activeWorkspace?.id) return;
     if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
+    const pending = { id: activeWorkspace.id, sessionKey: currentSessionKey, state: captureCurrentWorkspaceSessionState(value) };
+    pendingWorkspaceSaveRef.current = pending;
     draftSaveTimerRef.current = setTimeout(() => {
-      void saveWorkspaceState({
-        id: activeWorkspace.id,
-        sessionKey: currentSessionKey,
-        state: captureCurrentWorkspaceSessionState(value),
-      });
+      if (pendingWorkspaceSaveRef.current === pending) pendingWorkspaceSaveRef.current = null;
+      void saveWorkspaceState(pending);
     }, 250);
   }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, currentSessionKey, saveWorkspaceState]);
 
@@ -1815,14 +1713,15 @@ export function Chat() {
     });
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
-  const handleOpenTaskLedger = useCallback(() => {
-    const nodeId = longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId;
-    navigate(nodeId ? `/task-ledger?nodeId=${encodeURIComponent(nodeId)}` : '/task-ledger');
-  }, [longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId, navigate]);
-  const handleOpenClawGraph = useCallback(() => {
-    const runId = longTaskControlStatus?.latestCheckpoint?.clawGraphRunId;
-    navigate(runId ? `/clawgraph?runId=${encodeURIComponent(runId)}` : '/clawgraph');
-  }, [longTaskControlStatus?.latestCheckpoint?.clawGraphRunId, navigate]);
+  /** The task dock's ledger link: carries workspace and session, like the scope list. */
+  const handleOpenSessionTask = useCallback((taskNodeId: string) => {
+    const query = new URLSearchParams({
+      ...(activeWorkspaceId ? { workspaceId: activeWorkspaceId } : {}),
+      sessionKey: currentSessionKey,
+      nodeId: taskNodeId,
+    });
+    navigate(`/task-ledger?${query}`);
+  }, [activeWorkspaceId, currentSessionKey, navigate]);
 
   const handleAppendComposerDraft = useCallback((text: string) => {
     const nextDraft = composerDraft.trim()
@@ -1942,23 +1841,41 @@ export function Chat() {
 
   useEffect(() => {
     if (!activeWorkspace?.id) return;
+    if (!workspaceOwnsSession(activeWorkspace, currentSessionKey)) return;
+    const restored = workspaceStateRestoreRef.current;
+    if (restored.workspaceId !== activeWorkspace.id || restored.sessionKey !== currentSessionKey) return;
     if (skipNextWorkspaceStateSaveRef.current) {
       skipNextWorkspaceStateSaveRef.current = false;
       return;
     }
-    const timer = setTimeout(() => {
-      void saveWorkspaceState({
+    const captured = captureCurrentWorkspaceSessionState();
+    const save = () => saveWorkspaceState({
         id: activeWorkspace.id,
         sessionKey: currentSessionKey,
-        state: captureCurrentWorkspaceSessionState(),
+        state: captured,
       });
+    pendingViewSaveRef.current = save;
+    const timer = setTimeout(() => {
+      pendingViewSaveRef.current = null;
+      void save();
     }, 300);
     return () => clearTimeout(timer);
-  }, [activeWorkspace?.id, artifactActiveTabId, artifactTabs, captureCurrentWorkspaceSessionState, currentSessionKey, panelOpen, runActivityExpandedOverrides, saveWorkspaceState]);
+  }, [activeWorkspace, artifactActiveTabId, artifactTabs, captureCurrentWorkspaceSessionState, currentSessionKey, panelOpen, runActivityExpandedOverrides, saveWorkspaceState]);
 
-  useEffect(() => () => {
-    if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
-  }, []);
+  useEffect(() => {
+    const draft = pendingWorkspaceSaveRef;
+    const view = pendingViewSaveRef;
+    const timer = draftSaveTimerRef;
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+      // Pending data and closures retain the original workspace/session.
+      const pending = draft.current;
+      if (pending) void useWorkspacesStore.getState().saveWorkspaceState(pending);
+      else void view.current?.();
+      draft.current = null;
+      view.current = null;
+    };
+  }, [activeWorkspace?.id, currentSessionKey]);
 
   const contextRangeRef = useRef(contextRange);
   contextRangeRef.current = contextRange;
@@ -2182,19 +2099,27 @@ export function Chat() {
   }, [currentAgentId, currentSessionKey, isCurrentControlScope, refreshLongTaskControlStatus, t]);
 
   const handleManualCompact = useCallback(async (customInstructions?: string) => {
-    if (!isCurrentControlScope()) return;
+    if (!isCurrentControlScope()) return false;
+    if (!controlGeneration) { toast.error(t('operationGenerationUnavailable')); return false; }
     setCompactionBusy(true);
     try {
       const result = await hostApi.sessions.compact({
         sessionKey: currentSessionKey,
+        expectedSessionId: controlGeneration,
         agentId: currentAgentId,
         customInstructions,
         force: true,
       });
-      if (!isCurrentControlScope()) return;
+      if (!isCurrentControlScope()) return false;
       if (!result.success) {
         toast.error(result.error || t('composer.compaction.toastFailed'));
-        return;
+        await refreshCompactionStatus();
+        return false;
+      }
+      if (result.status === 'pending') {
+        toast.message(t('composer.compaction.toastPending'));
+        await refreshCompactionStatus();
+        return false;
       }
       if (result.compacted) {
         const before = typeof result.tokensBefore === 'number'
@@ -2218,7 +2143,7 @@ export function Chat() {
           loadHistory(true),
           loadSessions(),
         ]);
-        if (!isCurrentControlScope()) return;
+        if (!isCurrentControlScope()) return false;
         await Promise.all([
           refreshCompactionStatus(),
           refreshLongTaskControlStatus(),
@@ -2233,13 +2158,16 @@ export function Chat() {
       })().catch((refreshError) => {
         console.warn('[chat:manual-compaction] refresh failed', refreshError);
       });
+      return true;
     } catch (error) {
-      if (!isCurrentControlScope()) return;
+      if (!isCurrentControlScope()) return false;
       toast.error(error instanceof Error ? error.message : t('composer.compaction.toastFailed'));
+      await refreshCompactionStatus();
+      return false;
     } finally {
       if (isCurrentControlScope()) setCompactionBusy(false);
     }
-  }, [currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
+  }, [controlGeneration, currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
 
   const continuityRunActive = sending || pendingFinal || Boolean(streamingMessage) || Boolean(activeRunId);
   const gatewayAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;
@@ -2252,7 +2180,9 @@ export function Chat() {
     longTaskControlStatus,
   }), [compactionStatus, contextRange, continuityRunActive, gatewayAvailable, liveUsage, longTaskControlStatus]);
   const continuityRecommendation = continuityPreflight.recommendation;
-  const handoffDisabled = continuityPreflight.handoff.disabled;
+  const handoffDisabled = continuityPreflight.handoff.disabled || !controlGeneration;
+  const handoffDisabledReason = !controlGeneration ? t('operationGenerationUnavailable')
+    : continuityPreflight.handoff.disabled ? t('composer.handoff.disabledActiveRun') : undefined;
   const forkDisabled = continuityPreflight.fork.disabled;
   const handleForkSessionRef = useRef<(() => Promise<void>) | null>(null);
   const handlePrepareHandoffRef = useRef<(() => Promise<void>) | null>(null);
@@ -2293,36 +2223,34 @@ export function Chat() {
     toast.error(t(`composer.continuity.failure.${action}.${kind}.title`, { defaultValue: fallbackTitle }), toastOptions);
   }, [t]);
 
-  const handleForkSession = useCallback(async (options?: { fromLeafId?: string }) => {
-    if (forkDisabled || forkBusy) return;
+  const handleForkSession = useCallback(async (options?: { fromLeafId?: string; questionDraft?: string }) => {
+    if (forkDisabled || forkBusy || forkCreatingRef.current) return;
     const sourceSessionKey = currentSessionKey;
+    forkCreatingRef.current = true;
     setForkBusy(true);
     try {
       await persistCurrentContinuitySourceSession();
-      const nextSessionKey = await createWorkspaceScopedForkSession(sourceSessionKey, options);
+      const nextSessionKey = await createWorkspaceScopedForkSession(sourceSessionKey, {
+        fromLeafId: options?.fromLeafId, draftInput: options?.questionDraft,
+      });
+      if (useChatStore.getState().currentSessionKey !== nextSessionKey) return;
       workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
         ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
         : null;
-      const lastMessageTimestamp = messages.at(-1)?.timestamp;
-      setSessionLineage((current) => ({
-        ...current,
-        [nextSessionKey]: {
-          relation: 'forked_from',
-          sourceSessionKey,
-          ...(typeof lastMessageTimestamp === 'number' && Number.isFinite(lastMessageTimestamp)
-            ? { forkedFromTimestamp: lastMessageTimestamp < 1_000_000_000_000 ? lastMessageTimestamp * 1000 : lastMessageTimestamp }
-            : {}),
-        },
-      }));
       lastRestoredWorkspaceIdRef.current = activeWorkspace?.id ?? null;
       lastObservedSessionKeyRef.current = nextSessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-      resetSessionView(nextSessionKey);
       setContextRange(null);
       setLiveUsage(null);
       setCompactionStatus(null);
-      await loadSessions();
-      await loadHistory();
+      if (options?.questionDraft !== undefined) {
+        setQuestionFork(null);
+        const revision = useChatStore.getState().viewRevision;
+        requestAnimationFrame(() => {
+          if (controlScopeRef.current && useChatStore.getState().currentSessionKey === nextSessionKey
+            && useChatStore.getState().viewRevision === revision) document.querySelector<HTMLTextAreaElement>('[data-testid="chat-composer-input"]')?.focus();
+        });
+      }
       toast.success(t('composer.fork.toastCreated'));
     } catch (error) {
       const kind = classifySessionContinuityError(error);
@@ -2339,6 +2267,7 @@ export function Chat() {
           : undefined,
       });
     } finally {
+      forkCreatingRef.current = false;
       setForkBusy(false);
     }
   }, [
@@ -2346,11 +2275,7 @@ export function Chat() {
     currentSessionKey,
     forkBusy,
     forkDisabled,
-    loadHistory,
-    loadSessions,
-    messages,
     persistCurrentContinuitySourceSession,
-    resetSessionView,
     showContinuityFailureToast,
     t,
   ]);
@@ -2363,30 +2288,56 @@ export function Chat() {
   const handleCompactRange = useCallback(async (messageId: string, boundary: 'from' | 'to') => {
     if (!isCurrentControlScope()) return;
     const sessionKey = currentSessionKey;
+    if (!controlGeneration) { toast.error(t('operationGenerationUnavailable')); return; }
     try {
       const result = await hostApi.sessions.compactRange({
         sessionKey,
+        expectedSessionId: controlGeneration,
         ...(currentAgentId ? { agentId: currentAgentId } : {}),
         ...(boundary === 'from' ? { fromLeafId: messageId } : { toLeafId: messageId }),
       });
+      if (!isCurrentControlScope()) return;
+      if (result.status === 'pending') {
+        toast.message(t('composer.compaction.toastPending'));
+        await refreshCompactionStatus();
+        return;
+      }
       if (!result.success || result.compacted !== true) {
         toast.error(t('composer.compactRange.toastFailed'), {
-          description: result.reason || t('composer.compactRange.toastFailedDescription'),
+          description: result.error || result.reason || t('composer.compactRange.toastFailedDescription'),
         });
+        await refreshCompactionStatus();
         return;
       }
       await loadSessions();
+      if (!isCurrentControlScope()) return;
       await loadHistory();
+      if (!isCurrentControlScope()) return;
       toast.success(t('composer.compactRange.toastCompacted'));
     } catch (error) {
+      if (!isCurrentControlScope()) return;
       toast.error(t('composer.compactRange.toastFailed'), {
         description: getContinuityErrorMessage(error, t('composer.compactRange.toastFailedDescription')),
       });
+      await refreshCompactionStatus();
     }
-  }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, t]);
+  }, [controlGeneration, currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, refreshCompactionStatus, t]);
+
+  const handleForkFromMessage = useCallback((messageId: string) => {
+    const index = messages.findIndex((message) => getTranscriptEntryId(message) === messageId);
+    const ancestor = messages.slice(0, index).findLast((message) => normalizeMessageRole(message.role) === 'assistant' && getTranscriptEntryId(message));
+    if (index < 0 || !ancestor) { toast.error(t('questionFork.noAncestor')); return; }
+    setQuestionFork({ sourceSessionKey: currentSessionKey, generation: currentSession.sessionId,
+      messageId, draft: extractText(messages[index]) });
+  }, [messages, currentSessionKey, currentSession.sessionId, t]);
+  const handleCompactMessageRange = useCallback((messageId: string, boundary: 'from' | 'to') => {
+    void handleCompactRange(messageId, boundary);
+  }, [handleCompactRange]);
 
   const handlePrepareHandoff = useCallback(async () => {
-    if (handoffDisabled || handoffBusy || !isCurrentControlScope()) return;
+    if (!isCurrentControlScope()) return;
+    if (!controlGeneration) { toast.error(t('operationGenerationUnavailable')); return; }
+    if (handoffDisabled || handoffBusy) return;
     setHandoffBusy(true);
     try {
       const result = await hostApi.sessions.prepareHandoff({
@@ -2412,6 +2363,7 @@ export function Chat() {
       }
       setHandoffResult(result);
       setHandoffDraft(result.draft);
+      handoffIntentIdRef.current = crypto.randomUUID();
       setHandoffDialogOpen(true);
     } catch (error) {
       if (!isCurrentControlScope()) return;
@@ -2432,6 +2384,7 @@ export function Chat() {
     }
   }, [
     activeWorkspace?.id,
+    controlGeneration,
     currentAgentId,
     currentSessionKey,
     gatewayAvailable,
@@ -2461,25 +2414,40 @@ export function Chat() {
       return;
     }
     if (sessionIntent.sessionKey !== currentSessionKey) return;
+    if (!controlGeneration) return;
     clearSessionIntent();
     void handlePrepareHandoffRef.current?.();
-  }, [clearSessionIntent, currentSessionKey, sessionIntent]);
+  }, [clearSessionIntent, controlGeneration, currentSessionKey, sessionIntent]);
 
   const handleCreateHandoffSession = useCallback(async () => {
     const draft = handoffDraft.trim();
-    if (!draft || handoffCreating) return;
+    if (!draft || handoffCreating || handoffCreatingRef.current) return;
+    handoffCreatingRef.current = true;
+    const operationId = handoffIntentIdRef.current ?? crypto.randomUUID();
+    handoffIntentIdRef.current = operationId;
     setHandoffCreating(true);
     try {
       await persistCurrentContinuitySourceSession();
-      const nextSessionKey = await createWorkspaceScopedHandoffSession(draft);
+      const nextSessionKey = await createWorkspaceScopedHandoffSession(draft, {
+        operationId,
+        ...(handoffOperation?.id === operationId ? { sourceSessionKey: handoffOperation.sourceSessionKey } : {}),
+      });
+      if (useChatStore.getState().currentSessionKey !== nextSessionKey) return;
       workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
         ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
         : null;
       lastRestoredWorkspaceIdRef.current = activeWorkspace?.id ?? null;
       lastObservedSessionKeyRef.current = nextSessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-      resetSessionView(nextSessionKey);
-      setComposerDraft('');
+      setComposerDraft(draft);
+      const revision = useChatStore.getState().viewRevision;
+      const draftRevision = composerDraftRevision.current;
+      const targetGeneration = useChatStore.getState().sessions.find((session) => session.key === nextSessionKey)?.sessionId;
+      const ownsView = () => controlScopeRef.current != null
+        && useWorkspacesStore.getState().activeWorkspaceId === activeWorkspace?.id
+        && useChatStore.getState().currentSessionKey === nextSessionKey
+        && useChatStore.getState().viewRevision === revision
+        && useChatStore.getState().sessions.find((session) => session.key === nextSessionKey)?.sessionId === targetGeneration;
       setRunActivityExpandedOverrides({});
       setRunActivityStepDetailsExpanded({});
       setContextRange(null);
@@ -2489,21 +2457,30 @@ export function Chat() {
       // A handoff is only useful if the new session actually receives the
       // working context. Send the reviewed draft as the first user turn so it
       // enters the real transcript instead of waiting for a manual paste.
-      await sendMessage(draft);
-      toast.success(t('composer.handoff.toastCreated'));
+      await sendMessage(draft, { idempotencyKey: handoffFirstSendKey(operationId), handoffOperationId: operationId });
+      if (activeWorkspace?.id) {
+        const checked = await hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id, sessionKey: nextSessionKey, operationId, reconcile: true });
+        if (!ownsView()) return;
+        setHandoffOperation(checked.operation);
+        if (checked.operation && ['accepted', 'sent'].includes(checked.operation.phase)) {
+          if (composerDraftRevision.current === draftRevision) setComposerDraft('');
+          toast.success(t('composer.handoff.toastCreated'));
+        }
+      }
     } catch (error) {
       const kind = classifySessionContinuityError(error);
       showContinuityFailureToast({ action: 'handoff', kind, message: getContinuityErrorMessage(error, t('composer.handoff.toastCreateFailed')) });
     } finally {
+      handoffCreatingRef.current = false;
       setHandoffCreating(false);
     }
   }, [
     activeWorkspace?.id,
     handoffCreating,
     handoffDraft,
+    handoffOperation,
     showContinuityFailureToast,
     persistCurrentContinuitySourceSession,
-    resetSessionView,
     sendMessage,
     t,
   ]);
@@ -2571,9 +2548,9 @@ export function Chat() {
   );
   const {
     streamTimestamp,
+    streamText,
     streamTools,
     hasStreamText,
-    hasRunningStreamToolStatus,
     shouldRenderStreaming,
     hasAnyStreamContent,
   } = streamState;
@@ -2687,16 +2664,22 @@ export function Chat() {
   const inputRunActive = executionProjection.inputRunActive;
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
   const handlePauseComposerSession = useCallback(async () => {
-    if (!inputRunActive) return;
-    setComposerPaused(true);
-    if (activeWorkspace?.id) {
-      await saveWorkspaceState({
-        id: activeWorkspace.id,
-        sessionKey: currentSessionKey,
-        state: { composerRunState: 'paused' },
-      });
+    if ((!inputRunActive && !useChatStore.getState().sending) || pauseComposerPendingRef.current) return;
+    pauseComposerPendingRef.current = true;
+    try {
+      const stopped = await abortRun();
+      if (!stopped) { setComposerPaused(false); return; }
+      setComposerPaused(true);
+      if (activeWorkspace?.id) {
+        void saveWorkspaceState({
+          id: activeWorkspace.id,
+          sessionKey: currentSessionKey,
+          state: { composerRunState: 'paused' },
+        });
+      }
+    } finally {
+      pauseComposerPendingRef.current = false;
     }
-    await abortRun();
   }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, saveWorkspaceState]);
 
   const handleResumeComposerSession = useCallback(async () => {
@@ -2859,6 +2842,30 @@ export function Chat() {
     sessionActivityRuns.flatMap((run) => projectRunProcesses(run)),
     userRunCards.flatMap((card) => card.surfaces.terminals.map(processFromTerminalSurface)),
   ), [sessionActivityRuns, userRunCards]);
+  const activeWorkspaceSubject = useMemo<ActiveWorkspaceSubject | null>(() => {
+    if (!panelOpen) return null;
+    const tab = artifactTabs.find((entry) => entry.id === artifactActiveTabId);
+    if (!tab) return null;
+    if (tab.kind === 'review') return { kind: 'review' };
+    if ((tab.kind === 'process' || tab.kind === 'subagent') && tab.subject) return { kind: tab.kind, subject: tab.subject };
+    return null;
+  }, [artifactActiveTabId, artifactTabs, panelOpen]);
+  /* The status card's Context row reads the same resolved facts as the
+   * composer's pressure readout, so the two can never disagree. */
+  const sessionContextUsage = useMemo(() => {
+    const pressure = resolveContextPressure({ liveUsage, contextRange });
+    return {
+      usedTokens: pressure.usedTokens,
+      maxTokens: pressure.maxTokens,
+      utilisation: pressure.utilisation,
+      cacheReadTokens: pressure.cacheReadTokens,
+      warmTurnHitRate: pressure.warmTurnHitRate,
+    };
+  }, [contextRange, liveUsage]);
+  const sessionEnvironmentSources = useMemo(
+    () => collectSessionEnvironmentSources(messages, sessionActivityRuns, currentSessionKey, activeRunId),
+    [messages, sessionActivityRuns, currentSessionKey, activeRunId],
+  );
 
   /**
    * Is the owning turn summary currently showing its full plan?
@@ -2873,35 +2880,25 @@ export function Chat() {
     const cardApprovals = approvalsByRunKey.get(card.runKey) ?? [];
     const defaultExpanded = card.status === 'error'
       || card.status === 'aborted'
+      || card.steps.some((step) => step.status === 'error')
+      || card.surfaces.terminals.some((terminal) => terminal.status === 'failed')
       || (card.status === 'completed' && runActivityKeepExpandedOnComplete)
-      || (card.active && card.streamingReplyText == null)
-      || !card.hasVisibleReply;
+      || (!card.active && !card.hasVisibleReply);
     return cardApprovals.length > 0
       || (runActivityExpandedOverrides[turnDisclosureKey(currentSessionKey, card)] ?? defaultExpanded);
   }, [approvalsByRunKey, currentSessionKey, runActivityExpandedOverrides, runActivityKeepExpandedOnComplete]);
 
-  const sessionActivityPlanVisibleInTranscript = useMemo(() => {
-    // Newest turn first — the same card sessionActivityPlan fell back to.
-    for (let index = userRunCards.length - 1; index >= 0; index -= 1) {
-      const card = userRunCards[index];
-      if (!card.surfaces.plan || card.surfaces.plan.todos.length === 0) continue;
-      return isTurnSummaryExpanded(card);
-    }
-    // Plan sourced from a live runtime run: its card is the active one.
-    const activeCard = userRunCards.find((card) => card.active);
-    return activeCard ? isTurnSummaryExpanded(activeCard) : false;
-  }, [isTurnSummaryExpanded, userRunCards]);
 
-  const visibleSessionActivitySnapshot = useMemo(() => {
-    if (!sessionActivitySnapshot) return undefined;
+  const [visibleSessionActivitySnapshot, sessionActivitySnapshotPending] = useMemo(() => {
+    if (!sessionActivitySnapshot) return [createEmptySessionActivitySnapshot(currentSessionKey), true] as const;
     const policyScope = sessionActivitySnapshot.policy?.scope;
     if (policyScope && (
       policyScope.sessionKey !== currentSessionKey
       || (activeWorkspaceId != null && policyScope.workspaceId !== activeWorkspaceId)
     )) {
-      return undefined;
+      return [createEmptySessionActivitySnapshot(currentSessionKey), true] as const;
     }
-    return retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock);
+    return [retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock), false] as const;
   }, [
     activeWorkspaceId,
     currentSessionKey,
@@ -2915,19 +2912,11 @@ export function Chat() {
       showCommands: sessionActivityShowCommands,
     })
     : 'none';
-  /**
-   * Does the card have anything to render?
-   *
-   * `classifySessionActivity` only sees the snapshot, but two of the card's four
-   * sections are fed from the runtime run state instead, and it also shows a
-   * clean repository (which the classifier scores as nothing to report). Gating
-   * on the classifier alone therefore both hid the toggle over a card that had a
-   * plan to show, and offered a toggle onto a card that rendered nothing.
-   */
-  const sessionActivityHasContent = sessionActivityLevel !== 'none'
-    || Boolean(visibleSessionActivitySnapshot?.policy)
-    || Boolean(sessionActivityShowGit && visibleSessionActivitySnapshot?.git?.isRepository)
-    || (sessionActivityPlan?.todos.length ?? 0) > 0
+  const sessionActivityHasContent = hasSessionEnvironmentActivity(visibleSessionActivitySnapshot, {
+    showGit: sessionActivityShowGit,
+    showCommands: sessionActivityShowCommands,
+  })
+    || sessionEnvironmentSources.length > 0
     || (sessionActivityShowCommands && sessionActivityProcesses.length > 0);
   const hasSessionActivityEntry = canShowChatSideRail
     && sessionActivityPanelEnabled
@@ -2935,47 +2924,13 @@ export function Chat() {
     && !isEmpty
     && sessionActivityHasContent;
 
-  /**
-   * The status rail's two layers.
-   *
-   * PASSIVE (`inline`) — the rail put itself there because the run has a plan.
-   * Task planning is the whole trigger: a run that is merely alive has nothing
-   * for a column to hold, so a session without a plan shows no rail at all and
-   * the toolbar toggle is the only way in. Because it appeared on its own, the
-   * transcript gives up the width for it (see `codex-conversation-inset`)
-   * instead of being covered by it.
-   *
-   * ACTIVE (`overlay`) — the user opened it from the toolbar. It becomes a
-   * dropdown off that control and is drawn OVER the transcript, which keeps its
-   * width: a panel the reader asked for must not reflow what they were reading.
-   *
-   * `sessionActivityAutoExpand` has existed in Settings ("auto expand: when
-   * active / when it needs attention / never") with nothing consuming it. It is
-   * the policy knob for the passive layer only — `never` does not disable the
-   * toggle, it just stops the rail from opening by itself.
-   */
-  const sessionActivityHasPlan = (sessionActivityPlan?.todos.length ?? 0) > 0;
-  const sessionActivityPassive = hasSessionActivityEntry
-    && !compactToolbarLayout
-    /* The workspace panel already claims the right-hand column; insetting the
-       transcript for a second one leaves the conversation a sliver. */
-    && !panelOpen
-    && sessionActivityHasPlan
-    && (sessionActivityAutoExpand === 'active'
-      || (sessionActivityAutoExpand === 'attention' && sessionActivityLevel === 'attention'));
+  // Task progress stays above the composer; the status sidebar opens on request.
+  const sessionActivityPassive = false;
   const sessionActivityOverride = sessionActivityOpenOverrides[currentSessionKey];
   const sessionActivityRailOpen = (sessionActivityOverride ?? sessionActivityPassive)
-    && Boolean(visibleSessionActivitySnapshot)
-    && sessionActivityPanelEnabled
-    && !isEmpty;
+    && hasSessionActivityEntry;
   const sessionActivityRailLayer = sessionActivityOverride === true ? 'overlay' : 'inline';
-  /**
-   * Toggle against the EFFECTIVE state, not against the override.
-   *
-   * With a plan on screen the rail is already open with no override recorded;
-   * flipping `override ?? false` would have taken it from passive-inline to
-   * user-overlay instead of closing it — one click, two surfaces, nothing shut.
-   */
+  // Explicit status requests leave the transcript width unchanged.
   const handleToggleSessionActivity = useCallback(() => {
     const opening = !(sessionActivityOpenOverrides[currentSessionKey] ?? sessionActivityPassive);
     if (opening) {
@@ -2992,6 +2947,34 @@ export function Chat() {
     sessionActivityOpenOverrides,
     sessionActivityPassive,
   ]);
+
+  const handleCloseSessionActivity = useCallback(() => {
+    setSessionActivityOpenOverrides((current) => ({ ...current, [currentSessionKey]: false }));
+  }, [currentSessionKey]);
+
+  useEffect(() => {
+    if (!sessionActivityRailOpen || sessionActivityRailLayer !== 'overlay') return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Element && !event.target.closest(
+        '[data-testid="chat-session-status-rail"], [data-testid="chat-session-activity-control"]',
+      )) handleCloseSessionActivity();
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      const withinEnvironment = event.target instanceof Element && event.target.closest(
+        '[data-testid="chat-session-status-rail"], [data-testid="chat-session-activity-control"]',
+      );
+      // A tooltip on this surface may already have consumed Escape.
+      if (event.key !== 'Escape' || (event.defaultPrevented && !withinEnvironment)) return;
+      handleCloseSessionActivity();
+      document.querySelector<HTMLButtonElement>('[data-testid="chat-session-activity-toggle"]')?.focus();
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [handleCloseSessionActivity, sessionActivityRailLayer, sessionActivityRailOpen]);
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -3013,6 +2996,8 @@ export function Chat() {
     [messages, userRunCards],
   );
   const streamingReplyText = executionProjection.streamingReplyText;
+  const visibleStreamingText = streamingReplyText
+    ?? (hasStreamText && streamTools.length === 0 && !isInternalProcessNarration(streamText) ? streamText : null);
   const userRunCardsByTriggerIndex = useMemo(
     () => groupRunCardsByTriggerIndex(userRunCards),
     [userRunCards],
@@ -3061,7 +3046,13 @@ export function Chat() {
   const messageWorkspaceRoot = activeWorkspace?.rootPath || currentAgent?.workspace || null;
   const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => messages.map((msg, idx) => {
     const hasUserFacingMedia = hasUserFacingMediaAttachments(msg);
-    const suppressAssistantText = foldedNarrationIndices.has(idx);
+    // User-facing progress stays in the transcript; internal narration stays
+    // in the process log. Folding a tool must never swallow its explanation.
+    const repeatsLiveReply = visibleStreamingText != null
+      && extractText(msg).trim() === visibleStreamingText.trim()
+      && userRunCards.some((card) => card.active && idx > card.triggerIndex);
+    const suppressAssistantText = foldedNarrationIndices.has(idx)
+      && (isInternalProcessNarration(extractText(msg)) || repeatsLiveReply);
     const suppressToolCards = runSegmentMessageIndices.has(idx);
     const suppressReasoning = runCardReasoning.adoptedIndices.has(idx);
     const textOverride = replyTextOverrides.get(idx);
@@ -3108,14 +3099,17 @@ export function Chat() {
     runCardReasoning,
     runSegmentMessageIndices,
     userRunCardsByTriggerIndex,
+    userRunCards,
+    visibleStreamingText,
   ]);
-  const windowedMessageRenderRows = useMemo(() => {
-    const maxDom = getAgentResourceLimits().maxDomRenderMessages;
-    const { start, end, windowed } = selectMessageRenderWindow(messageRenderRows.length, { maxDomNodes: maxDom });
-    return { rows: messageRenderRows.slice(start, end), start, windowed, total: messageRenderRows.length };
-  }, [messageRenderRows]);
+  const visibleMessageRows = useMemo(() => messageRenderRows.filter(row => !row.hidden), [messageRenderRows]);
+  const getMessageScrollElement = useCallback(() => scrollElementRef.current, []);
+  const messageViewport = useMessageViewport(visibleMessageRows, getMessageScrollElement,
+    `${currentSessionKey}:${currentSession.sessionId ?? ''}`, getAgentResourceLimits().maxDomRenderMessages,
+    preserveReadingPosition ? savedReadingPosition : undefined);
+  const scrollToMessageIndex = messageViewport.scrollToIndex;
   const messageNavItems = useMemo<MessageNavRailItem[]>(() => {
-    const rows = windowedMessageRenderRows.rows;
+    const rows = visibleMessageRows;
     const users = rows.filter((row) => !row.hidden && isRealUserMessage(row.message));
     return users.map((row, ordinal) => {
       const end = users[ordinal + 1]?.index ?? messages.length;
@@ -3123,7 +3117,7 @@ export function Chat() {
       const preview = (text: string, limit: number) => text.replace(/```[\s\S]*?```/g, '').replace(/<[^>]*>/g, '').replace(/[*#`]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
       return { index: row.index, ordinal: ordinal + 1, title: preview(extractText(row.message), 110) || t('messageNav.jumpTo', { ordinal: ordinal + 1 }), response: reply ? preview(projectMessageRender(reply.message, { isUser: false, suppressAssistantText: reply.suppressAssistantText, suppressToolCards: reply.suppressToolCards, suppressReasoning: reply.suppressReasoning, textOverride: reply.textOverride }).displayText, 180) : undefined, completedAt: reply?.message.timestamp };
     });
-  }, [windowedMessageRenderRows, messages.length, t]);
+  }, [visibleMessageRows, messages.length, t]);
   const completedActivity = useMemo(() => buildCompletionActivity(
     currentSessionKey,
     userRunCards,
@@ -3210,16 +3204,9 @@ export function Chat() {
   useEffect(() => {
     if (!pendingCompletionActivity || pendingCompletionActivity.sessionKey !== currentSessionKey || loading) return;
     const index = pendingCompletionActivity.index ?? userRunCards.find((card) => card.runId === pendingCompletionActivity.runId)?.triggerIndex;
-    const scroller = scrollElementRef.current;
-    const anchor = index == null ? null : scroller?.querySelector<HTMLElement>(`#chat-message-${index}`);
-    if (scroller && anchor) {
-      scroller.scrollTo({
-        top: anchor.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 20,
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-      });
-    }
+    if (index != null) scrollToMessageIndex(index);
     clearCompletionNavigation();
-  }, [clearCompletionNavigation, currentSessionKey, loading, pendingCompletionActivity, userRunCards]);
+  }, [clearCompletionNavigation, currentSessionKey, loading, pendingCompletionActivity, userRunCards, scrollToMessageIndex]);
 
   const streamingToolsForMessage = useMemo(
     () => (streamingReplyText != null || hasActiveExecutionGraph ? [] : streamingTools),
@@ -3253,7 +3240,6 @@ export function Chat() {
           : 'thinking') as 'thinking' | 'streaming' | 'syncing',
     }
     : null;
-  const showStandaloneStreamStatus = inputRunActive && streamingReplyText == null && !pendingImageGeneration;
   /**
    * While a run is live its thinking belongs to the active card, not to the
    * streaming bubble. An active card always clears `hasActivity` (`card.active`
@@ -3264,6 +3250,8 @@ export function Chat() {
     () => userRunCards.some((card) => card.active),
     [userRunCards],
   );
+  const showStandaloneStreamStatus = inputRunActive && streamingReplyText == null
+    && !pendingImageGeneration && !streamReasoningAdopted;
 
 
   // Cache generated files per run so the activity receipt and artifact panel share one projection.
@@ -3372,7 +3360,6 @@ export function Chat() {
     const { cache: next, changed } = mergeGraphStepCacheEntries(current, userRunCards);
     if (changed) {
       graphStepCacheStore.set(currentSessionKey, next);
-      gcGraphStepCache();
     }
   }, [userRunCards, currentSessionKey]);
 
@@ -3381,46 +3368,14 @@ export function Chat() {
     <div
       ref={splitContainerRef}
       data-testid="chat-page"
+      data-project-workspace={projectWorkspaceId}
+      data-session-generation={currentSession.sessionId}
       className={cn(
         'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
-        '-m-5 rounded-tl-xl bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]',
+        '-m-5 rounded-tl-xl bg-background',
       )}
       style={{ height: 'calc(100% + 2.5rem)' }}
     >
-      {/* verse-style background: grid, glows, noise.
-        *
-        * It belongs to the SESSION, not to the empty state, and it is the page's
-        * canvas rather than the conversation's — both of which are corrections.
-        *
-        * It used to be mounted inside the message pane, `position: fixed`, and
-        * revealed only while `isEmpty`. Nothing in the ancestor chain establishes
-        * a containing block, so `fixed` resolved against the viewport: the
-        * hairlines ran across the sidebar too, for as long as the hero was up.
-        * Then the first message landed and the whole layer faded out, leaving the
-        * transcript on a flat canvas.
-        *
-        * Now it is an `absolute` layer on the page box, so it stops exactly where
-        * the page does (the sidebar keeps its own surface), it never leaves, and
-        * it spans BOTH columns — the workspace panel is co-planar with the
-        * conversation, so the grid has to cross the divider rather than stop at
-        * it. That is also why the panel's own surfaces are transparent in the
-        * side placement; see codex-workspace-panel.css.
-        *
-        * `data-phase` is what the hero-only flourishes hang off, and `z-index: 0`
-        * keeps it under every positioned sibling that follows — which is why the
-        * two columns, the transcript wrapper, the composer and the hero rows are
-        * all `relative`. */}
-      <div
-        className="codex-welcome-bg"
-        data-phase={isEmpty ? 'hero' : 'conversation'}
-        aria-hidden="true"
-        data-testid="chat-welcome-bg"
-      >
-        <div className="codex-welcome-bg__grid" />
-        <div className="codex-welcome-bg__glow codex-welcome-bg__glow--a" />
-        <div className="codex-welcome-bg__glow codex-welcome-bg__glow--b" />
-        <div className="codex-welcome-bg__noise" />
-      </div>
       {/* Left column: chat. `relative` is the status rail's anchor — it hangs
           off this column's own top-right corner, not the page's, so it can never
           drift over the artifact panel. */}
@@ -3434,38 +3389,30 @@ export function Chat() {
         ref={chatToolbarRef}
         data-testid="chat-toolbar-shell"
         className={cn(
-        'chat-toolbar-shell relative flex shrink-0 items-center justify-between gap-3 px-4 py-2',
-        'min-h-11 bg-material-panel',
+        'chat-toolbar-shell relative flex shrink-0 items-center justify-between gap-2 px-3 py-1',
+        'min-h-10 bg-material-panel',
       )}
       >
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />
-        <div className="no-drag relative z-10 min-w-0">
-          {!isEmpty && (
-            <div className="flex items-center gap-1.5">
+        <div className="no-drag relative z-10 flex min-w-0 flex-1 items-center gap-1">
+            <div className="flex min-w-0 items-center gap-1.5">
               <ProjectSessionHeader
+                key={`${activeWorkspaceId ?? ''}:${currentSessionKey}`}
+                showProject
                 workspaceId={activeWorkspaceId}
                 projectName={activeWorkspace?.name || basenameFromPath(activeWorkspace?.rootPath) || 'clawx'}
                 projectPath={activeWorkspace?.rootPath}
                 workspaceProfiles={workspaceProfiles}
                 switchWorkspace={handleSwitchWorkspace}
                  pickWorkspaceFolder={handlePickWorkspaceFolder}
-                 onOpenTaskLedger={handleOpenTaskLedger}
-                 onOpenClawGraph={handleOpenClawGraph}
                 sessions={sessions}
                 currentSessionKey={currentSessionKey}
                 sessionLabels={sessionLabels}
                 workspaceSessionKeys={Object.keys(activeWorkspace?.sessionStates ?? {})}
-                switchSession={switchSession}
+                switchSession={(key) => { void openFamilySession(key); }}
                 renameSession={renameSession}
-                onForkSession={handleForkSession}
-                onCheckpoints={() => setCheckpointsOpen(true)}
-                forkDisabled={forkDisabled}
-                forkBusy={forkBusy}
-                onHandoffSession={handlePrepareHandoff}
-                handoffDisabled={handoffDisabled}
-                handoffBusy={handoffBusy}
-                continuityRecommendation={continuityRecommendation}
-                sessionLineage={sessionLineage}
+                derivation={sessionActivitySnapshot?.derivation}
+                onRefresh={() => { void loadSessions(); }}
                 runtimeRuns={runtimeRuns}
                 activeRunId={activeRunId}
                 sending={sending}
@@ -3473,9 +3420,12 @@ export function Chat() {
                 runError={runError}
               />
             </div>
-          )}
         </div>
-        <div data-testid="chat-toolbar-actions" className="no-drag relative z-10 flex items-center gap-2">
+        <div data-testid="chat-toolbar-actions" className="no-drag relative z-10 flex min-w-0 shrink-0 items-center gap-1">
+          <TaskLedgerSummaryPanel workspaceId={activeWorkspace?.id} session={currentSession}
+            binding={activeWorkspace?.coordinatorBindings?.[currentSessionKey]} mode="bar" hideWhenEmpty projectWide={Boolean(projectWorkspaceId)}
+            onTaskSelected={async () => { await fetchWorkspaces(); await loadSessions({ force: true }); }}
+            refreshKey={`${activeRunId ?? ''}:${sending}:${pendingFinal}`} />
           {showSyncStatus && (
             <div
               data-testid="chat-history-sync-status"
@@ -3483,7 +3433,7 @@ export function Chat() {
               role="status"
             >
               <OrbStatus state="syncing" label={t('startup.syncing')} className="size-3.5" />
-              <span>{t('startup.syncing')}</span>
+              <span className="sr-only">{t('startup.syncing')}</span>
             </div>
           )}
           {/* The toggle is deliberately NOT gated on the workspace panel being
@@ -3493,14 +3443,48 @@ export function Chat() {
             * was on screen. Only the PASSIVE layer yields to the panel, because
             * only that layer takes width from the transcript. */}
           <ChatToolbar
+            key={`${activeWorkspaceId ?? ''}:${currentSessionKey}`}
+            workspaceId={activeWorkspace?.id}
+            sessionGeneration={currentSession.sessionId}
             promptCacheStatus={promptCacheStatus}
             sessionActivityAvailable={hasSessionActivityEntry}
             sessionActivityOpen={sessionActivityRailOpen}
             sessionActivityNeedsAttention={sessionActivityLevel === 'attention'}
             onToggleSessionActivity={handleToggleSessionActivity}
+            onCheckpoints={() => setCheckpointsOpen(true)}
+            checkpointsDisabled={sending || pendingFinal}
+            onForkSession={handleForkSession}
+            forkDisabled={forkDisabled}
+            forkBusy={forkBusy}
+            onHandoffSession={handlePrepareHandoff}
+            handoffDisabled={handoffDisabled}
+            handoffDisabledReason={handoffDisabledReason}
+            handoffBusy={handoffBusy}
+            continuityRecommendation={continuityRecommendation}
           />
         </div>
       </div>
+
+      {projectWorkspaceId && <div data-testid="project-coordinator-entry" className="relative px-4 pt-1 text-xs text-muted-foreground">
+        {t('projectEntry.coordinator', { name: activeWorkspace?.name ?? '' })}
+      </div>}
+      {handoffOperation && !handoffBusy && handoffOperation.phase !== 'sent' && <section data-testid="handoff-recovery" data-phase={handoffOperation.phase}
+        className="relative flex min-w-0 flex-wrap items-center gap-2 border-b border-border/40 px-4 py-1 text-xs">
+        <span role="status">{t(`handoffRecovery.phase.${handoffOperation.phase}`)}</span>
+        {['creating', 'ready', 'failed'].includes(handoffOperation.phase) && <button type="button" data-testid="handoff-recovery-resume" className="underline"
+          onClick={() => { handoffIntentIdRef.current = handoffOperation.id; setHandoffDraft(handoffOperation.draftInput); setHandoffDialogOpen(true); }}>
+          {t('handoffRecovery.resume')}
+        </button>}
+        <button type="button" data-testid="handoff-recovery-check" className="underline" onClick={() => {
+          const visit = useChatStore.getState().viewRevision;
+          if (activeWorkspace?.id) void hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id, sessionKey: currentSessionKey,
+            operationId: handoffOperation.id, reconcile: true }).then((result) => {
+              if (isCurrentControlScope() && useChatStore.getState().viewRevision === visit) setHandoffOperation(result.operation);
+            });
+        }}>{t('handoffRecovery.check')}</button>
+        {handoffOperation.sessionKey !== currentSessionKey && handoffOperation.sessionGeneration && <button type="button" className="underline"
+          onClick={() => { void openFamilySession(handoffOperation.sessionKey); }}>{t('handoffRecovery.openChild')}</button>}
+      </section>}
 
       {/*
         * Session status rail — the surface the recovery panel used to occupy.
@@ -3520,8 +3504,13 @@ export function Chat() {
         >
           <SessionActivityPanel
             snapshot={visibleSessionActivitySnapshot}
-            plan={sessionActivityPlanVisibleInTranscript ? null : sessionActivityPlan}
+            statusPending={sessionActivitySnapshotPending}
+            sources={sessionEnvironmentSources}
+            workspaceName={activeWorkspace?.name}
+            onClose={handleCloseSessionActivity}
+            plan={null}
             processes={sessionActivityProcesses}
+            activeWorkspaceSubject={activeWorkspaceSubject}
             compact
             className="!w-full"
             showGit={sessionActivityShowGit}
@@ -3533,27 +3522,16 @@ export function Chat() {
             onOpenSubagent={handleOpenSubagentTranscript}
             onOpenProcess={handleOpenProcess}
             onRetryStatus={() => void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey })}
+            context={sessionContextUsage}
           />
         </aside>
       )}
 
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
-        {isEmpty && (
-          <div
-            className={cn(
-              'codex-welcome-watermark',
-              !sendingAnimation && 'codex-welcome-watermark--visible',
-              sendingAnimation && 'codex-welcome-watermark--sending',
-            )}
-            aria-hidden="true"
-            data-testid="chat-welcome-watermark"
-          >
-            verse
-          </div>
-        )}
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
-        {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef} />}
+        {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef}
+          onSelect={scrollToMessageIndex} firstVisibleIndex={messageViewport.firstVisibleIndex} />}
         {/* One measure, always. The layout used to widen to `max-w-7xl` and turn
             into a row when the recovery rail appeared, so the transcript was
             re-centred AND re-wrapped in the same frame. The status rail is
@@ -3575,8 +3553,7 @@ export function Chat() {
               ref={contentRef}
               className={cn(
                 "mx-auto space-y-4",
-                // Empty state fills the pane so the scroll area does not collapse
-                // around the status rail and let the watermark reflow.
+                // Preserve the centred input layout before the first message.
                 isEmpty ? "h-full w-full max-w-[820px]" : "max-w-[820px]",
               )}
             >
@@ -3613,13 +3590,17 @@ export function Chat() {
                       </button>
                     </div>
                   )}
-                  {windowedMessageRenderRows.rows.map((row) => {
+                  <div ref={messageViewport.attachList} data-testid="chat-virtual-history" className="relative"
+                    style={{ height: messageViewport.total, overflowAnchor: 'none' }}>
+                  {messageViewport.rows.map((row, position) => {
                     if (row.hidden) return null;
                     return (
                     <div
                       key={row.key}
+                      ref={messageViewport.measure}
+                      data-viewport-key={row.key}
                       className="space-y-3"
-                      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 200px' }}
+                      style={{ position: 'absolute', top: messageViewport.offsets[messageViewport.start + position], width: '100%' }}
                       id={`chat-message-${row.index}`}
                       data-testid={`chat-message-${row.index}`}
                     >
@@ -3639,6 +3620,7 @@ export function Chat() {
                         textOverride={row.textOverride}
                         suppressAssistantText={row.suppressAssistantText}
                         suppressToolCards={row.suppressToolCards}
+                        showActions={!foldedNarrationIndices.has(row.index)}
                         suppressProcessAttachments={row.suppressToolCards}
                         suppressReasoning={row.suppressReasoning}
                         onOpenFile={handleOpenAttachedFile}
@@ -3648,12 +3630,8 @@ export function Chat() {
                         onDraftInteractionResponse={handleAppendComposerDraft}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
-                        onForkFromMessage={(messageId) =>
-                          void handleForkSession({ fromLeafId: messageId })
-                        }
-                        onCompactRange={(messageId, boundary) =>
-                          void handleCompactRange(messageId, boundary)
-                        }
+                        onForkFromMessage={handleForkFromMessage}
+                        onCompactRange={handleCompactMessageRange}
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;
@@ -3678,6 +3656,12 @@ export function Chat() {
                         // `isTurnSummaryExpanded`) so both surfaces agree on
                         // when the plan's full view is on screen.
                         const expanded = isTurnSummaryExpanded(card);
+                        const activeTool = card.active
+                          ? card.steps.findLast((step) => step.kind === 'tool' && step.status === 'running')
+                          : undefined;
+                        const activeTerminal = card.active
+                          ? card.surfaces.terminals.findLast((terminal) => terminal.status === 'running')
+                          : undefined;
                         /* Reasoning counts as activity: a pure-thinking turn (no
                          * tools, no files — the common DeepSeek shape) otherwise
                          * had no card at all, and its thinking would have had
@@ -3700,9 +3684,15 @@ export function Chat() {
                               startedAt={card.startedAt}
                               endedAt={card.endedAt}
                               expanded={expanded}
+                              activity={activeTool ? (
+                                <ExecutionGraphCard agentLabel={card.agentLabel} steps={[activeTool]} active compact />
+                              ) : activeTerminal ? (
+                                <CallChip name={activeTerminal.command} icon="terminal" status="running" showTimer={false} />
+                              ) : undefined}
                               reasoning={cardReasoning}
                               reasoningStreaming={card.active && assistantStreamStatus?.state === 'thinking'}
                               summary={{
+                                tools: card.steps.filter((step) => step.kind === 'tool').length,
                                 thoughts: cardReasoning.length,
                                 plan: card.surfaces.plan?.todos.length ?? 0,
                                 files: generatedFiles.length,
@@ -3718,9 +3708,6 @@ export function Chat() {
                                 }))
                               }
                             >
-                              {card.codingRunView && (
-                                <CodingRunEvidence codingRun={card.codingRunView} />
-                              )}
                               {/* Pending approvals first — the run is blocked on them. */}
                               {cardApprovals.length > 0 && (
                                 <PendingRunApprovals
@@ -3730,8 +3717,8 @@ export function Chat() {
                               )}
                               {card.surfaces.plan && (
                                 <ToolUiPlanView
-                                  title={card.surfaces.plan.title ?? ''}
-                                  showTitle={Boolean(card.surfaces.plan.title)}
+                                  title={t('task.steps')}
+                                  showTitle
                                   description={card.surfaces.plan.description}
                                   todos={card.surfaces.plan.todos}
                                   compact
@@ -3766,7 +3753,7 @@ export function Chat() {
                                 agentLabel={card.agentLabel}
                                 steps={card.steps}
                                 active={card.active}
-                                suppressThinking={card.suppressThinking}
+                                suppressThinking={card.suppressThinking || cardReasoning.length > 0 || Boolean(activeTool || activeTerminal)}
                                 traceId={card.traceId}
                                 expandedStepIds={new Set(
                                   Object.entries(runActivityStepDetailsExpanded[runKey] ?? {})
@@ -3791,6 +3778,9 @@ export function Chat() {
                                   embedded
                                 />
                               ))}
+                              {card.codingRunView && (
+                                <CodingRunEvidence codingRun={card.codingRunView} />
+                              )}
                             </TurnSummaryCard>
                           </div>
                         );
@@ -3799,6 +3789,7 @@ export function Chat() {
                     );
                   })}
 
+                  </div>
                   {/* A pending approval must NEVER be invisible — it is the only
                       control that can unblock the agent. Attribution to a turn
                       is best-effort: a turn whose whole output was "I need
@@ -3825,7 +3816,7 @@ export function Chat() {
                         timestamp: activeRuntimeRunStartedAt ?? Date.now(),
                       }}
                       isStreaming
-                      streamStatus={assistantStreamStatus}
+                      streamStatus={streamReasoningAdopted ? null : assistantStreamStatus}
                       reasoningOverride={streamingReasoning}
                       suppressReasoning={streamReasoningAdopted}
                       liveUsage={liveUsage}
@@ -3836,7 +3827,7 @@ export function Chat() {
                   {shouldRenderAssistantStreamMessage && (
                     streamingReplyText != null
                     || !hasActiveExecutionGraph
-                    || (hasStreamText && streamTools.length === 0 && !hasRunningStreamToolStatus && !hasRunningRuntimeToolStatus)
+                    || visibleStreamingText != null
                   ) && (
                     <ChatMessage
                       agent={currentAgent}
@@ -3848,7 +3839,7 @@ export function Chat() {
                       })}
                       textOverride={streamingReplyText ?? undefined}
                       isStreaming
-                      streamStatus={assistantStreamStatus}
+                      streamStatus={streamReasoningAdopted ? null : assistantStreamStatus}
                       reasoningOverride={streamingReasoning}
                       suppressReasoning={streamReasoningAdopted}
                       streamingTools={streamingToolsForMessage}
@@ -3927,9 +3918,13 @@ export function Chat() {
           </Button>
         </div>
       )}
-      {activeWorkspace && (
-        <div className="relative mx-auto w-full max-w-[768px] px-4">
-          <ComposerGitStrip workspace={activeWorkspace} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} />
+      {/* Task tray: the running task stays docked beside the input until it
+        * finishes (then folds to a one-line receipt); nothing renders while the
+        * session has neither a durable task nor a live plan. */}
+      {!isEmpty && (
+        <div className="relative mx-auto w-full max-w-[768px] px-4" data-testid="chat-task-tray">
+          <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
+            plan={sessionActivityPlan} runActive={inputRunActive} onOpenTask={handleOpenSessionTask} />
         </div>
       )}
       <ChatInput
@@ -3954,6 +3949,7 @@ export function Chat() {
         forkBusy={forkBusy}
         onHandoffSession={handlePrepareHandoff}
         handoffDisabled={handoffDisabled}
+        handoffDisabledReason={handoffDisabledReason}
         handoffBusy={handoffBusy}
         knowledgeScope={knowledgeScope}
         onKnowledgeScopeChange={handleKnowledgeScopeChange}
@@ -3967,11 +3963,14 @@ export function Chat() {
         onDrainQueuedFollowup={handleDrainQueuedFollowup}
         taskLoopUpgradeBusy={taskLoopUpgradeBusy}
         onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
-        /* `relative` puts the composer in the same paint layer as the background
-         * sheet behind it, and later in tree order, so the grid stays under the
-         * card instead of over it. Same reason on the two hero rows below. */
+        /* The input is the only elevated surface in the conversation. */
         className={cn('relative', sendingAnimation && 'codex-composer-host--sending')}
       />
+      {activeWorkspace && !isEmpty && (
+        <div className="relative mx-auto w-full max-w-[768px] px-4">
+          <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active={!isEmpty} sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
+        </div>
+      )}
       {/* Reference stacking under the stage is composer → context → chips, then
         * a spacer that grows like the message area above it; the two spacers
         * together centre the group without the composer leaving its slot. */}
@@ -3980,7 +3979,9 @@ export function Chat() {
           <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
             <WelcomeScreen
               onPickFolder={handlePickWorkspaceFolder}
-              disabled={!isGatewayRunning}
+              onSelectProject={handleSwitchWorkspace}
+              onSelectWorktree={handleSwitchWorktreeWorkspace}
+              disabled={inputRunActive}
             />
           </div>
           <div className={cn('codex-welcome-chips-host relative', sendingAnimation && 'codex-welcome-chips--sending')}>
@@ -3994,7 +3995,7 @@ export function Chat() {
         </>
       )}
       <Suspense fallback={null}>
-        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} />}
+        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} generation={currentSession.sessionId} />}
         {compressionEvidence && <CompactionArtifactViewer
           open onOpenChange={(open) => { if (!open) setCompressionEvidence(null); }}
           sessionKey={currentSessionKey} checkpointId={compressionEvidence.checkpointId}
@@ -4004,6 +4005,23 @@ export function Chat() {
           prepareRecoveryBusy={handoffBusy} forkBusy={forkBusy}
         />}
       </Suspense>
+      <Dialog open={questionFork !== null} onOpenChange={(open) => { if (!open) setQuestionFork(null); }}>
+        <DialogContent data-testid="question-fork-dialog" className="max-w-xl bg-surface-modal">
+          <DialogTitle>{t('questionFork.title')}</DialogTitle>
+          <DialogDescription>{t('questionFork.description')}</DialogDescription>
+          <Textarea data-testid="question-fork-draft" aria-label={t('questionFork.question')} value={questionFork?.draft ?? ''}
+            onChange={(event) => setQuestionFork((value) => value ? { ...value, draft: event.target.value } : null)} className="min-h-32 bg-surface-input" />
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setQuestionFork(null)}>{t('common:actions.cancel')}</Button>
+            <Button data-testid="question-fork-create" disabled={forkBusy || !questionFork?.draft.trim()} onClick={() => {
+              if (!questionFork || questionFork.sourceSessionKey !== currentSessionKey || questionFork.generation !== currentSession.sessionId) {
+                toast.error(t('questionFork.sourceChanged')); return;
+              }
+              void handleForkSession({ fromLeafId: questionFork.messageId, questionDraft: questionFork.draft });
+            }}>{t('questionFork.create')}</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <Dialog open={handoffDialogOpen} onOpenChange={setHandoffDialogOpen}>
         <DialogContent
           className="max-w-3xl rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"
@@ -4060,6 +4078,7 @@ export function Chat() {
             id="chat-handoff-draft"
             data-testid="chat-handoff-draft"
             value={handoffDraft}
+            readOnly={handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating'}
             onChange={(event) => setHandoffDraft(event.target.value)}
             className="mt-2 min-h-[340px] resize-y bg-surface-input font-mono text-xs"
           />
@@ -4087,15 +4106,18 @@ export function Chat() {
       </div>
 
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
-      {panelOpen && (
+      {(panelOpen || artifactTabs.length > 0) && (
         <>
-          {!terminalBottomOpen && panelExpanded && (
+          {panelOpen && !terminalBottomOpen && panelExpanded && (
             <Suspense fallback={null}>
               <PanelResizeDividerLazy containerRef={splitContainerRef} />
             </Suspense>
           )}
           <aside
             data-testid="artifact-panel-aside"
+            data-open={panelOpen ? 'true' : 'false'}
+            hidden={!panelOpen}
+            inert={!panelOpen}
             data-expanded={panelExpanded ? 'true' : 'false'}
             data-placement={terminalBottomOpen ? 'bottom' : 'side'}
             className={cn(
@@ -4123,6 +4145,7 @@ export function Chat() {
                 : 'relative border-l border-black/5 dark:border-white/10',
               !terminalBottomOpen && 'codex-workspace-sweep',
               'no-drag',
+              !panelOpen && 'hidden',
             )}
             style={terminalBottomOpen
               ? { width: '100%', height: terminalBottomHeight }
@@ -4344,6 +4367,8 @@ function ChatStartupError({ message, onRetry }: { message: string | null; onRetr
 type WelcomeScreenProps = {
   onSend: (text: string) => void | Promise<unknown>;
   onPickFolder?: () => void | Promise<unknown>;
+  onSelectProject?: (workspaceId: string) => void | Promise<unknown>;
+  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
   disabled?: boolean;
 };
 
@@ -4413,106 +4438,40 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
   return <AuiProvider value={aui}>{children}</AuiProvider>;
 }
 
-/**
- * Empty-state scaffolding: the project/branch context row under the composer.
- *
- * There is deliberately no heading here. The reference's empty state has one
- * piece of display type — the giant `verse` watermark behind the composer —
- * and adding a second ("what should we build in X?") gave the screen two
- * competing focal points and pushed the composer off centre. The watermark is
- * the heading; this row is the caption under it.
- *
- * That leaves the context row as the only place the workspace can be switched
- * from, so the project token is the picker rather than a static label.
- */
-function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenProps, 'onSend'>) {
-  const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
-  const hasWorkspace = Boolean(activeWorkspace);
-  const [gitStatus, setGitStatus] = useState<
-    { workspaceId: string; branch: string; detached: boolean } | null
-  >(null);
-
-  const refreshGitStatus = useCallback(async () => {
-    const workspaceId = activeWorkspace?.id;
-    if (!workspaceId) return;
-    try {
-      const result = await hostApi.git.status();
-      const status = result.status;
-      setGitStatus(status?.isRepository && status.branch
-        ? { workspaceId, branch: status.branch, detached: status.detached ?? false }
-        : null);
-    } catch {
-      setGitStatus(null);
-    }
-  }, [activeWorkspace?.id]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const loadGitStatus = async () => {
-      const workspaceId = activeWorkspace?.id;
-      if (!workspaceId) return;
-      try {
-        const result = await hostApi.git.status();
-        const status = result.status;
-        if (!cancelled) {
-          setGitStatus(status?.isRepository && status.branch
-            ? { workspaceId, branch: status.branch, detached: status.detached ?? false }
-            : null);
-        }
-      } catch {
-        if (!cancelled) setGitStatus(null);
-      }
-    };
-    void loadGitStatus();
-    return () => {
-      cancelled = true;
-    };
-  }, [activeWorkspace?.id]);
-
-  /* A result from the workspace we just left is dropped here rather than
-   * cleared in the effect body: clearing it there is a synchronous setState
-   * inside an effect, which costs a second render pass on every workspace
-   * switch. Tagging the result with the workspace it was read from is enough
-   * to know it is stale. */
-  const branch = gitStatus?.workspaceId === activeWorkspace?.id ? gitStatus : null;
-
-  return (
-    <div className="codex-welcome-stage">
-      {hasWorkspace && (
-        <div className="codex-welcome-context" data-testid="chat-welcome-context">
-          <div className="codex-welcome-context__group" data-testid="chat-welcome-environment-group">
-            <WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} />
-            {branch && (
-              <WelcomeBranchPicker
-                branch={branch.branch}
-                detached={branch.detached}
-                disabled={disabled}
-                onChanged={refreshGitStatus}
-              />
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+/** The empty conversation names its project without exposing Git configuration. */
+function WelcomeScreen({ disabled = false, onPickFolder, onSelectProject, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'>) {
+  const activeWorkspace = useWorkspacesStore(state=>state.activeWorkspace);
+  if (!activeWorkspace) return null;
+  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} onSelect={onSelectProject} onSelectWorktree={onSelectWorktree}/></div></div>;
 }
 
-/**
- * Quick-action chips. Rendered *below* the composer to match the reference
- * ordering — above, a row of suggestions reads as a menu the input belongs to;
- * below, it reads as shortcuts you may ignore.
- *
- * They retract while the composer holds text: once you have said what you want,
- * three canned openers are noise sitting between you and the send button. The
- * retraction is staggered left-to-right and reverses on the way back, and the
- * row keeps its height throughout so the composer never moves.
- */
+/** Optional starters share one disclosure; its reserved row keeps drafting stable. */
 function WelcomeChips({
   disabled = false,
   onSend,
   retracted = false,
 }: Pick<WelcomeScreenProps, 'disabled' | 'onSend'> & { retracted?: boolean }) {
   const { t } = useTranslation('chat');
+  const menuRef = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (retracted && menuRef.current) menuRef.current.open = false;
+  }, [retracted]);
+  useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) menuRef.current.open = false;
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !menuRef.current?.open) return;
+      menuRef.current.open = false;
+      menuRef.current.querySelector('summary')?.focus();
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, []);
   const quickActions = useMemo<SuggestionConfig[]>(() => [
     {
       title: t('welcome.askQuestions'),
@@ -4543,14 +4502,22 @@ function WelcomeChips({
         // concerned; `inert` is what keeps a mid-fade chip from being clicked.
         inert={retracted || undefined}
       >
-        <ThreadPrimitive.Suggestions>
+        <details className="codex-welcome-quick-start" ref={menuRef}>
+          <summary data-testid="welcome-quick-start-trigger">
+            {t('welcome.quickStart')}
+            <ChevronDown className="h-3 w-3" aria-hidden="true" />
+          </summary>
+          <div className="codex-header-menu codex-welcome-quick-start__menu" data-testid="welcome-quick-start-menu">
+          <ThreadPrimitive.Suggestions>
           {({ suggestion }) => {
             const index = quickActions.findIndex((action) => (
               typeof action === 'string' ? action === suggestion.title : action.title === suggestion.title
             ));
             return <SuggestionItem disabled={disabled} Icon={actionIcons[index] ?? ListChecks} />;
           }}
-        </ThreadPrimitive.Suggestions>
+          </ThreadPrimitive.Suggestions>
+          </div>
+        </details>
       </div>
     </WelcomeSuggestionRuntime>
   );

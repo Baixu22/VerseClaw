@@ -1315,3 +1315,94 @@ Use this packet before any handoff, fork, or context-pressure continuation.
     focused and repo-wide unit gates. Per the 2026-07-09 decision, those UI E2E
     failures are parked as UI/worktree drift and are not treated as backend
     closure blockers.
+
+## 2026-11-03 Inline/Spill retention development checkpoint
+
+- The default truncation references remain archive-backed and bounded. The
+  follow-up retention policy is explicitly off by default through
+  `runtime.contextFamily.archiveRecallRetention.enabled`.
+- The real recall tool issues provenance only after checksum/session checks.
+  The pruner and replacement planner use it for `ageTurns < 4`, at most 16000
+  visible characters total, and only when the existing budget can fit it.
+  Already-trimmed results, ordinary tools, user content, and assistant reasoning
+  get no added retention. No store, timer, queue, or re-injection is introduced.
+- The legacy pruner negative control was captured before implementation at
+  commit `10dd6c472`. The frozen `off-mode-baseline.json` is replayed by current
+  tests; metadata is never counted as provider-visible text.
+- Development proof passed 36 retention tests, one malformed-provider evidence
+  test, 10 would-trim tests, and 126 config-parity tests. Replay/precheck retain
+  minimal verified lineage; eligible sources are selected before conversion and
+  final budgets are planned afterward with transient lineage removed before
+  dispatch. Existing call-id rewrites carry only a previously valid binding.
+  Guarded disk reload covers large ASCII/CJK pages; multi-block budget failures
+  fall back to the existing unprotected plan. The evaluator retains real JSONL.
+  Multiple fitting recalls share the total cap, converter-added text remains
+  bounded, and masking replacements follow the enabled conversion boundary.
+  Retained pages do not consume truncation notices; actual budget pressure
+  releases the oldest protected page first through the existing planner.
+  This is a development checkpoint, not final acceptance.
+- Final deterministic/live-provider results, raw transcripts, source hashes,
+  command records, credential scan, and recovery index are retained under
+  `harness/specs/fixtures/context-inline-spill/`; closure depends on reading
+  those refreshed artifacts and completing the spec-declared gates.
+- Autonomous model recall selection, full-loop continuation, lossless full
+  summarization, product/default graduation, and GA are not claimed.
+
+## 2026-11-08 Inline/Spill 封存收益复核
+
+- 第二轮 47 份、第三轮 37 份证据哈希及 1605 个归档回读通过，原始评分与逐次 usage 复算一致；候选未跟踪材料已复制归档并记录 SHA256。
+- 第三轮收益判定为 NO-GO：B2/B4/B5/B6 失败，B3 的唯一差异来自无证据控制；TF-0749 保持 in_progress/80，TF-0750–0755 的既有 done 状态保留。
+- 本轮新增 provider 调用为 0。复算结果、验证记录与下一轮页适配实验见 [封存收益证据复核](../../harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/REPORT.md)。
+- 续接收尾：48 项相关单测、node/web/tests 三套无缓存类型、契约与本任务 Harness 检查通过；完整 Harness CI 在 59 项前置测试通过后因四份 Agent Dev 证据过期退出 1。Task Forest validate/export 与图、HTML 当前投影及末帧读回通过，TF-0749 字段保持原值。
+
+## 2026-11-08 Inline/Spill 第四轮页预算适配
+
+- TF-0859 已完成显式 1–5500 字符页参数适配，以及 32 次 deterministic 和 96 次 live/367 次调用的评测。最大序列化结果 5944 字符、超页 0、24 对首轮请求相同、原始历史旁路与 baseline oracle 泄漏均为 0。
+- stable 证据正确 0/18、控制有效 null 3/6；B1–B6 全部失败，56 次响应耗尽 900 输出 token，token 增长 51.56%。TF-0749 保持 in_progress/80、NO-GO。
+- 50 项定向单测、三套串行无缓存类型、契约与定向 Harness 通过。完整 Harness CI 在 59 项测试通过后因四份 Agent Dev 历史证据过期退出 1。认证失败的首次 96 请求、测试夹具失败和类型内存失败均保留，详见[第四轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md)。
+
+## 2026-11-13 Inline/Spill 第五轮低推理收益实测
+
+- 同一模型、四臂、8 个任务与三次重复，900 输出 token 上限不变；显式 reasoning.effort=low。
+- 96 次运行/438 调用：436 completed、2 transport error、0 incomplete。stable 证据 0/18，控制 6/6。
+- B1/B5 通过；B2/B3/B4/B6 失败。总 token 相对 reference-visible 增长 94.88%，证据保留正向配对 0、反向 1。
+- 记录 dirty 候选身份限制、超页和复算工具失败，不把原始可复算改写为 B7 或产品收益通过。
+- 证据：harness/specs/fixtures/context-inline-spill-benefit-round5/REPORT.md。
+
+## 2026-11-13 Inline/Spill 第六轮 clean 候选复核
+
+- 冻结设计已单独提交为 `ab8605136`：96 次四臂、900 输出 token、低推理、8 轮和 5500 字符页，B1–B7 阈值保持原值。
+- 开跑/结束身份、原始 provider 状态和 usage、归档选择及逐调用记录由候选与磁盘证据绑定；B2/B3 使用 18 个证据配对，6 个控制配对单独报告。
+- 第五轮 32 份原始文件按字节封存，保留 mechanism-only/NO_GO 和 dirty 拒绝；第六轮完成判定读取独立 verifier 结果。TF-0749 保持 in_progress/80。
+- clean 候选 `eb93671ab`：96 次运行/399 调用，394 completed、5 transport error、0 incomplete。stable 证据 3/18、控制 6/6，证据保留正向 3、反向 0。
+- B3/B4/B5/B7 通过，B1/B2/B6 失败：成功回读率 94.44%，McNemar p=0.25，总 token 增长 87.78%。verifier 接受 clean 候选并核验 555 个归档，判定 no-benefit/NO_GO；TF-0749 未收口。
+- 同候选 54 项定向测试、契约和定向 Harness 通过。完整 typecheck 退出 1（VerseBrowser 类型入口缺失），完整 Harness CI 58/59、退出 1（三份其他任务 spec 缺少 lifecycleStatus）；失败日志保留在第六轮证据包。
+
+## 2026-11-13 Inline/Spill 第七轮原归档与压力来源修复
+
+- 评测锚定初始可见 exec 归档，连续分页并在取得精确值后结束；四臂工具说明一致。
+- agent 健康检查日志保留全部原字节，改为 exec 工具观测并保留 user/assistant 回合节奏；新增工具压力继续受既定预算处理。旧 user 来源对照单独保留。
+- 900 输出 token、5500 字符页、原模型、四臂、语料及 B1–B7 阈值保持原值；240000ms 单次请求期限在 live 前冻结，无自动重试。
+- TF-0749 在 B1–B7 全过、clean 候选被 verifier 接受且 base_graph_hash 匹配前保持 in_progress/80。
+- clean候选`89dff8ebd`已完成96次/416次调用，全部completed；stable证据1/18、控制6/6。B1/B3/B5/B6/B7通过，B2/B4失败，verifier接受候选，判定mechanism-only/NO_GO。
+- token相对reference减少22.56%，原归档仍有39次正确选择、49次其他归档，原工具content命中1次。工具日志来源修复解决了预算缺口，任务收益仍需修复原归档分页与可见字段识别。
+
+## 2026-11-13 Inline/Spill 第八轮可见导航修复
+
+- 只从实际请求的可见引用、首个recall参数与投影工具输出生成原归档分页建议和完整字段位置；不复制字段值、不比较oracle、不读取原始历史。
+- 导航提示在四臂一致，模型自行发起function_call并输出最终value；原模型、900输出token、5500字符页、压力字节、240000ms期限及B1–B7阈值保持原值。
+- 第五、六、七轮原始证据和失败保持；独立冻结并在clean候选上通过B1–B7及verifier后，才收口TF-0749。
+- 第八轮f8d41ddb2完成96次/349次调用，全部completed；stable证据14/18、reference16/18、控制6/6。B1/B4/B6失败，token增幅25.027526%高于固定25%，NO_GO，父节点保持in_progress/80。
+- 当前故障是模型把URI文件名16位摘要扩写为64位checksum，missing后继续沿用错误目标。后续有界书签将最初可见引用放入既有agent问题，恢复建议不静默改写模型参数。
+
+## 2026-11-13 Inline/Spill 第九轮可见书签恢复
+
+- 书签只复制初始已可见URI/checksum到既有agent问题，长度不超过512字符，优先于错误模型参数；无引用基线不增加引用，payload和oracle值不进入书签。
+- 正常与首次URI扩写故障的deterministic对照均为reference/stable 6/6、off0/6，控制全对；该结果只证明恢复路径，真实收益由独立冻结后的clean候选96次live判定。
+- 原模型、语料、压力字节、900输出token、5500页、240000ms期限及B1–B7阈值保持；第五至第八轮失败完整保留。
+
+- 第九轮 clean 候选 `27c1a91dd228369ca1427d2b30f39dd6222cee37` 完成96次真实运行、324份completed响应。稳定证据17/18、reference13/18、baseline与retention-off0/18，控制6/6；保留正向17、反向0，总token相对reference下降5.694417567%。B1–B7全部通过，同候选clean检出的未改动verifier接受归集证据。
+- TF-0749已按严格B1–B7收口为done/100；七个子节点25条验收、父节点5条验收及固定收益条件完成磁盘回读。
+- 原live汇总与提案应用命令的退出码未观测，原回执保留；冻结源码恢复增加provider调用0，节点done/100及validate退出0已有独立回读。
+- 本轮产物`driven_by: agent`、`actor: codex-g7-inline-spill-tf0749-01a1d34c`、`realHumanEvidence: false`。证据与命令见[第九轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round9/REPORT.md)。
+- Task Forest export退出0；HTML当前投影与历史末帧读回TF-0749 done/100，七个子节点均done/100。完整Task Forest历史和导出留在本地。

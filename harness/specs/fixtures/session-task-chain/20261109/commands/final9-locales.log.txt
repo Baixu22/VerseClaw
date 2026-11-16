@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:25796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\session-task-locales.spec.ts:6:5 › project tasks and family navigation remain usable in all four interface languages (54.7s)
+
+  1 passed (57.7s)

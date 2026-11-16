@@ -1,0 +1,124 @@
+{
+  "candidate": "fb00956ed041531b14dad5601ace0e78cf63c50e",
+  "used": [
+    [
+      "d:/clawx/tests/unit/sidebar-render-containment.test.tsx",
+      {
+        "source": "D:/ClawX-work/session-task-unified-relay-20261109/tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "05cbe187f40ca3fc5cc452ca21498571720ace9fac27444da1d930f117cc9a01"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat.ts",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-plan/after/src/stores/chat.ts",
+        "sha256": "32c32045c87b0c03e1b292c4085924371497fe3de46aecb760a8f27b95cc829f"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/session-derivation.ts",
+      {
+        "source": "D:/ClawX-work/session-task-unified-relay-20261109/shared/types/session-derivation.ts",
+        "sha256": "d4dbb29a538041fe1806a156a447200609117143255f5d5c48588e5dbe47f997"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/session-read-model.ts",
+      {
+        "source": "D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts",
+        "sha256": "b0030d796f44714ac46995869f07b7b83c1f98160d9665b7f7a5a9ba467c8623"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/chat.json",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-plan/after/shared/i18n/locales/en/chat.json",
+        "sha256": "c8c7da3b2adb7895c975d7817115e232f607ee1fc033f55334850247f71e1d7c"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/taskledger.json",
+      {
+        "source": "D:/ClawX-work/session-task-unified-relay-20261109/shared/i18n/locales/en/taskLedger.json",
+        "sha256": "229d88ddfbb5a434403fd4a396dc090de48abfb406fa6ae17178bf2dfd670985"
+      }
+    ],
+    [
+      "d:/clawx/shared/chat/types.ts",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-plan/after/shared/chat/types.ts",
+        "sha256": "3c3ef066b4658c871a35c6e0f62aabd57244c9cb9757891034ddedb05e98e0c2"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/workspaces.ts",
+      {
+        "source": "D:/ClawX-work/session-task-unified-relay-20261109/src/stores/workspaces.ts",
+        "sha256": "40bee7adef9fe40d81e6615dda01cf09e58a356177aa63eb4d69330d022bd017"
+      }
+    ],
+    [
+      "d:/clawx/src/components/layout/sidebar.tsx",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-resolutions-final/src/components/layout/Sidebar.tsx",
+        "sha256": "72486e4b69504576505a32f45df59face6888fe137d6f24f4417855f39c6b4c5"
+      }
+    ],
+    [
+      "d:/clawx/src/components/layout/session-buckets.ts",
+      {
+        "source": "D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/session-buckets.ts",
+        "sha256": "9da36d4f51ecff9e6434fc64116a93c71f7c2ba53f858f5dd2dd04eb11231314"
+      }
+    ],
+    [
+      "d:/clawx/src/components/layout/sessionfoldertree.tsx",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-resolutions-final/src/components/layout/SessionFolderTree.tsx",
+        "sha256": "4100ff5aefb94f842437ff3be07c27a22be1f8828dfb0484ed728de0efb4b05c"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/workspace-session.ts",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-resolutions-final/src/lib/workspace-session.ts",
+        "sha256": "b413f72f7a78cc8926be9d0c417cdffc345768391dfd1b4b1d543d762d782e4a"
+      }
+    ],
+    [
+      "d:/clawx/tests/unit/workspace-session.test.ts",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-resolutions-final/tests/unit/workspace-session.test.ts",
+        "sha256": "9c9bf6308a620acd81450b9418134341e4eaf722f787df44c33fdda9cc1d39ec"
+      }
+    ],
+    [
+      "d:/clawx/tests/unit/session-activity-store-scope.test.ts",
+      {
+        "source": "D:/ClawX-work/session-task-unified-relay-20261109/tests/unit/session-activity-store-scope.test.ts",
+        "sha256": "3b33c39693dfa4a8f1a856a909f39d8bbdadccff8c19c8489cf6ed284be39037"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/session-activity.ts",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-resolutions-final/src/stores/session-activity.ts",
+        "sha256": "51c21009506d7aa0bed88b45fcb8e241a344c42b0eba662e0b75e3ddcda13e30"
+      }
+    ],
+    [
+      "d:/clawx/tests/unit/session-activity-background-read.test.ts",
+      {
+        "source": "D:/tmp/unified-management-20261109/session-main-plan/after/tests/unit/session-activity-background-read.test.ts",
+        "sha256": "75eb79dbd806e9ec27b4bfa8d600af1dbce86de15f9e7e9e203d69c6e8094cf4"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/session-activity-api.ts",
+      {
+        "source": "D:/ClawX-work/session-task-unified-relay-20261109/electron/services/session-activity-api.ts",
+        "sha256": "bdc278563194e58e8ce8097f8ca48990277ab4bdcb7ae9513569d7453d087133"
+      }
+    ]
+  ]
+}

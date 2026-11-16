@@ -1,5 +1,8 @@
 /**
- * Stage 5 memory convergence surface.
+ * @deprecated Production adoption retired (TF-0744).
+ * Historical Stage 5 observation and direct-test surface only. No production
+ * tool registration or public barrel exports consume this module; keep the
+ * direct exports for golden-run replay without restoring Runtime Memory persist.
  *
  * The facade is deliberately a projection boundary: adapters may retrieve or
  * summarize candidates, while only the injected namespace owner may persist.

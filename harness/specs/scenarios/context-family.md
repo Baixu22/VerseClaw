@@ -13,6 +13,21 @@ ownedPaths:
   - harness/specs/tasks/context-status-projection-shadow.md
   - harness/specs/tasks/context-observation-masking-projection.md
   - harness/specs/tasks/context-readonly-recall-surface.md
+  - harness/specs/tasks/context-inline-spill-default-path.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round3.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round6.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round7.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round8.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round9.md
+  - harness/specs/tasks/inline-spill-real-benefit-closeout.md
+  - harness/specs/rules/inline-spill-eval-projected-input.md
+  - harness/specs/fixtures/context-inline-spill-benefit-round3/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round6/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round7/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round8/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round9/**
+  - harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/**
+  - harness/specs/fixtures/context-inline-spill/**
 requiredRules:
   - context-family-boundary
   - context-runtime-kit-boundary
@@ -33,7 +48,13 @@ Use this scenario when work defines or changes:
 - ContextItemRegistry shadow metadata.
 - Context Status projections.
 - Observation masking and read-only recall surfaces.
+- Default truncation archive references and explicitly enabled, bounded
+  retention of verified archive recall result projections.
 - The staged harness task map for Context Family work.
+- Model-driven Inline/Spill evaluation with projection-only protocol outputs and identical initial inputs for retention pressure pairs.
+- Offline replay of sealed Inline/Spill results, with evidence-task and absent-evidence control pairs reported separately when interpreting retention benefit.
+- Evaluation-only archive pages require explicit 1–5500 character sizes, with invalid requests rejected before archive access and every returned page still passing through production projection.
+- Evaluation-only original-archive anchoring keeps the initial visible URI/checksum pair across pages. Agent-generated health logs retain their bytes as tool observations under the existing aggregate budget, with the user/assistant cadence fixed before live runs.
 
 ## Scenario Boundaries
 

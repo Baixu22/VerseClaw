@@ -1,0 +1,52 @@
+{
+  "before": {
+    "passed": 0,
+    "failed": 3,
+    "skipped": 39,
+    "files": 1
+  },
+  "assertions": [
+    {
+      "ancestorTitles": [
+        "host services"
+      ],
+      "fullName": "host services preserves current explicit business-task links during fork in Main",
+      "status": "failed",
+      "title": "preserves current explicit business-task links during fork in Main",
+      "duration": 10295.0074,
+      "failureMessages": [
+        "AssertionError: expected [] to deeply equal [ 'active-task', 'done-task' ]\n    at D:/tmp/clawx-audit-next-20261107/candidate/tests/unit/host-services.test.ts:1779:90\n    at file:///D:/tmp/clawx-audit-next-20261107/candidate/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+      ],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "host services"
+      ],
+      "fullName": "host services preserves current explicit business-task links during handoff in Main",
+      "status": "failed",
+      "title": "preserves current explicit business-task links during handoff in Main",
+      "duration": 314.5437000000002,
+      "failureMessages": [
+        "AssertionError: expected [] to deeply equal [ 'active-task', 'done-task' ]\n    at D:/tmp/clawx-audit-next-20261107/candidate/tests/unit/host-services.test.ts:1779:90\n    at file:///D:/tmp/clawx-audit-next-20261107/candidate/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+      ],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "host services"
+      ],
+      "fullName": "host services records canonical fork lineage in Main without creating a handoff",
+      "status": "failed",
+      "title": "records canonical fork lineage in Main without creating a handoff",
+      "duration": 6.864299999999275,
+      "failureMessages": [
+        "AssertionError: expected [] to deeply equal [ ObjectContaining{…} ]\n    at D:/tmp/clawx-audit-next-20261107/candidate/tests/unit/host-services.test.ts:1807:62\n    at file:///D:/tmp/clawx-audit-next-20261107/candidate/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+      ],
+      "meta": {},
+      "tags": []
+    }
+  ]
+}

@@ -28,6 +28,7 @@ import {
   Pin,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toastUserError } from '@/lib/user-error';
 import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { isGatewayRestarting } from '@/lib/gateway-status';
 import { rendererExtensionRegistry } from '@/extensions/registry';
@@ -76,8 +77,9 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useNewChatAction } from './use-new-chat-action';
 import { CalendarDays, FileText, Inbox as CodexInbox, Laptop, ListChecks, PenLine } from '@/components/icons/codex-icons';
 import { toast } from 'sonner';
+import i18n from 'i18next';
 import { useSessionIntentStore } from '@/stores/session-intent';
-import { createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
+import { activateWorkspaceScopedSession, activateWorkspaceSession, createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
 
 interface NavItemProps {
   to: string;
@@ -133,7 +135,7 @@ interface SessionRowProps {
   onRenameSubmit: () => Promise<void>;
   onRenameCancel: () => void;
   onRenameKeyDown: (e: React.KeyboardEvent) => void;
-  onSwitch: (key: string) => void;
+  onSwitch: (key: string) => Promise<boolean>;
   onLoadHistory: (force: boolean) => Promise<void>;
   navigate: (to: string) => void;
   onDismissSessionStatus: (key: string, signature: string) => void;
@@ -191,7 +193,7 @@ const WAITING_SESSION_STATUSES = new Set([
 ]);
 
 function runHasWaitingApproval(run: ChatRuntimeRunState | null): boolean {
-  if (!run) return false;
+  if (!run || run.status !== 'running') return false;
   const latestApproval = [...run.events].reverse().find((event) => event.type === 'approval.updated');
   if (!latestApproval || latestApproval.type !== 'approval.updated') return false;
   const status = `${latestApproval.status ?? ''} ${latestApproval.phase ?? ''}`.toLowerCase();
@@ -205,15 +207,27 @@ function buildSidebarSessionStatus(input: {
   activeRunId: string | null;
   sending: boolean;
   pendingFinal: boolean;
+  lastUserMessageAt: number | null;
   runError: string | null;
   dismissedCompletedSignature?: string;
 }): SidebarSessionStatus | null {
   const latestRun = input.latestRun;
   const isCurrentSession = input.session.key === input.currentSessionKey;
-  const currentRunActive = isCurrentSession && (input.sending || input.pendingFinal || input.activeRunId != null);
-  const sessionStatus = input.session.status?.toLowerCase();
+  const terminalAt = latestRun && latestRun.status !== 'running' && Number.isFinite(latestRun.endedAt)
+    ? latestRun.endedAt! : null;
+  // A receipt closes its own run, not a newer send or another active run ID.
+  const newerSend = isCurrentSession && input.lastUserMessageAt != null
+    && (terminalAt == null || input.lastUserMessageAt > terminalAt);
+  const currentRunActive = isCurrentSession && (input.sending || input.pendingFinal || input.activeRunId != null)
+    && !(terminalAt != null && input.activeRunId === latestRun!.runId && !newerSend);
+  // sessions.list can finish before run.ended and leave its running projection cached.
+  // Only suppress an older, timestamped projection; a newer owner snapshot still wins.
+  const staleSessionProjection = terminalAt != null && Number.isFinite(input.session.updatedAt)
+    && input.session.updatedAt! <= terminalAt;
+  const sessionStatus = staleSessionProjection ? undefined : input.session.status?.toLowerCase();
+  const sessionHasActiveRun = !staleSessionProjection && input.session.hasActiveRun === true;
   const latestRunStatus = latestRun?.status?.toLowerCase();
-  const waitingForInput = (isCurrentSession && input.pendingFinal)
+  const waitingForInput = (currentRunActive && input.pendingFinal)
     || runHasWaitingApproval(latestRun)
     || WAITING_SESSION_STATUSES.has(sessionStatus ?? '')
     || WAITING_SESSION_STATUSES.has(latestRunStatus ?? '');
@@ -221,7 +235,7 @@ function buildSidebarSessionStatus(input: {
   let kind: SidebarSessionStatusKind | null = null;
   if (isCurrentSession && input.runError) {
     kind = 'error';
-  } else if (waitingForInput || currentRunActive || input.session.hasActiveRun === true || sessionStatus === 'running' || latestRunStatus === 'running') {
+  } else if (waitingForInput || currentRunActive || sessionHasActiveRun || sessionStatus === 'running' || latestRunStatus === 'running') {
     kind = waitingForInput ? 'waiting' : 'running';
   } else if (COMPLETED_SESSION_STATUSES.has(latestRunStatus ?? '') || COMPLETED_SESSION_STATUSES.has(sessionStatus ?? '')) {
     kind = 'completed';
@@ -417,13 +431,11 @@ const SessionRowMemo = memo(function SessionRow({
         <button
         type="button"
         data-testid={`sidebar-session-${s.key}`}
-        onClick={() => {
+        onClick={async () => {
           onMarkRead(s.key);
           if (currentSessionKey === s.key) {
             void onLoadHistory(false);
-          } else {
-            onSwitch(s.key);
-          }
+          } else if (!await onSwitch(s.key)) return;
           navigate('/');
         }}
         onDoubleClick={() => onStartRename(s.key, sessionLabel)}
@@ -561,7 +573,7 @@ export function Sidebar() {
   const [isResizing, setIsResizing] = useState(false);
   const stopResizeRef = useRef<(() => void) | null>(null);
 
-  const { sessions, messages, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, runError, startupPhase } = useChatStore(useShallow((s) => ({
+  const { sessions, messages, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, lastUserMessageAt, runError, startupPhase } = useChatStore(useShallow((s) => ({
     sessions: s.sessions,
     messages: s.messages,
     currentSessionKey: s.currentSessionKey,
@@ -571,10 +583,10 @@ export function Sidebar() {
     activeRunId: s.activeRunId,
     sending: s.sending,
     pendingFinal: s.pendingFinal,
+    lastUserMessageAt: s.lastUserMessageAt,
     runError: s.runError,
     startupPhase: s.startupPhase,
   })));
-  const switchSession = useChatStore((s) => s.switchSession);
   const deleteSession = useChatStore((s) => s.deleteSession);
   const archiveSession = useChatStore((s) => s.archiveSession);
   const restoreSession = useChatStore((s) => s.restoreSession);
@@ -632,6 +644,7 @@ export function Sidebar() {
     // from a gateway refresh, so keep that implementation detail out of the
     // sidebar while preserving real history-backed session rows.
     const isFreshCurrent = session.key === currentSessionKey
+        && !session.sessionId
       && /:session-\d/.test(session.key)
       && messages.length === 0;
     return !isFreshCurrent;
@@ -667,7 +680,7 @@ export function Sidebar() {
    * stays bounded while every session remains reachable.
    */
   const [sessionRenderLimit, setSessionRenderLimit] = useState(SIDEBAR_SESSION_RENDER_CHUNK);
-  const sessionRenderResetKey = `${sessionView}:${sessions.length}:${currentSessionKey}`;
+  const sessionRenderResetKey = `${sessionView}:${activeWorkspaceId ?? ''}:${sessions.length}:${currentSessionKey}`;
   useEffect(() => {
     setSessionRenderLimit(SIDEBAR_SESSION_RENDER_CHUNK);
   }, [sessionRenderResetKey]);
@@ -829,9 +842,21 @@ export function Sidebar() {
     workspaceProfiles.find((profile) => (
       profile.activeSessionKey === sessionKey
       || Boolean(profile.sessionStates?.[sessionKey])
+      || Object.hasOwn(profile.coordinatorBindings ?? {}, sessionKey)
       || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey)
     )) ?? null
   ), [workspaceProfiles]);
+
+  const selectSidebarSession = useCallback(async (sessionKey: string) => {
+    const workspace = findWorkspaceForSession(sessionKey);
+    try {
+      if (workspace) return await activateWorkspaceScopedSession(workspace.id, sessionKey);
+      return await activateWorkspaceSession(sessionKey);
+    } catch {
+      toast.error(i18n.t('chat:projectEntry.unavailable'));
+      return false;
+    }
+  }, [findWorkspaceForSession]);
 
   const updateSessionListState = useCallback((sessionKey: string, patch: WorkspaceSessionListState) => {
     const workspace = findWorkspaceForSession(sessionKey);
@@ -958,11 +983,11 @@ export function Sidebar() {
    * session, then park a one-shot intent the chat page picks up once the switch
    * has landed (src/stores/session-intent.ts).
    */
-  const handleHandoffSessionFromMenu = useCallback((sessionKey: string) => {
+  const handleHandoffSessionFromMenu = useCallback(async (sessionKey: string) => {
+    if (currentSessionKey !== sessionKey && !await selectSidebarSession(sessionKey)) return;
     requestSessionIntent('handoff', sessionKey);
-    if (currentSessionKey !== sessionKey) switchSession(sessionKey);
     navigate('/');
-  }, [currentSessionKey, navigate, requestSessionIntent, switchSession]);
+  }, [currentSessionKey, navigate, requestSessionIntent, selectSidebarSession]);
 
   /**
    * Archive is reversible (Settings › Archived, or the toast's Undo), so it is a
@@ -972,15 +997,17 @@ export function Sidebar() {
     // Record where the session lived, so the archive lists it under its project
     // and workgroup and the host scopes its resource cleanup to that project.
     const workspace = findWorkspaceForSession(sessionKey);
+    const visit = useChatStore.getState().viewRevision;
     try {
       await archiveSession(sessionKey, {
         workspaceId: workspace?.id ?? null,
         folderId: workspace?.sessionFolderAssignments?.[sessionKey] ?? null,
       });
     } catch {
-      toast.error(t('chat:sidebar.archiveFailed'));
+      if (useChatStore.getState().viewRevision === visit) toast.error(t('chat:sidebar.archiveFailed'));
       return;
     }
+    if (useChatStore.getState().viewRevision !== visit) return;
     if (currentSessionKey === sessionKey) navigate('/');
     toast.success(t('chat:sidebar.archivedToast', { label }), {
       action: {
@@ -1097,6 +1124,7 @@ export function Sidebar() {
         activeRunId,
         sending,
         pendingFinal,
+        lastUserMessageAt,
         runError,
         dismissedCompletedSignature: dismissedCompletedStatuses[session.key],
       });
@@ -1110,6 +1138,7 @@ export function Sidebar() {
     dismissedCompletedStatuses,
     latestRuntimeRunBySession,
     pendingFinal,
+    lastUserMessageAt,
     runError,
     sending,
     sidebarSessions,
@@ -1204,7 +1233,7 @@ export function Sidebar() {
       onRenameSubmit={handleRenameSubmit}
       onRenameCancel={handleRenameCancel}
       onRenameKeyDown={handleRenameKeyDown}
-      onSwitch={switchSession}
+      onSwitch={selectSidebarSession}
       onLoadHistory={loadHistory}
       navigate={navigate}
       onDismissSessionStatus={handleDismissSessionStatus}
@@ -1215,7 +1244,7 @@ export function Sidebar() {
     />;
   }, [
     agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
-    currentSessionKey, isOnChat, switchSession, loadHistory, navigate,
+    currentSessionKey, isOnChat, selectSidebarSession, loadHistory, navigate,
     handleStartRename, handleRenameSubmit, handleRenameCancel, handleRenameKeyDown,
     handleDismissSessionStatus, findWorkspaceForSession,
     markSessionRead, openSessionContextMenu, closeSessionContextMenu, toggleSessionPinned,
@@ -1297,7 +1326,7 @@ export function Sidebar() {
         {!sidebarCollapsed && (
           <div className="flex min-w-0 items-center gap-2 overflow-hidden">
             <BrandLogo size="sidebar" />
-            <span className="truncate whitespace-nowrap text-[17px] font-semibold leading-6 text-foreground/90">
+            <span className="truncate whitespace-nowrap text-[15px] font-semibold leading-6 text-foreground/90">
               Verse
             </span>
           </div>
@@ -1411,8 +1440,8 @@ export function Sidebar() {
                 No `content-visibility: auto` here: skipping/restoring the whole
                 list's layout is what made the scroll height jump when a project
                 folded, and it also disables `position: sticky` for the project
-                headers inside. Row count in this list is bounded by the session
-                list itself, so there is nothing to virtualize away. */}
+                headers inside. Each workspace shares a mount budget across its
+                workgroups and grows it on scroll-to-bottom. */}
             <div className={cn('section-list-outer', sessionSectionOpen && 'open')} aria-hidden={!sessionSectionOpen}>
             <HookSidebar className="task-collection-list" activeKey={currentSessionKey}>
               {sidebarSessionEntries
@@ -1476,23 +1505,23 @@ export function Sidebar() {
                           </>
                         )}
                       >
-                        <button
-                          type="button"
-                          data-testid={`sidebar-session-project-toggle-${group.workspace.id}`}
-                          aria-expanded={!collapsed}
-                          onClick={() => toggleWorkspaceGroup(group.workspace.id)}
-                          className="project-row"
-                        >
+                        <div className="project-row">
+                          <button type="button" data-testid={`sidebar-session-project-toggle-${group.workspace.id}`}
+                            aria-expanded={!collapsed} aria-label={t('chat:projectEntry.toggle', { name: group.workspace.name })}
+                            onClick={() => toggleWorkspaceGroup(group.workspace.id)} className="project-disclosure">
                           {collapsed
                             ? <OfficialFolderClosedIcon size={19} />
                             : <OfficialFolderOpenIcon size={19} />}
-                          <span>{group.workspace.name}</span>
-                        </button>
+                          </button>
+                          <button type="button" className="project-name" data-testid={`sidebar-project-open-${group.workspace.id}`}
+                            onClick={() => navigate(`/projects/${encodeURIComponent(group.workspace.id)}`)}>{group.workspace.name}</button>
+                        </div>
                       </SidebarRow>
                       )}
                       <div
                         className={cn('project-tasks-outer', !workspaceCollapsed && 'open')}
                         aria-hidden={workspaceCollapsed}
+                        inert={workspaceCollapsed}
                       >
                         {/* `flat` drops the indent the workspace row's icon
                             column reserved, so group labels can sit on the
@@ -1500,7 +1529,9 @@ export function Sidebar() {
                         <div className="project-tasks" data-flat={showWorkspaceRow ? undefined : 'true'}>
                           <SessionFolderTree
                             workspace={group.workspace}
-                            sessions={sessionRenderLimit >= sessions.length ? group.sessions : group.sessions.slice(0, sessionRenderLimit)}
+                            currentSessionKey={currentSessionKey}
+                            sessions={group.sessions}
+                            renderLimit={workspaceCollapsed ? 0 : Math.min(sessionRenderLimit, group.sessions.length)}
                             collapsedFolders={collapsedFolderIds}
                             sessionStatusKinds={sessionStatusKinds}
                             sessionSort={sessionSort}
@@ -1851,12 +1882,14 @@ export function Sidebar() {
               onClick={async () => {
                 const target = sessionToDelete;
                 if (!target) return;
+                const visit = useChatStore.getState().viewRevision;
                 setDeleteDialogOpen(false);
                 try {
                   await archiveSession(target.key);
-                  if (currentSessionKey === target.key) navigate('/');
+                  if (currentSessionKey === target.key && useChatStore.getState().viewRevision === visit) navigate('/');
                 } catch (error) {
                   console.warn('[sidebar] archiveSession failed:', error);
+                  if (useChatStore.getState().viewRevision === visit) toastUserError(error);
                 }
               }}
             >
@@ -1869,12 +1902,14 @@ export function Sidebar() {
               onClick={async () => {
                 const target = sessionToDelete;
                 if (!target) return;
+                const visit = useChatStore.getState().viewRevision;
                 setDeleteDialogOpen(false);
                 try {
                   await deleteSession(target.key);
-                  if (currentSessionKey === target.key) navigate('/');
+                  if (currentSessionKey === target.key && useChatStore.getState().viewRevision === visit) navigate('/');
                 } catch (error) {
                   console.warn('[sidebar] deleteSession failed:', error);
+                  if (useChatStore.getState().viewRevision === visit) toastUserError(error);
                 }
               }}
             >
@@ -1896,9 +1931,9 @@ export function Sidebar() {
         workspaces={workspaceProfiles}
         agentNameById={agentNameById}
         onSwitch={(key) => {
-          void switchSession(key);
-          void loadHistory(false);
-          if (!isOnChat) navigate('/');
+          void selectSidebarSession(key).then((selected) => {
+            if (selected && !isOnChat) navigate('/');
+          });
         }}
       />
     </aside>

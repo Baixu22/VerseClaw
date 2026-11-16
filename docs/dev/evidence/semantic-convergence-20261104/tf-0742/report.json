@@ -1,0 +1,92 @@
+{
+  "schema": "MemoryAtomicUpdateReport/v1",
+  "node": "TF-0742",
+  "driven_by": "agent",
+  "actor": "codex/tf0742",
+  "generatedAt": "2026-11-05T09:08:27.450Z",
+  "base": "d8b5f93b9ac33b04b5d44c197e11a27b95d92dce",
+  "candidate": {
+    "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+    "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+    "dirty": false
+  },
+  "decision": {
+    "status": "node-complete",
+    "acceptancePassed": true,
+    "persist": false,
+    "releaseReady": false,
+    "liveReady": false,
+    "realHumanEvidence": false
+  },
+  "tests": {
+    "atomic": {
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0
+    },
+    "regression": {
+      "total": 79,
+      "passed": 79,
+      "failed": 0,
+      "skipped": 0
+    },
+    "totalPassed": 103,
+    "baselineFinalTests": {
+      "total": 24,
+      "passed": 1,
+      "failed": 23,
+      "skipped": 0
+    }
+  },
+  "metrics": {
+    "faultInjectionCases": 6,
+    "rollbackPasses": 6,
+    "observedPartialStatesBefore": 4,
+    "observedPartialStatesAfter": 0,
+    "separateConnectionIntermediateObservations": 6,
+    "uncommittedWritesVisibleAfter": 0,
+    "deleteReportedSkippedAfterEffect": 0
+  },
+  "acceptance": [
+    {
+      "criterion": "partial_update_windows=0",
+      "verdict": "pass",
+      "evidence": [
+        "observations.json",
+        "atomic-tests.json"
+      ],
+      "scope": "isolated SQLite, both update owners; synchronous in-memory rollback including eviction"
+    },
+    {
+      "criterion": "delete_reported_skipped_after_effect=0",
+      "verdict": "pass",
+      "evidence": [
+        "atomic-tests.json"
+      ],
+      "scope": "applied, repeated already_applied, missing-target and skipped-load controls"
+    },
+    {
+      "criterion": "3 failure stages x 2 update paths",
+      "verdict": "pass",
+      "evidence": [
+        "observations.json",
+        "atomic-tests.json"
+      ],
+      "scope": "SQL trigger injection at fact/invalidation/relation; retry after trigger removal"
+    }
+  ],
+  "review": {
+    "exitCode": 0,
+    "findings": 0,
+    "confidence": 0.93,
+    "metadata": "review-metadata.json"
+  },
+  "limits": [
+    "Runtime Memory persist remains retired. Tests enable only a test-process mocked flag resolver and simulated AUDN decisions; this is recovery-precondition validation, not restored product behavior.",
+    "SQLite tests use two real local connections. They do not prove live-model, cross-process cache freshness, every filesystem crash mode or GA.",
+    "Memory transactions accept synchronous internal mutations; the supplied persistence port owns rollback guarantees.",
+    "TF-0743 cache consistency and TF-0744 facade policy remain separate nodes.",
+    "Frozen-source results use the current test file with mapped pre-change runtime modules; new-API failures are not counted as independently observed partial writes."
+  ]
+}

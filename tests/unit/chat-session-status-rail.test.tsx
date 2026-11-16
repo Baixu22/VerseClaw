@@ -1,31 +1,23 @@
-/**
- * Session status rail — the two layers, and what decides which one you get.
- *
- * The rail occupies the slot the recovery-assist panel used to hold, and the
- * whole point of the change is that WHO OPENED IT decides how it behaves:
- *
- *   passive (`inline`)  — it appeared on its own because the run has a plan, so
- *                         the transcript makes room for it (`data-rail`);
- *   active (`overlay`)  — the user clicked the toolbar toggle, so it floats over
- *                         the transcript and the transcript does not move.
- *
- * Task planning is the entire passive trigger: no plan, no rail at rest. These
- * tests drive the page through the toolbar's callback rather than the toolbar's
- * own markup, because the contract under test belongs to the page — the toolbar
- * only forwards a click.
- */
+/** Session environment triggers, automatic inline layout and manual overlay disclosure. */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { Chat } from '@/pages/Chat';
 import { createEmptySessionActivitySnapshot } from '@shared/types/session-activity';
+import { useSettingsStore } from '@/stores/settings';
 
 const SESSION_KEY = 'main:test';
 
 const planState = vi.hoisted(() => ({ hasPlan: true }));
 
+// The page renders without a router, so `Link` (used by the task-ledger
+// summary) is a plain anchor here rather than the context-bound original.
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
+  Link: ({ to, children, ...props }: { to: string; children?: ReactNode } & Record<string, unknown>) => (
+    <a href={typeof to === 'string' ? to : '#'} {...props}>{children}</a>
+  ),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -34,6 +26,8 @@ vi.mock('react-i18next', () => ({
     /* Interpolation options arrive as an object; returning it would hand React a
        non-element child and crash the render instead of failing an assertion. */
     t: (key: string, options?: unknown) => (typeof options === 'string' ? options : key),
+    // The session task dock formats times with the active locale.
+    i18n: { language: 'en' },
   }),
 }));
 
@@ -149,6 +143,10 @@ vi.mock('@/stores/session-activity', () => ({
     (selector: (state: typeof activityState) => unknown) => selector(activityState),
     { getState: () => activityState },
   ),
+  /* The page reads the scoped snapshot through this selector; the fake store
+     keys snapshots by session only, which is all this rail test needs. */
+  selectSessionActivitySnapshot: (state: typeof activityState, _workspaceId: unknown, sessionKey: string) =>
+    state.snapshots[sessionKey],
 }));
 
 vi.mock('@/components/file-preview/ArtifactPanel', () => ({
@@ -226,24 +224,45 @@ function railElement() {
 
 describe('Chat session status rail', () => {
   beforeEach(() => {
+    Element.prototype.scrollTo = vi.fn();
     window.electron.platform = 'win32';
+    Object.defineProperty(window, 'innerWidth', { configurable: true, writable: true, value: 1600 });
     planState.hasPlan = true;
     artifactPanelState.open = false;
+    useSettingsStore.setState({ sessionActivityAutoExpand: 'active' });
     seedSnapshotWithGitRepo();
   });
 
-  it('opens itself in the inline layer once the run has a plan, and the transcript makes room', async () => {
+  it('keeps the sidebar closed when a plan arrives and leaves transcript width unchanged', async () => {
     render(<Chat />);
 
-    const rail = await screen.findByTestId('chat-session-status-rail');
-    expect(rail).toHaveAttribute('data-layer', 'inline');
-    expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'expanded');
+    await screen.findByTestId('stub-activity-toggle');
+    expect(railElement()).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
     // The toggle reflects the effective state, not just an override.
-    expect(screen.getByTestId('stub-activity-toggle')).toHaveAttribute('data-open', 'true');
+    expect(screen.getByTestId('stub-activity-toggle')).toHaveAttribute('data-open', 'false');
   });
 
-  it('stays out of the way when the run has no plan, and opens as an overlay on demand', async () => {
+  it('keeps changed environments quiet until the user opens status', async () => {
     planState.hasPlan = false;
+    render(<Chat />);
+    await screen.findByTestId('stub-activity-toggle');
+    expect(railElement()).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
+  });
+
+  it('keeps a clean environment hidden even while a reply is running', async () => {
+    planState.hasPlan = false;
+    const snapshot = createEmptySessionActivitySnapshot(SESSION_KEY);
+    activityState.snapshots = { [SESSION_KEY]: snapshot };
+    render(<Chat />);
+    expect(await screen.findByTestId('stub-activity-toggle')).toHaveAttribute('data-available', 'false');
+    expect(railElement()).not.toBeInTheDocument();
+  });
+
+  it('honors never-auto-expand and opens an overlay on demand', async () => {
+    planState.hasPlan = false;
+    useSettingsStore.setState({ sessionActivityAutoExpand: 'never' });
 
     render(<Chat />);
 
@@ -257,12 +276,29 @@ describe('Chat session status rail', () => {
     // Asked for, so it floats: over the transcript, which does not move.
     expect(rail).toHaveAttribute('data-layer', 'overlay');
     expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
+
+    const escape = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    escape.preventDefault();
+    fireEvent(rail, escape);
+    expect(railElement()).not.toBeInTheDocument();
   });
 
-  it('closes on the first click while passive instead of swapping layers under the cursor', async () => {
+  it('uses the manual overlay at narrow widths without automatically covering the conversation', async () => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, writable: true, value: 900 });
+    render(<Chat />);
+    expect(railElement()).not.toBeInTheDocument();
+    fireEvent.click(await screen.findByTestId('stub-activity-toggle'));
+    expect(railElement()).toHaveAttribute('data-layer', 'overlay');
+  });
+
+
+
+  it('opens and closes the requested overlay without creating a passive sidebar', async () => {
     render(<Chat />);
 
-    await screen.findByTestId('chat-session-status-rail');
+    await screen.findByTestId('stub-activity-toggle');
+    fireEvent.click(screen.getByTestId('stub-activity-toggle'));
+    expect(screen.getByTestId('chat-session-status-rail')).toHaveAttribute('data-layer', 'overlay');
     fireEvent.click(screen.getByTestId('stub-activity-toggle'));
     expect(railElement()).not.toBeInTheDocument();
     expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
@@ -286,7 +322,7 @@ describe('Chat session status rail', () => {
   it('does not bring back the recovery-assist rail', async () => {
     render(<Chat />);
 
-    await screen.findByTestId('chat-session-status-rail');
+    await screen.findByTestId('stub-activity-toggle');
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-rollback-plan')).not.toBeInTheDocument();
   });

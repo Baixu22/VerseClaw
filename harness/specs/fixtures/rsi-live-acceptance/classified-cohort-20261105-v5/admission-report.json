@@ -1,0 +1,1752 @@
+{
+  "schemaVersion": "RsiLiveAdmissionReport/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-admission-verifier",
+  "status": "NO_GO",
+  "admissions": [
+    {
+      "taskId": "tf-0274-e01",
+      "passed": false,
+      "issues": [
+        "reference-oracle-not-passing"
+      ],
+      "status": "rejected",
+      "admissionDigest": "0edaa132d5e4cc94bbbb9ef0e15c9079af57080f558873cf7e1e30fe374cfe53"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "passed": false,
+      "issues": [
+        "reference-oracle-not-passing"
+      ],
+      "status": "rejected",
+      "admissionDigest": "59b1c5719743118baa8875a898c01a5e3fce151605051bdb200aacd340a365ec"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "passed": false,
+      "issues": [
+        "reference-oracle-not-passing"
+      ],
+      "status": "rejected",
+      "admissionDigest": "545d6bafeb257a5bf32bca62a717a9e2ead2273bf1e69493f5de70432d5bba68"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "990294c512b272339a054594fc0df1b9fb94fad01e60da53129f13b8180786d5"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "f0770d8324d2ea3777d8caf5960997f2dc94484624d2da3e538f1373b37e790d"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "passed": false,
+      "issues": [
+        "baseline-already-passes"
+      ],
+      "status": "rejected",
+      "admissionDigest": "82fb183425fb8ee135f1c47461fa8d5ebb48423a09482f9f43abf3c36df140f1"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "70e1ca0915a167399a068996d5ea8c37ec5dfa35a4812d942e4d641f974f8ae6"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "passed": false,
+      "issues": [
+        "baseline-already-passes"
+      ],
+      "status": "rejected",
+      "admissionDigest": "48493261575390d65e1154f5713fe29c1a5a7aa11e18c0173088f3f3b721759f"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "50f10918e9eb09e1fa918388f7cddd28df0a11e6be47d7e8966310b64f4c33a2"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "61a49988b157fdadea222445e94944c8ea0f837f33d3a1e782d0e1f41ad247f1"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "b14dc8999c06fb796cebfdd37ac21d1660744b62edaa66b4f7645fc7428fdd34"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "5e9c5c2b270077ba9a0a05d987c8734e95df40db258523b30762d831dbfe0df4"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "8997794c985bd4a4ea84e602b6a37cc6d558e8bbb811d42fc79960c2eb93ed9c"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "passed": false,
+      "issues": [
+        "baseline-already-passes"
+      ],
+      "status": "rejected",
+      "admissionDigest": "c800a42fe8c2cff4e9c81bc8accb0b25eaaea544b45cc332a2a5ce0daa4a4568"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "passed": false,
+      "issues": [
+        "reference-oracle-input-drift",
+        "baseline-oracle-input-drift"
+      ],
+      "status": "rejected",
+      "admissionDigest": "cdb0ea36572a7a8b72cd5f7e40df114d813bf4a2cf61e1590edd72b66fd531c2"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "fe10ba86081ed740bf8e855aa033daae8a0b081257525363e5ce666a2e081a7a"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "69f42b1da24d84af5a566b4aa400162e3991da9e02d13b97cb4836162fbca673"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "d15a7afba87411901067624a9affe5333a68e6bdbab9d5d5f002306992b1c3c9"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "passed": false,
+      "issues": [
+        "reference-infrastructure-failure"
+      ],
+      "status": "rejected",
+      "admissionDigest": "cc7869b53445f3a3582b4622d72bdee199bb16ae6d3e5a732311a3dd2978c773"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "passed": false,
+      "issues": [
+        "reference-infrastructure-failure"
+      ],
+      "status": "rejected",
+      "admissionDigest": "54aa0154861251cc584282bb48abeaad5bf0d7da5e2ca141d57119fe57a34dea"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "passed": false,
+      "issues": [
+        "reference-infrastructure-failure"
+      ],
+      "status": "rejected",
+      "admissionDigest": "85890261f5320e7656ebe75588b370c4c79c190119b871e7649676505bcaf1cc"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "passed": false,
+      "issues": [
+        "reference-infrastructure-failure"
+      ],
+      "status": "rejected",
+      "admissionDigest": "aac6158b5a1e9add854beba8f2213b6fd40dbefd6eee11ece0a9170c43bacf5e"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "passed": false,
+      "issues": [
+        "reference-infrastructure-failure",
+        "baseline-infrastructure-failure"
+      ],
+      "status": "rejected",
+      "admissionDigest": "ab0bc8a4042f9df1e74f94a3d07e9c4d2e5d93fadaf410da744eec8b0113b6cd"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "passed": false,
+      "issues": [
+        "reference-infrastructure-failure"
+      ],
+      "status": "rejected",
+      "admissionDigest": "b05e76df40bd255e08e4e7dfbc0387922fdee9bea0067828c73317f670cafcda"
+    }
+  ],
+  "provider": {
+    "status": "not-evaluated",
+    "receipt": "provider-preflight.json",
+    "responseId": null,
+    "usage": null
+  },
+  "trialSlots": [
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "task-admission-not-satisfied"
+    }
+  ],
+  "claims": {
+    "taskQualityMeasured": false,
+    "benefit": false,
+    "promotionReady": false,
+    "realHuman": false,
+    "productLocksChanged": false
+  }
+}

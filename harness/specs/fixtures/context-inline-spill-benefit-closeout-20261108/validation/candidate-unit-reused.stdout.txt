@@ -1,0 +1,12 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+
+ RUN  v4.1.1 D:/tmp/inline-spill-closeout-20261108-01a1b90a/validation-candidate
+
+ ❯ tests/unit/context-inline-spill-eval-provider.test.ts (1 test | 1 failed) 45048ms
+   × retains raw HTTP response and usage when a provider answer is not JSON 45047ms
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 47 passed (48)
+   Start at  11:09:03
+   Duration  79.21s (transform 17.44s, setup 1.44s, import 24.69s, tests 50.60s, environment 0ms)
+

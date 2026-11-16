@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "title": "The new Electron validation test bypasses the required Setup journey",
+      "body": "This test launches with `skipSetup: true` and goes directly to Settings, so it does not exercise the Setup provider-validation path required by the new spec. It also never checks that continuation/save is disabled after a failed validation. A Setup regression could therefore leave an invalid provider enabled while this added test still passes. Add Setup coverage for 429 and non-auth 400, including assertions that verification is not claimed and continuation is disabled.",
+      "priority": "P1",
+      "confidence": 0.91,
+      "category": "test_gap",
+      "code_location": {
+        "file_path": "tests/e2e/semantic-convergence-provider-readiness.spec.ts",
+        "line": 21
+      }
+    },
+    {
+      "title": "The cleanup regression assumes an optional environment variable exists",
+      "body": "Although the surrounding fixture treats `CLAWX_E2E_RUN_ROOT` as optional and falls back to `tmpdir()`, `join(process.env.CLAWX_E2E_RUN_ROOT!, ...)` throws at runtime when the variable is absent. A direct Playwright invocation without that environment variable therefore fails before launching the second app. Use a unique `mkdtemp` directory under `tmpdir()` or derive the profile from an existing unique fixture directory; the current fixed path can also collide across concurrent workers or projects.",
+      "priority": "P2",
+      "confidence": 0.88,
+      "category": "bug",
+      "code_location": {
+        "file_path": "tests/e2e/semantic-convergence-provider-readiness.spec.ts",
+        "line": 58
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "Capturing the real Electron main PID and using it for Windows tree teardown is a sound improvement. However, the final-matrix implementation does not cover the explicitly required Setup validation and disabled-continuation behavior, and its process-cleanup regression can fail when the optional run-root environment variable is absent. Both issues are scoped to the newly added tests.",
+  "overall_confidence": 0.9
+}

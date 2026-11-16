@@ -1,0 +1,896 @@
+{
+  "candidate": "0b152a30ad1b5cfc3f7d12ee2f7ec3f0d4dd4a47",
+  "uniqueTests": 63,
+  "suite": {
+    "numTotalTestSuites": 14,
+    "numPassedTestSuites": 14,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 63,
+    "numPassedTests": 63,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1793882604581,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Gateway startup doctor contract loading"
+            ],
+            "fullName": "Gateway startup doctor contract loading retains migration entries when a compiled contract needs the fallback loader",
+            "status": "passed",
+            "title": "retains migration entries when a compiled contract needs the fallback loader",
+            "duration": 8.287599999999998,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Gateway startup doctor contract loading"
+            ],
+            "fullName": "Gateway startup doctor contract loading keeps a source doctor contract ahead of a generic built contract",
+            "status": "passed",
+            "title": "keeps a source doctor contract ahead of a generic built contract",
+            "duration": 2.336999999999989,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Gateway startup doctor contract loading"
+            ],
+            "fullName": "Gateway startup doctor contract loading retains source loading when the bundled artifact is unbuilt",
+            "status": "passed",
+            "title": "retains source loading when the bundled artifact is unbuilt",
+            "duration": 3.1918000000000006,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Gateway startup doctor contract loading"
+            ],
+            "fullName": "Gateway startup doctor contract loading preserves the authoritative bundled plugin root",
+            "status": "passed",
+            "title": "preserves the authoritative bundled plugin root",
+            "duration": 1.9895999999999958,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Gateway startup doctor contract loading"
+            ],
+            "fullName": "Gateway startup doctor contract loading preserves the authoritative global plugin root",
+            "status": "passed",
+            "title": "preserves the authoritative global plugin root",
+            "duration": 1.9703000000000088,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Gateway startup doctor contract loading"
+            ],
+            "fullName": "Gateway startup doctor contract loading loads native compiled contracts without constructing the SDK alias loader",
+            "status": "passed",
+            "title": "loads native compiled contracts without constructing the SDK alias loader",
+            "duration": 7.532899999999984,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Gateway startup doctor contract loading"
+            ],
+            "fullName": "Gateway startup doctor contract loading keeps source contracts authoritative when running from source",
+            "status": "passed",
+            "title": "keeps source contracts authoritative when running from source",
+            "duration": 60.38869999999997,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1793882616545,
+        "endTime": 1793882616631.3887,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX/.tmp/gateway-startup-verify-20261105/tests/unit/gateway-doctor-contract-loading.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring subscribes to typed host events on init",
+            "status": "passed",
+            "title": "subscribes to typed host events on init",
+            "duration": 80.14850000000024,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring propagates gatewayReady field from status events",
+            "status": "passed",
+            "title": "propagates gatewayReady field from status events",
+            "duration": 1.1902000000000044,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring allows explicit intervention sends while preserving normal active-run double-submit guard",
+            "status": "passed",
+            "title": "allows explicit intervention sends while preserving normal active-run double-submit guard",
+            "duration": 982.2669999999998,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring treats undefined gatewayReady as ready for backwards compatibility",
+            "status": "passed",
+            "title": "treats undefined gatewayReady as ready for backwards compatibility",
+            "duration": 0.7105000000001382,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring does not clear chat sending state on non-terminal runtime events",
+            "status": "passed",
+            "title": "does not clear chat sending state on non-terminal runtime events",
+            "duration": 28.165099999999256,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring does not let a stale send RPC re-arm a completed run after a newer send starts",
+            "status": "passed",
+            "title": "does not let a stale send RPC re-arm a completed run after a newer send starts",
+            "duration": 20.349100000000362,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring preserves a running session lifecycle when creating a new chat and switching back",
+            "status": "passed",
+            "title": "preserves a running session lifecycle when creating a new chat and switching back",
+            "duration": 17.320200000000114,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring retains inactive-session runtime events for graph reconstruction after switching back",
+            "status": "passed",
+            "title": "retains inactive-session runtime events for graph reconstruction after switching back",
+            "duration": 16.066399999999703,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring clears cached inactive-session run state when run.ended arrives while another session is selected",
+            "status": "passed",
+            "title": "clears cached inactive-session run state when run.ended arrives while another session is selected",
+            "duration": 48.943999999999505,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring clears chat sending state on terminal run.ended runtime event",
+            "status": "passed",
+            "title": "clears chat sending state on terminal run.ended runtime event",
+            "duration": 34.72980000000007,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring does not clear the active send when a stale run.ended arrives for the same session",
+            "status": "passed",
+            "title": "does not clear the active send when a stale run.ended arrives for the same session",
+            "duration": 15.277600000000348,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring ignores session-less runtime terminals that do not match the active run",
+            "status": "passed",
+            "title": "ignores session-less runtime terminals that do not match the active run",
+            "duration": 31.44969999999921,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring tracks a current-session run.started even when the optimistic send is already active",
+            "status": "passed",
+            "title": "tracks a current-session run.started even when the optimistic send is already active",
+            "duration": 15.047099999999773,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring forces a terminal history reload when the runtime emits run.ended",
+            "status": "passed",
+            "title": "forces a terminal history reload when the runtime emits run.ended",
+            "duration": 15.969500000000153,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring forwards normalized chat runtime events through the dedicated host event channel",
+            "status": "passed",
+            "title": "forwards normalized chat runtime events through the dedicated host event channel",
+            "duration": 31.80489999999918,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring passes progressive delta notifications without seq through to chat store",
+            "status": "passed",
+            "title": "passes progressive delta notifications without seq through to chat store",
+            "duration": 37.058500000000095,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway store event wiring"
+            ],
+            "fullName": "gateway store event wiring dedupes exact replayed delta notifications without seq",
+            "status": "passed",
+            "title": "dedupes exact replayed delta notifications without seq",
+            "duration": 25.262399999999616,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1793882609243,
+        "endTime": 1793882610645.2625,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX/.tmp/gateway-startup-verify-20261105/tests/unit/gateway-events.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [],
+            "fullName": "probes and authenticates the managed loopback Gateway when DNS is unavailable",
+            "status": "passed",
+            "title": "probes and authenticates the managed loopback Gateway when DNS is unavailable",
+            "duration": 30.744100000000003,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1793882617040,
+        "endTime": 1793882617070.7441,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX/.tmp/gateway-startup-verify-20261105/tests/unit/gateway-loopback-connect.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "GatewayManager gatewayReady fallback"
+            ],
+            "fullName": "GatewayManager gatewayReady fallback sets gatewayReady=false when entering starting state",
+            "status": "passed",
+            "title": "sets gatewayReady=false when entering starting state",
+            "duration": 2125.9085999999998,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "GatewayManager gatewayReady fallback"
+            ],
+            "fullName": "GatewayManager gatewayReady fallback emits gatewayReady=true when gateway:ready event is received",
+            "status": "passed",
+            "title": "emits gatewayReady=true when gateway:ready event is received",
+            "duration": 29.017299999999977,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "GatewayManager gatewayReady fallback"
+            ],
+            "fullName": "GatewayManager gatewayReady fallback auto-sets gatewayReady=true after fallback RPC router probe succeeds",
+            "status": "passed",
+            "title": "auto-sets gatewayReady=true after fallback RPC router probe succeeds",
+            "duration": 37.70060000000012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "GatewayManager gatewayReady fallback"
+            ],
+            "fullName": "GatewayManager gatewayReady fallback keeps gatewayReady=false when fallback RPC router probe fails",
+            "status": "passed",
+            "title": "keeps gatewayReady=false when fallback RPC router probe fails",
+            "duration": 24.11979999999994,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "GatewayManager gatewayReady fallback"
+            ],
+            "fullName": "GatewayManager gatewayReady fallback cancels fallback timer when gateway:ready event arrives first",
+            "status": "passed",
+            "title": "cancels fallback timer when gateway:ready event arrives first",
+            "duration": 24.810199999999895,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "GatewayManager gatewayReady fallback"
+            ],
+            "fullName": "GatewayManager gatewayReady fallback marks gatewayReady after handshake advertises the Verse Claw required runtime surface",
+            "status": "passed",
+            "title": "marks gatewayReady after handshake advertises the Verse Claw required runtime surface",
+            "duration": 26.029499999999643,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "GatewayManager gatewayReady fallback"
+            ],
+            "fullName": "GatewayManager gatewayReady fallback keeps gatewayReady false when handshake is missing Verse Claw required methods",
+            "status": "passed",
+            "title": "keeps gatewayReady false when handshake is missing Verse Claw required methods",
+            "duration": 29.673999999999978,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "GatewayManager gatewayReady fallback"
+            ],
+            "fullName": "GatewayManager gatewayReady fallback does not let ready events or the fallback probe override a missing required method gate",
+            "status": "passed",
+            "title": "does not let ready events or the fallback probe override a missing required method gate",
+            "duration": 25.85149999999976,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1793882612899,
+        "endTime": 1793882615222.8516,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX/.tmp/gateway-startup-verify-20261105/tests/unit/gateway-ready-fallback.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "gateway startup recovery heuristics"
+            ],
+            "fullName": "gateway startup recovery heuristics detects invalid-config signal from stderr lines",
+            "status": "passed",
+            "title": "detects invalid-config signal from stderr lines",
+            "duration": 1.2745000000001028,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway startup recovery heuristics"
+            ],
+            "fullName": "gateway startup recovery heuristics detects invalid-config signal from error message fallback",
+            "status": "passed",
+            "title": "detects invalid-config signal from error message fallback",
+            "duration": 0.2807999999999993,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway startup recovery heuristics"
+            ],
+            "fullName": "gateway startup recovery heuristics does not treat unrelated startup failures as invalid-config failures",
+            "status": "passed",
+            "title": "does not treat unrelated startup failures as invalid-config failures",
+            "duration": 0.2921000000000049,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway startup recovery heuristics"
+            ],
+            "fullName": "gateway startup recovery heuristics attempts auto-repair only once per startup flow",
+            "status": "passed",
+            "title": "attempts auto-repair only once per startup flow",
+            "duration": 0.2662000000000262,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "gateway startup recovery heuristics"
+            ],
+            "fullName": "gateway startup recovery heuristics matches common invalid-config phrases robustly",
+            "status": "passed",
+            "title": "matches common invalid-config phrases robustly",
+            "duration": 0.254099999999994,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "getGatewayStartupRecoveryAction"
+            ],
+            "fullName": "getGatewayStartupRecoveryAction returns repair on first config-invalid failure",
+            "status": "passed",
+            "title": "returns repair on first config-invalid failure",
+            "duration": 0.16999999999995907,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "getGatewayStartupRecoveryAction"
+            ],
+            "fullName": "getGatewayStartupRecoveryAction returns retry when repair was attempted but error is still transient",
+            "status": "passed",
+            "title": "returns retry when repair was attempted but error is still transient",
+            "duration": 0.21410000000003038,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "getGatewayStartupRecoveryAction"
+            ],
+            "fullName": "getGatewayStartupRecoveryAction returns retry for transient errors after successful repair (no config signal)",
+            "status": "passed",
+            "title": "returns retry for transient errors after successful repair (no config signal)",
+            "duration": 0.21090000000003783,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "getGatewayStartupRecoveryAction"
+            ],
+            "fullName": "getGatewayStartupRecoveryAction returns fail when max attempts exceeded even for transient errors",
+            "status": "passed",
+            "title": "returns fail when max attempts exceeded even for transient errors",
+            "duration": 0.1795999999999367,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "getGatewayStartupRecoveryAction"
+            ],
+            "fullName": "getGatewayStartupRecoveryAction returns fail for non-transient, non-config errors",
+            "status": "passed",
+            "title": "returns fail for non-transient, non-config errors",
+            "duration": 0.24929999999994834,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "getGatewayStartupRecoveryAction"
+            ],
+            "fullName": "getGatewayStartupRecoveryAction returns retry for gateway still starting handshake rejection",
+            "status": "passed",
+            "title": "returns retry for gateway still starting handshake rejection",
+            "duration": 0.253400000000056,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewayWithStartupRetry"
+            ],
+            "fullName": "connectGatewayWithStartupRetry retries connect when gateway is still starting",
+            "status": "passed",
+            "title": "retries connect when gateway is still starting",
+            "duration": 0.8694000000000415,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewayWithStartupRetry"
+            ],
+            "fullName": "connectGatewayWithStartupRetry throws immediately for non-starting errors",
+            "status": "passed",
+            "title": "throws immediately for non-starting errors",
+            "duration": 1.3953000000000202,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewayWithStartupRetry"
+            ],
+            "fullName": "connectGatewayWithStartupRetry checks lifecycle before each retry attempt",
+            "status": "passed",
+            "title": "checks lifecycle before each retry attempt",
+            "duration": 0.7814999999999372,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1793882616165,
+        "endTime": 1793882616171.7815,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX/.tmp/gateway-startup-verify-20261105/tests/unit/gateway-startup-recovery.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "connectGatewaySocket"
+            ],
+            "fullName": "connectGatewaySocket upgrades to device-token auth before readiness (accepted=true)",
+            "status": "passed",
+            "title": "upgrades to device-token auth before readiness (accepted=true)",
+            "duration": 58.281600000000026,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewaySocket"
+            ],
+            "fullName": "connectGatewaySocket upgrades to device-token auth before readiness (accepted=false)",
+            "status": "passed",
+            "title": "upgrades to device-token auth before readiness (accepted=false)",
+            "duration": 1.9878000000001066,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewaySocket"
+            ],
+            "fullName": "connectGatewaySocket keeps the handshake alive long enough for slower gateway restart responses",
+            "status": "passed",
+            "title": "keeps the handshake alive long enough for slower gateway restart responses",
+            "duration": 2.417699999999968,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewaySocket"
+            ],
+            "fullName": "connectGatewaySocket rejects an unsupported negotiated protocol instead of accepting it silently",
+            "status": "passed",
+            "title": "rejects an unsupported negotiated protocol instead of accepting it silently",
+            "duration": 0.6841999999999189,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewaySocket"
+            ],
+            "fullName": "connectGatewaySocket emits a typed sequence gap after the handshake",
+            "status": "passed",
+            "title": "emits a typed sequence gap after the handshake",
+            "duration": 0.689200000000028,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewaySocket"
+            ],
+            "fullName": "connectGatewaySocket invokes the reconnect callback only when explicitly reconnecting",
+            "status": "passed",
+            "title": "invokes the reconnect callback only when explicitly reconnecting",
+            "duration": 0.5216000000000349,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewaySocket"
+            ],
+            "fullName": "connectGatewaySocket still fails when the connect response exceeds the configured timeout",
+            "status": "passed",
+            "title": "still fails when the connect response exceeds the configured timeout",
+            "duration": 0.7899999999999636,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "connectGatewaySocket"
+            ],
+            "fullName": "connectGatewaySocket terminates the pre-handshake socket when connect is rejected",
+            "status": "passed",
+            "title": "terminates the pre-handshake socket when connect is rejected",
+            "duration": 0.5669000000000324,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "probeGatewayReady"
+            ],
+            "fullName": "probeGatewayReady resolves true when connect.challenge message is received",
+            "status": "passed",
+            "title": "resolves true when connect.challenge message is received",
+            "duration": 0.6213999999999942,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "probeGatewayReady"
+            ],
+            "fullName": "probeGatewayReady resolves false on WebSocket error",
+            "status": "passed",
+            "title": "resolves false on WebSocket error",
+            "duration": 0.5249999999998636,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "probeGatewayReady"
+            ],
+            "fullName": "probeGatewayReady resolves false on timeout when no message is received",
+            "status": "passed",
+            "title": "resolves false on timeout when no message is received",
+            "duration": 3.5649000000000797,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "probeGatewayReady"
+            ],
+            "fullName": "probeGatewayReady resolves false when socket closes before challenge",
+            "status": "passed",
+            "title": "resolves false when socket closes before challenge",
+            "duration": 0.3533999999999651,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "probeGatewayReady"
+            ],
+            "fullName": "probeGatewayReady does NOT resolve true on plain open event (key behavioral change)",
+            "status": "passed",
+            "title": "does NOT resolve true on plain open event (key behavioral change)",
+            "duration": 0.3263999999999214,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "probeGatewayReady"
+            ],
+            "fullName": "probeGatewayReady uses terminate() instead of close() for cleanup to avoid Windows TIME_WAIT",
+            "status": "passed",
+            "title": "uses terminate() instead of close() for cleanup to avoid Windows TIME_WAIT",
+            "duration": 0.3447999999998501,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "probeGatewayReady"
+            ],
+            "fullName": "probeGatewayReady ignores non-challenge messages",
+            "status": "passed",
+            "title": "ignores non-challenge messages",
+            "duration": 0.37809999999990396,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "probeGatewayReady"
+            ],
+            "fullName": "probeGatewayReady ignores malformed JSON messages",
+            "status": "passed",
+            "title": "ignores malformed JSON messages",
+            "duration": 0.3550000000000182,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1793882611822,
+        "endTime": 1793882611894.3782,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX/.tmp/gateway-startup-verify-20261105/tests/unit/gateway-ws-client.test.ts"
+      }
+    ]
+  },
+  "finalRefreshedTest": {
+    "candidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+    "report": {
+      "numTotalTestSuites": 1,
+      "numPassedTestSuites": 1,
+      "numFailedTestSuites": 0,
+      "numPendingTestSuites": 0,
+      "numTotalTests": 1,
+      "numPassedTests": 1,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "snapshot": {
+        "added": 0,
+        "failure": false,
+        "filesAdded": 0,
+        "filesRemoved": 0,
+        "filesRemovedList": [],
+        "filesUnmatched": 0,
+        "filesUpdated": 0,
+        "matched": 0,
+        "total": 0,
+        "unchecked": 0,
+        "uncheckedKeysByFile": [],
+        "unmatched": 0,
+        "updated": 0,
+        "didUpdate": false
+      },
+      "startTime": 1793883817290,
+      "success": true,
+      "testResults": [
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [],
+              "fullName": "probes and authenticates the managed loopback Gateway when DNS is unavailable",
+              "status": "passed",
+              "title": "probes and authenticates the managed loopback Gateway when DNS is unavailable",
+              "duration": 35.937300000000505,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1793883823170,
+          "endTime": 1793883823205.9373,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX/.tmp/gateway-startup-verify-20261105/tests/unit/gateway-loopback-connect.test.ts"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-structured-resource-admission",
+  "scope": "provider admission; not a task outcome",
+  "attempt": 3,
+  "startedAt": "2026-11-06T08:58:52.465Z",
+  "durationMs": 4334,
+  "passed": false,
+  "request": {
+    "url": "http://127.0.0.1:3065/v1/responses",
+    "method": "POST",
+    "headers": {
+      "accept": "application/json",
+      "content-type": "application/json"
+    },
+    "redirect": "error",
+    "cache": "no-store",
+    "body": {
+      "model": "space-bunny",
+      "instructions": "Return only JSON matching the supplied schema and the exact ready marker.",
+      "input": "RSI_PROVIDER_READY",
+      "store": false,
+      "stream": false,
+      "truncation": "disabled",
+      "max_output_tokens": 1024,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "format": {
+          "type": "json_schema",
+          "name": "rsi_coding_edits",
+          "strict": true,
+          "schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ready"
+            ],
+            "properties": {
+              "ready": {
+                "type": "string",
+                "enum": [
+                  "RSI_PROVIDER_READY"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "response": {
+    "id": "01a1b0150faf72b9ba819f5090856585",
+    "model": "space-bunny",
+    "status": "completed",
+    "text": "\"RSI_PROVIDER_READY\"",
+    "usage": {
+      "inputTokens": 170,
+      "outputTokens": 113,
+      "totalTokens": 283
+    },
+    "functionCalls": [],
+    "incompleteReason": null
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793955536,
+    "created_at": 1793955533,
+    "error": null,
+    "id": "01a1b0150faf72b9ba819f5090856585",
+    "incomplete_details": null,
+    "instructions": "Return only JSON matching the supplied schema and the exact ready marker.",
+    "max_output_tokens": 1024,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_a772febc35ceae56201bc81fb1bce7ad",
+        "summary": [
+          {
+            "text": "We need infer schema? \"supplied schema and exact ready marker.\" User only marker. Maybe expected JSON with schema perhaps hidden? Need output marker exact? Could be echo as JSON? They say return only JSON matching supplied schema and exact ready marker. No schema actually supplied. Maybe use {\"marker\":\"RSI_PROVIDER_READY\"}? Exact ready marker perhaps output it as string, valid JSON. \"only JSON\" and exact ready marker => JSON string \"RSI_PROVIDER_READY\".",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "\"RSI_PROVIDER_READY\"",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_2869595ad65e25ce3817dc7ae6cfc778",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "\"RSI_PROVIDER_READY\"",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": "low",
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "name": "rsi_coding_edits",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "ready": {
+              "enum": [
+                "RSI_PROVIDER_READY"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "ready"
+          ],
+          "type": "object"
+        },
+        "strict": true,
+        "type": "json_schema"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 170,
+      "output_tokens": 113,
+      "output_tokens_details": {
+        "reasoning_tokens": 101
+      },
+      "total_tokens": 283
+    },
+    "user": null
+  }
+}

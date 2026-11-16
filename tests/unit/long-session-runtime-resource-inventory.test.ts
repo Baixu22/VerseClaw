@@ -1,11 +1,13 @@
 // @vitest-environment node
 
-import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { readRuntimeSessionResourceInventory } from '../../openclaw_runtime/src/gateway/session-resource-inventory';
 import { sessionAdmissionRegistry } from '../../openclaw_runtime/src/sessions/session-admission-registry';
 import { __resetWorktreeRegistry, createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
-import { createProcessSupervisor } from '../../openclaw_runtime/src/process/supervisor/index';
+import { getProcessSupervisor } from '../../openclaw_runtime/src/process/supervisor/index';
+import { resetResourceEnvelopeLedgerForTest } from '../../openclaw_runtime/src/resources/resource-envelope';
 
 const OWNER = {
   agentId: 'agent-e2',
@@ -28,6 +30,25 @@ afterEach(() => {
 });
 
 describe('runtime long-session resource inventory', () => {
+  it('retains known session owners when the worktree root cannot be read', async () => {
+    const missingRoot = path.join(makeRoot(), 'not-created');
+    const release = sessionAdmissionRegistry.acquirePermit({
+      agentId: OWNER.agentId, canonicalSessionKey: OWNER.sessionKey, expectedSessionId: OWNER.expectedSessionId,
+    }, 'exec-spawn');
+    try {
+      const inventory = await readRuntimeSessionResourceInventory({ ...OWNER, workspaceId: 'workspace-e2', rootPath: missingRoot });
+      expect(inventory.scope.expectedSessionId).toBe(OWNER.expectedSessionId);
+      expect(inventory.owners.find(owner => owner.kind === 'admission-permit')).toMatchObject({
+        generation: OWNER.expectedSessionId, authority: 'managed', state: 'known', activePermits: 1,
+      });
+      expect(inventory.owners.find(owner => owner.kind === 'process')).toMatchObject({
+        generation: OWNER.expectedSessionId, authority: 'managed', state: 'known', count: 0,
+      });
+      expect(inventory.owners.find(owner => owner.kind === 'worktree')).toMatchObject({
+        state: 'unknown', count: null, worktreeIds: null,
+      });
+    } finally { release(); }
+  });
   it('reads admission permits and generation-bound worktrees without inventing measurements', async () => {
     const root = makeRoot();
     const release = sessionAdmissionRegistry.acquirePermit({
@@ -60,6 +81,11 @@ describe('runtime long-session resource inventory', () => {
       worktreeIds: ['wt-e2'],
       generation: OWNER.expectedSessionId,
     });
+    resetResourceEnvelopeLedgerForTest();
+    const rebuilt = await readRuntimeSessionResourceInventory({ sessionKey: OWNER.sessionKey, agentId: OWNER.agentId,
+      expectedSessionId: OWNER.expectedSessionId, workspaceId: 'workspace-e2', rootPath: root });
+    expect(rebuilt.owners.find(owner => owner.kind === 'worktree')).toEqual(before.owners.find(owner => owner.kind === 'worktree'));
+    expect(rebuilt.owners.find(owner => owner.kind === 'admission-permit')).toEqual(before.owners.find(owner => owner.kind === 'admission-permit'));
     console.log('[resource-inventory-audit] ' + JSON.stringify({
       schema: before.schema,
       scope: before.scope,
@@ -116,7 +142,7 @@ describe('runtime long-session process budget', () => {
   it('rejects a second lifecycle-owned process before spawn when maxProcesses is one', async () => {
     const previous = process.env.OPENCLAW_LONG_SESSION_MAX_PROCESSES;
     process.env.OPENCLAW_LONG_SESSION_MAX_PROCESSES = '1';
-    const supervisor = createProcessSupervisor();
+    const supervisor = getProcessSupervisor();
     let first: Awaited<ReturnType<typeof supervisor.spawn>> | undefined;
     try {
       first = await supervisor.spawn({
@@ -131,6 +157,18 @@ describe('runtime long-session process budget', () => {
         argv: [process.execPath, '-e', 'setInterval(() => {}, 1000)'],
         captureOutput: false,
       });
+      const resourceRoot = makeRoot();
+      const read = () => readRuntimeSessionResourceInventory({ sessionKey: OWNER.sessionKey, agentId: OWNER.agentId,
+        expectedSessionId: OWNER.expectedSessionId, rootPath: resourceRoot });
+      const before = await read();
+      resetResourceEnvelopeLedgerForTest();
+      const rebuilt = await read();
+      expect(rebuilt.owners.find(owner => owner.kind === 'process')?.pids).toContain(first.pid);
+      expect(rebuilt.owners.find(owner => owner.kind === 'process')?.count).toBe(before.owners.find(owner => owner.kind === 'process')?.count);
+      const evidence = path.join(process.cwd(), 'artifacts/runs/autonomy-resource-admission', 'process-owner-' + Date.now());
+      mkdirSync(evidence, { recursive: true });
+      writeFileSync(path.join(evidence, 'process-owner-rebuild.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-r1-process-owner-reader',
+        pid: first.pid, before, rebuilt }, null, 2) + '\n');
       await expect(supervisor.spawn({
         runId: 'e2-process-two',
         sessionId: OWNER.expectedSessionId,
@@ -157,5 +195,5 @@ describe('runtime long-session process budget', () => {
       if (previous === undefined) delete process.env.OPENCLAW_LONG_SESSION_MAX_PROCESSES;
       else process.env.OPENCLAW_LONG_SESSION_MAX_PROCESSES = previous;
     }
-  }, 20_000);
+  }, 60_000);
 });

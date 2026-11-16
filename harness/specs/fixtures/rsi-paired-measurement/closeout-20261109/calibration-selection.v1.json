@@ -1,0 +1,228 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-admission-assembler",
+  "runId": "e8866141-a1f3-43c4-8efa-dfc9822cd24d",
+  "sourceCandidate": "26b644a90d83dbeeb3c4238054b063d5261b2790",
+  "frozenPlanPreserved": true,
+  "taskAdmissions": 24,
+  "providerCalls": 0,
+  "firstFailuresRetained": true,
+  "selected": [
+    {
+      "taskId": "tf-0274-e01",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0274-e01\\admission.json",
+      "sha256": "def504b50375e8351aea457acff13042aa93c5f153a9180bbba72bac494e110c",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0274-e01\\admission.json",
+      "originalSha256": "def504b50375e8351aea457acff13042aa93c5f153a9180bbba72bac494e110c",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0275-e02\\admission.json",
+      "sha256": "1dc00aa50c7c0614afb40983a287b0569c9624f9c43e4f0e79861f61c8e9fe0a",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0275-e02\\admission.json",
+      "originalSha256": "1dc00aa50c7c0614afb40983a287b0569c9624f9c43e4f0e79861f61c8e9fe0a",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0289-g01\\admission.json",
+      "sha256": "a73a0f7d619e27a695de5d34db054efac1a86c6518aaf371bb43afdb694fd91c",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0289-g01\\admission.json",
+      "originalSha256": "a73a0f7d619e27a695de5d34db054efac1a86c6518aaf371bb43afdb694fd91c",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0290-g02\\admission.json",
+      "sha256": "0b1eecf27fb7602219716c4162f44bf1c3da660e6967bda10fa831d7b6f8b9dc",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0290-g02\\admission.json",
+      "originalSha256": "0b1eecf27fb7602219716c4162f44bf1c3da660e6967bda10fa831d7b6f8b9dc",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0291-g03\\admission.json",
+      "sha256": "d820dd5ca362a51ab3273ac93f1111494867699b6d544ac8cc0042766cebd2ec",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0291-g03\\admission.json",
+      "originalSha256": "d820dd5ca362a51ab3273ac93f1111494867699b6d544ac8cc0042766cebd2ec",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0283-l01\\admission.json",
+      "sha256": "cd42970d92299a6f5ee289a8568c22248c6febf2a1bc4b922c7f0491c39527da",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0283-l01\\admission.json",
+      "originalSha256": "cd42970d92299a6f5ee289a8568c22248c6febf2a1bc4b922c7f0491c39527da",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0284-l02\\admission.json",
+      "sha256": "64250044566e0645cb90eaf4350707f2391976a6f992c51b5d94de47388f3e50",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0284-l02\\admission.json",
+      "originalSha256": "64250044566e0645cb90eaf4350707f2391976a6f992c51b5d94de47388f3e50",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0285-l03\\admission.json",
+      "sha256": "1612b9eebee2ebfd714ca1b6d7ace2e833e276df7b6f403daa2607369aea04ca",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0285-l03\\admission.json",
+      "originalSha256": "1612b9eebee2ebfd714ca1b6d7ace2e833e276df7b6f403daa2607369aea04ca",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0286-l04\\admission.json",
+      "sha256": "cc467026e7f7a38436fdf57ff66f9a718188055fed5a9406a0f976af41a3b6d6",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0286-l04\\admission.json",
+      "originalSha256": "cc467026e7f7a38436fdf57ff66f9a718188055fed5a9406a0f976af41a3b6d6",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0287-l05\\admission.json",
+      "sha256": "6602153474dafbd6ab7aa780ac82fed52f6fc1d1ada880676fed3018c55ca990",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0287-l05\\admission.json",
+      "originalSha256": "6602153474dafbd6ab7aa780ac82fed52f6fc1d1ada880676fed3018c55ca990",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0288-l06\\admission.json",
+      "sha256": "fa790fa98f37e23c4375c83b4e77639f6048160a48521167fd96f063fc20bdc0",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0288-l06\\admission.json",
+      "originalSha256": "fa790fa98f37e23c4375c83b4e77639f6048160a48521167fd96f063fc20bdc0",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0276-s01\\admission.json",
+      "sha256": "4eacd8529ba42dee43b4d50497e56742b4806b531f0cb2297c349505c55d7baf",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0276-s01\\admission.json",
+      "originalSha256": "4eacd8529ba42dee43b4d50497e56742b4806b531f0cb2297c349505c55d7baf",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0277-s02\\admission.json",
+      "sha256": "f69430febb3ef6ffcb434c6b79cd6953e4036c7b77e33e918a49cdb366c8dbd1",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0277-s02\\admission.json",
+      "originalSha256": "f69430febb3ef6ffcb434c6b79cd6953e4036c7b77e33e918a49cdb366c8dbd1",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0278-s03\\admission.json",
+      "sha256": "2a24d92046a1a03f8c7d8ecb6b13a08544d2b6e0de2563043060a295f892c495",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0278-s03\\admission.json",
+      "originalSha256": "2a24d92046a1a03f8c7d8ecb6b13a08544d2b6e0de2563043060a295f892c495",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0279-s04\\admission.json",
+      "sha256": "6f79dc01de200f2ea97137480ba2cea9ff7174a319867900c25c3e9cd34a32eb",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0279-s04\\admission.json",
+      "originalSha256": "6f79dc01de200f2ea97137480ba2cea9ff7174a319867900c25c3e9cd34a32eb",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0280-s05\\admission.json",
+      "sha256": "587444badc08929ccccc81c43e7f4a5231645daa1b7c889b145d25866b534bb7",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0280-s05\\admission.json",
+      "originalSha256": "587444badc08929ccccc81c43e7f4a5231645daa1b7c889b145d25866b534bb7",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "source": "D:\\tmp\\rsi-paired-calibration-retry-20261109-01a1b651\\calibration\\tf-0281-s06\\admission.json",
+      "sha256": "e7a377a7622f865666a9c077a1353e4b08cc4c21389e38c5ce00182d0ef3a034",
+      "replay": true,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0281-s06\\admission.json",
+      "originalSha256": "cf1e39acbd76f52475e3bbc3af743728a4e9fdc239e25ed8711387b7251b616b",
+      "originalPassed": false
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0282-s07\\admission.json",
+      "sha256": "cdede8dc044c9f9e6beb1a4eddcd07493be4ef1ca078b1b211c2ce24e9ee3c28",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0282-s07\\admission.json",
+      "originalSha256": "cdede8dc044c9f9e6beb1a4eddcd07493be4ef1ca078b1b211c2ce24e9ee3c28",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0293-a01\\admission.json",
+      "sha256": "b67eb771510daa3e6e63b1e1cac1c2f92498fab35afb34d0d7187570f24ecbd0",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0293-a01\\admission.json",
+      "originalSha256": "b67eb771510daa3e6e63b1e1cac1c2f92498fab35afb34d0d7187570f24ecbd0",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0294-a02\\admission.json",
+      "sha256": "7d2e136f4d0cbf1dfae8bae5c0ce0b1b2b600f7b4d14f4b718189013875fd309",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0294-a02\\admission.json",
+      "originalSha256": "7d2e136f4d0cbf1dfae8bae5c0ce0b1b2b600f7b4d14f4b718189013875fd309",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0295-a03\\admission.json",
+      "sha256": "92c8755367c0fbe2d63f5bd380e42e10e4a06a3af0baad1b40c8ee958bff813c",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0295-a03\\admission.json",
+      "originalSha256": "92c8755367c0fbe2d63f5bd380e42e10e4a06a3af0baad1b40c8ee958bff813c",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0296-a04\\admission.json",
+      "sha256": "0b12fda47645d174c4aed6d074da0b2d88445aa6371ea9fb008ff0cc80f28aa9",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0296-a04\\admission.json",
+      "originalSha256": "0b12fda47645d174c4aed6d074da0b2d88445aa6371ea9fb008ff0cc80f28aa9",
+      "originalPassed": true
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "source": "D:\\tmp\\rsi-paired-calibration-retry-20261109-01a1b651\\calibration\\tf-0297-a05\\admission.json",
+      "sha256": "11df0ee7b4d5ec482cbf36ea2ab119a4a879d15218d9375c14e9ebac9237815f",
+      "replay": true,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0297-a05\\admission.json",
+      "originalSha256": "a5fd65ca6e08888d5126fb34b938bbd73f81c181943156987088fdd2dd3628b4",
+      "originalPassed": false
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "source": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0298-a06\\admission.json",
+      "sha256": "da37c8d75cacff566756202a335e8c5c80a99063aaa260a0aec0a096b5cf392a",
+      "replay": false,
+      "original": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651\\admission\\calibration\\tf-0298-a06\\admission.json",
+      "originalSha256": "da37c8d75cacff566756202a335e8c5c80a99063aaa260a0aec0a096b5cf392a",
+      "originalPassed": true
+    }
+  ]
+}

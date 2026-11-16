@@ -11,6 +11,7 @@ import {
   Terminal as TerminalIcon,
 } from "lucide-react";
 import type { TerminalProps } from "./schema";
+import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
 
 import { Button } from "./_adapter";
@@ -19,6 +20,8 @@ import { cn } from "./_adapter";
 const COPY_ID = "terminal-output";
 
 type TerminalControlledProps = {
+  fill?: boolean;
+  status?: 'running' | 'completed' | 'failed';
   expanded?: boolean;
   defaultExpanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
@@ -30,6 +33,7 @@ type TerminalHeaderProps = Pick<
   TerminalProps,
   "command" | "cwd" | "exitCode"
 > & {
+  status?: TerminalControlledProps['status'];
   formattedDuration: string | null;
   hasOutput: boolean;
   copiedId: string | null;
@@ -45,6 +49,7 @@ type TerminalOutputProps = Pick<
   lineCount: number;
   previewLines: number;
   onToggleCollapse: () => void;
+  fill?: boolean;
 };
 
 function formatDuration(durationMs?: number): string | null {
@@ -67,22 +72,30 @@ function TerminalHeader({
   hasOutput,
   copiedId,
   onCopy,
+  status,
 }: TerminalHeaderProps) {
   const { t } = useTranslation("chat");
   return (
-    <div className="bg-surface-modal flex min-w-0 items-center gap-3 border-b border-border/70 px-3 py-2">
-      <TerminalIcon className="text-muted-foreground h-4 w-4 shrink-0" aria-hidden="true" />
+    <div className="bg-surface-modal flex min-w-0 shrink-0 items-center gap-2 border-b border-border/70 px-3 py-2">
+      {status === 'running'
+        ? <OrbStatus state="working" size={20} label={t('processPanel.status.running')} />
+        : <TerminalIcon className="text-muted-foreground h-4 w-4 shrink-0" aria-hidden="true" />}
       <div className="min-w-0 flex-1">
         <code className="text-foreground block truncate font-mono text-xs leading-5" title={command}>{command}</code>
         {cwd && <div className="truncate font-mono text-[11px] leading-4 text-muted-foreground" title={cwd}>{cwd}</div>}
       </div>
       <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
+        {status && (
+          <span className={cn('text-xs', status === 'failed' ? 'text-destructive' : 'text-muted-foreground')}>
+            {t(`processPanel.status.${status}`)}
+          </span>
+        )}
         {formattedDuration && (
           <span className="text-muted-foreground font-mono text-[11px] tabular-nums">
             {formattedDuration}
           </span>
         )}
-        {exitCode != null && (
+        {exitCode != null && (!status || exitCode !== 0) && (
           <span
             className={cn(
               "text-xs tabular-nums",
@@ -128,6 +141,7 @@ function TerminalOutput({
   lineCount,
   previewLines,
   onToggleCollapse,
+  fill = false,
 }: TerminalOutputProps) {
   const { t } = useTranslation("chat");
   const contentId = useId();
@@ -136,15 +150,15 @@ function TerminalOutput({
   const wasCollapsed = useRef(isCollapsed);
   useLayoutEffect(() => {
     const node = outputRef.current;
-    if (node && isCollapsed && (followingOutput.current || !wasCollapsed.current)) {
+    if (node && (isCollapsed || fill) && (followingOutput.current || (isCollapsed && !wasCollapsed.current))) {
       node.scrollTop = node.scrollHeight;
     }
     wasCollapsed.current = isCollapsed;
-  }, [isCollapsed, stdout, stderr]);
+  }, [isCollapsed, fill, stdout, stderr]);
 
   return (
-    <div>
-      <div className="px-3 py-2">
+    <div className={cn(fill && 'flex min-h-0 flex-1 flex-col')}>
+      <div className={cn('px-3 py-2', fill && 'flex min-h-0 flex-1 flex-col')}>
         <div
           ref={outputRef}
           id={contentId}
@@ -152,7 +166,7 @@ function TerminalOutput({
           aria-label={t("toolUi.terminal.output")}
           tabIndex={0}
           data-testid="terminal-output"
-          className="overflow-auto overscroll-contain font-mono text-xs leading-5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
+          className={cn('overflow-auto overscroll-contain font-mono text-xs leading-5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring', fill && 'min-h-0 flex-1')}
           style={{ maxHeight: isCollapsed ? previewLines * 20 : undefined }}
           onScroll={(event) => {
             const node = event.currentTarget;
@@ -205,11 +219,11 @@ function TerminalOutput({
   );
 }
 
-function TerminalEmpty() {
+function TerminalEmpty({ running = false }: { running?: boolean }) {
   const { t } = useTranslation("chat");
   return (
     <div className="text-muted-foreground px-3 py-3 font-mono text-xs">
-      {t("toolUi.terminal.empty")}
+      {t(running ? 'processPanel.waiting' : 'toolUi.terminal.empty')}
     </div>
   );
 }
@@ -228,6 +242,8 @@ function TerminalRoot({
   expanded,
   defaultExpanded = false,
   onExpandedChange,
+  fill = false,
+  status,
 }: TerminalRootProps) {
   const [uncontrolledExpanded, setUncontrolledExpanded] =
     useState(defaultExpanded);
@@ -261,12 +277,13 @@ function TerminalRoot({
     <div
       className={cn(
         "@container flex w-full min-w-0 flex-col gap-2",
+        fill && 'h-full min-h-0',
         className,
       )}
       data-tool-ui-id={id}
       data-slot="terminal"
     >
-      <div className="border-border/70 bg-surface-input min-w-0 overflow-hidden rounded-lg border">
+      <div className={cn('border-border/70 bg-surface-input min-w-0 overflow-hidden rounded-lg border', fill && 'flex min-h-0 flex-1 flex-col')}>
         <TerminalHeader
           command={command}
           cwd={cwd}
@@ -275,6 +292,7 @@ function TerminalRoot({
           hasOutput={hasOutput}
           copiedId={copiedId}
           onCopy={handleCopy}
+          status={status}
         />
 
         {hasOutput && (
@@ -287,10 +305,11 @@ function TerminalRoot({
             lineCount={lineCount}
             previewLines={maxCollapsedLines ?? 10}
             onToggleCollapse={() => setExpanded(!isExpanded)}
+            fill={fill}
           />
         )}
 
-        {!hasOutput && <TerminalEmpty />}
+        {!hasOutput && <TerminalEmpty running={status === 'running'} />}
       </div>
     </div>
   );

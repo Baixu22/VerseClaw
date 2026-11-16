@@ -4,7 +4,46 @@
 
 Review Center includes a collapsed, opt-in Change Context view for four comparison modes, digest-anchored comments and explicit review verdicts. Pull Changes uses the existing approval, Git and Coding journal owners; review approval never completes a task or merges code. See [Workspace and coding](docs/modules/workspace-and-coding.md). The Windows source-host acceptance and feature-gate rollback are documented in [Controlled rollout](docs/dev/change-context-review-loop/rollout.md).
 
+Provider spend limits can be enabled explicitly with `runtime.providerBudget` for host, project and session scopes. Child calls inherit the session owner's workspace; reservations and unknown costs are retained by the runtime owner. See [Resources and observability](docs/modules/resources-and-observability.md) for coverage and accounting limits.
+
 # Verse Claw
+
+Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
+
+Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery uses the conversation’s recorded working directory.
+
+Chat groups ordinary streamed text updates by animation frame. Approvals, cancellation, errors and completion publish immediately; completed message content stays stable while the active reply grows.
+
+Long conversations use measured message heights to keep earlier loaded turns reachable within the DOM limit. History, preview and projection caches share a 32 MiB payload budget; evicted content reloads from the existing session and media owners.
+
+Compatible filesystem subscriptions share native watchers while keeping independent filters and release handles. Knowledge sources resume after root recreation, and Main Git status reads share fresh results across windows.
+
+Managed process lifecycles retain their shared executor until their own terminal result. Poll dispatch leaves room for stdin and cancellation, and captured output uses a shared byte limit with the existing artifact references.
+
+Terminal PTYs and governed processes share declared host capacity. Known server ports are reserved before launch, stale terminal generations reject control, and uncertain exits retain their reservations for recovery. See [terminal resource ownership](harness/specs/guides/terminal-resource-ownership.md).
+
+Runtime-managed worktree ownership, creation stages and merge intent persist in SQLite across restarts. Replaced paths, incomplete setup and unknown merge outcomes retain their resources and reject stale execution credentials. See the [registration and recovery contract](harness/specs/guides/execution-domain-registry.md).
+
+Managed tool effects combine task claims, session generations and durable checkout writers with the existing merge, freeze and cleanup owners. Writers persist between calls; unknown effects and background processes require owner reconciliation. The [writer contract](harness/specs/guides/checkout-writer-ownership.md) describes transfer, recovery and external-write boundaries.
+
+Chat can continue the same conversation and task in another configured checkout. Migration retains the objective and artifact references, verifies source drain and target ownership, and resumes an interrupted transfer from its saved operation.
+
+Session navigation restores the visible message and draft. Background work updates its own status while hovered or focused family rows stay in place. Empty projects, permission failures and dependency waits show specific reasons and existing next actions; dispatch plans remain separate from current queue observations.
+
+Message Fork requires a recorded transcript boundary and shows why the action is unavailable. Suggestions to continue elsewhere use the existing editable Handoff preview; a new conversation is created only by its explicit action.
+
+Handoff becomes available when the session identity finishes loading. Pending sidebar handoffs wait for that identity, and previews remain bound to the current session generation.
+If activation is interrupted, retrying keeps the original child session and checks its generation before sending.
+
+Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).
+
+Composer menus use opaque neutral surfaces in both themes, show model brand icons and complete model names, and identify linked worktrees in conversation status.
+
+Opening a conversation activates its owning workspace and restores its draft. Branch controls refresh the displayed checkout; related conversations expand under their source and appear once in the searchable session menu. [Session navigation](docs/dev/chat-worktree-session-navigation.md).
+
+Session lifecycle views replay raw v2 trajectory events through one assembler. Verifier completion reports route configured repair tasks to the lead for independent re-verification.
+
+Skill choices persist in the runtime configuration, and managed skills can be uninstalled from their details. Agent Dev reports collect normal chat and tool events and deduplicate token usage.
 
 **Chat, code, knowledge and agent execution in one desktop workspace.**
 
@@ -24,17 +63,28 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 |---|---|---|
 | LLM and models | Account-based provider configuration, OAuth/API key/local auth, protocol adapters, model fallback, turn/session model overrides, streaming, tool loops, reasoning effort, usage and estimated cost | [LLM and models](docs/modules/llm-and-models.md) |
 | Conversations and sessions | JSONL append-only session trees, runs, abort/stop/archive/delete, checkpoints, compaction, handoff/fork, searchable sidebar, persisted folders and long-session coordinator binding | [Sessions](docs/modules/sessions.md) |
-| Context and memory | Context Orchestrator, 6,000-character turn budget, Workspace Context, context health, one reviewable Memory product over separate Role/Runtime stores | [Context and memory](docs/modules/context-and-memory.md) |
+| Context and memory | Context Orchestrator, 6,000-character managed-injection budget with separate post-orchestrator accounting, Workspace Context, context health, one reviewable Memory product over separate Role/Runtime stores | [Context and memory](docs/modules/context-and-memory.md) |
 | Workspaces and coding | Workspace preflight, four permission modes, file preview, PTY terminals, web previews, Git operations, review panel, write journal, stale-write guard and auto verification | [Workspace and coding](docs/modules/workspace-and-coding.md) |
 | Knowledge | Markdown/wiki-first library, Inbox → Draft → Steward → Proposal → explicit apply, Source Sets, OKF, Runtime Lessons/SEKB, provenance and governance | [Knowledge base](docs/modules/knowledge-base.md) |
 | Multi-agent and tasks | Agent/Persona/Role separation, nine built-in roles, routing, team templates, resource-aware waves, subagent admission, Task Ledger, Task Loop and ClawGraph | [Multi-agent and tasks](docs/modules/multi-agent-and-tasks.md) |
+| Project and session navigation | Project names open their coordinator; the project view retains every explicitly associated coordinator across agents. Families expand within existing workgroups and show scoped tasks. Ledger history opens linked transcripts and checkpoint artifacts. Fork questions stay as drafts; Handoff creates and sends with restart recovery. | [Session and task flow](docs/modules/multi-agent-and-tasks.md) |
 | Verse components | VerseGit repository/evidence control plane, VerseShell governed execution, VerseBrowser drivers, and retired VToken | [Verse tools](docs/modules/verse-tools.md) |
-| Resources and observability | Cooperative ResourceFabric, background shedding, process/port tracking, token/cost limits, traces, issues, Problems, session activity and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
+| Resources and observability | ResourceFabric with bounded per-operation latency feedback and memory/event-loop pressure control, background shedding, process tracking, token/cost limits and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
 | Integrations and other surfaces | 15 channel types, schedules, Skills/MCP, Inbox, remote tasks, Code Review, VerseConf documents, media, Billing and Agent Dev | [Integrations and surfaces](docs/modules/integrations-and-surfaces.md) |
 
 The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
 
-Chat keeps the final reply visible alongside a collapsible process summary. Long file replacements preview both versions inside the conversation column; unbroken code wraps in the preview and only scrolls inside the diff after expansion. Command previews start at the latest output. Both support expansion; copying includes the complete retained content. The repository change strip shares the composer's centered width, and tool calls appear as compact status chips with their target and timing.
+Chat uses one text column without assistant avatars. Progress and final replies stay visible; execution details and passive tool cards start folded. The current tool retains its progress animation, while errors and approval requests remain directly accessible. Long file replacements preview both versions inside the conversation column; unbroken code wraps in the preview and only scrolls inside the diff after expansion. Command previews start at the latest output. Both support expansion; copying includes the complete retained content. The repository change strip shares the composer's centered width, and tool calls appear as compact status chips with their target and timing.
+
+Session status uses a single surface, with completed processes folded into history. Opening a process uses the same terminal view as the conversation, including output copying and scrolling that respects earlier lines being read. Matched tool calls and results share one disclosure; diagnostics stay at the end.
+
+The session environment appears after actual changes or activity. It groups changes, observed MCP/skill usage and workers into short previews with details on demand. Automatic expansion sits beside the conversation; manual opening uses a compact overlay. Closing the workspace preserves its tabs and selected content.
+
+Empty Chat shows a project picker below the composer; its menu includes local checkout and linked-worktree controls. Loaded empty chats retain these local controls when the Gateway disconnects. Starter actions open through Quick start. When files change, a compact entry below the composer opens branch search, checkout, and worktree actions.
+
+Composer model, knowledge and permission menus share a compact surface and the add menu's blur transition. Menus stay within the window, close when another opens, and support Escape and reduced motion.
+
+Choose a model directly from the composer. New chats start with your last available choice; existing chats retain their own model. Switching applies to subsequent messages. Agent defaults are managed in Settings.
 
 Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
 
@@ -50,17 +100,22 @@ Conversations show what a turn produced, whichever tool produced it. Audio and v
 | `retired` | Kept only for compatibility, provenance or rollback inspection. |
 | `agent-driven` | Evidence produced by an agent and labeled as such. It is not real-human evidence. |
 
-The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 24 internal, 5 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
+The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 23 internal, 6 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
 
 Important current defaults:
 
 - Workspace Context and read-only DCS context tools are on under their declared health and permission gates.
 - Runtime Memory injection, SEKB automatic writeback and browser private-network access are not default-on.
-- Memory feedback and SEKB adoption counts are diagnostic-only; feedback does not affect retrieval ranking or retention decisions. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md) distinguish historical measurement from deterministic replay.
+- SEKB records explicit use of a principle by its version and run, with operational and independently graded outcomes kept separate. Memory feedback remains diagnostic and does not affect retrieval ranking or retention. See [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md).
+- Controlled RSI prompt research records parent versions, training attribution and frozen validation decisions. Staged candidates bind to a separately sealed evaluation plan.
 - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
-- VerseGit is default-off and landed-unwired. VerseShell is a default-off controlled foundation. VerseBrowser advertises actions from a live driver snapshot, not from its full contract.
+- VerseGit and VerseShell remain default-off; their host integrations retain the boundaries described below.
 - Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.
 - `liveReady=false`, `productApproved=false` and `defaultOn=false` remain product locks.
+
+<!-- VERSE-TOOLS-BOUNDARY-START -->
+**VerseGit bounded coding loop:** default-off, not approved for general availability. The bounded win32-x64 M1 provider supplies repository facts; candidate verification uses VerseShell, while the host owns the write journal and Git apply. M4 landing/admission is unauthorized; `liveReady=false` and `productApproved=false` remain locked. VerseShell stays default-off. VerseBrowser accepts only available runtime actions with an owning session; host-only approvals cannot be supplied by the model, and request-level private-network checks cover redirects and subresources. See [Verse tool boundaries](docs/modules/verse-tools.md).
+<!-- VERSE-TOOLS-BOUNDARY-END -->
 
 See the [default configuration matrix](docs/dev/default-config-matrix.md), [product semantics](docs/clawx-product-semantics.md) and [capability claims](shared/capability-claims.ts) before changing a default or making a release claim.
 
@@ -100,6 +155,8 @@ pnpm dev
 
 `pnpm dev` builds VerseBrowser, the embedded runtime and bundled skills before opening Vite and Electron. The Gateway normally needs 10–30 seconds to become ready. A Vite page alone does not provide the full Electron Host services.
 
+Built Gateway startup tries native loading for resolved JavaScript doctor contracts before preparing SDK aliases. Mounted source overlays and external plugins keep their own contracts, and migration checks still run. After `pnpm run build:runtime`, use `node scripts/measure-gateway-startup.mjs` for an isolated, loopback-only comparison with fresh caches; every accepted sample must exercise the loader and complete an authenticated RPC.
+
 First session:
 
 1. Complete Setup.
@@ -109,7 +166,8 @@ First session:
 5. Resolve approvals in Inbox.
 6. Use Knowledge or Memory only through their review surfaces.
 7. Manage a conversation from its row: hovering shows Pin and ⋯ (rename, move to a workgroup, mark unread, fork, hand off, copy, archive with Undo, delete); right-click opens the same menu, and long titles scroll while hovered.
-8. The sidebar bell shows activity: a ring while a conversation runs (amber when one needs you), a list of running conversations with elapsed time, and completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
+   Related conversations use a shallow indent and a quiet guide; their count appears while collapsed. The compact header keeps unboxed workspace and conversation names. Click the title to search, switch or return to a source conversation; More holds checkpoints, fork, handoff, refresh, recovery, migration and memory tools. Dark mode separates the sidebar, reading surface and raised composer with graphite tones. Empty task scopes stay hidden. Settings → Session & Recovery offers a quiet display preset.
+8. While a conversation runs or waits for you, the sidebar bell shows the same status orb as that conversation's row. Its corner badge counts unread activity. The panel shows running conversations with elapsed time, plus completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
 
 Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
 
@@ -170,11 +228,14 @@ No separate database server is required.
 - Sessions use JSONL transcripts; runtime state also uses SQLite.
 - Token history is aggregated from structured session usage records. Costs are estimates.
 - Knowledge uses a `memory-wiki` vault plus local governance metadata.
+- Watched folders reconcile additions, updates and withdrawals into versioned review candidates, including changes missed while the app was stopped.
+- Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.
+- Chinese lexical retrieval, bounded long-document continuation, a provider-scoped embedding cache and version-bound Steward findings share the same admission boundary. An opt-in public GitHub directory connector sends updates and withdrawals to Inbox; other SaaS connectors are not implemented.
 - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
 
 Local storage does not mean offline execution. Content sent to online models, channels, browsers or external tools reaches those services under their configured credentials and network policy. Keep secrets and private transcripts out of commits and public issue reports.
 
-VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation). Private-network navigation requires a Main-owned approval bound to the session and origin. Agent-driven verification performs that approval in Main; caller-supplied approval markers grant no access.
+VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation). Private-network navigation requires a Main-owned approval bound to the session and origin. Agent-driven verification performs that approval in Main; caller-supplied approval markers grant no access. Failed navigation clears its wait state so subsequent navigation starts independently. Browser cleanup releases occupancy after the original window confirms it has closed.
 
 <a id="development"></a>
 
@@ -210,6 +271,8 @@ The [personal-agent QA pack](openclaw_runtime/qa/README.md) runs ten Gateway sce
 
 The [Responses acceptance contract](harness/specs/tasks/product-acceptance-space-bunny.md) covers text after reasoning, one tool round trip, session isolation, cancellation and provider failures on a configured local service. An interrupted Responses stream cannot finish a turn successfully or dispatch an incomplete tool call. These checks do not approve a model or a release.
 
+The [core product matrix](harness/specs/tasks/product-acceptance-matrix.md) maps nine journey groups to frozen test sources and records each batch's execution results and outstanding acceptance checks. Serial batches can reuse the same verified build with `--build-proof`; their execution budgets follow the declared case timeouts.
+
 See [development and validation](docs/modules/development-and-validation.md) for the full gate map and evidence rules.
 
 <a id="troubleshooting"></a>
@@ -218,7 +281,7 @@ See [development and validation](docs/modules/development-and-validation.md) for
 
 | Symptom | What to check |
 |---|---|
-| Knowledge shows `unknown method: wiki.status` | Enable and load `memory-wiki`, then initialize the vault. Gateway readiness alone is insufficient. |
+| Knowledge shows `unknown method: wiki.status` | Use Knowledge configuration to enable plugin loading and `memory-wiki`, then initialize the vault. Configuration reports any existing plugin policy that blocks activation. |
 | Wrong pnpm version / install failure | Check Node.js 24.x, pinned pnpm, both dependency workspaces and lockfiles. |
 | Missing Electron executable | Run `node node_modules/electron/install.js` and check download connectivity. |
 | Gateway stays unavailable | Inspect Settings → System & Runtime and logs; run Doctor before Doctor Fix. |
@@ -250,9 +313,29 @@ Keep changes scoped, provide relevant validation and update all four root README
 
 Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation/workspace interactions, including web-search source cards, adapted from [Rare UI](https://rareui.com) by Swami Malode retain attribution under `src/components/rareui`.
 
+### Persistent task execution
+
+Worker details show task acceptance from the task owner for the displayed session. Once the task owner accepts the verified evidence, refresh to read the accepted result. Recorded verifier checks and task-owner acceptance are shown separately; worker links in the ledger open their transcript panel.
+
+Task Ledger → Persistent tasks saves objectives, constraints and acceptance checks independently of chat history. Sessions claim tasks in a repository shared by its local Git worktrees. Task execution checks ownership before managed tool calls and restores the current goal before model requests. Configure either an exact file-content check or a command check with declared input files; commands use the existing tool permissions. See [task-system architecture](docs/dev/durable-task-system/PLAN.md).
+
+Managed worktree cleanup preserves historical task artifacts under verified Git references and records the retained bytes in the original task history. Agents can trace acceptance and read those artifacts after the checkout is removed. Active tasks, unresolved effects and artifacts without a matching retained snapshot keep the checkout available.
+
+Cleanup retains ignored files, hidden Git index edits, and in-process files or permissions without a verified retained copy. Git and Storage deletion entries use the same hidden-index check; a confirmed native dirty-file refusal keeps the checkout retryable, while an unknown deletion result retains its execution reservation.
+
+Git and Storage deletion also serialize their final ownership check and native removal with Task creation and claiming, so a new task cannot claim a checkout while it is being removed.
+
+Changing the implicit main agent's model or name preserves its workspace inheritance, so later project switches remain the execution directory source. Explicit agent workspace settings remain explicit.
+
+Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
+
+Conversation tasks are managed by the agent. A running task docks just above the input — title, a short task ID you can copy, the current step and real step progress — and stays there until it finishes, then folds into a one-line receipt; its menu opens the Task Ledger, expands the steps or hides the dock without touching the task. The session's task scope is a quiet chip in the header instead of a strip over the transcript. The session status panel reads like a short key–value list: context usage, connectors in use, changes with a review action, and background workers and commands. A small changed-file entry appears below the composer only when files change; branches and worktree controls remain in its details.
+
 Recovery implementation and evidence: the opt-in execution writer persists tool lifecycle phases on TaskFlow, claims work before effects, and resumes only owner-authorized work. Both lifecycle and execution writers must explicitly select `taskflow`; defaults remain `legacy`. Unknown effects require reconciliation. Recovery follow-up fixes pending-delivery run ownership and startup recovery ordering; see the [follow-up verification](docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md). The [2026-11-05 evaluation](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md) retains 60 live answers and 30 primary fault windows. Candidate outcome classification improves, while frozen latency gates return FAIL/NO-GO.
 
 Gated subagent recovery (`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority`, with both writers selecting `taskflow`) commits its decision and budget before RPC and preserves unknown outcomes for reconciliation. Recovered tool events enter the current run subscription to update delivery and completion records. See the [recovery admission guide](docs/dev/recovery-contract/GA-READINESS-20261106.md).
+
+Managed worktree integration preserves deletions, renames and binary bytes through the existing Coding journal. Persistent worktree receipts reconcile duplicate completion and restart, while target drift refuses an overwrite. Cleanup preserves undeclared and ignored local files. Executable permission changes are refused before integration.
 
 Gated main-session recovery uses the same admission policy and preserves its existing three-attempt budget. Public-output boundaries are recorded by the Session owner before response data is dispatched; unknown output and pending replies stay available for reconciliation.
 

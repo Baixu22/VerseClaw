@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "candidate-harness-dry-run-reused",
+  "cwd": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "harness",
+    "run",
+    "--spec",
+    "harness/specs/tasks/inline-spill-real-benefit-closeout.md",
+    "--dry-run"
+  ],
+  "started_at": "2026-11-08T03:08:53.848670+00:00",
+  "duration_seconds": 5.594,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-harness-dry-run-reused.stdout.txt",
+      "bytes": 369,
+      "sha256": "eae9664ab1c9df02557e196f43d0afa1f14ec7064835d1083d5247359797fc7b"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-harness-dry-run-reused.stderr.txt",
+      "bytes": 243,
+      "sha256": "a87f91f61af496cabfa5d60cd6f812fba670a872520bbca857a53a27b971f447"
+    }
+  }
+}

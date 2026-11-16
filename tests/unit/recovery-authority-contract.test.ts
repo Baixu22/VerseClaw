@@ -39,6 +39,36 @@ function baseRequest(): RecoveryAuthorityRequest {
 }
 
 describe("recovery-authority contract invariants", () => {
+  it.each(["applied", "reconciled"] as const)(
+    "settles a known %s effect before delivery, exhausted budget, wedge, or visible-output recovery",
+    (effect) => {
+      const base = { ...baseRequest(), effect };
+      const requests: RecoveryAuthorityRequest[] = [
+        { ...base, requestedAction: "deliver" },
+        { ...base, budget: { ...base.budget, attempts: { current: 3, max: 3 } } },
+        { ...base, budget: { ...base.budget, wedge: { afterAttempts: 3, wedged: true } } },
+        { ...base, admission: { ...base.admission, visibleOutputObserved: true } },
+      ];
+
+      for (const request of requests) {
+        const decision = evaluateRecoveryRequest(request);
+        expect(decision.kind).toBe("settle");
+        expect(decision.basis).toBe("effect-certainty");
+        expect(decision.attempt.current).toBe(request.budget.attempts.current);
+        expect(decision.attempt.max).toBe(request.budget.attempts.max);
+      }
+    },
+  );
+
+  it("keeps a known but unadmitted effect behind the admission boundary", () => {
+    const request: RecoveryAuthorityRequest = {
+      ...baseRequest(),
+      effect: "applied",
+      admission: { ...baseRequest().admission, admitted: false },
+    };
+    expect(evaluateRecoveryRequest(request).kind).toBe("reject");
+  });
+
   it.each(["effect-receipt", "event-log", "transcript"] as const)(
     "does not let %s evidence authorize replay",
     (kind) => {

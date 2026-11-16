@@ -1,0 +1,15 @@
+{
+  "schema": "CodingC0SourceRetentionVerification/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-c0-source-reader",
+  "verificationCommit": "357b6eeda49e165e70f4796a1e7703eabadab949",
+  "measuredCandidate": "27bd9df474236a52da03fd6b63613b66d0cc6af4",
+  "checkout": "D:\\tmp\\coding-c0-source-verifier-qj30whjd",
+  "usesIgnoredEvidence": false,
+  "usesNodeModules": false,
+  "artifactHashesVerified": 41,
+  "sourceInputsVerified": 50,
+  "verifierExit": 0,
+  "output": "{\n  \"ok\": true,\n  \"issues\": [],\n  \"productVerdict\": \"needs-fix\"\n}\n",
+  "result": "pass-source-retention-and-baseline-not-product-GA"
+}

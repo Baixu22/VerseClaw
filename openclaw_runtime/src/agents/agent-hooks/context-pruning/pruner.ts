@@ -2,6 +2,10 @@
 import type { ImageContent, TextContent, ToolResultMessage } from "../../../llm/types.js";
 import { CHARS_PER_TOKEN_ESTIMATE, estimateStringChars } from "../../../utils/cjk-chars.js";
 import { dropThinkingBlocks } from "../../embedded-agent-runner/thinking.js";
+import {
+  getRetainedArchiveRecalls,
+  type ArchiveRecallRetentionOptions,
+} from "../../archive-recall-retention.js";
 import type { AgentMessage } from "../../runtime/index.js";
 import type { ExtensionContext } from "../../sessions/index.js";
 import type { EffectiveContextPruningSettings } from "./settings.js";
@@ -294,6 +298,7 @@ export function pruneContextMessages(params: {
   isToolPrunable?: (toolName: string) => boolean;
   contextWindowTokensOverride?: number;
   dropThinkingBlocksForEstimate?: boolean;
+  archiveRecallRetention?: ArchiveRecallRetentionOptions;
 }): AgentMessage[] {
   const { messages, settings, ctx } = params;
   const contextWindowTokens =
@@ -335,6 +340,9 @@ export function pruneContextMessages(params: {
   }
 
   const prunableToolIndexes: number[] = [];
+  const retainedIndexes = new Set(
+    getRetainedArchiveRecalls(messages, params.archiveRecallRetention).map((item) => item.index),
+  );
   let next: AgentMessage[] | null = null;
 
   for (let i = pruneStartIndex; i < cutoffIndex; i++) {
@@ -342,7 +350,7 @@ export function pruneContextMessages(params: {
     if (!msg || msg.role !== "toolResult") {
       continue;
     }
-    if (!isToolPrunable(msg.toolName)) {
+    if (!isToolPrunable(msg.toolName) || retainedIndexes.has(i)) {
       continue;
     }
     prunableToolIndexes.push(i);

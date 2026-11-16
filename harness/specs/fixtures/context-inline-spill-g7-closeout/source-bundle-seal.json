@@ -1,0 +1,15 @@
+{
+  "schema": "G7SourceHistoryRecovery/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "path": "D:/ClawX-archives/g7-inline-spill-20261113-01a1d34c/g7-source-recovery.bundle",
+  "bytes": 508196747,
+  "sha256": "e11e5b0827fd5d362960173afbf9aac5f9fce29e9f3aa9c880ddc115ea8ef7fc",
+  "originalSourceHead": "05969eba873265b9791bd23945bcdbee1900f853",
+  "preservedRefs": [
+    "codex/g7-inline-spill-source-preserved-01a1d34c",
+    "codex/g7-inline-spill-round8-preserved-01a1d34c"
+  ],
+  "originalCandidatesPreserved": true
+}

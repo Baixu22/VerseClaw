@@ -1,0 +1,4 @@
+tests/e2e/chat-session-handoff.spec.ts(258,13): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ "agent:main:main": {}; "agent:main:session-isolation-b": {}; }'.
+  No index signature with a parameter of type 'string' was found on type '{ "agent:main:main": {}; "agent:main:session-isolation-b": {}; }'.
+tests/e2e/chat-session-handoff.spec.ts(258,49): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ "agent:main:main": {}; "agent:main:session-isolation-b": {}; }'.
+  No index signature with a parameter of type 'string' was found on type '{ "agent:main:main": {}; "agent:main:session-isolation-b": {}; }'.

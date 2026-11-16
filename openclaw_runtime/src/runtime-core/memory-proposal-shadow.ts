@@ -217,7 +217,8 @@ export function confirmRuntimeMemoryFactProposal(input: {
     message:
       result.status === "rejected"
         ? `persistence rejected: ${result.message}`
-        : `persistence skipped (${result.reason})`,
+        : result.status === "skipped" ? `persistence skipped (${result.reason})`
+          : "persistence deleted a fact instead of confirming the proposal",
   };
 }
 

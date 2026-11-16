@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "iteration": 9,
+  "createdAt": "2026-11-05T16:36:47.110216+00:00",
+  "driven_by": "agent",
+  "actor": "codex-session-environment-relay",
+  "realHumanEvidence": false,
+  "status": "development-scope-verified",
+  "releaseReady": false,
+  "sourceThreads": [
+    "01a1aa85-c4f4-7701-b1ec-637a9ce47b95",
+    "01a1ab11-fb98-7561-970d-16f4a769037e"
+  ],
+  "candidate": {
+    "validationRoot": "D:\\tmp\\chat-environment-r9-20261105\\validation",
+    "validationBaseCommit": "5accfbddbf46839bf7999c70eed31b1b045b640b",
+    "workingHeadAtSeal": "95a0d34e94331d9803d05a6267446214cf7626de",
+    "dirty": true,
+    "manifest": "sources.json"
+  },
+  "sourceMatch": {
+    "total": 29,
+    "exact": 25,
+    "different": [
+      "README.ja-JP.md",
+      "README.md",
+      "README.ru-RU.md",
+      "README.zh-CN.md"
+    ],
+    "note": "Four root READMEs received concurrent additions after freezing. Round-9 text is retained; runtime/UI/test sources still match."
+  },
+  "unit": {
+    "files": 17,
+    "passed": 259,
+    "failed": 0,
+    "skipped": 0,
+    "allExitsZero": true,
+    "mode": "one fresh process per file, one worker, unchanged 30000ms test timeout",
+    "results": "unit-runs.json"
+  },
+  "electron": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "allExitsZero": true,
+    "runs": {
+      "environment": {
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-11-05T16:02:32.481Z",
+          "duration": 75026.454,
+          "expected": 5,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "sourceUnchanged": true
+      },
+      "workspace": {
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-11-05T16:06:52.178Z",
+          "duration": 77276.792,
+          "expected": 2,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "sourceUnchanged": true
+      }
+    }
+  },
+  "checks": {
+    "webTypes": 0,
+    "i18n": 0,
+    "lint": 0,
+    "lintWarnings": 5,
+    "scopedHarness": 0,
+    "fullHarness": 1,
+    "fullTestTypes": 2,
+    "testTypeErrors": 31,
+    "testTypeFiles": [
+      "electron/services/sessions-api.ts",
+      "openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts",
+      "openclaw_runtime/extensions/diagnostics-otel/src/service.ts",
+      "openclaw_runtime/packages/net-policy/src/ip.ts",
+      "tests/unit/gateway-loopback-connect.test.ts",
+      "tests/unit/long-session-delegation-admission.test.ts"
+    ],
+    "build": {
+      "exitCode": 0,
+      "evidence": "build-provenance.json",
+      "freshThisRelay": false
+    }
+  },
+  "dependencyIsolation": "Fresh independent pnpm install --frozen-lockfile --ignore-scripts in validation; Electron 40.8.4 binaries copied locally. Product code was not rebuilt after the successful Electron checks.",
+  "limitations": [
+    "Host/runtime records are agent-driven fixtures, not live-provider or real-human evidence.",
+    "Skills are identified from structured SKILL.md read calls; shell text and narrative are not treated as proof of use.",
+    "Full test types retain out-of-scope backend/runtime/dependency diagnostics; full changed-path Harness includes concurrent tasks. TF-0783 full-candidate review remains open.",
+    "Earlier Electron hydration race and incomplete/failed unit batches are retained separately and do not count as passing evidence."
+  ]
+}

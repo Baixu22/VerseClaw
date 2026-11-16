@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "RsiModelDiagnostic/v1",
+  "generatedAt": "2026-11-05T04:11:46.378Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-model-diagnostic",
+  "diagnosticOnly": true,
+  "benchmarkValid": false,
+  "benefitEligible": false,
+  "task": {
+    "id": "tf-0291-g03",
+    "base": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+    "reference": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+    "sourceRecord": "docs/dev/harness-gap-closure/g03-acceptance.json"
+  },
+  "provider": {
+    "endpoint": "http://127.0.0.1:3065/v1/responses",
+    "model": "space-bunny",
+    "underlyingModelIdentity": "endpoint-reported alias; unverified",
+    "reasoningEffort": "low",
+    "maxOutputTokens": 16000,
+    "responseId": "01a1a9cbf8df732b9bee699c34dde1c0",
+    "status": "completed",
+    "usage": {
+      "inputTokens": 1340,
+      "outputTokens": 2557,
+      "totalTokens": 3897
+    }
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "maxOutputTokens": 6000,
+      "reasoningEffort": "default",
+      "status": "incomplete",
+      "incompleteReason": "max_output_tokens",
+      "outputTokens": 6000,
+      "totalTokens": 7340,
+      "outcome": "no-json-body"
+    },
+    {
+      "attempt": 2,
+      "maxOutputTokens": 16000,
+      "reasoningEffort": "default",
+      "status": "timeout",
+      "timeoutMs": 120000,
+      "outcome": "infrastructure-timeout"
+    },
+    {
+      "attempt": 3,
+      "maxOutputTokens": 16000,
+      "reasoningEffort": "low",
+      "status": "completed",
+      "outputTokens": 2557,
+      "totalTokens": 3897,
+      "outcome": "oracle-pass"
+    }
+  ],
+  "edits": [
+    {
+      "path": "scripts/lib/trace-to-eval-sample.mjs",
+      "bytes": 5326,
+      "digest": "134d8412ee2c1c0b79022b7befe0eed67522c285a4394fa0e94d1fa252f0c730"
+    },
+    {
+      "path": "scripts/lib/trace-to-eval-sample.d.mts",
+      "bytes": 1202,
+      "digest": "0bdbb1a84b3575855c05508fc0baa937c0aab124bfbf6b614e85d0c036af5770"
+    }
+  ],
+  "oracle": {
+    "taskId": "tf-0291-g03",
+    "passed": true,
+    "total": 6,
+    "passedTests": 6,
+    "failed": 0,
+    "pending": 0,
+    "oracleUnchanged": true,
+    "reportPath": "harness/specs/fixtures/rsi-model-diagnostic/g03/oracle/run-report.json",
+    "calibrationPath": "harness/specs/fixtures/rsi-model-diagnostic/g03/admission.json",
+    "admissionStatus": "pass",
+    "admissionWarnings": [
+      "baseline-target-module-absent"
+    ]
+  },
+  "execution": {
+    "providerResponseRetained": true,
+    "rawArtifactPath": "harness/specs/fixtures/rsi-model-diagnostic/g03/raw-response.json",
+    "responseTextPath": "harness/specs/fixtures/rsi-model-diagnostic/g03/response-text.txt"
+  },
+  "limitations": [
+    "White-box single-task smoke: the public interface contract was supplied from the task contract; the hidden test file contents were not sent to the model.",
+    "No planner/216-slot measured plan, no k=3 repeats, no three-arm comparison or SEKB candidate.",
+    "The endpoint-reported model alias is not independent proof of underlying model identity.",
+    "No product default, product lock, release or real-human claim."
+  ],
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "realHuman": false,
+    "productLocksChanged": false,
+    "completeRsiImplementation": false,
+    "releaseApproved": false
+  },
+  "evidencePack": "harness/specs/fixtures/rsi-model-diagnostic/g03"
+}

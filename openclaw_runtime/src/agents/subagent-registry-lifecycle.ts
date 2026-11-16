@@ -62,9 +62,10 @@ import {
 import type { PendingFinalDeliveryPayload, SubagentRunRecord } from "./subagent-registry.types.js";
 import { resolveSubagentRunDeadlineMs } from "./subagent-run-timeout.js";
 import { deleteSubagentSessionForCleanup } from "./subagent-session-cleanup.js";
-import { createWorktreeService } from "./worktree-service.js";
-import { runSubagentVerseGitCleanup } from "./subagent-versegit-cleanup.js";
-import { loadSubagentSessionEntry } from "./subagent-session-reconciliation.js";
+import { createWorktreeService } from './worktree-service.js';
+import { runSubagentVerseGitCleanup } from './subagent-versegit-cleanup.js';
+import { loadSubagentSessionEntry } from './subagent-session-reconciliation.js';
+import { returnPersistentTaskWriter } from './persistent-task-delegation.js';
 
 type CaptureSubagentCompletionReply =
   (typeof import("./subagent-announce.js"))["captureSubagentCompletionReply"];
@@ -826,13 +827,15 @@ export function createSubagentRegistryLifecycleController(params: {
             },
           });
         },
-        cleanupWorktree: (_authorization) => {
+        cleanupWorktree: (authorization) => {
           const worktreeId = entry.orchestration?.worktreeId;
           if (!worktreeId || !entry.workspaceDir) return;
           const service = createWorktreeService(entry.workspaceDir, {
             backend: entry.orchestration?.worktreeBackend,
           });
-          service.cleanup(worktreeId);
+          const generation = entry.orchestration?.worktreeGeneration;
+          if (!generation) throw new Error("worktree_generation_required");
+          service.cleanup(worktreeId, { expectedGeneration: generation, ...(authorization ? { authorization } : {}) });
         },
       },
     });
@@ -1265,6 +1268,14 @@ export function createSubagentRegistryLifecycleController(params: {
       };
       mutated = true;
     }
+    if (entry.dispatchPending) {
+      delete entry.dispatchPending;
+      mutated = true;
+    }
+    if (entry.queuedDispatch) {
+      delete entry.queuedDispatch;
+      mutated = true;
+    }
     const outcome = withSubagentOutcomeTiming(completionOutcome, {
       startedAt: entry.startedAt,
       endedAt,
@@ -1305,6 +1316,12 @@ export function createSubagentRegistryLifecycleController(params: {
 
     if (mutated) {
       params.persist();
+    }
+    if(entry.workspaceDir){
+      try{
+        const parent=loadSubagentSessionEntry({childSessionKey:entry.requesterSessionKey});
+        returnPersistentTaskWriter({workspace:entry.workspaceDir,childSessionKey:entry.childSessionKey,runId:entry.runId,endedAt:entry.endedAt,outcome:outcome.status,parentGeneration:parent?.sessionId});
+      }catch(error){params.warn('persistent task writer return requires recovery',{runId:entry.runId,error:String(error)});}
     }
     safeFinalizeSubagentTaskRun({
       entry,

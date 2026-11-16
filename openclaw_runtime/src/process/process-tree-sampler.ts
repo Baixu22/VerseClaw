@@ -1,12 +1,15 @@
 import { execFile } from "node:child_process";
 import fs from "node:fs";
 import { promisify } from "node:util";
+import { randomUUID } from "node:crypto";
+import { RESOURCE_METRICS_TTL_MS, type ResourceProcessObservation, type ResourceMachineCommit } from "../../../shared/types/resources.js";
 
 const execFileAsync = promisify(execFile);
 const PROCESS_TREE_LIMIT = 512;
 const PROCESS_PROBE_TIMEOUT_MS = 15_000;
-const LINUX_CLOCK_TICKS_PER_SECOND = 100;
-const LINUX_DEFAULT_PAGE_SIZE_BYTES = 4_096;
+// Main polls every 30s; allow its probe duration without treating a paused owner as current.
+const CPU_BASELINE_MAX_INTERVAL_MS = RESOURCE_METRICS_TTL_MS * 2;
+const OWNER_EPOCH = randomUUID();
 
 export type ProcessTreeSampleStatus = "ok" | "empty" | "unknown";
 
@@ -22,6 +25,9 @@ export type ProcessTreeSample = {
   queueWaitMs: number;
   source: "windows-cim" | "linux-proc" | "none" | "unknown";
   detail?: string;
+  ownerEpoch?: string;
+  processes?: ResourceProcessObservation[];
+  machineCommit?: ResourceMachineCommit;
 };
 
 type ProcessRecord = {
@@ -30,10 +36,11 @@ type ProcessRecord = {
   token: string;
   rssBytes: number;
   cpuTimeMs: number;
+  privateBytes: number | null;
 };
 
 type ProcessTableResult =
-  | { ok: true; records: Map<number, ProcessRecord>; source: "windows-cim" | "linux-proc" }
+  | { ok: true; records: Map<number, ProcessRecord>; source: "windows-cim" | "linux-proc"; machineCommit?: ResourceMachineCommit }
   | { ok: false; detail: string };
 
 function parsePositiveInt(value: string): number | null {
@@ -59,40 +66,59 @@ async function readWindowsProcessTable(): Promise<ProcessTableResult> {
     "-NoProfile",
     "-NonInteractive",
     "-Command",
-    "$ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc() }",
+    "$ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }",
   ]);
   if (!probe.ok) {
     return { ok: false, detail: probe.detail };
   }
   const records = new Map<number, ProcessRecord>();
+  let machineCommit: ResourceMachineCommit | undefined;
   for (const line of probe.stdout.split(/\r?\n/).map((value) => value.trim()).filter(Boolean)) {
-    const [pidRaw, parentRaw, rssRaw, kernelRaw, userRaw, token] = line.split("|");
+    if (line.startsWith("commit|")) {
+      const [, used, limit] = line.split("|");
+      const committedBytes = Number(used), commitLimitBytes = Number(limit);
+      if (Number.isFinite(committedBytes) && committedBytes >= 0 && Number.isFinite(commitLimitBytes) && commitLimitBytes > 0) {
+        machineCommit = { sampledAt: Date.now(), committedBytes, commitLimitBytes };
+      }
+      continue;
+    }
+    const [pidRaw, parentRaw, rssRaw, kernelRaw, userRaw, token, privateRaw] = line.split("|");
     const pid = parsePositiveInt(pidRaw ?? "");
-    const parentPid = parsePositiveInt(parentRaw ?? "");
+    const parentPid = Number(parentRaw);
     const rssBytes = Number.parseInt((rssRaw ?? "").trim(), 10);
     const kernel = Number.parseInt((kernelRaw ?? "").trim(), 10);
     const user = Number.parseInt((userRaw ?? "").trim(), 10);
-    if (pid === null || parentPid === null || !token || !Number.isFinite(rssBytes)) continue;
+    if (pid === null || !Number.isInteger(parentPid) || !token || !Number.isFinite(rssBytes)) continue;
     records.set(pid, {
       pid,
       parentPid,
       token: token.trim(),
       rssBytes: Math.max(0, rssBytes),
       cpuTimeMs: Math.max(0, (Number.isFinite(kernel) ? kernel : 0) + (Number.isFinite(user) ? user : 0)) / 10_000,
+      privateBytes: privateRaw && Number.isFinite(Number(privateRaw)) ? Math.max(0, Number(privateRaw)) : null,
     });
   }
   return records.size > 0
-    ? { ok: true, records, source: "windows-cim" }
+    ? { ok: true, records, source: "windows-cim", ...(machineCommit ? { machineCommit } : {}) }
     : { ok: false, detail: "Windows process probe returned an empty process table" };
 }
 
-function readLinuxProcessTable(): ProcessTableResult {
+let linuxUnits: Promise<{ ticks: number; pageSize: number }> | undefined;
+async function readLinuxProcessTable(): Promise<ProcessTableResult> {
   try {
+    linuxUnits ??= Promise.all([runProbe("getconf", ["CLK_TCK"]), runProbe("getconf", ["PAGESIZE"])]).then(([ticks, pages]) => {
+      if (!ticks.ok || !pages.ok || Number(ticks.stdout) <= 0 || Number(pages.stdout) <= 0
+        || !Number.isFinite(Number(ticks.stdout)) || !Number.isFinite(Number(pages.stdout))) throw new Error("Process counter units unavailable");
+      return { ticks: Number(ticks.stdout), pageSize: Number(pages.stdout) };
+    });
+    const { ticks, pageSize } = await linuxUnits;
     const records = new Map<number, ProcessRecord>();
     for (const entry of fs.readdirSync("/proc", { withFileTypes: true })) {
       if (!entry.isDirectory() || !/^\d+$/.test(entry.name)) continue;
       const pid = Number.parseInt(entry.name, 10);
-      const stat = fs.readFileSync(`/proc/${pid}/stat`, "utf8");
+      let stat: string;
+      try { stat = fs.readFileSync(`/proc/${pid}/stat`, "utf8"); }
+      catch { continue; } // A process may exit between enumeration and reading.
       const commEnd = stat.lastIndexOf(")");
       if (commEnd < 0) continue;
       const fields = stat.slice(commEnd + 1).trim().split(/\s+/);
@@ -106,11 +132,12 @@ function readLinuxProcessTable(): ProcessTableResult {
         pid,
         parentPid,
         token: startTime,
-        rssBytes: Number.isFinite(rssPages) ? Math.max(0, rssPages) * LINUX_DEFAULT_PAGE_SIZE_BYTES : 0,
+        rssBytes: Number.isFinite(rssPages) ? Math.max(0, rssPages) * pageSize : 0,
+        privateBytes: null,
         cpuTimeMs:
           ((Number.isFinite(utime) ? Math.max(0, utime) : 0) +
             (Number.isFinite(stime) ? Math.max(0, stime) : 0)) /
-            LINUX_CLOCK_TICKS_PER_SECOND *
+            ticks *
             1_000,
       });
     }
@@ -118,6 +145,7 @@ function readLinuxProcessTable(): ProcessTableResult {
       ? { ok: true, records, source: "linux-proc" }
       : { ok: false, detail: "Linux process probe returned an empty process table" };
   } catch (error) {
+    linuxUnits = undefined;
     return { ok: false, detail: String(error) };
   }
 }
@@ -129,6 +157,7 @@ async function readProcessTable(): Promise<ProcessTableResult> {
 }
 
 function tokenNotBefore(candidate: string, parent: string): boolean {
+  if (/^\d+$/.test(candidate) && /^\d+$/.test(parent)) return BigInt(candidate) >= BigInt(parent);
   return candidate >= parent;
 }
 
@@ -165,7 +194,7 @@ export async function readProcessTreeSample(params: {
   queueDepth?: number;
   queueWaitMs?: number;
 }): Promise<ProcessTreeSample> {
-  const sampledAt = params.sampledAt ?? Date.now();
+  let sampledAt = params.sampledAt ?? Date.now();
   const rootPids = [...new Set(params.rootPids.filter((pid) => Number.isInteger(pid) && pid > 0))];
   const queueDepth = Math.max(0, Math.floor(params.queueDepth ?? 0));
   const queueWaitMs = Math.max(0, Math.floor(params.queueWaitMs ?? 0));
@@ -185,6 +214,7 @@ export async function readProcessTreeSample(params: {
     };
   }
   const table = await readProcessTable();
+  sampledAt = params.sampledAt ?? Date.now();
   if (!table.ok) {
     return {
       status: "unknown",
@@ -216,7 +246,7 @@ export async function readProcessTreeSample(params: {
       detail: `process tree reached the ${PROCESS_TREE_LIMIT}-PID safety limit`,
     };
   }
-  if (collected.records.length === 0) {
+  if (collected.records.length === 0 || rootPids.some(pid => !table.records.has(pid))) {
     return {
       status: "unknown",
       sampledAt,
@@ -239,16 +269,23 @@ export async function readProcessTreeSample(params: {
     treeRssBytes: collected.records.reduce((sum, record) => sum + record.rssBytes, 0),
     treeCpuTimeMs: collected.records.reduce((sum, record) => sum + record.cpuTimeMs, 0),
     treeCpuPercent: null,
+    ownerEpoch: OWNER_EPOCH,
+    processes: collected.records.map(record => ({
+      pid: record.pid, parentPid: record.parentPid, creationToken: record.token,
+      rssBytes: record.rssBytes, privateBytes: record.privateBytes, cpuTimeMs: record.cpuTimeMs, cpuPercent: null,
+    })),
     queueDepth,
     queueWaitMs,
     source: table.source,
+    ...(table.machineCommit ? { machineCommit: table.machineCommit } : {}),
   };
 }
 
 export class ProcessTreeSampler {
   private readonly now: () => number;
   private readonly readSample: typeof readProcessTreeSample;
-  private readonly lastCpu = new Map<string, { at: number; cpuTimeMs: number }>();
+  private lastCpu = new Map<string, { at: number; cpuTimeMs: number }>();
+  private lastEpoch: string | undefined;
 
   constructor(options?: {
     now?: () => number;
@@ -263,24 +300,36 @@ export class ProcessTreeSampler {
     queueDepth?: number;
     queueWaitMs?: number;
   }): Promise<ProcessTreeSample> {
-    const sampledAt = this.now();
-    const sample = await this.readSample({ ...params, sampledAt });
-    if (sample.status !== "ok" || sample.treeCpuTimeMs === null) {
-      return sample;
+    const sample = await this.readSample(params);
+    const now = this.now();
+    if (sample.ownerEpoch !== this.lastEpoch) this.lastCpu.clear();
+    this.lastEpoch = sample.ownerEpoch;
+    if (sample.status !== "ok" || !sample.processes?.length || !Number.isFinite(sample.sampledAt)
+      || sample.sampledAt > now || now - sample.sampledAt > RESOURCE_METRICS_TTL_MS) {
+      this.lastCpu.clear();
+      if (sample.status === "ok") return { ...sample, status: "unknown", treeCpuPercent: null, detail: "process sample lacks fresh identities" };
+      return { ...sample, ownerEpoch: sample.ownerEpoch ?? OWNER_EPOCH, processes: [], treeCpuPercent: null };
     }
-    const key = [...sample.rootPids].sort((a, b) => a - b).join(",");
-    const previous = this.lastCpu.get(key);
-    this.lastCpu.set(key, { at: sampledAt, cpuTimeMs: sample.treeCpuTimeMs });
-    if (!previous || sampledAt <= previous.at || sample.treeCpuTimeMs < previous.cpuTimeMs) {
-      return { ...sample, treeCpuPercent: 0 };
-    }
+    const next = new Map<string, { at: number; cpuTimeMs: number }>();
+    const processes = sample.processes.map(record => {
+      const key = `${record.pid}:${record.creationToken}`;
+      const previous = this.lastCpu.get(key);
+      next.set(key, { at: sample.sampledAt, cpuTimeMs: record.cpuTimeMs });
+      const elapsed = previous ? sample.sampledAt - previous.at : 0;
+      const cpuPercent = previous && elapsed > 0 && elapsed <= CPU_BASELINE_MAX_INTERVAL_MS && record.cpuTimeMs >= previous.cpuTimeMs
+        ? Math.round((record.cpuTimeMs - previous.cpuTimeMs) / elapsed * 10_000) / 100 : null;
+      return { ...record, cpuPercent };
+    });
+    this.lastCpu = next;
     return {
-      ...sample,
-      treeCpuPercent: Math.round(((sample.treeCpuTimeMs - previous.cpuTimeMs) / (sampledAt - previous.at)) * 100 * 100) / 100,
+      ...sample, ownerEpoch: sample.ownerEpoch ?? OWNER_EPOCH, processes,
+      treeCpuPercent: processes.every(record => record.cpuPercent !== null)
+        ? processes.reduce((sum, record) => sum + (record.cpuPercent ?? 0), 0) : null,
     };
   }
 
   reset(): void {
     this.lastCpu.clear();
+    this.lastEpoch = undefined;
   }
 }

@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "u2-background-green3",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/session-task-reading-navigation.spec.ts",
+    "--grep",
+    "background",
+    "--workers=1",
+    "--reporter=list,json",
+    "--output=D:/tmp/unified-management-20261109/interaction-validation/u2-background-green3-results"
+  ],
+  "startedAt": "2026-11-09T03:14:00.938Z",
+  "finishedAt": "2026-11-09T03:15:13.703Z",
+  "durationMs": 72764,
+  "exitCode": 1,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "b730717ef9b1e7aa0a8b909132b3db8da14ddaad",
+    "tree": "d45a4f51c5da0dc8a0b9b450624b73605fb559b2",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/gateway/chat-runtime-events.ts",
+        "sha256": "826c3d843b0a7ea552ca671c712a746661c7525de02d33d8627105df14bb1e24"
+      },
+      {
+        "file": "electron/gateway/event-dispatch.ts",
+        "sha256": "c76d5b0587e7ccd5aa5fafc53225c4707b748310653f9fd31cd2712425a9b2a1"
+      },
+      {
+        "file": "electron/gateway/manager.ts",
+        "sha256": "ab67a97dd1edfe0570b12657928ea3da41c4c879563cbaceb927ea92c345d562"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "9dcd02931e63f2f64658a11ba33fa5c247501e98f38dba9d59aaccf47bcb357d"
+      },
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "880ef4b8c585c20168631c4dd4273d36fc15c7a4a26852521fc899bedc8e4c0a"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "2d29cdc5b257cf7e75c797f67dda84595b52e46146a2105e53da0074af34c268"
+      },
+      {
+        "file": "src/components/layout/session-buckets.ts",
+        "sha256": "1fc01965fbe13495c2bc28f19bf4de1d3953a13f0590e42c2ecee2e6d608acb9"
+      },
+      {
+        "file": "src/hooks/use-message-viewport.ts",
+        "sha256": "a152b62ff5d537fca2fd36ffeccdfcb3108a2b366aede1bd45a97331b0afa753"
+      },
+      {
+        "file": "src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "9f8555ba1cec07f1196c279dbff3d77b3c6ce1a2d6e3f0ee4ed828af2dc3715e"
+      },
+      {
+        "file": "src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "c89c24e22e21f472e507efef631b77e10ad88d1464efac1070ad62dbb82c7ae6"
+      },
+      {
+        "file": "src/stores/gateway.ts",
+        "sha256": "9b5aea549d5553beee4f9539a41306e97395025c29e2a4cbea55609da2341d2a"
+      },
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "0ea81eaf5e959e508bd8832c1f8f867ec149a07f68c1128a452d0d54085e2a01"
+      },
+      {
+        "file": "tests/unit/chat-viewport.test.tsx",
+        "sha256": "30969869ccdaddb0dd039163918384282265e16efeacbd201238d731e80f4d06"
+      },
+      {
+        "file": "tests/unit/gateway-event-dispatch.test.ts",
+        "sha256": "643ec2220d2940ef8cf7ee7a18dd7e4da942bdf8351af2fc4af5571ef8329ad8"
+      },
+      {
+        "file": "tests/unit/gateway-events.test.ts",
+        "sha256": "e4ab0e48caf04c0be565fd71759e58210ffce17194511f02c19392c2cd502a5e"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "c28dca21774cf69778dbe6295fd0f4ee211384f1ddac69a327ee0bbee6c38830"
+      },
+      {
+        "file": "tests/unit/session-reading-scroll-owner.test.tsx",
+        "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+      },
+      {
+        "file": "tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "22b6c28521fafeec66a0a1671897b6999f6c6c49217da03b171df5a5de7a6624"
+      }
+    ]
+  },
+  "after": {
+    "commit": "b730717ef9b1e7aa0a8b909132b3db8da14ddaad",
+    "tree": "d45a4f51c5da0dc8a0b9b450624b73605fb559b2",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/gateway/chat-runtime-events.ts",
+        "sha256": "826c3d843b0a7ea552ca671c712a746661c7525de02d33d8627105df14bb1e24"
+      },
+      {
+        "file": "electron/gateway/event-dispatch.ts",
+        "sha256": "c76d5b0587e7ccd5aa5fafc53225c4707b748310653f9fd31cd2712425a9b2a1"
+      },
+      {
+        "file": "electron/gateway/manager.ts",
+        "sha256": "ab67a97dd1edfe0570b12657928ea3da41c4c879563cbaceb927ea92c345d562"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "9dcd02931e63f2f64658a11ba33fa5c247501e98f38dba9d59aaccf47bcb357d"
+      },
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "880ef4b8c585c20168631c4dd4273d36fc15c7a4a26852521fc899bedc8e4c0a"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "2d29cdc5b257cf7e75c797f67dda84595b52e46146a2105e53da0074af34c268"
+      },
+      {
+        "file": "src/components/layout/session-buckets.ts",
+        "sha256": "1fc01965fbe13495c2bc28f19bf4de1d3953a13f0590e42c2ecee2e6d608acb9"
+      },
+      {
+        "file": "src/hooks/use-message-viewport.ts",
+        "sha256": "a152b62ff5d537fca2fd36ffeccdfcb3108a2b366aede1bd45a97331b0afa753"
+      },
+      {
+        "file": "src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "9f8555ba1cec07f1196c279dbff3d77b3c6ce1a2d6e3f0ee4ed828af2dc3715e"
+      },
+      {
+        "file": "src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "c89c24e22e21f472e507efef631b77e10ad88d1464efac1070ad62dbb82c7ae6"
+      },
+      {
+        "file": "src/stores/gateway.ts",
+        "sha256": "9b5aea549d5553beee4f9539a41306e97395025c29e2a4cbea55609da2341d2a"
+      },
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "0ea81eaf5e959e508bd8832c1f8f867ec149a07f68c1128a452d0d54085e2a01"
+      },
+      {
+        "file": "tests/unit/chat-viewport.test.tsx",
+        "sha256": "30969869ccdaddb0dd039163918384282265e16efeacbd201238d731e80f4d06"
+      },
+      {
+        "file": "tests/unit/gateway-event-dispatch.test.ts",
+        "sha256": "643ec2220d2940ef8cf7ee7a18dd7e4da942bdf8351af2fc4af5571ef8329ad8"
+      },
+      {
+        "file": "tests/unit/gateway-events.test.ts",
+        "sha256": "e4ab0e48caf04c0be565fd71759e58210ffce17194511f02c19392c2cd502a5e"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "c28dca21774cf69778dbe6295fd0f4ee211384f1ddac69a327ee0bbee6c38830"
+      },
+      {
+        "file": "tests/unit/session-reading-scroll-owner.test.tsx",
+        "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+      },
+      {
+        "file": "tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "22b6c28521fafeec66a0a1671897b6999f6c6c49217da03b171df5a5de7a6624"
+      }
+    ]
+  },
+  "tests": {
+    "startTime": "2026-11-09T03:14:02.244Z",
+    "duration": 70398.99799999999,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-green3.log",
+    "sha256": "524b415092a2cffa5ce7f9707cfa0f8b0e73be3276efc4576d918cf68f5aaa68"
+  }
+}

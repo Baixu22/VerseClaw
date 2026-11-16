@@ -3,6 +3,7 @@ import type { GatewayManager } from '../gateway/manager';
 import type { ResourceFabric } from './resource-fabric';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createHash } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import type {
   KnowledgeCreateInboxItemPayload,
   KnowledgeDraftType,
@@ -40,7 +41,7 @@ import {
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import { createSandboxDenialDetails, type SandboxDenialDetails } from '@shared/sandbox/errors';
-import { decideGatewayRpc, isApprovalRisk } from './workspace-permissions';
+import { decideGatewayRpc, isApprovalRisk, resolveWorkspaceSessionRoot } from './workspace-permissions';
 import {
   classifyGatewayMethodForSandboxGate,
   composeWithSandboxHighRiskGate,
@@ -61,6 +62,7 @@ type RpcPayload = {
   params?: unknown;
   timeoutMs?: unknown;
   approvalId?: unknown;
+  expectedWorkspaceId?: unknown;
 };
 
 type GatewayApiOptions = {
@@ -343,7 +345,39 @@ export function createGatewayApi(
     method: string,
     params: unknown,
     timeoutMs: number | undefined,
+    policyWorkspace?: Awaited<ReturnType<typeof getActiveWorkspaceProfile>>,
   ) => {
+    if (method === 'chat.send' || method === 'orchestrator.run') {
+      const active = await getActiveWorkspaceProfile();
+      if (policyWorkspace && (!active || active.id !== policyWorkspace.id
+        || active.rootPath !== policyWorkspace.rootPath || active.permissionMode !== policyWorkspace.permissionMode)) {
+        throw Object.assign(new Error('Gateway workspace scope changed after permission evaluation'), { code: 'VALIDATION' });
+      }
+      if (isRecord(params) && params.workspaceId !== undefined && params.workspaceId !== active?.id) {
+        throw Object.assign(new Error('Gateway workspace scope differs from the Main owner'), { code: 'VALIDATION' });
+      }
+      if (active && policyWorkspace && isRecord(params)) params = { ...params, workspaceId: active.id };
+    }
+    if (method === 'task_loop.verifyCompletion') {
+      const active = await getActiveWorkspaceProfile();
+      if (!active || !isRecord(params) || params.workspaceId !== active.id || params.sessionKey !== active.activeSessionKey) {
+        throw Object.assign(new Error('Verification execution scope differs from the workspace/session whose policy was checked'), { code: 'VALIDATION' });
+      }
+      const facts = await gatewayManager.rpc<{ workspaceRoot: string; checkpoint: unknown }>('task_loop.completionEvidence', {
+        workspaceId: params.workspaceId, sessionKey: params.sessionKey, checkpointId: params.checkpointId,
+      }, 20_000);
+      const fresh = await getActiveWorkspaceProfile();
+      const physical = (value: string) => { const root = realpathSync(value); return process.platform === 'win32' ? root.toLowerCase() : root; };
+      if (!fresh || !facts.checkpoint || fresh.id !== active.id || fresh.activeSessionKey !== active.activeSessionKey
+        || physical(facts.workspaceRoot) !== physical(fresh.rootPath) || physical(active.rootPath) !== physical(fresh.rootPath)
+        || fresh.permissionMode !== active.permissionMode) {
+        throw Object.assign(new Error('Verification physical workspace or permission owner changed before dispatch'), { code: 'VALIDATION' });
+      }
+      if (!policyWorkspace || policyWorkspace.id !== active.id || policyWorkspace.activeSessionKey !== active.activeSessionKey
+        || physical(policyWorkspace.rootPath) !== physical(active.rootPath) || policyWorkspace.permissionMode !== active.permissionMode) {
+        throw Object.assign(new Error('Verification workspace policy changed after permission evaluation'), { code: 'VALIDATION' });
+      }
+    }
     const result = await runGatewayRpc(gatewayManager, resourceFabricInstance, method, params, timeoutMs);
     await captureMissionKnowledgeCandidates(method, result, options.createKnowledgeInboxItem, capturedMissionKnowledgeKeys);
     return result;
@@ -401,14 +435,57 @@ export function createGatewayApi(
       return { success: true };
     },
     rpc: async (payload) => {
-      const body = isRecord(payload) ? payload as RpcPayload : {};
+      let body = isRecord(payload) ? payload as RpcPayload : {};
       const method = typeof body.method === 'string' ? body.method.trim() : '';
       if (!method) {
         throw new Error('Invalid gateway RPC method');
       }
+      if (method.startsWith('taskScope.')) {
+        return { success: false, rejectedBeforeDispatch: true, error: 'Task scope bridge methods are backend-owned' };
+      }
       const timeoutMs = parseTimeoutMs(body.timeoutMs);
       const approvalId = normalizeApprovalId(body.approvalId);
       const workspace = await getActiveWorkspaceProfile();
+      const expectedWorkspaceId = typeof body.expectedWorkspaceId === 'string' ? body.expectedWorkspaceId : undefined;
+      if (expectedWorkspaceId && workspace?.id !== expectedWorkspaceId) {
+        return { success: false, rejectedBeforeDispatch: true, error: 'Gateway workspace scope changed' };
+      }
+      const runScopedRpc = async () => {
+        if (expectedWorkspaceId && (await getActiveWorkspaceProfile())?.id !== expectedWorkspaceId) {
+          return { success: false, rejectedBeforeDispatch: true, error: 'Gateway workspace scope changed before dispatch' };
+        }
+        return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
+      };
+
+      if (method === 'tools.invoke' && workspace) {
+        const params = isRecord(body.params) ? { ...body.params } : {};
+        const sessionKey = typeof params.sessionKey === 'string' ? params.sessionKey : workspace.activeSessionKey;
+        const binding = Object.values(workspace.agentBindings ?? {}).find((entry) => entry.sessionKey === sessionKey);
+        const agentId = binding?.agentId ?? workspace.selectedAgentId ?? workspace.agentId;
+        const expectedSessionGeneration = params.expectedSessionGeneration ?? workspace.coordinatorBindings?.[sessionKey]?.sessionGeneration;
+        const workspaceDir = resolveWorkspaceSessionRoot(workspace, sessionKey, agentId, expectedSessionGeneration);
+        if (!workspaceDir || (!binding && sessionKey !== workspace.activeSessionKey) || (params.agentId !== undefined && params.agentId !== agentId)
+          || (params.workspaceDir !== undefined && params.workspaceDir !== workspaceDir)) {
+          return { success: false, blocked: true, errorCode: 'VALIDATION', error: 'Tool invocation differs from the active workspace binding' };
+        }
+        body = { ...body, params: { ...params, sessionKey, agentId, workspaceDir,
+          ...(expectedSessionGeneration ? { expectedSessionGeneration } : {}) } };
+      }
+
+      if (method === 'mcp.listTools' || method === 'mcp.heartbeat' || method === 'mcp.callTool') {
+        const params = isRecord(body.params) ? body.params : {};
+        const sessionKey = typeof params.sessionKey === 'string' ? params.sessionKey : '';
+        const binding = Object.values(workspace?.agentBindings ?? {}).find((entry) => entry.sessionKey === sessionKey);
+        const agentId = binding?.agentId ?? workspace?.selectedAgentId ?? workspace?.agentId;
+        const workspaceDir = workspace && agentId ? resolveWorkspaceSessionRoot(workspace, sessionKey, agentId, params.expectedSessionGeneration) : undefined;
+        // Recheck the Main owner at the permission gate so a queued request cannot
+        // borrow another workspace's permission after the UI context changes.
+        if (!workspace || !workspaceDir || params.workspaceId !== workspace.id || params.workspaceDir !== workspaceDir
+          || !sessionKey || (!binding && sessionKey !== workspace.activeSessionKey) || params.agentId !== agentId
+          || typeof params.expectedSessionGeneration !== 'string' || !params.expectedSessionGeneration.trim()) {
+          return { success: false, blocked: true, errorCode: 'VALIDATION', error: 'MCP request is not bound to the active workspace and assistant' };
+        }
+      }
 
       if (workspace) {
         let decision = decideGatewayRpc(method, workspace.permissionMode, body.params);
@@ -474,7 +551,7 @@ export function createGatewayApi(
                       paramsPreview: buildParamsPreview(body.params),
                       reason: `approved by preset ${matchResult.preset.label} (${matchResult.preset.id})`,
                     });
-                    return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
+                    return runScopedRpc();
                   }
                 }
               } catch {
@@ -492,7 +569,7 @@ export function createGatewayApi(
                 requestHash,
               });
               if (approved) {
-                return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
+                return runScopedRpc();
               }
             }
 
@@ -544,7 +621,7 @@ export function createGatewayApi(
         if (mockResult) return mockResult;
       }
 
-      return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
+      return runScopedRpc();
     },
   };
 }

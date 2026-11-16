@@ -1,28 +1,13 @@
 {
   "schema": "clawx.agent-dev.deep-test.v1",
-  "generatedAt": "2026-11-02T03:44:20.608Z",
+  "generatedAt": "2026-11-13T09:13:48.548Z",
   "success": true,
-  "totalDurationMs": 38940,
+  "totalDurationMs": 119570,
   "buildReuse": {
-    "mode": "reuse",
-    "status": "reused",
-    "reusable": true,
-    "reason": "all required build artifacts are newer than relevant Agent Dev sources",
-    "oldestArtifact": "dist/index.html",
-    "artifacts": [
-      {
-        "path": "dist/index.html",
-        "mtimeMs": 1793590970685.2112
-      },
-      {
-        "path": "dist-electron/main/index.js",
-        "mtimeMs": 1793590974971.6165
-      },
-      {
-        "path": "dist-electron/preload/index.js",
-        "mtimeMs": 1793590975003.365
-      }
-    ],
+    "mode": "fresh",
+    "status": "fresh",
+    "reusable": false,
+    "reason": "fresh build mode always runs pnpm run build:vite",
     "requiredArtifacts": [
       "dist/index.html",
       "dist-electron/main/index.js",
@@ -40,46 +25,43 @@
   },
   "unitMode": "full",
   "unitCoverageNote": "Full Agent Dev unit path: includes Main API, scaffolds, shared scenarios, contract, i18n, and host-api facade coverage.",
-  "typecheckMode": "cached",
-  "typecheckCoverageNote": "Cached typecheck path: generate bridge and reuse a previous successful node/web TypeScript check only when the input fingerprint is unchanged; run pnpm run typecheck before PR/release review.",
-  "e2eMode": "smoke",
-  "e2eCoverageNote": "Smoke Agent Dev E2E path: Settings > Developer Workbench visibility, contract gaps, and record button only; keep the full E2E for review/release confidence.",
+  "typecheckMode": "full",
+  "typecheckCoverageNote": "Full typecheck path: generate bridge once, then run node and web TypeScript project checks in parallel.",
+  "e2eMode": "full",
+  "e2eCoverageNote": "Full Agent Dev quality E2E path: accessibility, visual artifact, and Settings > Developer Workbench record flow.",
   "results": [
     {
       "id": "typecheck",
       "command": "pnpm",
       "args": [
         "run",
-        "typecheck:cached"
+        "typecheck"
       ],
-      "goal": "Fingerprint-cached node/web TypeScript safety for repeated Agent Dev diagnosis",
-      "targetMs": 25000,
-      "limitMs": 45000,
-      "commandLine": "pnpm run typecheck:cached",
+      "goal": "Compiled contract and renderer/Main type safety",
+      "commandLine": "pnpm run typecheck",
       "exitCode": 0,
-      "durationMs": 5103,
+      "durationMs": 25578,
       "ok": true,
       "skipped": false,
-      "stdoutTail": "[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"cache\": {\n    \"enabled\": true,\n    \"status\": \"hit\",\n    \"key\": \"3ebf8d77b293fe3ad9d3160a7388b2908ab8f62b0075a0dff6b74d97cd6e8b91\",\n    \"inputCount\": 13012,\n    \"report\": \"D:\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\report.json\",\n    \"cachedAt\": \"2026-11-02T03:41:45.829Z\"\n  },\n  \"totalDurationMs\": 4571,\n  \"coverageNote\": \"Reused successful node/web/test checks with unchanged source inputs; run pnpm run typecheck for an uncached full gate.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 94\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 0,\n      \"skipped\": true,\n      \"cacheHit\": true,\n      \"cachedDurationMs\": 12800,\n      \"cachedAt\": \"2026-11-02T03:41:45.829Z\"\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 0,\n      \"skipped\": true,\n      \"cacheHit\": true,\n      \"cachedDurationMs\": 7713,\n      \"cachedAt\": \"2026-11-02T03:41:45.829Z\"\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 0,\n      \"skipped\": true,\n      \"cacheHit\": true,\n      \"cachedDurationMs\": 16250,\n      \"cachedAt\": \"2026-11-02T03:41:45.829Z\"\n    }\n  ]\n}\n",
-      "stderrTail": "$ node scripts/typecheck-agent-dev.mjs --cache\n",
+      "stdoutTail": "[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 0,\n    \"durationMs\": 16473,\n    \"observationMode\": false,\n    \"errorCount\": 0,\n    \"errorLog\": \"D:\\\\ClawX-work\\\\g8-ui-closeout-20261113-01a1d351\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": null,\n    \"inputCount\": 0,\n    \"report\": \"D:\\\\ClawX-work\\\\g8-ui-closeout-20261113-01a1d351\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 25037,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 86\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 8475\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 4181\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 16473,\n      \"observationMode\": false,\n      \"errorCount\": 0,\n      \"errorLog\": \"D:\\\\ClawX-work\\\\g8-ui-closeout-20261113-01a1d351\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n",
+      "stderrTail": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n",
       "diagnostics": {
         "typecheck": {
           "kind": "typecheck",
           "mode": "parallel",
           "cache": {
-            "enabled": true,
-            "status": "hit",
-            "key": "3ebf8d77b293fe3ad9d3160a7388b2908ab8f62b0075a0dff6b74d97cd6e8b91",
-            "inputCount": 13012,
-            "report": "D:\\ClawX\\artifacts\\typecheck-cache\\report.json",
-            "cachedAt": "2026-11-02T03:41:45.829Z"
+            "enabled": false,
+            "status": "disabled",
+            "key": null,
+            "inputCount": 0,
+            "report": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\artifacts\\typecheck-cache\\report.json"
           },
-          "totalDurationMs": 4571,
-          "coverageNote": "Reused successful node/web/test checks with unchanged source inputs; run pnpm run typecheck for an uncached full gate.",
+          "totalDurationMs": 25037,
+          "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
           "phases": [
             {
               "commandLine": "node scripts/generate-ext-bridge.mjs",
-              "durationMs": 94,
+              "durationMs": 86,
               "exitCode": 0,
               "ok": true,
               "skipped": false,
@@ -87,38 +69,32 @@
             },
             {
               "commandLine": "pnpm run typecheck:node",
-              "durationMs": 0,
+              "durationMs": 8475,
               "exitCode": 0,
               "ok": true,
-              "skipped": true,
-              "cacheHit": true,
-              "cachedDurationMs": 12800,
-              "cachedAt": "2026-11-02T03:41:45.829Z"
+              "skipped": false,
+              "cacheHit": false
             },
             {
               "commandLine": "pnpm run typecheck:web",
-              "durationMs": 0,
+              "durationMs": 4181,
               "exitCode": 0,
               "ok": true,
-              "skipped": true,
-              "cacheHit": true,
-              "cachedDurationMs": 7713,
-              "cachedAt": "2026-11-02T03:41:45.829Z"
+              "skipped": false,
+              "cacheHit": false
             },
             {
               "commandLine": "pnpm run typecheck:test",
-              "durationMs": 0,
+              "durationMs": 16473,
               "exitCode": 0,
               "ok": true,
-              "skipped": true,
-              "cacheHit": true,
-              "cachedDurationMs": 16250,
-              "cachedAt": "2026-11-02T03:41:45.829Z"
+              "skipped": false,
+              "cacheHit": false
             }
           ],
           "slowestPhase": {
-            "commandLine": "node scripts/generate-ext-bridge.mjs",
-            "durationMs": 94,
+            "commandLine": "pnpm run typecheck:test",
+            "durationMs": 16473,
             "exitCode": 0,
             "ok": true,
             "skipped": false,
@@ -129,18 +105,18 @@
     },
     {
       "id": "contract",
-      "command": "pnpm",
+      "command": "node",
       "args": [
-        "contract:check"
+        "scripts/contract-check.mjs"
       ],
       "goal": "Host-api contract/facade/service drift",
-      "commandLine": "pnpm contract:check",
+      "commandLine": "node scripts/contract-check.mjs",
       "exitCode": 0,
-      "durationMs": 615,
+      "durationMs": 2185,
       "ok": true,
       "skipped": false,
       "stdoutTail": "Contract check passed.\n",
-      "stderrTail": "$ node scripts/contract-check.mjs\n"
+      "stderrTail": ""
     },
     {
       "id": "i18n",
@@ -151,7 +127,7 @@
       "goal": "Four-locale namespace/key coverage",
       "commandLine": "pnpm i18n:lint",
       "exitCode": 0,
-      "durationMs": 696,
+      "durationMs": 732,
       "ok": true,
       "skipped": false,
       "stdoutTail": "i18n lint passed.\n",
@@ -166,10 +142,10 @@
       "goal": "Static Workbench evidence generation",
       "commandLine": "pnpm agent-dev:workbench",
       "exitCode": 0,
-      "durationMs": 550,
+      "durationMs": 589,
       "ok": true,
       "skipped": false,
-      "stdoutTail": "{\n  \"success\": true,\n  \"scenarioCount\": 15,\n  \"reports\": {\n    \"quality\": true,\n    \"channelConformance\": true,\n    \"scenarioRecordings\": true\n  },\n  \"output\": \"D:\\\\ClawX\\\\artifacts\\\\agent-dev-workbench\\\\index.html\",\n  \"evidence\": \"D:\\\\ClawX\\\\artifacts\\\\agent-dev-workbench\\\\evidence.json\"\n}\n",
+      "stdoutTail": "{\n  \"success\": true,\n  \"scenarioCount\": 15,\n  \"reports\": {\n    \"quality\": true,\n    \"channelConformance\": false,\n    \"scenarioRecordings\": true\n  },\n  \"output\": \"D:\\\\ClawX-work\\\\g8-ui-closeout-20261113-01a1d351\\\\artifacts\\\\agent-dev-workbench\\\\index.html\",\n  \"evidence\": \"D:\\\\ClawX-work\\\\g8-ui-closeout-20261113-01a1d351\\\\artifacts\\\\agent-dev-workbench\\\\evidence.json\"\n}\n",
       "stderrTail": "$ node scripts/agent-dev-workbench.mjs\n"
     },
     {
@@ -184,7 +160,7 @@
       "goal": "Shared Agent Dev scenario baseline; task ownership is validated separately for each change set",
       "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
       "exitCode": 0,
-      "durationMs": 1884,
+      "durationMs": 1614,
       "ok": true,
       "skipped": false,
       "stdoutTail": "Spec is valid: harness\\specs\\scenarios\\agent-dev-composable-scenarios.md\n",
@@ -199,11 +175,11 @@
       "goal": "Focused Agent Dev behavior and facade tests",
       "commandLine": "pnpm agent-dev:unit",
       "exitCode": 0,
-      "durationMs": 4632,
+      "durationMs": 12925,
       "ok": true,
       "skipped": false,
-      "stdoutTail": "\n RUN  v4.1.1 D:/ClawX\n\n\n Test Files  7 passed (7)\n      Tests  116 passed (116)\n   Start at  11:43:52\n   Duration  2.65s (transform 413ms, setup 211ms, import 599ms, tests 4.61s, environment 948ms)\n\n",
-      "stderrTail": "$ pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts tests/unit/host-api-facade.test.ts\n"
+      "stdoutTail": "\n RUN  v4.1.1 D:/ClawX-work/g8-ui-closeout-20261113-01a1d351\n\n\n Test Files  7 passed (7)\n      Tests  188 passed (188)\n   Start at  17:12:21\n   Duration  10.87s (transform 404ms, setup 149ms, import 491ms, tests 12.54s, environment 620ms)\n\n",
+      "stderrTail": "$ vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts tests/unit/host-api-facade.test.ts\n"
     },
     {
       "id": "comms-replay",
@@ -215,10 +191,10 @@
       "goal": "Communication replay metrics",
       "commandLine": "pnpm run comms:replay",
       "exitCode": 0,
-      "durationMs": 710,
+      "durationMs": 667,
       "ok": true,
       "skipped": false,
-      "stdoutTail": "Wrote comms replay metrics to D:\\ClawX\\artifacts\\comms\\current-metrics.json\n",
+      "stdoutTail": "Wrote comms replay metrics to D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\artifacts\\comms\\current-metrics.json\n",
       "stderrTail": "$ node scripts/comms/replay.mjs\n"
     },
     {
@@ -231,10 +207,10 @@
       "goal": "Communication baseline comparison",
       "commandLine": "pnpm run comms:compare",
       "exitCode": 0,
-      "durationMs": 672,
+      "durationMs": 611,
       "ok": true,
       "skipped": false,
-      "stdoutTail": "# Comms Regression Report\n\n- Generated at: 2026-11-02T03:43:56.605Z\n- Candidate: 6131e241a7694e9dc3520088efcf13885621c310 (fdd17e0ec6d136186f1d3e6c0313dce5b6a26127)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\ClawX\\artifacts\\comms\\compare-report.md\n",
+      "stdoutTail": "# Comms Regression Report\n\n- Generated at: 2026-11-13T09:12:33.844Z\n- Candidate: 414af909c67460f6ee4667812070a2051ce108a9 (72d085f814b75a2c68ee12c24c58ef12ce2930b1)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\artifacts\\comms\\compare-report.md\n",
       "stderrTail": "$ node scripts/comms/compare.mjs\n"
     },
     {
@@ -244,52 +220,115 @@
         "run",
         "build:vite"
       ],
-      "goal": "Verified reusable Vite/Electron production build for no-build Playwright loops",
-      "skip": true,
-      "skipped": true,
-      "reuseStatus": "reused",
-      "commandLine": "reuse existing build",
+      "goal": "Reusable Vite/Electron production build for no-build Playwright loops",
+      "reuseStatus": "fresh",
+      "commandLine": "pnpm run build:vite",
       "exitCode": 0,
-      "durationMs": 1,
+      "durationMs": 53963,
       "ok": true,
+      "skipped": false,
+      "stdoutTail": "re-B25dwEJi.js                                86.37 kB\ndist/assets/swift-D82vCrfD.js                                    86.69 kB\ndist/assets/fortran-free-form-BxgE0vQu.js                        88.97 kB\ndist/assets/csharp-DSvCPggb.js                                   90.19 kB\ndist/assets/racket-BqYA7rlc.js                                   92.39 kB\ndist/assets/less-B1dDrJ26.js                                     97.63 kB\ndist/assets/blade-2xfisSek.js                                   104.98 kB\ndist/assets/objective-c-DXmwc3jG.js                             105.41 kB\ndist/assets/php-Csjmro_R.js                                     113.09 kB\ndist/assets/DcsProdFlagsPanel-C6FVoP5d.js                       113.47 kB\ndist/assets/index-CpDLlfIh.js                                   124.53 kB\ndist/assets/asciidoc-Ve4PFQV2.js                                131.53 kB\ndist/assets/mdx-Cmh6b_Ma.js                                     136.11 kB\ndist/assets/knowledge-view-utils-uiAbEHTt.js                    138.91 kB\ndist/assets/markdown-rendering-DJ_LgNmV.js                      150.10 kB\ndist/assets/objective-cpp-CLxacb5B.js                           171.97 kB\ndist/assets/javascript-wDzz0qaB.js                              174.83 kB\ndist/assets/tsx-COt5Ahok.js                                     175.54 kB\ndist/assets/jsx-g9-lgVsj.js                                     177.79 kB\ndist/assets/typescript-BPQ3VLAy.js                              181.08 kB\ndist/assets/angular-ts-CT0n3M0e.js                              183.82 kB\ndist/assets/vue-vine-BoDAl6tE.js                                190.05 kB\ndist/assets/react-vendor-Cc9bFkFH.js                            192.88 kB\ndist/assets/html2canvas.esm-DXEQVQnt.js                         201.04 kB\ndist/assets/assistant-ui-runtime-CPJq7UOB.js                    210.60 kB\ndist/assets/index-C04k1uFW.js                                   220.20 kB\ndist/assets/math-rendering-BtIipC_D.js                          258.80 kB\ndist/assets/zh-DbUgBcR-.js                                      260.78 kB\ndist/assets/wolfram-lXgVvXCa.js                                 262.39 kB\ndist/assets/AgentAvatar-Dft8Ey6I.js                             307.53 kB\ndist/assets/ja-j5x2z4Fc.js                                      336.68 kB\ndist/assets/ru-CW52Lltp.js                                      412.98 kB\ndist/assets/document-viewers-CNerDvZX.js                        429.19 kB\ndist/assets/index-CMGd26Ir.js                                   443.26 kB\ndist/assets/lucide-icons-Ba2_1hRg.js                            488.08 kB\ndist/assets/ArtifactPanel-l1cG3AsC.js                           558.70 kB\ndist/assets/index-Bv-312-X.js                                   567.78 kB\ndist/assets/wasm-CG6Dc4jp.js                                    622.34 kB\ndist/assets/cpp-UfJy6YNI.js                                     626.08 kB\ndist/assets/App-DQPeAFyj.js                                     705.40 kB\ndist/assets/emacs-lisp-CXvaQtF9.js                              779.88 kB\ndist/assets/GeneratedFilesPanel-2kes45Km.js                   1,726.23 kB\ndist/assets/editor-CONRKkre.js                                3,750.05 kB\n✓ built in 39.80s\nvite v7.3.1 building client environment for production...\ntransforming...\n✓ 970 modules transformed.\nrendering chunks...\ndist-electron/main/index.js                                         1.38 kB\ndist-electron/main/active-sandbox-high-risk-policy-CjPWtP6A.js      2.26 kB\ndist-electron/main/session-cascade-delete-DWgWJXEE.js               3.77 kB\ndist-electron/main/execution-checkout-admission-DTwpv2yc.js         4.49 kB\ndist-electron/main/execution-migration-Xn54PO1y.js                  9.68 kB\ndist-electron/main/index-CVzytNKG.js                            2,438.24 kB\n✓ built in 4.89s\nvite v7.3.1 building client environment for production...\ntransforming...\n✓ 2 modules transformed.\nrendering chunks...\ndist-electron/preload/index.js  2.50 kB\n✓ built in 14ms\n[versebrowser-build] bound; 2296 compiled outputs\n",
+      "stderrTail": "ent-browser-api.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/resource-envelope.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/agent-browser-bridge.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/ipc-handlers.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/long-session-resource-reclamation.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/session-storage-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sessions-api.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/git-api.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/openclaw_runtime/src/agents/worktree-merge-files.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/openclaw_runtime/src/agents/worktree-service.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/execution-migration.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-system-service.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/openclaw_runtime/src/agents/execution-checkout-admission.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-system-service.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/git-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sessions-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-service.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-service.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/chat-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/session-storage-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sessions-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-api.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/long-session-resource-reclamation.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/session-activity-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sessions-api.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/ipc-handlers.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/resource-envelope.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, dynamic import will not move module into another chunk.\n\n$ node scripts/versebrowser-build-provenance.mjs\n",
       "diagnostics": {
         "build": {
           "kind": "vite-build",
-          "reused": true,
-          "skipped": true,
-          "warningCount": 0,
-          "largestAssets": []
+          "buildPasses": [
+            {
+              "index": 1,
+              "durationMs": 39800
+            },
+            {
+              "index": 2,
+              "durationMs": 4890
+            },
+            {
+              "index": 3,
+              "durationMs": 14
+            }
+          ],
+          "largestAssets": [
+            {
+              "path": "dist/assets/editor-CONRKkre.js",
+              "sizeKb": 3750.05
+            },
+            {
+              "path": "dist-electron/main/index-CVzytNKG.js",
+              "sizeKb": 2438.24
+            },
+            {
+              "path": "dist/assets/GeneratedFilesPanel-2kes45Km.js",
+              "sizeKb": 1726.23
+            },
+            {
+              "path": "dist/assets/emacs-lisp-CXvaQtF9.js",
+              "sizeKb": 779.88
+            },
+            {
+              "path": "dist/assets/App-DQPeAFyj.js",
+              "sizeKb": 705.4
+            },
+            {
+              "path": "dist/assets/cpp-UfJy6YNI.js",
+              "sizeKb": 626.08
+            },
+            {
+              "path": "dist/assets/wasm-CG6Dc4jp.js",
+              "sizeKb": 622.34
+            },
+            {
+              "path": "dist/assets/index-Bv-312-X.js",
+              "sizeKb": 567.78
+            }
+          ],
+          "warningCount": 12,
+          "warnings": [
+            "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/workspaces.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/agents/RolesOrchestrationPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/SessionWorkspacePicker.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/WelcomeProjectPicker.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/ArtifactPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAuditPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceBrowserBody.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceGitPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/MainLayout.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/Sidebar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/lib/workspace-session.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/use-session-reading-position.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/CodeReview/ChangeContextPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Memory/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Projects/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/chat.ts, dynamic import will not move module into another chunk.",
+            "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/chat.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/Sidebar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/rareui/CompletionActivityMenu.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/lib/workspace-session.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatToolbar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/TeamOrchestrationCard.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Cron/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Projects/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/cron.ts, dynamic import will not move module into another chunk.",
+            "(!) Some chunks are larger than 500 kB after minification. Consider:",
+            "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/store.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/manager.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/config-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/manager.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/launch-at-startup.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/menu.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/proxy.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/agent-dev-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/chat-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/efficiency-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/gateway-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/remote-control-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/remote-tasks-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sensitive-capture-gate.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/session-delegation-store.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/settings-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/support-bundle.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/system-notifications-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/usage-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/work-providers-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/app-version-rollback.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/control-ui-device-pairing.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-auth.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.",
+            "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/channel-config.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/cron-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/skill-config.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/config-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/supervisor.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/agents-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/channels-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/hooks-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/mcp-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/roles-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/agent-config.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/app-version-rollback.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.",
+            "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-service.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-system-service.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/chat-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/code-review-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sessions-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-working-context.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts, dynamic import will not move module into another chunk."
+          ],
+          "totalReportedBuildMs": 44704
         }
-      },
-      "stdoutTail": "",
-      "stderrTail": ""
+      }
     },
     {
       "id": "playwright-agent-dev",
       "command": "pnpm",
       "args": [
         "run",
-        "test:e2e:agent-dev-quality:smoke"
+        "test:e2e:agent-dev-quality:run"
       ],
-      "goal": "Smoke Agent Dev Settings > Developer Workbench path",
-      "targetMs": 15000,
-      "limitMs": 25000,
-      "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+      "goal": "Electron Agent Dev scenario and in-app Workbench path",
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
       "exitCode": 0,
-      "durationMs": 23299,
+      "durationMs": 20158,
       "ok": true,
       "skipped": false,
-      "stdoutTail": "\nRunning 1 test using 1 worker\n\n  ok 1 tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (17.9s)\n\n  1 passed (22.0s)\n",
-      "stderrTail": "$ playwright test tests/e2e/agent-dev-quality.spec.ts --grep \"loads the in-app Agent Dev Workbench\"\n(node:5832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:5832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stdoutTail": "\nRunning 4 tests using 2 workers\n\n  ok 2 tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling (8.9s)\n  ok 1 tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario (8.9s)\n  ok 3 tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario (7.2s)\n  ok 4 tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (8.3s)\n\n  4 passed (19.0s)\n",
+      "stderrTail": "$ playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2\n(node:46784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:37368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:46784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:37368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
       "diagnostics": {
         "playwright": {
           "kind": "playwright",
-          "passed": 1,
-          "reportedDurationMs": 22000,
+          "passed": 4,
+          "reportedDurationMs": 19000,
           "tests": [
             {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+              "durationMs": 8900
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+              "durationMs": 8900
+            },
+            {
               "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-              "durationMs": 17900
+              "durationMs": 8300
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+              "durationMs": 7200
             }
           ]
         }
@@ -304,48 +343,48 @@
       "goal": "Refresh Workbench evidence after quality report generation",
       "commandLine": "pnpm agent-dev:workbench",
       "exitCode": 0,
-      "durationMs": 639,
+      "durationMs": 534,
       "ok": true,
       "skipped": false,
-      "stdoutTail": "{\n  \"success\": true,\n  \"scenarioCount\": 15,\n  \"reports\": {\n    \"quality\": true,\n    \"channelConformance\": true,\n    \"scenarioRecordings\": true\n  },\n  \"output\": \"D:\\\\ClawX\\\\artifacts\\\\agent-dev-workbench\\\\index.html\",\n  \"evidence\": \"D:\\\\ClawX\\\\artifacts\\\\agent-dev-workbench\\\\evidence.json\"\n}\n",
+      "stdoutTail": "{\n  \"success\": true,\n  \"scenarioCount\": 15,\n  \"reports\": {\n    \"quality\": true,\n    \"channelConformance\": false,\n    \"scenarioRecordings\": true\n  },\n  \"output\": \"D:\\\\ClawX-work\\\\g8-ui-closeout-20261113-01a1d351\\\\artifacts\\\\agent-dev-workbench\\\\index.html\",\n  \"evidence\": \"D:\\\\ClawX-work\\\\g8-ui-closeout-20261113-01a1d351\\\\artifacts\\\\agent-dev-workbench\\\\evidence.json\"\n}\n",
       "stderrTail": "$ node scripts/agent-dev-workbench.mjs\n"
     }
   ],
   "bottlenecks": [
     {
-      "id": "playwright-agent-dev",
-      "durationMs": 23299,
-      "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+      "id": "e2e-build",
+      "durationMs": 53963,
+      "commandLine": "pnpm run build:vite",
       "skipped": false
     },
     {
       "id": "typecheck",
-      "durationMs": 5103,
-      "commandLine": "pnpm run typecheck:cached",
+      "durationMs": 25578,
+      "commandLine": "pnpm run typecheck",
+      "skipped": false
+    },
+    {
+      "id": "playwright-agent-dev",
+      "durationMs": 20158,
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
       "skipped": false
     },
     {
       "id": "vitest-agent-dev",
-      "durationMs": 4632,
+      "durationMs": 12925,
       "commandLine": "pnpm agent-dev:unit",
       "skipped": false
     },
     {
-      "id": "harness-agent-dev",
-      "durationMs": 1884,
-      "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
-      "skipped": false
-    },
-    {
-      "id": "comms-replay",
-      "durationMs": 710,
-      "commandLine": "pnpm run comms:replay",
+      "id": "contract",
+      "durationMs": 2185,
+      "commandLine": "node scripts/contract-check.mjs",
       "skipped": false
     }
   ],
   "workbenchEvidence": {
     "schema": "clawx.agent-dev.workbench-evidence.v1",
-    "generatedAt": "2026-11-02T03:44:20.557Z",
+    "generatedAt": "2026-11-13T09:13:48.515Z",
     "scenarioCount": 15,
     "scenarios": [
       {
@@ -467,8 +506,9 @@
       "runtime:long-stability": "node scripts/runtime-long-stability.mjs",
       "ext:bridge": "node scripts/generate-ext-bridge.mjs",
       "build": "node scripts/generate-ext-bridge.mjs && pnpm run build:vite && pnpm run build:runtime && zx scripts/bundle-openclaw.mjs && zx scripts/bundle-openclaw-plugins.mjs && zx scripts/bundle-openclaw-runtime.mjs && zx scripts/bundle-preinstalled-skills.mjs && node scripts/bundle-main-runtime.mjs && node scripts/run-electron-builder.mjs",
-      "prebuild:vite": "pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs",
+      "prebuild:vite": "node scripts/versebrowser-build-provenance.mjs --capture && pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs",
       "build:vite": "node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build",
+      "postbuild:vite": "node scripts/versebrowser-build-provenance.mjs",
       "build:startup-check": "node scripts/check-renderer-startup-chunks.mjs",
       "bundle:openclaw-plugins": "zx scripts/bundle-openclaw-plugins.mjs",
       "bundle:preinstalled-skills": "zx scripts/bundle-preinstalled-skills.mjs",
@@ -523,13 +563,14 @@
       "rsi:tf0592:check": "node scripts/rsi-tf0592-statistical-adjudication.mjs --check --json",
       "rsi:decision:check": "node scripts/rsi-decision-check.mjs --json",
       "rsi:feedback:check": "node scripts/rsi-feedback-pilot.mjs --check --json",
+      "rsi:feedback:export": "node scripts/rsi-feedback-export.mjs --write --json",
       "agent-first:corpus:check": "node scripts/agent-first-corpus-check.mjs",
       "rsi:corpus:write": "node scripts/rsi-historical-task-corpus.mjs --write",
       "rsi:corpus:check": "node scripts/rsi-historical-task-corpus.mjs --check",
       "rsi:corpus:calibrate": "node scripts/rsi-historical-task-corpus.mjs --calibrate",
-      "agent-dev:unit:node": "pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts",
+      "agent-dev:unit:node": "vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts",
       "agent-dev:unit:fast": "pnpm agent-dev:unit",
-      "agent-dev:unit": "pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts tests/unit/host-api-facade.test.ts",
+      "agent-dev:unit": "vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts tests/unit/host-api-facade.test.ts",
       "agent-dev:fast": "pnpm contract:check && pnpm i18n:lint && pnpm prompt-quality:fast && pnpm agent-dev:workbench && pnpm agent-dev:unit:fast",
       "prompt-quality:budget": "pnpm exec vitest run tests/unit/prompt-quality-budget.test.ts",
       "prompt-quality:fast": "pnpm run prompt-quality:budget",
@@ -775,12 +816,12 @@
     "artifactStatus": {
       "workbench": true,
       "quality": true,
-      "channelConformance": true,
+      "channelConformance": false,
       "scenarioRecordings": true
     },
     "artifacts": {
       "quality": true,
-      "channelConformance": true,
+      "channelConformance": false,
       "scenarioRecordings": true
     },
     "gateCommands": {
@@ -801,90 +842,84 @@
     },
     "performance": {
       "latest": {
-        "generatedAt": "2026-11-02T03:44:19.960Z",
+        "generatedAt": "2026-11-13T09:13:48.007Z",
         "success": true,
-        "totalDurationMs": 38295,
+        "totalDurationMs": 119030,
         "decision": {
-          "status": "needs-full-gate",
-          "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+          "status": "daily-loop-ok",
+          "reason": "All selected Agent Dev gates passed within hard limits.",
           "dailyLoopReady": true,
-          "releaseReady": false,
-          "fullGateComplete": false,
+          "releaseReady": true,
+          "fullGateComplete": true,
           "budgetStatus": "watch",
-          "fastPathModes": [
-            "reuse-build",
-            "cached-typecheck",
-            "smoke-e2e"
-          ],
-          "requiredFullGates": [
-            "pnpm run build:vite",
-            "pnpm run typecheck",
-            "pnpm test:e2e:agent-dev-quality"
-          ],
+          "fastPathModes": [],
+          "requiredFullGates": [],
           "watchSteps": [
-            "playwright-agent-dev"
+            "e2e-build",
+            "vitest-agent-dev",
+            "contract",
+            "typecheck"
           ],
           "limitSteps": []
         },
         "modes": {
-          "buildReuse": "reused",
+          "buildReuse": "fresh",
           "unit": "full",
-          "typecheck": "cached",
-          "e2e": "smoke"
+          "typecheck": "full",
+          "e2e": "full"
         },
         "bottlenecks": [
           {
-            "id": "playwright-agent-dev",
-            "durationMs": 23299,
-            "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+            "id": "e2e-build",
+            "durationMs": 53963,
+            "commandLine": "pnpm run build:vite",
             "skipped": false
           },
           {
             "id": "typecheck",
-            "durationMs": 5103,
-            "commandLine": "pnpm run typecheck:cached",
+            "durationMs": 25578,
+            "commandLine": "pnpm run typecheck",
+            "skipped": false
+          },
+          {
+            "id": "playwright-agent-dev",
+            "durationMs": 20158,
+            "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
             "skipped": false
           },
           {
             "id": "vitest-agent-dev",
-            "durationMs": 4632,
+            "durationMs": 12925,
             "commandLine": "pnpm agent-dev:unit",
             "skipped": false
           },
           {
-            "id": "harness-agent-dev",
-            "durationMs": 1884,
-            "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
-            "skipped": false
-          },
-          {
-            "id": "comms-replay",
-            "durationMs": 710,
-            "commandLine": "pnpm run comms:replay",
+            "id": "contract",
+            "durationMs": 2185,
+            "commandLine": "node scripts/contract-check.mjs",
             "skipped": false
           }
         ],
         "diagnostics": {
           "typecheck": {
             "stepId": "typecheck",
-            "commandLine": "pnpm run typecheck:cached",
-            "durationMs": 5103,
+            "commandLine": "pnpm run typecheck",
+            "durationMs": 25578,
             "kind": "typecheck",
             "mode": "parallel",
             "cache": {
-              "enabled": true,
-              "status": "hit",
-              "key": "3ebf8d77b293fe3ad9d3160a7388b2908ab8f62b0075a0dff6b74d97cd6e8b91",
-              "inputCount": 13012,
-              "report": "D:\\ClawX\\artifacts\\typecheck-cache\\report.json",
-              "cachedAt": "2026-11-02T03:41:45.829Z"
+              "enabled": false,
+              "status": "disabled",
+              "key": null,
+              "inputCount": 0,
+              "report": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\artifacts\\typecheck-cache\\report.json"
             },
-            "totalDurationMs": 4571,
-            "coverageNote": "Reused successful node/web/test checks with unchanged source inputs; run pnpm run typecheck for an uncached full gate.",
+            "totalDurationMs": 25037,
+            "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
             "phases": [
               {
                 "commandLine": "node scripts/generate-ext-bridge.mjs",
-                "durationMs": 94,
+                "durationMs": 86,
                 "exitCode": 0,
                 "ok": true,
                 "skipped": false,
@@ -892,38 +927,32 @@
               },
               {
                 "commandLine": "pnpm run typecheck:node",
-                "durationMs": 0,
+                "durationMs": 8475,
                 "exitCode": 0,
                 "ok": true,
-                "skipped": true,
-                "cacheHit": true,
-                "cachedDurationMs": 12800,
-                "cachedAt": "2026-11-02T03:41:45.829Z"
+                "skipped": false,
+                "cacheHit": false
               },
               {
                 "commandLine": "pnpm run typecheck:web",
-                "durationMs": 0,
+                "durationMs": 4181,
                 "exitCode": 0,
                 "ok": true,
-                "skipped": true,
-                "cacheHit": true,
-                "cachedDurationMs": 7713,
-                "cachedAt": "2026-11-02T03:41:45.829Z"
+                "skipped": false,
+                "cacheHit": false
               },
               {
                 "commandLine": "pnpm run typecheck:test",
-                "durationMs": 0,
+                "durationMs": 16473,
                 "exitCode": 0,
                 "ok": true,
-                "skipped": true,
-                "cacheHit": true,
-                "cachedDurationMs": 16250,
-                "cachedAt": "2026-11-02T03:41:45.829Z"
+                "skipped": false,
+                "cacheHit": false
               }
             ],
             "slowestPhase": {
-              "commandLine": "node scripts/generate-ext-bridge.mjs",
-              "durationMs": 94,
+              "commandLine": "pnpm run typecheck:test",
+              "durationMs": 16473,
               "exitCode": 0,
               "ok": true,
               "skipped": false,
@@ -932,25 +961,91 @@
           },
           "build": {
             "stepId": "e2e-build",
-            "commandLine": "reuse existing build",
-            "durationMs": 1,
+            "commandLine": "pnpm run build:vite",
+            "durationMs": 53963,
             "kind": "vite-build",
-            "reused": true,
-            "skipped": true,
-            "warningCount": 0,
-            "largestAssets": []
+            "buildPasses": [
+              {
+                "index": 1,
+                "durationMs": 39800
+              },
+              {
+                "index": 2,
+                "durationMs": 4890
+              },
+              {
+                "index": 3,
+                "durationMs": 14
+              }
+            ],
+            "largestAssets": [
+              {
+                "path": "dist/assets/editor-CONRKkre.js",
+                "sizeKb": 3750.05
+              },
+              {
+                "path": "dist-electron/main/index-CVzytNKG.js",
+                "sizeKb": 2438.24
+              },
+              {
+                "path": "dist/assets/GeneratedFilesPanel-2kes45Km.js",
+                "sizeKb": 1726.23
+              },
+              {
+                "path": "dist/assets/emacs-lisp-CXvaQtF9.js",
+                "sizeKb": 779.88
+              },
+              {
+                "path": "dist/assets/App-DQPeAFyj.js",
+                "sizeKb": 705.4
+              },
+              {
+                "path": "dist/assets/cpp-UfJy6YNI.js",
+                "sizeKb": 626.08
+              },
+              {
+                "path": "dist/assets/wasm-CG6Dc4jp.js",
+                "sizeKb": 622.34
+              },
+              {
+                "path": "dist/assets/index-Bv-312-X.js",
+                "sizeKb": 567.78
+              }
+            ],
+            "warningCount": 12,
+            "warnings": [
+              "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/workspaces.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/agents/RolesOrchestrationPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/SessionWorkspacePicker.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/WelcomeProjectPicker.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/ArtifactPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAuditPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceBrowserBody.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceGitPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/MainLayout.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/Sidebar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/lib/workspace-session.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/use-session-reading-position.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/CodeReview/ChangeContextPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Memory/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Projects/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/chat.ts, dynamic import will not move module into another chunk.",
+              "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/chat.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/Sidebar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/rareui/CompletionActivityMenu.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/lib/workspace-session.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatToolbar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/TeamOrchestrationCard.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Cron/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Projects/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/cron.ts, dynamic import will not move module into another chunk.",
+              "(!) Some chunks are larger than 500 kB after minification. Consider:",
+              "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/store.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/manager.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/config-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/manager.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/launch-at-startup.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/menu.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/proxy.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/agent-dev-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/chat-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/efficiency-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/gateway-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/remote-control-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/remote-tasks-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sensitive-capture-gate.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/session-delegation-store.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/settings-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/support-bundle.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/system-notifications-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/usage-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/work-providers-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/app-version-rollback.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/control-ui-device-pairing.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-auth.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.",
+              "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/channel-config.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/cron-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/skill-config.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/config-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/supervisor.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/agents-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/channels-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/hooks-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/mcp-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/roles-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/agent-config.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/app-version-rollback.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.",
+              "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-service.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-system-service.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/chat-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/code-review-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sessions-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-working-context.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts, dynamic import will not move module into another chunk."
+            ],
+            "totalReportedBuildMs": 44704
           },
           "playwright": {
             "stepId": "playwright-agent-dev",
-            "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
-            "durationMs": 23299,
+            "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+            "durationMs": 20158,
             "kind": "playwright",
-            "passed": 1,
-            "reportedDurationMs": 22000,
+            "passed": 4,
+            "reportedDurationMs": 19000,
             "tests": [
               {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+                "durationMs": 8900
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+                "durationMs": 8900
+              },
+              {
                 "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-                "durationMs": 17900
+                "durationMs": 8300
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+                "durationMs": 7200
               }
             ]
           }
@@ -959,489 +1054,14 @@
       "history": {
         "trend": {
           "direction": "regressed",
-          "previousRunDeltaMs": 95777,
-          "sameModeDeltaMs": 95777,
-          "sameModeSampleCount": 4,
-          "previousRunGeneratedAt": "2026-11-02T03:39:49.107Z",
-          "previousSameModeGeneratedAt": "2026-11-02T03:39:49.107Z",
-          "note": "Compared with previous same-mode run 2026-11-02T03:39:49.107Z."
+          "previousRunDeltaMs": 58884,
+          "sameModeDeltaMs": 58884,
+          "sameModeSampleCount": 6,
+          "previousRunGeneratedAt": "2026-11-13T08:58:29.934Z",
+          "previousSameModeGeneratedAt": "2026-11-13T08:58:29.934Z",
+          "note": "Compared with previous same-mode run 2026-11-13T08:58:29.934Z."
         },
         "entries": [
-          {
-            "generatedAt": "2026-10-24T07:20:04.371Z",
-            "success": true,
-            "totalDurationMs": 25743,
-            "decisionStatus": "needs-full-gate",
-            "releaseReady": false,
-            "modes": {
-              "buildReuse": "reused",
-              "unit": "full",
-              "typecheck": "cached",
-              "e2e": "smoke"
-            },
-            "stepDurations": {
-              "typecheck": {
-                "durationMs": 5674,
-                "skipped": false,
-                "ok": true
-              },
-              "contract": {
-                "durationMs": 466,
-                "skipped": false,
-                "ok": true
-              },
-              "i18n": {
-                "durationMs": 597,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench": {
-                "durationMs": 417,
-                "skipped": false,
-                "ok": true
-              },
-              "harness-agent-dev": {
-                "durationMs": 1275,
-                "skipped": false,
-                "ok": true
-              },
-              "vitest-agent-dev": {
-                "durationMs": 3320,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-replay": {
-                "durationMs": 529,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-compare": {
-                "durationMs": 473,
-                "skipped": false,
-                "ok": true
-              },
-              "e2e-build": {
-                "durationMs": 1,
-                "skipped": true,
-                "ok": true
-              },
-              "playwright-agent-dev": {
-                "durationMs": 11906,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench-refresh": {
-                "durationMs": 1002,
-                "skipped": false,
-                "ok": true
-              }
-            },
-            "budgetSummary": {
-              "ok": 11,
-              "watch": 0,
-              "limit": 0
-            }
-          },
-          {
-            "generatedAt": "2026-10-26T14:32:36.672Z",
-            "success": false,
-            "totalDurationMs": 99733,
-            "decisionStatus": "blocked",
-            "releaseReady": false,
-            "modes": {
-              "buildReuse": "stale",
-              "unit": "full",
-              "typecheck": "cached",
-              "e2e": "smoke"
-            },
-            "stepDurations": {
-              "typecheck": {
-                "durationMs": 37045,
-                "skipped": false,
-                "ok": true
-              },
-              "contract": {
-                "durationMs": 629,
-                "skipped": false,
-                "ok": true
-              },
-              "i18n": {
-                "durationMs": 691,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench": {
-                "durationMs": 405,
-                "skipped": false,
-                "ok": true
-              },
-              "harness-agent-dev": {
-                "durationMs": 1703,
-                "skipped": false,
-                "ok": true
-              },
-              "vitest-agent-dev": {
-                "durationMs": 4955,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-replay": {
-                "durationMs": 518,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-compare": {
-                "durationMs": 481,
-                "skipped": false,
-                "ok": true
-              },
-              "e2e-build": {
-                "durationMs": 49670,
-                "skipped": false,
-                "ok": true
-              },
-              "playwright-agent-dev": {
-                "durationMs": 3041,
-                "skipped": false,
-                "ok": false
-              },
-              "workbench-refresh": {
-                "durationMs": 464,
-                "skipped": false,
-                "ok": true
-              }
-            },
-            "budgetSummary": {
-              "ok": 9,
-              "watch": 2,
-              "limit": 0
-            }
-          },
-          {
-            "generatedAt": "2026-10-26T14:33:01.766Z",
-            "success": false,
-            "totalDurationMs": 14952,
-            "decisionStatus": "blocked",
-            "releaseReady": false,
-            "modes": {
-              "buildReuse": "reused",
-              "unit": "full",
-              "typecheck": "cached",
-              "e2e": "smoke"
-            },
-            "stepDurations": {
-              "typecheck": {
-                "durationMs": 5299,
-                "skipped": false,
-                "ok": true
-              },
-              "contract": {
-                "durationMs": 398,
-                "skipped": false,
-                "ok": true
-              },
-              "i18n": {
-                "durationMs": 552,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench": {
-                "durationMs": 385,
-                "skipped": false,
-                "ok": true
-              },
-              "harness-agent-dev": {
-                "durationMs": 1477,
-                "skipped": false,
-                "ok": true
-              },
-              "vitest-agent-dev": {
-                "durationMs": 3028,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-replay": {
-                "durationMs": 526,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-compare": {
-                "durationMs": 499,
-                "skipped": false,
-                "ok": true
-              },
-              "e2e-build": {
-                "durationMs": 1,
-                "skipped": true,
-                "ok": true
-              },
-              "playwright-agent-dev": {
-                "durationMs": 2206,
-                "skipped": false,
-                "ok": false
-              },
-              "workbench-refresh": {
-                "durationMs": 517,
-                "skipped": false,
-                "ok": true
-              }
-            },
-            "budgetSummary": {
-              "ok": 11,
-              "watch": 0,
-              "limit": 0
-            }
-          },
-          {
-            "generatedAt": "2026-10-26T14:49:46.771Z",
-            "success": false,
-            "totalDurationMs": 60181,
-            "decisionStatus": "blocked",
-            "releaseReady": false,
-            "modes": {
-              "buildReuse": "reused",
-              "unit": "full",
-              "typecheck": "cached",
-              "e2e": "smoke"
-            },
-            "stepDurations": {
-              "typecheck": {
-                "durationMs": 5523,
-                "skipped": false,
-                "ok": true
-              },
-              "contract": {
-                "durationMs": 428,
-                "skipped": false,
-                "ok": true
-              },
-              "i18n": {
-                "durationMs": 573,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench": {
-                "durationMs": 425,
-                "skipped": false,
-                "ok": true
-              },
-              "harness-agent-dev": {
-                "durationMs": 1646,
-                "skipped": false,
-                "ok": true
-              },
-              "vitest-agent-dev": {
-                "durationMs": 3700,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-replay": {
-                "durationMs": 525,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-compare": {
-                "durationMs": 460,
-                "skipped": false,
-                "ok": true
-              },
-              "e2e-build": {
-                "durationMs": 1,
-                "skipped": true,
-                "ok": true
-              },
-              "playwright-agent-dev": {
-                "durationMs": 46427,
-                "skipped": false,
-                "ok": false
-              },
-              "workbench-refresh": {
-                "durationMs": 384,
-                "skipped": false,
-                "ok": true
-              }
-            },
-            "budgetSummary": {
-              "ok": 10,
-              "watch": 0,
-              "limit": 1
-            }
-          },
-          {
-            "generatedAt": "2026-10-26T15:02:38.900Z",
-            "success": true,
-            "totalDurationMs": 65753,
-            "decisionStatus": "blocked",
-            "releaseReady": false,
-            "modes": {
-              "buildReuse": "reused",
-              "unit": "full",
-              "typecheck": "cached",
-              "e2e": "smoke"
-            },
-            "stepDurations": {
-              "typecheck": {
-                "durationMs": 25247,
-                "skipped": false,
-                "ok": true
-              },
-              "contract": {
-                "durationMs": 552,
-                "skipped": false,
-                "ok": true
-              },
-              "i18n": {
-                "durationMs": 820,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench": {
-                "durationMs": 406,
-                "skipped": false,
-                "ok": true
-              },
-              "harness-agent-dev": {
-                "durationMs": 1714,
-                "skipped": false,
-                "ok": true
-              },
-              "vitest-agent-dev": {
-                "durationMs": 4253,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-replay": {
-                "durationMs": 480,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-compare": {
-                "durationMs": 417,
-                "skipped": false,
-                "ok": true
-              },
-              "e2e-build": {
-                "durationMs": 1,
-                "skipped": true,
-                "ok": true
-              },
-              "playwright-agent-dev": {
-                "durationMs": 31425,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench-refresh": {
-                "durationMs": 381,
-                "skipped": false,
-                "ok": true
-              }
-            },
-            "budgetSummary": {
-              "ok": 9,
-              "watch": 1,
-              "limit": 1
-            }
-          },
-          {
-            "generatedAt": "2026-10-26T15:04:00.381Z",
-            "success": true,
-            "totalDurationMs": 25995,
-            "decisionStatus": "needs-full-gate",
-            "releaseReady": false,
-            "modes": {
-              "buildReuse": "reused",
-              "unit": "full",
-              "typecheck": "cached",
-              "e2e": "smoke"
-            },
-            "stepDurations": {
-              "typecheck": {
-                "durationMs": 5531,
-                "skipped": false,
-                "ok": true
-              },
-              "contract": {
-                "durationMs": 412,
-                "skipped": false,
-                "ok": true
-              },
-              "i18n": {
-                "durationMs": 553,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench": {
-                "durationMs": 371,
-                "skipped": false,
-                "ok": true
-              },
-              "harness-agent-dev": {
-                "durationMs": 1403,
-                "skipped": false,
-                "ok": true
-              },
-              "vitest-agent-dev": {
-                "durationMs": 2696,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-replay": {
-                "durationMs": 521,
-                "skipped": false,
-                "ok": true
-              },
-              "comms-compare": {
-                "durationMs": 429,
-                "skipped": false,
-                "ok": true
-              },
-              "e2e-build": {
-                "durationMs": 1,
-                "skipped": true,
-                "ok": true
-              },
-              "playwright-agent-dev": {
-                "durationMs": 13630,
-                "skipped": false,
-                "ok": true
-              },
-              "workbench-refresh": {
-                "durationMs": 383,
-                "skipped": false,
-                "ok": true
-              }
-            },
-            "budgetSummary": {
-              "ok": 11,
-              "watch": 0,
-              "limit": 0
-            }
-          },
-          {
-            "generatedAt": "2026-11-02T03:39:49.107Z",
-            "success": false,
-            "totalDurationMs": 23230,
-            "decisionStatus": "blocked",
-            "releaseReady": false,
-            "modes": {
-              "buildReuse": "stale",
-              "unit": "full",
-              "typecheck": "cached",
-              "e2e": "smoke"
-            },
-            "stepDurations": {
-              "typecheck": {
-                "durationMs": 23094,
-                "skipped": false,
-                "ok": false
-              }
-            },
-            "budgetSummary": {
-              "ok": 1,
-              "watch": 0,
-              "limit": 0
-            }
-          },
           {
             "generatedAt": "2026-11-02T03:43:24.103Z",
             "success": true,
@@ -1516,20 +1136,470 @@
               "watch": 1,
               "limit": 1
             }
+          },
+          {
+            "generatedAt": "2026-11-02T03:44:20.608Z",
+            "success": true,
+            "totalDurationMs": 38940,
+            "decisionStatus": "needs-full-gate",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "smoke"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 5103,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 615,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 696,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 550,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 1884,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 4632,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 710,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 672,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 23299,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 639,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 10,
+              "watch": 1,
+              "limit": 0
+            }
+          },
+          {
+            "generatedAt": "2026-11-06T11:33:40.995Z",
+            "success": false,
+            "totalDurationMs": 51857,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "fresh",
+              "unit": "full",
+              "typecheck": "full",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 51809,
+                "skipped": false,
+                "ok": false
+              }
+            },
+            "budgetSummary": {
+              "ok": 0,
+              "watch": 0,
+              "limit": 1
+            }
+          },
+          {
+            "generatedAt": "2026-11-06T11:48:44.066Z",
+            "success": false,
+            "totalDurationMs": 499614,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "fresh",
+              "unit": "full",
+              "typecheck": "full",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 141038,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 4574,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 1131,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 535,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 2167,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 227452,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 1472,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 678,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 112565,
+                "skipped": false,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 7377,
+                "skipped": false,
+                "ok": false
+              },
+              "workbench-refresh": {
+                "durationMs": 539,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 6,
+              "watch": 1,
+              "limit": 4
+            }
+          },
+          {
+            "generatedAt": "2026-11-06T12:06:56.096Z",
+            "success": true,
+            "totalDurationMs": 309964,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "full",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 81259,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 3977,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 1103,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 552,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 1807,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 180444,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 645,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 532,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 38302,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 574,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 6,
+              "watch": 2,
+              "limit": 3
+            }
+          },
+          {
+            "generatedAt": "2026-11-13T08:39:54.355Z",
+            "success": false,
+            "totalDurationMs": 346822,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "fresh",
+              "unit": "full",
+              "typecheck": "full",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 98979,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 4334,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 1546,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 849,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 3378,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 237679,
+                "skipped": false,
+                "ok": false
+              }
+            },
+            "budgetSummary": {
+              "ok": 1,
+              "watch": 2,
+              "limit": 3
+            }
+          },
+          {
+            "generatedAt": "2026-11-13T08:58:29.934Z",
+            "success": true,
+            "totalDurationMs": 192593,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "fresh",
+              "unit": "full",
+              "typecheck": "full",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 68672,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 3341,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 1190,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 618,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 1967,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 17850,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 812,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 678,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 58952,
+                "skipped": false,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 37848,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 607,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 5,
+              "watch": 3,
+              "limit": 3
+            }
+          },
+          {
+            "generatedAt": "2026-11-13T09:05:03.391Z",
+            "success": true,
+            "totalDurationMs": 251477,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "fresh",
+              "unit": "full",
+              "typecheck": "full",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 31577,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 2817,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 925,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 560,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 2099,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 15190,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 827,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 860,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 152267,
+                "skipped": false,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 43422,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 783,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 6,
+              "watch": 3,
+              "limit": 2
+            }
           }
         ]
       },
       "audit": {
         "status": "fail",
-        "grade": "B",
-        "totalScore": 81,
+        "grade": "D",
+        "totalScore": 60,
         "maxScore": 100,
         "confidence": {
-          "level": "high",
-          "reason": "Required generated evidence is present, parseable, and within the freshness window.",
-          "freshGeneratedCount": 4,
+          "level": "medium",
+          "reason": "4 generated evidence artifact(s) are stale.",
+          "freshGeneratedCount": 0,
           "generatedSourceCount": 4,
-          "staleGeneratedCount": 0
+          "staleGeneratedCount": 4
         },
         "scoreBreakdown": [
           {
@@ -1545,12 +1615,37 @@
           {
             "id": "evidence-completeness",
             "title": "Evidence Completeness",
-            "score": 20,
+            "score": 0,
             "maxScore": 20,
-            "deducted": 0,
-            "status": "pass",
-            "reason": "No findings deducted points for this dimension.",
-            "findings": []
+            "deducted": 20,
+            "status": "fail",
+            "reason": "4 finding(s) deducted 20 point(s).",
+            "findings": [
+              {
+                "id": "evidence-stale:workbench",
+                "severity": "fail",
+                "estimatedPenalty": 8,
+                "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+              },
+              {
+                "id": "evidence-stale:deep-test",
+                "severity": "fail",
+                "estimatedPenalty": 8,
+                "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+              },
+              {
+                "id": "evidence-stale:deep-test-history",
+                "severity": "fail",
+                "estimatedPenalty": 8,
+                "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+              },
+              {
+                "id": "evidence-stale:quality",
+                "severity": "fail",
+                "estimatedPenalty": 8,
+                "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+              }
+            ]
           },
           {
             "id": "coverage-breadth",
@@ -1565,11 +1660,11 @@
           {
             "id": "performance-discipline",
             "title": "Performance Discipline",
-            "score": 1,
+            "score": 0,
             "maxScore": 20,
-            "deducted": 19,
+            "deducted": 20,
             "status": "fail",
-            "reason": "3 finding(s) deducted 19 point(s).",
+            "reason": "6 finding(s) deducted 20 point(s).",
             "findings": [
               {
                 "id": "latest-decision-blocked",
@@ -1578,16 +1673,34 @@
                 "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
               },
               {
-                "id": "performance-limit:playwright-agent-dev",
+                "id": "performance-limit:vitest-agent-dev",
                 "severity": "fail",
                 "estimatedPenalty": 8,
+                "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+              },
+              {
+                "id": "performance-limit:typecheck",
+                "severity": "fail",
+                "estimatedPenalty": 8,
+                "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+              },
+              {
+                "id": "performance-limit:contract",
+                "severity": "fail",
+                "estimatedPenalty": 8,
+                "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+              },
+              {
+                "id": "performance-watch:playwright-agent-dev",
+                "severity": "warn",
+                "estimatedPenalty": 3,
                 "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
               },
               {
-                "id": "performance-watch:e2e-build",
+                "id": "performance-watch:i18n",
                 "severity": "warn",
                 "estimatedPenalty": 3,
-                "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+                "recommendation": "Keep literal namespace scans bounded to source and locale directories."
               }
             ]
           },
@@ -1612,37 +1725,52 @@
             "findings": []
           }
         ],
-        "disqualifierCount": 2
+        "disqualifierCount": 8
       },
       "quality": {
         "success": true,
         "build": {
           "ok": true,
-          "durationMs": 1,
-          "commandLine": "reuse existing build",
-          "reused": true,
-          "skipped": true,
-          "reuseStatus": "reused"
+          "durationMs": 53963,
+          "commandLine": "pnpm run build:vite",
+          "reused": false,
+          "skipped": false,
+          "reuseStatus": "fresh"
         },
         "playwright": {
           "ok": true,
-          "durationMs": 23299,
-          "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+          "durationMs": 20158,
+          "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
           "spec": "tests/e2e/agent-dev-quality.spec.ts",
-          "mode": "smoke",
-          "expectedTests": 1,
+          "mode": "full",
+          "expectedTests": 4,
           "diagnostics": {
             "kind": "playwright",
-            "passed": 1,
-            "reportedDurationMs": 22000,
+            "passed": 4,
+            "reportedDurationMs": 19000,
             "tests": [
               {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+                "durationMs": 8900
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+                "durationMs": 8900
+              },
+              {
                 "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-                "durationMs": 17900
+                "durationMs": 8300
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+                "durationMs": 7200
               }
             ]
           },
           "evidence": [
+            "seeded scenario accessibility report",
+            "assistant-ui welcome suggestions visual artifact",
+            "seeded scenario visual artifact",
             "Settings > Developer Agent Dev Workbench host-api record path"
           ]
         }
@@ -1730,44 +1858,30 @@
   },
   "performanceLimits": [
     {
-      "id": "playwright-agent-dev",
-      "durationMs": 23299,
-      "targetMs": 15000,
-      "limitMs": 25000,
-      "overTargetMs": 8299,
+      "id": "e2e-build",
+      "durationMs": 53963,
+      "targetMs": 25000,
+      "limitMs": 58000,
+      "overTargetMs": 28963,
       "overLimitMs": 0,
-      "ratioToTarget": 1.55,
+      "ratioToTarget": 2.16,
       "severity": "watch",
       "loop": "full-local",
-      "owner": "Electron Agent Dev scenario path",
-      "mitigation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
-      "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
-      "skipped": false
-    },
-    {
-      "id": "typecheck",
-      "durationMs": 5103,
-      "targetMs": 25000,
-      "limitMs": 45000,
-      "overTargetMs": 0,
-      "overLimitMs": 0,
-      "ratioToTarget": 0.2,
-      "severity": "ok",
-      "loop": "full-local",
-      "owner": "compiled contract and renderer/Main safety",
-      "mitigation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
-      "commandLine": "pnpm run typecheck:cached",
-      "skipped": false
+      "owner": "Vite/Electron production build",
+      "mitigation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+      "commandLine": "pnpm run build:vite",
+      "skipped": false,
+      "reuseStatus": "fresh"
     },
     {
       "id": "vitest-agent-dev",
-      "durationMs": 4632,
+      "durationMs": 12925,
       "targetMs": 10000,
       "limitMs": 21000,
-      "overTargetMs": 0,
+      "overTargetMs": 2925,
       "overLimitMs": 0,
-      "ratioToTarget": 0.46,
-      "severity": "ok",
+      "ratioToTarget": 1.29,
+      "severity": "watch",
       "loop": "fast-pr",
       "owner": "focused Agent Dev unit and facade tests",
       "mitigation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.",
@@ -1775,13 +1889,58 @@
       "skipped": false
     },
     {
+      "id": "contract",
+      "durationMs": 2185,
+      "targetMs": 1000,
+      "limitMs": 3000,
+      "overTargetMs": 1185,
+      "overLimitMs": 0,
+      "ratioToTarget": 2.19,
+      "severity": "watch",
+      "loop": "fast-pr",
+      "owner": "host-api contract drift",
+      "mitigation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+      "commandLine": "node scripts/contract-check.mjs",
+      "skipped": false
+    },
+    {
+      "id": "typecheck",
+      "durationMs": 25578,
+      "targetMs": 25000,
+      "limitMs": 45000,
+      "overTargetMs": 578,
+      "overLimitMs": 0,
+      "ratioToTarget": 1.02,
+      "severity": "watch",
+      "loop": "full-local",
+      "owner": "compiled contract and renderer/Main safety",
+      "mitigation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+      "commandLine": "pnpm run typecheck",
+      "skipped": false
+    },
+    {
+      "id": "playwright-agent-dev",
+      "durationMs": 20158,
+      "targetMs": 25000,
+      "limitMs": 40000,
+      "overTargetMs": 0,
+      "overLimitMs": 0,
+      "ratioToTarget": 0.81,
+      "severity": "ok",
+      "loop": "full-local",
+      "owner": "Electron Agent Dev scenario path",
+      "mitigation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+      "skipped": false
+    },
+    {
       "id": "harness-agent-dev",
-      "durationMs": 1884,
+      "durationMs": 1614,
       "targetMs": 3000,
       "limitMs": 8000,
       "overTargetMs": 0,
       "overLimitMs": 0,
-      "ratioToTarget": 0.63,
+      "ratioToTarget": 0.54,
       "severity": "ok",
       "loop": "full-local",
       "owner": "shared Agent Dev scenario baseline",
@@ -1790,28 +1949,13 @@
       "skipped": false
     },
     {
-      "id": "comms-replay",
-      "durationMs": 710,
-      "targetMs": 2000,
-      "limitMs": 5000,
-      "overTargetMs": 0,
-      "overLimitMs": 0,
-      "ratioToTarget": 0.35,
-      "severity": "ok",
-      "loop": "nightly-release",
-      "owner": "communication replay metrics",
-      "mitigation": "Keep replay corpus bounded for Agent Dev deep diagnostics; broader comms evidence belongs in release gates.",
-      "commandLine": "pnpm run comms:replay",
-      "skipped": false
-    },
-    {
       "id": "i18n",
-      "durationMs": 696,
+      "durationMs": 732,
       "targetMs": 1000,
       "limitMs": 3000,
       "overTargetMs": 0,
       "overLimitMs": 0,
-      "ratioToTarget": 0.7,
+      "ratioToTarget": 0.73,
       "severity": "ok",
       "loop": "fast-pr",
       "owner": "locale namespace/key coverage",
@@ -1820,13 +1964,28 @@
       "skipped": false
     },
     {
-      "id": "comms-compare",
-      "durationMs": 672,
+      "id": "comms-replay",
+      "durationMs": 667,
       "targetMs": 2000,
       "limitMs": 5000,
       "overTargetMs": 0,
       "overLimitMs": 0,
-      "ratioToTarget": 0.34,
+      "ratioToTarget": 0.33,
+      "severity": "ok",
+      "loop": "nightly-release",
+      "owner": "communication replay metrics",
+      "mitigation": "Keep replay corpus bounded for Agent Dev deep diagnostics; broader comms evidence belongs in release gates.",
+      "commandLine": "pnpm run comms:replay",
+      "skipped": false
+    },
+    {
+      "id": "comms-compare",
+      "durationMs": 611,
+      "targetMs": 2000,
+      "limitMs": 5000,
+      "overTargetMs": 0,
+      "overLimitMs": 0,
+      "ratioToTarget": 0.31,
       "severity": "ok",
       "loop": "nightly-release",
       "owner": "communication baseline comparison",
@@ -1835,43 +1994,13 @@
       "skipped": false
     },
     {
-      "id": "workbench-refresh",
-      "durationMs": 639,
-      "targetMs": 1500,
-      "limitMs": 5000,
-      "overTargetMs": 0,
-      "overLimitMs": 0,
-      "ratioToTarget": 0.43,
-      "severity": "ok",
-      "loop": "nightly-release",
-      "owner": "post-quality Workbench evidence refresh",
-      "mitigation": "Refresh evidence from existing artifacts only.",
-      "commandLine": "pnpm agent-dev:workbench",
-      "skipped": false
-    },
-    {
-      "id": "contract",
-      "durationMs": 615,
-      "targetMs": 1000,
-      "limitMs": 3000,
-      "overTargetMs": 0,
-      "overLimitMs": 0,
-      "ratioToTarget": 0.61,
-      "severity": "ok",
-      "loop": "fast-pr",
-      "owner": "host-api contract drift",
-      "mitigation": "Keep contract scanning text-based and bounded to host-api/service sources.",
-      "commandLine": "pnpm contract:check",
-      "skipped": false
-    },
-    {
       "id": "workbench",
-      "durationMs": 550,
+      "durationMs": 589,
       "targetMs": 1500,
       "limitMs": 5000,
       "overTargetMs": 0,
       "overLimitMs": 0,
-      "ratioToTarget": 0.37,
+      "ratioToTarget": 0.39,
       "severity": "ok",
       "loop": "fast-pr",
       "owner": "static Workbench evidence indexing",
@@ -1880,52 +2009,51 @@
       "skipped": false
     },
     {
-      "id": "e2e-build",
-      "durationMs": 1,
-      "targetMs": 25000,
-      "limitMs": 58000,
+      "id": "workbench-refresh",
+      "durationMs": 534,
+      "targetMs": 1500,
+      "limitMs": 5000,
       "overTargetMs": 0,
       "overLimitMs": 0,
-      "ratioToTarget": 0,
+      "ratioToTarget": 0.36,
       "severity": "ok",
-      "loop": "full-local",
-      "owner": "Vite/Electron production build",
-      "mitigation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
-      "commandLine": "reuse existing build",
-      "skipped": true,
-      "reuseStatus": "reused"
+      "loop": "nightly-release",
+      "owner": "post-quality Workbench evidence refresh",
+      "mitigation": "Refresh evidence from existing artifacts only.",
+      "commandLine": "pnpm agent-dev:workbench",
+      "skipped": false
     }
   ],
   "gateProfile": {
     "full-local": {
-      "durationMs": 30287,
+      "durationMs": 101313,
       "stepCount": 4,
-      "skippedStepCount": 1,
+      "skippedStepCount": 0,
       "slowestStep": {
-        "id": "playwright-agent-dev",
-        "durationMs": 23299,
-        "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+        "id": "e2e-build",
+        "durationMs": 53963,
+        "commandLine": "pnpm run build:vite",
         "skipped": false
       }
     },
     "fast-pr": {
-      "durationMs": 6493,
+      "durationMs": 16431,
       "stepCount": 4,
       "skippedStepCount": 0,
       "slowestStep": {
         "id": "vitest-agent-dev",
-        "durationMs": 4632,
+        "durationMs": 12925,
         "commandLine": "pnpm agent-dev:unit",
         "skipped": false
       }
     },
     "nightly-release": {
-      "durationMs": 2021,
+      "durationMs": 1812,
       "stepCount": 3,
       "skippedStepCount": 0,
       "slowestStep": {
         "id": "comms-replay",
-        "durationMs": 710,
+        "durationMs": 667,
         "commandLine": "pnpm run comms:replay",
         "skipped": false
       }
@@ -1934,24 +2062,23 @@
   "diagnostics": {
     "typecheck": {
       "stepId": "typecheck",
-      "commandLine": "pnpm run typecheck:cached",
-      "durationMs": 5103,
+      "commandLine": "pnpm run typecheck",
+      "durationMs": 25578,
       "kind": "typecheck",
       "mode": "parallel",
       "cache": {
-        "enabled": true,
-        "status": "hit",
-        "key": "3ebf8d77b293fe3ad9d3160a7388b2908ab8f62b0075a0dff6b74d97cd6e8b91",
-        "inputCount": 13012,
-        "report": "D:\\ClawX\\artifacts\\typecheck-cache\\report.json",
-        "cachedAt": "2026-11-02T03:41:45.829Z"
+        "enabled": false,
+        "status": "disabled",
+        "key": null,
+        "inputCount": 0,
+        "report": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\artifacts\\typecheck-cache\\report.json"
       },
-      "totalDurationMs": 4571,
-      "coverageNote": "Reused successful node/web/test checks with unchanged source inputs; run pnpm run typecheck for an uncached full gate.",
+      "totalDurationMs": 25037,
+      "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
       "phases": [
         {
           "commandLine": "node scripts/generate-ext-bridge.mjs",
-          "durationMs": 94,
+          "durationMs": 86,
           "exitCode": 0,
           "ok": true,
           "skipped": false,
@@ -1959,38 +2086,32 @@
         },
         {
           "commandLine": "pnpm run typecheck:node",
-          "durationMs": 0,
+          "durationMs": 8475,
           "exitCode": 0,
           "ok": true,
-          "skipped": true,
-          "cacheHit": true,
-          "cachedDurationMs": 12800,
-          "cachedAt": "2026-11-02T03:41:45.829Z"
+          "skipped": false,
+          "cacheHit": false
         },
         {
           "commandLine": "pnpm run typecheck:web",
-          "durationMs": 0,
+          "durationMs": 4181,
           "exitCode": 0,
           "ok": true,
-          "skipped": true,
-          "cacheHit": true,
-          "cachedDurationMs": 7713,
-          "cachedAt": "2026-11-02T03:41:45.829Z"
+          "skipped": false,
+          "cacheHit": false
         },
         {
           "commandLine": "pnpm run typecheck:test",
-          "durationMs": 0,
+          "durationMs": 16473,
           "exitCode": 0,
           "ok": true,
-          "skipped": true,
-          "cacheHit": true,
-          "cachedDurationMs": 16250,
-          "cachedAt": "2026-11-02T03:41:45.829Z"
+          "skipped": false,
+          "cacheHit": false
         }
       ],
       "slowestPhase": {
-        "commandLine": "node scripts/generate-ext-bridge.mjs",
-        "durationMs": 94,
+        "commandLine": "pnpm run typecheck:test",
+        "durationMs": 16473,
         "exitCode": 0,
         "ok": true,
         "skipped": false,
@@ -1999,147 +2120,210 @@
     },
     "build": {
       "stepId": "e2e-build",
-      "commandLine": "reuse existing build",
-      "durationMs": 1,
+      "commandLine": "pnpm run build:vite",
+      "durationMs": 53963,
       "kind": "vite-build",
-      "reused": true,
-      "skipped": true,
-      "warningCount": 0,
-      "largestAssets": []
+      "buildPasses": [
+        {
+          "index": 1,
+          "durationMs": 39800
+        },
+        {
+          "index": 2,
+          "durationMs": 4890
+        },
+        {
+          "index": 3,
+          "durationMs": 14
+        }
+      ],
+      "largestAssets": [
+        {
+          "path": "dist/assets/editor-CONRKkre.js",
+          "sizeKb": 3750.05
+        },
+        {
+          "path": "dist-electron/main/index-CVzytNKG.js",
+          "sizeKb": 2438.24
+        },
+        {
+          "path": "dist/assets/GeneratedFilesPanel-2kes45Km.js",
+          "sizeKb": 1726.23
+        },
+        {
+          "path": "dist/assets/emacs-lisp-CXvaQtF9.js",
+          "sizeKb": 779.88
+        },
+        {
+          "path": "dist/assets/App-DQPeAFyj.js",
+          "sizeKb": 705.4
+        },
+        {
+          "path": "dist/assets/cpp-UfJy6YNI.js",
+          "sizeKb": 626.08
+        },
+        {
+          "path": "dist/assets/wasm-CG6Dc4jp.js",
+          "sizeKb": 622.34
+        },
+        {
+          "path": "dist/assets/index-Bv-312-X.js",
+          "sizeKb": 567.78
+        }
+      ],
+      "warningCount": 12,
+      "warnings": [
+        "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/workspaces.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/agents/RolesOrchestrationPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/SessionWorkspacePicker.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/WelcomeProjectPicker.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/ArtifactPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAuditPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceBrowserBody.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceGitPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/MainLayout.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/Sidebar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/lib/workspace-session.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/use-session-reading-position.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/CodeReview/ChangeContextPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Memory/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Projects/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/chat.ts, dynamic import will not move module into another chunk.",
+        "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/chat.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/layout/Sidebar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/rareui/CompletionActivityMenu.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/lib/workspace-session.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ChatToolbar.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/TeamOrchestrationCard.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Chat/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Cron/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Projects/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/src/stores/cron.ts, dynamic import will not move module into another chunk.",
+        "(!) Some chunks are larger than 500 kB after minification. Consider:",
+        "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/store.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/manager.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/config-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/manager.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/launch-at-startup.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/menu.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/proxy.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/agent-dev-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/chat-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/efficiency-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/gateway-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/remote-control-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/remote-tasks-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sensitive-capture-gate.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/session-delegation-store.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/settings-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/support-bundle.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/system-notifications-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/usage-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/work-providers-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/app-version-rollback.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/control-ui-device-pairing.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-auth.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.",
+        "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/channel-config.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/cron-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/skill-config.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/config-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/gateway/supervisor.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/agents-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/channels-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/hooks-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/mcp-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/roles-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/agent-config.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/app-version-rollback.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.",
+        "(!) D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-service.ts is dynamically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-system-service.ts but also statically imported by D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/main/index.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/chat-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/code-review-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/sessions-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-api.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/task-ledger-working-context.ts, D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/electron/services/workspaces-api.ts, dynamic import will not move module into another chunk."
+      ],
+      "totalReportedBuildMs": 44704
     },
     "playwright": {
       "stepId": "playwright-agent-dev",
-      "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
-      "durationMs": 23299,
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+      "durationMs": 20158,
       "kind": "playwright",
-      "passed": 1,
-      "reportedDurationMs": 22000,
+      "passed": 4,
+      "reportedDurationMs": 19000,
       "tests": [
         {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+          "durationMs": 8900
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+          "durationMs": 8900
+        },
+        {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 17900
+          "durationMs": 8300
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+          "durationMs": 7200
         }
       ]
     }
   },
   "decision": {
-    "status": "needs-full-gate",
-    "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+    "status": "daily-loop-ok",
+    "reason": "All selected Agent Dev gates passed within hard limits.",
     "dailyLoopReady": true,
-    "releaseReady": false,
-    "fullGateComplete": false,
+    "releaseReady": true,
+    "fullGateComplete": true,
     "budgetStatus": "watch",
-    "fastPathModes": [
-      "reuse-build",
-      "cached-typecheck",
-      "smoke-e2e"
-    ],
-    "requiredFullGates": [
-      "pnpm run build:vite",
-      "pnpm run typecheck",
-      "pnpm test:e2e:agent-dev-quality"
-    ],
+    "fastPathModes": [],
+    "requiredFullGates": [],
     "watchSteps": [
-      "playwright-agent-dev"
+      "e2e-build",
+      "vitest-agent-dev",
+      "contract",
+      "typecheck"
     ],
     "limitSteps": []
   },
   "recommendations": [
-    "playwright-agent-dev exceeded its target by 8299ms; Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
-    "Build reuse skipped e2e-build after verifying dist and dist-electron artifacts are fresh enough for the selected Playwright loop.",
-    "cached typecheck mode is reported separately from the default full gate; run pnpm run typecheck before review or release if this was a local-only loop.",
-    "Smoke E2E mode covers the Workbench record path only; run the full Agent Dev quality E2E before review or release.",
-    "Playwright runtime remains the dominant full-local cost; keep pnpm agent-dev:deep-test:reuse on smoke E2E for daily diagnosis and use pnpm agent-dev:deep-test:reuse:full only when full E2E evidence is needed.",
+    "e2e-build exceeded its target by 28963ms; Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+    "vitest-agent-dev exceeded its target by 2925ms; Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.",
+    "contract exceeded its target by 1185ms; Keep contract scanning text-based and bounded to host-api/service sources.",
+    "Vite/Electron build is the dominant E2E setup cost; use pnpm agent-dev:deep-test:reuse after a fresh build for repeated local loops.",
     "Typecheck is a major fixed cost; the Agent Dev parallel typecheck path preserves both node and web projects while reducing local wait time.",
-    "Vitest has full and fast paths now; keep host-api facade coverage in the fast path and do not treat node-only evidence as full unit proof."
+    "Playwright runtime remains the dominant full-local cost; keep pnpm agent-dev:deep-test:reuse on smoke E2E for daily diagnosis and use pnpm agent-dev:deep-test:reuse:full only when full E2E evidence is needed."
   ],
-  "qualityReport": "D:\\ClawX\\artifacts\\agent-dev-quality\\report.json",
+  "qualityReport": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\artifacts\\agent-dev-quality\\report.json",
   "history": {
-    "path": "D:\\ClawX\\artifacts\\agent-dev-deep-test\\history.json",
+    "path": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\artifacts\\agent-dev-deep-test\\history.json",
     "latest": {
-      "generatedAt": "2026-11-02T03:44:20.608Z",
+      "generatedAt": "2026-11-13T09:13:48.548Z",
       "success": true,
-      "totalDurationMs": 38940,
-      "decisionStatus": "needs-full-gate",
-      "releaseReady": false,
+      "totalDurationMs": 119570,
+      "decisionStatus": "daily-loop-ok",
+      "releaseReady": true,
       "modes": {
-        "buildReuse": "reused",
+        "buildReuse": "fresh",
         "unit": "full",
-        "typecheck": "cached",
-        "e2e": "smoke"
+        "typecheck": "full",
+        "e2e": "full"
       },
       "stepDurations": {
         "typecheck": {
-          "durationMs": 5103,
+          "durationMs": 25578,
           "skipped": false,
           "ok": true
         },
         "contract": {
-          "durationMs": 615,
+          "durationMs": 2185,
           "skipped": false,
           "ok": true
         },
         "i18n": {
-          "durationMs": 696,
+          "durationMs": 732,
           "skipped": false,
           "ok": true
         },
         "workbench": {
-          "durationMs": 550,
+          "durationMs": 589,
           "skipped": false,
           "ok": true
         },
         "harness-agent-dev": {
-          "durationMs": 1884,
+          "durationMs": 1614,
           "skipped": false,
           "ok": true
         },
         "vitest-agent-dev": {
-          "durationMs": 4632,
+          "durationMs": 12925,
           "skipped": false,
           "ok": true
         },
         "comms-replay": {
-          "durationMs": 710,
+          "durationMs": 667,
           "skipped": false,
           "ok": true
         },
         "comms-compare": {
-          "durationMs": 672,
+          "durationMs": 611,
           "skipped": false,
           "ok": true
         },
         "e2e-build": {
-          "durationMs": 1,
-          "skipped": true,
+          "durationMs": 53963,
+          "skipped": false,
           "ok": true
         },
         "playwright-agent-dev": {
-          "durationMs": 23299,
+          "durationMs": 20158,
           "skipped": false,
           "ok": true
         },
         "workbench-refresh": {
-          "durationMs": 639,
+          "durationMs": 534,
           "skipped": false,
           "ok": true
         }
       },
       "budgetSummary": {
-        "ok": 10,
-        "watch": 1,
+        "ok": 7,
+        "watch": 4,
         "limit": 0
       }
     },
     "trend": {
-      "direction": "regressed",
-      "previousRunDeltaMs": -80067,
-      "sameModeDeltaMs": 12945,
-      "sameModeSampleCount": 14,
-      "previousRunGeneratedAt": "2026-11-02T03:43:24.103Z",
-      "previousSameModeGeneratedAt": "2026-10-26T15:04:00.381Z",
-      "note": "Compared with previous same-mode run 2026-10-26T15:04:00.381Z."
+      "direction": "improved",
+      "previousRunDeltaMs": -131907,
+      "sameModeDeltaMs": -131907,
+      "sameModeSampleCount": 7,
+      "previousRunGeneratedAt": "2026-11-13T09:05:03.391Z",
+      "previousSameModeGeneratedAt": "2026-11-13T09:05:03.391Z",
+      "note": "Compared with previous same-mode run 2026-11-13T09:05:03.391Z."
     },
     "sampleCount": 20
-  }
+  },
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false
 }

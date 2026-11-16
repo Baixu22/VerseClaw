@@ -1,0 +1,40 @@
+{
+  "driven_by": "agent",
+  "base": "63493df01a3246ebea83f9272bdc52e7fbba7981",
+  "candidate": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+  "passed": true,
+  "errors": 0,
+  "warnings": 2,
+  "baseline": [
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "severity": 1,
+      "ruleId": "react-refresh/only-export-components",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+      "source": "export function resolveWorkspaceHeaderSessions({"
+    },
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "severity": 1,
+      "ruleId": "react-refresh/only-export-components",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+      "source": "export function resolveWorkspaceSessionTarget(workspace: WorkspaceProfile, currentAgentId = 'main'): {"
+    }
+  ],
+  "current": [
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "severity": 1,
+      "ruleId": "react-refresh/only-export-components",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+      "source": "export function resolveWorkspaceHeaderSessions({"
+    },
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "severity": 1,
+      "ruleId": "react-refresh/only-export-components",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+      "source": "export function resolveWorkspaceSessionTarget(workspace: WorkspaceProfile, currentAgentId = 'main'): {"
+    }
+  ]
+}

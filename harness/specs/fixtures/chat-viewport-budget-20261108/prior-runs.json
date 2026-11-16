@@ -1,0 +1,31 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "runs": [
+    {
+      "path": "D:\\tmp\\tf0834\\candidate-probe.json",
+      "sha256": "a527e00e951c3b92a285c770bfe7a35475c28bea77497be0ce536e31d24c2cb3",
+      "reason": "Initial compiled candidate failed to start because assistant runtime depended on a lazy Markdown initialization; manual chunks corrected."
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\baseline-probe.json",
+      "sha256": "543d526abee0787fbc9b3af934b10889b9cb9b5e3af15fd25238a813c2135021",
+      "reason": "Old navigation failed at the first loaded message; initial memory fixture also lacked workspace session bindings."
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-final\\native.json",
+      "sha256": "af18d98d511ea9228aca05e1a1cf106bfa1ea5d5b69e8a9831fa20bbacaa6987",
+      "reason": "Four-language bottom-position assertions exposed stale anchor restoration; fixed before integrated freeze."
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance\\report.json",
+      "sha256": "7762fbd6b553ccb4a4685e7da2452e3782cb1b744c5ce5ec6754fddc1c1cda20",
+      "reason": "Existing jsdom test fixture lacked scrollTo; viewport test line endings failed diff check; corrected."
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-anchor\\report.json",
+      "sha256": "08c009f0720753425689e5615c8f9718c1ad70a5424bd2e924dd793426b578fb",
+      "reason": "Two worker terminations timed out; only 68 tests were reported and command exit was 1. No pass claimed."
+    }
+  ]
+}

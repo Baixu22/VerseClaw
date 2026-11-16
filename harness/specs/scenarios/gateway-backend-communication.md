@@ -55,6 +55,11 @@ forbiddenPatterns:
 
 Gateway backend communication covers all Verse Claw paths that move data between the visual desktop UI and OpenClaw runtime/backend services.
 
+Coding retirement also crosses this boundary. Legacy Patch Flow requests and restored worker
+metadata must not revive proposal-only execution or delayed candidate application. Developer
+flags show retired controls as unavailable, while ordinary journal-backed coding and explicit
+worktree isolation remain the supported paths. See `harness/specs/tasks/coding-retired-control-admission.md`.
+
 Allowed flow:
 Renderer page/component -> `src/lib/host-api.ts` (typed facade) or `src/lib/host-api-client.ts` (typed request client) -> Electron Main typed host service or IPC handler -> Main-owned OpenClaw Gateway WebSocket -> runtime result -> store/UI.
 
@@ -71,6 +76,8 @@ Chat composer intent metadata, including per-message knowledge scope and work mo
 Tool cancellation must survive runtime adaptation, client delegation, policy evaluation, plugin approval registration, and process input waits. Cancelled calls must not return late success or a pending client handoff. Process polling preserves unread output and the execution owner's terminal status; removing a process prevents late exit callbacks from restoring its entry. Repeated delivery of the same tool outcome must not inflate loop evidence.
 
 Pending preparation and policy promises must release their local wait on cancellation without waiting for the plugin to return. Input acknowledgements must report a process that exited during the write with its owner's terminal status and output. Session alias merges must not duplicate a tool call, and changes to process poll wait duration must not reset otherwise unchanged loop evidence.
+
+Tool admission checks the current session, workspace, configuration and approval before execution. A completed tool's known result retains its call association; configuration changes produced during the call apply to subsequent admissions.
 
 Long-session archive and restore mutations cross the same boundary but remain
 runtime-owned. The renderer calls the typed sessions host service, Main persists a

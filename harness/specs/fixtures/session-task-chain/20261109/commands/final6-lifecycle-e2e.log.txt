@@ -1,0 +1,79 @@
+
+Running 22 tests using 1 worker
+
+(node:36232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\e2e\chat-checkpoints.spec.ts:134:5 › checkpoints dialog lists and restores a session checkpoint (23.5s)
+  ok  2 tests\e2e\chat-session-compact-range.spec.ts:155:7 › Verse Claw located (range) compaction › summarizes from a chosen message through the host-api, keeping the newer side (8.6s)
+  ok  3 tests\e2e\chat-session-compact-range.spec.ts:198:7 › Verse Claw located (range) compaction › summarizes up to a chosen message, folding it into the summary (8.1s)
+  ok  4 tests\e2e\chat-session-fork.spec.ts:275:7 › Verse Claw chat session fork › creates and selects a forked session with inherited history and copied draft without auto-send (10.1s)
+  ok  5 tests\e2e\chat-session-fork.spec.ts:515:7 › Verse Claw chat session fork › offers handoff preparation when fork fails because the parent is too large (10.2s)
+  ok  6 tests\e2e\chat-session-fork.spec.ts:613:7 › Verse Claw chat session fork › disables fork entry points while a run is active (8.7s)
+  ok  7 tests\e2e\chat-session-handoff.spec.ts:227:7 › Verse Claw chat session handoff › keeps the current handoff draft when an old conversation responds late (10.6s)
+  ok  8 tests\e2e\chat-session-handoff.spec.ts:303:7 › Verse Claw chat session handoff › previews, edits, creates and sends the reviewed handoff with a recoverable child draft (8.7s)
+  ok  9 tests\e2e\chat-session-handoff.spec.ts:475:7 › Verse Claw chat session handoff › disables handoff entry points while a run is active (7.2s)
+  ok 10 tests\e2e\chat-session-handoff.spec.ts:544:7 › Verse Claw chat session handoff › refuses a relay once the handoff depth limit is reached (#179) (7.8s)
+  ok 11 tests\e2e\chat-session-handoff.spec.ts:589:7 › Verse Claw chat session handoff › keeps the editable draft and session when creation rejects changed ancestry (12.5s)
+  ok 12 tests\e2e\chat-slash-session-lifecycle.spec.ts:95:5 › slash /rename renames the current session through the host API (8.0s)
+  ok 13 tests\e2e\chat-slash-session-lifecycle.spec.ts:125:5 › slash /clear resets the local message view (7.6s)
+  ok 14 tests\e2e\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart (44.7s)
+  x  15 tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (40.9s)
+(node:6724) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6724) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 16 tests\e2e\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (39.8s)
+  ok 17 tests\e2e\sidebar-session-folders-archive.spec.ts:331:7 › Sidebar session workgroups and archive › pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting (9.1s)
+  ok 18 tests\e2e\sidebar-session-folders-archive.spec.ts:392:7 › Sidebar session workgroups and archive › keeps workgroups inside the project and renders time sorting as a direct list (7.8s)
+  ok 19 tests\e2e\sidebar-session-folders-archive.spec.ts:418:7 › Sidebar session workgroups and archive › creates a workgroup, moves a running session into it, searches it, then deletes the workgroup (9.1s)
+  ok 20 tests\e2e\sidebar-session-folders-archive.spec.ts:515:7 › Sidebar session workgroups and archive › delete dialog offers archive and permanent delete; archive modal restores sessions (8.8s)
+  ok 21 tests\e2e\sidebar-session-folders-archive.spec.ts:561:7 › Sidebar session workgroups and archive › drags a conversation after another to auto-group, rename, and remove the group (8.6s)
+  ok 22 tests\e2e\sidebar-session-folders-archive.spec.ts:643:7 › Sidebar session workgroups and archive › permanent delete from the archived settings page removes the entry (9.3s)
+
+
+  1) tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('long-session-coordinator')
+    Expected substring: [32m"local-workspace"[39m
+    Received string:    [31m"Long-session coordinatorinvalidgit / local / r2D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-H9D7DK\\.openclaw\\workspaceRecovery: environment-missingenvironment-generation-changed61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingResumeCPU 0.0%RSS 1169 MB4 processes0 slots0 background terminals0 queued"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('long-session-coordinator')[22m
+    [2m    3 × locator resolved to <section data-testid="long-session-coordinator" class="mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10">…</section>[22m
+    [2m      - unexpected value "Long-session coordinatoractivegit / local / r1D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-lrRonx\verse-claw-e2e-home-H9D7DK\.openclaw\workspaceRecovery: unknown61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingPause"[22m
+    [2m    15 × locator resolved to <section data-testid="long-session-coordinator" class="mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10">…</section>[22m
+    [2m       - unexpected value "Long-session coordinatorinvalidgit / local / r2D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-lrRonx\verse-claw-e2e-home-H9D7DK\.openclaw\workspaceRecovery: environment-missingenvironment-generation-changed61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingResumeCPU 0.0%RSS 1169 MB4 processes0 slots0 background terminals0 queued"[22m
+
+
+      298 |     let coordinator = await openCoordinator(page);
+      299 |     await expect(coordinator).toContainText(task.id);
+    > 300 |     await expect(coordinator).toContainText('local-workspace');
+          |                               ^
+      301 |     await expect(coordinator.getByTestId('coordinator-recovery')).toContainText('ready');
+      302 |     await expect(coordinator).toContainText('CPU');
+      303 |     await expect(coordinator).toContainText(`${activeBackgroundTerminalCount} background terminals`);
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-coordination.spec.ts:300:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final6-lifecycle-e2e-results\long-session-coordination--a1f27-cle-locales-and-screenshots\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final6-lifecycle-e2e-results\long-session-coordination--a1f27-cle-locales-and-screenshots\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final6-lifecycle-e2e-results\long-session-coordination--a1f27-cle-locales-and-screenshots\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final6-lifecycle-e2e-results\long-session-coordination--a1f27-cle-locales-and-screenshots\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots 
+  21 passed (5.2m)

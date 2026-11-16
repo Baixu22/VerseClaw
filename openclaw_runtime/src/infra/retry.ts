@@ -132,7 +132,8 @@ export async function retryAsync<T>(
   }
 
   const options = attemptsOrOptions;
-  const attemptBudget = options.attemptBudget ?? getRequestAttemptBudget();
+  const explicitAttemptBudget = options.attemptBudget;
+  const attemptBudget = explicitAttemptBudget ?? getRequestAttemptBudget();
   if (attemptBudget && !attemptBudget.canRetry()) {
     throw new Error("retry attempt budget exhausted");
   }
@@ -151,18 +152,26 @@ export async function retryAsync<T>(
   let lastErr: unknown;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    const physicalAttempt = attemptBudget
-      ? attemptBudget.tryRecordAttempt({ layer: attemptLayer, outcome: "failure" })
+    // Only an explicit budget is charged by retryAsync itself. The ambient
+    // logical-request budget is charged by the actual provider transport;
+    // charging it here as well would count one outbound request twice.
+    const physicalAttempt = explicitAttemptBudget
+      ? explicitAttemptBudget.tryRecordAttempt({ layer: attemptLayer, outcome: "failure" })
       : attempt;
-    if (physicalAttempt === undefined) {
+    if (explicitAttemptBudget && physicalAttempt === undefined) {
       break;
     }
     try {
       const result = await fn();
-      attemptBudget?.completeAttempt(physicalAttempt, "success");
+      if (explicitAttemptBudget && physicalAttempt !== undefined) {
+        explicitAttemptBudget.completeAttempt(physicalAttempt, "success");
+      }
       return result;
     } catch (err) {
       lastErr = err;
+      if (attemptBudget && !attemptBudget.canRetry()) {
+        break;
+      }
       if (attempt >= maxAttempts || !shouldRetry(err, attempt)) {
         break;
       }

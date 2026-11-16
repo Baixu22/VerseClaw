@@ -1,4 +1,6 @@
-import { basename, resolve } from 'node:path';
+import { basename, resolve, join } from 'node:path';
+import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
@@ -44,6 +46,7 @@ vi.mock('electron-store', () => {
 
 vi.mock('@electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
+  createWorkspacesApi: () => ({ list: async () => ({ profiles: activeWorkspace.profile ? [activeWorkspace.profile] : [] }) }),
 }));
 
 function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptEdits'): WorkspaceProfile {
@@ -82,6 +85,20 @@ describe('git api', () => {
     activeWorkspace.profile = workspace();
   });
 
+  it('rejects a reported Git root that differs from the physical checkout before writing', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'git-native-root-'));
+    const source = join(base, 'source'), neighbour = join(base, 'neighbour');
+    await mkdir(join(source, '.git'), { recursive: true }); await mkdir(join(neighbour, '.git'), { recursive: true });
+    activeWorkspace.profile = { ...workspace(), rootPath: source };
+    const calls: string[][] = [];
+    mockExec((_command, args) => { calls.push(args); return { stdout: isRepoRootProbe(args) ? neighbour + '\n' : '' }; });
+    try {
+      const { createGitApi } = await import('@electron/services/git-api');
+      await expect(createGitApi().stage({ paths: ['artifact.txt'] })).rejects.toThrow('GIT_WORKTREE_ROOT_MISMATCH');
+      expect(calls.some(args => args[0] === 'add')).toBe(false);
+    } finally { await rm(base, { recursive: true, force: true }); }
+  });
+
   it('coalesces concurrent status reads and reuses a fresh cached status', async () => {
     let statusCalls = 0;
     let repoProbeCalls = 0;
@@ -108,6 +125,56 @@ describe('git api', () => {
     await api.status();
     expect(statusCalls).toBe(1);
     expect(repoProbeCalls).toBe(1);
+  });
+
+  it('fences a pending status when its repository is invalidated', async () => {
+    const { readCurrentGitStatus, invalidateGitStatusCache, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest();
+    let finish!: (...args: unknown[]) => void; let statusCalls = 0;
+    execFileMock.mockImplementation((_command, args, _options, callback) => {
+      if (isRepoRootProbe(args)) callback(null, process.cwd() + '\n', '');
+      else if (args[0] === 'status' && ++statusCalls === 1) finish = callback;
+      else callback(null, args[0] === 'status' ? '# branch.head new\0' : '', '');
+      return { stdin: { destroy: vi.fn() } };
+    });
+    const old = readCurrentGitStatus(); await vi.waitFor(() => expect(finish).toBeTypeOf('function'));
+    invalidateGitStatusCache(process.cwd()); const current = readCurrentGitStatus();
+    finish(null, '# branch.head old\0', '');
+    expect((await old).branch).toBe('old'); expect((await current).branch).toBe('new');
+    expect((await readCurrentGitStatus()).branch).toBe('new'); expect(statusCalls).toBe(2);
+  });
+
+  it('shares the same root status across workspace profiles without mixing roots', async () => {
+    let statuses = 0;
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: process.cwd() + '\n' };
+      if (args[0] === 'status') { statuses++; return { stdout: '# branch.head main\0' }; }
+      return { stdout: '' };
+    });
+    const { readCurrentGitStatus, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest(); await readCurrentGitStatus();
+    activeWorkspace.profile = { ...workspace(), id: 'other-window-profile' };
+    await readCurrentGitStatus(); expect(statuses).toBe(1);
+  });
+
+  it('rechecks source identity after directory deletion and Git metadata replacement', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'git-cache-owner-')); const root = join(base, 'repo'); await mkdir(root);
+    let version = 'first'; let calls = 0;
+    activeWorkspace.profile = { ...workspace(), rootPath: root };
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: root + '\n' };
+      if (args[0] === 'status') { calls++; return { stdout: '# branch.head ' + version + '\0' }; }
+      return { stdout: '' };
+    });
+    const { readCurrentGitStatus, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest();
+    try {
+      await writeFile(join(root, '.git'), 'gitdir: first-owner'); expect((await readCurrentGitStatus()).branch).toBe('first');
+      await rm(root, { recursive: true }); await mkdir(root); await writeFile(join(root, '.git'), 'gitdir: replacement-owner'); version = 'second';
+      expect((await readCurrentGitStatus()).branch).toBe('second');
+      await writeFile(join(root, '.git'), 'gitdir: a-different-owner-longer'); version = 'third';
+      expect((await readCurrentGitStatus()).branch).toBe('third'); expect(calls).toBe(3);
+    } finally { clearGitStatusCacheForTest(); await rm(base, { recursive: true, force: true }); }
   });
 
   it('invalidates the repo status cache after a successful write', async () => {
@@ -553,7 +620,7 @@ describe('git api', () => {
     expect(calls).toContainEqual(['stash', 'pop', 'stash@{0}']);
   });
 
-  it('only allows worktree remove for paths registered with the repository', async () => {
+  it('rejects paths absent from the native worktree list before owner inspection', async () => {
     const registeredWorktree = resolve(process.cwd(), '..', 'Project-feature');
     mockExec((_command, args) => {
       if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
@@ -578,11 +645,7 @@ describe('git api', () => {
     await expect(gitApi.worktreeRemove({ path: resolve(process.cwd(), '..', 'not-a-worktree') })).rejects.toThrow(
       'worktree path is not registered with this repository',
     );
-    await expect(gitApi.worktreeRemove({ path: registeredWorktree })).resolves.toMatchObject({
-      success: false,
-      blocked: true,
-      approvalRequired: true,
-    });
+    // 正向删除与审批/owner拒绝使用 ui-worktree-cleanup-conservative.test.ts 的真实Git夹具。
   });
 
   it('adds a worktree by creating a new branch with the correct argument order', async () => {
@@ -740,13 +803,16 @@ describe('git api', () => {
     // Simulate a repository directly under a volume root so the sibling-area
     // heuristic cannot accidentally bless the entire drive.
     const repoRoot = resolve(process.platform === 'win32' ? 'C:/repo' : '/repo');
+    // This case isolates the volume topology; native binding is exercised above.
+    const native = await import('../../shared/git-native-root');
+    const nativeProbe = vi.spyOn(native, 'assertGitNativeRoot').mockImplementation(() => undefined);
     mockExec((_command, args) => {
       if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') return { stdout: repoRoot + '\n' };
       return { stdout: "" };
     });
     const { createGitApi } = await import('@electron/services/git-api');
 
-    await expect(createGitApi().worktreeAdd({
+    try { await expect(createGitApi().worktreeAdd({
       branch: 'feature/risky',
       path: process.platform === 'win32' ? 'D:/outside-worktree' : '/outside-worktree',
       checkoutNewBranch: true,
@@ -756,6 +822,7 @@ describe('git api', () => {
       approvalRequired: true,
     });
     expect(execFileMock.mock.calls.some((call) => call[1]?.[0] === 'worktree' && call[1]?.[1] === 'add')).toBe(false);
+    } finally { nativeProbe.mockRestore(); }
   });
 
   it('creates GitHub PRs with explicit base/head/draft args after dangerous approval', async () => {

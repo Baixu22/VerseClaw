@@ -78,6 +78,11 @@ describe('sidebar latest runtime run index', () => {
 });
 
 describe('sidebar session activity resolution', () => {
+  it('keeps an unbound configured project navigable before its first persisted session',()=>{
+    const groups=buildSidebarWorkspaceSessionGroups({sessions:[],currentSessionKey:'another',sessionLastActivity:{},
+      workspaces:[workspace({activeSessionKey:'pending',agentBindings:{},sessionStates:{}})],includeSyntheticCurrent:false});
+    expect(groups.map(group=>group.workspace.id)).toEqual(['workspace-a']);expect(groups[0].sessions).toEqual([]);
+  });
   it('uses the timestamp embedded in a locally-created session key as activity fallback', () => {
     const createdAtMs = new Date('2026-05-06T10:00:00.000Z').getTime();
     const session = {
@@ -188,6 +193,34 @@ describe('sidebar session activity resolution', () => {
     ]);
   });
 
+  it.each(['agent', 'coordinator'] as const)('keeps explicitly associated coordinators visible through a %s binding', (bindingKind) => {
+    const main = 'agent:main:project';
+    const reviewer = 'agent:reviewer:project';
+    const unrelated = 'agent:reviewer:unrelated';
+    const groups = buildSidebarWorkspaceSessionGroups({
+      currentSessionKey: main,
+      sessionLastActivity: {},
+      sessions: [{ key: main }, { key: reviewer }, { key: unrelated }],
+      workspaces: [workspace({
+        id: 'workspace-a', activeSessionKey: main,
+        agentBindings: {
+          main: { workspaceId: 'workspace-a', agentId: 'main', sessionKey: main },
+          ...(bindingKind === 'agent' ? { reviewer: { workspaceId: 'workspace-a', agentId: 'reviewer', sessionKey: reviewer } } : {}),
+        },
+        ...(bindingKind === 'coordinator' ? { coordinatorBindings: { [reviewer]: {
+          schemaVersion: 1, workspaceId: 'workspace-a', agentId: 'reviewer', sessionKey: reviewer,
+          sessionGeneration: 'reviewer-generation', taskLedgerReferences: [], state: 'active',
+          environment: { kind: 'local', backend: 'local-workspace', canonicalRoot: 'C:/a', branch: null,
+            detachedHead: false, setupProfile: null },
+          archiveRestorePolicy: 'restore', bindingRevision: 1, invalidationReason: null,
+          createdAt: '2026-11-09T00:00:00Z', updatedAt: '2026-11-09T00:00:00Z',
+        } } } : {}),
+      })],
+    });
+    expect(groups).toHaveLength(1);
+    expect(new Set(groups[0].sessions.map((entry) => entry.session.key))).toEqual(new Set([main, reviewer]));
+  });
+
   it('builds the time view as one activity-sorted list across projects', () => {
     const entries = buildSidebarTimeSessions({
       currentSessionKey: 'agent:main:a-new',
@@ -256,7 +289,8 @@ describe('sidebar session activity resolution', () => {
       ],
     });
 
-    expect(groups.map((group) => group.workspace.id)).toEqual(['workspace-a']);
+    expect(groups.map((group) => group.workspace.id)).toEqual(['workspace-a', 'workspace-b']);
+    expect(groups[1].sessions).toEqual([]);
     expect(groups[0]?.sessions.map((entry) => entry.session.key)).toEqual([duplicated]);
   });
 

@@ -34,11 +34,17 @@ Requirements:
 - Opening an overlay must not transform the mounted background application tree; animate only the overlay itself.
 - UI v2 code does not add `transition-all`, `ease-in`, `scale(0)` entrances, spring decoration, or `active:scale` feedback.
 - Motion is purposeful, interruptible where user-driven, and removed or reduced for high-frequency keyboard navigation.
+- Composer popovers share the add menu's 300ms movement and 160ms blur/fade. Their outgoing surface is inert; settled foreground filters are removed. Adjacent controls are mutually exclusive, menus stay in the viewport, and reduced motion disables slide, scale and blur.
+- Chat keeps the existing tool progress animation in its compact current-tool row. Expanded details and the compact row must not animate duplicate copies of the same tool. A settled tool must not force the full process open; approvals and errors remain directly reachable.
+- Session status uses one surface with section separators rather than nested cards. Open process output reuses the conversation terminal; status color and emphasis must not introduce a separate badge system. Log updates must preserve a reader's earlier scroll position.
+- Empty Chat context uses unboxed project and branch controls with restrained hover/focus feedback. Starter actions stay behind an explicit disclosure; all three remain reachable at narrow widths.
+- Session environment is triggered by observed activity, not configured inventory. Auto-expanded summaries share the conversation plane; manually opened cards use the existing overlay material. Preview groups are bounded, explicit dismissal survives updates, and workspace visibility changes retain mounted tabs and selection.
 - An outgoing animated Setup control or delayed installation completion can only advance its own active step. Leaving a step cancels its pending visual transition; it cannot bypass Provider, Model or Workspace verification.
 - Setup verification results remain bound to the current Provider/Model selection and component instance. Obsolete completions cannot initiate subsequent writes or restore readiness for a different selection.
 - Reduced-motion replaces large movement and spring behavior with short opacity/color transitions.
 - Color, opacity, and necessary movement transitions stay within 120-180ms.
 - Translucent materials are not stacked without an opaque or sufficiently frosted separation layer.
+- Composer menus and their containing input use opaque surfaces. Model names wrap fully, and linked-worktree identity comes from the host worktree list. Validate card opacity with contrasting-underlay screenshot comparisons in both themes.
 - Modal scrims and large drawers must not use `backdrop-filter` while hardware acceleration is unavailable.
 - Settings navigation selection must not use layout-projection animation; preserve the selected material with compositor-friendly opacity or color transitions.
 - Chat layout and message consumers do not subscribe to changing overlay state. The retired visual-version switch must not return through a separate context or fallback branch.

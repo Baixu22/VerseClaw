@@ -1,0 +1,36 @@
+electron/services/sessions-api.ts(1929,9): error TS2322: Type '((input: SessionTaskScopeInput) => Promise<SessionTaskScopeInput> | SessionTaskScopeInput) | ((input: { ...; }) => Promise<...>)' is not assignable to type '(input: { workspaceId: string; sessionKey: string; taskRef: string; bindingRevision: number; bindingState: WorkspaceCoordinatorBindingState; sessionGeneration: string; }) => Promise<...> | SessionTaskScopeInput'.
+  Type '(input: SessionTaskScopeInput) => Promise<SessionTaskScopeInput> | SessionTaskScopeInput' is not assignable to type '(input: { workspaceId: string; sessionKey: string; taskRef: string; bindingRevision: number; bindingState: WorkspaceCoordinatorBindingState; sessionGeneration: string; }) => Promise<...> | SessionTaskScopeInput'.
+    Types of parameters 'input' and 'input' are incompatible.
+      Type '{ workspaceId: string; sessionKey: string; taskRef: string; bindingRevision: number; bindingState: WorkspaceCoordinatorBindingState; sessionGeneration: string; }' is missing the following properties from type 'SessionTaskScopeInput': generation, links
+openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts(5,40): error TS2307: Cannot find module '@opentelemetry/resources' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts(11,8): error TS2307: Cannot find module '@opentelemetry/sdk-trace-base' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts(461,38): error TS7006: Parameter 'result' implicitly has an 'any' type.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(11,48): error TS2307: Cannot find module '@opentelemetry/api-logs' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(12,33): error TS2307: Cannot find module '@opentelemetry/exporter-logs-otlp-proto' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(13,36): error TS2307: Cannot find module '@opentelemetry/exporter-metrics-otlp-proto' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(14,35): error TS2307: Cannot find module '@opentelemetry/exporter-trace-otlp-proto' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(15,40): error TS2307: Cannot find module '@opentelemetry/resources' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(16,57): error TS2307: Cannot find module '@opentelemetry/sdk-logs' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(17,47): error TS2307: Cannot find module '@opentelemetry/sdk-metrics' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(18,25): error TS2307: Cannot find module '@opentelemetry/sdk-node' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(24,8): error TS2307: Cannot find module '@opentelemetry/sdk-trace-base' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(25,35): error TS2307: Cannot find module '@opentelemetry/semantic-conventions' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(31,8): error TS2307: Cannot find module '@opentelemetry/semantic-conventions/incubating' or its corresponding type declarations.
+openclaw_runtime/packages/net-policy/src/ip.ts(47,3): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '"benchmarking"' is not assignable to type 'BlockedIpv6Range'.
+openclaw_runtime/packages/net-policy/src/ip.ts(49,3): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '"orchid2"' is not assignable to type 'BlockedIpv6Range'.
+tests/unit/long-session-delegation-admission.test.ts(332,89): error TS2339: Property 'sessionGeneration' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(333,33): error TS2339: Property 'taskRef' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(335,81): error TS2339: Property 'taskRef' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(335,115): error TS2339: Property 'sessionGeneration' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(336,31): error TS2339: Property 'taskRef' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(336,125): error TS2339: Property 'sessionGeneration' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(422,89): error TS2339: Property 'sessionGeneration' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(423,33): error TS2339: Property 'taskRef' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(425,81): error TS2339: Property 'taskRef' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(425,115): error TS2339: Property 'sessionGeneration' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(426,31): error TS2339: Property 'taskRef' does not exist on type 'SessionTaskScopeInput'.
+tests/unit/long-session-delegation-admission.test.ts(426,125): error TS2339: Property 'sessionGeneration' does not exist on type 'SessionTaskScopeInput'.

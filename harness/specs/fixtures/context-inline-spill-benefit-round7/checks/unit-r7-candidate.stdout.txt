@@ -1,0 +1,12 @@
+
+ RUN  v4.1.1 D:/ClawX-work/g7-inline-spill-tf0749-20261113-01a1d34c
+
+ ❯ tests/unit/context-inline-spill-benefit-clean-candidate.test.ts (4 tests | 2 failed) 159286ms
+     × rejects a changed output budget before any provider call 62949ms
+     × reads and rejects an actually dirty temporary Git candidate before a request 61705ms
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  2 failed | 58 passed (60)
+   Start at  16:40:38
+   Duration  237.75s (transform 20.93s, setup 2.95s, import 35.49s, tests 191.66s, environment 4.44s)
+

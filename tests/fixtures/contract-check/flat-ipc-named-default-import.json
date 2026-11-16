@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-named-default-import",
+  "rule": "flat-ipc/bypass-registry",
+  "expect": "[flat-ipc/bypass-registry]",
+  "description": "Regression for local IPC aliases, bound channels and binding origins through the real checker entrypoint.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\nimport { default as admissionElectron } from 'electron';\nadmissionElectron.ipcMain.handle('rogue:default-import', () => 1);\n"
+    }
+  ]
+}

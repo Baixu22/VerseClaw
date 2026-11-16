@@ -1,0 +1,38 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "tf-export-final",
+  "cwd": "D:/ClawX",
+  "command": [
+    "py",
+    "-3",
+    "-X",
+    "utf8",
+    "D:/ClawX/.codex-tools/task-forest/hardened-recovery-20261103/scripts/task_forest.py",
+    "export",
+    "--workspace",
+    "D:/ClawX",
+    "--lock-timeout",
+    "1200"
+  ],
+  "started_at": "2026-11-08T06:28:07.911617+00:00",
+  "duration_seconds": 161.39,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\tf-export-final.stdout.txt",
+      "bytes": 76,
+      "sha256": "0bc4369e62e6eb26386957751a57728a1e8114c796f803af032d9994fd92396c"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\tf-export-final.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -2,6 +2,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { normalizeMessageChannel } from "../utils/message-channel.js";
+import { getRuntimeConfig } from "../config/config.js";
 import type { AuthRateLimiter } from "./auth-rate-limit.js";
 import type { ResolvedGatewayAuth } from "./auth.js";
 import { readJsonBodyOrError, sendJson, sendMethodNotAllowed } from "./http-common.js";
@@ -78,6 +79,7 @@ export async function handleToolsInvokeHttpRequest(
   const senderIsOwner = resolveOpenAiCompatibleHttpSenderIsOwner(req, requestAuth);
   const outcome = await invokeGatewayTool({
     cfg,
+    getRuntimeConfig,
     input: body,
     messageChannel: messageChannel ?? undefined,
     accountId,

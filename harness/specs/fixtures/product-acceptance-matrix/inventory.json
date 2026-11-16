@@ -1,0 +1,271 @@
+{
+  "schema": "ProductAcceptanceMatrix/v1",
+  "node": "TF-0582",
+  "groups": [
+    {
+      "id": "provider",
+      "title": "Provider 配置、流式聊天和失败恢复",
+      "defaultComponents": [],
+      "files": [
+        "tests/e2e/setup-first-run-fp-p1-01.spec.ts",
+        "tests/e2e/provider-lifecycle.spec.ts",
+        "tests/e2e/product-acceptance-space-bunny.spec.ts"
+      ],
+      "evidenceLayers": [
+        "real-electron-and-http",
+        "live-provider",
+        "mock-ui"
+      ],
+      "positiveOracles": [
+        "保存的 provider 在重开后仍可见；三次产品 smoke 具有真实 read、后续回复和会话隔离回执"
+      ],
+      "negativeOracles": [
+        "401/404/429/500/504、停滞 SSE、畸形响应、断流和取消产生可见终态，下一轮可以恢复"
+      ],
+      "remainingChecks": [
+        "三次 live smoke 需当前候选的 fresh-build proof 和既有私有环境资源"
+      ]
+    },
+    {
+      "id": "sessions",
+      "title": "会话创建、切换、重开、归档、删除和任务保留",
+      "defaultComponents": [
+        "component.task-ledger"
+      ],
+      "files": [
+        "tests/e2e/chat-new-session-date.spec.ts",
+        "tests/e2e/session-family-lifecycle.spec.ts",
+        "tests/e2e/sidebar-session-folders-archive.spec.ts"
+      ],
+      "evidenceLayers": [
+        "real-gateway-scripted-model",
+        "mock-ui"
+      ],
+      "positiveOracles": [
+        "归档/恢复后的 session generation、子会话 transcript、Task Ledger 和真实 result.txt 均可读回"
+      ],
+      "negativeOracles": [
+        "取消删除保留父会话；删除父会话保留子会话、任务及被引用产物"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "coding",
+      "title": "moyu 编码、审批、撤销和工作区上下文",
+      "defaultComponents": [
+        "component.working-memory-context",
+        "component.tool-registry-context",
+        "component.dcs-context-tools",
+        "component.coding-execution-backend",
+        "component.permission-approval-authority",
+        "feature.coding-recovery"
+      ],
+      "files": [
+        "tests/e2e/product-acceptance-moyu.spec.ts",
+        "tests/e2e/workspace-context-settings.spec.ts",
+        "tests/e2e/context-view-tool-surface.spec.ts"
+      ],
+      "evidenceLayers": [
+        "real-gateway-live-model",
+        "real-owner",
+        "mock-ui"
+      ],
+      "positiveOracles": [
+        "三次 moyu 旅程核对文件、测试、重启读回和 undo；上下文开关及只读工具入口映射到既有 owner"
+      ],
+      "negativeOracles": [
+        "readOnly 拒绝真实 edit；越界 exec 审批拒绝；缺少 journal snapshot 时 undo 不覆盖现存文件"
+      ],
+      "remainingChecks": [
+        "使用经过筛选的 moyu 临时副本及既有授权 provider；普通取消后续接的三次证据单独回读"
+      ]
+    },
+    {
+      "id": "knowledge",
+      "title": "知识审核、生命周期、检索与引用",
+      "defaultComponents": [
+        "component.knowledge-review-authority",
+        "component.knowledge-retrieval-source"
+      ],
+      "files": [
+        "tests/e2e/knowledge-review-queue.spec.ts",
+        "tests/e2e/knowledge-lifecycle.spec.ts",
+        "tests/e2e/knowledge-ks04-chat-dcs.spec.ts",
+        "tests/e2e/product-matrix-knowledge.spec.ts"
+      ],
+      "evidenceLayers": [
+        "mock-ui-and-gateway-seam",
+        "real-gateway-explicit-memory-wiki-local-vault"
+      ],
+      "positiveOracles": [
+        "审核选择仅准备和批准所选 proposal；六种生命周期操作返回对应 EffectReceipt；真实导入和编译产生页面及索引，Chat 实际请求携带所选 owner 引用"
+      ],
+      "negativeOracles": [
+        "拒绝候选不持久化；权限拒绝的知识引用显示原因并不成为有效注入；批准删除后的页面、检索和索引均不再包含所删知识"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "memory",
+      "title": "接受记忆、后续取回和作用域隔离",
+      "defaultComponents": [
+        "component.role-memory"
+      ],
+      "files": [
+        "tests/e2e/memory-surface.spec.ts",
+        "tests/e2e/long-session-continuity-context.spec.ts",
+        "tests/e2e/product-matrix-memory.spec.ts"
+      ],
+      "evidenceLayers": [
+        "real-gateway-scripted-model",
+        "mock-ui",
+        "explicit-role-memory-pilot"
+      ],
+      "positiveOracles": [
+        "真实 memory.propose/review 后的 continuity preview 包含接受的 memory-ref；显式 role-memory pilot 下，后续 Chat 从实际 system request 取回接受事实，并可读回 injection receipt"
+      ],
+      "negativeOracles": [
+        "未接受上下文被排除；跨 scope 返回 missing；删除负责人后预览失效"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "delegation",
+      "title": "子会话委派、完成回执和父会话续接",
+      "defaultComponents": [],
+      "files": [
+        "tests/e2e/long-session-delegation-admission.spec.ts",
+        "tests/e2e/long-session-completion-continuation.spec.ts",
+        "tests/e2e/session-worker-task-journey.spec.ts",
+        "tests/e2e/product-matrix-delegation.spec.ts"
+      ],
+      "evidenceLayers": [
+        "real-gateway-scripted-model"
+      ],
+      "positiveOracles": [
+        "admission/run/child/generation/budget 回执、Task Ledger 和子会话真实文件读回；重启恢复同一 completion batch；空闲父会话从实际子会话完成通知中取得结果并仅续接一次"
+      ],
+      "negativeOracles": [
+        "重复请求和 completion 不产生第二次效果；unknown role、unsupported backend、stale generation 拒绝"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "channels",
+      "title": "本地渠道、一次定时提醒和取消",
+      "defaultComponents": [],
+      "files": [
+        "tests/e2e/rc10-operator-live.spec.ts",
+        "tests/e2e/session-task-scope-completion.spec.ts",
+        "tests/e2e/long-session-followup-scheduling.spec.ts"
+      ],
+      "evidenceLayers": [
+        "development-real-gateway-and-loopback-transport",
+        "real-gateway-scripted-model"
+      ],
+      "positiveOracles": [
+        "本地 IRC 恰好投递一次并读回 approval/effect/runtime receipt；定时任务产生真实 scheduled.txt"
+      ],
+      "negativeOracles": [
+        "deny/cancel 无投递；重启不重发；负责人失效后 trigger 拒绝且 run log 为空"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "tools",
+      "title": "VB 浏览、工具来源、VS 进程与 VG 受控写回",
+      "defaultComponents": [
+        "component.skills-mcp-source-registry",
+        "component.tool-search-schema-expander"
+      ],
+      "files": [
+        "tests/e2e/versebrowser-host-invocation.spec.ts",
+        "tests/e2e/workspace-git-mcp-runtime.spec.ts",
+        "tests/e2e/skills-packs.spec.ts",
+        "tests/e2e/versegit-runtime-bindings.spec.ts",
+        "tests/e2e/versegit-candidate-apply.spec.ts",
+        "tests/e2e/product-matrix-tools.spec.ts"
+      ],
+      "evidenceLayers": [
+        "real-embedded-browser",
+        "real-owner-and-binary",
+        "mock-ui",
+        "explicit-verseshell-and-tool-search-config"
+      ],
+      "positiveOracles": [
+        "批准后的浏览动作、Git MCP 运行时绑定、候选校验和 journaled apply 可回读；显式 VerseShell 进程具有输出、输入和退出回执，Tool Search 展开真实 schema"
+      ],
+      "negativeOracles": [
+        "私网和伪造审批拒绝；跨仓库/错误 owner/旧 epoch 拒绝；候选失败和 TOCTOU 不修改 main；VerseShell 取消产生终态，缺失及策略拒绝的工具不能展开或调用"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "settings",
+      "title": "Settings、Doctor 与脱敏支持诊断",
+      "defaultComponents": [
+        "component.renderer-ui-surface"
+      ],
+      "files": [
+        "tests/e2e/settings-drawer.spec.ts",
+        "tests/e2e/support-bundle-fp-p1-06.spec.ts",
+        "tests/e2e/channels-health-diagnostics.spec.ts",
+        "tests/e2e/product-matrix-doctor.spec.ts"
+      ],
+      "evidenceLayers": [
+        "real-electron-and-gateway-child",
+        "mock-ui"
+      ],
+      "positiveOracles": [
+        "Settings 返回原路由、主题键盘焦点及窄屏状态正确；支持包从磁盘读回真实 Gateway child mirror；Doctor 真实命令退出 0 并保留命令、输出与配置哈希"
+      ],
+      "negativeOracles": [
+        "支持包不含种植的 key、源码正文或 gatewayToken；degraded 状态展示明确的恢复动作；损坏配置让 Doctor 退出 1 并展示错误，配置内容保持不变"
+      ],
+      "remainingChecks": [
+        "Doctor 超时路径尚未执行；当前核心负例覆盖损坏配置"
+      ]
+    }
+  ],
+  "additionalAcceptance": [
+    "普通 Chat 最终回复、moyu 编码/撤销、取消后续接各三次同候选 live 结果",
+    "至少 20 分钟 agent 驱动探索，记录动作、截图、console、最终状态和问题 owner",
+    "冻结 Judge rubric 并以正确、错误、无法判定样例校准；文件/DB/状态 oracle 优先",
+    "逐项处理当前 P0/P1，并回读全部原始结果、来源绑定和 SHA256"
+  ],
+  "sourceHashes": {
+    "tests/e2e/channels-health-diagnostics.spec.ts": "9eba3bac6e3b8eaef3e709fc7a9c77f4ef4e7d70e1a87f307f8be435f73e9a91",
+    "tests/e2e/chat-new-session-date.spec.ts": "6fb2658de650f6153e6e843aecb5f308a79c309ed4a00baacbaceaa37cc22b94",
+    "tests/e2e/context-view-tool-surface.spec.ts": "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
+    "tests/e2e/knowledge-ks04-chat-dcs.spec.ts": "a2dcd9c2d8945aab99110d1774548510e8acfeb1e7f81f887df427ee7b14f56a",
+    "tests/e2e/knowledge-lifecycle.spec.ts": "085b3c927a674b819a58df7cc494791e67caf9ef2fca6c6b72ff303de1816e06",
+    "tests/e2e/knowledge-review-queue.spec.ts": "45c69d3619dcccebc6b2c2a51e46d781dbe7c5d66de18b89f1685421125ce59b",
+    "tests/e2e/long-session-completion-continuation.spec.ts": "5dfe2a613eee558bbf2f10166c9daf7af370c8cb06fe3457f294b62554c2f80d",
+    "tests/e2e/long-session-continuity-context.spec.ts": "0441eb5727044dad6ba754121171a1433445da9e59111fa8f884bc6aa5a3df11",
+    "tests/e2e/long-session-delegation-admission.spec.ts": "888c8baf15c5c839b2ce82b768d5ed88bead024f60020c35e8b76b2ecf12398d",
+    "tests/e2e/long-session-followup-scheduling.spec.ts": "8bd76ae1072a0a5222518e33a05fd98dba9f6b2e50cc31ff4225e798514c9c69",
+    "tests/e2e/memory-surface.spec.ts": "88ced3d438d20a1158a62b15c14692f369adf5a441bb85235e3704f7cba0e288",
+    "tests/e2e/product-acceptance-moyu.spec.ts": "eb89b07934001aadbd40b8e141610c5d23f9e9e414b3b5e975db6ba1f0073ce9",
+    "tests/e2e/product-acceptance-space-bunny.spec.ts": "31c4e2d35564c5ba68a14720c37d5d1cc5b688c296bdd955e0ddcaba5c3318a6",
+    "tests/e2e/product-matrix-delegation.spec.ts": "49f8292f472db2fc1fb124f834322e855a232a40c6aaa028de1f55472e9d9d00",
+    "tests/e2e/product-matrix-doctor.spec.ts": "48962f402ba3b4147c8db87e16d96604d013aa44a3d5317fdcc24a9aa9a10fcb",
+    "tests/e2e/product-matrix-knowledge.spec.ts": "d286f228eebcec426724ed3a9298e754e910218827f2fde21db5323c581a14c9",
+    "tests/e2e/product-matrix-memory.spec.ts": "44acfb885f07fef5b3d8a521e9da399028307ea63cf1d353e8401568f59592e4",
+    "tests/e2e/product-matrix-tools.spec.ts": "afc4f4af8982e59417868dab0792b8f32312912943847c8eccdb51862ed92c3c",
+    "tests/e2e/provider-lifecycle.spec.ts": "c5678ed23c3d5730e0ee7d9523295f34d288dc481f90571539b6962cb220d395",
+    "tests/e2e/rc10-operator-live.spec.ts": "0020073a1feec1bab1c8fcfe2769aa820fff47a89b7ab15cd9d8e8dbf84cae7d",
+    "tests/e2e/session-family-lifecycle.spec.ts": "b534cf9e7a5bac219f216a4ec686358dacfa8b481300d9a6d51d3edab84e173c",
+    "tests/e2e/session-task-scope-completion.spec.ts": "9055e7b9ed3540ec08776f802ab7f047a6a621532a0a9e7e9ce6511d5d9b9614",
+    "tests/e2e/session-worker-task-journey.spec.ts": "ef0ab3627fccb21213b97a536393e54ac18c3da003987178013a5df8fe63c413",
+    "tests/e2e/settings-drawer.spec.ts": "5ab222fcf8d505871cc3de1adb6e8b7b70d4b4dc8c7fba3281b30d394d43970d",
+    "tests/e2e/setup-first-run-fp-p1-01.spec.ts": "24b289e55c76a3c5cd225cdb554962dee7364911875027a1eb2c375666cacf76",
+    "tests/e2e/sidebar-session-folders-archive.spec.ts": "5dc303a4117238ce3b9e8e4829851db32453b0391eda177666c529553ddf925d",
+    "tests/e2e/skills-packs.spec.ts": "24eba9a19bb7c15770b965f65db23d9d93b4c302a4ab01291460af1321fd50b7",
+    "tests/e2e/support-bundle-fp-p1-06.spec.ts": "26c6de9dfe0ca7bebcbd80ae887663925739aa8b1c2c5b115971ba28bab7b40a",
+    "tests/e2e/versebrowser-host-invocation.spec.ts": "edc10518f30e8e2b3ef561e90d581edc27c7be497d2fe72e10b513dd209a7f22",
+    "tests/e2e/versegit-candidate-apply.spec.ts": "56e0153b663804dce35f7559ff2ba23b263fbd0640b2044a9fb1e54858d7036b",
+    "tests/e2e/versegit-runtime-bindings.spec.ts": "95c06d322e5be81a9643cceb0074e3e879a92888767f90f12573d294ed80fbbf",
+    "tests/e2e/workspace-context-settings.spec.ts": "d4bcc81302ac0534338c4ed8076de8c75c04b2e9f9fe5a5121e4a78a4c07960a",
+    "tests/e2e/workspace-git-mcp-runtime.spec.ts": "8a2d359e52df02e81fc2816e08bbeb335a9f767052c2e8276310d3f939b7c919"
+  }
+}

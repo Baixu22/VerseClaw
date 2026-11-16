@@ -1,0 +1,439 @@
+{
+  "schema": "CodingProbeTestFixture/v1",
+  "historicalOnly": true,
+  "driven_by": "agent",
+  "candidate": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+  "probes": {
+    "worktrees": {
+      "schema": "CodingAuditProbe/v1",
+      "driven_by": "agent",
+      "actor": "codex-coding-audit",
+      "realHumanEvidence": false,
+      "recordedAt": "2026-11-04T13:19:38.216Z",
+      "candidate": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+      "fixtureRoot": "D:\\tmp\\clawx-coding-audit-20261104\\fixtures-DX9hUk",
+      "rows": [
+        {
+          "id": "coding-run-optional-warning-roundtrip",
+          "expected": "status=ok for a valid typed event without optional warning",
+          "actual": {
+            "status": "error",
+            "code": "MISSING_FIELD",
+            "line": 2,
+            "message": "Missing loop.warning",
+            "field": "warning"
+          },
+          "reproduced": true
+        },
+        {
+          "id": "coding-run-cross-run-verification",
+          "expected": "reject verification associated with run-B",
+          "actual": {
+            "codingRunId": "run-A",
+            "records": 2,
+            "turns": 0,
+            "approvals": 0,
+            "files": 0,
+            "tests": 0,
+            "verification": "passed",
+            "finalStatus": null
+          },
+          "reproduced": true
+        },
+        {
+          "id": "coding-run-nested-schema-validation",
+          "expected": "reject malformed scope/runIds/taskLedgerRootId/completion",
+          "actual": {
+            "status": "ok",
+            "records": [
+              {
+                "schema": "coding-run/v1",
+                "sequence": 0,
+                "recordType": "coding-run",
+                "payload": {
+                  "codingRunId": "run-A",
+                  "objective": null,
+                  "acceptanceContractRef": null,
+                  "sessionIds": [],
+                  "scope": {},
+                  "runIds": [
+                    42
+                  ],
+                  "attemptIds": [],
+                  "taskLedgerRootId": 42,
+                  "traceId": null,
+                  "permissionEnvelopeRef": null,
+                  "contextFingerprint": null,
+                  "completion": {
+                    "taskStatus": "invented-status"
+                  }
+                }
+              }
+            ]
+          },
+          "reproduced": true
+        },
+        {
+          "id": "worktree-deletion-silently-not-merged",
+          "expected": "delete a.txt in base or report a failure",
+          "actual": {
+            "result": [
+              {
+                "taskNodeId": "delete-worker",
+                "worktreeId": "delete-worker",
+                "changedFiles": [
+                  "a.txt"
+                ],
+                "changedFilesSource": "declared-writeSet",
+                "writeSetMismatch": [],
+                "status": "merged"
+              }
+            ],
+            "baseFileStillExists": true
+          },
+          "reproduced": true
+        },
+        {
+          "id": "worktree-overwrites-concurrent-base-edit",
+          "expected": "conflict and preserve concurrent-owner-change",
+          "actual": {
+            "result": [
+              {
+                "taskNodeId": "stale-worker",
+                "worktreeId": "stale-worker",
+                "changedFiles": [
+                  "a.txt"
+                ],
+                "changedFilesSource": "declared-writeSet",
+                "writeSetMismatch": [],
+                "status": "merged"
+              }
+            ],
+            "baseContents": "worker-change"
+          },
+          "reproduced": true
+        },
+        {
+          "id": "git-worktree-delete",
+          "expected": "delete a.txt or report failure",
+          "actual": {
+            "backend": "git",
+            "result": [
+              {
+                "taskNodeId": "git-delete",
+                "worktreeId": "git-delete",
+                "changedFiles": [
+                  "a.txt"
+                ],
+                "changedFilesSource": "git-status",
+                "writeSetMismatch": [],
+                "status": "merged"
+              }
+            ],
+            "contents": "baseline"
+          },
+          "reproduced": true
+        },
+        {
+          "id": "git-worktree-stale",
+          "expected": "preserve concurrent base edit and report conflict",
+          "actual": {
+            "backend": "git",
+            "result": [
+              {
+                "taskNodeId": "git-stale",
+                "worktreeId": "git-stale",
+                "changedFiles": [
+                  "a.txt"
+                ],
+                "changedFilesSource": "git-status",
+                "writeSetMismatch": [],
+                "status": "merged"
+              }
+            ],
+            "contents": "worker-change"
+          },
+          "reproduced": true
+        },
+        {
+          "id": "worktree-dotdot-id-deletes-control-directory",
+          "expected": "reject reserved id before any mutation",
+          "actual": {
+            "result": {
+              "id": "..",
+              "root": "D:\\tmp\\clawx-coding-audit-20261104\\fixtures-DX9hUk\\reserved-id\\.openclaw",
+              "baseRoot": "D:\\tmp\\clawx-coding-audit-20261104\\fixtures-DX9hUk\\reserved-id",
+              "createdAtMs": 1793798378216,
+              "status": "active",
+              "backend": "inprocess"
+            },
+            "markerPreserved": false,
+            "fixtureBoundary": "D:\\tmp\\clawx-coding-audit-20261104\\fixtures-DX9hUk\\reserved-id"
+          },
+          "reproduced": true
+        }
+      ]
+    },
+    "boundaries": {
+      "driven_by": "agent",
+      "actor": "codex-coding-audit",
+      "realHumanEvidence": false,
+      "candidate": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+      "area": "D:\\tmp\\clawx-coding-audit-20261104\\boundaries-DWTfCf",
+      "rows": [
+        {
+          "id": "denied-write-journal-trusted",
+          "expected": "denied; no copied data",
+          "actual": {
+            "directReadDenied": true,
+            "refused": "Error: Path escapes sandbox root (D:\\tmp\\clawx-coding-audit-20261104\\boundaries-DWTfCf\\workspace): D:\\tmp\\clawx-coding-audit-20261104\\boundaries-DWTfCf\\outside\\marker.txt. Use a relative path under `.openclaw/tmp/` inside the workspace for scratch/temp/meta files that file tools need to read or write later.",
+            "outsideUnchanged": true,
+            "snapshots": [
+              "0001-marker.txt.pre"
+            ],
+            "copied": true,
+            "readableByReadTool": true
+          },
+          "reproduced": true
+        },
+        {
+          "id": "denied-write-journal-external",
+          "expected": "denied; no copied data",
+          "actual": {
+            "directReadDenied": true,
+            "refused": "Error: Workspace external write denied: external or unknown provenance cannot write outside the active workspace.",
+            "outsideUnchanged": true,
+            "snapshots": [],
+            "copied": false,
+            "readableByReadTool": false
+          },
+          "reproduced": false
+        },
+        {
+          "id": "undo-via-junction-workspaceOnly",
+          "expected": "reject; outside marker unchanged",
+          "actual": {
+            "outsideContents": "before-local-edit",
+            "undo": {
+              "ok": true,
+              "restored": [
+                "sub/marker.txt"
+              ],
+              "errors": [],
+              "journalDir": "D:\\tmp\\clawx-coding-audit-20261104\\boundaries-DWTfCf\\workspace\\.openclaw\\journal\\undo-alias",
+              "remainingEntries": 0
+            }
+          },
+          "reproduced": true
+        }
+      ]
+    },
+    "routing": {
+      "driven_by": "agent",
+      "actor": "codex-coding-audit",
+      "realHumanEvidence": false,
+      "area": "D:\\tmp\\clawx-coding-audit-20261104\\routes-B6EUzs",
+      "candidate": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+      "rows": [
+        {
+          "id": "stock-gateway-methods",
+          "actual": {
+            "mcp.listTools": false,
+            "mcp.callTool": false,
+            "mcp.heartbeat": false,
+            "tools.catalog": true,
+            "tools.effective": true,
+            "tools.invoke": true,
+            "orchestrator.plan": true,
+            "orchestrator.run": true
+          }
+        },
+        {
+          "id": "mcp-image-real-hook-and-sdk",
+          "actual": {
+            "actual": {
+              "jsonrpc": "2.0",
+              "id": 1,
+              "result": {
+                "content": [
+                  {
+                    "type": "image",
+                    "text": "{\"type\":\"image\",\"data\":\"AA==\",\"mimeType\":\"image/png\"}"
+                  }
+                ],
+                "isError": false
+              }
+            },
+            "sdkAccepted": false
+          }
+        },
+        {
+          "id": "mcp-error-real-hook",
+          "actual": {
+            "actual": {
+              "jsonrpc": "2.0",
+              "id": 1,
+              "result": {
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "fixture failed"
+                  }
+                ],
+                "isError": false
+              }
+            }
+          }
+        },
+        {
+          "id": "rpc-top-level-isolation",
+          "actual": {
+            "requested": "worktree",
+            "actual": {
+              "ok": true,
+              "planIsolation": "shared",
+              "workerIsolation": null
+            },
+            "workerOverride": {
+              "ok": true,
+              "planIsolation": "shared",
+              "workerIsolation": "worktree"
+            }
+          }
+        },
+        {
+          "id": "rpc-run-workspace-carrier",
+          "actual": {
+            "requestedRoot": "D:\\tmp\\clawx-coding-audit-20261104\\routes-B6EUzs",
+            "ctxHasRoot": false,
+            "spawnCalls": 0,
+            "failures": [
+              {
+                "roleName": "implementer",
+                "status": "error",
+                "error": "worktree isolation requires a workspaceDir"
+              }
+            ]
+          }
+        },
+        {
+          "id": "retired-patch-flow-explicit-false",
+          "actual": {
+            "recommendation": "patch-flow",
+            "spawnProbes": [
+              {
+                "deniedWrite": false,
+                "proposalPrompt": false
+              },
+              {
+                "deniedWrite": false,
+                "proposalPrompt": false
+              },
+              {
+                "deniedWrite": false,
+                "proposalPrompt": false
+              }
+            ],
+            "failures": [
+              {
+                "roleName": "implementer",
+                "status": "error",
+                "error": "fixture spawn sentinel"
+              },
+              {
+                "roleName": "implementer",
+                "status": "error",
+                "error": "fixture spawn sentinel"
+              },
+              {
+                "roleName": "implementer",
+                "status": "error",
+                "error": "fixture spawn sentinel"
+              }
+            ]
+          }
+        },
+        {
+          "id": "retired-patch-flow-explicit-true",
+          "actual": {
+            "recommendation": "patch-flow",
+            "spawnProbes": [
+              {
+                "deniedWrite": true,
+                "proposalPrompt": true
+              },
+              {
+                "deniedWrite": true,
+                "proposalPrompt": true
+              },
+              {
+                "deniedWrite": true,
+                "proposalPrompt": true
+              }
+            ],
+            "failures": [
+              {
+                "roleName": "implementer",
+                "status": "error",
+                "error": "fixture spawn sentinel"
+              },
+              {
+                "roleName": "implementer",
+                "status": "error",
+                "error": "fixture spawn sentinel"
+              },
+              {
+                "roleName": "implementer",
+                "status": "error",
+                "error": "fixture spawn sentinel"
+              }
+            ]
+          }
+        },
+        {
+          "id": "coding-run-cli-optional",
+          "actual": {
+            "exit": 1,
+            "stdout": "",
+            "stderr": "{\"status\":\"error\",\"code\":\"MISSING_FIELD\",\"line\":2,\"message\":\"Missing loop.warning\",\"field\":\"warning\"}"
+          }
+        },
+        {
+          "id": "coding-run-cli-cross-run",
+          "actual": {
+            "exit": 0,
+            "stdout": "{\n  \"codingRunId\": \"run-A\",\n  \"records\": 2,\n  \"turns\": 0,\n  \"approvals\": 0,\n  \"files\": 0,\n  \"tests\": 0,\n  \"verification\": \"passed\",\n  \"finalStatus\": null\n}",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    "journal": {
+      "driven_by": "agent",
+      "actor": "codex-coding-audit",
+      "realHumanEvidence": false,
+      "area": "D:\\tmp\\clawx-coding-audit-20261104\\journal-lsSKrM",
+      "candidate": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+      "rows": [
+        {
+          "id": "patch-sidecar-normal",
+          "returned": "committed",
+          "journalInResult": "committed",
+          "undoable": true,
+          "persisted": "committed",
+          "rehydrated": "committed",
+          "actualFile": "after\n"
+        },
+        {
+          "id": "patch-sidecar-locked",
+          "returned": "committed",
+          "journalInResult": "committed",
+          "undoable": true,
+          "persisted": "prepared",
+          "rehydrated": "prepared",
+          "actualFile": "after\n"
+        }
+      ]
+    }
+  }
+}

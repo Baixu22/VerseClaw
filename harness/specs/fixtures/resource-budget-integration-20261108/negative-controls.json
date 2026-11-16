@@ -1,0 +1,91 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "cases": [
+    {
+      "name": "fairness",
+      "candidate": "d607437e684d11ed259996de21ff1861d4cbbfb3",
+      "sourceOverlayCommit": "e91b866954d8d4452426f870b7155e14344d27ec",
+      "sourcePath": "electron/services/resource-fabric.ts",
+      "oldSourceSha256": "73a8efcb8007eeef4e6c33289248f7fddd3c9286525551baea069b9d20cca0d4",
+      "restoredSourceSha256": "59687bff5d7eebb14f7ba0e79dc641d1960099fe3deed4a39cee2b672dfe060c",
+      "argv": [
+        "node",
+        "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "tests/unit/resource-budget-integration.test.ts",
+        "-t",
+        "prefers a less-used tenant",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0830\\sealed-negatives\\fairness.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 1,
+      "failures": [
+        {
+          "name": "integrated host budget and bounded waiting prefers a less-used tenant at equal QoS when global capacity is released",
+          "message": "AssertionError: expected [ 'busy' ] to deeply equal [ 'new' ]"
+        }
+      ],
+      "report": "D:\\tmp\\tf0830\\sealed-negatives\\fairness.json"
+    },
+    {
+      "name": "terminal-release",
+      "candidate": "d607437e684d11ed259996de21ff1861d4cbbfb3",
+      "sourceOverlayCommit": "e91b866954d8d4452426f870b7155e14344d27ec",
+      "sourcePath": "electron/services/session-storage-api.ts",
+      "oldSourceSha256": "f907361ac49adf1d03c1bb5179d8ab408cad333543c825508523797fdcfc64b0",
+      "restoredSourceSha256": "d3d7dbca7d0df83ba7354acdc20dba26ba6aae2890ca40dc453c9264543c01aa",
+      "argv": [
+        "node",
+        "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "tests/unit/session-storage-api.test.ts",
+        "-t",
+        "waits for terminal owner exit",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0830\\sealed-negatives\\terminal-release.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 1,
+      "failures": [
+        {
+          "name": "session storage with real Git and files waits for terminal owner exit and records a rejected cleanup as failed",
+          "message": "AssertionError: expected true to be false // Object.is equality"
+        }
+      ],
+      "report": "D:\\tmp\\tf0830\\sealed-negatives\\terminal-release.json"
+    },
+    {
+      "name": "browser-cancel",
+      "candidate": "d607437e684d11ed259996de21ff1861d4cbbfb3",
+      "sourceOverlayCommit": "e91b866954d8d4452426f870b7155e14344d27ec",
+      "sourcePath": "packages/versebrowser/src/engine/supervised-task-executor.ts",
+      "oldSourceSha256": "2ae4f90414ccf39ab6d493e84b3fb3a3baa08f0d9a6444025e8aefb28f7defc9",
+      "restoredSourceSha256": "f8935f5bdcf0aaa11d832aa9dbea7dc1b22eab7decb6509b71b9fc71e8041026",
+      "argv": [
+        "node",
+        "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "tests/agent-browser-supervised-task-executor.test.ts",
+        "-t",
+        "awaits one asynchronous owner cleanup",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0830\\sealed-negatives\\browser-cancel.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\packages\\versebrowser",
+      "exitCode": 1,
+      "failures": [
+        {
+          "name": "agent browser supervised task executor awaits one asynchronous owner cleanup before completing cancellation",
+          "message": "AssertionError: expected \"vi.fn()\" to be called once, but got 2 times"
+        }
+      ],
+      "report": "D:\\tmp\\tf0830\\sealed-negatives\\browser-cancel.json"
+    }
+  ],
+  "sourceRestored": true
+}

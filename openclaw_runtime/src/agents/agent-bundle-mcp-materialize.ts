@@ -71,10 +71,9 @@ function toAgentToolResult(params: {
           text: `structuredContent:\n${JSON.stringify(params.result.structuredContent, null, 2)}`,
         } as const)
       : null;
-  // Structured MCP results are the canonical model payload here; replacing
-  // mirrored content avoids duplicating large tool output in the prompt.
+  // Keep media beside structured content; replacing content here silently loses attachments.
   const normalizedContent: AgentToolResult<unknown>["content"] = structuredContentBlock
-    ? [structuredContentBlock]
+    ? [...content, structuredContentBlock]
     : content.length > 0
       ? content
       : ([
@@ -101,6 +100,11 @@ function toAgentToolResult(params: {
   if (params.result.isError === true) {
     details.status = "error";
   }
+  if (params.result._meta) details.mcpMeta = params.result._meta;
+  const converted = params.result.content
+    .filter((block) => !["text", "image"].includes(block.type))
+    .map((block) => block.type);
+  if (converted.length) details.contentLoss = { convertedToText: converted };
   return {
     content: normalizedContent,
     details,
@@ -402,9 +406,11 @@ export async function materializeBundleMcpToolsForRun(params: {
   const tools = buildBundleMcpToolsFromCatalog({
     catalog,
     reservedToolNames: params.reservedToolNames,
-    createExecute: (tool) => async (_toolCallId: string, input: unknown) => {
+    createExecute: (tool) => async (_toolCallId: string, input: unknown, signal?: AbortSignal) => {
       params.runtime.markUsed();
-      const result = await params.runtime.callTool(tool.serverName, tool.toolName, input);
+      signal?.throwIfAborted();
+      const result = await params.runtime.callTool(tool.serverName, tool.toolName, input, signal);
+      signal?.throwIfAborted();
       return toAgentToolResult({
         serverName: tool.serverName,
         toolName: tool.toolName,

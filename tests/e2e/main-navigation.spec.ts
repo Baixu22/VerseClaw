@@ -24,8 +24,8 @@ test.describe('Verse Claw main navigation without setup flow', () => {
       await expect(page.getByTestId('chat-page')).toBeVisible();
       await expect(page.getByTestId('main-content')).toBeVisible();
       await expect(page.getByTestId('sidebar-resize-handle')).toBeVisible();
-      // v2 ui-version renders main-content without the legacy rounded corner.
-      await expect(page.getByTestId('main-content')).toHaveCSS('border-top-left-radius', '0px');
+      // v2 ui-version raises the conversation as a card out of the chrome plane.
+      await expect(page.getByTestId('main-content')).toHaveCSS('border-top-left-radius', '15px');
 
       await page.getByTestId('sidebar-nav-settings').click();
       await page.getByTestId('settings-nav-models').click();
@@ -85,7 +85,7 @@ test.describe('Verse Claw main navigation without setup flow', () => {
       await page.getByTestId('settings-language-select').click();
       await page.getByRole('option', { name: '中文', exact: true }).click();
 
-      await expect(page.getByText('菜单语言已更新')).toBeVisible();
+      await expect(page.getByTestId('settings-language-select')).toContainText('中文');
       await expect.poll(() => readNativeMenuLabels(app)).toMatchObject({
         file: '文件',
         newChat: '新对话',

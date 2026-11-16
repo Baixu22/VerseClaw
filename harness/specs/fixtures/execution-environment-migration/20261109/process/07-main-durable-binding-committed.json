@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "case": "Main durable binding-committed",
+  "breakPoint": "binding-committed",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "55690402-81b8-4dcf-b416-a99eb244d43d",
+  "operation": {
+    "id": "tf0866-process-operation",
+    "phase": "confirmed",
+    "sessionKey": "agent:main:tf0866-process-proof",
+    "sourceGeneration": "tf0866-source-generation",
+    "targetGeneration": "55690402-81b8-4dcf-b416-a99eb244d43d",
+    "reservationReleased": true
+  },
+  "journal": {
+    "state": "runtime_committed",
+    "requestDigest": "35ede68a3143a256b1f66b46eeddb2061a6f3b92ada1ee71771f71f158c857ce",
+    "manifestDigest": "7c6d6f54c384485d5e85edcf368e982309e1b06aff8f6c4155b0f313d324846e"
+  },
+  "session": {
+    "sessionId": "55690402-81b8-4dcf-b416-a99eb244d43d",
+    "workspaceDir": "D:\\tmp\\tf0866-process-kL1Kt2\\target",
+    "migrationState": "confirmed"
+  },
+  "artifactHashes": [
+    {
+      "path": "D:\\tmp\\tf0866-process-kL1Kt2\\source\\result.txt",
+      "sha256": "2f1bf152cea586c7342529059c7961e615eafe8cf14d66b57c819c50cfae87bd"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 6716,
+      "breakPoint": "binding-committed",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 26628,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:14:45.746Z",
+        "pid": 6716,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "binding-committed"
+      },
+      {
+        "at": "2026-11-09T00:14:46.320Z",
+        "pid": 6716,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "binding-committed",
+        "stage": "main-workspace-save-committed",
+        "operationPhase": "binding-committed",
+        "targetGeneration": "55690402-81b8-4dcf-b416-a99eb244d43d"
+      },
+      {
+        "at": "2026-11-09T00:14:49.169Z",
+        "pid": 26628,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:14:49.652Z",
+        "pid": 26628,
+        "kind": "main-worker-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "phase": "confirmed"
+      }
+    ],
+    "breakSignal": {
+      "pid": 6716,
+      "point": "binding-committed",
+      "at": "2026-11-09T00:14:46.319Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "main-workspace-save-committed",
+      "operationPhase": "binding-committed",
+      "targetGeneration": "55690402-81b8-4dcf-b416-a99eb244d43d"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "phase": "confirmed",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "55690402-81b8-4dcf-b416-a99eb244d43d",
+      "taskNodeId": "6f88b2f2-9e2a-4708-87ab-8107f88e24bd",
+      "pid": 26628,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

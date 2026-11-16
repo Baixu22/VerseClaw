@@ -1,0 +1,1 @@
+{"freeze":"D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\harness\\specs\\fixtures\\context-inline-spill-benefit-round8\\design.freeze.json","sha256":"4544337fdb828790f580cdbcec913bc34cdbdfef9dff22800dd03ac3d224fe9e","strategySources":10}

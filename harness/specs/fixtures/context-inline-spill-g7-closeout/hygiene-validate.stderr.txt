@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/inline-spill-g7-integration-closeout.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/inline-spill-g7-integration-closeout.md"

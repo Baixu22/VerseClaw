@@ -130,7 +130,12 @@ const settingsRecovery = createDeferredComponent<Record<string, never>>(
   'settings-rows',
 );
 
+const settingsStorage = createDeferredComponent<{ embedded?: boolean }>(
+  () => import('./sections/StorageSection').then((module) => ({ default: module.StorageSection })),
+);
+
 const standaloneSections = {
+  storage: settingsStorage.Component,
   models: settingsModels.Component,
   agents: settingsAgents.Component,
   skills: settingsSkills.Component,
@@ -163,6 +168,7 @@ export function SettingsRoute() {
     developer: { title: t('navigation.developer.title'), description: t('navigation.developer.description') },
     billing: { title: t('navigation.billing.title'), description: t('navigation.billing.description') },
     archived: { title: t('navigation.archived.title'), description: t('navigation.archived.description') },
+    storage: { title: t('navigation.storage.title'), description: t('navigation.storage.description') },
     recovery: { title: t('navigation.recovery.title'), description: t('navigation.recovery.description') },
   } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
 

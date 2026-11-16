@@ -1,4 +1,5 @@
 {
+  "operationGenerationUnavailable": "会话身份尚未就绪，请刷新后继续。",
   "gatewayNotRunning": "网关未运行",
   "retry": "重试",
   "gatewayRequired": "OpenClaw 网关需要运行才能使用聊天。它将自动启动，或者您可以从设置中启动。",
@@ -12,6 +13,9 @@
     "retry": "重新加载"
   },
   "welcome": {
+    "quickStart": "快捷开始",
+    "branchLoading": "正在读取分支…",
+    "branchLoadFailed": "无法读取分支",
     "projectSearch": "搜索项目",
     "projectEmpty": "未找到项目",
     "changeProject": "切换项目：{{projectName}}",
@@ -29,7 +33,7 @@
     "brainstormingDesc": "让多个智能体协同拆分任务"
   },
   "sessionActivity": {
-    "title": "会话状态",
+    "title": "会话环境",
     "description": "当前会话的实时运行、任务、Git、目标、进程、谱系、子 Agent 和终端状态。",
     "openRecovery": "打开会话恢复",
     "createMemoryDraft": "存为记忆草稿",
@@ -49,9 +53,10 @@
       "lineage": "谱系",
       "terminals": "终端",
       "continuity": "连续性",
-      "environment": "环境",
+      "environment": "变更",
       "plan": "开发任务",
-      "policy": "运行策略"
+      "policy": "运行策略",
+      "sources": "来源"
     },
     "status": {
       "idle": "空闲",
@@ -162,7 +167,14 @@
     },
     "runningCount": "{{count}} 个运行中",
     "processes": {
-      "openOutput": "查看 {{command}} 的输出"
+      "recent": "已完成 · {{count}}",
+      "openOutput": "查看 {{command}} 的输出",
+      "openInWorkspace": "在工作空间中打开",
+      "noOutput": "暂无输出",
+      "showOutput": "展开输出",
+      "hideOutput": "收起输出",
+      "duration": "{{seconds}} 秒",
+      "inWorkspace": "已在工作空间打开"
     },
     "policy": {
       "backend": "配置的后端",
@@ -266,6 +278,25 @@
         }
       },
       "unverifiedFacts": "未验证事实"
+    },
+    "sourceKinds": {
+      "mcp": "MCP",
+      "skill": "Skill"
+    },
+    "moreRows": "查看其余 {{count}} 项",
+    "close": "收起环境",
+    "overview": {
+      "context": "上下文",
+      "contextUsed": "已用 / 窗口",
+      "cacheRead": "缓存读取",
+      "cacheHitRate": "缓存命中率",
+      "pressure": "压力",
+      "connectors": "连接器",
+      "connectorsValue": "{{count}} 个在用",
+      "skillsValue": "{{count}} 个技能",
+      "review": "审阅",
+      "background": "后台任务",
+      "backgroundIdle": "暂无运行"
     }
   },
   "noLogs": "（暂无日志）",
@@ -334,9 +365,11 @@
     "copiedCode": "已复制"
   },
   "messageActions": {
+    "forkMissingBoundary": "此消息缺少记录边界，请刷新会话后再分支。",
+    "forkUnavailable": "会话连接正常且当前运行结束后才能分支。",
     "summarizeUpToHere": "摘要到此为止",
     "summarizeFromHere": "从这里开始摘要",
-    "forkFromHere": "从此处分叉",
+    "forkFromHere": "在新会话中提问",
     "copy": "复制消息",
     "copied": "已复制",
     "edit": "编辑",
@@ -746,7 +779,8 @@
       "expand": "展开面板",
       "collapse": "收起面板",
       "moveTerminalSide": "将终端移到右侧",
-      "moveTerminalBottom": "将终端移到底部"
+      "moveTerminalBottom": "将终端移到底部",
+      "close": "关闭工作空间"
     },
     "changes": {
       "heading": "文件变更（{{count}} 个）",
@@ -1253,6 +1287,8 @@
     }
   },
   "executionGraph": {
+    "arguments": "调用参数",
+    "result": "执行结果",
     "title": "执行关系图",
     "branchLabel": "分支",
     "thinkingLabel": "思考中",
@@ -1334,6 +1370,13 @@
     "previewUnavailable": "图片预览暂时不可用"
   },
   "session": {
+    "navigation": {
+      "title": "当前工作区的会话",
+      "search": "查找会话",
+      "source": "来源会话",
+      "from": "来自 {{session}}",
+      "children": "展开 {{count}} 个子会话"
+    },
     "derived": {
       "title": "派生会话（{{count}}）"
     },
@@ -1343,7 +1386,8 @@
     "lineage": {
       "forkedFrom": "Fork 自 {{session}}",
       "forkedFromAt": "Fork 自 {{session}} · {{time}}"
-    }
+    },
+    "manage": "会话选项"
   },
   "composer": {
     "attachFiles": "添加文件",
@@ -1359,7 +1403,7 @@
     "skillEmpty": "未找到匹配的技能",
     "pickAgent": "选择 Agent",
     "pickModel": "选择模型",
-    "abortFailed": "停止失败,运行仍在继续",
+    "abortFailed": "未能确认停止结果。请刷新会话核实当前状态。",
     "actions": {
       "add": "添加",
       "context": "添加上下文",
@@ -1635,6 +1679,11 @@
           "label": "复制最后响应",
           "description": "将最后一条助手响应复制为 markdown。",
           "argumentHint": ""
+        },
+        "storage": {
+          "label": "存储空间",
+          "description": "管理会话文件、运行进程与 Git 工作树。",
+          "argumentHint": ""
         }
       },
       "prompts": {
@@ -1707,7 +1756,7 @@
     "resumeTooltip": "继续这个已暂停的会话。",
     "resumeDisabled": "此会话当前无法在这里继续。",
     "startingTooltip": "正在启动…点击可取消本次发送，或暂停当前运行。",
-    "queueTooltip": "将这条草稿排队，待当前运行结束后发送。双击改为暂停。",
+    "queueTooltip": "排队：当前运行结束后发送",
     "gatewayConnected": "已连接",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
     "contextMenu": {
@@ -1729,6 +1778,7 @@
     "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
     "contextHidden": "已隐藏 {{count}} 条",
     "compaction": {
+      "toastPending": "整理请求已接收。请刷新会话查看结果。",
       "compress": "压缩当前会话",
       "compressTooltip": "压缩当前会话历史",
       "viewEvidence": "查看压缩证据",
@@ -1966,9 +2016,9 @@
       "tooltip": "在新会话中准备继续工作的草稿",
       "disabledActiveRun": "当前运行结束后可用",
       "dialogTitle": "接力到新对话",
-      "dialogDescription": "创建新会话前可先检查和编辑这份接力草稿。它只会放入输入框，不会自动发送。",
+      "dialogDescription": "先检查并编辑接力草稿。“创建并发送”会打开新会话，并将草稿作为首条消息提交。若发送结果未确认，系统会保留草稿供核实和恢复。",
       "draftLabel": "接力草稿",
-      "create": "创建接力会话",
+      "create": "创建并发送",
       "cancel": "取消",
       "toastPrepareFailed": "接力准备失败",
       "toastCreateFailed": "创建接力会话失败",
@@ -2064,16 +2114,17 @@
     },
     "workModeRecommendedPermission": "建议：{{mode}}",
     "intervention": {
+      "menu": "发送方式",
       "guide": "引导",
-      "guideTooltip": "向当前运行注入非打断式指导。",
+      "guideTooltip": "不停止运行，在下一步加入当前运行",
       "longTaskRequired": "打断/引导/排队/修改目标需要当前会话存在有效的 /loop 长任务上下文。",
       "reviseGoal": "修改目标",
-      "reviseGoalTooltip": "记录检查点并从修改后的用户目标重新开始。",
+      "reviseGoalTooltip": "保存检查点，并以这条消息作为新目标重新开始",
       "queueDefault": "运行中：Enter 默认排队",
       "queue": "排队",
-      "queueTooltip": "保持当前运行不变，稍后重放这条后续输入。",
-      "interrupt": "打断",
-      "interruptTooltip": "在高风险恢复动作前中止或引导当前运行。"
+      "queueTooltip": "当前运行结束后再发送",
+      "interrupt": "打断并发送",
+      "interruptTooltip": "保存检查点，停止当前运行并从这条消息重新开始"
     },
     "rollbackPlan": {
       "title": "恢复辅助",
@@ -2206,7 +2257,14 @@
       "newBranch": "新分支",
       "existingBranch": "已有分支",
       "defaultPath": "默认路径",
-      "defaultPathUnavailable": "输入分支名称以预览路径"
+      "defaultPathUnavailable": "输入分支名称以预览路径",
+      "kindBranch": "分支",
+      "kindWorktree": "工作树",
+      "kindDetached": "分离",
+      "mainCheckout": "主检出",
+      "linkedWorktree": "独立工作树",
+      "filesChanged": "已修改 {{count}} 个文件",
+      "filesChanged_one": "已修改 {{count}} 个文件"
     },
     "modelSwitchSessionResetFailed": "默认模型已保存，但当前会话未能重置：{{error}}",
     "knowledgeRuntimeLessons": {
@@ -2318,6 +2376,11 @@
     "dropHint": "拖到另一个会话上即可归为一组"
   },
   "archive": {
+    "mutationUnconfirmed": "未能确认操作结果。请刷新列表核实当前状态。",
+    "pendingTitle": "待确认的操作",
+    "pendingDescription": "核对已记录的操作，从保存的状态继续。",
+    "resumeMutation": "核实并继续",
+    "pendingKinds": {"archive": "归档", "restore": "还原", "delete": "删除"},
     "searchPlaceholder": "搜索已归档会话",
     "ungrouped": "未分组",
     "noMatches": "没有匹配的会话",
@@ -2337,7 +2400,8 @@
     "archiveAction": "归档",
     "emptyAll": "清空归档",
     "emptyAllConfirm": "再次点击以永久删除所有已归档对话",
-    "viewLabel": "归档视图"
+    "viewLabel": "归档视图",
+    "permanentDeleteMessage": "永久删除“{{label}}”及其对话历史？"
   },
   "questionDirectory": {
     "title": "问题目录",
@@ -2516,7 +2580,7 @@
   },
   "turnSummary": {
     "codingRun": {
-      "title": "CodingRun 证据",
+      "title": "运行诊断",
       "jsonl": "只读 JSONL 投影",
       "copy": "复制",
       "copied": "已复制"
@@ -2536,6 +2600,7 @@
       "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
     },
     "badge": {
+      "tools": "{{count}} 次工具调用",
       "thoughts": "{{count}} 段思考",
       "approvals": "{{count}} 项待批准",
       "plan": "{{count}} 步计划",
@@ -2776,6 +2841,145 @@
       "typeLabel": "类型",
       "hint": "此处无法显示该资源。",
       "copy": "复制详情"
+    }
+  },
+  "task": {
+    "steps": "执行步骤"
+  },
+  "sessionFamily": {
+    "toggle": "展开或收起 {{count}} 个派生会话",
+    "navigation": "会话家族",
+    "kind": {
+      "fork": "分支",
+      "handoff": "续接",
+      "spawn": "子代理",
+      "unknown": "来源不可用"
+    },
+    "children": "派生会话（{{count}}）",
+    "missing": "来源不可用",
+    "unloaded": "加载来源会话",
+    "conflict": "来源字段存在冲突",
+    "cycle": "来源链存在循环",
+    "bound-exceeded": "来源链已截断",
+    "relations": "关系详情"
+  },
+  "projectEntry": {
+    "toggle": "展开或收起 {{name}}",
+    "loading": "正在打开项目负责人…",
+    "unbound": "此项目未绑定负责人。",
+    "unavailable": "项目负责人关联暂不可用。",
+    "coordinator": "{{name}} · 项目负责人"
+  },
+  "questionFork": {
+    "title": "在新会话中提问",
+    "description": "保留此问题之前的上下文，新问题作为可编辑草稿进入子会话。",
+    "question": "新问题",
+    "create": "创建并保留草稿",
+    "noAncestor": "当前可用上下文中没有此问题之前的助手回复，无法分支。",
+    "sourceChanged": "来源会话已变化，请重新打开预览。"
+  },
+  "handoffRecovery": {
+    "resume": "按已保存草稿恢复",
+    "check": "核实首发状态",
+    "openChild": "打开子会话",
+    "phase": {
+      "creating": "续接创建待核实",
+      "ready": "子会话已创建，首轮尚未发送",
+      "sending": "正在提交首轮消息",
+      "accepted": "首轮已接收，等待 transcript 确认",
+      "sent": "首轮消息已记录",
+      "failed": "首轮被拒绝，草稿已保留",
+      "unknown": "首发结果未知，请先核实再重试"
+    }
+  },
+  "delegationStages": {
+    "verification": {
+      "unavailable": "不可用",
+      "pending": "等待验证回执",
+      "recorded": "已记录 {{count}} / {{total}} 项验证回执"
+    },
+    "capacity": {
+      "planTitle": "派发时的安排与原因",
+      "planDescription": "这是派发回执中的计划，不是实时队列。",
+      "recordedAt": "回执时间：{{at}}",
+      "wave": "第 {{wave}} 批 · {{roles}}",
+      "reasonUnavailable": "未记录调度原因。",
+      "otherReason": "调度原因：{{reason}}",
+      "reason": {
+        "concurrencyCap": "并发容量上限",
+        "writeSetConflict": "写入范围重叠",
+        "writeSetProof": "尚未证明写入隔离",
+        "toolContention": "共享工具争用"
+      },
+      "currentTitle": "当前执行状态读回",
+      "currentQueue": "当前会话排队数：{{count}}",
+      "workerWaiting": "执行方当前报告等待。",
+      "openResources": "查看会话与资源占用"
+    },
+    "label": {
+      "admission": "派发准入",
+      "verification": "验证回执",
+      "execution": "实际执行",
+      "report": "报告回传",
+      "acceptance": "任务验收",
+      "continuation": "父会话续行"
+    },
+    "taskRequired": "派发前需要选择已有业务任务并绑定协调器。",
+    "model": "实际运行模型：{{model}}",
+    "cost": "已读记录费用：{{cost}}",
+    "costUnknown": "未知",
+    "taskAcceptance": {
+      "pending": "等待验收",
+      "accepted": "已验收",
+      "cancelled": "已取消"
+    },
+    "status": {
+      "unavailable": "不可用",
+      "in-flight": "准入处理中",
+      "approval-pending": "等待权限处理",
+      "accepted": "已接收",
+      "partial": "部分接收",
+      "rejected": "已拒绝",
+      "outcome-unknown": "结果未知",
+      "started": "启动事件已记录",
+      "yielded": "等待中",
+      "completed": "运行已完成",
+      "error": "运行失败",
+      "aborted": "运行已停止",
+      "verified": "核验结果已记录",
+      "not_required": "无需回传",
+      "pending": "等待回传",
+      "in_progress": "正在回传",
+      "delivered": "已送达",
+      "failed": "失败",
+      "suspended": "已暂停",
+      "discarded": "已丢弃",
+      "fenced": "执行代际已变化",
+      "waiting": "等待父会话下一轮",
+      "unknown": "交付结果未知",
+      "queued": "已排队",
+      "steered": "引导已接收"
+    }
+  },
+  "migration": {
+    "open": "将工作迁移到其他检出",
+    "resume": "继续恢复迁移",
+    "title": "在另一个检出中继续",
+    "description": "保留当前会话和任务。系统关闭源环境的新副作用，核对未结清工作，确认交接后才开放目标环境。",
+    "target": "目标工作区",
+    "start": "迁移并继续",
+    "cancel": "关闭",
+    "retained": "进度已保存。处理提示的条件后可继续恢复。",
+    "artifactChanged": "已记录的产物发生了变化。恢复到检查点版本后可继续迁移。",
+    "phase": {
+      "intent": "已记录迁移意图",
+      "fenced": "已关闭源执行入口",
+      "drained": "源效果已结清",
+      "reserved": "已预留目标",
+      "session-committed": "会话已迁移，正在核对任务",
+      "task-committed": "任务所有权已转交",
+      "binding-committed": "正在确认目标",
+      "confirmed": "目标环境已就绪"
     }
   }
 }

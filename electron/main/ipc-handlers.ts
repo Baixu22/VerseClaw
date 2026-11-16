@@ -6,12 +6,14 @@ import { BrowserWindow, app } from 'electron';
 import { join } from 'node:path';
 import { GatewayManager } from '../gateway/manager';
 import { registerAgentBrowserGatewayBridge } from '../gateway/agent-browser-bridge';
+import { registerSessionTaskScopeBridge } from '../gateway/session-task-scope-bridge';
 import { ClawHubService } from '../gateway/clawhub';
 import { logger } from '../utils/logger';
 import { startCronAgentRepair } from '../services/cron-maintenance';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { resourceFabric } from '../services/resource-fabric';
 import { HostApiRegistry, registerHostInvokeHandler } from './ipc/host-invoke';
+import { initializeHostWindowAuthorization } from './ipc/host-window-observers';
 import { createAppApi } from '../services/app-api';
 import { createVerseGitApi } from '../services/versegit-api';
 import { ensureVerseGitBindingBridge } from '../gateway/versegit-bridge';
@@ -56,11 +58,12 @@ import { createOrchestrationPresetsApi } from '../services/orchestration-presets
 import { createTerminalApi } from '../services/terminal-api';
 import { createHostTraceDiagnosticsService } from '../services/host-trace-diagnostics';
 import { createSessionActivityApi } from '../services/session-activity-api';
-import { createGitApi } from '../services/git-api';
+import { createGitApi, readCurrentGitStatus, readWorkspaceGitWorktrees } from '../services/git-api';
+import { createSessionStorageApi } from '../services/session-storage-api';
 import { createTerminalSessionManager, type TerminalSessionManager } from '../services/terminal-session-manager';
 import { createWebPreviewApi } from '../services/web-preview-api';
 import { createWebPreviewManager } from '../services/web-preview-manager';
-import { createWorkspacesApi } from '../services/workspaces-api';
+import { createWorkspacesApi, observeWorkspaceNavigation } from '../services/workspaces-api';
 import { createProjectRulesApi } from '../services/project-rules-api';
 import { createRemoteControlApi } from '../services/remote-control-api';
 import { createAgentBrowserApi } from '../services/agent-browser-api';
@@ -128,14 +131,22 @@ function registerTypedHostHandlers(
   const knowledgeApi = createKnowledgeApi({ gatewayManager });
   const remoteForgeApi = createRemoteForgeApi();
   const gitApi = createGitApi();
-  const taskLedgerApi = createTaskLedgerApi();
+  const taskLedgerApi = createTaskLedgerApi(gatewayManager);
   const workspacesApi = createWorkspacesApi({
     gatewayManager,
     terminalManager,
     webPreviewManager,
-    gitApi,
+    gitApi: { ...gitApi,
+      statusForWorkspace: async (workspace) => ({ success: true, status: await readCurrentGitStatus(workspace) }),
+      worktreesForWorkspace: readWorkspaceGitWorktrees,
+    },
     taskLedgerApi,
   });
+  const stopWorkspaceNavigation=observeWorkspaceNavigation(()=>{
+    if(!mainWindow.isDestroyed())mainWindow.webContents.send(HOST_EVENT_CHANNELS.chat.workspaceNavigationChanged);
+  });
+  mainWindow.once('closed',stopWorkspaceNavigation);
+  registerSessionTaskScopeBridge(gatewayManager, workspacesApi.admitTaskEffect);
   const traceDiagnostics = createHostTraceDiagnosticsService({
     onSummary: recordObservabilityHostDiagnostic,
   });
@@ -166,20 +177,21 @@ function registerTypedHostHandlers(
     terminal: createTerminalApi({ gatewayManager, terminalManager, traceDiagnostics }),
     sessionActivity: createSessionActivityApi({ gatewayManager, terminalManager }),
     git: gitApi,
+    sessionStorage: createSessionStorageApi({ workspaces: workspacesApi, terminalManager }),
     permissions: createPermissionsApi(),
     runtimeApprovals: createRuntimeApprovalsApi(gatewayManager),
     orchestrationPresets: createOrchestrationPresetsApi(),
-    webPreview: createWebPreviewApi({ webPreviewManager }),
+    webPreview: createWebPreviewApi({ webPreviewManager, gatewayManager }),
     settings: createSettingsApi(gatewayManager),
     efficiency: createEfficiencyApi(),
-    resourceEnvelope: createResourceEnvelopeApi(),
+    resourceEnvelope: createResourceEnvelopeApi({ terminalManager }),
     gateway: gatewayApi,
     localControlPlane: createLocalControlPlaneApi(gatewayManager),
     capabilities: createCapabilitiesApi({ gatewayManager }),
     agentDev: createAgentDevApi({ gatewayManager }),
     remoteControl: createRemoteControlApi(),
     agentBrowser: agentBrowserApi,
-    mcp: createMcpApiWithContext({ gatewayManager, remoteForgeApi }),
+    mcp: createMcpApiWithContext({ gatewayManager, gatewayRpc: gatewayApi.rpc, remoteForgeApi }),
     sandbox: createSandboxApi(),
     hooks: createHooksApi(),
     logs: createLogsApi(),
@@ -190,7 +202,7 @@ function registerTypedHostHandlers(
     files: createFilesApi(),
     media: createMediaApi(),
     sessions: sessionsApi,
-    chat: createChatApi({ gatewayManager }),
+    chat: createChatApi({ gatewayManager, selectSessionTask: workspacesApi.selectSessionTask }),
     codeReview: createCodeReviewApi({ gatewayManager }),
     changeContext: createChangeContextApi({
       gatewayManager,
@@ -226,9 +238,7 @@ function registerTypedHostHandlers(
     }),
   });
   registerHostInvokeHandler(hostApiRegistry, {
-    senderAuth: {
-      allowedWebContentsIds: new Set([mainWindow.webContents.id]),
-    },
+    senderAuth: initializeHostWindowAuthorization(mainWindow, join(__dirname, '../preload/index.js')),
   });
 }
 

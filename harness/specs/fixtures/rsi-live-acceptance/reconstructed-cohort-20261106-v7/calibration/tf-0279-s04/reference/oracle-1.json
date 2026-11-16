@@ -1,0 +1,100 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 5,
+  "numPassedTests": 5,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793938509142,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger denies external/unknown provenance the external connection modes, allows managed",
+          "status": "passed",
+          "title": "denies external/unknown provenance the external connection modes, allows managed",
+          "duration": 2.142600000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger allows trusted provenance every connection mode",
+          "status": "passed",
+          "title": "allows trusted provenance every connection mode",
+          "duration": 0.2576000000000249,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger requires a Main-owned managed session for click/type under external/unknown provenance",
+          "status": "passed",
+          "title": "requires a Main-owned managed session for click/type under external/unknown provenance",
+          "duration": 0.8267000000000166,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger pins the wiring: external-access on every action, session gate only on click/type",
+          "status": "passed",
+          "title": "pins the wiring: external-access on every action, session gate only on click/type",
+          "duration": 0.5294000000000096,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger records every action and the residual session-gate gap in the ledger doc",
+          "status": "passed",
+          "title": "records every action and the residual session-gate gap in the ledger doc",
+          "duration": 0.5346000000000117,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793938509866,
+      "endTime": 1793938509870.5347,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0279-s04/reference/workspace/tests/unit/browser-effect-boundary-ledger.test.ts"
+    }
+  ]
+}

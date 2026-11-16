@@ -1,0 +1,186 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/context-prompt-owner",
+  "observations": [
+    {
+      "id": "btw-side-question",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "Ephemeral BTW side-question prompt and sanitized conversation sealed by the BTW entry before provider execution.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "compaction-summarizer",
+      "mutates": "messages",
+      "kind": "semantic",
+      "purpose": "Compaction summarizer request (SUMMARIZATION_SYSTEM_PROMPT + serialized transcript). It bypasses the Context Orchestrator, so it is sealed at the stream boundary before transport serialization.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "compass-retrieval",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "COMPASS pre-reply hybrid-retrieval top-5 facts (get-reply-run extraSystemPromptParts); attributed by content at the seal.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "compass-ssp",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "COMPASS self-sustaining-prompt (SSP) produced by buildPreReplyInjection; must run before the bundle seal.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "cvk-message-replacement",
+      "mutates": "messages",
+      "kind": "semantic",
+      "purpose": "ContextEngine message replacement (attempt.ts assembledMessages swap and ownsCompaction engine loop); must run before the bundle seal.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "cvk-system-prompt-addition",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "CVK systemPromptAddition collected into the candidate collection (channel cvk_addition).",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "dcs-knowledge",
+      "mutates": "messages",
+      "kind": "semantic",
+      "purpose": "DCS knowledge block injection (assembler #appendKnowledge -> knowledge channel).",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "dcs-tool-registry",
+      "mutates": "messages",
+      "kind": "semantic",
+      "purpose": "DCS tool-registry injection (assembler #appendToolRegistry -> tool_registry channel).",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "dcs-working-memory",
+      "mutates": "messages",
+      "kind": "semantic",
+      "purpose": "DCS working-memory injection (assembler #appendWorkingMemory -> working_memory channel).",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "embedded-system-prompt",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "Attempt system prompt builder (attempt.ts buildAttemptSystemPrompt, provider transform, pre-loop hook overrides); owns every system-prompt byte not attributed to a narrower producer. Its digest is bound at the seal.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "memory-pilot-injection",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "Runtime Memory inject-pilot output collected by the Context Orchestrator (memory_pilot channel); must run before the bundle seal.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "role-memory-injection",
+      "mutates": "messages",
+      "kind": "semantic",
+      "purpose": "Role-memory injection in subagent sessions (assembler role_memory handler).",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "role-spawn-memory-pack",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "Role Memory ContextPack rendered into a role-spawned subagent system prompt (role-spawn buildRoleSystemPrompt); attributed by content at the seal.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "session-start-injection",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "Session-start plan projected through the existing Context Orchestrator candidate collection.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "transport-cache-boundary-strip",
+      "mutates": "transport",
+      "kind": "non-semantic",
+      "purpose": "The prompt-cache boundary marker is removed before the bytes leave: stripSystemPromptCacheBoundary in the stream transformContext, joinSystemPromptWithoutCacheBoundary in the OpenAI transports and the provider-owned hand-over, plus the enforceNoOutboundCacheBoundary gate. No semantic text changes.",
+      "version": "1",
+      "phase": "post-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "transport-provider-headers",
+      "mutates": "transport",
+      "kind": "non-semantic",
+      "purpose": "Provider-specific header injection after the seal; does not touch systemPrompt/messages.",
+      "version": "1",
+      "phase": "post-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "transport-wire-serialization",
+      "mutates": "transport",
+      "kind": "non-semantic",
+      "purpose": "Final wire serialization/stream flag after the seal; does not touch semantic content.",
+      "version": "1",
+      "phase": "post-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    },
+    {
+      "id": "vtoken-packer",
+      "mutates": "system_prompt",
+      "kind": "semantic",
+      "purpose": "VToken assembly output injected as context candidates.",
+      "version": "1",
+      "phase": "pre-seal",
+      "verdict": "pass",
+      "driven_by": "agent"
+    }
+  ]
+}

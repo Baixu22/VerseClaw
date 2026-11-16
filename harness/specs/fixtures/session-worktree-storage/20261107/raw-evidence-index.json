@@ -1,0 +1,64 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "provenance": "Historical TF-0821 logs retained byte-for-byte outside source; report keeps original candidate and verdict.",
+  "originalManifest": "D:\\tmp\\tf0832\\storage-historical-raw\\SHA256SUMS.original",
+  "files": [
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\build.txt",
+      "sha256": "3750d67f18768ddbadd41a905d5153cbff5f94faeff0ae94f105d39d671d1a9a"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\comms-compare.txt",
+      "sha256": "dadef88eef9bc09a518bd2635d617637e46b60a38cee42b679d388f21ada5074"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\comms-replay.txt",
+      "sha256": "0962e83c9f461596e2398d8a77eecc38a7bf1decfa61d3b6efc8acccc37c2a28"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\contract.txt",
+      "sha256": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\electron.txt",
+      "sha256": "e30b5c55fbc168945f075194fc03be989727cf095aba5bd18a710b29fc3edaa7"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\harness-ci.txt",
+      "sha256": "3f6791bcdf9a4a80c04177db432fad914448e84649a308a7ee728e121268f1ae"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\harness-workspace.txt",
+      "sha256": "f0878ad30906c9f2cc0f0edf2d5c596f013e842fcfe57017a81f4aa9f4d73edd"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\i18n.txt",
+      "sha256": "04fe1f40258bd17febac82ae99a106d852ff2961909d5e91dd88023cf3056f69"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\lint.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\node-types.txt",
+      "sha256": "aab44707a0bb417f8bc774ca186f3cc3d6bb2f3239953798a0546376a8790df8"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\runtime-build.txt",
+      "sha256": "52e0172957b7c2b36bd60c15841881ddc219c917942778e730dd207f362a6d10"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\unit-backend.txt",
+      "sha256": "7b6bc0013aee7799023334b1179dd05e6b5d86b232dbb27543c9060d08695ec2"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\unit-ui.txt",
+      "sha256": "777564a536ea0401289014699a1210c62c51d666f319a10c79a62d709fafe5fe"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\storage-historical-raw\\web-types.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

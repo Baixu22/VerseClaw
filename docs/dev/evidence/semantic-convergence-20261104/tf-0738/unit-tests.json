@@ -1,0 +1,1477 @@
+{
+  "numTotalTestSuites": 17,
+  "numPassedTestSuites": 17,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 116,
+  "numPassedTests": 116,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793788689096,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "TF-0002 context orchestrator production entry scan"
+          ],
+          "fullName": "TF-0002 context orchestrator production entry scan embedded attempt imports orchestrator and not low-level compute*",
+          "status": "passed",
+          "title": "embedded attempt imports orchestrator and not low-level compute*",
+          "duration": 2.737700000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0002 context orchestrator production entry scan"
+          ],
+          "fullName": "TF-0002 context orchestrator production entry scan gateway agent does not call low-level memory/vtoken injectors",
+          "status": "passed",
+          "title": "gateway agent does not call low-level memory/vtoken injectors",
+          "duration": 1.600999999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0002 context orchestrator production entry scan"
+          ],
+          "fullName": "TF-0002 context orchestrator production entry scan orchestrator is the only production composer of both stages",
+          "status": "passed",
+          "title": "orchestrator is the only production composer of both stages",
+          "duration": 0.4601999999999862,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0002 context orchestrator production entry scan"
+          ],
+          "fullName": "TF-0002 context orchestrator production entry scan CVK systemPromptAddition is kill-switch gated in embedded attempt",
+          "status": "passed",
+          "title": "CVK systemPromptAddition is kill-switch gated in embedded attempt",
+          "duration": 0.6537999999999897,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0002 context orchestrator production entry scan"
+          ],
+          "fullName": "TF-0002 context orchestrator production entry scan production sources collect before one final Context Orchestrator projection",
+          "status": "passed",
+          "title": "production sources collect before one final Context Orchestrator projection",
+          "duration": 1891.7443,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0002 context orchestrator production entry scan"
+          ],
+          "fullName": "TF-0002 context orchestrator production entry scan no unattended SEKB auto-writeback workers in knowledge/sekb",
+          "status": "passed",
+          "title": "no unattended SEKB auto-writeback workers in knowledge/sekb",
+          "duration": 4.437199999999848,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788690457,
+      "endTime": 1793788692358.4373,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/tests/unit/context-orchestrator-entry-scan.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "P1-2 memory self-edit adapter stays retired"
+          ],
+          "fullName": "P1-2 memory self-edit adapter stays retired registers no tools for explicit persist: true",
+          "status": "passed",
+          "title": "registers no tools for explicit persist: true",
+          "duration": 1.9057000000000244,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P1-2 memory self-edit adapter stays retired"
+          ],
+          "fullName": "P1-2 memory self-edit adapter stays retired registers no tools for string persist: \"true\"",
+          "status": "passed",
+          "title": "registers no tools for string persist: \"true\"",
+          "duration": 0.21519999999998163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P1-2 memory self-edit adapter stays retired"
+          ],
+          "fullName": "P1-2 memory self-edit adapter stays retired registers no tools for persist: false",
+          "status": "passed",
+          "title": "registers no tools for persist: false",
+          "duration": 0.12249999999994543,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P1-2 memory self-edit adapter stays retired"
+          ],
+          "fullName": "P1-2 memory self-edit adapter stays retired registers no tools for empty config",
+          "status": "passed",
+          "title": "registers no tools for empty config",
+          "duration": 0.2138999999999669,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P1-2 memory self-edit adapter stays retired"
+          ],
+          "fullName": "P1-2 memory self-edit adapter stays retired registers no tools for undefined config",
+          "status": "passed",
+          "title": "registers no tools for undefined config",
+          "duration": 0.17049999999994725,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P1-2 memory self-edit adapter stays retired"
+          ],
+          "fullName": "P1-2 memory self-edit adapter stays retired never exposes any of the retired tool names",
+          "status": "passed",
+          "title": "never exposes any of the retired tool names",
+          "duration": 1.0182000000000926,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788738372,
+      "endTime": 1793788738375.0183,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/tests/unit/memory-self-edit-adapter.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "retired runtime-memory flags can never resolve to true"
+          ],
+          "fullName": "retired runtime-memory flags can never resolve to true resolves every retired flag to false for explicit true",
+          "status": "passed",
+          "title": "resolves every retired flag to false for explicit true",
+          "duration": 1.5715999999999894,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired runtime-memory flags can never resolve to true"
+          ],
+          "fullName": "retired runtime-memory flags can never resolve to true resolves every retired flag to false for string true",
+          "status": "passed",
+          "title": "resolves every retired flag to false for string true",
+          "duration": 0.22260000000005675,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired runtime-memory flags can never resolve to true"
+          ],
+          "fullName": "retired runtime-memory flags can never resolve to true resolves every retired flag to false for omitted",
+          "status": "passed",
+          "title": "resolves every retired flag to false for omitted",
+          "duration": 0.26110000000016953,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired runtime-memory flags can never resolve to true"
+          ],
+          "fullName": "retired runtime-memory flags can never resolve to true resolves every retired flag to false for explicit false",
+          "status": "passed",
+          "title": "resolves every retired flag to false for explicit false",
+          "duration": 0.35370000000011714,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired runtime-memory flags can never resolve to true"
+          ],
+          "fullName": "retired runtime-memory flags can never resolve to true keeps candidateGeneration independently configurable",
+          "status": "passed",
+          "title": "keeps candidateGeneration independently configurable",
+          "duration": 0.31150000000002365,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired persistence produces no writes and no database file"
+          ],
+          "fullName": "retired persistence produces no writes and no database file skips migrate without creating the database file",
+          "status": "passed",
+          "title": "skips migrate without creating the database file",
+          "duration": 1.5450000000000728,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired persistence produces no writes and no database file"
+          ],
+          "fullName": "retired persistence produces no writes and no database file skips episode and fact writes and never opens sqlite",
+          "status": "passed",
+          "title": "skips episode and fact writes and never opens sqlite",
+          "duration": 2.302500000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired persistence produces no writes and no database file"
+          ],
+          "fullName": "retired persistence produces no writes and no database file exposes an empty store when loading retired persistence",
+          "status": "passed",
+          "title": "exposes an empty store when loading retired persistence",
+          "duration": 0.4795999999998912,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired persistence produces no writes and no database file"
+          ],
+          "fullName": "retired persistence produces no writes and no database file skips the readonly inspector without opening sqlite",
+          "status": "passed",
+          "title": "skips the readonly inspector without opening sqlite",
+          "duration": 4.370099999999866,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "retired integration stays inert and never invokes injected writers"
+          ],
+          "fullName": "retired integration stays inert and never invokes injected writers skips migration and writes through the integration facade",
+          "status": "passed",
+          "title": "skips migration and writes through the integration facade",
+          "duration": 0.6656000000000404,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788737468,
+      "endTime": 1793788737480.6655,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/tests/unit/memory-tf0500-persistence-retirement.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) redacts auth messages and preserves classification",
+          "status": "passed",
+          "title": "redacts auth messages and preserves classification",
+          "duration": 8.33789999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) redacts auth_permanent messages and preserves classification",
+          "status": "passed",
+          "title": "redacts auth_permanent messages and preserves classification",
+          "duration": 0.5781999999999243,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) redacts billing messages and preserves classification",
+          "status": "passed",
+          "title": "redacts billing messages and preserves classification",
+          "duration": 0.591899999999896,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) redacts format messages and preserves classification",
+          "status": "passed",
+          "title": "redacts format messages and preserves classification",
+          "duration": 0.5390999999999622,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) redacts model_not_found messages and preserves classification",
+          "status": "passed",
+          "title": "redacts model_not_found messages and preserves classification",
+          "duration": 0.46469999999999345,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) redacts rate_limit messages and preserves classification",
+          "status": "passed",
+          "title": "redacts rate_limit messages and preserves classification",
+          "duration": 0.3770999999999276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) redacts session_expired messages and preserves classification",
+          "status": "passed",
+          "title": "redacts session_expired messages and preserves classification",
+          "duration": 0.30179999999995744,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) keeps stable server_error errors and sanitizes code",
+          "status": "passed",
+          "title": "keeps stable server_error errors and sanitizes code",
+          "duration": 0.3654999999998836,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) keeps stable timeout errors and sanitizes code",
+          "status": "passed",
+          "title": "keeps stable timeout errors and sanitizes code",
+          "duration": 0.3307999999999538,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) keeps stable overloaded errors and sanitizes code",
+          "status": "passed",
+          "title": "keeps stable overloaded errors and sanitizes code",
+          "duration": 0.2861000000000331,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) keeps mandatory redaction when logging uses off settings",
+          "status": "passed",
+          "title": "keeps mandatory redaction when logging uses off settings",
+          "duration": 0.23249999999984539,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) keeps mandatory redaction when logging uses custom settings",
+          "status": "passed",
+          "title": "keeps mandatory redaction when logging uses custom settings",
+          "duration": 0.18269999999984066,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) redacts a normalized SDK error and a nested cause without mutating the original",
+          "status": "passed",
+          "title": "redacts a normalized SDK error and a nested cause without mutating the original",
+          "duration": 5.330000000000155,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public provider error boundary (#117)"
+          ],
+          "fullName": "public provider error boundary (#117) keeps an already sanitized preview readable and leaves unclassified failures to the generic handler",
+          "status": "passed",
+          "title": "keeps an already sanitized preview readable and leaves unclassified failures to the generic handler",
+          "duration": 1.5336999999999534,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps auth without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps auth without an undefined compatibility branch",
+          "duration": 0.46260000000006585,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps auth_permanent without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps auth_permanent without an undefined compatibility branch",
+          "duration": 0.16170000000010987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps format without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps format without an undefined compatibility branch",
+          "duration": 0.24289999999996326,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps rate_limit without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps rate_limit without an undefined compatibility branch",
+          "duration": 0.15670000000000073,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps overloaded without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps overloaded without an undefined compatibility branch",
+          "duration": 0.16030000000000655,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps billing without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps billing without an undefined compatibility branch",
+          "duration": 0.12770000000000437,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps server_error without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps server_error without an undefined compatibility branch",
+          "duration": 0.12609999999995125,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps timeout without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps timeout without an undefined compatibility branch",
+          "duration": 0.10500000000001819,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps model_not_found without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps model_not_found without an undefined compatibility branch",
+          "duration": 0.0968000000000302,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps session_expired without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps session_expired without an undefined compatibility branch",
+          "duration": 0.1065000000000964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps refusal without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps refusal without an undefined compatibility branch",
+          "duration": 0.1875,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps empty_response without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps empty_response without an undefined compatibility branch",
+          "duration": 0.2074999999999818,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps no_error_details without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps no_error_details without an undefined compatibility branch",
+          "duration": 0.1330000000000382,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps unclassified without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps unclassified without an undefined compatibility branch",
+          "duration": 0.24529999999981555,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) maps unknown without an undefined compatibility branch",
+          "status": "passed",
+          "title": "maps unknown without an undefined compatibility branch",
+          "duration": 0.18430000000012114,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public FailoverReason compatibility mapping (#116)"
+          ],
+          "fullName": "public FailoverReason compatibility mapping (#116) keeps refusal semantics distinct and does not claim unknown responsibility",
+          "status": "passed",
+          "title": "keeps refusal semantics distinct and does not claim unknown responsibility",
+          "duration": 0.37459999999987303,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) honors hints with jitter=0 fraction=0",
+          "status": "passed",
+          "title": "honors hints with jitter=0 fraction=0",
+          "duration": 5.337200000000166,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) honors hints with jitter=0.5 fraction=0",
+          "status": "passed",
+          "title": "honors hints with jitter=0.5 fraction=0",
+          "duration": 1.4335000000000946,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) honors hints with jitter=0.5 fraction=0.999999",
+          "status": "passed",
+          "title": "honors hints with jitter=0.5 fraction=0.999999",
+          "duration": 2.4363999999998214,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) stops before scheduling an unsatisfiable hint 100.1",
+          "status": "passed",
+          "title": "stops before scheduling an unsatisfiable hint 100.1",
+          "duration": 1.37070000000017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) stops before scheduling an unsatisfiable hint 250",
+          "status": "passed",
+          "title": "stops before scheduling an unsatisfiable hint 250",
+          "duration": 0.4752000000000862,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) stops before scheduling an unsatisfiable hint 2147000001",
+          "status": "passed",
+          "title": "stops before scheduling an unsatisfiable hint 2147000001",
+          "duration": 0.6056999999998425,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) rejects a hint beyond the timer range even when zero maxDelay means uncapped",
+          "status": "passed",
+          "title": "rejects a hint beyond the timer range even when zero maxDelay means uncapped",
+          "duration": 0.521900000000187,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) caps positive jitter at the platform timer limit without violating the hint",
+          "status": "passed",
+          "title": "caps positive jitter at the platform timer limit without violating the hint",
+          "duration": 0.6519999999998163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) uses ordinary exponential backoff for invalid hint undefined",
+          "status": "passed",
+          "title": "uses ordinary exponential backoff for invalid hint undefined",
+          "duration": 1.1380999999998949,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) uses ordinary exponential backoff for invalid hint NaN",
+          "status": "passed",
+          "title": "uses ordinary exponential backoff for invalid hint NaN",
+          "duration": 0.7964000000001761,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) uses ordinary exponential backoff for invalid hint Infinity",
+          "status": "passed",
+          "title": "uses ordinary exponential backoff for invalid hint Infinity",
+          "duration": 0.5937000000001262,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) uses ordinary exponential backoff for invalid hint -1",
+          "status": "passed",
+          "title": "uses ordinary exponential backoff for invalid hint -1",
+          "duration": 0.5227999999999611,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) preserves exponential backoff and maximum attempts",
+          "status": "passed",
+          "title": "preserves exponential backoff and maximum attempts",
+          "duration": 0.7529999999999291,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) does not resend channel retry_after=120 from root",
+          "status": "passed",
+          "title": "does not resend channel retry_after=120 from root",
+          "duration": 0.7992999999999029,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) does not resend channel retry_after=120 from response",
+          "status": "passed",
+          "title": "does not resend channel retry_after=120 from response",
+          "duration": 2.448799999999892,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) does not resend channel retry_after=120 from error",
+          "status": "passed",
+          "title": "does not resend channel retry_after=120 from error",
+          "duration": 0.32529999999997017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) retains structured retry metadata when a channel throws a non-Error object",
+          "status": "passed",
+          "title": "retains structured retry metadata when a channel throws a non-Error object",
+          "duration": 0.3056000000001404,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Retry-After lower bound (#119)"
+          ],
+          "fullName": "Retry-After lower bound (#119) never overrides strict shouldRetry for a non-idempotent channel call",
+          "status": "passed",
+          "title": "never overrides strict shouldRetry for a non-idempotent channel call",
+          "duration": 0.2378000000001066,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788731957,
+      "endTime": 1793788732001.3057,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/tests/unit/provider-error-retry-boundaries.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission systemPrompt permits its registered replace_system_prompt contribution",
+          "status": "passed",
+          "title": "systemPrompt permits its registered replace_system_prompt contribution",
+          "duration": 8.416199999999662,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission prependContext permits its registered append_data contribution",
+          "status": "passed",
+          "title": "prependContext permits its registered append_data contribution",
+          "duration": 0.45539999999891734,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission appendContext permits its registered append_data contribution",
+          "status": "passed",
+          "title": "appendContext permits its registered append_data contribution",
+          "duration": 0.31209999999555293,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission prependSystemContext permits its registered append_instruction contribution",
+          "status": "passed",
+          "title": "prependSystemContext permits its registered append_instruction contribution",
+          "duration": 0.23180000000138534,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission appendSystemContext permits its registered append_instruction contribution",
+          "status": "passed",
+          "title": "appendSystemContext permits its registered append_instruction contribution",
+          "duration": 0.4360999999989872,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission systemPrompt grants only data append to an undeclared producer",
+          "status": "passed",
+          "title": "systemPrompt grants only data append to an undeclared producer",
+          "duration": 1.7053000000014435,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission prependContext grants only data append to an undeclared producer",
+          "status": "passed",
+          "title": "prependContext grants only data append to an undeclared producer",
+          "duration": 0.31889999999839347,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission appendContext grants only data append to an undeclared producer",
+          "status": "passed",
+          "title": "appendContext grants only data append to an undeclared producer",
+          "duration": 0.27089999999589054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission prependSystemContext grants only data append to an undeclared producer",
+          "status": "passed",
+          "title": "prependSystemContext grants only data append to an undeclared producer",
+          "duration": 0.42779999999766005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission appendSystemContext grants only data append to an undeclared producer",
+          "status": "passed",
+          "title": "appendSystemContext grants only data append to an undeclared producer",
+          "duration": 0.5607000000018161,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission systemPrompt rejects a grant belonging to another producer",
+          "status": "passed",
+          "title": "systemPrompt rejects a grant belonging to another producer",
+          "duration": 0.41670000000158325,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission prependContext rejects a grant belonging to another producer",
+          "status": "passed",
+          "title": "prependContext rejects a grant belonging to another producer",
+          "duration": 0.30419999999867287,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission appendContext rejects a grant belonging to another producer",
+          "status": "passed",
+          "title": "appendContext rejects a grant belonging to another producer",
+          "duration": 0.25,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission prependSystemContext rejects a grant belonging to another producer",
+          "status": "passed",
+          "title": "prependSystemContext rejects a grant belonging to another producer",
+          "duration": 0.24109999999927823,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission appendSystemContext rejects a grant belonging to another producer",
+          "status": "passed",
+          "title": "appendSystemContext rejects a grant belonging to another producer",
+          "duration": 0.2635999999984051,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission requires the exact authority and scope, without implicit privilege escalation",
+          "status": "passed",
+          "title": "requires the exact authority and scope, without implicit privilege escalation",
+          "duration": 0.5310000000026776,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission checks the legacy hook, including an empty systemPrompt replacement",
+          "status": "passed",
+          "title": "checks the legacy hook, including an empty systemPrompt replacement",
+          "duration": 0.7419000000008964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission never borrows an earlier hook grant or silently returns a partial merge",
+          "status": "passed",
+          "title": "never borrows an earlier hook grant or silently returns a partial merge",
+          "duration": 0.4896999999982654,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission ignores permissions forged inside a hook result",
+          "status": "passed",
+          "title": "ignores permissions forged inside a hook result",
+          "duration": 0.24900000000343425,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission preserves default behavior while surfacing a warning",
+          "status": "passed",
+          "title": "preserves default behavior while surfacing a warning",
+          "duration": 2.3553000000028987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission carries an immutable declaration through the public registration API",
+          "status": "passed",
+          "title": "carries an immutable declaration through the public registration API",
+          "duration": 7.07850000000326,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 hook authority admission"
+          ],
+          "fullName": "TF-0737 hook authority admission does not change model resolution or ordinary plugin error handling",
+          "status": "passed",
+          "title": "does not change model resolution or ordinary plugin error handling",
+          "duration": 7.590799999998126,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 candidate admission and projection"
+          ],
+          "fullName": "TF-0737 candidate admission and projection system_prompt admits a declared append_instruction candidate",
+          "status": "passed",
+          "title": "system_prompt admits a declared append_instruction candidate",
+          "duration": 6.189899999997579,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 candidate admission and projection"
+          ],
+          "fullName": "TF-0737 candidate admission and projection message admits a declared append_data candidate",
+          "status": "passed",
+          "title": "message admits a declared append_data candidate",
+          "duration": 1.054100000001199,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 candidate admission and projection"
+          ],
+          "fullName": "TF-0737 candidate admission and projection message_replacement admits a declared replace_messages candidate",
+          "status": "passed",
+          "title": "message_replacement admits a declared replace_messages candidate",
+          "duration": 3.857900000002701,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 candidate admission and projection"
+          ],
+          "fullName": "TF-0737 candidate admission and projection rejects undeclared system_prompt before collection or charge",
+          "status": "passed",
+          "title": "rejects undeclared system_prompt before collection or charge",
+          "duration": 1.0100000000020373,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 candidate admission and projection"
+          ],
+          "fullName": "TF-0737 candidate admission and projection rejects undeclared message_replacement before collection or charge",
+          "status": "passed",
+          "title": "rejects undeclared message_replacement before collection or charge",
+          "duration": 0.8950000000040745,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 candidate admission and projection"
+          ],
+          "fullName": "TF-0737 candidate admission and projection allows undeclared data and records warned system additions in default mode",
+          "status": "passed",
+          "title": "allows undeclared data and records warned system additions in default mode",
+          "duration": 0.29659999999421416,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 candidate admission and projection"
+          ],
+          "fullName": "TF-0737 candidate admission and projection validates declaration shape instead of treating a malformed grant as data-only fallback",
+          "status": "passed",
+          "title": "validates declaration shape instead of treating a malformed grant as data-only fallback",
+          "duration": 0.18409999999857973,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 candidate admission and projection"
+          ],
+          "fullName": "TF-0737 candidate admission and projection forwards admission through the production orchestrator entry",
+          "status": "passed",
+          "title": "forwards admission through the production orchestrator entry",
+          "duration": 156.8703999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788730500,
+      "endTime": 1793788730704.8704,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/tests/unit/semantic-convergence-prompt-authority.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting records eight real API observations and a missing-accounting negative control",
+          "status": "passed",
+          "title": "records eight real API observations and a missing-accounting negative control",
+          "duration": 15.607700000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting uses the tested composer/setter on the production embedded path",
+          "status": "passed",
+          "title": "uses the tested composer/setter on the production embedded path",
+          "duration": 1.8445999999999003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting accounts three post-orchestrator pieces while preserving the 6000 managed ceiling",
+          "status": "passed",
+          "title": "accounts three post-orchestrator pieces while preserving the 6000 managed ceiling",
+          "duration": 1.9828000000002248,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting uses the final prompt observation to expose a late unregistered addition",
+          "status": "passed",
+          "title": "uses the final prompt observation to expose a late unregistered addition",
+          "duration": 1.253400000000056,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting does not charge repeated composition or cached finalization twice",
+          "status": "passed",
+          "title": "does not charge repeated composition or cached finalization twice",
+          "duration": 1.5498999999999796,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting retires overwritten base/post attribution when a hook replaces the whole base component",
+          "status": "passed",
+          "title": "retires overwritten base/post attribution when a hook replaces the whole base component",
+          "duration": 0.867500000000291,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting accounts managed messages and hook data without treating ordinary history as injected text",
+          "status": "passed",
+          "title": "accounts managed messages and hook data without treating ordinary history as injected text",
+          "duration": 0.997599999999693,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting accounts a provider rewrite using the actual successful setter output",
+          "status": "passed",
+          "title": "accounts a provider rewrite using the actual successful setter output",
+          "duration": 0.9898000000002867,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting leaves raw-run diagnostic text constructed but records no unapplied system contribution",
+          "status": "passed",
+          "title": "leaves raw-run diagnostic text constructed but records no unapplied system contribution",
+          "duration": 1.0162999999997737,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting marks no-turnId paths in both returned and retained diagnostics",
+          "status": "passed",
+          "title": "marks no-turnId paths in both returned and retained diagnostics",
+          "duration": 1.688799999999901,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting does not pretend a snapshot without a baseline observation has complete budgeting",
+          "status": "passed",
+          "title": "does not pretend a snapshot without a baseline observation has complete budgeting",
+          "duration": 0.9279999999998836,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting does not count a setter operation that failed to apply",
+          "status": "passed",
+          "title": "does not count a setter operation that failed to apply",
+          "duration": 1.615799999999581,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting keeps recorded snapshots immutable as the ledger changes for the next model call",
+          "status": "passed",
+          "title": "keeps recorded snapshots immutable as the ledger changes for the next model call",
+          "duration": 1.2928000000001703,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting preserves the existing filtered join for base \"\"",
+          "status": "passed",
+          "title": "preserves the existing filtered join for base \"\"",
+          "duration": 0.2298000000000684,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting preserves the existing filtered join for base \" \"",
+          "status": "passed",
+          "title": "preserves the existing filtered join for base \" \"",
+          "duration": 0.1529000000000451,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0738 observed prompt accounting"
+          ],
+          "fullName": "TF-0738 observed prompt accounting preserves the existing filtered join for base \"base\"",
+          "status": "passed",
+          "title": "preserves the existing filtered join for base \"base\"",
+          "duration": 0.1408000000001266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788735529,
+      "endTime": 1793788735561.2927,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/tests/unit/semantic-convergence-prompt-budget.test.ts"
+    }
+  ]
+}

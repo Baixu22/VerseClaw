@@ -1,0 +1,41 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "directory": "D:/ClawX-acceptance/rsi-experience-adoption-20261108-01a1b651",
+  "database": {
+    "path": "D:\\ClawX-acceptance\\rsi-experience-adoption-20261108-01a1b651\\runtime-state.sqlite",
+    "sha256": "a5a7502bfa0387daebd0ac68d90eaeb2307a9a6d635509b0bb8f69beef3e5dd5"
+  },
+  "firstFailureReports": [
+    "rsi-adoption-export-red-20261108.json",
+    "rsi-adoption-lint-20261108.json",
+    "rsi-adoption-lint-final-20261108.json",
+    "rsi-adoption-red-20261108.json",
+    "rsi-adoption-runtime-check-2-20261108.json",
+    "rsi-adoption-runtime-check-20261108.json",
+    "rsi-adoption-runtime-check-3-20261108.json",
+    "rsi-adoption-runtime-check-4-20261108.json",
+    "rsi-adoption-runtime-red-2-20261108.json",
+    "rsi-adoption-runtime-red-20261108.json",
+    "rsi-adoption-store-check-20261108.json",
+    "rsi-adoption-store-green-20261108.json"
+  ],
+  "dependencyFailures": [
+    "missing runtime packages",
+    "network ECONNRESET",
+    "an unused native grammar install requested an unavailable version"
+  ],
+  "typecheckInitialFailure": {
+    "origin": "observed command output; the original output file was replaced by the successful rerun",
+    "diagnostics": [
+      "BuildSystemPromptOptions did not contain tools",
+      "baseConfig.resolve could be undefined",
+      "AliasOptions required narrowing"
+    ]
+  },
+  "taskForestLauncher": {
+    "path": "D:/tmp/rsi-taskforest-cli.py",
+    "uses": "task_forest.main with its unchanged argument parser and lock implementation",
+    "manualLockDeletion": false
+  }
+}

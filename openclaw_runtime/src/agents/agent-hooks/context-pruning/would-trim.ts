@@ -91,12 +91,14 @@ export function buildWouldTrimReport(params: {
   isToolPrunable?: (toolName: string) => boolean;
   contextWindowTokensOverride?: number;
   dropThinkingBlocksForEstimate?: boolean;
+  archiveRecallRetention?: Parameters<typeof pruneContextMessages>[0]["archiveRecallRetention"];
 }): WouldTrimReport {
   const before = params.messages;
   const projected = pruneContextMessages({
     messages: before,
     settings: params.settings,
     ctx: params.ctx,
+    archiveRecallRetention: params.archiveRecallRetention,
     ...(params.isToolPrunable ? { isToolPrunable: params.isToolPrunable } : {}),
     ...(params.contextWindowTokensOverride !== undefined
       ? { contextWindowTokensOverride: params.contextWindowTokensOverride }

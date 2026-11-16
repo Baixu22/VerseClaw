@@ -26,7 +26,11 @@ import {
 } from "../context-engine/registry/context-item-registry.js";
 import type { ArchiveHandle } from "../../../shared/types/context-family.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
-import { resolveGatewaySessionStoreTarget } from "./session-utils.js";
+import {
+  migrateAndPruneGatewaySessionStoreKey,
+  resolveFreshestSessionEntryFromStoreKeys,
+  resolveGatewaySessionStoreTarget,
+} from "./session-utils.js";
 
 const log = createSubsystemLogger("gateway/session-compaction-checkpoints");
 const MAX_COMPACTION_CHECKPOINTS_PER_SESSION = 25;
@@ -504,6 +508,7 @@ async function cleanupTrimmedCompactionCheckpointFiles(params: {
 
 export async function persistSessionCompactionCheckpoint(params: {
   cfg: OpenClawConfig;
+  agentId?: string;
   sessionKey: string;
   sessionId: string;
   reason: SessionCompactionCheckpointReason;
@@ -531,6 +536,7 @@ export async function persistSessionCompactionCheckpoint(params: {
   const target = resolveGatewaySessionStoreTarget({
     cfg: params.cfg,
     key: params.sessionKey,
+    agentId: params.agentId,
   });
   const createdAt = params.createdAt ?? Date.now();
   const checkpointId = randomUUID();
@@ -557,7 +563,6 @@ export async function persistSessionCompactionCheckpoint(params: {
       ...(params.snapshot.archiveHandle ? { archiveHandle: params.snapshot.archiveHandle } : {}),
     },
   });
-  recordContextFamilyLifecycleEvents(lifecycleEvents);
   const checkpoint: SessionCompactionCheckpoint = {
     checkpointId,
     sessionKey: target.canonicalKey,
@@ -592,18 +597,23 @@ export async function persistSessionCompactionCheckpoint(params: {
     },
   };
 
-  let stored = false;
   let trimmedCheckpoints:
     | {
         kept: SessionCompactionCheckpoint[] | undefined;
         removed: SessionCompactionCheckpoint[];
       }
     | undefined;
-  await updateSessionStore(target.storePath, async (store) => {
-    const existing = store[target.canonicalKey];
-    if (!existing?.sessionId) {
-      return;
-    }
+  const stored = await updateSessionStore(target.storePath, async (store) => {
+    const currentTarget = resolveGatewaySessionStoreTarget({
+      cfg: params.cfg, key: params.sessionKey, agentId: params.agentId, store,
+    });
+    const current = resolveFreshestSessionEntryFromStoreKeys(store, currentTarget.storeKeys);
+    // The source snapshot owns this history; params.sessionId may be a successor.
+    if (!current?.sessionId || current.sessionId !== params.snapshot.sessionId) return false;
+    const { entry: existing } = migrateAndPruneGatewaySessionStoreKey({
+      cfg: params.cfg, key: params.sessionKey, agentId: params.agentId, store,
+    });
+    if (!existing) return false;
     const checkpoints = sessionStoreCheckpoints(existing);
     checkpoints.push(checkpoint);
     const snapshotBytesByPath = await statCheckpointSnapshotBytes(checkpoints);
@@ -613,15 +623,17 @@ export async function persistSessionCompactionCheckpoint(params: {
       updatedAt: Math.max(existing.updatedAt ?? 0, createdAt),
       compactionCheckpoints: trimmedCheckpoints.kept,
     };
-    stored = true;
-  });
+    return true;
+  }, { skipSaveWhenResult: (stored) => !stored });
 
   if (!stored) {
-    log.warn("skipping compaction checkpoint persist: session not found", {
+    log.warn("skipping compaction checkpoint persist: source generation changed or session missing", {
       sessionKey: params.sessionKey,
+      expectedSessionId: params.snapshot.sessionId,
     });
     return null;
   }
+  recordContextFamilyLifecycleEvents(lifecycleEvents);
   const checkpointArtifactFile = snapshotSessionFile || postSessionFile || "";
   await cleanupTrimmedCompactionCheckpointFiles({
     removed: trimmedCheckpoints?.removed ?? [],

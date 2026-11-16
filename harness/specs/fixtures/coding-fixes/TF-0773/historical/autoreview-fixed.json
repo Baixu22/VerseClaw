@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "body": "An unavailable approval produces `isError: true` with `openclaw/resultStatus: \"unavailable\"`. Materialization preserves this as `details.status: \"error\"` plus `details.mcpMeta`. When converted back to MCP, metadata takes precedence over that error status, but `unavailable` is absent from the failure list, so the result becomes `isError: false`. Preserve the canonical error independently of the metadata status and include unavailable approvals in the model roundtrip regression cases.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/shared/mcp-tool-result.ts",
+        "line": 63
+      },
+      "confidence": 0.99,
+      "priority": "P2",
+      "title": "Preserve canonical errors when restoring approval metadata"
+    },
+    {
+      "body": "The new integration suite is included by `vitest.config.ts` and runs in the Ubuntu `check.yml` job. Its unconditional `mkdtemp('D:/tmp/...')` calls require a workstation-specific parent directory and fail on a fresh Linux checkout. These paths also become relative on Linux, conflicting with the stdio child's different working directory. Derive absolute fixture paths from `tmpdir()` and reuse that root for child environment variables; the local TEMP/TMP configuration already directs Windows temporary output to D:.",
+      "category": "regression",
+      "code_location": {
+        "file_path": "tests/integration/mcp-result-sdk.test.ts",
+        "line": 39
+      },
+      "confidence": 0.99,
+      "priority": "P2",
+      "title": "Use a portable temporary root for SDK integration tests"
+    }
+  ],
+  "overall_confidence": 0.98,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "Unavailable approval errors can become successful results after model adaptation, and the new integration tests introduce a Linux CI failure. Findings are based on source and installed SDK inspection; no tests were run during this review."
+}

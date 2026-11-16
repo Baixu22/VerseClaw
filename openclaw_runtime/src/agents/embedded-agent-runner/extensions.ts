@@ -27,6 +27,7 @@ import {
 } from "../../context-engine/chat-knowledge-intent.js";
 import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
+import { nextRc03ModelCallIndex } from "../../context-engine/rc03-seal-hook.js";
 import { isWorkingMemoryRegatherEnabled } from "../../context-engine/working-memory-regather.js";
 import { resolveInternalContextLadderPolicy } from "../../context-engine/context-ladder.js";
 import type { TurnInjectionChannel } from "../../context-engine/turn-injection-budget.js";
@@ -50,6 +51,7 @@ import type { RuntimeMemoryQueryableFact } from "../../runtime-core/memory-conte
 import type { RuntimeLineage } from "../../runtime-core/lineage.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../runtime-core/memory-runtime-integration.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
+import type { SekbRunIdentity } from "../../knowledge/sekb/types.js";
 import type { EmbeddedSekbRuntime, SekbInstallableAgent } from "./sekb-runtime.js";
 import { installEmbeddedSekbHarnessHooks } from "./sekb-runtime.js";
 import { isSubagentSessionKey } from "../../sessions/session-key-utils.js";
@@ -435,6 +437,9 @@ function buildContextBlockFactory(params: {
         log.warn(`context source preparation failed: ${String(error)}`);
       }
     }
+    if (options.seal !== false) {
+      modelCallIndex = nextRc03ModelCallIndex(params.runId, params.attemptIndex ?? 0, modelCallIndex);
+    }
     const finalized = finalizeContextOrchestratorTurn({
       turnId,
       messages,
@@ -565,7 +570,7 @@ function buildContextBlockFactory(params: {
       });
     }
 
-    agent.on("context", async (event: unknown) => {
+    agent.on("context", async (event: unknown, ctx?: { getSystemPrompt?: () => string }) => {
       if (!sessionId) {
         return undefined;
       }
@@ -574,6 +579,9 @@ function buildContextBlockFactory(params: {
         return undefined;
       }
       if (params.injectionTurnId) {
+        // Continuations can skip before_agent_start; bind the live prompt for this call.
+        const currentPrompt = ctx?.getSystemPrompt?.();
+        if (typeof currentPrompt === "string") sealedSystemPrompt = currentPrompt;
         // F-01: the first context callback of the attempt reuses the projection
         // sealed at before_agent_start (modelCallIndex 0). Every later callback
         // is a new model call: skip channels already injected into the
@@ -649,6 +657,7 @@ function resolveContextWindowTokens(params: {
 function buildContextPruningFactory(params: {
   cfg: OpenClawConfig | undefined;
   sessionManager: SessionManager;
+  sessionId?: string;
   provider: string;
   modelId: string;
   model: ProviderRuntimeModel | undefined;
@@ -673,6 +682,9 @@ function buildContextPruningFactory(params: {
 
   setContextPruningRuntime(params.sessionManager, {
     settings,
+    sessionId: params.sessionId,
+    archiveRecallRetention:
+      params.cfg?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
     contextWindowTokens: resolveContextWindowTokens(params),
     isToolPrunable: makeToolPrunablePredicate(settings.tools),
     dropThinkingBlocks: transcriptPolicy.dropThinkingBlocks,
@@ -884,6 +896,7 @@ function buildSekbFactory(params: {
   runId?: string;
   sessionId?: string;
   sessionKey?: string;
+  sekbAttribution?: Pick<SekbRunIdentity, "taskId" | "experimentId" | "arm" | "repeat">;
 }): ExtensionFactory | undefined {
   // sekbRuntime is only supplied when resolveEmbeddedSekbRuntime saw enablement
   // (config and/or OPENCLAW_SEKB_ENABLED). Gate on the runtime object so env-only
@@ -900,7 +913,11 @@ function buildSekbFactory(params: {
             runId: params.runId,
             sessionId: params.sessionKey ?? params.sessionId,
           })?.lineage;
-    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime, lineage);
+    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime, lineage, {
+      runId: params.runId ?? null, sessionId: params.sessionId ?? null, sessionKey: params.sessionKey ?? null,
+      taskId: params.sekbAttribution?.taskId ?? null, experimentId: params.sekbAttribution?.experimentId ?? null,
+      arm: params.sekbAttribution?.arm ?? null, repeat: params.sekbAttribution?.repeat ?? null,
+    });
   };
 }
 
@@ -915,6 +932,7 @@ export function buildEmbeddedExtensionFactories(params: {
   sessionKey?: string;
   runId?: string;
   lineage?: RuntimeLineage;
+  sekbAttribution?: Pick<SekbRunIdentity, "taskId" | "experimentId" | "arm" | "repeat">;
   injectionTurnId?: string;
   attemptIndex?: number;
   contextBlockSink?: ContextBlockSink;

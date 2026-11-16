@@ -1,0 +1,139 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-process-owner-reader",
+  "pid": 42648,
+  "before": {
+    "schema": "LongSessionResourceInventory/v1",
+    "scope": {
+      "workspaceId": "",
+      "sessionKey": "agent:agent-e2:long-session",
+      "expectedSessionId": "generation-e2",
+      "rootPath": "D:\\tmp\\clawx-e2-inventory-PIbMkc"
+    },
+    "capturedAt": "2026-11-07T17:35:30.521Z",
+    "owners": [
+      {
+        "kind": "process",
+        "owner": "ProcessSupervisor+BashProcessRegistry",
+        "authority": "managed",
+        "generation": "generation-e2",
+        "state": "known",
+        "count": 1,
+        "pids": [
+          42648
+        ],
+        "processTreePids": [
+          42648
+        ],
+        "rssKb": 52428,
+        "cpuPercent": null,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": 0,
+        "worktreeIds": null,
+        "sessionIds": null
+      },
+      {
+        "kind": "admission-permit",
+        "owner": "SessionAdmissionRegistry",
+        "authority": "managed",
+        "generation": "generation-e2",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": 0,
+        "waiters": 0,
+        "helperRefs": null,
+        "worktreeIds": null,
+        "sessionIds": null
+      },
+      {
+        "kind": "worktree",
+        "owner": "WorktreeService",
+        "authority": "managed",
+        "generation": "generation-e2",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": null,
+        "worktreeIds": [],
+        "sessionIds": null
+      }
+    ]
+  },
+  "rebuilt": {
+    "schema": "LongSessionResourceInventory/v1",
+    "scope": {
+      "workspaceId": "",
+      "sessionKey": "agent:agent-e2:long-session",
+      "expectedSessionId": "generation-e2",
+      "rootPath": "D:\\tmp\\clawx-e2-inventory-PIbMkc"
+    },
+    "capturedAt": "2026-11-07T17:35:35.106Z",
+    "owners": [
+      {
+        "kind": "process",
+        "owner": "ProcessSupervisor+BashProcessRegistry",
+        "authority": "managed",
+        "generation": "generation-e2",
+        "state": "known",
+        "count": 1,
+        "pids": [
+          42648
+        ],
+        "processTreePids": [
+          42648
+        ],
+        "rssKb": 52428,
+        "cpuPercent": null,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": 0,
+        "worktreeIds": null,
+        "sessionIds": null
+      },
+      {
+        "kind": "admission-permit",
+        "owner": "SessionAdmissionRegistry",
+        "authority": "managed",
+        "generation": "generation-e2",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": 0,
+        "waiters": 0,
+        "helperRefs": null,
+        "worktreeIds": null,
+        "sessionIds": null
+      },
+      {
+        "kind": "worktree",
+        "owner": "WorktreeService",
+        "authority": "managed",
+        "generation": "generation-e2",
+        "state": "known",
+        "count": 0,
+        "pids": null,
+        "processTreePids": null,
+        "rssKb": null,
+        "cpuPercent": null,
+        "activePermits": null,
+        "waiters": null,
+        "helperRefs": null,
+        "worktreeIds": [],
+        "sessionIds": null
+      }
+    ]
+  }
+}

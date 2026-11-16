@@ -1,0 +1,107 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-unified-relay-20261109
+
+ ❯ tests/unit/session-task-scope-completion.test.ts (31 tests | 1 failed) 14794ms
+     ✓ admits an owned child while the fenced parent run remains active  1216ms
+     ✓ rejects missing and incomplete contracts without creating a Legacy business task 239ms
+     ✓ starts a complete canonical contract through task_control without requiring a session bridge  879ms
+     ✓ associates a live isolated scheduled run with its canonical contract without replacing the project coordinator  553ms
+     ✓ uses a decomposed scheduled child contract under the recorded parent TaskRef  579ms
+     ✓ rejects a missing scheduled coordinator before claiming another task 282ms
+     ✓ rejects a stale scheduled coordinator before claiming another task  502ms
+     ✓ rejects a paused scheduled coordinator before claiming another task  697ms
+     ✓ rejects an isolated schedule from another workspace or agent before creating a task  370ms
+     ✓ consumes a canonical business contract after a failed turn left a diagnostic deviation link  779ms
+     ✓ selects an existing completed task and preserves its status and historical links  1011ms
+     ✓ uses the captured worker parent TaskRef with a real child contract despite a later parent selection  657ms
+     ✓ pauses new dispatch while retaining the already admitted writer and workgroup ownership  342ms
+     ✓ keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary  501ms
+     ✓ rejects effects on a completed canonical task, including after owner reconstruction  752ms
+     ✓ rejects a Legacy done node without creating a canonical replacement or changing it to doing  765ms
+     ✓ keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token  759ms
+     ✓ does not release a live canonical claim because a new API instance or response settled  532ms
+     ✓ rejects an old claim after canonical epoch rotation even when the Workspace cache still has it 270ms
+     ✓ preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface  511ms
+     ✓ rejects unknown session before writing a task 187ms
+     ✓ rejects wrong root before writing a task 163ms
+     ✓ rejects stale generation before writing a task 158ms
+     ✓ rejects forged claim before writing a task 187ms
+     ✓ rejects foreign workspace identity and a changed session generation without manufacturing a replacement  402ms
+     ✓ fences a generation change while admission is awaiting its final live owner read 159ms
+     × leaves a selected task unclaimed when the final run check fails 235ms
+     ✓ requires explicit canonical selection for multiple links and rejects an external reference as a task  536ms
+     ✓ does not silently switch a running canonical task through coordinator rebinding 258ms
+     ✓ requires admission for unknown MCP effects and checks cancellation before execution 47ms
+     ✓ cancels an effect after Main admission without releasing or upgrading its canonical claim 265ms
+ ❯ tests/unit/sidebar-session-buckets.test.ts (11 tests | 1 failed) 12ms
+     ✓ selects the latest activity for each session in one index 2ms
+     ✓ preserves the previous tie behavior by selecting the later iterated run 0ms
+     ✓ uses the timestamp embedded in a locally-created session key as activity fallback 0ms
+     ✓ prefers real message activity over backend metadata or key creation time 0ms
+     ✓ returns 0 for unparseable session keys without updatedAt 0ms
+     ✓ keeps sessions scoped to the current workspace and agent 0ms
+     ✓ groups sessions by workspace recency and sorts each project by activity 1ms
+     × keeps explicitly associated coordinators visible across agents in the project view 6ms
+     ✓ builds the time view as one activity-sorted list across projects 0ms
+     ✓ renders a duplicated legacy session in only one project 0ms
+     ✓ keeps pinned sessions first and supports active and priority sorting 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/session-task-scope-completion.test.ts > first effect consumes the canonical execution contract > leaves a selected task unclaimed when the final run check fails
+AssertionError: expected { …(9) } to be null
+
+- Expected:
+null
+
++ Received:
+{
+  "attemptId": "27a3bc77-2326-4350-8e81-a24aaa1b2214",
+  "contractRevision": 1,
+  "epoch": 1,
+  "expiresAt": 1794164744022,
+  "generation": "generation-parent",
+  "sessionKey": "agent:main:parent",
+  "state": "active",
+  "taskNodeId": "921737d8-d72b-499e-9044-85950447841c",
+  "worktree": "d:/tmp/hooke-task-scope-completion-dpdaui",
+}
+
+ ❯ tests/unit/session-task-scope-completion.test.ts:483:55
+    481|     });
+    482|     await expect(owner.admitTaskEffect(request())).rejects.toThrow('TA…
+    483|     expect(tasks.get(task.contract.taskNodeId).claim).toBeNull();
+       |                                                       ^
+    484|     expect(tasks.get(task.contract.taskNodeId).contract.state).toBe('r…
+    485|     expect(tasks.binding(parent, 'generation-parent')?.referenceOnly).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/sidebar-session-buckets.test.ts > sidebar session activity resolution > keeps explicitly associated coordinators visible across agents in the project view
+AssertionError: expected [ 'agent:main:project' ] to deeply equal [ 'agent:main:project', …(1) ]
+
+- Expected
++ Received
+
+  [
+    "agent:main:project",
+-   "agent:reviewer:project",
+  ]
+
+ ❯ tests/unit/sidebar-session-buckets.test.ts:208:66
+    206|     });
+    207|     expect(groups).toHaveLength(1);
+    208|     expect(groups[0].sessions.map((entry) => entry.session.key)).toEqu…
+       |                                                                  ^
+    209|   });
+    210|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 40 passed (42)
+   Start at  03:03:19
+   Duration  35.78s (transform 1.20s, setup 2.43s, import 6.28s, tests 14.81s, environment 10.14s)
+
+JSON report written to D:/tmp/unified-management-20261109/session-task-validation/relay-owner-red.tests.json

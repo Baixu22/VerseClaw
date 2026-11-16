@@ -1,0 +1,84 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\git-ui-ts.json",
+  "sourceSha256": "4483886370de9a26592234911b4099388dd71d5f908317e07d655073379cd05a",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 3,
+    "numPassedTests": 3,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563327968,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "git UI helpers"
+            ],
+            "fullName": "git UI helpers builds distinct worktree labels from path, branch, and commit",
+            "status": "passed",
+            "title": "builds distinct worktree labels from path, branch, and commit",
+            "duration": 1.296799999999962,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git UI helpers"
+            ],
+            "fullName": "git UI helpers normalizes branch names into stable worktree path slugs",
+            "status": "passed",
+            "title": "normalizes branch names into stable worktree path slugs",
+            "duration": 0.43269999999995434,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git UI helpers"
+            ],
+            "fullName": "git UI helpers compares Windows and POSIX paths without trailing slash noise",
+            "status": "passed",
+            "title": "compares Windows and POSIX paths without trailing slash noise",
+            "duration": 0.1893000000000029,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563328874,
+        "endTime": 1794563328875.4326,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/git-ui.test.ts"
+      }
+    ]
+  }
+}

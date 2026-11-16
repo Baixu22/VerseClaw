@@ -39,28 +39,29 @@ export function changedPathsBetween(root, fromCommit, toRef = 'HEAD', paths = []
  * @returns {{judged: string[], unrelated: string[]}}
  */
 export function splitDirtyPaths(root, boundPaths) {
-  let out = '';
-  try {
-    out = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], {
-      cwd: root,
-      encoding: 'utf8',
-      windowsHide: true,
-    }).trim();
-  } catch {
-    return { judged: [], unrelated: [] };
-  }
+  // Preserve path bytes and propagate Git failures: unavailable is not clean.
+  const out = execFileSync('git', ['status', '--porcelain', '-z', '--untracked-files=all'], {
+    cwd: root, encoding: 'utf8', windowsHide: true, timeout: 15000,
+  });
   if (!out) return { judged: [], unrelated: [] };
   const bound = new Set((boundPaths ?? []).map((path) => String(path).replaceAll('\\', '/')));
   const judged = [];
   const unrelated = [];
-  for (const line of out.split(/\r?\n/u)) {
-    if (!line.trim()) continue;
-    let path = line.slice(3).trim();
-    const renamed = path.split(' -> ');
-    if (renamed.length === 2) path = renamed[1];
-    path = path.replace(/^"|"$/gu, '').replaceAll('\\', '/');
-    if (bound.has(path)) judged.push(path);
-    else unrelated.push(path);
+  const fields = out.split('\0');
+  for (let index = 0; index < fields.length; index += 1) {
+    const field = fields[index];
+    if (!field) continue;
+    // A rename changes both paths, including a judged input moved out of scope.
+    const status = field.slice(0, 2);
+    const path = field.slice(3).replaceAll('\\', '/');
+    if (!path) continue;
+    const paths = [path];
+    if (status.includes('R') || status.includes('C')) paths.push(fields[++index]?.replaceAll('\\', '/'));
+    for (const changed of paths) {
+      if (!changed) throw new Error('invalid-git-status');
+      if (bound.has(changed)) judged.push(changed);
+      else unrelated.push(changed);
+    }
   }
   return { judged, unrelated };
 }

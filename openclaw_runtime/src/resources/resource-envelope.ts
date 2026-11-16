@@ -1,7 +1,12 @@
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
+import { randomUUID } from "node:crypto";
 
 import {
   RESOURCE_ENVELOPE_SCHEMA,
+  RESOURCE_METRICS_TTL_MS,
+  type ResourceProcessObservation,
+  type ResourceProcessTotals,
+  type ResourceEventLoopPressure,
   type ResourceEnvelopeEntry,
   type ResourceEnvelopeExceeded,
   type ResourceEnvelopeSnapshot,
@@ -56,8 +61,48 @@ function mergeLimits(kind: ResourceKind, overrides?: Partial<ResourceLimits>): R
   };
 }
 
+export function isResourceKind(value: unknown): value is ResourceKind {
+  return typeof value === "string" && Object.hasOwn(DEFAULT_LIMITS, value);
+}
+
 function workspaceEntryKey(entry: Pick<ResourceEnvelopeEntry, "workspaceKey" | "kind" | "priority" | "owner">): string {
   return [entry.workspaceKey, entry.kind, entry.priority, entry.owner].join("\u0000");
+}
+
+function fresh(at: number, now: number): boolean {
+  return Number.isFinite(at) && at <= now && now - at <= RESOURCE_METRICS_TTL_MS;
+}
+
+function processTotals(entries: readonly ResourceEnvelopeEntry[], now: number, warnings: string[]): ResourceProcessTotals {
+  const byPid = new Map<number, { at: number; record: ResourceProcessObservation }>();
+  let measured = false;
+  let incomplete = false;
+  for (const entry of entries) {
+    const measurement = entry.processMeasurement;
+    if (!measurement) continue;
+    if (measurement.status !== "ok" || !measurement.ownerEpoch || !fresh(measurement.sampledAt, now)) {
+      incomplete = true;
+      warnings.push(`${entry.id}: process measurement unavailable or expired`);
+      continue;
+    }
+    measured = true;
+    for (const record of measurement.processes) {
+      const previous = byPid.get(record.pid);
+      if (!previous || measurement.sampledAt > previous.at) byPid.set(record.pid, { at: measurement.sampledAt, record });
+      else if (measurement.sampledAt === previous.at && record.creationToken !== previous.record.creationToken) {
+        incomplete = true;
+        warnings.push(`PID ${record.pid}: conflicting process identities at the same sample time`);
+      }
+    }
+  }
+  const records = [...byPid.values()].map(item => item.record);
+  const known = measured && !incomplete;
+  return {
+    processCount: records.length,
+    rssBytes: known ? records.reduce((sum, p) => sum + p.rssBytes, 0) : null,
+    privateBytes: known && records.every(p => p.privateBytes !== null) ? records.reduce((sum, p) => sum + (p.privateBytes ?? 0), 0) : null,
+    cpuPercent: known && records.every(p => p.cpuPercent !== null) ? records.reduce((sum, p) => sum + (p.cpuPercent ?? 0), 0) : null,
+  };
 }
 
 function exceededForEntry(entry: ResourceEnvelopeEntry): ResourceEnvelopeExceeded[] {
@@ -84,11 +129,17 @@ function exceededForEntry(entry: ResourceEnvelopeEntry): ResourceEnvelopeExceede
 }
 
 export class ResourceEnvelopeLedger {
+  readonly ownerEpoch = randomUUID();
+  private eventLoopPressure: ResourceEventLoopPressure | undefined;
   private readonly entries = new Map<string, ResourceEnvelopeEntry>();
   private readonly limits: Partial<Record<ResourceKind, Partial<ResourceLimits>>>;
 
   constructor(options?: { limits?: Partial<Record<ResourceKind, Partial<ResourceLimits>>> }) {
     this.limits = options?.limits ?? {};
+  }
+
+  recordEventLoopPressure(value: Omit<ResourceEventLoopPressure, "ownerEpoch"> | undefined): void {
+    this.eventLoopPressure = value ? { ...value, ownerEpoch: this.ownerEpoch } : undefined;
   }
 
   update(candidate: ResourceEnvelopeCandidate): ResourceEnvelopeEntry {
@@ -153,6 +204,15 @@ export class ResourceEnvelopeLedger {
       totals.treeCpuPercent += entry.treeCpuPercent;
       exceeded.push(...exceededForEntry(entry));
     }
+    const measurementWarnings = [...warnings];
+    const physical = processTotals(entries, now, measurementWarnings);
+    if (entries.some(entry => entry.processMeasurement)) {
+      // Logical slots stay additive; physical counters come only from identified processes.
+      totals.processCount = physical.processCount;
+      totals.treeRssBytes = physical.rssBytes ?? 0;
+      totals.treeCpuPercent = physical.cpuPercent ?? 0;
+    }
+    const ownProcess = entries.flatMap(entry => entry.processMeasurement?.processes ?? []).find(record => record.pid === process.pid);
     return {
       schema: RESOURCE_ENVELOPE_SCHEMA,
       generatedAt: now,
@@ -160,7 +220,10 @@ export class ResourceEnvelopeLedger {
       entries,
       totals,
       exceeded,
-      warnings: [...warnings],
+      warnings: measurementWarnings,
+      producer: { pid: process.pid, epoch: this.ownerEpoch, ...(ownProcess ? { creationToken: ownProcess.creationToken } : {}) },
+      processTotals: physical,
+      ...(this.eventLoopPressure && fresh(this.eventLoopPressure.sampledAt, now) ? { eventLoopPressure: { ...this.eventLoopPressure } } : {}),
     };
   }
 }
@@ -172,10 +235,40 @@ export function mergeResourceEnvelopeSnapshots(
   const entries: ResourceEnvelopeEntry[] = [];
   const byKey = new Map<string, ResourceEnvelopeEntry>();
   const warnings = new Set<string>();
+  const byProducer = new Map<number, ResourceEnvelopeSnapshot>();
+  const accepted: ResourceEnvelopeSnapshot[] = [];
   for (const snapshot of snapshots) {
+    if (!fresh(snapshot.generatedAt, now)) {
+      warnings.add("resource-envelope snapshot expired or future-dated");
+      continue;
+    }
+    if (!snapshot.producer) { accepted.push(snapshot); continue; }
+    const previous = byProducer.get(snapshot.producer.pid);
+    if (!previous || snapshot.generatedAt >= previous.generatedAt) byProducer.set(snapshot.producer.pid, snapshot);
+  }
+  accepted.push(...byProducer.values());
+  const liveIdentities = new Map<number, { at: number; token: string }>();
+  for (const snapshot of accepted) for (const entry of snapshot.entries) {
+    const measurement = entry.processMeasurement;
+    if (measurement?.status !== "ok" || !fresh(measurement.sampledAt, now)) continue;
+    for (const p of measurement.processes) {
+      const previous = liveIdentities.get(p.pid);
+      if (!previous || measurement.sampledAt > previous.at) liveIdentities.set(p.pid, { at: measurement.sampledAt, token: p.creationToken });
+    }
+  }
+  let eventLoopPressure: ResourceEventLoopPressure | undefined;
+  for (const snapshot of accepted) {
+    const currentOwner = snapshot.producer ? liveIdentities.get(snapshot.producer.pid) : undefined;
+    if (snapshot.producer?.creationToken && currentOwner && snapshot.producer.creationToken !== currentOwner.token) {
+      warnings.add(`resource-envelope producer PID ${snapshot.producer.pid} was reused`);
+      continue;
+    }
+    if (snapshot.eventLoopPressure && snapshot.eventLoopPressure.ownerEpoch === snapshot.producer?.epoch
+      && fresh(snapshot.eventLoopPressure.sampledAt, now)
+      && (!eventLoopPressure || snapshot.eventLoopPressure.sampledAt > eventLoopPressure.sampledAt)) eventLoopPressure = snapshot.eventLoopPressure;
     for (const warning of snapshot.warnings) warnings.add(warning);
     for (const entry of snapshot.entries) {
-      const key = workspaceEntryKey(entry);
+      const key = entry.processMeasurement ? `${entry.owner}\u0000${entry.id}` : workspaceEntryKey(entry);
       const existing = byKey.get(key);
       if (!existing) {
         const copy = {
@@ -210,7 +303,17 @@ export function mergeResourceEnvelopeSnapshots(
   }
   const merged = new ResourceEnvelopeLedger();
   for (const entry of entries) merged.update(entry);
-  return merged.snapshot(now, [...warnings]);
+  const result = merged.snapshot(now, [...warnings]);
+  // A merged projection has no producer epoch of its own.
+  delete result.producer;
+  const machine = accepted.map(snapshot => snapshot.machineMemory).filter(value => value && fresh(value.sampledAt, now))
+    .sort((a, b) => b!.sampledAt - a!.sampledAt)[0];
+  if (machine) result.machineMemory = machine;
+  const commit = accepted.map(snapshot => snapshot.machineCommit).filter(value => value && fresh(value.sampledAt, now))
+    .sort((a, b) => b!.sampledAt - a!.sampledAt)[0];
+  if (commit) result.machineCommit = { ...commit };
+  if (eventLoopPressure) result.eventLoopPressure = { ...eventLoopPressure };
+  return result;
 }
 
 const RESOURCE_ENVELOPE_LEDGER_KEY = Symbol.for("openclaw.resourceEnvelopeLedger");

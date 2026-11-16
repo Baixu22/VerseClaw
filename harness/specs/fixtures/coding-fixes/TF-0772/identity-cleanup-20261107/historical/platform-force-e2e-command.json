@@ -1,0 +1,18 @@
+{
+  "candidate": "d60e5821f8a95c4d15a6620b05d1f8fcd1d7d35e",
+  "startedAt": "2026-11-07T12:29:58.743Z",
+  "finishedAt": "2026-11-07T12:30:07.951Z",
+  "exitCode": 1,
+  "argv": [
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/coding-mcp-management.spec.ts",
+    "tests/e2e/electron-worker-cleanup.spec.ts",
+    "--workers=1",
+    "--reporter=list,json",
+    "--output=D:/tmp/coding-relay-01a1b4da/platform-force-e2e/results"
+  ],
+  "cwd": "D:/tmp/coding-relay-01a1b425/p2-private",
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent"
+}

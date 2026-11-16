@@ -1,0 +1,102 @@
+{
+  "schema": "RuntimeMemoryUnusedTestDeclarationCleanup/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "before_commit": "56da04a2fb0a598b6c7ee05b3489d2cb8357e70d",
+  "baseline_errors": 28,
+  "files": [
+    {
+      "file": "tests/unit/runtime-memory-context-provider.test.ts",
+      "before_sha256": "93d550f515b57b9007dd38aaab8981fbbe34feffe9d53df92d6c47baafd2a434",
+      "after_sha256": "c7a479a2cea04fca4468a10162d30d10edabc48c2c5f1e9856203ee9fcced2aa",
+      "executable_statement_count": 1,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-eval-budget-pressure.test.ts",
+      "before_sha256": "d60f88680a76a9e471010551f9d77659c9e8b4189ffce83b206f27a3db5babe2",
+      "after_sha256": "b585dcc91bdb875d0a770db1062a0b74c5193c4cc585cf01dbff9f016f256caa",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-eval-conflict-resolution.test.ts",
+      "before_sha256": "f828feab2c98167781830e5284f523df95c4e3d0e96f65a021390226e9711414",
+      "after_sha256": "bd625c6402f3dbc376f7b2cd8b5a013cef400d85b8e300ed2d077e30ec4f90b1",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-eval-temporal-evolution.test.ts",
+      "before_sha256": "23c6ef921753cf077ccd97c0752f3820b0d7db488408080869316b44777bab55",
+      "after_sha256": "49b98796e05e724edc1a79d6db80492e721ea07018962152f4035db9015be5ca",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-eval-topic-drift.test.ts",
+      "before_sha256": "5c153a2aa8f9e158ffc35e1f8977e5265400520b611346ec53afbe614a746df1",
+      "after_sha256": "faa3440b961811ff722b2955459cb3c251cd91d2d7804355b5c78d95d554a315",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-locomo-benchmark.test.ts",
+      "before_sha256": "97f85ce86b7f765ea09606f8a31f33b23e86dc1a92b05b4b501860c7dd90f7e9",
+      "after_sha256": "2fe5775f83f817d997d7de186ca0768b830bbe49dddb1a80d9775da11884fa17",
+      "executable_statement_count": 3,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-proposal-shadow.test.ts",
+      "before_sha256": "f98dcba8f5a0436f03fc9b38f7b19945adc1796a1d09a417f0b0238722db4a10",
+      "after_sha256": "9a5149fe28aa27b7fbd52d835d61b569736617f42e89ea3e575f077022fc5a77",
+      "executable_statement_count": 1,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts",
+      "before_sha256": "0f928b0d5a7931ad28ac35af1f1ed95cedc70d7923e801f83ad13614b6c1eebe",
+      "after_sha256": "186c532682c5bdc508a126a81af7f4e3fd843ace15f1a571e3831a83de4e935b",
+      "executable_statement_count": 3,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts",
+      "before_sha256": "f90f129f489e92f78f70fd4772cb1470be26ae570b01ffd84b5d71339439966d",
+      "after_sha256": "519dba8817e442b691d36e26d18928b7bc4d16d5fe9062e9dafe1d15e7ebdb31",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts",
+      "before_sha256": "a7e67d41e472e9416a94b44b46f51c217f8f4e383b3a2b9ecc443bbba5e88d44",
+      "after_sha256": "e255b0772bd7e5999c430c68c4ef9f1f700f41757bf01c9f4bd1d92bed499173",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts",
+      "before_sha256": "0dc1fe51d8a7f1db9d1b1353c6566237d83ee272848e5a2696dbc966dcedb0aa",
+      "after_sha256": "86e7c1ef75c85b02e3f28b958e03758ae805e86b80b9bc1dc0cda6cd7c160061",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts",
+      "before_sha256": "c705b0aeb816235ca89c3591e50343ef41c0847d4c1bcb23d2358f756fcc9e96",
+      "after_sha256": "a77b90f0c25b595b154779926b81a45f973e5d140053430ceb68fb51bf7d04dc",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-read-hydration-shadow.test.ts",
+      "before_sha256": "92c6d1bd18aade65a33b5be5d21e95bdee5ea8d969fc23e8d3cc42de9cf1833d",
+      "after_sha256": "1e7ddcd97764be60d74d464082bf6fb0ee2a992a2489d9c0b4739fc8a19997df",
+      "executable_statement_count": 2,
+      "executable_statements_unchanged": true
+    }
+  ],
+  "test_blocks_changed": 0,
+  "tests_removed": 0
+}

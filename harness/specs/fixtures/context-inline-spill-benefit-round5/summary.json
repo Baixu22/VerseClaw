@@ -1,0 +1,204 @@
+{
+  "schema": "ContextInlineSpillRound5Summary/v1",
+  "driven_by": "agent",
+  "actor": "codex/windows-inline-closeout",
+  "recordedAt": "2026-11-12T17:12:28.241178+00:00",
+  "evaluationCommit": "6eee064950273b393240a647702d6ee5652bae35",
+  "verificationCommit": "811bdab408bef0dacd894a1e1b5cc6421523fef2",
+  "candidate": {
+    "commit": "6eee064950273b393240a647702d6ee5652bae35",
+    "tree": "9368072986699d208b3618efe4733bef89fdc437",
+    "dirty": true
+  },
+  "verdict": "NO_GO",
+  "decision": {
+    "status": "mechanism-only",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": false,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": 2553.6666666666642,
+    "tokenGrowthPct": 0.9487643210501924,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "counts": {
+    "runs": 96,
+    "providerCalls": 438,
+    "completed": 436,
+    "incomplete": 0,
+    "transportErrors": 2,
+    "stableEvidenceSuccess": 0,
+    "stableControlSuccess": 6
+  },
+  "usage": {
+    "baseline-no-reference": {
+      "inputTokens": 66881.0,
+      "outputTokens": 8196.0,
+      "totalTokens": 75077.0
+    },
+    "reference-visible": {
+      "inputTokens": 440252.0,
+      "outputTokens": 23663.0,
+      "totalTokens": 463915.0
+    },
+    "recall-stable": {
+      "inputTokens": 878978.0,
+      "outputTokens": 25083.0,
+      "totalTokens": 904061.0
+    },
+    "retention-off": {
+      "inputTokens": 810740.0,
+      "outputTokens": 23261.0,
+      "totalTokens": 834001.0
+    }
+  },
+  "latency": {
+    "baseline-no-reference": {
+      "p50RunMs": 10745.698,
+      "p95RunMs": 34411.163
+    },
+    "reference-visible": {
+      "p50RunMs": 27921.328,
+      "p95RunMs": 66796.008
+    },
+    "recall-stable": {
+      "p50RunMs": 21020.744,
+      "p95RunMs": 46539.414
+    },
+    "retention-off": {
+      "p50RunMs": 21759.936,
+      "p95RunMs": 55126.677
+    }
+  },
+  "cost": {
+    "status": "not-run",
+    "reason": "No provider rate or billing unit available."
+  },
+  "diagnostics": {
+    "driven_by": "agent",
+    "actor": "codex-inline-spill-benefit-r4-relay",
+    "pageArgumentCounts": {
+      "400": 2,
+      "600": 1,
+      "1200": 4,
+      "1500": 3,
+      "2000": 5,
+      "2142": 1,
+      "3000": 5,
+      "4000": 1,
+      "4399": 1,
+      "4403": 1,
+      "4412": 1,
+      "5500": 325,
+      "5910": 1,
+      "5912": 1,
+      "5918": 1,
+      "5977": 1,
+      "missing": 1
+    },
+    "responseStatuses": {
+      "completed": 436
+    },
+    "incompleteReasons": {},
+    "returnedModels": {
+      "space-bunny": 436
+    },
+    "completedMessageTextIgnoredByAdapter": [],
+    "byArm": {
+      "baseline-no-reference": {
+        "rawOracleHits": 0,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 53
+      },
+      "reference-visible": {
+        "rawOracleHits": 4,
+        "overProjectionBudgetCalls": 1,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 111
+      },
+      "recall-stable": {
+        "rawOracleHits": 0,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 98
+      },
+      "retention-off": {
+        "rawOracleHits": 1,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 93
+      }
+    },
+    "retentionPairs": {
+      "evidence": {
+        "pairs": 18,
+        "both": 0,
+        "onlyStable": 0,
+        "onlyOff": 1,
+        "neither": 17
+      },
+      "control": {
+        "pairs": 6,
+        "both": 6,
+        "onlyStable": 0,
+        "onlyOff": 0,
+        "neither": 0
+      }
+    },
+    "pageContract": {
+      "allToolDefinitionsIdentical": true,
+      "validSizeCalls": 350,
+      "invalidSizeCalls": 5,
+      "invalidSizeDiagnostics": 5,
+      "maxSerializedResultChars": 6072
+    },
+    "archiveSelection": {
+      "baseline-no-reference": {
+        "originalArchive": 0,
+        "otherArchive": 47,
+        "missingArchive": 6,
+        "successfulOriginal": 0,
+        "successfulOther": 0
+      },
+      "reference-visible": {
+        "originalArchive": 91,
+        "otherArchive": 20,
+        "missingArchive": 0,
+        "successfulOriginal": 88,
+        "successfulOther": 17
+      },
+      "recall-stable": {
+        "originalArchive": 48,
+        "otherArchive": 50,
+        "missingArchive": 0,
+        "successfulOriginal": 48,
+        "successfulOther": 50
+      },
+      "retention-off": {
+        "originalArchive": 51,
+        "otherArchive": 42,
+        "missingArchive": 0,
+        "successfulOriginal": 51,
+        "successfulOther": 38
+      }
+    },
+    "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
+  },
+  "evidence": {
+    "archives": 771,
+    "credentialHits": 0,
+    "b7CleanCandidate": false,
+    "reason": "Live record retains dirty=true; copied verifier rejects that flag.",
+    "portableVerifierPathFixed": true,
+    "finalVerifierExitCode": 1
+  },
+  "realHumanEvidence": false,
+  "releaseApproved": false,
+  "defaultOn": false
+}

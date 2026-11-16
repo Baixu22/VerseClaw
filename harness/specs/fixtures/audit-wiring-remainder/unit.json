@@ -1,0 +1,3709 @@
+{
+  "numTotalTestSuites": 64,
+  "numPassedTestSuites": 64,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 284,
+  "numPassedTests": 284,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794026661511,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "agent browser gateway bridge"
+          ],
+          "fullName": "agent browser gateway bridge resolves a gateway invoke request when Electron reports a result",
+          "status": "passed",
+          "title": "resolves a gateway invoke request when Electron reports a result",
+          "duration": 4.358900000000176,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent browser gateway bridge"
+          ],
+          "fullName": "agent browser gateway bridge binds the returned gateway request and owner key to the real bridge response",
+          "status": "passed",
+          "title": "binds the returned gateway request and owner key to the real bridge response",
+          "duration": 69.30919999999969,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent browser gateway bridge"
+          ],
+          "fullName": "agent browser gateway bridge rejects a session owned by another runtime session before touching the module",
+          "status": "passed",
+          "title": "rejects a session owned by another runtime session before touching the module",
+          "duration": 3.7892000000001644,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent browser gateway bridge"
+          ],
+          "fullName": "agent browser gateway bridge executes Electron Main service calls and reports the bridge result",
+          "status": "passed",
+          "title": "executes Electron Main service calls and reports the bridge result",
+          "duration": 57.101699999999255,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent browser gateway bridge"
+          ],
+          "fullName": "agent browser gateway bridge delivers agent-browser requests only when the bridge event scope is allowed",
+          "status": "passed",
+          "title": "delivers agent-browser requests only when the bridge event scope is allowed",
+          "duration": 2.2076999999999316,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent browser gateway bridge"
+          ],
+          "fullName": "agent browser gateway bridge routes new facade actions through the complete host API when available",
+          "status": "passed",
+          "title": "routes new facade actions through the complete host API when available",
+          "duration": 59.27760000000035,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent browser gateway bridge"
+          ],
+          "fullName": "agent browser gateway bridge passes advanced CLI command requests to Electron Main",
+          "status": "passed",
+          "title": "passes advanced CLI command requests to Electron Main",
+          "duration": 61.71779999999944,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026693747,
+      "endTime": 1794026694004.7178,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/agent-browser-gateway-bridge.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "agent dev api"
+          ],
+          "fullName": "agent dev api exposes read-only status when agent dev mode is not enabled",
+          "status": "passed",
+          "title": "exposes read-only status when agent dev mode is not enabled",
+          "duration": 638.9404,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent dev api"
+          ],
+          "fullName": "agent dev api seeds scenarios and feature flags in E2E mode",
+          "status": "passed",
+          "title": "seeds scenarios and feature flags in E2E mode",
+          "duration": 2.3214000000000397,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent dev api"
+          ],
+          "fullName": "agent dev api creates in-memory conversations and provider seeds",
+          "status": "passed",
+          "title": "creates in-memory conversations and provider seeds",
+          "duration": 1.3925000000001546,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent dev api"
+          ],
+          "fullName": "agent dev api returns diagnostics, transport trace, and selector contracts",
+          "status": "passed",
+          "title": "returns diagnostics, transport trace, and selector contracts",
+          "duration": 5.866100000000188,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent dev api"
+          ],
+          "fullName": "agent dev api collects real dispatcher channels and deduplicates message usage against final run totals",
+          "status": "passed",
+          "title": "collects real dispatcher channels and deduplicates message usage against final run totals",
+          "duration": 2.5992999999998574,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent dev api"
+          ],
+          "fullName": "agent dev api retains distinct model messages and failed tool observations",
+          "status": "passed",
+          "title": "retains distinct model messages and failed tool observations",
+          "duration": 1.2607000000000426,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent dev api"
+          ],
+          "fullName": "agent dev api records redacted scenario artifacts with a human promotion checklist",
+          "status": "passed",
+          "title": "records redacted scenario artifacts with a human promotion checklist",
+          "duration": 6.939000000000078,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026682319,
+      "endTime": 1794026682978.939,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/agent-dev-api.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles routes verifier failure to the lead only when configured (true)",
+          "status": "passed",
+          "title": "routes verifier failure to the lead only when configured (true)",
+          "duration": 11.464300000000094,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles routes verifier failure to the lead only when configured (false)",
+          "status": "passed",
+          "title": "routes verifier failure to the lead only when configured (false)",
+          "duration": 0.7334999999998217,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles keeps lead repair inside the existing attempt budget (1)",
+          "status": "passed",
+          "title": "keeps lead repair inside the existing attempt budget (1)",
+          "duration": 0.720600000000104,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles keeps lead repair inside the existing attempt budget (2)",
+          "status": "passed",
+          "title": "keeps lead repair inside the existing attempt budget (2)",
+          "duration": 0.470299999999952,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles holds worker completions until the deferred verifier is complete",
+          "status": "passed",
+          "title": "holds worker completions until the deferred verifier is complete",
+          "duration": 0.5808999999999287,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles leases a single Team Result Bundle once verifier completion is pending",
+          "status": "passed",
+          "title": "leases a single Team Result Bundle once verifier completion is pending",
+          "duration": 2.9253000000001066,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles does not use a same-string taskId as the handoff taskNodeId",
+          "status": "passed",
+          "title": "does not use a same-string taskId as the handoff taskNodeId",
+          "duration": 0.5869000000000142,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles renders schema gate failure when successful worker evidence is missing",
+          "status": "passed",
+          "title": "renders schema gate failure when successful worker evidence is missing",
+          "duration": 0.3601000000001022,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent steering team result bundles"
+          ],
+          "fullName": "agent steering team result bundles renders memory proposals from structured bundle data without writing role memory",
+          "status": "passed",
+          "title": "renders memory proposals from structured bundle data without writing role memory",
+          "duration": 100.7152000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026687933,
+      "endTime": 1794026688051.715,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/agent-steering-team-bundle.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "chat event dedupe"
+          ],
+          "fullName": "chat event dedupe keeps processing delta events without seq for the same run",
+          "status": "passed",
+          "title": "keeps processing delta events without seq for the same run",
+          "duration": 144.9584000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat event dedupe"
+          ],
+          "fullName": "chat event dedupe still dedupes repeated delta events when seq matches",
+          "status": "passed",
+          "title": "still dedupes repeated delta events when seq matches",
+          "duration": 15.514099999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026688923,
+      "endTime": 1794026689083.5142,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/chat-event-dedupe.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "chat pending message queue"
+          ],
+          "fullName": "chat pending message queue queues a message sent while a run is active instead of dropping it",
+          "status": "passed",
+          "title": "queues a message sent while a run is active instead of dropping it",
+          "duration": 166.3665000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat pending message queue"
+          ],
+          "fullName": "chat pending message queue drains queued messages and sends them after the run ends",
+          "status": "passed",
+          "title": "drains queued messages and sends them after the run ends",
+          "duration": 19.65650000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat pending message queue"
+          ],
+          "fullName": "chat pending message queue does not queue long-task interventions (inputMode passes through)",
+          "status": "passed",
+          "title": "does not queue long-task interventions (inputMode passes through)",
+          "duration": 25.45270000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026681001,
+      "endTime": 1794026681212.4526,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/chat-pending-message-queue.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "production chat session actions"
+          ],
+          "fullName": "production chat session actions archives through the host service and switches the actual store to a retained session",
+          "status": "passed",
+          "title": "archives through the host service and switches the actual store to a retained session",
+          "duration": 182.12890000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production chat session actions"
+          ],
+          "fullName": "production chat session actions preserves the sidebar on archive failure",
+          "status": "passed",
+          "title": "preserves the sidebar on archive failure",
+          "duration": 20.567299999999932,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production chat session actions"
+          ],
+          "fullName": "production chat session actions restores only after a successful host result and refreshes actual session state",
+          "status": "passed",
+          "title": "restores only after a successful host result and refreshes actual session state",
+          "duration": 20.770500000000084,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production chat session actions"
+          ],
+          "fullName": "production chat session actions permanently removes only an acknowledged archive row and clears a failed archive listing",
+          "status": "passed",
+          "title": "permanently removes only an acknowledged archive row and clears a failed archive listing",
+          "duration": 16.005199999999945,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026686354,
+      "endTime": 1794026686593.0051,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/chat-production-session-actions.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration waits without showing an empty ready state before the gateway is ready",
+          "status": "passed",
+          "title": "waits without showing an empty ready state before the gateway is ready",
+          "duration": 187.68740000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration clears a stale connection error while the gateway is starting",
+          "status": "passed",
+          "title": "clears a stale connection error while the gateway is starting",
+          "duration": 14.395899999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration loads sessions before history and confirms an empty conversation",
+          "status": "passed",
+          "title": "loads sessions before history and confirms an empty conversation",
+          "duration": 15.55159999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration keeps cached messages ready while refreshing in the background",
+          "status": "passed",
+          "title": "keeps cached messages ready while refreshing in the background",
+          "duration": 21.01409999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration exposes a retryable startup error when no history source succeeds",
+          "status": "passed",
+          "title": "exposes a retryable startup error when no history source succeeds",
+          "duration": 19.452099999999973,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration keeps an exhausted startup timeout in error when the transcript fallback is empty",
+          "status": "passed",
+          "title": "keeps an exhausted startup timeout in error when the transcript fallback is empty",
+          "duration": 15.071699999999964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration clears a startup error after switching to a session whose history loads successfully",
+          "status": "passed",
+          "title": "clears a startup error after switching to a session whose history loads successfully",
+          "duration": 69.96990000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration makes a new empty session ready after a startup error",
+          "status": "passed",
+          "title": "makes a new empty session ready after a startup error",
+          "duration": 15.847700000000032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat startup hydration"
+          ],
+          "fullName": "chat startup hydration hydrates the new gateway runtime after an older runtime changes while pending",
+          "status": "passed",
+          "title": "hydrates the new gateway runtime after an older runtime changes while pending",
+          "duration": 25.43860000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026683988,
+      "endTime": 1794026684373.4387,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/chat-startup-hydration.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry uses the longer timeout only for the initial foreground history load",
+          "status": "passed",
+          "title": "uses the longer timeout only for the initial foreground history load",
+          "duration": 631.4765,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry renders local transcript fallback while the initial gateway history request is still pending",
+          "status": "passed",
+          "title": "renders local transcript fallback while the initial gateway history request is still pending",
+          "duration": 16.155299999999897,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps startup retry active after rendering local transcript fallback",
+          "status": "passed",
+          "title": "keeps startup retry active after rendering local transcript fallback",
+          "duration": 21.392599999999902,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps local transcript fallback when gateway returns empty history",
+          "status": "passed",
+          "title": "keeps local transcript fallback when gateway returns empty history",
+          "duration": 14.055299999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry forces the internal final-message reload through the quiet history cooldown",
+          "status": "passed",
+          "title": "forces the internal final-message reload through the quiet history cooldown",
+          "duration": 80.98239999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps non-startup foreground loading safety timeout at 15 seconds",
+          "status": "passed",
+          "title": "keeps non-startup foreground loading safety timeout at 15 seconds",
+          "duration": 18.871599999999944,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps cached session messages visible without foreground loading overlay during refresh",
+          "status": "passed",
+          "title": "keeps cached session messages visible without foreground loading overlay during refresh",
+          "duration": 16.445199999999886,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry switchSession restores cached session messages immediately while refreshing in background",
+          "status": "passed",
+          "title": "switchSession restores cached session messages immediately while refreshing in background",
+          "duration": 14.865099999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry does not re-arm Thinking state for stale main-session heartbeat tool history",
+          "status": "passed",
+          "title": "does not re-arm Thinking state for stale main-session heartbeat tool history",
+          "duration": 16.03449999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry switchSession preserves unsynced optimistic user messages when switching back",
+          "status": "passed",
+          "title": "switchSession preserves unsynced optimistic user messages when switching back",
+          "duration": 15.195999999999913,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry switchSession restores trusted tool results from the session history cache",
+          "status": "passed",
+          "title": "switchSession restores trusted tool results from the session history cache",
+          "duration": 14.107600000000048,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry switchSession restores in-flight run state so Thinking indicator survives navigation",
+          "status": "passed",
+          "title": "switchSession restores in-flight run state so Thinking indicator survives navigation",
+          "duration": 13.87130000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry treats the same session as a fresh foreground load after gateway runtime changes",
+          "status": "passed",
+          "title": "treats the same session as a fresh foreground load after gateway runtime changes",
+          "duration": 29.73759999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry does not burn the first-load retry path when the first attempt becomes stale",
+          "status": "passed",
+          "title": "does not burn the first-load retry path when the first attempt becomes stale",
+          "duration": 917.2346,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry stops retrying once the user switches sessions mid-load",
+          "status": "passed",
+          "title": "stops retrying once the user switches sessions mid-load",
+          "duration": 20.95600000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps the optimistic user message when completion refresh wins the transcript write race",
+          "status": "passed",
+          "title": "keeps the optimistic user message when completion refresh wins the transcript write race",
+          "duration": 15.11830000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry does not restore a pending optimistic message after deleting the session",
+          "status": "passed",
+          "title": "does not restore a pending optimistic message after deleting the session",
+          "duration": 12.647899999999936,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps the run open across intermediate [thinking, toolCall] history snapshots",
+          "status": "passed",
+          "title": "keeps the run open across intermediate [thinking, toolCall] history snapshots",
+          "duration": 13.070099999999911,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps the run open for mixed [thinking, text, toolCall] turns with stopReason=toolUse",
+          "status": "passed",
+          "title": "keeps the run open for mixed [thinking, text, toolCall] turns with stopReason=toolUse",
+          "duration": 12.33680000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry closes the run when a final assistant reply (text, stopReason=endTurn) appears",
+          "status": "passed",
+          "title": "closes the run when a final assistant reply (text, stopReason=endTurn) appears",
+          "duration": 12.877000000000407,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry unsticks sending when history has a final reply after tools without pendingFinal",
+          "status": "passed",
+          "title": "unsticks sending when history has a final reply after tools without pendingFinal",
+          "duration": 12.531199999999899,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps the run open for Anthropic-native [thinking, tool_use] (snake_case stop_reason)",
+          "status": "passed",
+          "title": "keeps the run open for Anthropic-native [thinking, tool_use] (snake_case stop_reason)",
+          "duration": 13.65179999999964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry keeps the run open for OpenAI ChatCompletions message with tool_calls array",
+          "status": "passed",
+          "title": "keeps the run open for OpenAI ChatCompletions message with tool_calls array",
+          "duration": 16.402700000000095,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry closes the run for OpenAI ChatCompletions plain-text final reply",
+          "status": "passed",
+          "title": "closes the run for OpenAI ChatCompletions plain-text final reply",
+          "duration": 13.643399999999929,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry clears a stale no-response error when history poll shows tool progress",
+          "status": "passed",
+          "title": "clears a stale no-response error when history poll shows tool progress",
+          "duration": 13.675799999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry does not emit a false no-response error when history poll shows tool progress",
+          "status": "passed",
+          "title": "does not emit a false no-response error when history poll shows tool progress",
+          "duration": 12.369100000000344,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry surfaces an idle-timeout hint when a role-only stream placeholder stalls the run",
+          "status": "passed",
+          "title": "surfaces an idle-timeout hint when a role-only stream placeholder stalls the run",
+          "duration": 13.353399999999965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "useChatStore startup history retry"
+          ],
+          "fullName": "useChatStore startup history retry does not treat prior-turn assistant history as progress for a new send",
+          "status": "passed",
+          "title": "does not treat prior-turn assistant history as progress for a new send",
+          "duration": 13.335000000000036,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026676929,
+      "endTime": 1794026678946.335,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/chat-store-history-retry.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "chat store session label summary hydration"
+          ],
+          "fullName": "chat store session label summary hydration hydrates sidebar titles immediately after sessions load because summaries do not use gateway chat.history",
+          "status": "passed",
+          "title": "hydrates sidebar titles immediately after sessions load because summaries do not use gateway chat.history",
+          "duration": 152.2512999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat store session label summary hydration"
+          ],
+          "fullName": "chat store session label summary hydration hydrates existing sidebar session titles as soon as sessions load",
+          "status": "passed",
+          "title": "hydrates existing sidebar session titles as soon as sessions load",
+          "duration": 14.713199999999915,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat store session label summary hydration"
+          ],
+          "fullName": "chat store session label summary hydration hydrates session labels through the host API instead of gateway chat.history fan-out",
+          "status": "passed",
+          "title": "hydrates session labels through the host API instead of gateway chat.history fan-out",
+          "duration": 20.729799999999955,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat store session label summary hydration"
+          ],
+          "fullName": "chat store session label summary hydration does not re-request label hydration for unchanged sessions across repeated loadSessions calls",
+          "status": "passed",
+          "title": "does not re-request label hydration for unchanged sessions across repeated loadSessions calls",
+          "duration": 13.709699999999884,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat store session label summary hydration"
+          ],
+          "fullName": "chat store session label summary hydration re-requests a session summary when updatedAt changes after an empty result",
+          "status": "passed",
+          "title": "re-requests a session summary when updatedAt changes after an empty result",
+          "duration": 14.010700000000043,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat store session label summary hydration"
+          ],
+          "fullName": "chat store session label summary hydration preserves user-renamed labels when visible session summaries refresh",
+          "status": "passed",
+          "title": "preserves user-renamed labels when visible session summaries refresh",
+          "duration": 14.141200000000026,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026685277,
+      "endTime": 1794026685507.141,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/chat-store-session-label-fetch.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "P2-2 promotion candidate filtering"
+          ],
+          "fullName": "P2-2 promotion candidate filtering keeps qualifying candidates",
+          "status": "passed",
+          "title": "keeps qualifying candidates",
+          "duration": 1.7719000000000733,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P2-2 promotion candidate filtering"
+          ],
+          "fullName": "P2-2 promotion candidate filtering drops snippets shorter than 24 characters",
+          "status": "passed",
+          "title": "drops snippets shorter than 24 characters",
+          "duration": 0.5929999999999609,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P2-2 promotion candidate filtering"
+          ],
+          "fullName": "P2-2 promotion candidate filtering drops near-duplicate candidates sharing a claim hash",
+          "status": "passed",
+          "title": "drops near-duplicate candidates sharing a claim hash",
+          "duration": 0.3186000000000604,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P2-2 promotion candidate filtering"
+          ],
+          "fullName": "P2-2 promotion candidate filtering keeps candidates without a claim hash even when duplicates exist",
+          "status": "passed",
+          "title": "keeps candidates without a claim hash even when duplicates exist",
+          "duration": 0.22640000000001237,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P2-2 promotion candidate filtering"
+          ],
+          "fullName": "P2-2 promotion candidate filtering returns an empty list for empty input",
+          "status": "passed",
+          "title": "returns an empty list for empty input",
+          "duration": 0.15200000000004366,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026982180,
+      "endTime": 1794026982183.2263,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/dreaming-filter.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers enumerates the runtime feature leaves from the real machine-readable source",
+          "status": "passed",
+          "title": "enumerates the runtime feature leaves from the real machine-readable source",
+          "duration": 21.811600000000908,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers treats arrays and empty objects as leaves, like listLeafPaths in the source module",
+          "status": "passed",
+          "title": "treats arrays and empty objects as leaves, like listLeafPaths in the source module",
+          "duration": 0.5733999999974912,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers passes on the real tree: no unpinned zero-consumer leaf",
+          "status": "passed",
+          "title": "passes on the real tree: no unpinned zero-consumer leaf",
+          "duration": 0.3849000000009255,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers treats a pinned leaf that gained a consumer as informational and stays green",
+          "status": "passed",
+          "title": "treats a pinned leaf that gained a consumer as informational and stays green",
+          "duration": 0.5044999999990978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers treats a pinned leaf that no longer exists as informational and stays green",
+          "status": "passed",
+          "title": "treats a pinned leaf that no longer exists as informational and stays green",
+          "duration": 2.3312000000005355,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers fails closed on a NEW leaf with no consumer, naming the leaf",
+          "status": "passed",
+          "title": "fails closed on a NEW leaf with no consumer, naming the leaf",
+          "duration": 3.7446000000018103,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers stays green when the same new leaf is wired to a real reader",
+          "status": "passed",
+          "title": "stays green when the same new leaf is wired to a real reader",
+          "duration": 0.6806999999971595,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers does not treat a generic gate word alone as evidence of consumption",
+          "status": "passed",
+          "title": "does not treat a generic gate word alone as evidence of consumption",
+          "duration": 0.38729999999850406,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers flags a brand-new leaf with no consumer even under a well-known parent",
+          "status": "passed",
+          "title": "flags a brand-new leaf with no consumer even under a well-known parent",
+          "duration": 0.47660000000178115,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "check-feature-leaf-consumers"
+          ],
+          "fullName": "check-feature-leaf-consumers shares the frozen production baseline and self-test with the CLI",
+          "status": "passed",
+          "title": "shares the frozen production baseline and self-test with the CLI",
+          "duration": 51.83179999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026938502,
+      "endTime": 1794026938584.8318,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/feature-leaf-consumers.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs parses Markdown frontmatter with arrays and nested docs",
+          "status": "passed",
+          "title": "parses Markdown frontmatter with arrays and nested docs",
+          "duration": 1.8902000000000498,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs matches repository glob paths",
+          "status": "passed",
+          "title": "matches repository glob paths",
+          "duration": 0.3908000000001266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs loads guide and layer specs from the harness spec library",
+          "status": "passed",
+          "title": "loads guide and layer specs from the harness spec library",
+          "duration": 22.865600000000086,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs builds task context from scenario rules and touched-path layers",
+          "status": "passed",
+          "title": "builds task context from scenario rules and touched-path layers",
+          "duration": 77.8900000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs requires gateway backend communication tasks to run fast and comms",
+          "status": "passed",
+          "title": "requires gateway backend communication tasks to run fast and comms",
+          "duration": 0.5401000000001659,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs detects plugin lifecycle task specs for strict validation",
+          "status": "passed",
+          "title": "detects plugin lifecycle task specs for strict validation",
+          "duration": 0.19960000000014588,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs treats only harness/specs/tasks/ specs as tasks",
+          "status": "passed",
+          "title": "treats only harness/specs/tasks/ specs as tasks",
+          "duration": 0.18600000000014916,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs does not classify a rule spec carrying a scenario key as a scenario-bound task",
+          "status": "passed",
+          "title": "does not classify a rule spec carrying a scenario key as a scenario-bound task",
+          "duration": 0.12999999999988177,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs still classifies a real task spec with a scenario key as scenario-bound",
+          "status": "passed",
+          "title": "still classifies a real task spec with a scenario key as scenario-bound",
+          "duration": 0.14360000000010587,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs requires plugin lifecycle tasks to declare strict task fields",
+          "status": "passed",
+          "title": "requires plugin lifecycle tasks to declare strict task fields",
+          "duration": 0.23710000000005493,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs rejects plugin lifecycle tasks with the wrong scenario or task type",
+          "status": "passed",
+          "title": "rejects plugin lifecycle tasks with the wrong scenario or task type",
+          "duration": 0.13289999999983593,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs detects communication path changes",
+          "status": "passed",
+          "title": "detects communication path changes",
+          "duration": 0.25929999999993925,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs blocks direct Gateway HTTP in renderer files",
+          "status": "passed",
+          "title": "blocks direct Gateway HTTP in renderer files",
+          "duration": 6.929399999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs blocks direct IPC and Gateway transport calls in renderer text",
+          "status": "passed",
+          "title": "blocks direct IPC and Gateway transport calls in renderer text",
+          "duration": 0.29909999999995307,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs allows fallback flags only in their boundary modules",
+          "status": "passed",
+          "title": "allows fallback flags only in their boundary modules",
+          "duration": 2.5190000000000055,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs"
+          ],
+          "fullName": "harness specs allows pages and components to display gatewayReady state",
+          "status": "passed",
+          "title": "allows pages and components to display gatewayReady state",
+          "duration": 1.1346000000000913,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership runs a scenario baseline across tasks while preserving boundary and task ownership failures",
+          "status": "passed",
+          "title": "runs a scenario baseline across tasks while preserving boundary and task ownership failures",
+          "duration": 2473.8821,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership accepts changed paths covered by touchedAreas or the task spec ownedPaths",
+          "status": "passed",
+          "title": "accepts changed paths covered by touchedAreas or the task spec ownedPaths",
+          "duration": 0.51949999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects a changed path owned by no declared area",
+          "status": "passed",
+          "title": "rejects a changed path owned by no declared area",
+          "duration": 0.6195999999999913,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership still honours scenario ownedPaths for scenario-bound specs",
+          "status": "passed",
+          "title": "still honours scenario ownedPaths for scenario-bound specs",
+          "duration": 0.2845999999999549,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership fails closed when a spec declares no ownership at all but files changed",
+          "status": "passed",
+          "title": "fails closed when a spec declares no ownership at all but files changed",
+          "duration": 0.2258999999999105,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership classifies only the exact Task Forest export paths as residual",
+          "status": "passed",
+          "title": "classifies only the exact Task Forest export paths as residual",
+          "duration": 1.927599999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership keeps near-miss Task Forest paths fail-closed",
+          "status": "passed",
+          "title": "keeps near-miss Task Forest paths fail-closed",
+          "duration": 0.7629000000001724,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"**\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"**\"",
+          "duration": 0.3712999999997919,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"src/**\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"src/**\"",
+          "duration": 0.2545000000000073,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"*\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"*\"",
+          "duration": 0.19900000000006912,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"?\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"?\"",
+          "duration": 0.1691000000000713,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"[abc]\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"[abc]\"",
+          "duration": 0.1914999999999054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"{a,b}\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"{a,b}\"",
+          "duration": 0.2238999999999578,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"../secret.txt\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"../secret.txt\"",
+          "duration": 0.19780000000037035,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"C:\\\\secret.txt\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"C:\\\\secret.txt\"",
+          "duration": 0.2569999999996071,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"C:/secret.txt\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"C:/secret.txt\"",
+          "duration": 0.23829999999998108,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"/abs/secret.txt\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"/abs/secret.txt\"",
+          "duration": 0.21550000000024738,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \".\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \".\"",
+          "duration": 0.2139999999999418,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"..\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"..\"",
+          "duration": 0.20029999999997017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"\"",
+          "duration": 0.19590000000016516,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"src/\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"src/\"",
+          "duration": 0.198399999999765,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"src\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"src\"",
+          "duration": 0.31359999999995125,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"./nested/file.txt\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"./nested/file.txt\"",
+          "duration": 0.1732999999999265,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership rejects non-exact residualPaths entry \"src\\\\file.txt\"",
+          "status": "passed",
+          "title": "rejects non-exact residualPaths entry \"src\\\\file.txt\"",
+          "duration": 0.19619999999986248,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership fails closed with a non-zero exit when a spec declares residualPaths: [\"**\"]",
+          "status": "passed",
+          "title": "fails closed with a non-zero exit when a spec declares residualPaths: [\"**\"]",
+          "duration": 633.1420000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership returns non-zero when a residual is accompanied by another uncovered path",
+          "status": "passed",
+          "title": "returns non-zero when a residual is accompanied by another uncovered path",
+          "duration": 721.8766000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "harness specs",
+            "changed-path ownership"
+          ],
+          "fullName": "harness specs changed-path ownership runs the CLI ownership branch for a scenario-less spec",
+          "status": "passed",
+          "title": "runs the CLI ownership branch for a scenario-less spec",
+          "duration": 1336.7790999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026670635,
+      "endTime": 1794026675924.779,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/harness-specs.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Inbox store"
+          ],
+          "fullName": "Inbox store projects the three backend models into constrained actionable item variants",
+          "status": "passed",
+          "title": "projects the three backend models into constrained actionable item variants",
+          "duration": 2.7760000000000673,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Inbox store"
+          ],
+          "fullName": "Inbox store redacts external-write details from the Inbox projection",
+          "status": "passed",
+          "title": "redacts external-write details from the Inbox projection",
+          "duration": 3.6508000000001175,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Inbox store"
+          ],
+          "fullName": "Inbox store keeps successful sources when one Inbox source fails",
+          "status": "passed",
+          "title": "keeps successful sources when one Inbox source fails",
+          "duration": 2.048999999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Inbox store"
+          ],
+          "fullName": "Inbox store refreshes aggregate state immediately after a permission decision",
+          "status": "passed",
+          "title": "refreshes aggregate state immediately after a permission decision",
+          "duration": 1.6170999999999367,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026979948,
+      "endTime": 1794026979957.6172,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/inbox-store.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "observability lifecycle source"
+          ],
+          "fullName": "observability lifecycle source refreshes on assembler lifecycle transitions and ignores notifications with no new v2 state",
+          "status": "passed",
+          "title": "refreshes on assembler lifecycle transitions and ignores notifications with no new v2 state",
+          "duration": 309.80500000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026679812,
+      "endTime": 1794026680121.805,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/observability-store-lifecycle.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "orchestration gates"
+          ],
+          "fullName": "orchestration gates passes a well-formed verified bundle",
+          "status": "passed",
+          "title": "passes a well-formed verified bundle",
+          "duration": 1.5398999999999887,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestration gates"
+          ],
+          "fullName": "orchestration gates fails a successful worker outcome without evidence",
+          "status": "passed",
+          "title": "fails a successful worker outcome without evidence",
+          "duration": 0.7544999999998936,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestration gates"
+          ],
+          "fullName": "orchestration gates fails a bundle without required ids",
+          "status": "passed",
+          "title": "fails a bundle without required ids",
+          "duration": 0.8024000000000342,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestration gates"
+          ],
+          "fullName": "orchestration gates normalizes verifier fail decisions",
+          "status": "passed",
+          "title": "normalizes verifier fail decisions",
+          "duration": 0.38619999999991705,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestration gates"
+          ],
+          "fullName": "orchestration gates normalizes verifier repair_required and allows only attempt 1 repair",
+          "status": "passed",
+          "title": "normalizes verifier repair_required and allows only attempt 1 repair",
+          "duration": 0.8423000000000229,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestration gates"
+          ],
+          "fullName": "orchestration gates blocks a second automatic repair decision",
+          "status": "passed",
+          "title": "blocks a second automatic repair decision",
+          "duration": 0.27490000000000236,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestration gates"
+          ],
+          "fullName": "orchestration gates keeps first repair allowed and second repair exhausted under the P0 cap",
+          "status": "passed",
+          "title": "keeps first repair allowed and second repair exhausted under the P0 cap",
+          "duration": 0.24880000000007385,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026985693,
+      "endTime": 1794026985698.2488,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/orchestration-gates.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "orchestration result bundle"
+          ],
+          "fullName": "orchestration result bundle builds a spawn-phase bundle with task graph, outcomes, failures, and trace refs",
+          "status": "passed",
+          "title": "builds a spawn-phase bundle with task graph, outcomes, failures, and trace refs",
+          "duration": 4.649899999999889,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestration result bundle"
+          ],
+          "fullName": "orchestration result bundle builds a completion-phase bundle with worker evidence, verifier report, and memory proposals",
+          "status": "passed",
+          "title": "builds a completion-phase bundle with worker evidence, verifier report, and memory proposals",
+          "duration": 0.8079000000000178,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestration result bundle"
+          ],
+          "fullName": "orchestration result bundle renders prompt text from structured bundle fields",
+          "status": "passed",
+          "title": "renders prompt text from structured bundle fields",
+          "duration": 0.41460000000006403,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026984595,
+      "endTime": 1794026984600.8079,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/orchestration-result-bundle.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "R0-3 chat abort/checkStuck reclamation"
+          ],
+          "fullName": "R0-3 chat abort/checkStuck reclamation keeps the run state when chat.abort fails and warns the user",
+          "status": "passed",
+          "title": "keeps the run state when chat.abort fails and warns the user",
+          "duration": 89.59339999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "R0-3 chat abort/checkStuck reclamation"
+          ],
+          "fullName": "R0-3 chat abort/checkStuck reclamation releases UI state only after a confirmed abort",
+          "status": "passed",
+          "title": "releases UI state only after a confirmed abort",
+          "duration": 14.056299999999965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "R0-3 chat abort/checkStuck reclamation"
+          ],
+          "fullName": "R0-3 chat abort/checkStuck reclamation keeps exactly one pending checkStuck chain across consecutive sends",
+          "status": "passed",
+          "title": "keeps exactly one pending checkStuck chain across consecutive sends",
+          "duration": 14.161200000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026694871,
+      "endTime": 1794026694989.1611,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/r0-3-chat-abort-checkstuck.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention keeps the retention boundary narrower than mixed source directories",
+          "status": "passed",
+          "title": "keeps the retention boundary narrower than mixed source directories",
+          "duration": 3.1830999999999676,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention ignores regenerated local history while keeping gate inputs addable",
+          "status": "passed",
+          "title": "ignores regenerated local history while keeping gate inputs addable",
+          "duration": 363.85660000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention rejects unreviewed forced additions, including new files inside a retained pack",
+          "status": "passed",
+          "title": "rejects unreviewed forced additions, including new files inside a retained pack",
+          "duration": 1811.1434,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention rejects missing reviewed inputs and stale generated ignore rules",
+          "status": "passed",
+          "title": "rejects missing reviewed inputs and stale generated ignore rules",
+          "duration": 539.5086999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention rejects a task spec that requires private handoff history",
+          "status": "passed",
+          "title": "rejects a task spec that requires private handoff history",
+          "duration": 805.5048999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention runs the source boundary gate in PR CI before dependency installation",
+          "status": "passed",
+          "title": "runs the source boundary gate in PR CI before dependency installation",
+          "duration": 1.2493999999996959,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention passes a checkout with no local task graph or retired wording tests",
+          "status": "passed",
+          "title": "passes a checkout with no local task graph or retired wording tests",
+          "duration": 320.8901999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention rejects ignored files that remain tracked and missing gate inputs",
+          "status": "passed",
+          "title": "rejects ignored files that remain tracked and missing gate inputs",
+          "duration": 429.33539999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention rejects a retired test still discoverable locally or required by a spec",
+          "status": "passed",
+          "title": "rejects a retired test still discoverable locally or required by a spec",
+          "duration": 480.7326000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention does not report a staged deletion as an ignored tracked path",
+          "status": "passed",
+          "title": "does not report a staged deletion as an ignored tracked path",
+          "duration": 505.9952999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention rejects a tracked path that is also matched by .gitignore (shadow tracking)",
+          "status": "passed",
+          "title": "rejects a tracked path that is also matched by .gitignore (shadow tracking)",
+          "duration": 414.29309999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention rejects a broad ignore that hides required gate inputs even if they remain tracked",
+          "status": "passed",
+          "title": "rejects a broad ignore that hides required gate inputs even if they remain tracked",
+          "duration": 340.72340000000077,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "repository artifact retention"
+          ],
+          "fullName": "repository artifact retention keeps the vtoken tokenizer cache ignored in fact, not only in a comment",
+          "status": "passed",
+          "title": "keeps the vtoken tokenizer cache ignored in fact, not only in a comment",
+          "duration": 226.33500000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026662978,
+      "endTime": 1794026669221.335,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/repository-artifact-retention.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.list returns builtin roles and count",
+          "status": "passed",
+          "title": "roles.list returns builtin roles and count",
+          "duration": 4.637800000000425,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.list merges config-defined roles",
+          "status": "passed",
+          "title": "roles.list merges config-defined roles",
+          "duration": 0.9789000000018859,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.list surfaces registry diagnostics for a conflicting config role (#109)",
+          "status": "passed",
+          "title": "roles.list surfaces registry diagnostics for a conflicting config role (#109)",
+          "duration": 1.5370999999977357,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.get returns a role contract + compiled SOUL",
+          "status": "passed",
+          "title": "roles.get returns a role contract + compiled SOUL",
+          "duration": 0.5017000000007101,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.get errors on unknown role",
+          "status": "passed",
+          "title": "roles.get errors on unknown role",
+          "duration": 0.6396999999997206,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers teams.list returns a snapshot",
+          "status": "passed",
+          "title": "teams.list returns a snapshot",
+          "duration": 0.3525000000008731,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.list surfaces origin=built-in for untouched built-ins",
+          "status": "passed",
+          "title": "roles.list surfaces origin=built-in for untouched built-ins",
+          "duration": 0.35089999999763677,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.list surfaces origin=config for a fresh config-defined role",
+          "status": "passed",
+          "title": "roles.list surfaces origin=config for a fresh config-defined role",
+          "duration": 0.42770000000018626,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.list surfaces origin=config when a built-in is overridden by config",
+          "status": "passed",
+          "title": "roles.list surfaces origin=config when a built-in is overridden by config",
+          "duration": 0.3845999999975902,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles.* / teams.* handlers"
+          ],
+          "fullName": "roles.* / teams.* handlers roles.get surfaces origin field",
+          "status": "passed",
+          "title": "roles.get surfaces origin field",
+          "duration": 0.3290999999990163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler errors when task is empty",
+          "status": "passed",
+          "title": "errors when task is empty",
+          "duration": 0.3569999999999709,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler returns a plan with mode/leadRole/workers",
+          "status": "passed",
+          "title": "returns a plan with mode/leadRole/workers",
+          "duration": 3.7148999999990338,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler honors preferredLeadRole when it is a known role",
+          "status": "passed",
+          "title": "honors preferredLeadRole when it is a known role",
+          "duration": 0.6349999999983993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler ignores preferredLeadRole that is not a known role",
+          "status": "passed",
+          "title": "ignores preferredLeadRole that is not a known role",
+          "duration": 0.6254000000008091,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler errors on unknown team template id",
+          "status": "passed",
+          "title": "errors on unknown team template id",
+          "duration": 0.17380000000048312,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler plans with a known team template id",
+          "status": "passed",
+          "title": "plans with a known team template id",
+          "duration": 1.1022000000011758,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler returns structured P2 complexity and runbook metadata without dropping scheduler fields",
+          "status": "passed",
+          "title": "returns structured P2 complexity and runbook metadata without dropping scheduler fields",
+          "duration": 1.6225000000013097,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler accepts explicit duplicate workers and preserves labels",
+          "status": "passed",
+          "title": "accepts explicit duplicate workers and preserves labels",
+          "duration": 0.9128999999993539,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler projects the anchor agent id and stable node ids across duplicate roles",
+          "status": "passed",
+          "title": "projects the anchor agent id and stable node ids across duplicate roles",
+          "duration": 0.5816000000013446,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler errors when explicit workers are empty",
+          "status": "passed",
+          "title": "errors when explicit workers are empty",
+          "duration": 0.21220000000175787,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.plan handler"
+          ],
+          "fullName": "orchestrator.plan handler errors when explicit workers include an unknown role",
+          "status": "passed",
+          "title": "errors when explicit workers include an unknown role",
+          "duration": 0.16920000000027358,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.run handler"
+          ],
+          "fullName": "orchestrator.run handler errors when task is empty",
+          "status": "passed",
+          "title": "errors when task is empty",
+          "duration": 0.3569999999999709,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.run handler"
+          ],
+          "fullName": "orchestrator.run handler errors when sessionKey is missing",
+          "status": "passed",
+          "title": "errors when sessionKey is missing",
+          "duration": 0.1136000000005879,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.run handler"
+          ],
+          "fullName": "orchestrator.run handler rejects an unsupported worker backend before spawn",
+          "status": "passed",
+          "title": "rejects an unsupported worker backend before spawn",
+          "duration": 0.27470000000175787,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.run handler"
+          ],
+          "fullName": "orchestrator.run handler rejects an unknown explicit worker before spawn without a phantom completion",
+          "status": "passed",
+          "title": "rejects an unknown explicit worker before spawn without a phantom completion",
+          "duration": 0.254399999997986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.run handler"
+          ],
+          "fullName": "orchestrator.run handler returns scheduler metrics in the gateway run payload",
+          "status": "passed",
+          "title": "returns scheduler metrics in the gateway run payload",
+          "duration": 938.335500000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.run handler"
+          ],
+          "fullName": "orchestrator.run handler returns a delegation admission receipt bound to the coordinator and child identity",
+          "status": "passed",
+          "title": "returns a delegation admission receipt bound to the coordinator and child identity",
+          "duration": 2.975399999999354,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.run handler"
+          ],
+          "fullName": "orchestrator.run handler returns P2 metadata in gateway run payload alongside P0/P1 data",
+          "status": "passed",
+          "title": "returns P2 metadata in gateway run payload alongside P0/P1 data",
+          "duration": 2.273799999999028,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "orchestrator.run handler"
+          ],
+          "fullName": "orchestrator.run handler returns P4 synthesis in the gateway run payload without removing existing metadata",
+          "status": "passed",
+          "title": "returns P4 synthesis in the gateway run payload without removing existing metadata",
+          "duration": 1.192299999998795,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runOrchestrationObserved (observed execution + tracing)"
+          ],
+          "fullName": "runOrchestrationObserved (observed execution + tracing) carries canonical verifier discipline into accepted worker completion metadata",
+          "status": "passed",
+          "title": "carries canonical verifier discipline into accepted worker completion metadata",
+          "duration": 1.3620999999984633,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runOrchestrationObserved (observed execution + tracing)"
+          ],
+          "fullName": "runOrchestrationObserved (observed execution + tracing) spawns initial workers through the injected fn and records a trace",
+          "status": "passed",
+          "title": "spawns initial workers through the injected fn and records a trace",
+          "duration": 3.6981999999989057,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runOrchestrationObserved (observed execution + tracing)"
+          ],
+          "fullName": "runOrchestrationObserved (observed execution + tracing) records a verifier span and marks failures on spawn rejection",
+          "status": "passed",
+          "title": "records a verifier span and marks failures on spawn rejection",
+          "duration": 2.3364000000001397,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runOrchestrationObserved (observed execution + tracing)"
+          ],
+          "fullName": "runOrchestrationObserved (observed execution + tracing) enables proposal-only patch-flow execution only with explicit opt-in and advisory",
+          "status": "passed",
+          "title": "enables proposal-only patch-flow execution only with explicit opt-in and advisory",
+          "duration": 1.566500000000815,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runOrchestrationObserved (observed execution + tracing)"
+          ],
+          "fullName": "runOrchestrationObserved (observed execution + tracing) keeps ordinary worker execution unchanged when patchFlowExecution is omitted",
+          "status": "passed",
+          "title": "keeps ordinary worker execution unchanged when patchFlowExecution is omitted",
+          "duration": 1.2721999999994296,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runOrchestrationObserved (observed execution + tracing)"
+          ],
+          "fullName": "runOrchestrationObserved (observed execution + tracing) uses resolved role contracts for scheduler contention when request roles are omitted",
+          "status": "passed",
+          "title": "uses resolved role contracts for scheduler contention when request roles are omitted",
+          "duration": 0.9032000000006519,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "team_orchestrate tool"
+          ],
+          "fullName": "team_orchestrate tool runs router-mode orchestration without a template and returns yield guidance",
+          "status": "passed",
+          "title": "runs router-mode orchestration without a template and returns yield guidance",
+          "duration": 3.0099000000009255,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "team_orchestrate tool"
+          ],
+          "fullName": "team_orchestrate tool uses template roles and reports partial failures",
+          "status": "passed",
+          "title": "uses template roles and reports partial failures",
+          "duration": 3.789099999998143,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "team_orchestrate tool"
+          ],
+          "fullName": "team_orchestrate tool exposes P2 metadata from team_orchestrate details without granting permissions",
+          "status": "passed",
+          "title": "exposes P2 metadata from team_orchestrate details without granting permissions",
+          "duration": 2.0502999999989697,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "team_orchestrate tool"
+          ],
+          "fullName": "team_orchestrate tool exposes P4 synthesis from team_orchestrate details without granting tools",
+          "status": "passed",
+          "title": "exposes P4 synthesis from team_orchestrate details without granting tools",
+          "duration": 1.2916000000004715,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SECURITY: role.tools allowlist is enforced at the policy gate"
+          ],
+          "fullName": "SECURITY: role.tools allowlist is enforced at the policy gate a role with tools=[read] cannot use write/edit/exec/bash",
+          "status": "passed",
+          "title": "a role with tools=[read] cannot use write/edit/exec/bash",
+          "duration": 0.8029999999998836,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SECURITY: role.tools allowlist is enforced at the policy gate"
+          ],
+          "fullName": "SECURITY: role.tools allowlist is enforced at the policy gate a write-capable role (implementer) permits write/edit",
+          "status": "passed",
+          "title": "a write-capable role (implementer) permits write/edit",
+          "duration": 0.30579999999827123,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SECURITY: role.tools allowlist is enforced at the policy gate"
+          ],
+          "fullName": "SECURITY: role.tools allowlist is enforced at the policy gate an empty allowlist means \"allow everything not denied\"",
+          "status": "passed",
+          "title": "an empty allowlist means \"allow everything not denied\"",
+          "duration": 0.20420000000012806,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SECURITY: role.tools allowlist is enforced at the policy gate"
+          ],
+          "fullName": "SECURITY: role.tools allowlist is enforced at the policy gate network:\"none\" denies all network-capable tools including plugins",
+          "status": "passed",
+          "title": "network:\"none\" denies all network-capable tools including plugins",
+          "duration": 0.4452999999994063,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SECURITY: role.tools allowlist is enforced at the policy gate"
+          ],
+          "fullName": "SECURITY: role.tools allowlist is enforced at the policy gate network:\"limited\" denies high-risk tools but allows read-only retrieval",
+          "status": "passed",
+          "title": "network:\"limited\" denies high-risk tools but allows read-only retrieval",
+          "duration": 0.3868000000002212,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SECURITY: role.tools allowlist is enforced at the policy gate"
+          ],
+          "fullName": "SECURITY: role.tools allowlist is enforced at the policy gate commands allowlist with read-only fs denies shell tools",
+          "status": "passed",
+          "title": "commands allowlist with read-only fs denies shell tools",
+          "duration": 0.23500000000058208,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "observability.* handlers (trace store/read round-trip)"
+          ],
+          "fullName": "observability.* handlers (trace store/read round-trip) observability.reportTrace stores a trace; observability.traces returns it",
+          "status": "passed",
+          "title": "observability.reportTrace stores a trace; observability.traces returns it",
+          "duration": 0.41990000000078,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "observability.* handlers (trace store/read round-trip)"
+          ],
+          "fullName": "observability.* handlers (trace store/read round-trip) observability.reportTrace rejects a trace without an id",
+          "status": "passed",
+          "title": "observability.reportTrace rejects a trace without an id",
+          "duration": 0.21090000000185682,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) projects accepted memory separately from candidates and tombstones accepted memory through memory.delete",
+          "status": "passed",
+          "title": "projects accepted memory separately from candidates and tombstones accepted memory through memory.delete",
+          "duration": 929.2692999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) reports Role Memory as closed without reading or exposing its stored cards",
+          "status": "passed",
+          "title": "reports Role Memory as closed without reading or exposing its stored cards",
+          "duration": 2.2252000000007683,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) returns disabled read state and blocks writes when Role Memory is off",
+          "status": "passed",
+          "title": "returns disabled read state and blocks writes when Role Memory is off",
+          "duration": 1.860499999998865,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) memory.previewProposal returns governance preview without writing records",
+          "status": "passed",
+          "title": "memory.previewProposal returns governance preview without writing records",
+          "duration": 624.1316999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) memory.store accepts a proposal and memory.list returns it",
+          "status": "passed",
+          "title": "memory.store accepts a proposal and memory.list returns it",
+          "duration": 677.5645999999979,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) memory.feedback records real utility feedback and memory.utilityReport does not invent eval deltas",
+          "status": "passed",
+          "title": "memory.feedback records real utility feedback and memory.utilityReport does not invent eval deltas",
+          "duration": 758.0126999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) memory.store rejects a low-confidence proposal",
+          "status": "passed",
+          "title": "memory.store rejects a low-confidence proposal",
+          "duration": 521.4459999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) memory.propose rejects fake keys without echoing the full secret in Gateway feedback",
+          "status": "passed",
+          "title": "memory.propose rejects fake keys without echoing the full secret in Gateway feedback",
+          "duration": 615.7160999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) memory.propose sends duplicate active cards to review without writing a new card",
+          "status": "passed",
+          "title": "memory.propose sends duplicate active cards to review without writing a new card",
+          "duration": 685.4024000000027,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "memory.* handlers (store/read round-trip with persistence)"
+          ],
+          "fullName": "memory.* handlers (store/read round-trip with persistence) memory.update, memory.archive, memory.supersede, and conflicts round-trip through SQLite",
+          "status": "passed",
+          "title": "memory.update, memory.archive, memory.supersede, and conflicts round-trip through SQLite",
+          "duration": 1230.7729,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026964990,
+      "endTime": 1794026972027.773,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/role-orchestration-methods.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'an RPC timeout is unknown, never an e…'",
+          "status": "passed",
+          "title": "'an RPC timeout is unknown, never an e…'",
+          "duration": 3.233500000000049,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'an owner read exception is unknown, n…'",
+          "status": "passed",
+          "title": "'an owner read exception is unknown, n…'",
+          "duration": 0.5497000000000298,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'a response without the owner projecti…'",
+          "status": "passed",
+          "title": "'a response without the owner projecti…'",
+          "duration": 0.3454999999999018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'an envelope without a snapshot is unk…'",
+          "status": "passed",
+          "title": "'an envelope without a snapshot is unk…'",
+          "duration": 0.2902000000001408,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'a gateway without the method stays un…'",
+          "status": "passed",
+          "title": "'a gateway without the method stays un…'",
+          "duration": 0.3201000000001386,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'a projection whose goal-wake owner re…'",
+          "status": "passed",
+          "title": "'a projection whose goal-wake owner re…'",
+          "duration": 0.42849999999998545,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'a projection that omits the owner-rea…'",
+          "status": "passed",
+          "title": "'a projection that omits the owner-rea…'",
+          "duration": 0.36850000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'a successful empty read is known'",
+          "status": "passed",
+          "title": "'a successful empty read is known'",
+          "duration": 0.39639999999985776,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) 'a finished main run with live backgro…'",
+          "status": "passed",
+          "title": "'a finished main run with live backgro…'",
+          "duration": 0.6422999999999774,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) keeps a successful empty read as a fact: known, dated, and warning-free",
+          "status": "passed",
+          "title": "keeps a successful empty read as a fact: known, dated, and warning-free",
+          "duration": 1.2019999999999982,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) keeps background activity after the main run ended",
+          "status": "passed",
+          "title": "keeps background activity after the main run ended",
+          "duration": 0.8094999999998436,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (Main service)"
+          ],
+          "fullName": "session activity background read (Main service) forwards the canonical workspace id into the runtime policy read",
+          "status": "passed",
+          "title": "forwards the canonical workspace id into the runtime policy read",
+          "duration": 1.1398999999998978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (renderer store)"
+          ],
+          "fullName": "session activity background read (renderer store) does not present a failed first read as a successful empty read",
+          "status": "passed",
+          "title": "does not present a failed first read as a successful empty read",
+          "duration": 2.4717000000000553,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (renderer store)"
+          ],
+          "fullName": "session activity background read (renderer store) retains live background facts when a re-read fails and marks them stale",
+          "status": "passed",
+          "title": "retains live background facts when a re-read fails and marks them stale",
+          "duration": 1.6597999999999047,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (renderer store)"
+          ],
+          "fullName": "session activity background read (renderer store) marks a host-reported unknown read without inventing a failure for an unsupported host",
+          "status": "passed",
+          "title": "marks a host-reported unknown read without inventing a failure for an unsupported host",
+          "duration": 0.536200000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity background read (renderer store)"
+          ],
+          "fullName": "session activity background read (renderer store) returns to known/current after a successful re-read",
+          "status": "passed",
+          "title": "returns to known/current after a successful re-read",
+          "duration": 0.481899999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026978503,
+      "endTime": 1794026978518.482,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/session-activity-background-read.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "goal-wake owner read state"
+          ],
+          "fullName": "goal-wake owner read state 'an owner read exception reports unkno…'",
+          "status": "passed",
+          "title": "'an owner read exception reports unkno…'",
+          "duration": 1403.6907000000065,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "goal-wake owner read state"
+          ],
+          "fullName": "goal-wake owner read state 'a completed read that found nothing r…'",
+          "status": "passed",
+          "title": "'a completed read that found nothing r…'",
+          "duration": 10188.88460000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "goal-wake owner read state"
+          ],
+          "fullName": "goal-wake owner read state carries the read state on the owner views the activity snapshot is built from",
+          "status": "passed",
+          "title": "carries the read state on the owner views the activity snapshot is built from",
+          "duration": 882.8318999999901,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "goal-wake owner read state"
+          ],
+          "fullName": "goal-wake owner read state reports a known read for a session key that cannot exist",
+          "status": "passed",
+          "title": "reports a known read for a session key that cannot exist",
+          "duration": 471.9915000000037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026847597,
+      "endTime": 1794026860547.9915,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/session-activity-owner-read-status.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel"
+          ],
+          "fullName": "SessionActivityPanel renders goal, process, and lineage states from the read-only snapshot",
+          "status": "passed",
+          "title": "renders goal, process, and lineage states from the read-only snapshot",
+          "duration": 379.29639999999927,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel"
+          ],
+          "fullName": "SessionActivityPanel exposes no lifecycle buttons or actions in the projection sections",
+          "status": "passed",
+          "title": "exposes no lifecycle buttons or actions in the projection sections",
+          "duration": 18.75,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel"
+          ],
+          "fullName": "SessionActivityPanel returns nothing for an empty snapshot",
+          "status": "passed",
+          "title": "returns nothing for an empty snapshot",
+          "duration": 2.868499999996857,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel"
+          ],
+          "fullName": "SessionActivityPanel surfaces an unavailable Git query instead of treating it as no repository",
+          "status": "passed",
+          "title": "surfaces an unavailable Git query instead of treating it as no repository",
+          "duration": 5.002099999997881,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel"
+          ],
+          "fullName": "SessionActivityPanel surfaces an unavailable terminal query instead of treating it as no terminal",
+          "status": "passed",
+          "title": "surfaces an unavailable terminal query instead of treating it as no terminal",
+          "duration": 10.926899999998568,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel"
+          ],
+          "fullName": "SessionActivityPanel keeps retry semantics for unavailable status queries",
+          "status": "passed",
+          "title": "keeps retry semantics for unavailable status queries",
+          "duration": 56.27930000000197,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel background read state"
+          ],
+          "fullName": "SessionActivityPanel background read state 'shows a warning with the last-read da…'",
+          "status": "passed",
+          "title": "'shows a warning with the last-read da…'",
+          "duration": 27.78280000000086,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel background read state"
+          ],
+          "fullName": "SessionActivityPanel background read state 'keeps a first read that never happene…'",
+          "status": "passed",
+          "title": "'keeps a first read that never happene…'",
+          "duration": 10.404900000001362,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SessionActivityPanel background read state"
+          ],
+          "fullName": "SessionActivityPanel background read state 'shows the normal empty state for a su…'",
+          "status": "passed",
+          "title": "'shows the normal empty state for a su…'",
+          "duration": 14.951000000000931,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026914627,
+      "endTime": 1794026915154.951,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/session-activity-panel.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "session activity request and workspace scope"
+          ],
+          "fullName": "session activity request and workspace scope does not let an older request overwrite the newest backend policy",
+          "status": "passed",
+          "title": "does not let an older request overwrite the newest backend policy",
+          "duration": 28.516500000000633,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity request and workspace scope"
+          ],
+          "fullName": "session activity request and workspace scope drops same-key rows immediately when the workspace scope changes",
+          "status": "passed",
+          "title": "drops same-key rows immediately when the workspace scope changes",
+          "duration": 1.7565999999997075,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity request and workspace scope"
+          ],
+          "fullName": "session activity request and workspace scope rejects a response carrying another workspace policy",
+          "status": "passed",
+          "title": "rejects a response carrying another workspace policy",
+          "duration": 9.76299999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity request and workspace scope"
+          ],
+          "fullName": "session activity request and workspace scope refreshes policy after an approval or authorization event",
+          "status": "passed",
+          "title": "refreshes policy after an approval or authorization event",
+          "duration": 69.42869999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026920743,
+      "endTime": 1794026920852.4287,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/session-activity-store-scope.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection isolates events by session key",
+          "status": "passed",
+          "title": "isolates events by session key",
+          "duration": 1.4329999999999927,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection keeps a newer terminal state when an older event arrives late",
+          "status": "passed",
+          "title": "keeps a newer terminal state when an older event arrives late",
+          "duration": 1.891300000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection keeps projected run state when an older runtime notification arrives",
+          "status": "passed",
+          "title": "keeps projected run state when an older runtime notification arrives",
+          "duration": 0.21489999999994325,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection does not infer lifecycle or percentage progress from a runtime notification",
+          "status": "passed",
+          "title": "does not infer lifecycle or percentage progress from a runtime notification",
+          "duration": 0.5262000000000171,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection preserves backend task progress from structured lifecycle events",
+          "status": "passed",
+          "title": "preserves backend task progress from structured lifecycle events",
+          "duration": 0.5338999999999032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection files a sub-agent under the session that spawned it, not its own child session",
+          "status": "passed",
+          "title": "files a sub-agent under the session that spawned it, not its own child session",
+          "duration": 0.3484000000000833,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection keeps the child session key when a later event omits it",
+          "status": "passed",
+          "title": "keeps the child session key when a later event omits it",
+          "duration": 0.3035000000002128,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection classifies blocked evidence above active and passive activity",
+          "status": "passed",
+          "title": "classifies blocked evidence above active and passive activity",
+          "duration": 0.2980999999999767,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection classifies goal, process, and lineage projection states",
+          "status": "passed",
+          "title": "classifies goal, process, and lineage projection states",
+          "duration": 0.32560000000012224,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection retains recent goal, process, and lineage projections while preserving failures",
+          "status": "passed",
+          "title": "retains recent goal, process, and lineage projections while preserving failures",
+          "duration": 0.4296999999999116,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "session activity projection"
+          ],
+          "fullName": "session activity projection retains only recent completed items while preserving failures",
+          "status": "passed",
+          "title": "retains only recent completed items while preserving failures",
+          "duration": 0.1896999999999025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026981107,
+      "endTime": 1794026981113.4297,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/session-activity.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "TrajectoryAssembler"
+          ],
+          "fullName": "TrajectoryAssembler replaces an event window with the expected terminal whole-value state",
+          "status": "passed",
+          "title": "replaces an event window with the expected terminal whole-value state",
+          "duration": 2.3910000000000764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TrajectoryAssembler"
+          ],
+          "fullName": "TrajectoryAssembler keeps an update-only tail pending until prepend supplies its start, then equals replace",
+          "status": "passed",
+          "title": "keeps an update-only tail pending until prepend supplies its start, then equals replace",
+          "duration": 1.3318000000001575,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TrajectoryAssembler"
+          ],
+          "fullName": "TrajectoryAssembler makes historical prepend plus live append equivalent to a full replay",
+          "status": "passed",
+          "title": "makes historical prepend plus live append equivalent to a full replay",
+          "duration": 0.28150000000005093,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TrajectoryAssembler"
+          ],
+          "fullName": "TrajectoryAssembler preserves unchanged keyed node references while prepending historical contexts",
+          "status": "passed",
+          "title": "preserves unchanged keyed node references while prepending historical contexts",
+          "duration": 0.2900999999999385,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TrajectoryAssembler"
+          ],
+          "fullName": "TrajectoryAssembler publishes animation-frame updates at most once per frame",
+          "status": "passed",
+          "title": "publishes animation-frame updates at most once per frame",
+          "duration": 0.46289999999999054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TrajectoryAssembler"
+          ],
+          "fullName": "TrajectoryAssembler gives renderer-facing consumers node.data without event or context internals",
+          "status": "passed",
+          "title": "gives renderer-facing consumers node.data without event or context internals",
+          "duration": 0.6000000000001364,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026983352,
+      "endTime": 1794026983357.6,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/trajectory-assembler.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply uses the runtime terminal state {\"status\":\"interrupted\",\"timedOut\":true} without inventing completion",
+          "status": "passed",
+          "title": "uses the runtime terminal state {\"status\":\"interrupted\",\"timedOut\":true} without inventing completion",
+          "duration": 2.895300000000134,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply uses the runtime terminal state {\"status\":\"interrupted\",\"externalAbort\":true} without inventing completion",
+          "status": "passed",
+          "title": "uses the runtime terminal state {\"status\":\"interrupted\",\"externalAbort\":true} without inventing completion",
+          "duration": 0.5419999999999163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply uses the runtime terminal state {\"status\":\"success\"} without inventing completion",
+          "status": "passed",
+          "title": "uses the runtime terminal state {\"status\":\"success\"} without inventing completion",
+          "duration": 0.38540000000011787,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply uses the runtime terminal state {\"status\":\"unclassified\"} without inventing completion",
+          "status": "passed",
+          "title": "uses the runtime terminal state {\"status\":\"unclassified\"} without inventing completion",
+          "duration": 0.45089999999981956,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply joins paged history and buffered realtime at asOfSeq without applying a duplicate",
+          "status": "passed",
+          "title": "joins paged history and buffered realtime at asOfSeq without applying a duplicate",
+          "duration": 1.9872000000000298,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply repairs a realtime sequence gap through the existing history entrypoint",
+          "status": "passed",
+          "title": "repairs a realtime sequence gap through the existing history entrypoint",
+          "duration": 0.49289999999996326,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply repairs a gap that arrives during the cold history request",
+          "status": "passed",
+          "title": "repairs a gap that arrives during the cold history request",
+          "duration": 0.6933000000001357,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply assembles run, turn, step and tool identities from the original v2 rows",
+          "status": "passed",
+          "title": "assembles run, turn, step and tool identities from the original v2 rows",
+          "duration": 0.36439999999993233,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply does not apply another session or a response returned after disposal",
+          "status": "passed",
+          "title": "does not apply another session or a response returned after disposal",
+          "duration": 0.24279999999998836,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply keeps legacy or empty supply idle instead of reconstructing runtime lifecycle",
+          "status": "passed",
+          "title": "keeps legacy or empty supply idle instead of reconstructing runtime lifecycle",
+          "duration": 0.3605999999999767,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply rejects a history response for the wrong session",
+          "status": "passed",
+          "title": "rejects a history response for the wrong session",
+          "duration": 0.2963999999999487,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production trajectory view supply"
+          ],
+          "fullName": "production trajectory view supply does not skip an unresolved history gap or spin on a stuck pagination cursor",
+          "status": "passed",
+          "title": "does not skip an unresolved history gap or spin on a stuck pagination cursor",
+          "duration": 0.41849999999999454,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026976682,
+      "endTime": 1794026976691.4185,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/trajectory-view-feed.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "verifier runtime config"
+          ],
+          "fullName": "verifier runtime config reads canonical configuration and preserves an explicit request override",
+          "status": "passed",
+          "title": "reads canonical configuration and preserves an explicit request override",
+          "duration": 11.622699999999895,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794026974819,
+      "endTime": 1794026974830.6228,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/clawx-audit-remainder-20261107/candidate/tests/unit/verifier-discipline-config.test.ts"
+    }
+  ]
+}

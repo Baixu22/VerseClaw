@@ -1,0 +1,74 @@
+{
+  "driven_by": "agent",
+  "source": "Production atomic start and Main read API; controlled chat history and runtime event delivery",
+  "task": {
+    "contract": {
+      "objective": "Fix and verify the export",
+      "constraints": [
+        "Preserve the existing format"
+      ],
+      "acceptance": [
+        {
+          "id": "test",
+          "description": "Export regression checks pass",
+          "verification": {
+            "kind": "tool-result",
+            "tool": "exec",
+            "command": "node test-export.cjs",
+            "files": [
+              "test-export.cjs"
+            ],
+            "exitCode": 0
+          }
+        }
+      ],
+      "target": "src/export.ts",
+      "dependencies": [],
+      "origin": {
+        "source": "runtime-task-tool",
+        "sessionKey": "agent:main:dashboard:30273482-f665-4997-ae63-886b12113766",
+        "requestId": "conversation-start:create"
+      },
+      "taskNodeId": "05dd82c3-71ab-4cfa-bcd8-89dad43a2aad",
+      "domain": "bcd7b229cb564af990f6a52a83f22e02a977861182cd17137e9264a66dd90076",
+      "revision": 1,
+      "digest": "9cf54487353e976eea7e06b8f6c839148a2be1c180ca6a55140a9c66bb521398",
+      "state": "doing",
+      "createdAt": 1794151944333,
+      "updatedAt": 1794151944334
+    },
+    "claim": {
+      "taskNodeId": "05dd82c3-71ab-4cfa-bcd8-89dad43a2aad",
+      "sessionKey": "agent:main:dashboard:30273482-f665-4997-ae63-886b12113766",
+      "generation": "a59b4122-605d-4fec-8038-cf7662a69187",
+      "epoch": 1,
+      "attemptId": "5acc3ef2-fdce-48ca-925f-f6b3ff45807e",
+      "worktree": "d:/clawx-work/durable-task-system-20261107/.tmp/e2e-runs/verse-claw-e2e-run-ax9rvc/verse-claw-e2e-home-cyppnc/conversation-task",
+      "contractRevision": 1,
+      "expiresAt": 1794152064334,
+      "state": "active"
+    },
+    "checkpoint": {
+      "nextAction": "Run checks",
+      "completed": [
+        "Inspect export"
+      ],
+      "unresolved": [],
+      "artifacts": []
+    },
+    "pendingOperations": 0,
+    "pendingOperationDetails": [],
+    "childTaskNodeIds": []
+  },
+  "default": "collapsed",
+  "hiddenPersists": true,
+  "hidePreservesClaim": true,
+  "languages": [
+    "en",
+    "zh",
+    "ja",
+    "ru"
+  ],
+  "keyboardToggle": true,
+  "layout": "single task header above transcript; changed-file chip below composer; plain canvas"
+}

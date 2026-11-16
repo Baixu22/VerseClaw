@@ -2,7 +2,7 @@
  * ResourceChip shows running resource count in the chat toolbar.
  * Click opens a popover with the full resource list and stop controls.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, ExternalLink, Loader2, Pause, Play, Server, StopCircle, Trash2, Users, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -13,9 +13,10 @@ import type { TrackedResource } from '@shared/types/resource-tracker';
 import type { WorkspaceCoordinatorBinding, WorkspaceCoordinatorRecovery } from '@shared/types/workspace';
 import type { RuntimeResourceEnvelopeState } from '@shared/host-api/contract';
 import { hostApi } from '@/lib/host-api';
+import { createPollScheduler } from '@/lib/poll-scheduler';
 import { getWorkspaceCoordinatorBinding } from '@/lib/workspace-session';
 import { useChatStore } from '@/stores/chat';
-import { useSessionActivityStore } from '@/stores/session-activity';
+import { useSessionActivityStore, selectSessionActivitySnapshot } from '@/stores/session-activity';
 import { useWorkspacesStore } from '@/stores/workspaces';
 
 export function ResourceChip() {
@@ -38,7 +39,10 @@ export function ResourceChip() {
   const switchSession = useChatStore((state) => state.switchSession);
   const activeTaskNodeId = useChatStore((state) => state.activeTaskNodeId);
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
-  const activitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
+  const generation = useChatStore((state) => state.sessions.find((session) => session.key === currentSessionKey)?.sessionId);
+  const activitySnapshot = useSessionActivityStore((state) => selectSessionActivitySnapshot(state, activeWorkspace?.id, currentSessionKey, generation));
+  const scope = useMemo(() => ({ workspaceId: activeWorkspace?.id, rootPath: activeWorkspace?.rootPath, sessionKey: currentSessionKey, generation }), [activeWorkspace?.id, activeWorkspace?.rootPath, currentSessionKey, generation]);
+  const scopeRef = useRef(scope); scopeRef.current = scope;
   const [coordinatorBinding, setCoordinatorBinding] = useState<WorkspaceCoordinatorBinding | null>(null);
   const [coordinatorRecovery, setCoordinatorRecovery] = useState<WorkspaceCoordinatorRecovery | null>(null);
   const [resourceEnvelope, setResourceEnvelope] = useState<RuntimeResourceEnvelopeState | null>(null);
@@ -51,14 +55,16 @@ export function ResourceChip() {
   const completionBatches = activitySnapshot?.completionBatches ?? [];
   const activeBackgroundTerminalCount = activitySnapshot?.terminals.filter((terminal) => ['starting', 'running', 'idle', 'blocked'].includes(terminal.status)).length ?? 0;
   const loadCoordinator = useCallback(async () => {
-    if (!activeWorkspace || !agentId || !currentSessionKey) {
+    setCoordinatorBinding(null); setCoordinatorRecovery(null); setCoordinatorError(null);
+    if (!scope.workspaceId || !agentId || !currentSessionKey) {
       setCoordinatorBinding(null);
       return;
     }
     const [resolved, envelope] = await Promise.allSettled([
-      hostApi.workspaces.resolveCoordinator({ workspaceId: activeWorkspace.id, agentId, sessionKey: currentSessionKey }),
+      hostApi.workspaces.resolveCoordinator({ workspaceId: scope.workspaceId, agentId, sessionKey: currentSessionKey }),
       hostApi.resourceEnvelope.getState(),
     ]);
+    if (scopeRef.current !== scope) return;
     if (resolved.status === 'fulfilled') {
       setCoordinatorBinding(resolved.value.binding ?? null);
       setCoordinatorRecovery(resolved.value.recovery);
@@ -66,8 +72,9 @@ export function ResourceChip() {
       setCoordinatorBinding(cachedBinding);
     }
     if (envelope.status === 'fulfilled') setResourceEnvelope(envelope.value);
-  }, [activeWorkspace, agentId, cachedBinding, currentSessionKey]);
-  const binding = coordinatorBinding ?? cachedBinding;
+  }, [agentId, cachedBinding, currentSessionKey, scope]);
+  const binding = coordinatorBinding?.workspaceId === activeWorkspace?.id && coordinatorBinding?.sessionKey === currentSessionKey
+    ? coordinatorBinding : cachedBinding;
   const runCoordinatorAction = async (action: 'bind' | 'pause' | 'resume') => {
     if (!activeWorkspace || !agentId || !currentSessionKey) return;
     setCoordinatorBusy(true);
@@ -80,7 +87,10 @@ export function ResourceChip() {
           sessionKey: currentSessionKey,
           expectedRevision: binding.bindingRevision,
         });
+        if (scopeRef.current !== scope) return;
+        if (!result.success) throw new Error(result.error ?? result.recovery.reason ?? t('resourceTracker.coordinator.recovery', { state: 'unknown' }));
         setCoordinatorBinding(result.binding);
+        setCoordinatorRecovery(result.recovery);
         return;
       }
       const taskLedgerNodeIds = binding?.taskLedgerReferences.map((reference) => reference.taskLedgerNodeId)
@@ -112,27 +122,29 @@ export function ResourceChip() {
         environment,
         archiveRestorePolicy: binding?.archiveRestorePolicy ?? 'restore',
       });
+      if (scopeRef.current !== scope) return;
+      if (!result.success) throw new Error(result.error ?? result.recovery.reason ?? t('resourceTracker.coordinator.recovery', { state: 'unknown' }));
       setCoordinatorBinding(result.binding);
-      if (!result.success) setCoordinatorError(result.error ?? result.recovery.reason ?? null);
+      setCoordinatorRecovery(result.recovery);
     } catch (error) {
-      setCoordinatorError(error instanceof Error ? error.message : String(error));
+      if (scopeRef.current === scope) setCoordinatorError(error instanceof Error ? error.message : String(error));
     } finally {
-      setCoordinatorBusy(false);
+      if (scopeRef.current === scope) setCoordinatorBusy(false);
     }
   };
   const [nowMs, setNowMs] = useState(() => Date.now());
 
   useEffect(() => {
-    init();
+    return init();
   }, [init]);
 
   useEffect(() => {
-    void loadCoordinator();
-  }, [loadCoordinator]);
+    if (popoverOpen) void loadCoordinator();
+  }, [loadCoordinator, popoverOpen]);
+  useEffect(() => { setCoordinatorBusy(false); }, [scope]);
 
   useEffect(() => {
-    const timer = setInterval(() => setNowMs(Date.now()), 60_000);
-    return () => clearInterval(timer);
+    return createPollScheduler({ intervalMs: 60_000, task: () => setNowMs(Date.now()) });
   }, []);
 
   const totalCount = resources.length;
@@ -229,7 +241,7 @@ export function ResourceChip() {
             </div>
 
             {(binding || activeTaskNodeId || resourceEnvelope?.measured || completionBatches.length > 0) && (
-              <section data-testid="long-session-coordinator" className="mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10">
+              <section data-testid="long-session-coordinator" data-state={binding?.state ?? 'unbound'} aria-busy={coordinatorBusy} className="mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10">
                 <div className="flex items-center gap-2">
                   <Users className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                   <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
@@ -309,7 +321,7 @@ export function ResourceChip() {
                     {t('resourceTracker.coordinator.start')}
                   </button>
                 )}
-                {coordinatorError && <p className="mt-1 text-[10px] text-red-700 dark:text-red-400">{coordinatorError}</p>}
+                {coordinatorError && <p role="alert" data-testid="coordinator-error" className="mt-1 text-[10px] text-red-700 dark:text-red-400">{coordinatorError}</p>}
                 {resourceEnvelope?.measured && resourceEnvelope.snapshot && (
                   <div className="mt-1.5 grid grid-cols-2 gap-x-2 gap-y-0.5 border-t border-black/5 pt-1 text-[10px] text-muted-foreground dark:border-white/10">
                     <span>CPU {resourceEnvelope.snapshot.totals.treeCpuPercent.toFixed(1)}%</span>

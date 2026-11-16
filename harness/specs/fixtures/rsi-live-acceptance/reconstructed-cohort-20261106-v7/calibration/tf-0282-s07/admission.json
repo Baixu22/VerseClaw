@@ -1,0 +1,537 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0282-s07",
+  "source": {
+    "id": "tf-0282-s07",
+    "base": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+    "reference": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+    "productChanges": [
+      "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts"
+    ],
+    "originalDecision": "PASS",
+    "codingBindingDigest": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+    "baselineSetup": null,
+    "targetScope": [
+      "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+      "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts",
+      "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+      "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md",
+      "docs/dev/harness-gap-closure/s07-acceptance.json",
+      "docs/dev/harness-gap-closure/S07-SHA256SUMS"
+    ],
+    "prompt": "S07 给 evidence verifier 一个受限、可撤销的完成裁决入口：复用既有 evaluateEvidenceVerifier，只对授权范围内的指定 task 产出 digest-only verdict，approved 才产生唯一 node->done 状态转换，且可从记录的 prior status 撤销。verdict 不授予发布/产品锁权限，也不是第二套权限层。",
+    "sourceRecord": "docs/dev/harness-gap-closure/s07-acceptance.json",
+    "sourceRecordDigest": "e1bf507b61cd5df38514ff797f23b4bffe2c77f9370404a9fa7230c5c9d857fb",
+    "oraclePaths": [
+      "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts",
+      "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+    ],
+    "commands": [
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0282-s07",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/runtime-core/verifier-completion-verdict.test.ts",
+            "src/runtime-core/evidence-verifier.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 4,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 11,
+            "numPassedTests": 11,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793938927428,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating keeps shadow and pilot flags off by default (no production injection)",
+                    "status": "passed",
+                    "title": "keeps shadow and pilot flags off by default (no production injection)",
+                    "duration": 0.3500999999996566,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 20,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating completes a task with the canonical fixture (all evidence kinds present)",
+                    "status": "passed",
+                    "title": "completes a task with the canonical fixture (all evidence kinds present)",
+                    "duration": 0.32190000000082364,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating reports insufficient evidence when required kinds are missing",
+                    "status": "passed",
+                    "title": "reports insufficient evidence when required kinds are missing",
+                    "duration": 0.31409999999959837,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 37,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating respects policy overrides for required evidence kinds",
+                    "status": "passed",
+                    "title": "respects policy overrides for required evidence kinds",
+                    "duration": 0.29879999999866413,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 50,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating collects evidence through the task-loop bridge without changing legacy decisions",
+                    "status": "passed",
+                    "title": "collects evidence through the task-loop bridge without changing legacy decisions",
+                    "duration": 0.9495999999999185,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 68,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793938928297,
+                "endTime": 1793938928298.9497,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0282-s07/reference/workspace/openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S07 verifier completion verdict"
+                    ],
+                    "fullName": "S07 verifier completion verdict approves a completed task with the canonical evidence and produces one node->done transition",
+                    "status": "passed",
+                    "title": "approves a completed task with the canonical evidence and produces one node->done transition",
+                    "duration": 131.84959999999955,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 16,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S07 verifier completion verdict"
+                    ],
+                    "fullName": "S07 verifier completion verdict is digest-only and grants no publish / product-lock authority",
+                    "status": "passed",
+                    "title": "is digest-only and grants no publish / product-lock authority",
+                    "duration": 0.8832000000002154,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 28,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S07 verifier completion verdict"
+                    ],
+                    "fullName": "S07 verifier completion verdict returns insufficient-evidence and no transition when evidence is missing",
+                    "status": "passed",
+                    "title": "returns insufficient-evidence and no transition when evidence is missing",
+                    "duration": 0.690600000001723,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 41,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S07 verifier completion verdict"
+                    ],
+                    "fullName": "S07 verifier completion verdict is bounded: a task outside the granted scope gets no verdict and no transition",
+                    "status": "passed",
+                    "title": "is bounded: a task outside the granted scope gets no verdict and no transition",
+                    "duration": 0.6529000000009546,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 52,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S07 verifier completion verdict"
+                    ],
+                    "fullName": "S07 verifier completion verdict is revocable: revocation restores the recorded prior status",
+                    "status": "passed",
+                    "title": "is revocable: revocation restores the recorded prior status",
+                    "duration": 0.38699999999880674,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 63,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S07 verifier completion verdict"
+                    ],
+                    "fullName": "S07 verifier completion verdict is deterministic: the same evidence yields the same digest (replay-safe)",
+                    "status": "passed",
+                    "title": "is deterministic: the same evidence yields the same digest (replay-safe)",
+                    "duration": 0.3382000000001426,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 68,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793938928131,
+                "endTime": 1793938928265.387,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0282-s07/reference/workspace/openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 11,
+      "numPassedTests": 11,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "6fdc6e0e0924233ac6e1ce9f23d07ad4562c681fb6676f3162f9b6ed8f280ebc",
+      "oracleHashAfter": "6fdc6e0e0924233ac6e1ce9f23d07ad4562c681fb6676f3162f9b6ed8f280ebc",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-verifier-completion-verdict.md": "aa86ff9ae1f449e89e3597f9acd639c36554c5b60e6038d73c829a30598043a9",
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts": "5e70e5bcfc1c54e709233c4d191d7480b94edadbf33200b83e149923371b7434",
+        "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts": "b73715370d0bd11afea7a3b0d5561267bf2edbd88bc38c9031d135ed4b4cbb2e"
+      },
+      "oracleRevision": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts": "5e70e5bcfc1c54e709233c4d191d7480b94edadbf33200b83e149923371b7434",
+        "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts": "b73715370d0bd11afea7a3b0d5561267bf2edbd88bc38c9031d135ed4b4cbb2e"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0282-s07",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/runtime-core/verifier-completion-verdict.test.ts",
+            "src/runtime-core/evidence-verifier.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 3,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 5,
+            "numPassedTests": 5,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793938956429,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating keeps shadow and pilot flags off by default (no production injection)",
+                    "status": "passed",
+                    "title": "keeps shadow and pilot flags off by default (no production injection)",
+                    "duration": 120.60250000000087,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 20,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating completes a task with the canonical fixture (all evidence kinds present)",
+                    "status": "passed",
+                    "title": "completes a task with the canonical fixture (all evidence kinds present)",
+                    "duration": 1.0923000000002503,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 31,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating reports insufficient evidence when required kinds are missing",
+                    "status": "passed",
+                    "title": "reports insufficient evidence when required kinds are missing",
+                    "duration": 0.3636999999998807,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 37,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating respects policy overrides for required evidence kinds",
+                    "status": "passed",
+                    "title": "respects policy overrides for required evidence kinds",
+                    "duration": 0.27049999999871943,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 50,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "evidence verifier shadow/pilot gating"
+                    ],
+                    "fullName": "evidence verifier shadow/pilot gating collects evidence through the task-loop bridge without changing legacy decisions",
+                    "status": "passed",
+                    "title": "collects evidence through the task-loop bridge without changing legacy decisions",
+                    "duration": 0.8556000000007771,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 68,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793938957111,
+                "endTime": 1793938957233.8557,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793938956429,
+                "endTime": 1793938956429,
+                "status": "failed",
+                "message": "Cannot find module './verifier-completion-verdict.js' imported from D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 5,
+      "numPassedTests": 5,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "target-module-absent",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "6fdc6e0e0924233ac6e1ce9f23d07ad4562c681fb6676f3162f9b6ed8f280ebc",
+      "oracleHashAfter": "6fdc6e0e0924233ac6e1ce9f23d07ad4562c681fb6676f3162f9b6ed8f280ebc",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-verifier-completion-verdict.md": "aa86ff9ae1f449e89e3597f9acd639c36554c5b60e6038d73c829a30598043a9",
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts": "5e70e5bcfc1c54e709233c4d191d7480b94edadbf33200b83e149923371b7434",
+        "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts": "b73715370d0bd11afea7a3b0d5561267bf2edbd88bc38c9031d135ed4b4cbb2e"
+      },
+      "oracleRevision": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts": "5e70e5bcfc1c54e709233c4d191d7480b94edadbf33200b83e149923371b7434",
+        "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts": "b73715370d0bd11afea7a3b0d5561267bf2edbd88bc38c9031d135ed4b4cbb2e"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "openclaw_runtime/src/runtime-core/verifier-completion-verdict.js",
+          "importer": "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts",
+          "inTargetScope": true
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0282-s07\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": [],
+    "warnings": [
+      "baseline-target-module-absent"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

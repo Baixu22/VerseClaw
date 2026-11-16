@@ -1,0 +1,595 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/chat-output-e2e-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-composer-git-strip.spec.ts",
+      "file": "chat-composer-git-strip.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Chat composer Git strip",
+          "file": "D:/ClawX/tests/e2e/chat-composer-git-strip.spec.ts",
+          "line": 181,
+          "column": 6,
+          "specs": [
+            {
+              "title": "renders runtime approval inline with the composer and Git strip",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 62026,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:40:28.250Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7718b418ef73cd7bf41-3b0729461093dae15517",
+              "file": "D:/ClawX/tests/e2e/chat-composer-git-strip.spec.ts",
+              "line": 182,
+              "column": 7
+            },
+            {
+              "title": "shows repository context and routes branch/worktree actions through host APIs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 46276,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:41:30.296Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7718b418ef73cd7bf41-9d2f8b61b7d3f06765d7",
+              "file": "D:/ClawX/tests/e2e/chat-composer-git-strip.spec.ts",
+              "line": 258,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-file-changes.spec.ts",
+      "file": "chat-file-changes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat file changes",
+          "file": "D:/ClawX/tests/e2e/chat-file-changes.spec.ts",
+          "line": 124,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows line stats on generated file cards",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 34971,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:42:16.713Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "chat-git-diff-narrow",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-final\\chat-file-changes-Verse-Cl-22b2f-ats-on-generated-file-cards\\attachments\\chat-git-diff-narrow-382e2ab18315a2e9127b5bf2d85e2c80e697f89c.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fd14a13cd8bcd8fd7b54-9ea124fb0ebf638cb159",
+              "file": "D:/ClawX/tests/e2e/chat-file-changes.spec.ts",
+              "line": 125,
+              "column": 7
+            },
+            {
+              "title": "opens html files from chat as rendered previews",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26666,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:42:51.705Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fd14a13cd8bcd8fd7b54-d4fe4cc0191c462de1f8",
+              "file": "D:/ClawX/tests/e2e/chat-file-changes.spec.ts",
+              "line": 219,
+              "column": 7
+            },
+            {
+              "title": "keeps an attached file selected after switching through workspace",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23988,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:43:18.387Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fd14a13cd8bcd8fd7b54-5ca7879a75da2ba9eb80",
+              "file": "D:/ClawX/tests/e2e/chat-file-changes.spec.ts",
+              "line": 328,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-tool-ui-execution-surfaces.spec.ts",
+      "file": "chat-tool-ui-execution-surfaces.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Tool UI execution surfaces",
+          "file": "D:/ClawX/tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+          "line": 107,
+          "column": 6,
+          "specs": [
+            {
+              "title": "renders official execution surfaces in light, dark, and narrow layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 42463,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:43:42.410Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "tool-ui-execution-light",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-final\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-light-e849e8a6e59040c026fbac2dff3a51e8d62d4a95.png"
+                        },
+                        {
+                          "name": "tool-ui-execution-dark",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-final\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-dark-d1795a0c9e62b8068e3d83c72b776601459ddef7.png"
+                        },
+                        {
+                          "name": "tool-ui-execution-narrow",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-final\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-narrow-36619220b03edde3e138e71999614dae9a192f97.png"
+                        },
+                        {
+                          "name": "tool-ui-execution-640",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-final\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-640-3671fb111e5fcebb6015a577b7b47d86c44279db.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fbdc74cf16e7047c807a-5368bbec17e918a4037a",
+              "file": "D:/ClawX/tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+              "line": 108,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-turn-summary-collapse.spec.ts",
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat turn summary collapse",
+          "file": "D:/ClawX/tests/e2e/chat-turn-summary-collapse.spec.ts",
+          "line": 149,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keeps live activity compact, animated and readable without assistant avatars",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 50239,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:44:24.955Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8431e429a3efaf24759e-d93ce219608a2379a486",
+              "file": "D:/ClawX/tests/e2e/chat-turn-summary-collapse.spec.ts",
+              "line": 150,
+              "column": 7
+            },
+            {
+              "title": "collapses completed long task process and expands details on demand",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 48821,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:45:15.416Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8431e429a3efaf24759e-4313b82ec5dc9a3673ec",
+              "file": "D:/ClawX/tests/e2e/chat-turn-summary-collapse.spec.ts",
+              "line": 211,
+              "column": 7
+            },
+            {
+              "title": "leaves short conversations unwrapped",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 33352,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:46:04.675Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8431e429a3efaf24759e-202f5033f3cb39b39ee0",
+              "file": "D:/ClawX/tests/e2e/chat-turn-summary-collapse.spec.ts",
+              "line": 279,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "runtime-approval-bridge.spec.ts",
+      "file": "runtime-approval-bridge.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Runtime approval bridge",
+          "file": "D:/ClawX/tests/e2e/runtime-approval-bridge.spec.ts",
+          "line": 28,
+          "column": 6,
+          "specs": [
+            {
+              "title": "covers the composer without a modal and restores its draft after approval",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 38636,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:46:38.108Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "408b928db53c9f4f25dd-83c59f7be415120aeaad",
+              "file": "D:/ClawX/tests/e2e/runtime-approval-bridge.spec.ts",
+              "line": 29,
+              "column": 7
+            },
+            {
+              "title": "answers a pending runtime approval from the conversation input area",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 66873,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:47:16.759Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "408b928db53c9f4f25dd-7a8a71608fba5a8ada76",
+              "file": "D:/ClawX/tests/e2e/runtime-approval-bridge.spec.ts",
+              "line": 153,
+              "column": 7
+            },
+            {
+              "title": "offers only the decisions the runtime listed for the request",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 51671,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:48:23.648Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "408b928db53c9f4f25dd-3cdd2579daad4293f167",
+              "file": "D:/ClawX/tests/e2e/runtime-approval-bridge.spec.ts",
+              "line": 204,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mWorker teardown timeout of 90000ms exceeded.\u001b[39m\n\n\u001b[31mFailed worker ran 12 tests, last 10 tests were:\u001b[39m\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:125:7 › Verse Claw chat file changes › shows line stats on generated file cards\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:219:7 › Verse Claw chat file changes › opens html files from chat as rendered previews\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:328:7 › Verse Claw chat file changes › keeps an attached file selected after switching through workspace\nD:\\ClawX\\tests\\e2e\\chat-tool-ui-execution-surfaces.spec.ts:108:7 › Tool UI execution surfaces › renders official execution surfaces in light, dark, and narrow layouts\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › keeps live activity compact, animated and readable without assistant avatars\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:211:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:279:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:29:7 › Runtime approval bridge › covers the composer without a modal and restores its draft after approval\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:153:7 › Runtime approval bridge › answers a pending runtime approval from the conversation input area\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:204:7 › Runtime approval bridge › offers only the decisions the runtime listed for the request",
+      "stack": "\u001b[31mWorker teardown timeout of 90000ms exceeded.\u001b[39m\n\n\u001b[31mFailed worker ran 12 tests, last 10 tests were:\u001b[39m\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:125:7 › Verse Claw chat file changes › shows line stats on generated file cards\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:219:7 › Verse Claw chat file changes › opens html files from chat as rendered previews\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:328:7 › Verse Claw chat file changes › keeps an attached file selected after switching through workspace\nD:\\ClawX\\tests\\e2e\\chat-tool-ui-execution-surfaces.spec.ts:108:7 › Tool UI execution surfaces › renders official execution surfaces in light, dark, and narrow layouts\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › keeps live activity compact, animated and readable without assistant avatars\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:211:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:279:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:29:7 › Runtime approval bridge › covers the composer without a modal and restores its draft after approval\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:153:7 › Runtime approval bridge › answers a pending runtime approval from the conversation input area\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:204:7 › Runtime approval bridge › offers only the decisions the runtime listed for the request"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-04T14:40:23.055Z",
+    "duration": 633645.661,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

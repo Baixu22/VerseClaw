@@ -10,6 +10,40 @@ import type { AnomalyPattern } from "../anomaly-classifier.js";
 import type { MissionContextPack } from "./context.js";
 import type { MissionContinuation } from "../goal-wake-types.js";
 import type { RuntimeLineage } from "../../runtime-core/lineage.js";
+import type { ExecutionTaskAuthorityBasis } from "../execution-task-authority.js";
+
+export type MissionManagedTaskRuntime = {
+  workspaceRoot: string;
+  sessionKey: string;
+  sessionGeneration: string;
+  taskNodeId?: string;
+  /** Missing authority, database, binding, or active claim fails for explicit managed runs. */
+  required?: boolean;
+};
+
+export type MissionManagedTaskReference = {
+  schema: 1;
+  authorityBasis: ExecutionTaskAuthorityBasis;
+  taskNodeId: string;
+  revision: number;
+  digest: string;
+  sessionKey: string;
+  generation: string;
+  epoch: number;
+  worktree: string;
+};
+
+export type MissionManagedTaskAcceptanceReceipt = {
+  schema: 1;
+  taskNodeId: string;
+  revision: number;
+  digest: string;
+  epoch: number;
+  worktree: string;
+  acceptedEventSequence: number;
+  acceptedAt: number;
+  candidateDigest: string;
+};
 
 export type MissionStatus =
   | "idle"
@@ -208,6 +242,8 @@ export type MissionRunRequest = {
   enableSchedule?: boolean;
   maxTicks?: number;
   maxRepairTicks?: number;
+  /** Trusted tool/Gateway input. Never parsed from model-supplied Mission arguments. */
+  managedTask?: MissionManagedTaskRuntime;
 };
 
 export type MissionTickInput = {

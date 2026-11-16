@@ -1,0 +1,277 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-migration",
+  "provider": "local-scripted",
+  "status": "passed",
+  "source": {
+    "workspaceId": "migration-source",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\source",
+    "sessionKey": "agent:main:session-1794182882843-migrationsource",
+    "generation": "9fbb94d3-e352-43c2-b1a5-024c988c5f7e"
+  },
+  "target": "migration-target",
+  "operation": {
+    "schema": 1,
+    "id": "e2e41c9b-1e90-41eb-8939-8e2f0da9c6c4",
+    "requestDigest": "4fadfd68401d573e6f64370074743219168cb695c6b44ed304843fefce4b4250",
+    "workspaceId": "migration-source",
+    "targetWorkspaceId": "migration-target",
+    "sessionKey": "agent:main:session-1794182882843-migrationsource",
+    "agentId": "main",
+    "sourceGeneration": "9fbb94d3-e352-43c2-b1a5-024c988c5f7e",
+    "targetGeneration": "394e10f8-adf4-4456-8fd3-99fed7a42f01",
+    "sourceRoot": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\source",
+    "targetRoot": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\target",
+    "sourceBindingRevision": 1,
+    "task": {
+      "credential": {
+        "taskNodeId": "f4d5bd8c-6165-479c-9f41-cf2dadc860ce",
+        "sessionKey": "agent:main:session-1794182882843-migrationsource",
+        "generation": "9fbb94d3-e352-43c2-b1a5-024c988c5f7e",
+        "epoch": 1,
+        "attemptId": "a3248830-865b-4492-ac8a-4864e56d2ec6",
+        "worktree": "d:/tmp/unified-management-20261109/migration-validation/electron-migration6-results/execution-migration-moves--e6289--restart-interrupted-false-/source",
+        "contractRevision": 1,
+        "expiresAt": 1794183017806,
+        "state": "active"
+      },
+      "revision": 1,
+      "digest": "80ba0c9737413274a905d2408c77ef06a09a52249c8cf7fc8a88dd356642dc7c",
+      "authority": {
+        "localDomainId": "392c000c22c5daed443358bc8fcc2d881749e085db6fc235364ea25a57254334",
+        "authorityId": "392c000c22c5daed443358bc8fcc2d881749e085db6fc235364ea25a57254334",
+        "authorityDatabase": "d:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\source\\.git\\verse-claw\\task-ledger.sqlite3",
+        "executionWorktree": "d:/tmp/unified-management-20261109/migration-validation/electron-migration6-results/execution-migration-moves--e6289--restart-interrupted-false-/source",
+        "registrationRevision": null,
+        "projectRevision": null,
+        "identityDigest": "d2468b7c5578324fabb34b643eaec7d4e21caef8497493b5fffc7d34a1c8799d",
+        "databaseIdentity": "3325120695:57702370232233622:1794182894714335300"
+      },
+      "checkpoint": {
+        "nextAction": "Continue in target checkout",
+        "completed": [
+          "Prior work retained"
+        ],
+        "unresolved": [],
+        "artifacts": [
+          {
+            "path": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\source\\prior.txt",
+            "sha256": "d55cf5a6cb4d7252eb4ffe6072425caea0a935c44d0528543c3ff11d63c6c37f"
+          }
+        ]
+      }
+    },
+    "phase": "confirmed",
+    "createdAt": "2026-11-09T00:08:36.024Z",
+    "updatedAt": "2026-11-09T00:08:38.179Z",
+    "pausedCredential": {
+      "taskNodeId": "f4d5bd8c-6165-479c-9f41-cf2dadc860ce",
+      "sessionKey": "agent:main:session-1794182882843-migrationsource",
+      "generation": "9fbb94d3-e352-43c2-b1a5-024c988c5f7e",
+      "epoch": 2,
+      "attemptId": "a3248830-865b-4492-ac8a-4864e56d2ec6",
+      "worktree": "d:/tmp/unified-management-20261109/migration-validation/electron-migration6-results/execution-migration-moves--e6289--restart-interrupted-false-/source",
+      "contractRevision": 1,
+      "expiresAt": 1794183017806,
+      "state": "paused"
+    },
+    "reservation": {
+      "baseRoot": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\target",
+      "worktreeId": null,
+      "credential": {
+        "root": "d:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\target",
+        "incarnation": "3325120695:57983845208943544:1794182877283757000",
+        "generation": "base:3325120695:57983845208943544:1794182877283757000",
+        "epoch": 1,
+        "token": "644cd603-d162-4be9-bc38-f1ec6599910d",
+        "owner": {
+          "kind": "run",
+          "run": {
+            "runId": "migration:e2e41c9b-1e90-41eb-8939-8e2f0da9c6c4",
+            "scope": {
+              "workspaceId": "migration-target",
+              "projectId": "migration-target",
+              "sessionKey": "agent:main:session-1794182882843-migrationsource"
+            }
+          },
+          "agentId": "main",
+          "sessionGeneration": "394e10f8-adf4-4456-8fd3-99fed7a42f01",
+          "bindingRevision": 2
+        }
+      }
+    },
+    "runtimeReceipt": {
+      "operationId": "e2e41c9b-1e90-41eb-8939-8e2f0da9c6c4",
+      "sessionKey": "agent:main:session-1794182882843-migrationsource",
+      "sourceGeneration": "9fbb94d3-e352-43c2-b1a5-024c988c5f7e",
+      "targetGeneration": "394e10f8-adf4-4456-8fd3-99fed7a42f01",
+      "sourceRoot": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\source",
+      "targetRoot": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\target",
+      "state": "confirmed",
+      "transcriptPath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-5tjqzr\\verse-claw-e2e-user-data-sZg3dM\\openclaw-source-state\\agents\\main\\sessions\\394e10f8-adf4-4456-8fd3-99fed7a42f01.jsonl",
+      "transcriptSha256": "34af3e2042d96e7c428bd821cc06ba488af93af7a082ea40f731ebce714f99c2"
+    },
+    "targetCredential": {
+      "taskNodeId": "f4d5bd8c-6165-479c-9f41-cf2dadc860ce",
+      "sessionKey": "agent:main:session-1794182882843-migrationsource",
+      "generation": "394e10f8-adf4-4456-8fd3-99fed7a42f01",
+      "epoch": 3,
+      "attemptId": "70650bfa-1b9e-4e03-8f62-fc7d95ddda16",
+      "worktree": "d:/tmp/unified-management-20261109/migration-validation/electron-migration6-results/execution-migration-moves--e6289--restart-interrupted-false-/target",
+      "contractRevision": 1,
+      "expiresAt": 1794183037569,
+      "state": "active"
+    },
+    "targetBindingRevision": 1,
+    "confirmation": {
+      "targetDigest": "80ba0c9737413274a905d2408c77ef06a09a52249c8cf7fc8a88dd356642dc7c",
+      "candidateArtifacts": [
+        {
+          "path": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\source\\prior.txt",
+          "sha256": "d55cf5a6cb4d7252eb4ffe6072425caea0a935c44d0528543c3ff11d63c6c37f"
+        }
+      ],
+      "pendingOperations": 0,
+      "at": "2026-11-09T00:08:38.031Z"
+    },
+    "reservationReleased": true
+  },
+  "before": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Continue the same task in another checkout",
+        "constraints": [
+          "Retain prior progress"
+        ],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Output after migration",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "after.txt",
+              "sha256": "67ba9850ab6b62c8ef21a4ce8f00f1e82480638bbf61f8f6b49b175279e363a0"
+            }
+          }
+        ],
+        "target": "after.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "migration-task"
+        },
+        "taskNodeId": "f4d5bd8c-6165-479c-9f41-cf2dadc860ce",
+        "domain": "392c000c22c5daed443358bc8fcc2d881749e085db6fc235364ea25a57254334",
+        "revision": 1,
+        "digest": "80ba0c9737413274a905d2408c77ef06a09a52249c8cf7fc8a88dd356642dc7c",
+        "state": "doing",
+        "createdAt": 1794182894740,
+        "updatedAt": 1794182917569
+      },
+      "claim": {
+        "taskNodeId": "f4d5bd8c-6165-479c-9f41-cf2dadc860ce",
+        "sessionKey": "agent:main:session-1794182882843-migrationsource",
+        "generation": "394e10f8-adf4-4456-8fd3-99fed7a42f01",
+        "epoch": 3,
+        "attemptId": "70650bfa-1b9e-4e03-8f62-fc7d95ddda16",
+        "worktree": "d:/tmp/unified-management-20261109/migration-validation/electron-migration6-results/execution-migration-moves--e6289--restart-interrupted-false-/target",
+        "contractRevision": 1,
+        "expiresAt": 1794183037569,
+        "state": "active"
+      },
+      "checkpoint": {
+        "nextAction": "Continue in target checkout",
+        "completed": [
+          "Prior work retained"
+        ],
+        "unresolved": [],
+        "artifacts": [
+          {
+            "path": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\source\\prior.txt",
+            "sha256": "d55cf5a6cb4d7252eb4ffe6072425caea0a935c44d0528543c3ff11d63c6c37f"
+          }
+        ]
+      },
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": []
+  },
+  "after": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Continue the same task in another checkout",
+        "constraints": [
+          "Retain prior progress"
+        ],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Output after migration",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "after.txt",
+              "sha256": "67ba9850ab6b62c8ef21a4ce8f00f1e82480638bbf61f8f6b49b175279e363a0"
+            }
+          }
+        ],
+        "target": "after.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "migration-task"
+        },
+        "taskNodeId": "f4d5bd8c-6165-479c-9f41-cf2dadc860ce",
+        "domain": "392c000c22c5daed443358bc8fcc2d881749e085db6fc235364ea25a57254334",
+        "revision": 1,
+        "digest": "80ba0c9737413274a905d2408c77ef06a09a52249c8cf7fc8a88dd356642dc7c",
+        "state": "doing",
+        "createdAt": 1794182894740,
+        "updatedAt": 1794182917569
+      },
+      "claim": {
+        "taskNodeId": "f4d5bd8c-6165-479c-9f41-cf2dadc860ce",
+        "sessionKey": "agent:main:session-1794182882843-migrationsource",
+        "generation": "394e10f8-adf4-4456-8fd3-99fed7a42f01",
+        "epoch": 3,
+        "attemptId": "70650bfa-1b9e-4e03-8f62-fc7d95ddda16",
+        "worktree": "d:/tmp/unified-management-20261109/migration-validation/electron-migration6-results/execution-migration-moves--e6289--restart-interrupted-false-/target",
+        "contractRevision": 1,
+        "expiresAt": 1794183083312,
+        "state": "active"
+      },
+      "checkpoint": {
+        "nextAction": "Continue in target checkout",
+        "completed": [
+          "Prior work retained"
+        ],
+        "unresolved": [],
+        "artifacts": [
+          {
+            "path": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\source\\prior.txt",
+            "sha256": "d55cf5a6cb4d7252eb4ffe6072425caea0a935c44d0528543c3ff11d63c6c37f"
+          }
+        ]
+      },
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": []
+  },
+  "providerLog": [
+    {
+      "turn": "[Mon 2026-11-09 08:08 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:MIGRATION-FIXTURE-READY"
+    },
+    {
+      "turn": "[Mon 2026-11-09 08:08 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {},
+      "issued": "write-after-migration"
+    }
+  ]
+}

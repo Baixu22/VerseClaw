@@ -1,0 +1,114 @@
+{
+  "schema": "clawx.long-session.delegation-admission-e2e/v1",
+  "driven_by": "agent",
+  "actor": "clawx-e2e-agent",
+  "workspaceId": "default",
+  "rootPath": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-abNTP1\\verse-claw-e2e-home-KmZaA3\\.openclaw\\workspace",
+  "sessionKey": "agent:main:dashboard:a89661d5-985b-46e1-92f7-3044ea0d836b",
+  "sessionGeneration": "027a063e-0629-4e98-87fa-eba1f4779d0f",
+  "taskRef": "01213320d1ce84d0bb8f8146bbd8a5d51d9db1a53430a28b991ed99db4b63710",
+  "taskLedgerStatusAfter": "todo",
+  "idempotencyKey": "delegation-admission-1794305034126",
+  "first": {
+    "status": "accepted",
+    "admissionId": "2bcfe6fb-0375-4d74-8ddb-ef2fefdef45d",
+    "orchestrationRunId": "orch_f92f90af-032d-466b-8311-58efea3a8863",
+    "bindingRevision": 1,
+    "parentEnvironmentRevision": 1,
+    "budget": {
+      "status": "observed",
+      "reason": null,
+      "maxWorkers": 5,
+      "process": {
+        "maxChildrenPerAgent": 5,
+        "maxSpawnDepth": 1,
+        "source": "agents.defaults.subagents"
+      },
+      "backgroundTerminal": {
+        "lane": "subagent",
+        "maxConcurrent": 8,
+        "activeCount": 0,
+        "queuedCount": 0,
+        "source": "process.command-queue.subagent"
+      }
+    },
+    "children": [
+      {
+        "roleName": "architect",
+        "taskNodeId": "architect-1",
+        "roleInstanceId": "orch_f92f90af-032d-466b-8311-58efea3a8863:architect-1:architect:attempt-1",
+        "admissionStatus": "accepted",
+        "runState": "accepted-not-completed",
+        "completionObserved": false,
+        "backend": "subagent",
+        "childSessionKey": "agent:main:subagent:f1ddee8e-115a-42e2-9395-a3f5ea7c91a4",
+        "childRunId": "058acc66-5e25-44e4-a426-94c598463fab",
+        "toolAuthorization": {
+          "status": "effective",
+          "source": "role-contract+parent-clamp",
+          "roleName": "architect",
+          "effectiveRoleName": "architect",
+          "parentRoleName": null,
+          "allowlist": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "denylist": [
+            "write",
+            "edit",
+            "apply_patch",
+            "undo_write",
+            "team_orchestrate",
+            "task_loop",
+            "mission_loop",
+            "exec",
+            "bash",
+            "__role_capability:mcp_write",
+            "web_search",
+            "web_fetch",
+            "x_search",
+            "code_execution",
+            "browser",
+            "__role_capability:mcp_network"
+          ],
+          "permissionDecisionCount": 16
+        },
+        "isolation": {
+          "mode": "shared",
+          "backend": "shared-inprocess",
+          "canonicalRoot": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-abNTP1\\verse-claw-e2e-home-KmZaA3\\.openclaw\\workspace",
+          "branch": null,
+          "detachedHead": false,
+          "verifiedCheckout": false
+        },
+        "schedulerWave": 1,
+        "error": null
+      }
+    ],
+    "completionObserved": false
+  },
+  "duplicate": {
+    "status": "accepted",
+    "replayed": true,
+    "orchestrationRunId": "orch_f92f90af-032d-466b-8311-58efea3a8863"
+  },
+  "restartRetry": {
+    "status": "accepted",
+    "replayed": true,
+    "orchestrationRunId": "orch_f92f90af-032d-466b-8311-58efea3a8863"
+  },
+  "staleGeneration": {
+    "status": "rejected",
+    "error": "Coordinator binding is generation-mismatch: session-generation-mismatch"
+  },
+  "unsupportedBackend": {
+    "status": "rejected",
+    "error": "Unsupported delegation backend: native-shell"
+  },
+  "unknownWorker": {
+    "status": "rejected",
+    "phantomChildCreated": false
+  },
+  "transport": "built Electron host:invoke sessions.delegate -> Main coordinator admission -> gateway.permission -> actual orchestrator.run -> role-spawn/subagent owner"
+}

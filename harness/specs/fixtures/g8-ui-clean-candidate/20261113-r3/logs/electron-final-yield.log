@@ -1,0 +1,13 @@
+
+Running 1 test using 1 worker
+
+[1A[2K(node:38984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:38984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/1] tests\e2e\chat-task-visualizer.spec.ts:420:7 › Verse Claw chat execution graph › renders internal yield status and linked subagent branch from mocked IPC
+[1A[2K  1 passed (10.4s)

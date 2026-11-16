@@ -1,0 +1,118 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0830\\serial\\electron-runs\\verse-claw-e2e-run-0WB0WU",
+  "ledgerEntries": 35,
+  "checks": [
+    {
+      "pid": 22080,
+      "creationTime": 1794073082912,
+      "status": "exited"
+    },
+    {
+      "pid": 21600,
+      "creationTime": 1794073090519,
+      "status": "exited"
+    },
+    {
+      "pid": 42980,
+      "creationTime": 1794073091347,
+      "status": "exited"
+    },
+    {
+      "pid": 40036,
+      "creationTime": 1794073143922,
+      "status": "exited"
+    },
+    {
+      "pid": 45888,
+      "creationTime": 1794073153477,
+      "status": "exited"
+    },
+    {
+      "pid": 4332,
+      "creationTime": 1794073153841,
+      "status": "exited"
+    },
+    {
+      "pid": 45816,
+      "creationTime": 1794073186839,
+      "status": "exited"
+    },
+    {
+      "pid": 28332,
+      "creationTime": 1794073192512,
+      "status": "exited"
+    },
+    {
+      "pid": 43840,
+      "creationTime": 1794073192896,
+      "status": "exited"
+    },
+    {
+      "pid": 43932,
+      "creationTime": 1794073199780,
+      "status": "exited"
+    },
+    {
+      "pid": 25224,
+      "creationTime": 1794073206056,
+      "status": "exited"
+    },
+    {
+      "pid": 45724,
+      "creationTime": 1794073206322,
+      "status": "exited"
+    },
+    {
+      "pid": 28304,
+      "creationTime": 1794073213325,
+      "status": "exited"
+    },
+    {
+      "pid": 28308,
+      "creationTime": 1794073218894,
+      "status": "exited"
+    },
+    {
+      "pid": 27868,
+      "creationTime": 1794073219319,
+      "status": "exited"
+    },
+    {
+      "pid": 25688,
+      "creationTime": 1794073226455,
+      "status": "exited"
+    },
+    {
+      "pid": 15956,
+      "creationTime": 1794073234071,
+      "status": "exited"
+    },
+    {
+      "pid": 22332,
+      "creationTime": 1794073234356,
+      "status": "exited"
+    },
+    {
+      "pid": 39396,
+      "creationTime": 1794073241502,
+      "status": "exited"
+    },
+    {
+      "pid": 46100,
+      "creationTime": 1794073246843,
+      "status": "exited"
+    },
+    {
+      "pid": 38956,
+      "creationTime": 1794073247108,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

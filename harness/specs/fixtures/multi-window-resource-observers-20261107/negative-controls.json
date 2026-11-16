@@ -1,0 +1,48 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "cases": [
+    {
+      "name": "window resource lifetimes aggregates visibility and detaches a closed window before reopen",
+      "failure": "AssertionError: expected true to be false // Object.is equality",
+      "sourceCommit": "5ad905b44c2822caf6037df9278a8a260a27d3f9",
+      "run": "D:\\tmp\\tf0832\\window-negative.json"
+    },
+    {
+      "name": "window resource lifetimes releases power listeners on stop and creates one set on restart",
+      "failure": "AssertionError: expected 2 to be 1 // Object.is equality",
+      "sourceCommit": "5ad905b44c2822caf6037df9278a8a260a27d3f9",
+      "run": "D:\\tmp\\tf0832\\window-negative.json"
+    },
+    {
+      "name": "window resource lifetimes ignores a late pressure result after stopping and restarting its generation",
+      "failure": "AssertionError: expected \"vi.fn()\" to be called 2 times, but got 1 times",
+      "sourceCommit": "5ad905b44c2822caf6037df9278a8a260a27d3f9",
+      "run": "D:\\tmp\\tf0832\\window-negative.json"
+    },
+    {
+      "name": "resource observer lifetime shares a single refresh and releases only the final observer",
+      "failure": "AssertionError: expected undefined to be type of 'function'",
+      "sourceCommit": "5ad905b44c2822caf6037df9278a8a260a27d3f9",
+      "run": "D:\\tmp\\tf0832\\observer-negative.json"
+    },
+    {
+      "name": "resource observer lifetime ignores a stopped generation response and shares explicit refreshes",
+      "failure": "AssertionError: expected \"vi.fn()\" to be called once, but got 2 times",
+      "sourceCommit": "5ad905b44c2822caf6037df9278a8a260a27d3f9",
+      "run": "D:\\tmp\\tf0832\\observer-negative.json"
+    },
+    {
+      "name": "resource observer lifetime does not issue shed requests while hidden and refreshes when visible",
+      "failure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 10 times\n\nReceived:\n\n  1st vi.fn() call:\n\n    Array []\n\n  2nd vi.fn() call:\n\n    Array []\n\n  3rd vi.fn() call:\n\n    Array []\n\n  4th vi.fn() call:\n\n    Array []\n\n  5th vi.fn() call:\n\n    Array []\n\n  6th vi.fn() call:\n\n    Array []\n\n  7th vi.fn() call:\n\n    Array []\n\n  8th vi.fn() call:\n\n    Array []\n\n  9th vi.fn() call:\n\n    Array []\n\n  10th vi.fn() call:\n\n    Array []\n\n\nNumber of calls: 10\n",
+      "sourceCommit": "5ad905b44c2822caf6037df9278a8a260a27d3f9",
+      "run": "D:\\tmp\\tf0832\\observer-negative.json"
+    },
+    {
+      "name": "window resource lifetimes publishes per-window native visibility and releases bridge listeners on close",
+      "failure": "Error: Object has been destroyed",
+      "sourceCommit": "d2f090ae63d4f96f128dd302af64dfae0892f1e1",
+      "run": "D:\\tmp\\tf0832\\destroyed-window-negative.json"
+    }
+  ]
+}

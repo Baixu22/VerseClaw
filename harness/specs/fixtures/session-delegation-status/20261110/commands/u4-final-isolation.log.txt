@@ -1,0 +1,14 @@
+
+Running 1 test using 1 worker
+
+(node:34252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+  ok 1 tests\e2e\session-worker-task-journey.spec.ts:14:5 › a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (isolation) (3.2m)
+
+  1 passed (3.3m)

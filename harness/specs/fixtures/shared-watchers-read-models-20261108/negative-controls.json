@@ -1,0 +1,72 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "cases": [
+    {
+      "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+      "report": "D:\\tmp\\tf0835\\negative.json",
+      "sha256": "80ef553ea22541c662a4ec64cd94eb5f766fcd51920b40810c1be915627d12e1",
+      "name": "independent watcher ownership keeps two subscriptions with the same callback until both handles close",
+      "failure": "AssertionError: expected 1 to be 2 // Object.is equality"
+    },
+    {
+      "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+      "report": "D:\\tmp\\tf0835\\negative.json",
+      "sha256": "80ef553ea22541c662a4ec64cd94eb5f766fcd51920b40810c1be915627d12e1",
+      "name": "independent watcher ownership does not let an old handle close a recreated subscription",
+      "failure": "AssertionError: expected +0 to be 1 // Object.is equality"
+    },
+    {
+      "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+      "report": "D:\\tmp\\tf0835\\negative.json",
+      "sha256": "80ef553ea22541c662a4ec64cd94eb5f766fcd51920b40810c1be915627d12e1",
+      "name": "independent watcher ownership updates the shared file poll to the fastest active interval",
+      "failure": "AssertionError: expected 1000 to be 100 // Object.is equality"
+    },
+    {
+      "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+      "report": "D:\\tmp\\tf0835\\negative.json",
+      "sha256": "80ef553ea22541c662a4ec64cd94eb5f766fcd51920b40810c1be915627d12e1",
+      "name": "read-only cache generation does not return or publish an invalidated pending result to new callers",
+      "failure": "AssertionError: expected 'old' to be 'new' // Object.is equality"
+    },
+    {
+      "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+      "report": "D:\\tmp\\tf0835\\negative.json",
+      "sha256": "80ef553ea22541c662a4ec64cd94eb5f766fcd51920b40810c1be915627d12e1",
+      "name": "read-only cache generation clear separates pending loads and respects the requesting TTL",
+      "failure": "AssertionError: expected 'old' to be 'new' // Object.is equality"
+    },
+    {
+      "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+      "report": "D:\\tmp\\tf0835\\git-negative.json",
+      "sha256": "56faf7805d6976d40e1d1a31549215eeb5e97ab788c83a2cbaf37c6f96708517",
+      "name": "git api fences a pending status when its repository is invalidated",
+      "failure": "AssertionError: expected 'old' to be 'new' // Object.is equality"
+    },
+    {
+      "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+      "report": "D:\\tmp\\tf0835\\git-negative.json",
+      "sha256": "56faf7805d6976d40e1d1a31549215eeb5e97ab788c83a2cbaf37c6f96708517",
+      "name": "git api shares the same root status across workspace profiles without mixing roots",
+      "failure": "AssertionError: expected 2 to be 1 // Object.is equality"
+    },
+    {
+      "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+      "report": "D:\\tmp\\tf0835\\git-negative.json",
+      "sha256": "56faf7805d6976d40e1d1a31549215eeb5e97ab788c83a2cbaf37c6f96708517",
+      "name": "git api rechecks source identity after directory deletion and Git metadata replacement",
+      "failure": "AssertionError: expected 'first' to be 'second' // Object.is equality"
+    }
+  ],
+  "gitSourceReadback": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "sourceCommit": "7bd784bd25a5cd76629f2eec17bf55162aea9e68",
+    "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\electron\\services\\git-api.ts",
+    "oldSourceSha256": "991ed87fa9b781a99a932462847c0e1a560ea456adbc66813d1db104f7832ec4",
+    "restoredSha256": "5c71d25e18481d8cfc40c6c982ed6db2f6249573d058e92eeb81473ea931f1f5",
+    "exitCode": 1,
+    "failed": 3
+  }
+}

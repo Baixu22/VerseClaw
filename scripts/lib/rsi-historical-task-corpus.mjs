@@ -5,7 +5,9 @@ import { parseFrontmatter } from '../../harness/src/specs.mjs';
 import { sha256File, TF0604_PACK_DIR } from '../rsi-tf0604-baseline.mjs';
 import { GRADER_VERSION, RUBRIC_SYSTEM_PROMPT, graderDigest, gradeExecutionRecord, gradeTraceEvidence, gradeRubricReceipts, combineGraderVerdicts, classifyZeroPassTrials } from './agent-first-graders.mjs';
 
-export const TF0590_PACK_DIR = 'harness/specs/fixtures/agent-first-task-corpus';
+// The original corpus remains immutable and is still the live cohort input.
+// This versioned instrument revalidates current source/registry bindings.
+export const TF0590_PACK_DIR = 'harness/specs/fixtures/rsi-coding-cohort/instruments/task-corpus-v2';
 export const CORPUS_ACTOR = 'codex/tf0590-corpus-owner';
 export const RUBRIC_CONFIG = Object.freeze({ model: 'claude-haiku-4-5-20251001', votes: 3, temperature: 0.3, maxTokens: 512, promptVersion: 'tf0590-clarity/v2', promptDigest: graderDigest(RUBRIC_SYSTEM_PROMPT) });
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));

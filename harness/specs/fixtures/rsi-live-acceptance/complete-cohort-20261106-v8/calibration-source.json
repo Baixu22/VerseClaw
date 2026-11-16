@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-clean-environment-calibrator",
+  "commit": "4c4fb1ad2deb6624faf12e2391c6a07044e01b84",
+  "tree": "02972cd88d46e6748bef6b74fa1c33993c1a3942",
+  "dirty": false,
+  "startedAt": "2026-11-06T08:32:37.514Z",
+  "supportRoot": "D:/tmp/rsi-completion-20261106/openclaw_runtime/packages/markdown-core",
+  "freshInstalledDependenciesFrom": "D:/tmp/rsi-completion-20261106",
+  "dependencyViewReused": true
+}

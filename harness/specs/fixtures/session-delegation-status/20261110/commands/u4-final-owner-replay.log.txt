@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+(node:40648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart (1.0m)
+  ok 2 tests\e2e\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (47.4s)
+
+  2 passed (1.8m)

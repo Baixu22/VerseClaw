@@ -1,0 +1,28 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0834\\pair-3-candidate\\electron\\verse-claw-e2e-run-fW5XIF",
+  "ledgerEntries": 5,
+  "checks": [
+    {
+      "pid": 43404,
+      "creationTime": 1794109558639,
+      "status": "exited"
+    },
+    {
+      "pid": 33056,
+      "creationTime": 1794109564794,
+      "status": "exited"
+    },
+    {
+      "pid": 41172,
+      "creationTime": 1794109565145,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

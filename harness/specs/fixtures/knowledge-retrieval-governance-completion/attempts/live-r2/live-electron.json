@@ -1,0 +1,550 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\knowledge-relay-20261105\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/knowledge-relay-20261105/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\knowledge-relay-20261105\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/knowledge-relay-20261105/final/live-r2/live-electron-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/knowledge-relay-20261105/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "knowledge-live.spec.ts",
+      "file": "knowledge-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "live Knowledge uses actual Gateway model-only inference and public GitHub capture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 93970,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:14.792Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:14.793Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-05T11:44:14.793Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=29780, ppid=24760\n[2026-11-05T11:44:14.793Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:14.996Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:15.004Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:15.004Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-05T11:44:15.004Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-05T11:44:15.004Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:15.110Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:15.111Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [29780:1105/194415.266:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:err] [29780:1105/194415.266:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:15.834Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:15.837Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:15.838Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:15.838Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T11:44:15.838Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T11:44:15.838Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-kbqual01\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-kbqual01\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:19.500Z] [INFO] Scheduling Gateway reload after saving provider \"custom-kbqual01\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:19.500Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-kbqual01/space-bunny\" for provider \"custom-kbqual01\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-kbqual01\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-kbqual01\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-kbqual01\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:19.895Z] [INFO] Updated agent model {\"agentId\":\"main\",\"modelRef\":\"custom-kbqual01/space-bunny\"}\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-kbqual01\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-kbqual01\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:20.119Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:20.121Z] [INFO] Gateway start requested (port=61971)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:20.125Z] [DEBUG] Device identity loaded (deviceId=c359668a1013dcb08541c1b6aca0cb61753c82752adcbe55c935347a8ce47aec)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:20.126Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:20.359Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:29780) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:20.500Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:20.705Z] [INFO] Deferring Gateway restart (reload) until startup/reconnect settles (state=starting, startLock=true)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-kbqual01/space-bunny\" for provider \"custom-kbqual01\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-kbqual01\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-kbqual01\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-kbqual01\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:20.974Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:21.009Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:21.013Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":402,\"providerEnvMs\":13,\"channelStartupPolicyMs\":2,\"uvEnvMs\":14,\"mcpEnvMs\":22,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":471,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:21.013Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=61971, entry=\"D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 61971 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\", bundledBin=no, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:21.053Z] [INFO] Gateway process started (pid=39992)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:21.054Z] [DEBUG] Gateway manager now owns process pid=39992\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:21.074Z] [WARN] [Gateway stderr] [1105/194421.073:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:21.075Z] [WARN] [Gateway stderr] Some features may not be available.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:21.456Z] [WARN] [Gateway stderr] (node:39992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:21.457Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:22.951Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:23.454Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:25.596Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:27.761Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:28.641Z] [DEBUG] [Gateway stderr] (node:39992) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:28.641Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:32.952Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:33.542Z] [DEBUG] Gateway ready after 42 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:33.542Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:61971/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:33.574Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=e5877449-ec87-4d36-ac30-0fad9aba93f5 peer=127.0.0.1:51307->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:33.576Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=dcb42cb2-0c40-4747-a262-320cb5a17a36 peer=127.0.0.1:51303->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:33.577Z] [WARN] [Gateway stderr] \u001b[36m[gateway]\u001b[39m \u001b[33mControl UI build failed: exit 2147483651\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:33.581Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:33.582Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T11:44:33.582Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:33.585Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=9d17aece-556d-436f-8b9a-49019801ad24 peer=127.0.0.1:51308->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:33.681Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:61971/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:33.682Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:36.980Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:36.981Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T11:44:36.981Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.599Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.600Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.600Z] [DEBUG] Deferred Gateway restart still waiting (status:starting->running, state=running, startLock=true)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.601Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.602Z] [INFO] [metric] gateway.startup {\"configSyncMs\":695,\"spawnToReadyMs\":12488,\"readyToConnectMs\":4060,\"totalMs\":17243}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.602Z] [INFO] Executing deferred Gateway restart now (start:finally)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.602Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=39992\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.602Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.602Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.603Z] [INFO] Sending kill to Gateway process (pid=39992)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:37.646Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:37.647Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.232Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.232Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.233Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.233Z] [INFO] Gateway start requested (port=61971)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.235Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.405Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.477Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-kbqual01/space-bunny\" for provider \"custom-kbqual01\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-kbqual01\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-kbqual01\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-kbqual01\"\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:38.747Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.750Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":232,\"providerEnvMs\":12,\"channelStartupPolicyMs\":3,\"uvEnvMs\":0,\"mcpEnvMs\":4,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":269,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.750Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=61971, entry=\"D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 61971 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\", bundledBin=no, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.799Z] [INFO] Gateway process started (pid=1196)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:38.800Z] [DEBUG] Gateway manager now owns process pid=1196\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:38.822Z] [WARN] [Gateway stderr] [1105/194438.815:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:38.822Z] [WARN] [Gateway stderr] Some features may not be available.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:38.931Z] [WARN] [Gateway stderr] (node:1196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:38.932Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:40.916Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:43.091Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:45.288Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:45.342Z] [DEBUG] [Gateway stderr] (node:1196) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:45.342Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:56.300Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=0f6cc60e-639e-4cbb-86d0-32e4cdca1d41 peer=127.0.0.1:57125->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:56.303Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=17632362-8772-466b-9aca-ca11461cab4c peer=127.0.0.1:57124->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:56.304Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=a7c709d7-c108-4b3e-ac86-b3e07817ca2b peer=127.0.0.1:61375->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:56.306Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=6637e742-e3c0-43d8-95ac-47daa2ee6d9a peer=127.0.0.1:61374->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:56.308Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=5b032dbf-42a9-486c-b756-6443894f9e21 peer=127.0.0.1:61359->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:56.310Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=0f74f5d1-b076-49b1-b13f-e03f9fea16a7 peer=127.0.0.1:64846->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:56.313Z] [WARN] [Gateway stderr] \u001b[36m[gateway]\u001b[39m \u001b[33mControl UI build failed: exit 2147483651\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:56.317Z] [DEBUG] Gateway ready after 40 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:56.317Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:61971/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:56.332Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=760d265b-1086-46d3-8843-04167ea3e85e peer=127.0.0.1:57126->127.0.0.1:61971 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61971 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:56.334Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:56.334Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:56.334Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:44:57.297Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:61971/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:44:57.298Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:00.976Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:00.977Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T11:45:00.977Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:01.466Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:01.467Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:01.467Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:01.468Z] [INFO] [metric] gateway.startup {\"configSyncMs\":395,\"spawnToReadyMs\":17517,\"readyToConnectMs\":5151,\"totalMs\":23063}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:01.468Z] [INFO] [metric] gateway.restart.executed {\"gateway_restart_executed_total\":1,\"gateway_restart_suppressed_total\":0,\"gateway_restart_circuit_open_until\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:01.468Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=39992 pidAfter=1196 suppressed=0 executed=1 circuitOpenUntil=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:45:05.535Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-yTKEci\\verse-claw-e2e-user-data-q4VGkP\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-yTKEci\\verse-claw-e2e-user-data-q4VGkP\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:45:05.537Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-yTKEci\\verse-claw-e2e-user-data-q4VGkP\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer\" → \"D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer\": Error: EPERM: operation not permitted, symlink 'D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer' -> 'C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-yTKEci\\verse-claw-e2e-user-data-q4VGkP\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:45:05.539Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-yTKEci\\verse-claw-e2e-user-data-q4VGkP\\openclaw-source-state\\plugin-skills\\wiki-maintainer\" → \"D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer\": Error: EPERM: operation not permitted, symlink 'D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer' -> 'C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-yTKEci\\verse-claw-e2e-user-data-q4VGkP\\openclaw-source-state\\plugin-skills\\wiki-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:45:05.542Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-yTKEci\\verse-claw-e2e-user-data-q4VGkP\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'D:\\ClawX-work\\knowledge-relay-20261105\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-yTKEci\\verse-claw-e2e-user-data-q4VGkP\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:18.553Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:18.553Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:18.554Z] [INFO] Sending kill to Gateway process (pid=1196)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T11:45:18.565Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:18.565Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:19.267Z] [INFO] Gateway process exited (code=1, expected=yes)\n[2026-11-05T11:45:19.268Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:19.987Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:19.987Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:20.084Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T11:45:20.084Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-05T11:45:20.084Z] [INFO] [efficiency-sampler] stopped\n[2026-11-05T11:45:20.084Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:err] Waiting for the debugger to disconnect...\r\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-05T11:44:01.683Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a6da131312defb822299-00fed65e703d7a72020d",
+          "file": "knowledge-live.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mWorker teardown timeout of 90000ms exceeded.\u001b[39m\n\n\u001b[31mFailed worker ran 1 test:\u001b[39m\ntests\\e2e\\knowledge-live.spec.ts:17:5 › live Knowledge uses actual Gateway model-only inference and public GitHub capture",
+      "stack": "\u001b[31mWorker teardown timeout of 90000ms exceeded.\u001b[39m\n\n\u001b[31mFailed worker ran 1 test:\u001b[39m\ntests\\e2e\\knowledge-live.spec.ts:17:5 › live Knowledge uses actual Gateway model-only inference and public GitHub capture"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-05T11:44:00.406Z",
+    "duration": 194172.55000000002,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

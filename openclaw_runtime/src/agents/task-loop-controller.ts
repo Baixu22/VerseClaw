@@ -87,6 +87,7 @@ import type {
 } from "./orchestrator-run-observed.js";
 import { listRoleContracts } from "./role-registry.js";
 import type { RoleSpawnContext, SpawnFn } from "./role-spawn.js";
+import type { MissionManagedTaskReference } from "./mission-control/types.js";
 import {
   buildTaskLoopContextPack,
   type TaskLoopContextPack,
@@ -187,6 +188,8 @@ export type TaskLoopRunRequest = {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string | null;
+  workspaceDir?: string;
+  managedTask?: MissionManagedTaskReference;
   taskLedgerRootId?: string;
   fileHints?: string[];
   important?: boolean;
@@ -334,6 +337,8 @@ export type TaskLoopRunRecord = {
   loopRunId: string;
   sessionKey: string;
   workspaceId?: string | null;
+  workspaceDir?: string;
+  managedTask?: MissionManagedTaskReference;
   task: string;
   taskLedgerRootId?: string;
   lineage?: RuntimeLineage;
@@ -3417,6 +3422,8 @@ export async function runTaskLoop(
     loopRunId,
     sessionKey: request.sessionKey,
     ...(request.workspaceId !== undefined ? { workspaceId: request.workspaceId } : {}),
+    ...(request.workspaceDir ? { workspaceDir: request.workspaceDir } : {}),
+    ...(request.managedTask ? { managedTask: request.managedTask } : {}),
     task: request.task,
     ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
     ...(initialLineage ? { lineage: initialLineage } : {}),
@@ -3528,6 +3535,7 @@ export async function runTaskLoop(
       const ctx: RoleSpawnContext = {
         agentSessionKey: request.sessionKey,
         ...(request.agentId ? { requesterAgentIdOverride: request.agentId } : {}),
+        ...(request.workspaceDir ? { workspaceDir: request.workspaceDir } : {}),
       };
       const runObserved =
         deps.runObserved ??

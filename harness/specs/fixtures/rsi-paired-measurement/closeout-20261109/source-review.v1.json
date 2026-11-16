@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "RsiCloseoutSourceReview/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-source-review",
+  "sourceCommit": "2aed4ea163b0eea0e6ae813a0307896c0237211b",
+  "independentModelReviewer": false,
+  "independentArithmeticVerifier": true,
+  "checks": [
+    {
+      "id": "original-evaluator-and-outcomes",
+      "status": "passed",
+      "files": 176,
+      "manifestEntries": 426
+    },
+    {
+      "id": "unknown-usage-reservation",
+      "status": "passed",
+      "accountedTokens": 11934418,
+      "unknownReservationTokens": 721
+    },
+    {
+      "id": "budget-stop-seals-imported-receipts",
+      "status": "passed",
+      "before": 197,
+      "after": 198,
+      "newProviderCalls": 0
+    },
+    {
+      "id": "frozen-completion-gate-preserved",
+      "status": "passed",
+      "missing": 18,
+      "incomplete": 1
+    },
+    {
+      "id": "protocol-effect-separation",
+      "status": "not-evaluated"
+    }
+  ],
+  "readmeReview": {
+    "files": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "documentation": "The developer capability page describes replay, receipt finalization and the measured v4 verdict."
+  }
+}

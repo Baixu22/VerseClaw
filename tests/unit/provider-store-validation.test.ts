@@ -61,7 +61,16 @@ describe('useProviderStore - validateAccountApiKey()', () => {
 
     const result = await useProviderStore.getState().validateAccountApiKey('custom', 'sk-lm-test');
 
-    expect(result).toEqual({ valid: false, error: 'Error: offline' });
+    // TF-0733: opaque invocation failures still carry the full structured
+    // state (unknown everywhere) instead of a bare boolean.
+    expect(result).toMatchObject({
+      valid: false,
+      error: 'Error: offline',
+      reachable: 'unknown',
+      auth: 'unknown',
+      ready: false,
+      reason: 'unknown',
+    });
   });
 });
 

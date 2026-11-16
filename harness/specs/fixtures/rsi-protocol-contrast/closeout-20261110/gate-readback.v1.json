@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "RsiProtocolGateReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-gate-curator",
+  "unit": {
+    "originalSixFiles": {
+      "passed": 105,
+      "success": true
+    },
+    "focusedFinal": {
+      "passed": 20,
+      "success": true
+    },
+    "serialization": {
+      "passed": 9,
+      "success": true
+    },
+    "recovery": {
+      "passed": 3,
+      "success": true
+    }
+  },
+  "scopedTypes": "passed",
+  "lint": "passed",
+  "commsReplayAndCompare": "passed",
+  "harnessValidateAndDryRun": "passed",
+  "fullHarnessCi": {
+    "exitCode": 1,
+    "frontTestsPassed": 59,
+    "catalogs": "passed",
+    "blockers": [
+      "four stale Agent Dev evidence reports",
+      "historical performance limits: vitest-agent-dev, typecheck, contract"
+    ]
+  },
+  "reusedDependencies": true,
+  "freshInstall": false
+}

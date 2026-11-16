@@ -9,31 +9,48 @@
 // validators, so no change to the gateway-protocol package is required.
 import crypto from "node:crypto";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
+import { GATEWAY_CLIENT_MODES } from '../../../packages/gateway-protocol/src/client-info.js';
+import { updateSessionStoreEntry } from '../../config/sessions/store.js';
+import { resolveGatewaySessionStoreTargetWithStore, resolveFreshestSessionStoreMatchFromStoreKeys } from '../session-utils.js';
 import { compileRoleContractToSoul } from "../../agents/role-contract.js";
-import { buildRoleRegistry, listRoleContracts, resolveRoleContract, roleOrigin } from "../../agents/role-registry.js";
+import {
+  buildRoleRegistry,
+  listRoleContracts,
+  resolveRoleContract,
+  roleOrigin,
+} from "../../agents/role-registry.js";
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";
 import { createOrchestratorPlan, type OrchestratorWorkerPlan } from "../../agents/orchestrator.js";
-import { runOrchestrationObserved, type OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
+import {
+  runOrchestrationObserved,
+  type OrchestrationLifecycleEvent,
+} from "../../agents/orchestrator-run-observed.js";
 import type { DelegationAdmissionContext } from "../../agents/delegation-admission.js";
 import { buildDelegationReceipt } from "../../agents/long-session-delegation-receipt.js";
 import { synthesizeOrchestrationResult } from "../../agents/orchestration-synthesizer.js";
+import { withSessionTaskRequesterReference } from "../../agents/session-task-scope.js";
+import { resolveOrchestrationContext } from "../../agents/orchestration-workspace-context.js";
+import type { RoleSpawnContext } from "../../agents/role-spawn.js";
 import {
   normalizeQualityPolicy,
+  normalizeIsolationMode,
   normalizeGraphMode,
   normalizeRepairPolicy,
   normalizeWorkerCommunication,
   summarizeQuality,
 } from "../../agents/orchestration-protocol.js";
-import {
-  readRoutingMemoDashboard,
-} from "../../agents/routing-memo.js";
+import { readRoutingMemoDashboard } from "../../agents/routing-memo.js";
 import {
   buildTaskLoopVerifiedQualityAuthority,
   unavailableOrchestrationQualityAuthority,
   type OrchestrationQualityAuthority,
 } from "../../agents/orchestration-quality-scorecard.js";
 import { spawnSubagentDirect } from "../../agents/subagent-spawn.js";
-import { getTaskLoopRun, runTaskLoop, type TaskLoopLifecycleEvent } from "../../agents/task-loop-controller.js";
+import {
+  getTaskLoopRun,
+  runTaskLoop,
+  type TaskLoopLifecycleEvent,
+} from "../../agents/task-loop-controller.js";
 import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../../config/agent-limits.js";
 import {
   storeRuntimeTrace,
@@ -75,10 +92,21 @@ import {
   supersedeMemoryCard,
   updateMemoryCard,
 } from "../../memory/memory-store.js";
-import type { MemoryFeedbackOutcome, MemoryPhaseTag, MemoryProposal, MemoryRetentionAction, MemoryReviewAction, MemoryTaskSuccess } from "../../memory/types.js";
+import type {
+  MemoryFeedbackOutcome,
+  MemoryPhaseTag,
+  MemoryProposal,
+  MemoryRetentionAction,
+  MemoryReviewAction,
+  MemoryTaskSuccess,
+} from "../../memory/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { resolveControlPlaneActor, formatControlPlaneActor } from "../control-plane-audit.js";
-import { buildMemorySurface, deleteMemorySurfaceEntry, type MemorySurfaceSource } from "./memory-surface.js";
+import {
+  buildMemorySurface,
+  deleteMemorySurfaceEntry,
+  type MemorySurfaceSource,
+} from "./memory-surface.js";
 import type { GatewayRequestHandlers, RespondFn } from "./types.js";
 import {
   readTrajectoryPage,
@@ -155,7 +183,11 @@ function resolveQualityAuthority(
 }
 
 function readMemoryFeedbackOutcome(value: unknown): MemoryFeedbackOutcome | undefined {
-  return value === "helpful" || value === "neutral" || value === "harmful" || value === "missing_needed" || value === "user_corrected"
+  return value === "helpful" ||
+    value === "neutral" ||
+    value === "harmful" ||
+    value === "missing_needed" ||
+    value === "user_corrected"
     ? value
     : undefined;
 }
@@ -207,7 +239,10 @@ const ROLE_MEMORY_DISABLED_MESSAGE = "Role memory is disabled in Settings.";
 const ORCHESTRATOR_RUN_QUALITY_STATE_REASON =
   "Ordinary orchestrator.run quality is scored from shadow evidence; Task Loop owns active repair quality semantics.";
 
-function resolveOrchestratorRunStatus(spawnedCount: number, failureCount: number): "accepted" | "partial" | "error" {
+function resolveOrchestratorRunStatus(
+  spawnedCount: number,
+  failureCount: number,
+): "accepted" | "partial" | "error" {
   if (spawnedCount > 0 && failureCount === 0) {
     return "accepted";
   }
@@ -221,11 +256,13 @@ function disabledMemoryHealthReport() {
   return {
     ok: true,
     checkedAt: new Date().toISOString(),
-    checks: [{
-      name: "role-memory-enabled",
-      status: "warn" as const,
-      message: ROLE_MEMORY_DISABLED_MESSAGE,
-    }],
+    checks: [
+      {
+        name: "role-memory-enabled",
+        status: "warn" as const,
+        message: ROLE_MEMORY_DISABLED_MESSAGE,
+      },
+    ],
   };
 }
 
@@ -282,28 +319,40 @@ function readWorkerCommunication(value: unknown): "none" | "lead_mediated" {
 function readDelegationAdmission(value: unknown): DelegationAdmissionContext | undefined {
   if (!isRecord(value)) return undefined;
   const coordinator = isRecord(value.coordinator) ? value.coordinator : null;
-  if (!coordinator
-    || typeof coordinator.workspaceId !== "string"
-    || typeof coordinator.agentId !== "string"
-    || typeof coordinator.sessionKey !== "string"
-    || typeof coordinator.bindingRevision !== "number") return undefined;
+  if (
+    !coordinator ||
+    typeof coordinator.workspaceId !== "string" ||
+    typeof coordinator.agentId !== "string" ||
+    typeof coordinator.sessionKey !== "string" ||
+    typeof coordinator.bindingRevision !== "number"
+  )
+    return undefined;
   const rawTask = value.taskRef;
-  const taskRefNodeId = isRecord(rawTask) && rawTask.kind === "task-ledger" && typeof rawTask.nodeId === "string"
-    ? rawTask.nodeId
-    : typeof rawTask === "string" && rawTask.trim() ? rawTask.trim() : null;
+  const taskRefNodeId =
+    isRecord(rawTask) && rawTask.kind === "task-ledger" && typeof rawTask.nodeId === "string"
+      ? rawTask.nodeId
+      : typeof rawTask === "string" && rawTask.trim()
+        ? rawTask.trim()
+        : null;
   if (!taskRefNodeId) return undefined;
   const receiptId = typeof value.receiptId === "string" ? value.receiptId : value.admissionId;
   if (typeof value.idempotencyKey !== "string" || typeof receiptId !== "string") return undefined;
   return {
     receiptId,
     idempotencyKey: value.idempotencyKey,
-    requestDigest: typeof value.requestDigest === "string" ? value.requestDigest : crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex"),
+    requestDigest:
+      typeof value.requestDigest === "string"
+        ? value.requestDigest
+        : crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex"),
     createdAt: typeof value.createdAt === "string" ? value.createdAt : new Date().toISOString(),
     coordinator: {
       workspaceId: coordinator.workspaceId,
       agentId: coordinator.agentId,
       sessionKey: coordinator.sessionKey,
-      sessionId: typeof coordinator.sessionId === "string" ? coordinator.sessionId : String(coordinator.sessionGeneration ?? ""),
+      sessionId:
+        typeof coordinator.sessionId === "string"
+          ? coordinator.sessionId
+          : String(coordinator.sessionGeneration ?? ""),
       bindingRevision: coordinator.bindingRevision,
     },
     taskRef: { kind: "task-ledger", nodeId: taskRefNodeId },
@@ -319,31 +368,55 @@ function readExplicitWorkers(
     return undefined;
   }
   if (!Array.isArray(params.workers) || params.workers.length === 0) {
-    respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'orchestrator workers must be a non-empty array'));
+    respond(
+      false,
+      undefined,
+      errorShape(ErrorCodes.INVALID_REQUEST, "orchestrator workers must be a non-empty array"),
+    );
     return undefined;
   }
   const workers: OrchestratorWorkerPlan[] = [];
   for (const [index, rawWorker] of params.workers.entries()) {
     if (!isRecord(rawWorker)) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `orchestrator worker ${index + 1} must be an object`));
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          `orchestrator worker ${index + 1} must be an object`,
+        ),
+      );
       return undefined;
     }
     const roleName = readString(rawWorker.roleName);
     const task = readString(rawWorker.task);
     if (!roleName || !task) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `orchestrator worker ${index + 1} requires roleName and task`));
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          `orchestrator worker ${index + 1} requires roleName and task`,
+        ),
+      );
       return undefined;
     }
     if (!resolveRoleContract(roleName, rolesConfig(cfg))) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown role "${roleName}"`));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, `unknown role "${roleName}"`),
+      );
       return undefined;
     }
     const writeSet = readStringArray(rawWorker.writeSet);
-    const isolation = rawWorker.isolation === "worktree"
-      ? "worktree"
-      : rawWorker.isolation === "shared"
-        ? "shared"
-        : undefined;
+    let isolation: OrchestratorWorkerPlan["isolation"];
+    try {
+      isolation = rawWorker.isolation === undefined ? undefined : normalizeIsolationMode(rawWorker.isolation);
+    } catch (error) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, String(error)));
+      return undefined;
+    }
     workers.push({
       roleName,
       task,
@@ -351,6 +424,7 @@ function readExplicitWorkers(
       ...(readString(rawWorker.modelRef) ? { modelRef: readString(rawWorker.modelRef) } : {}),
       ...(writeSet.length > 0 ? { writeSet } : {}),
       ...(isolation ? { isolation } : {}),
+      ...(readString(rawWorker.worktreeId) ? { worktreeId: readString(rawWorker.worktreeId) } : {}),
     });
   }
   return workers;
@@ -387,12 +461,23 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown role "${name}"`));
       return;
     }
-    respond(true, { role: { ...role, origin: roleOrigin(role.name, registry) }, soul: compileRoleContractToSoul(role) }, undefined);
+    respond(
+      true,
+      {
+        role: { ...role, origin: roleOrigin(role.name, registry) },
+        soul: compileRoleContractToSoul(role),
+      },
+      undefined,
+    );
   },
 
   "teams.list": async ({ respond, context }) => {
     const cfg = context.getRuntimeConfig();
-    respond(true, getTeamTemplateSnapshot(rolesConfig(cfg) as { agents?: { teams?: unknown } }), undefined);
+    respond(
+      true,
+      getTeamTemplateSnapshot(rolesConfig(cfg) as { agents?: { teams?: unknown } }),
+      undefined,
+    );
   },
 
   "orchestrator.plan": async ({ params, respond, context }) => {
@@ -407,7 +492,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, `unsupported orchestration backend "${requestedBackend}"`),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          `unsupported orchestration backend "${requestedBackend}"`,
+        ),
       );
       return;
     }
@@ -419,8 +507,18 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     if (Object.prototype.hasOwnProperty.call(params, "workers") && !workers) {
       return;
     }
+    let spawnContext: RoleSpawnContext;
+    let isolation: ReturnType<typeof normalizeIsolationMode>;
+    try {
+      isolation = normalizeIsolationMode(params.isolation);
+      spawnContext = resolveOrchestrationContext(params, () => context.getRuntimeConfig());
+    } catch (error) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, String(error)));
+      return;
+    }
     const plan = createOrchestratorPlan({
       task,
+      isolation,
       agentId: readString(params.agentId),
       fileHints: readStringArray(params.fileHints),
       important: readBoolean(params.important) ?? false,
@@ -441,20 +539,24 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       repairPolicy: normalizeRepairPolicy(params.repairPolicy),
       workerCommunication: readWorkerCommunication(params.workerCommunication),
       allowFollowupPlanning: readBoolean(params.allowFollowupPlanning) ?? false,
-      workspaceDir: readString(params.workspaceDir),
+      workspaceDir: spawnContext.workspaceDir,
       qualityAuthority: resolveQualityAuthority(params),
     });
-    respond(true, {
-      plan,
-      taskGraph: plan.taskGraph,
-      executionWaves: plan.executionWaves,
-      routeDiagnostics: plan.routeDiagnostics,
-      capabilityGaps: plan.capabilityGaps,
-      estimatedRepairPolicy: plan.estimatedRepairPolicy,
-      complexityDecision: plan.complexityDecision,
-      runbookSelection: plan.runbookSelection,
-      qualityRouting: plan.qualityRouting,
-    }, undefined);
+    respond(
+      true,
+      {
+        plan,
+        taskGraph: plan.taskGraph,
+        executionWaves: plan.executionWaves,
+        routeDiagnostics: plan.routeDiagnostics,
+        capabilityGaps: plan.capabilityGaps,
+        estimatedRepairPolicy: plan.estimatedRepairPolicy,
+        complexityDecision: plan.complexityDecision,
+        runbookSelection: plan.runbookSelection,
+        qualityRouting: plan.qualityRouting,
+      },
+      undefined,
+    );
   },
 
   "orchestrator.run": async ({ params, respond, context, client }) => {
@@ -481,9 +583,38 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, `unsupported orchestration backend "${requestedBackend}"`),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          `unsupported orchestration backend "${requestedBackend}"`,
+        ),
       );
       return;
+    }
+    const requestedWorkspaceId = readString(params.workspaceId);
+    if (requestedWorkspaceId) {
+      if (client?.connect?.client?.mode !== GATEWAY_CLIENT_MODES.BACKEND) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Orchestration workspaceId is reserved for backend callers.'));
+        return;
+      }
+      const target = resolveGatewaySessionStoreTargetWithStore({ cfg, key: sessionKey });
+      const parent = resolveFreshestSessionStoreMatchFromStoreKeys(target.store, target.storeKeys)?.entry;
+      if (!parent?.sessionId) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Orchestration workspace requires a session owner generation.'));
+        return;
+      }
+      try {
+        const bound = await updateSessionStoreEntry({ storePath: target.storePath, sessionKey: target.canonicalKey ?? sessionKey,
+          skipMaintenance: true, update: owner => {
+            if (owner.sessionId !== parent.sessionId || owner.workspaceId && owner.workspaceId !== requestedWorkspaceId) {
+              throw new Error('Orchestration session workspace scope changed before dispatch');
+            }
+            return owner.workspaceId ? null : { workspaceId: requestedWorkspaceId };
+          } });
+        if (!bound) throw new Error('Orchestration session owner disappeared before dispatch');
+      } catch (error) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, error instanceof Error ? error.message : String(error)));
+        return;
+      }
     }
     const templateId = readTemplateId(params);
     if (!validateTemplateId(respond, cfg, templateId)) {
@@ -495,61 +626,92 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     }
     const delegationAdmission = readDelegationAdmission(params.delegationAdmission);
     if (params.delegationAdmission !== undefined && !delegationAdmission) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "delegationAdmission is malformed"));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "delegationAdmission is malformed"),
+      );
+      return;
+    }
+    let spawnContext: RoleSpawnContext;
+    let isolation: ReturnType<typeof normalizeIsolationMode>;
+    try {
+      isolation = normalizeIsolationMode(params.isolation);
+      spawnContext = resolveOrchestrationContext(params, () => context.getRuntimeConfig(), delegationAdmission);
+    } catch (error) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, String(error)));
       return;
     }
     const orchestrationRunId = `orch_${crypto.randomUUID()}`;
     // Capture actor identity for the audit log (enterprise: who/which/when).
     const actor = resolveControlPlaneActor(client ?? null);
-    const leadRoleHint = readString(params.leadRole) ?? readString(params.preferredLeadRole) ?? "auto";
+    const leadRoleHint =
+      readString(params.leadRole) ?? readString(params.preferredLeadRole) ?? "auto";
     // Broadcast lifecycle events to all operator clients so the renderer can
     // show real-time orchestration progress (per-worker started/completed/error).
     const broadcastLifecycle = (event: OrchestrationLifecycleEvent) => {
       try {
         context.broadcast("subagent-lifecycle", { sessionKey, ...event }, { dropIfSlow: true });
-      } catch { /* broadcast is best-effort */ }
+      } catch {
+        /* broadcast is best-effort */
+      }
     };
     try {
-      const result = await runOrchestrationObserved(
-        {
-          task,
-          fileHints: readStringArray(params.fileHints),
-          important: readBoolean(params.important) ?? false,
-          includeVerifier: readBoolean(params.includeVerifier) ?? true,
-          agentId: readString(params.agentId),
-          workers,
-          templateId,
-          explicitRunbookId: readString(params.runbookId) ?? readString(params.explicitRunbookId),
-          riskHints: readStringArray(params.riskHints),
-          capabilityHints: readStringArray(params.capabilityHints),
-          toolHints: readStringArray(params.toolHints),
-          priorFailureCount: readPositiveInteger(params.priorFailureCount),
-          durationMinutes: readPositiveInteger(params.durationMinutes),
-          patchFlowExecution: params.patchFlowExecution === true ? true : undefined,
-          maxWorkers: resolveMaxWorkers(params, cfg),
-          graphMode: normalizeGraphMode(params.graphMode),
-          allowAutoRepair: readBoolean(params.allowAutoRepair) ?? true,
-          cfg: rolesConfig(cfg),
-          roles: listRoleContracts(rolesConfig(cfg)),
-          preferredLeadRole: readString(params.leadRole) ?? readString(params.preferredLeadRole),
-          qualityPolicy: normalizeQualityPolicy(params.qualityPolicy),
-          repairPolicy: normalizeRepairPolicy(params.repairPolicy),
-          workerCommunication: readWorkerCommunication(params.workerCommunication),
-          allowFollowupPlanning: readBoolean(params.allowFollowupPlanning) ?? false,
-          orchestrationRunId,
-          patchRegistryMetadata: true,
-          workspaceDir: readString(params.workspaceDir),
-          qualityAuthority: resolveQualityAuthority(params, sessionKey),
-          ...(delegationAdmission ? { delegationAdmission } : {}),
-        },
-        {
-          agentSessionKey: sessionKey,
-          ...(readString(params.agentId) ? { requesterAgentIdOverride: readString(params.agentId) } : {}),
-        },
-        { spawn: spawnSubagentDirect },
-        { sessionKey, runId: orchestrationRunId },
-        broadcastLifecycle,
+      const taskReference = delegationAdmission
+        ? {
+            taskRef:
+              typeof delegationAdmission.taskRef === "string"
+                ? delegationAdmission.taskRef
+                : delegationAdmission.taskRef.nodeId,
+            coordinator: {
+              workspaceId: delegationAdmission.coordinator.workspaceId,
+              sessionKey: delegationAdmission.coordinator.sessionKey,
+              sessionGeneration: String(delegationAdmission.coordinator.sessionId ?? ""),
+              bindingRevision: delegationAdmission.coordinator.bindingRevision,
+            },
+          }
+        : undefined;
+      const result = await withSessionTaskRequesterReference(taskReference, () =>
+        runOrchestrationObserved(
+          {
+            task,
+            isolation,
+            fileHints: readStringArray(params.fileHints),
+            important: readBoolean(params.important) ?? false,
+            includeVerifier: readBoolean(params.includeVerifier) ?? true,
+            agentId: readString(params.agentId),
+            workers,
+            templateId,
+            explicitRunbookId: readString(params.runbookId) ?? readString(params.explicitRunbookId),
+            riskHints: readStringArray(params.riskHints),
+            capabilityHints: readStringArray(params.capabilityHints),
+            toolHints: readStringArray(params.toolHints),
+            priorFailureCount: readPositiveInteger(params.priorFailureCount),
+            durationMinutes: readPositiveInteger(params.durationMinutes),
+            patchFlowExecution: params.patchFlowExecution === true ? true : undefined,
+            maxWorkers: resolveMaxWorkers(params, cfg),
+            graphMode: normalizeGraphMode(params.graphMode),
+            allowAutoRepair: readBoolean(params.allowAutoRepair) ?? true,
+            cfg: rolesConfig(cfg),
+            roles: listRoleContracts(rolesConfig(cfg)),
+            preferredLeadRole: readString(params.leadRole) ?? readString(params.preferredLeadRole),
+            qualityPolicy: normalizeQualityPolicy(params.qualityPolicy),
+            repairPolicy: normalizeRepairPolicy(params.repairPolicy),
+            workerCommunication: readWorkerCommunication(params.workerCommunication),
+            allowFollowupPlanning: readBoolean(params.allowFollowupPlanning) ?? false,
+            orchestrationRunId,
+            patchRegistryMetadata: true,
+            workspaceDir: spawnContext.workspaceDir,
+            qualityAuthority: resolveQualityAuthority(params, sessionKey),
+            ...(delegationAdmission ? { delegationAdmission } : {}),
+          },
+          spawnContext,
+          { spawn: spawnSubagentDirect },
+          { sessionKey, runId: orchestrationRunId },
+          broadcastLifecycle,
+        ),
       );
+      spawnContext.assertWorkspaceCurrent?.();
       const delegationReceipt = delegationAdmission
         ? buildDelegationReceipt({
             admission: {
@@ -563,10 +725,13 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
                 bindingRevision: delegationAdmission.coordinator.bindingRevision,
                 sessionGeneration: String(delegationAdmission.coordinator.sessionId ?? ""),
               },
-              taskRef: typeof delegationAdmission.taskRef === "string" ? delegationAdmission.taskRef : delegationAdmission.taskRef.nodeId,
+              taskRef:
+                typeof delegationAdmission.taskRef === "string"
+                  ? delegationAdmission.taskRef
+                  : delegationAdmission.taskRef.nodeId,
               parentEnvironment: {
                 kind: "local",
-                canonicalRoot: readString(params.workspaceDir) ?? process.cwd(),
+                canonicalRoot: spawnContext.workspaceDir!,
                 backend: "local-workspace",
                 branch: null,
                 detachedHead: false,
@@ -588,7 +753,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       context.logGateway.info(
         `[role-audit] orchestrator.run ${formatControlPlaneActor(actor)} lead=${leadRoleHint} mode=${result.plan.mode} workers=${result.spawnedRunIds.length} failures=${result.failures.length} sessionKey=${sessionKey}`,
       );
-      const status = resolveOrchestratorRunStatus(result.spawnedRunIds.length, result.failures.length);
+      const status = resolveOrchestratorRunStatus(
+        result.spawnedRunIds.length,
+        result.failures.length,
+      );
       const qualityScorecard = result.qualityScorecard ?? null;
       const quality = qualityScorecard?.workerScores ?? [];
       respond(
@@ -638,9 +806,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           qualityScorecard,
           qualitySummary: qualityScorecard?.summary ?? summarizeQuality([]),
           qualityDecision: {
-            result: qualityScorecard?.authority ?? unavailableOrchestrationQualityAuthority(
-              "Ordinary orchestration produced no scorecard-backed quality evidence.",
-            ),
+            result:
+              qualityScorecard?.authority ??
+              unavailableOrchestrationQualityAuthority(
+                "Ordinary orchestration produced no scorecard-backed quality evidence.",
+              ),
             routing: result.plan.qualityRouting,
           },
           followupCandidates: [],
@@ -678,11 +848,9 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   "routing_memo.summary": async ({ params, respond, context }) => {
     respond(
       true,
-      readRoutingMemoDashboard(
-        readString(params.workspaceDir),
-        context.getRuntimeConfig(),
-        { qualityAuthority: resolveQualityAuthority(params) },
-      ),
+      readRoutingMemoDashboard(readString(params.workspaceDir), context.getRuntimeConfig(), {
+        qualityAuthority: resolveQualityAuthority(params),
+      }),
       undefined,
     );
   },
@@ -707,12 +875,16 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     const broadcastLifecycle = (event: TaskLoopLifecycleEvent) => {
       try {
         context.broadcast("task-loop-lifecycle", event, { dropIfSlow: true });
-      } catch { /* broadcast is best-effort */ }
+      } catch {
+        /* broadcast is best-effort */
+      }
     };
     const broadcastSubagentLifecycle = (event: OrchestrationLifecycleEvent) => {
       try {
         context.broadcast("subagent-lifecycle", { sessionKey, ...event }, { dropIfSlow: true });
-      } catch { /* broadcast is best-effort */ }
+      } catch {
+        /* broadcast is best-effort */
+      }
     };
     try {
       const result = await runTaskLoop(
@@ -749,7 +921,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.UNAVAILABLE, `task_loop.run failed: ${err instanceof Error ? err.message : String(err)}`),
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `task_loop.run failed: ${err instanceof Error ? err.message : String(err)}`,
+        ),
       );
     }
   },
@@ -766,7 +941,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     }
     const loop = getTaskLoopRun(loopRunId);
     if (!loop) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown task loop "${loopRunId}"`));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, `unknown task loop "${loopRunId}"`),
+      );
       return;
     }
     respond(true, { loop }, undefined);
@@ -778,7 +957,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, 'observability.reportTrace requires a { trace } object with at least an "id" field'),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          'observability.reportTrace requires a { trace } object with at least an "id" field',
+        ),
       );
       return;
     }
@@ -787,7 +969,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "observability.traces": async ({ respond }) => {
-    respond(true, { traces: getRuntimeTraceBuffer(), scorecards: getRuntimeScorecards() }, undefined);
+    respond(
+      true,
+      { traces: getRuntimeTraceBuffer(), scorecards: getRuntimeScorecards() },
+      undefined,
+    );
   },
 
   "observability.readFrom": async ({ params, respond }) => {
@@ -832,7 +1018,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, "observability.subscribe requires sessionKey and an authenticated connection"),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "observability.subscribe requires sessionKey and an authenticated connection",
+        ),
       );
       return;
     }
@@ -872,7 +1061,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   "observability.unsubscribe": async ({ respond, client }) => {
     const connId = client?.connId;
     if (!connId) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "authenticated connection required"));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "authenticated connection required"),
+      );
       return;
     }
     respond(true, { unsubscribed: unsubscribeTrajectory(connId) }, undefined);
@@ -920,16 +1113,15 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.propose requires a { proposal } object with at least a "content" field'),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          'memory.propose requires a { proposal } object with at least a "content" field',
+        ),
       );
       return;
     }
     ensureMemoryCardsLoaded();
-    respond(
-      true,
-      proposeMemoryCard(proposal),
-      undefined,
-    );
+    respond(true, proposeMemoryCard(proposal), undefined);
   },
 
   "memory.previewProposal": async ({ params, respond }) => {
@@ -941,7 +1133,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.previewProposal requires a { proposal } object with content or a target id'),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "memory.previewProposal requires a { proposal } object with content or a target id",
+        ),
       );
       return;
     }
@@ -950,9 +1145,14 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       true,
       {
         preview: previewMemoryProposal(proposal, {
-          operation: operation === "create" || operation === "update" || operation === "archive" || operation === "supersede" || operation === "tombstone"
-            ? operation
-            : undefined,
+          operation:
+            operation === "create" ||
+            operation === "update" ||
+            operation === "archive" ||
+            operation === "supersede" ||
+            operation === "tombstone"
+              ? operation
+              : undefined,
           targetId,
         }),
       },
@@ -967,7 +1167,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.store requires a { proposal } object with at least a "content" field'),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          'memory.store requires a { proposal } object with at least a "content" field',
+        ),
       );
       return;
     }
@@ -979,17 +1182,29 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     if (!id) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.update requires an "id" string'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.update requires an "id" string'),
+      );
       return;
     }
-    respond(true, updateMemoryCard(id, (params.patch ?? params.proposal ?? {}) as Partial<MemoryProposal>), undefined);
+    respond(
+      true,
+      updateMemoryCard(id, (params.patch ?? params.proposal ?? {}) as Partial<MemoryProposal>),
+      undefined,
+    );
   },
 
   "memory.archive": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     if (!id) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.archive requires an "id" string'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.archive requires an "id" string'),
+      );
       return;
     }
     const tombstone = readBoolean(params.tombstone) === true;
@@ -1039,7 +1254,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     const id = readString(params.id);
     const proposal = params.proposal as MemoryProposal | undefined;
     if (!id || !proposal || typeof proposal !== "object" || !proposal.content) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.supersede requires "id" and { proposal }'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.supersede requires "id" and { proposal }'),
+      );
       return;
     }
     respond(true, supersedeMemoryCard(id, proposal), undefined);
@@ -1047,23 +1266,34 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
 
   "memory.conflicts": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { conflicts: [] } })) return;
-    respond(true, { conflicts: listMemoryConflicts({ status: readString(params.status) }) }, undefined);
+    respond(
+      true,
+      { conflicts: listMemoryConflicts({ status: readString(params.status) }) },
+      undefined,
+    );
   },
 
   "memory.conflictDetail": async ({ params, respond }) => {
-    if (respondRoleMemoryDisabled(respond, {
-      payload: {
-        cards: [],
-        proposals: [],
-        evidence: [],
-        scopePrecedence: [],
-        suggestedAction: "reject",
-        reasonSummary: ROLE_MEMORY_DISABLED_MESSAGE,
-      },
-    })) return;
+    if (
+      respondRoleMemoryDisabled(respond, {
+        payload: {
+          cards: [],
+          proposals: [],
+          evidence: [],
+          scopePrecedence: [],
+          suggestedAction: "reject",
+          reasonSummary: ROLE_MEMORY_DISABLED_MESSAGE,
+        },
+      })
+    )
+      return;
     const id = readString(params.id);
     if (!id) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.conflictDetail requires "id"'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.conflictDetail requires "id"'),
+      );
       return;
     }
     respond(true, getMemoryConflictDetail(id), undefined);
@@ -1071,92 +1301,152 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
 
   "memory.proposals": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { proposals: [] } })) return;
-    respond(true, {
-      proposals: listMemoryProposals({
-        status: readString(params.status),
-        roleName: readString(params.roleName),
-        scope: readString(params.scope),
-        operation: readString(params.operation),
-        decision: readString(params.decision),
-        limit: typeof params.limit === "number" ? params.limit : undefined,
-      }),
-    }, undefined);
+    respond(
+      true,
+      {
+        proposals: listMemoryProposals({
+          status: readString(params.status),
+          roleName: readString(params.roleName),
+          scope: readString(params.scope),
+          operation: readString(params.operation),
+          decision: readString(params.decision),
+          limit: typeof params.limit === "number" ? params.limit : undefined,
+        }),
+      },
+      undefined,
+    );
   },
 
   "memory.review": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     const action = readString(params.action);
-    if (!id || !action || !["approve", "reject", "applyAsCold", "supersede", "merge"].includes(action)) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.review requires "id" and a valid "action"'));
+    if (
+      !id ||
+      !action ||
+      !["approve", "reject", "applyAsCold", "supersede", "merge"].includes(action)
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.review requires "id" and a valid "action"'),
+      );
       return;
     }
-    respond(true, reviewMemoryProposalRecord(id, action as "approve" | "reject" | "applyAsCold" | "supersede" | "merge", {
-      reason: readString(params.reason),
-    }), undefined);
+    respond(
+      true,
+      reviewMemoryProposalRecord(
+        id,
+        action as "approve" | "reject" | "applyAsCold" | "supersede" | "merge",
+        {
+          reason: readString(params.reason),
+        },
+      ),
+      undefined,
+    );
   },
 
   "memory.reviewBatch": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const ids = readStringArray(params.ids ?? params.proposalIds);
     const action = readString(params.action);
-    if (ids.length === 0 || !action || !["approve", "reject", "applyAsCold", "supersede", "merge"].includes(action)) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.reviewBatch requires "ids" and a valid "action"'));
+    if (
+      ids.length === 0 ||
+      !action ||
+      !["approve", "reject", "applyAsCold", "supersede", "merge"].includes(action)
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          'memory.reviewBatch requires "ids" and a valid "action"',
+        ),
+      );
       return;
     }
-    respond(true, reviewMemoryProposalBatch({
-      ids,
-      action: action as MemoryReviewAction,
-      reason: readString(params.reason),
-    }), undefined);
+    respond(
+      true,
+      reviewMemoryProposalBatch({
+        ids,
+        action: action as MemoryReviewAction,
+        reason: readString(params.reason),
+      }),
+      undefined,
+    );
   },
 
   "memory.merge": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
-    respond(true, mergeMemoryEntries({
-      cardIds: readStringArray(params.cardIds),
-      proposalIds: readStringArray(params.proposalIds),
-      content: readString(params.content),
-      roleTags: readStringArray(params.roleTags),
-      scope: readString(params.scope) as MemoryProposal["scope"] | undefined,
-      scopeKey: readString(params.scopeKey) ?? null,
-      reason: readString(params.reason),
-    }), undefined);
+    respond(
+      true,
+      mergeMemoryEntries({
+        cardIds: readStringArray(params.cardIds),
+        proposalIds: readStringArray(params.proposalIds),
+        content: readString(params.content),
+        roleTags: readStringArray(params.roleTags),
+        scope: readString(params.scope) as MemoryProposal["scope"] | undefined,
+        scopeKey: readString(params.scopeKey) ?? null,
+        reason: readString(params.reason),
+      }),
+      undefined,
+    );
   },
 
   "memory.mergeDraft": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { draft: null } })) return;
     const suggestedAction = readString(params.suggestedAction);
-    respond(true, buildMemoryMergeDraft({
-      cardIds: readStringArray(params.cardIds),
-      proposalIds: readStringArray(params.proposalIds),
-      content: readString(params.content),
-      roleTags: readStringArray(params.roleTags),
-      scope: readString(params.scope) as MemoryProposal["scope"] | undefined,
-      scopeKey: readString(params.scopeKey) ?? null,
-      suggestedAction: suggestedAction === "supersede" ? "supersede" : "merge",
-    }), undefined);
+    respond(
+      true,
+      buildMemoryMergeDraft({
+        cardIds: readStringArray(params.cardIds),
+        proposalIds: readStringArray(params.proposalIds),
+        content: readString(params.content),
+        roleTags: readStringArray(params.roleTags),
+        scope: readString(params.scope) as MemoryProposal["scope"] | undefined,
+        scopeKey: readString(params.scopeKey) ?? null,
+        suggestedAction: suggestedAction === "supersede" ? "supersede" : "merge",
+      }),
+      undefined,
+    );
   },
 
   "memory.versions": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { versions: [] } })) return;
     const cardId = readString(params.cardId ?? params.id);
     if (!cardId) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.versions requires "cardId"'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.versions requires "cardId"'),
+      );
       return;
     }
-    respond(true, { versions: listMemoryVersions({ cardId, limit: typeof params.limit === "number" ? params.limit : undefined }) }, undefined);
+    respond(
+      true,
+      {
+        versions: listMemoryVersions({
+          cardId,
+          limit: typeof params.limit === "number" ? params.limit : undefined,
+        }),
+      },
+      undefined,
+    );
   },
 
   "memory.audit": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { events: [] } })) return;
-    respond(true, {
-      events: listMemoryAuditEvents({
-        cardId: readString(params.cardId),
-        action: readString(params.action),
-        limit: typeof params.limit === "number" ? params.limit : undefined,
-      }),
-    }, undefined);
+    respond(
+      true,
+      {
+        events: listMemoryAuditEvents({
+          cardId: readString(params.cardId),
+          action: readString(params.action),
+          limit: typeof params.limit === "number" ? params.limit : undefined,
+        }),
+      },
+      undefined,
+    );
   },
 
   "memory.stats": async ({ respond }) => {
@@ -1165,95 +1455,136 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.policy": async ({ respond }) => {
-    if (respondRoleMemoryDisabled(respond, { payload: { policy: { ...getRoleMemoryPolicy(), enabled: false } } })) return;
+    if (
+      respondRoleMemoryDisabled(respond, {
+        payload: { policy: { ...getRoleMemoryPolicy(), enabled: false } },
+      })
+    )
+      return;
     respond(true, { policy: getRoleMemoryPolicy() }, undefined);
   },
 
   "memory.retentionCandidates": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { candidates: [] } })) return;
-    respond(true, {
-      candidates: listMemoryRetentionCandidates({
-        roleName: readString(params.roleName),
-        limit: typeof params.limit === "number" ? params.limit : undefined,
-        includeKeep: readBoolean(params.includeKeep) === true,
-      }),
-    }, undefined);
+    respond(
+      true,
+      {
+        candidates: listMemoryRetentionCandidates({
+          roleName: readString(params.roleName),
+          limit: typeof params.limit === "number" ? params.limit : undefined,
+          includeKeep: readBoolean(params.includeKeep) === true,
+        }),
+      },
+      undefined,
+    );
   },
 
   "memory.retentionPropose": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const action = readString(params.action);
     if (action && !["cold", "archive", "tombstone", "review"].includes(action)) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.retentionPropose action must be cold, archive, tombstone, or review'));
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "memory.retentionPropose action must be cold, archive, tombstone, or review",
+        ),
+      );
       return;
     }
-    respond(true, proposeMemoryRetention({
-      cardId: readString(params.cardId ?? params.id),
-      cardIds: readStringArray(params.cardIds),
-      roleName: readString(params.roleName),
-      action: action as MemoryRetentionAction | undefined,
-      limit: typeof params.limit === "number" ? params.limit : undefined,
-      reason: readString(params.reason),
-    }), undefined);
+    respond(
+      true,
+      proposeMemoryRetention({
+        cardId: readString(params.cardId ?? params.id),
+        cardIds: readStringArray(params.cardIds),
+        roleName: readString(params.roleName),
+        action: action as MemoryRetentionAction | undefined,
+        limit: typeof params.limit === "number" ? params.limit : undefined,
+        reason: readString(params.reason),
+      }),
+      undefined,
+    );
   },
 
   "memory.evidenceCheck": async ({ params, respond }) => {
-    if (respondRoleMemoryDisabled(respond, {
-      payload: {
-        evidence: {
-          id: "role-memory-disabled",
-          targetKind: "refs",
-          targetId: null,
-          status: "unchecked",
-          refs: [],
-          summary: ROLE_MEMORY_DISABLED_MESSAGE,
-          checkedAt: new Date().toISOString(),
+    if (
+      respondRoleMemoryDisabled(respond, {
+        payload: {
+          evidence: {
+            id: "role-memory-disabled",
+            targetKind: "refs",
+            targetId: null,
+            status: "unchecked",
+            refs: [],
+            summary: ROLE_MEMORY_DISABLED_MESSAGE,
+            checkedAt: new Date().toISOString(),
+          },
         },
-      },
-    })) return;
+      })
+    )
+      return;
     const kind = readString(params.kind);
-    respond(true, checkMemoryEvidence({
-      id: readString(params.id),
-      kind: kind === "proposal" ? "proposal" : "card",
-      refs: Array.isArray(params.refs) ? params.refs as MemoryProposal["evidenceRefs"] : undefined,
-      content: readString(params.content),
-    }), undefined);
+    respond(
+      true,
+      checkMemoryEvidence({
+        id: readString(params.id),
+        kind: kind === "proposal" ? "proposal" : "card",
+        refs: Array.isArray(params.refs)
+          ? (params.refs as MemoryProposal["evidenceRefs"])
+          : undefined,
+        content: readString(params.content),
+      }),
+      undefined,
+    );
   },
 
   "memory.simulateInjection": async ({ params, respond }) => {
-    if (respondRoleMemoryDisabled(respond, {
-      payload: {
-        roleName: readString(params.roleName) ?? "",
-        pack: {
-          budget: {},
-          buckets: {},
-          estimatedTokens: { total: 0 },
-          truncated: false,
-          candidateExplanations: [],
+    if (
+      respondRoleMemoryDisabled(respond, {
+        payload: {
+          roleName: readString(params.roleName) ?? "",
+          pack: {
+            budget: {},
+            buckets: {},
+            estimatedTokens: { total: 0 },
+            truncated: false,
+            candidateExplanations: [],
+          },
+          selectedCards: [],
+          selectorSnapshot: { disabled: true },
         },
-        selectedCards: [],
-        selectorSnapshot: { disabled: true },
-      },
-    })) return;
+      })
+    )
+      return;
     const roleName = readString(params.roleName);
     if (!roleName) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.simulateInjection requires "roleName"'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.simulateInjection requires "roleName"'),
+      );
       return;
     }
-    respond(true, simulateMemoryInjection({
-      roleName,
-      phase: readString(params.phase) as MemoryPhaseTag | undefined,
-      task: readString(params.task ?? params.taskState),
-      scope: {
-        workspace: readString(params.workspace ?? params.workspaceId),
-        sessionKey: readString(params.sessionKey),
-        taskId: readString(params.taskId),
-      },
-    }), undefined);
+    respond(
+      true,
+      simulateMemoryInjection({
+        roleName,
+        phase: readString(params.phase) as MemoryPhaseTag | undefined,
+        task: readString(params.task ?? params.taskState),
+        scope: {
+          workspace: readString(params.workspace ?? params.workspaceId),
+          sessionKey: readString(params.sessionKey),
+          taskId: readString(params.taskId),
+        },
+      }),
+      undefined,
+    );
   },
 
   "memory.health": async ({ respond }) => {
-    if (respondRoleMemoryDisabled(respond, { payload: { health: disabledMemoryHealthReport() } })) return;
+    if (respondRoleMemoryDisabled(respond, { payload: { health: disabledMemoryHealthReport() } }))
+      return;
     respond(true, { health: getMemoryHealthReport() }, undefined);
   },
 
@@ -1261,12 +1592,9 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     // Runtime-memory governance report (roadmap §D3): 4 signals over the
     // runtime-memory fact store, separate from role-memory (memory.health).
     try {
-      const { createRuntimeMemoryRuntimeIntegration } = await import(
-        "../../runtime-core/memory-runtime-integration.js"
-      );
-      const { buildHealthReport } = await import(
-        "../../runtime-core/memory-governance.js"
-      );
+      const { createRuntimeMemoryRuntimeIntegration } =
+        await import("../../runtime-core/memory-runtime-integration.js");
+      const { buildHealthReport } = await import("../../runtime-core/memory-governance.js");
       const integration = createRuntimeMemoryRuntimeIntegration({
         config: context.getRuntimeConfig(),
       });
@@ -1303,7 +1631,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.UNAVAILABLE, `memory.governance failed: ${error instanceof Error ? error.message : String(error)}`),
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.governance failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
       );
     }
   },
@@ -1312,9 +1643,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     // Read-only sanitized runtime-memory episode inspection for operators.
     // Admin scope: episodes may contain sensitive text, redacted before return.
     try {
-      const { inspectRuntimeMemoryForOperator } = await import(
-        "../../runtime-core/memory-operator-inspection.js"
-      );
+      const { inspectRuntimeMemoryForOperator } =
+        await import("../../runtime-core/memory-operator-inspection.js");
       const limit = readPositiveInteger(params.limit) ?? 50;
       const inspection = inspectRuntimeMemoryForOperator({
         config: context.getRuntimeConfig(),
@@ -1325,108 +1655,144 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.UNAVAILABLE, `memory.operatorInspection failed: ${error instanceof Error ? error.message : String(error)}`),
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.operatorInspection failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
       );
     }
   },
 
   "memory.utilityReport": async ({ params, respond }) => {
-    if (respondRoleMemoryDisabled(respond, {
-      payload: {
-        report: {
-          roleName: readString(params.roleName),
-          generatedAt: new Date().toISOString(),
-          dataQuality: "insufficient",
-          missingEvidence: [ROLE_MEMORY_DISABLED_MESSAGE],
-          sample: { cards: 0, injections: 0, feedback: 0, proposals: 0, conflicts: 0 },
-          aggregate: {
-            contextPrecisionAtK: null,
-            helpfulnessRate: null,
-            harmRate: null,
-            staleRate: null,
-            conflictRate: null,
-            reviewAcceptanceRate: null,
-            tokenOverheadPerRun: null,
-            taskSuccessDelta: null,
+    if (
+      respondRoleMemoryDisabled(respond, {
+        payload: {
+          report: {
+            roleName: readString(params.roleName),
+            generatedAt: new Date().toISOString(),
+            dataQuality: "insufficient",
+            missingEvidence: [ROLE_MEMORY_DISABLED_MESSAGE],
+            sample: { cards: 0, injections: 0, feedback: 0, proposals: 0, conflicts: 0 },
+            aggregate: {
+              contextPrecisionAtK: null,
+              helpfulnessRate: null,
+              harmRate: null,
+              staleRate: null,
+              conflictRate: null,
+              reviewAcceptanceRate: null,
+              tokenOverheadPerRun: null,
+              taskSuccessDelta: null,
+            },
+            cards: [],
           },
-          cards: [],
         },
+      })
+    )
+      return;
+    respond(
+      true,
+      {
+        report: getMemoryUtilityReport({
+          roleName: readString(params.roleName),
+          limit: typeof params.limit === "number" ? params.limit : undefined,
+        }),
       },
-    })) return;
-    respond(true, {
-      report: getMemoryUtilityReport({
-        roleName: readString(params.roleName),
-        limit: typeof params.limit === "number" ? params.limit : undefined,
-      }),
-    }, undefined);
+      undefined,
+    );
   },
 
   "memory.evalReport": async ({ params, respond }) => {
-    if (respondRoleMemoryDisabled(respond, {
-      payload: {
-        report: {
-          roleName: readString(params.roleName),
-          generatedAt: new Date().toISOString(),
-          dataQuality: "insufficient",
-          missingEvidence: [ROLE_MEMORY_DISABLED_MESSAGE],
-          sample: { cards: 0, injections: 0, feedback: 0, proposals: 0, conflicts: 0 },
-          aggregate: {
-            contextPrecisionAtK: null,
-            helpfulnessRate: null,
-            harmRate: null,
-            staleRate: null,
-            conflictRate: null,
-            reviewAcceptanceRate: null,
-            tokenOverheadPerRun: null,
-            taskSuccessDelta: null,
+    if (
+      respondRoleMemoryDisabled(respond, {
+        payload: {
+          report: {
+            roleName: readString(params.roleName),
+            generatedAt: new Date().toISOString(),
+            dataQuality: "insufficient",
+            missingEvidence: [ROLE_MEMORY_DISABLED_MESSAGE],
+            sample: { cards: 0, injections: 0, feedback: 0, proposals: 0, conflicts: 0 },
+            aggregate: {
+              contextPrecisionAtK: null,
+              helpfulnessRate: null,
+              harmRate: null,
+              staleRate: null,
+              conflictRate: null,
+              reviewAcceptanceRate: null,
+              tokenOverheadPerRun: null,
+              taskSuccessDelta: null,
+            },
+            cards: [],
           },
-          cards: [],
+          dryRun: undefined,
         },
-        dryRun: undefined,
+      })
+    )
+      return;
+    respond(
+      true,
+      {
+        report: getMemoryUtilityReport({
+          roleName: readString(params.roleName),
+          limit: typeof params.limit === "number" ? params.limit : undefined,
+        }),
+        dryRun: readString(params.roleName)
+          ? simulateMemoryInjection({
+              roleName: readString(params.roleName)!,
+              phase: readString(params.phase) as MemoryPhaseTag | undefined,
+              task: readString(params.task ?? params.taskState),
+              scope: {
+                workspace: readString(params.workspace ?? params.workspaceId),
+                sessionKey: readString(params.sessionKey),
+                taskId: readString(params.taskId),
+              },
+            })
+          : undefined,
       },
-    })) return;
-    respond(true, {
-      report: getMemoryUtilityReport({
-        roleName: readString(params.roleName),
-        limit: typeof params.limit === "number" ? params.limit : undefined,
-      }),
-      dryRun: readString(params.roleName)
-        ? simulateMemoryInjection({
-          roleName: readString(params.roleName)!,
-          phase: readString(params.phase) as MemoryPhaseTag | undefined,
-          task: readString(params.task ?? params.taskState),
-          scope: {
-            workspace: readString(params.workspace ?? params.workspaceId),
-            sessionKey: readString(params.sessionKey),
-            taskId: readString(params.taskId),
-          },
-        })
-        : undefined,
-    }, undefined);
+      undefined,
+    );
   },
 
   "memory.detail": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { detail: null } })) return;
     const id = readString(params.id);
     if (!id) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.detail requires "id"'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.detail requires "id"'),
+      );
       return;
     }
     const kind = readString(params.kind);
-    respond(true, getMemoryDetail({
-      id,
-      kind: kind === "card" || kind === "proposal" || kind === "conflict" || kind === "injection" ? kind : undefined,
-    }), undefined);
+    respond(
+      true,
+      getMemoryDetail({
+        id,
+        kind:
+          kind === "card" || kind === "proposal" || kind === "conflict" || kind === "injection"
+            ? kind
+            : undefined,
+      }),
+      undefined,
+    );
   },
 
   "memory.restore": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     if (!id) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.restore requires "id"'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.restore requires "id"'),
+      );
       return;
     }
-    respond(true, restoreMemoryCardAsProposal(id, { reason: readString(params.reason) }), undefined);
+    respond(
+      true,
+      restoreMemoryCardAsProposal(id, { reason: readString(params.reason) }),
+      undefined,
+    );
   },
 
   "memory.resolveConflict": async ({ params, respond }) => {
@@ -1434,7 +1800,14 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     const id = readString(params.id);
     const resolution = readString(params.resolution);
     if (!id || !resolution) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.resolveConflict requires "id" and "resolution"'));
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          'memory.resolveConflict requires "id" and "resolution"',
+        ),
+      );
       return;
     }
     const conflict = resolveMemoryConflict(id, resolution);
@@ -1459,35 +1832,47 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
 
   "memory.feedbackList": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { feedback: [] } })) return;
-    respond(true, {
-      feedback: listMemoryFeedback({
-        injectionId: readString(params.injectionId),
-        cardId: readString(params.cardId),
-        roleName: readString(params.roleName),
-        outcome: readMemoryFeedbackOutcome(params.outcome),
-        limit: typeof params.limit === "number" ? params.limit : undefined,
-      }),
-    }, undefined);
+    respond(
+      true,
+      {
+        feedback: listMemoryFeedback({
+          injectionId: readString(params.injectionId),
+          cardId: readString(params.cardId),
+          roleName: readString(params.roleName),
+          outcome: readMemoryFeedbackOutcome(params.outcome),
+          limit: typeof params.limit === "number" ? params.limit : undefined,
+        }),
+      },
+      undefined,
+    );
   },
 
   "memory.feedback": async ({ params, respond }) => {
     if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const outcome = readMemoryFeedbackOutcome(params.outcome);
     if (!outcome) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.feedback requires a valid "outcome"'));
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.feedback requires a valid "outcome"'),
+      );
       return;
     }
-    respond(true, {
-      feedback: recordMemoryFeedback({
-        injectionId: readString(params.injectionId),
-        cardId: readString(params.cardId),
-        roleName: readString(params.roleName),
-        outcome,
-        taskSuccess: readMemoryTaskSuccess(params.taskSuccess),
-        note: readString(params.note),
-        actor: { type: "user" },
-      }),
-    }, undefined);
+    respond(
+      true,
+      {
+        feedback: recordMemoryFeedback({
+          injectionId: readString(params.injectionId),
+          cardId: readString(params.cardId),
+          roleName: readString(params.roleName),
+          outcome,
+          taskSuccess: readMemoryTaskSuccess(params.taskSuccess),
+          note: readString(params.note),
+          actor: { type: "user" },
+        }),
+      },
+      undefined,
+    );
   },
 
   // R3-2.2 "本轮注入了什么": read the sanitized COMPASS memory-injection
@@ -1497,9 +1882,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   // throws (returns [] on any store error), so no role-memory gate applies.
   "memory.injectionReceipts": async ({ params, respond }) => {
     try {
-      const { listMemoryInjectionReceipts } = await import(
-        "../../context-engine/memory-injection-receipt.js"
-      );
+      const { listMemoryInjectionReceipts } =
+        await import("../../context-engine/memory-injection-receipt.js");
       const sessionKey = readString(params.sessionKey);
       const receipts = listMemoryInjectionReceipts({
         ...(sessionKey ? { sessionKey } : {}),
@@ -1531,9 +1915,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         respond(true, { enabled: false, candidates: [] }, undefined);
         return;
       }
-      const { createRuntimeMemoryRuntimeIntegration } = await import(
-        "../../runtime-core/memory-runtime-integration.js"
-      );
+      const { createRuntimeMemoryRuntimeIntegration } =
+        await import("../../runtime-core/memory-runtime-integration.js");
       const integration = createRuntimeMemoryRuntimeIntegration({ config: cfg });
       const { store } = integration.loadStore();
       const limit = readPositiveInteger(params.limit) ?? 50;
@@ -1574,21 +1957,21 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.proposeFacts.confirm requires a "factId" string'),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          'memory.proposeFacts.confirm requires a "factId" string',
+        ),
       );
       return;
     }
     try {
       const cfg = context.getRuntimeConfig();
-      const { createRuntimeMemoryRuntimeIntegration } = await import(
-        "../../runtime-core/memory-runtime-integration.js"
-      );
-      const { confirmRuntimeMemoryFactProposal } = await import(
-        "../../runtime-core/memory-proposal-shadow.js"
-      );
-      const { isRuntimeMemoryTemporalFactCandidate } = await import(
-        "../../runtime-core/memory-context.js"
-      );
+      const { createRuntimeMemoryRuntimeIntegration } =
+        await import("../../runtime-core/memory-runtime-integration.js");
+      const { confirmRuntimeMemoryFactProposal } =
+        await import("../../runtime-core/memory-proposal-shadow.js");
+      const { isRuntimeMemoryTemporalFactCandidate } =
+        await import("../../runtime-core/memory-context.js");
       const integration = createRuntimeMemoryRuntimeIntegration({ config: cfg });
       const { store } = integration.loadStore();
       const [candidate] = store.queryFacts({ factId, verificationStatus: "candidate", limit: 1 });
@@ -1596,7 +1979,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         respond(
           false,
           undefined,
-          errorShape(ErrorCodes.NOT_FOUND, `no pending proposeFacts candidate for factId ${factId}`),
+          errorShape(
+            ErrorCodes.NOT_FOUND,
+            `no pending proposeFacts candidate for factId ${factId}`,
+          ),
         );
         return;
       }

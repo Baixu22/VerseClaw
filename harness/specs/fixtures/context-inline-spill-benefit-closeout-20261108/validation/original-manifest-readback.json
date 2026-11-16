@@ -1,0 +1,26 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b934",
+  "checks": [
+    {
+      "pack": "context-inline-spill",
+      "files": 105,
+      "mismatches": 0
+    },
+    {
+      "pack": "context-inline-spill-benefit",
+      "files": 47,
+      "mismatches": 0
+    },
+    {
+      "pack": "context-inline-spill-benefit-round3",
+      "files": 37,
+      "mismatches": 0
+    },
+    {
+      "pack": "context-inline-spill-benefit-closeout-20261108",
+      "files": 38,
+      "mismatches": 0
+    }
+  ]
+}

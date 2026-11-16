@@ -1,0 +1,587 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "u2-current-artifacts",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "scripts/check-repository-artifacts.mjs"
+  ],
+  "startedAt": "2026-11-09T05:39:57.601Z",
+  "finishedAt": "2026-11-09T05:40:06.278Z",
+  "durationMs": 8674,
+  "exitCode": 0,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+    "tree": "9549fb6fc7a56d8090a60c631748c6b19ee83dc3",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/gateway/chat-runtime-events.ts",
+        "sha256": "826c3d843b0a7ea552ca671c712a746661c7525de02d33d8627105df14bb1e24"
+      },
+      {
+        "file": "electron/gateway/event-dispatch.ts",
+        "sha256": "c76d5b0587e7ccd5aa5fafc53225c4707b748310653f9fd31cd2712425a9b2a1"
+      },
+      {
+        "file": "electron/gateway/manager.ts",
+        "sha256": "ab67a97dd1edfe0570b12657928ea3da41c4c879563cbaceb927ea92c345d562"
+      },
+      {
+        "file": "electron/main/ipc-handlers.ts",
+        "sha256": "3d38ff393d3bca51ee0aee63a5e896a76963fbdda2b1b3912c095a5b104d67d6"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "ffc1f7577cdb7e03ad4d47dcf961ece82d4908a0f3d6cc4e5411bdd1a4d3f1ae"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+        "sha256": "dc37f4fe8b00833a6777bbf1b9bb942969be5be4727df834e90b118255329d67"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "sha256": "e88bc2bbe4bebcbe4a440aa99f6ea3258b242fa927a7695b23e8909855920be4"
+      },
+      {
+        "file": "scripts/lib/rsi-benefit-eval.d.mts",
+        "sha256": "2a2c3456d90a192866ba162cb02b265cb7ba78d69b88a07aa500e017cb08a234"
+      },
+      {
+        "file": "scripts/lib/rsi-benefit-eval.mjs",
+        "sha256": "b167e2a6d217b77453e974cb500fecd33235beb0c8387ad9057edc4a8282a40d"
+      },
+      {
+        "file": "scripts/lib/rsi-campaign-budget.d.mts",
+        "sha256": "7a57212daff128a7d0908daf819123e90c99921a5b922b2167fa629f42f1405a"
+      },
+      {
+        "file": "scripts/lib/rsi-campaign-budget.mjs",
+        "sha256": "8d8b95cce9e1cb1427ee5e80f07c1ac4391651425f17d8cb8db37a9ce31d17b6"
+      },
+      {
+        "file": "scripts/lib/rsi-coding-tool-loop.d.mts",
+        "sha256": "3e5ab04a020b2121f401b5d35d745ddc1cf51b5428e8f1e9ce1bbce4d97d51b6"
+      },
+      {
+        "file": "scripts/lib/rsi-coding-tool-loop.mjs",
+        "sha256": "a44e814766c8cf166ae06192faedfa7d28e90c6f3f7e7fde88807d3a327d4d43"
+      },
+      {
+        "file": "scripts/repository-artifacts.json",
+        "sha256": "4eab89f78e318da5a610e528673dc7dc221f97bb16d68f2c7ad63f8f02d40c67"
+      },
+      {
+        "file": "scripts/rsi-budget-stop-regression.mjs",
+        "sha256": "004015b7ad953a4a7134851ac1f411572cc7916440ac3b4921b02b37c9740e11"
+      },
+      {
+        "file": "scripts/rsi-coding-collector.d.mts",
+        "sha256": "3303dde76702899282067b57cc0fc0324ae7f73f0121291fb301e7e323b82fda"
+      },
+      {
+        "file": "scripts/rsi-coding-collector.mjs",
+        "sha256": "f8369fa4b9eb711785c3e6c4b641fbddb2730bd283233bf233834e46263c9b24"
+      },
+      {
+        "file": "scripts/rsi-live-acceptance.d.mts",
+        "sha256": "5c0eeded04feda6f0776087b774855fc04c45fff9f2fc4f4a5da181f3db909ac"
+      },
+      {
+        "file": "scripts/rsi-live-acceptance.mjs",
+        "sha256": "aada17b3ce7494f0f4503f26e1785b71375cc4324eb2c66debfff265853d97ff"
+      },
+      {
+        "file": "scripts/rsi-paired-measurement-replay.d.mts",
+        "sha256": "c2abf500c7ffce95a664766009f01cce798d4733f82d9ae7884bd6daee68dd2d"
+      },
+      {
+        "file": "scripts/rsi-paired-measurement-replay.mjs",
+        "sha256": "d82be0fde55eca11cd1862128c97006fa1f4f12c0e75f7208bb55e99999191e5"
+      },
+      {
+        "file": "scripts/rsi-paired-measurement.d.mts",
+        "sha256": "5cb94657a358fa4aeacc95d272088ca67de28ceed4d24795f39793b87905da88"
+      },
+      {
+        "file": "scripts/rsi-paired-measurement.mjs",
+        "sha256": "6e425e47294caebab8ceccb86721daeb461635e52b112eef34d7f113816818d4"
+      },
+      {
+        "file": "shared/host-events/contract.ts",
+        "sha256": "90d9049e5a78c921a7e14d1cb3073807bb6ba51382c4b846aa0f41889f3fb96d"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "cdda2bee32c0e4e3d7d27e2aa960cba97800e753da722eb0bc5a12de22d5755f"
+      },
+      {
+        "file": "shared/i18n/locales/en/taskLedger.json",
+        "sha256": "96dd8a4247829a48ed0801e0bbc055baa53805471c1d0690d50402bf266033a8"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "d167c5dc6e6468cc1db7250ab988d6fb5c5996f14c8ac41528df6a11872e7a97"
+      },
+      {
+        "file": "shared/i18n/locales/ja/taskLedger.json",
+        "sha256": "44386547ece8ce43b6b072dcbae7a1f6c6ef904d5c0d6219c26408d27ba9700a"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "5249cd4650e5c422d92a72e75e3d06cf98960af984e0ec59e82869d5c5b69bfd"
+      },
+      {
+        "file": "shared/i18n/locales/ru/taskLedger.json",
+        "sha256": "b9a77c63f7b59f5a35fc4df4a5db875ab08948d0574b2ac013e42012468fd6de"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "a1ce3c6eabc7a1f5e62acd9c340ca6076546543ba3ead471cfc7e63d7891dad4"
+      },
+      {
+        "file": "shared/i18n/locales/zh/taskLedger.json",
+        "sha256": "e33c2c510068fc7c30882cd976ba4bbb78e5440b5d0d5c610269ee598126e32f"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "9dcd02931e63f2f64658a11ba33fa5c247501e98f38dba9d59aaccf47bcb357d"
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "6dfec2aa7c3bdb402255a13b7c2f24e26f8b74ce52166e69803a49e98289ffd7"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "ad6457964c3e9986d70c017bfd74c89fda6358f9ea8751469d6ef0a275a66d80"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "9a42bf1804bed6c98662b7b6e7b26e317e3860cda07fdb6a6ab93bc8db0d7a5c"
+      },
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "aeee24f12ed597158b2bfc7dbb71bab5c473bc1171d3903fc2293cbe8030b749"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "2d29cdc5b257cf7e75c797f67dda84595b52e46146a2105e53da0074af34c268"
+      },
+      {
+        "file": "src/components/layout/session-buckets.ts",
+        "sha256": "ce699527133ac60cf06d840dd4ea699b257e4c19ec40070fe749e6bc89d9564b"
+      },
+      {
+        "file": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "5f0a0f474997bd6ef2f368726d312058cb6c9e860bb52e773442f64ba0faef09"
+      },
+      {
+        "file": "src/hooks/use-message-viewport.ts",
+        "sha256": "a152b62ff5d537fca2fd36ffeccdfcb3108a2b366aede1bd45a97331b0afa753"
+      },
+      {
+        "file": "src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+      },
+      {
+        "file": "src/lib/host-events.ts",
+        "sha256": "fdec1cd7df9e74341772b59aeb4f5b69ba69ede6c39bb3988377c9c6b499af1a"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "9f8555ba1cec07f1196c279dbff3d77b3c6ce1a2d6e3f0ee4ed828af2dc3715e"
+      },
+      {
+        "file": "src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "c89c24e22e21f472e507efef631b77e10ad88d1464efac1070ad62dbb82c7ae6"
+      },
+      {
+        "file": "src/pages/Projects/index.tsx",
+        "sha256": "a49639af58311ebd39f1838df0a77f480e09c3b610f8c0e850b0fa749e286048"
+      },
+      {
+        "file": "src/pages/TaskLedger/ManagedTasks.tsx",
+        "sha256": "a7c2d0c058c5ea5b3b0ef81b728ab04405f0691446019a732b08a545364d5891"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "f1dbdd6a28b19414a41041ef2e67a7d3430cfec6c984a94a8b82c1ded109380b"
+      },
+      {
+        "file": "src/stores/gateway.ts",
+        "sha256": "2312797232f108cb5da2c92874e830cefff006e47afaca0f901760414f9e8cee"
+      },
+      {
+        "file": "tests/e2e/session-delegation-capacity.spec.ts",
+        "sha256": "e2bd7acf51e96b3250cc4ea530255989bba43da0617f46487e25b14587773d3c"
+      },
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "b54af109014ca1b291f4c31f6cc2bb0349775dcfc1600b61399ed2a81d84af3c"
+      },
+      {
+        "file": "tests/e2e/session-task-state-guidance.spec.ts",
+        "sha256": "9dfaa07e190cd97cf6b03a9198f98f3304d9f1b149bed6e83b96dffc1c8a0ae9"
+      },
+      {
+        "file": "tests/unit/chat-startup-hydration.test.ts",
+        "sha256": "d3284f8217ca6fda7d098f5a7d8c392b0b64179382ba4617c846be1c15adb069"
+      },
+      {
+        "file": "tests/unit/chat-viewport.test.tsx",
+        "sha256": "30969869ccdaddb0dd039163918384282265e16efeacbd201238d731e80f4d06"
+      },
+      {
+        "file": "tests/unit/gateway-event-dispatch.test.ts",
+        "sha256": "643ec2220d2940ef8cf7ee7a18dd7e4da942bdf8351af2fc4af5571ef8329ad8"
+      },
+      {
+        "file": "tests/unit/gateway-events.test.ts",
+        "sha256": "867761576d36f04091f96ed1e240c4109552ac29549a7f22cafd1ae2713e6826"
+      },
+      {
+        "file": "tests/unit/long-session-delegation-admission.test.ts",
+        "sha256": "e3bb6ff235563aa1fa35a7ed76335b4779602b384907148a341cae528f32526c"
+      },
+      {
+        "file": "tests/unit/rsi-campaign-budget.test.ts",
+        "sha256": "ec3b3c6592b4dc2e923943b066cecc0653ffe7cf237a774e8d044d3f72d80efe"
+      },
+      {
+        "file": "tests/unit/rsi-coding-tool-loop.test.ts",
+        "sha256": "2811dce42706f1f7540ec96d678e8a9a70228484027b9c220f6e3ba3c8bd7480"
+      },
+      {
+        "file": "tests/unit/rsi-paired-measurement-replay.test.ts",
+        "sha256": "5ed0cd58b4bdfcaa4d3953f20ae04eee55da81758ef4a218c5a51aaa4de35f67"
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "sha256": "b6465082f9b2ba52c197ab6cf260155aeb961bbbacfa7489ccfa31a1047544e8"
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "sha256": "7ff319e5a13ffad68a56668a36c90854012763852a0cf8d9544c6246d1a6af9f"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "5dce39f86a035d82194eed5cd99a3c8edf3bed27864d3df892f68f3ea5eaf55e"
+      },
+      {
+        "file": "tests/unit/session-reading-scroll-owner.test.tsx",
+        "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+      },
+      {
+        "file": "tests/unit/session-task-state-guidance.test.tsx",
+        "sha256": "87a9c62e0cef1f36dc4288920095b83294bb4f61467520806f3896484071a9aa"
+      },
+      {
+        "file": "tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "22b6c28521fafeec66a0a1671897b6999f6c6c49217da03b171df5a5de7a6624"
+      },
+      {
+        "file": "tests/unit/sidebar-session-buckets.test.ts",
+        "sha256": "3c761fecf40ced3bea68a8b9bb9d114439cedfc23e71a3254264d9d656fa3f94"
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "sha256": "d166a6abdd6634ae0d6f84fc31399a364dede2ae5deba1292efe9aa111807bc9"
+      },
+      {
+        "file": "tests/unit/workspaces-api.test.ts",
+        "sha256": "e0f9b3ec293d0a8e9a42ccad01b7adc639553c4368d10bd1b0e8608d9ba68b77"
+      }
+    ]
+  },
+  "after": {
+    "commit": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+    "tree": "9549fb6fc7a56d8090a60c631748c6b19ee83dc3",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/gateway/chat-runtime-events.ts",
+        "sha256": "826c3d843b0a7ea552ca671c712a746661c7525de02d33d8627105df14bb1e24"
+      },
+      {
+        "file": "electron/gateway/event-dispatch.ts",
+        "sha256": "c76d5b0587e7ccd5aa5fafc53225c4707b748310653f9fd31cd2712425a9b2a1"
+      },
+      {
+        "file": "electron/gateway/manager.ts",
+        "sha256": "ab67a97dd1edfe0570b12657928ea3da41c4c879563cbaceb927ea92c345d562"
+      },
+      {
+        "file": "electron/main/ipc-handlers.ts",
+        "sha256": "3d38ff393d3bca51ee0aee63a5e896a76963fbdda2b1b3912c095a5b104d67d6"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "ffc1f7577cdb7e03ad4d47dcf961ece82d4908a0f3d6cc4e5411bdd1a4d3f1ae"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+        "sha256": "dc37f4fe8b00833a6777bbf1b9bb942969be5be4727df834e90b118255329d67"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "sha256": "e88bc2bbe4bebcbe4a440aa99f6ea3258b242fa927a7695b23e8909855920be4"
+      },
+      {
+        "file": "scripts/lib/rsi-benefit-eval.d.mts",
+        "sha256": "2a2c3456d90a192866ba162cb02b265cb7ba78d69b88a07aa500e017cb08a234"
+      },
+      {
+        "file": "scripts/lib/rsi-benefit-eval.mjs",
+        "sha256": "b167e2a6d217b77453e974cb500fecd33235beb0c8387ad9057edc4a8282a40d"
+      },
+      {
+        "file": "scripts/lib/rsi-campaign-budget.d.mts",
+        "sha256": "7a57212daff128a7d0908daf819123e90c99921a5b922b2167fa629f42f1405a"
+      },
+      {
+        "file": "scripts/lib/rsi-campaign-budget.mjs",
+        "sha256": "8d8b95cce9e1cb1427ee5e80f07c1ac4391651425f17d8cb8db37a9ce31d17b6"
+      },
+      {
+        "file": "scripts/lib/rsi-coding-tool-loop.d.mts",
+        "sha256": "3e5ab04a020b2121f401b5d35d745ddc1cf51b5428e8f1e9ce1bbce4d97d51b6"
+      },
+      {
+        "file": "scripts/lib/rsi-coding-tool-loop.mjs",
+        "sha256": "a44e814766c8cf166ae06192faedfa7d28e90c6f3f7e7fde88807d3a327d4d43"
+      },
+      {
+        "file": "scripts/repository-artifacts.json",
+        "sha256": "4eab89f78e318da5a610e528673dc7dc221f97bb16d68f2c7ad63f8f02d40c67"
+      },
+      {
+        "file": "scripts/rsi-budget-stop-regression.mjs",
+        "sha256": "004015b7ad953a4a7134851ac1f411572cc7916440ac3b4921b02b37c9740e11"
+      },
+      {
+        "file": "scripts/rsi-coding-collector.d.mts",
+        "sha256": "3303dde76702899282067b57cc0fc0324ae7f73f0121291fb301e7e323b82fda"
+      },
+      {
+        "file": "scripts/rsi-coding-collector.mjs",
+        "sha256": "f8369fa4b9eb711785c3e6c4b641fbddb2730bd283233bf233834e46263c9b24"
+      },
+      {
+        "file": "scripts/rsi-live-acceptance.d.mts",
+        "sha256": "5c0eeded04feda6f0776087b774855fc04c45fff9f2fc4f4a5da181f3db909ac"
+      },
+      {
+        "file": "scripts/rsi-live-acceptance.mjs",
+        "sha256": "aada17b3ce7494f0f4503f26e1785b71375cc4324eb2c66debfff265853d97ff"
+      },
+      {
+        "file": "scripts/rsi-paired-measurement-replay.d.mts",
+        "sha256": "c2abf500c7ffce95a664766009f01cce798d4733f82d9ae7884bd6daee68dd2d"
+      },
+      {
+        "file": "scripts/rsi-paired-measurement-replay.mjs",
+        "sha256": "d82be0fde55eca11cd1862128c97006fa1f4f12c0e75f7208bb55e99999191e5"
+      },
+      {
+        "file": "scripts/rsi-paired-measurement.d.mts",
+        "sha256": "5cb94657a358fa4aeacc95d272088ca67de28ceed4d24795f39793b87905da88"
+      },
+      {
+        "file": "scripts/rsi-paired-measurement.mjs",
+        "sha256": "6e425e47294caebab8ceccb86721daeb461635e52b112eef34d7f113816818d4"
+      },
+      {
+        "file": "shared/host-events/contract.ts",
+        "sha256": "90d9049e5a78c921a7e14d1cb3073807bb6ba51382c4b846aa0f41889f3fb96d"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "cdda2bee32c0e4e3d7d27e2aa960cba97800e753da722eb0bc5a12de22d5755f"
+      },
+      {
+        "file": "shared/i18n/locales/en/taskLedger.json",
+        "sha256": "96dd8a4247829a48ed0801e0bbc055baa53805471c1d0690d50402bf266033a8"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "d167c5dc6e6468cc1db7250ab988d6fb5c5996f14c8ac41528df6a11872e7a97"
+      },
+      {
+        "file": "shared/i18n/locales/ja/taskLedger.json",
+        "sha256": "44386547ece8ce43b6b072dcbae7a1f6c6ef904d5c0d6219c26408d27ba9700a"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "5249cd4650e5c422d92a72e75e3d06cf98960af984e0ec59e82869d5c5b69bfd"
+      },
+      {
+        "file": "shared/i18n/locales/ru/taskLedger.json",
+        "sha256": "b9a77c63f7b59f5a35fc4df4a5db875ab08948d0574b2ac013e42012468fd6de"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "a1ce3c6eabc7a1f5e62acd9c340ca6076546543ba3ead471cfc7e63d7891dad4"
+      },
+      {
+        "file": "shared/i18n/locales/zh/taskLedger.json",
+        "sha256": "e33c2c510068fc7c30882cd976ba4bbb78e5440b5d0d5c610269ee598126e32f"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "9dcd02931e63f2f64658a11ba33fa5c247501e98f38dba9d59aaccf47bcb357d"
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "6dfec2aa7c3bdb402255a13b7c2f24e26f8b74ce52166e69803a49e98289ffd7"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "ad6457964c3e9986d70c017bfd74c89fda6358f9ea8751469d6ef0a275a66d80"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "9a42bf1804bed6c98662b7b6e7b26e317e3860cda07fdb6a6ab93bc8db0d7a5c"
+      },
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "aeee24f12ed597158b2bfc7dbb71bab5c473bc1171d3903fc2293cbe8030b749"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "2d29cdc5b257cf7e75c797f67dda84595b52e46146a2105e53da0074af34c268"
+      },
+      {
+        "file": "src/components/layout/session-buckets.ts",
+        "sha256": "ce699527133ac60cf06d840dd4ea699b257e4c19ec40070fe749e6bc89d9564b"
+      },
+      {
+        "file": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "5f0a0f474997bd6ef2f368726d312058cb6c9e860bb52e773442f64ba0faef09"
+      },
+      {
+        "file": "src/hooks/use-message-viewport.ts",
+        "sha256": "a152b62ff5d537fca2fd36ffeccdfcb3108a2b366aede1bd45a97331b0afa753"
+      },
+      {
+        "file": "src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+      },
+      {
+        "file": "src/lib/host-events.ts",
+        "sha256": "fdec1cd7df9e74341772b59aeb4f5b69ba69ede6c39bb3988377c9c6b499af1a"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "9f8555ba1cec07f1196c279dbff3d77b3c6ce1a2d6e3f0ee4ed828af2dc3715e"
+      },
+      {
+        "file": "src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "c89c24e22e21f472e507efef631b77e10ad88d1464efac1070ad62dbb82c7ae6"
+      },
+      {
+        "file": "src/pages/Projects/index.tsx",
+        "sha256": "a49639af58311ebd39f1838df0a77f480e09c3b610f8c0e850b0fa749e286048"
+      },
+      {
+        "file": "src/pages/TaskLedger/ManagedTasks.tsx",
+        "sha256": "a7c2d0c058c5ea5b3b0ef81b728ab04405f0691446019a732b08a545364d5891"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "f1dbdd6a28b19414a41041ef2e67a7d3430cfec6c984a94a8b82c1ded109380b"
+      },
+      {
+        "file": "src/stores/gateway.ts",
+        "sha256": "2312797232f108cb5da2c92874e830cefff006e47afaca0f901760414f9e8cee"
+      },
+      {
+        "file": "tests/e2e/session-delegation-capacity.spec.ts",
+        "sha256": "e2bd7acf51e96b3250cc4ea530255989bba43da0617f46487e25b14587773d3c"
+      },
+      {
+        "file": "tests/e2e/session-task-reading-navigation.spec.ts",
+        "sha256": "b54af109014ca1b291f4c31f6cc2bb0349775dcfc1600b61399ed2a81d84af3c"
+      },
+      {
+        "file": "tests/e2e/session-task-state-guidance.spec.ts",
+        "sha256": "9dfaa07e190cd97cf6b03a9198f98f3304d9f1b149bed6e83b96dffc1c8a0ae9"
+      },
+      {
+        "file": "tests/unit/chat-startup-hydration.test.ts",
+        "sha256": "d3284f8217ca6fda7d098f5a7d8c392b0b64179382ba4617c846be1c15adb069"
+      },
+      {
+        "file": "tests/unit/chat-viewport.test.tsx",
+        "sha256": "30969869ccdaddb0dd039163918384282265e16efeacbd201238d731e80f4d06"
+      },
+      {
+        "file": "tests/unit/gateway-event-dispatch.test.ts",
+        "sha256": "643ec2220d2940ef8cf7ee7a18dd7e4da942bdf8351af2fc4af5571ef8329ad8"
+      },
+      {
+        "file": "tests/unit/gateway-events.test.ts",
+        "sha256": "867761576d36f04091f96ed1e240c4109552ac29549a7f22cafd1ae2713e6826"
+      },
+      {
+        "file": "tests/unit/long-session-delegation-admission.test.ts",
+        "sha256": "e3bb6ff235563aa1fa35a7ed76335b4779602b384907148a341cae528f32526c"
+      },
+      {
+        "file": "tests/unit/rsi-campaign-budget.test.ts",
+        "sha256": "ec3b3c6592b4dc2e923943b066cecc0653ffe7cf237a774e8d044d3f72d80efe"
+      },
+      {
+        "file": "tests/unit/rsi-coding-tool-loop.test.ts",
+        "sha256": "2811dce42706f1f7540ec96d678e8a9a70228484027b9c220f6e3ba3c8bd7480"
+      },
+      {
+        "file": "tests/unit/rsi-paired-measurement-replay.test.ts",
+        "sha256": "5ed0cd58b4bdfcaa4d3953f20ae04eee55da81758ef4a218c5a51aaa4de35f67"
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "sha256": "b6465082f9b2ba52c197ab6cf260155aeb961bbbacfa7489ccfa31a1047544e8"
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "sha256": "7ff319e5a13ffad68a56668a36c90854012763852a0cf8d9544c6246d1a6af9f"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "5dce39f86a035d82194eed5cd99a3c8edf3bed27864d3df892f68f3ea5eaf55e"
+      },
+      {
+        "file": "tests/unit/session-reading-scroll-owner.test.tsx",
+        "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+      },
+      {
+        "file": "tests/unit/session-task-state-guidance.test.tsx",
+        "sha256": "87a9c62e0cef1f36dc4288920095b83294bb4f61467520806f3896484071a9aa"
+      },
+      {
+        "file": "tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "22b6c28521fafeec66a0a1671897b6999f6c6c49217da03b171df5a5de7a6624"
+      },
+      {
+        "file": "tests/unit/sidebar-session-buckets.test.ts",
+        "sha256": "3c761fecf40ced3bea68a8b9bb9d114439cedfc23e71a3254264d9d656fa3f94"
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "sha256": "d166a6abdd6634ae0d6f84fc31399a364dede2ae5deba1292efe9aa111807bc9"
+      },
+      {
+        "file": "tests/unit/workspaces-api.test.ts",
+        "sha256": "e0f9b3ec293d0a8e9a42ccad01b7adc639553c4368d10bd1b0e8608d9ba68b77"
+      }
+    ]
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-artifacts.log",
+    "sha256": "7631bb7707112d5abaeae2759f255c110da201ab9b76a7de16a9c163d89db767"
+  }
+}

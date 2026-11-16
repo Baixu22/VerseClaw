@@ -1,0 +1,195 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/traceability-validation/handoff-hydration-cold-ui3-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-session-handoff.spec.ts",
+      "file": "chat-session-handoff.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat session handoff",
+          "file": "chat-session-handoff.spec.ts",
+          "line": 227,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keeps a sidebar handoff intent until a cold session generation hydrates",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18917,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:23.348Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n[2026-11-10T15:23:23.348Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-10T15:23:23.349Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=47160, ppid=21336\n[2026-11-10T15:23:23.349Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:23.559Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:23.559Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-10T15:23:23.559Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-10T15:23:23.559Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:23.614Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:23.614Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [47160:1110/232323.775:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[47160:1110/232323.775:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:24.010Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:24.012Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:24.013Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:23:24.013Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:23:24.013Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T15:23:24.013Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:24.015Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:23:24.016Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:23:24.016Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T15:23:24.016Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:24.561Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-Co2HlY\\\\verse-claw-e2e-home-7exl7l\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:24.565Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-Co2HlY\\\\verse-claw-e2e-home-7exl7l\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:24.579Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-Co2HlY\\\\verse-claw-e2e-home-7exl7l\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:24.704Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"workspace-a\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-Co2HlY\\\\verse-claw-e2e-home-7exl7l\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\workspace-a-45fd7baeda\\\\snapshot.json\"}\n[2026-11-10T15:23:24.704Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"workspace-a\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-Co2HlY\\\\verse-claw-e2e-home-7exl7l\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\workspace-a-45fd7baeda\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:24.708Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"workspace-a\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-Co2HlY\\\\verse-claw-e2e-home-7exl7l\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\workspace-a-45fd7baeda\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:26.243Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:23:26.243Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:23:26.244Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T15:23:26.244Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:28.208Z] [INFO] Gateway stop requested\n[2026-11-10T15:23:28.209Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:63876/bcf2491e-09ae-4b10-97b7-2b4e4f9da78f\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:28.248Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:28.249Z] [INFO] [ResourceTracker] Stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:28.249Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:28.249Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:23:28.249Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-10T15:23:10.089Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-e9f27d78f0aed1513777",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 228,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T15:23:08.907Z",
+    "duration": 21027.102,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

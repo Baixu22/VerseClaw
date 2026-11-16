@@ -5,7 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 import { shell } from 'electron';
-import { getOpenClawConfigDir, ensureDir } from '../utils/paths';
+import { getOpenClawConfigDir, getOpenClawSkillsDir, ensureDir } from '../utils/paths';
 import { removeSkillConfig } from '../utils/skill-config';
 
 export interface MarketplaceSearchParams {
@@ -111,8 +111,13 @@ export class ClawHubService {
      */
     async uninstall(params: ClawHubUninstallParams): Promise<void> {
         const fsPromises = fs.promises;
-
-        const skillDir = path.join(this.workDir, 'skills', params.slug);
+        const slug = params.slug?.trim();
+        if (!slug || !/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(slug)) {
+            throw new Error('Invalid managed skill slug');
+        }
+        const skillsRoot = path.resolve(getOpenClawSkillsDir());
+        const skillDir = path.resolve(skillsRoot, slug);
+        if (path.dirname(skillDir) !== skillsRoot) throw new Error('Invalid managed skill path');
         if (fs.existsSync(skillDir)) {
             console.log(`Deleting skill directory: ${skillDir}`);
             await fsPromises.rm(skillDir, { recursive: true, force: true });
@@ -134,7 +139,8 @@ export class ClawHubService {
             }
         }
 
-        await removeSkillConfig(params.slug);
+        const removed = await removeSkillConfig(slug);
+        if (!removed.success) throw new Error(removed.error || 'Failed to remove skill config');
     }
 
     /**

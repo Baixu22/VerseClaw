@@ -1,0 +1,10 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+
+ RUN  v4.1.1 D:/tmp/inline-spill-closeout-20261108-01a1b90a/validation-candidate
+
+
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+   Start at  11:15:34
+   Duration  25.76s (transform 9.38s, setup 592ms, import 12.35s, tests 11.66s, environment 0ms)
+

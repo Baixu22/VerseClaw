@@ -1,0 +1,330 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0291-g03",
+  "source": {
+    "id": "tf-0291-g03",
+    "base": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+    "reference": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+    "productChanges": [
+      "scripts/lib/trace-to-eval-sample.d.mts",
+      "scripts/lib/trace-to-eval-sample.mjs"
+    ],
+    "originalDecision": "PASS",
+    "codingBindingDigest": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+    "baselineSetup": null,
+    "targetScope": [
+      "scripts/lib/trace-to-eval-sample.mjs",
+      "scripts/lib/trace-to-eval-sample.d.mts",
+      "tests/unit/trace-to-eval-sample.test.ts",
+      "harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+      "docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md",
+      "docs/dev/harness-gap-closure/g03-acceptance.json",
+      "docs/dev/harness-gap-closure/G03-SHA256SUMS"
+    ],
+    "prompt": "G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。",
+    "sourceRecord": "docs/dev/harness-gap-closure/g03-acceptance.json",
+    "sourceRecordDigest": "b2936554a04cf2500ca099bb643a6345aadf451b0c77bcbe76428271c7452949",
+    "oraclePaths": [
+      "tests/unit/trace-to-eval-sample.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0291-g03",
+      "commands": [
+        "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/trace-to-eval-sample.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 6,
+            "numPassedTests": 6,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793930696778,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample turns a failure trace into a sample expected to fail before the fix and pass after",
+                    "status": "passed",
+                    "title": "turns a failure trace into a sample expected to fail before the fix and pass after",
+                    "duration": 2.064200000000028,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample keeps success/refusal/cancelled traces as passing samples (a fix must not regress them)",
+                    "status": "passed",
+                    "title": "keeps success/refusal/cancelled traces as passing samples (a fix must not regress them)",
+                    "duration": 0.40189999999995507,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample refuses a trace that is not redacted (raw prompt or secret-like value)",
+                    "status": "passed",
+                    "title": "refuses a trace that is not redacted (raw prompt or secret-like value)",
+                    "duration": 0.23160000000001446,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample rejects a reproducer that is not a bounded kind (no shell command)",
+                    "status": "passed",
+                    "title": "rejects a reproducer that is not a bounded kind (no shell command)",
+                    "duration": 0.20470000000000255,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample is an explicit-trigger batch: selected traces only, with per-trace rejections",
+                    "status": "passed",
+                    "title": "is an explicit-trigger batch: selected traces only, with per-trace rejections",
+                    "duration": 0.31740000000002055,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample rejects a trace with a missing required field",
+                    "status": "passed",
+                    "title": "rejects a trace with a missing required field",
+                    "duration": 0.15840000000002874,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793930697479,
+                "endTime": 1793930697482.3174,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0291-g03/reference/workspace/tests/unit/trace-to-eval-sample.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 6,
+      "numPassedTests": 6,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "e1e6f82531095236b3a5fc4cd4b8610aeb83218033299317fd9e392f8aa43e4e",
+      "oracleHashAfter": "e1e6f82531095236b3a5fc4cd4b8610aeb83218033299317fd9e392f8aa43e4e",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-trace-to-eval-sample.md": "f0d8e2b9991d932ce267a9e88671357687f22f6b34d26f73366271185879aab7",
+        "tests/unit/trace-to-eval-sample.test.ts": "9895c0c9296985a31e8c1beceac7d3a1d3c4918899f1d84a3ea3441ba38c4d70"
+      },
+      "oracleRevision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+      "oracleTestDigests": {
+        "tests/unit/trace-to-eval-sample.test.ts": "9895c0c9296985a31e8c1beceac7d3a1d3c4918899f1d84a3ea3441ba38c4d70"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0291-g03",
+      "commands": [
+        "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/trace-to-eval-sample.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 1,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793930706523,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793930706523,
+                "endTime": 1793930706523,
+                "status": "failed",
+                "message": "Cannot find module '../../scripts/lib/trace-to-eval-sample.mjs' imported from D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0291-g03/baseline/workspace/tests/unit/trace-to-eval-sample.test.ts",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0291-g03/baseline/workspace/tests/unit/trace-to-eval-sample.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "target-module-absent",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "e1e6f82531095236b3a5fc4cd4b8610aeb83218033299317fd9e392f8aa43e4e",
+      "oracleHashAfter": "e1e6f82531095236b3a5fc4cd4b8610aeb83218033299317fd9e392f8aa43e4e",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-trace-to-eval-sample.md": "f0d8e2b9991d932ce267a9e88671357687f22f6b34d26f73366271185879aab7",
+        "tests/unit/trace-to-eval-sample.test.ts": "9895c0c9296985a31e8c1beceac7d3a1d3c4918899f1d84a3ea3441ba38c4d70"
+      },
+      "oracleRevision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+      "oracleTestDigests": {
+        "tests/unit/trace-to-eval-sample.test.ts": "9895c0c9296985a31e8c1beceac7d3a1d3c4918899f1d84a3ea3441ba38c4d70"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "scripts/lib/trace-to-eval-sample.mjs",
+          "importer": "tests/unit/trace-to-eval-sample.test.ts",
+          "inTargetScope": true
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0291-g03\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": [],
+    "warnings": [
+      "baseline-target-module-absent"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

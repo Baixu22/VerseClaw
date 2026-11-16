@@ -1,0 +1,978 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/session-task-validation/final6-lifecycle-e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-checkpoints.spec.ts",
+      "file": "chat-checkpoints.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "checkpoints dialog lists and restores a session checkpoint",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23485,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:45:10.599Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "19299a38428c48e4e512-a397b62826dff8da1571",
+          "file": "chat-checkpoints.spec.ts",
+          "line": 134,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "chat-session-compact-range.spec.ts",
+      "file": "chat-session-compact-range.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw located (range) compaction",
+          "file": "chat-session-compact-range.spec.ts",
+          "line": 154,
+          "column": 6,
+          "specs": [
+            {
+              "title": "summarizes from a chosen message through the host-api, keeping the newer side",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8559,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:45:34.108Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8295036efad5931ad71f-96c7f28e3023be12e255",
+              "file": "chat-session-compact-range.spec.ts",
+              "line": 155,
+              "column": 7
+            },
+            {
+              "title": "summarizes up to a chosen message, folding it into the summary",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8135,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:45:42.679Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8295036efad5931ad71f-fe974ffedffbb2dde9a5",
+              "file": "chat-session-compact-range.spec.ts",
+              "line": 198,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-session-fork.spec.ts",
+      "file": "chat-session-fork.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat session fork",
+          "file": "chat-session-fork.spec.ts",
+          "line": 274,
+          "column": 6,
+          "specs": [
+            {
+              "title": "creates and selects a forked session with inherited history and copied draft without auto-send",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10071,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:45:50.838Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "469235f3ba5119c45ccc-818da0817bfe83fd7041",
+              "file": "chat-session-fork.spec.ts",
+              "line": 275,
+              "column": 7
+            },
+            {
+              "title": "offers handoff preparation when fork fails because the parent is too large",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10153,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:46:00.919Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "469235f3ba5119c45ccc-e752573bf0385797801b",
+              "file": "chat-session-fork.spec.ts",
+              "line": 515,
+              "column": 7
+            },
+            {
+              "title": "disables fork entry points while a run is active",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8691,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:46:11.082Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "469235f3ba5119c45ccc-532773eade3f791995bb",
+              "file": "chat-session-fork.spec.ts",
+              "line": 613,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-session-handoff.spec.ts",
+      "file": "chat-session-handoff.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat session handoff",
+          "file": "chat-session-handoff.spec.ts",
+          "line": 226,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keeps the current handoff draft when an old conversation responds late",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10618,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:46:19.808Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-4a62e5add0c6a545b1b9",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 227,
+              "column": 7
+            },
+            {
+              "title": "previews, edits, creates and sends the reviewed handoff with a recoverable child draft",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8653,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:46:30.435Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-ff58fda1ce765e081161",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 303,
+              "column": 7
+            },
+            {
+              "title": "disables handoff entry points while a run is active",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7215,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:46:39.096Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-1e9e6be2e7438056fb00",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 475,
+              "column": 7
+            },
+            {
+              "title": "refuses a relay once the handoff depth limit is reached (#179)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7795,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:46:46.318Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-6ea6bd43dd0fce65f4bd",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 544,
+              "column": 7
+            },
+            {
+              "title": "keeps the editable draft and session when creation rejects changed ancestry",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12528,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:46:54.123Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-4393de2a350b071ae1b6",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 589,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-slash-session-lifecycle.spec.ts",
+      "file": "chat-slash-session-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "slash /rename renames the current session through the host API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7957,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:47:06.718Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1560b8bfb4b44fe713ea-682cc5828f9cc174cf62",
+          "file": "chat-slash-session-lifecycle.spec.ts",
+          "line": 95,
+          "column": 5
+        },
+        {
+          "title": "slash /clear resets the local message view",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7621,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:47:14.685Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1560b8bfb4b44fe713ea-e00650372c88a8b37b74",
+          "file": "chat-slash-session-lifecycle.spec.ts",
+          "line": 125,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "long-session-completion-continuation.spec.ts",
+      "file": "long-session-completion-continuation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "consolidates deferred worker completion into one generation-fenced batch after restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 44672,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:47:22.322Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "completion-continuation-e2e",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-e2e-results\\long-session-completion-co-12137--fenced-batch-after-restart\\attachments\\completion-continuation-e2e-c7289c2221e9136c9ca8532234debdb3dc5a0865.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a27601a5486df8def39c-165b32d26fe1723a96fa",
+          "file": "long-session-completion-continuation.spec.ts",
+          "line": 154,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "long-session-coordination.spec.ts",
+      "file": "long-session-coordination.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 40934,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('long-session-coordinator')\nExpected substring: \u001b[32m\"local-workspace\"\u001b[39m\nReceived string:    \u001b[31m\"Long-session coordinatorinvalidgit / local / r2D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-lrRonx\\\\verse-claw-e2e-home-H9D7DK\\\\.openclaw\\\\workspaceRecovery: environment-missingenvironment-generation-changed61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingResumeCPU 0.0%RSS 1169 MB4 processes0 slots0 background terminals0 queued\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('long-session-coordinator')\u001b[22m\n\u001b[2m    3 × locator resolved to <section data-testid=\"long-session-coordinator\" class=\"mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10\">…</section>\u001b[22m\n\u001b[2m      - unexpected value \"Long-session coordinatoractivegit / local / r1D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-H9D7DK\\.openclaw\\workspaceRecovery: unknown61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingPause\"\u001b[22m\n\u001b[2m    15 × locator resolved to <section data-testid=\"long-session-coordinator\" class=\"mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"Long-session coordinatorinvalidgit / local / r2D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-H9D7DK\\.openclaw\\workspaceRecovery: environment-missingenvironment-generation-changed61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingResumeCPU 0.0%RSS 1169 MB4 processes0 slots0 background terminals0 queued\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('long-session-coordinator')\nExpected substring: \u001b[32m\"local-workspace\"\u001b[39m\nReceived string:    \u001b[31m\"Long-session coordinatorinvalidgit / local / r2D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-lrRonx\\\\verse-claw-e2e-home-H9D7DK\\\\.openclaw\\\\workspaceRecovery: environment-missingenvironment-generation-changed61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingResumeCPU 0.0%RSS 1169 MB4 processes0 slots0 background terminals0 queued\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('long-session-coordinator')\u001b[22m\n\u001b[2m    3 × locator resolved to <section data-testid=\"long-session-coordinator\" class=\"mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10\">…</section>\u001b[22m\n\u001b[2m      - unexpected value \"Long-session coordinatoractivegit / local / r1D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-H9D7DK\\.openclaw\\workspaceRecovery: unknown61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingPause\"\u001b[22m\n\u001b[2m    15 × locator resolved to <section data-testid=\"long-session-coordinator\" class=\"mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"Long-session coordinatorinvalidgit / local / r2D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-H9D7DK\\.openclaw\\workspaceRecovery: environment-missingenvironment-generation-changed61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingResumeCPU 0.0%RSS 1169 MB4 processes0 slots0 background terminals0 queued\"\u001b[22m\n\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-coordination.spec.ts:300:31",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-coordination.spec.ts",
+                      "column": 31,
+                      "line": 300
+                    },
+                    "snippet": "  298 |     let coordinator = await openCoordinator(page);\n  299 |     await expect(coordinator).toContainText(task.id);\n> 300 |     await expect(coordinator).toContainText('local-workspace');\n      |                               ^\n  301 |     await expect(coordinator.getByTestId('coordinator-recovery')).toContainText('ready');\n  302 |     await expect(coordinator).toContainText('CPU');\n  303 |     await expect(coordinator).toContainText(`${activeBackgroundTerminalCount} background terminals`);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-coordination.spec.ts",
+                        "column": 31,
+                        "line": 300
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('long-session-coordinator')\nExpected substring: \u001b[32m\"local-workspace\"\u001b[39m\nReceived string:    \u001b[31m\"Long-session coordinatorinvalidgit / local / r2D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-lrRonx\\\\verse-claw-e2e-home-H9D7DK\\\\.openclaw\\\\workspaceRecovery: environment-missingenvironment-generation-changed61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingResumeCPU 0.0%RSS 1169 MB4 processes0 slots0 background terminals0 queued\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('long-session-coordinator')\u001b[22m\n\u001b[2m    3 × locator resolved to <section data-testid=\"long-session-coordinator\" class=\"mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10\">…</section>\u001b[22m\n\u001b[2m      - unexpected value \"Long-session coordinatoractivegit / local / r1D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-H9D7DK\\.openclaw\\workspaceRecovery: unknown61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingPause\"\u001b[22m\n\u001b[2m    15 × locator resolved to <section data-testid=\"long-session-coordinator\" class=\"mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"Long-session coordinatorinvalidgit / local / r2D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-H9D7DK\\.openclaw\\workspaceRecovery: environment-missingenvironment-generation-changed61a55fb3a94e328f64795ea7fdd58b16ce5c15a2f9109957ec88b1ed801e9354architectfailed / pendingResumeCPU 0.0%RSS 1169 MB4 processes0 slots0 background terminals0 queued\"\u001b[22m\n\n\n  298 |     let coordinator = await openCoordinator(page);\n  299 |     await expect(coordinator).toContainText(task.id);\n> 300 |     await expect(coordinator).toContainText('local-workspace');\n      |                               ^\n  301 |     await expect(coordinator.getByTestId('coordinator-recovery')).toContainText('ready');\n  302 |     await expect(coordinator).toContainText('CPU');\n  303 |     await expect(coordinator).toContainText(`${activeBackgroundTerminalCount} background terminals`);\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-coordination.spec.ts:300:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:48:07.010Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-e2e-results\\long-session-coordination--a1f27-cle-locales-and-screenshots\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-e2e-results\\long-session-coordination--a1f27-cle-locales-and-screenshots\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-e2e-results\\long-session-coordination--a1f27-cle-locales-and-screenshots\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-coordination.spec.ts",
+                    "column": 31,
+                    "line": 300
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "212f84e7db0627c54bf1-286649cd18be12412dff",
+          "file": "long-session-coordination.spec.ts",
+          "line": 182,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "long-session-delegation-admission.spec.ts",
+      "file": "long-session-delegation-admission.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 39847,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:48:49.318Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "delegation-admission-e2e",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-e2e-results\\long-session-delegation-ad-f5568--durable-admission-receipts\\attachments\\delegation-admission-e2e-ae7086af67e87785345fae23358b8250a28a86b8.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b51d4b2cd8b1f54e31be-104b92a0e4fa4b33e829",
+          "file": "long-session-delegation-admission.spec.ts",
+          "line": 123,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "sidebar-session-folders-archive.spec.ts",
+      "file": "sidebar-session-folders-archive.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Sidebar session workgroups and archive",
+          "file": "sidebar-session-folders-archive.spec.ts",
+          "line": 330,
+          "column": 6,
+          "specs": [
+            {
+              "title": "pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9098,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:49:29.205Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-1a3bddc86e4d382c3a29",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 331,
+              "column": 7
+            },
+            {
+              "title": "keeps workgroups inside the project and renders time sorting as a direct list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7836,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:49:38.317Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-bbdb45efe6fa941980a1",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 392,
+              "column": 7
+            },
+            {
+              "title": "creates a workgroup, moves a running session into it, searches it, then deletes the workgroup",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9091,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:49:46.163Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-b3bd548106bbb50d2c78",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 418,
+              "column": 7
+            },
+            {
+              "title": "delete dialog offers archive and permanent delete; archive modal restores sessions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8793,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:49:55.265Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-b8aeffd6d14af3326d5f",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 515,
+              "column": 7
+            },
+            {
+              "title": "drags a conversation after another to auto-group, rename, and remove the group",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8558,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:50:04.067Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-8e443d2ea5d5ae1e6683",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 561,
+              "column": 7
+            },
+            {
+              "title": "permanent delete from the archived settings page removes the entry",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9289,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:50:12.635Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-6d6eec3ee8c153c68c11",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 643,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T20:45:09.510Z",
+    "duration": 314480.406,
+    "expected": 21,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

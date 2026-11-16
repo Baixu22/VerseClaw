@@ -1,0 +1,5 @@
+a5972fdc9 fix(context-eval): guide recall from visible call metadata and field locations
+486f078ab eval(context): freeze visible archive navigation and completion rules
+1a12ad0cd eval(context): retain G7 budget repair and seventh-round NO_GO
+89dff8ebd fix(context-eval): reject frozen input drift before runtime imports
+d46cce0dc fix(context-eval): keep original archive targets and tool log provenance

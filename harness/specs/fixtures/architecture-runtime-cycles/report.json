@@ -1,0 +1,267 @@
+{
+  "schema": "ArchitectureRuntimeCyclesAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-05T09:32:53.403892+00:00",
+  "node": "TF-0789",
+  "phase": "TF-0786",
+  "rootNode": "TF-0628",
+  "verdict": "pass-for-runtime-cycle-removal-with-inherited-loc-residual",
+  "baseline": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+  "candidate": {
+    "commit": "b834bf3e1164544e8fde5c41b715d611c5dd4bf7",
+    "tree": "0eadb5e2e4a770fa8be10745f7e835aa8615bd48",
+    "dirty": false
+  },
+  "tests": {
+    "passed": 58,
+    "failed": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "scope": "root",
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "source": "unit-result.json",
+        "artifact": "tests-root.json"
+      },
+      {
+        "scope": "capability",
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0,
+        "source": "unit-capability-result.json",
+        "artifact": "tests-capability.json"
+      },
+      {
+        "scope": "runtime",
+        "passed": 30,
+        "failed": 0,
+        "skipped": 0,
+        "source": "runtime-unit-result.json",
+        "artifact": "tests-runtime.json"
+      }
+    ],
+    "baselineImportNegativeControls": 3
+  },
+  "graph": {
+    "beforeFiles": 9158,
+    "afterFiles": 9159,
+    "beforeComponents": [
+      23
+    ],
+    "afterComponents": [],
+    "originalCheckerExitCode": 0,
+    "allSourceHashesBoundToGit": true
+  },
+  "gates": [
+    {
+      "id": "unit",
+      "exitCode": 0,
+      "durationMs": 44486
+    },
+    {
+      "id": "unit-capability",
+      "exitCode": 0,
+      "durationMs": 44003
+    },
+    {
+      "id": "runtime-unit",
+      "exitCode": 0,
+      "durationMs": 4200
+    },
+    {
+      "id": "types",
+      "exitCode": 0,
+      "durationMs": 405279
+    },
+    {
+      "id": "cycles",
+      "exitCode": 0,
+      "durationMs": 22189
+    },
+    {
+      "id": "graphs",
+      "exitCode": 0,
+      "durationMs": 17203
+    },
+    {
+      "id": "parity",
+      "exitCode": 0,
+      "durationMs": 2112
+    },
+    {
+      "id": "bundle-smoke",
+      "exitCode": 0,
+      "durationMs": 1992
+    },
+    {
+      "id": "runtime-policy",
+      "exitCode": 0,
+      "durationMs": 300
+    },
+    {
+      "id": "deprecated-api",
+      "exitCode": 0,
+      "durationMs": 8084
+    },
+    {
+      "id": "deprecated-zero",
+      "exitCode": 0,
+      "durationMs": 6750
+    },
+    {
+      "id": "unused-files",
+      "exitCode": 0,
+      "durationMs": 28865
+    },
+    {
+      "id": "loc",
+      "exitCode": 1,
+      "durationMs": 10178
+    },
+    {
+      "id": "source-pipeline",
+      "exitCode": 1,
+      "durationMs": 50304
+    },
+    {
+      "id": "runtime-lint",
+      "exitCode": 0,
+      "durationMs": 28118
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationMs": 6629
+    },
+    {
+      "id": "format",
+      "exitCode": 0,
+      "durationMs": 500
+    },
+    {
+      "id": "contract",
+      "exitCode": 0,
+      "durationMs": 3675
+    },
+    {
+      "id": "comms-replay",
+      "exitCode": 0,
+      "durationMs": 806
+    },
+    {
+      "id": "comms-compare",
+      "exitCode": 0,
+      "durationMs": 708
+    },
+    {
+      "id": "artifacts",
+      "exitCode": 0,
+      "durationMs": 5340
+    },
+    {
+      "id": "evidence",
+      "exitCode": 0,
+      "durationMs": 380
+    },
+    {
+      "id": "harness-context",
+      "exitCode": 0,
+      "durationMs": 2809
+    },
+    {
+      "id": "harness-validate",
+      "exitCode": 0,
+      "durationMs": 10584
+    },
+    {
+      "id": "harness-dry-run",
+      "exitCode": 0,
+      "durationMs": 2172
+    },
+    {
+      "id": "diff",
+      "exitCode": 0,
+      "durationMs": 287
+    }
+  ],
+  "gateSummary": {
+    "exitZero": 24,
+    "exitOne": 2,
+    "exitOneIds": [
+      "loc",
+      "source-pipeline"
+    ],
+    "unexecutedPipelineSubgates": 0
+  },
+  "inheritedResidual": {
+    "newOver500": 23,
+    "grownOverBaseline": 110,
+    "baselineCandidateLocStdoutIdentical": true,
+    "touchedExistingOffenders": [
+      {
+        "file": "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+        "candidateLines": 508,
+        "baselineLines": 508
+      }
+    ],
+    "newOrWorsenedOffenders": 0
+  },
+  "behaviorBoundary": {
+    "equivalentModuleBodies": 4,
+    "protectedFilesUnchanged": 18,
+    "engineIdExportRetained": true,
+    "registeredFactoryAndFallbackCovered": true,
+    "readmeReview": "README.md, README.zh-CN.md and README.ja-JP.md reviewed. Internal import direction changes no user-facing flow/default/API, so updates are not required."
+  },
+  "build": {
+    "entryBundles": 5,
+    "fullBaselineExitCode": 134,
+    "fullCandidate": "not-run",
+    "remoteToolCapabilityExitCode": 2
+  },
+  "review": {
+    "engine": "codex",
+    "exitCode": 0,
+    "findings": 0,
+    "artifact": "review.json"
+  },
+  "notRun": [
+    "full candidate runtime build",
+    "full runtime-wide typecheck",
+    "full unit suite",
+    "Electron E2E",
+    "full desktop distribution build",
+    "live-provider effect evaluation"
+  ],
+  "limitations": [
+    "Graph covers the original checker static relative value imports/re-exports; dynamic import, require and non-relative package boundaries are outside its proof.",
+    "Owner tests use deterministic fixtures and mocks; comms replay consumes tracked deterministic event JSONL.",
+    "Full runtime:source:check is not green: its final LOC gate retains exactly the baseline failures. Full build and runtime-wide type health are not accepted.",
+    "No claim of overall architecture maturity, measured performance or maintainability benefit, GA or release readiness."
+  ],
+  "evidence": [
+    "gate-results.json",
+    "tests-root.json",
+    "tests-capability.json",
+    "tests-runtime.json",
+    "baseline-regression.json",
+    "graph-comparison.json",
+    "cut-analysis.json",
+    "source-bindings.json",
+    "behavior-parity.json",
+    "runtime-source-residual.json",
+    "bundle-smoke.json",
+    "review.json",
+    "comms-metrics.json",
+    "comms-compare.json",
+    "attempts-and-limits.json",
+    "reproduction.json",
+    "private-provenance.json"
+  ],
+  "credentialScan": "credential-scan.json",
+  "hashManifest": "SHA256SUMS"
+}

@@ -281,7 +281,7 @@ test.describe('Verse Claw chat session fork', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: SOURCE_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: SOURCE_SESSION_KEY, sessionId: 'fork-source-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: SOURCE_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -368,26 +368,27 @@ test.describe('Verse Claw chat session fork', () => {
           if (request.module === 'workspaces' && request.action === 'list') {
             return respond(request.id, {
               success: true,
-              profiles: calls.workspaceUpdate.length > 0 ? [buildWorkspace()] : [params.sourceWorkspace],
+              profiles: calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey) ? [buildWorkspace()] : [params.sourceWorkspace],
               activeWorkspaceId: 'workspace-a',
-              activeWorkspace: calls.workspaceUpdate.length > 0 ? buildWorkspace() : params.sourceWorkspace,
+              activeWorkspace: calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey) ? buildWorkspace() : params.sourceWorkspace,
             });
           }
           if (request.module === 'workspaces' && request.action === 'getActive') {
             return respond(request.id, {
               success: true,
               activeWorkspaceId: 'workspace-a',
-              activeWorkspace: calls.workspaceUpdate.length > 0 ? buildWorkspace() : params.sourceWorkspace,
+              activeWorkspace: calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey) ? buildWorkspace() : params.sourceWorkspace,
             });
           }
           if (request.module === 'gateway' && request.action === 'rpc') {
             const payload = request.payload ?? {};
-            if (payload.method === 'sessions.list' && calls.workspaceUpdate.length > 0) {
+            if (payload.method === 'sessions.list' && calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey)) {
               return respond(request.id, {
                 sessions: [
-                  { key: params.sourceSessionKey, displayName: 'main' },
+                  { key: params.sourceSessionKey, sessionId: 'fork-source-generation', displayName: 'main' },
                   {
                     key: params.forkSessionKey,
+                    sessionId: 'fork-child-generation',
                     displayName: 'Forked main',
                     parentSessionKey: params.sourceSessionKey,
                     forkedFromParent: true,
@@ -410,6 +411,10 @@ test.describe('Verse Claw chat session fork', () => {
             calls.chatSend += 1;
             return respond(request.id, { success: true, result: { runId: 'unexpected' } });
           }
+          if (request.module === 'sessions' && request.action === 'fork') {
+            return respond(request.id, { success: true, sourceSessionKey: params.sourceSessionKey,
+              sessionKey: params.forkSessionKey, forkedFromParent: true });
+          }
           return originalHostInvoke?.(event, request) ?? respond(request.id, {});
         });
         (globalThis as typeof globalThis & { __forkCalls?: typeof calls }).__forkCalls = calls;
@@ -431,7 +436,7 @@ test.describe('Verse Claw chat session fork', () => {
       await expect(page.getByText('Design the runtime-backed fork flow.')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill(SOURCE_DRAFT);
 
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await expect(page.getByTestId('chat-session-fork')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
       await expect(page.getByTestId('chat-session-fork-recommended')).toBeVisible();
@@ -440,14 +445,14 @@ test.describe('Verse Claw chat session fork', () => {
 
       await expect.poll(async () => app.evaluate(() => {
         const calls = (globalThis as typeof globalThis & {
-          __forkCalls?: { workspaceUpdate: unknown[]; forkHistoryLoads: number };
+          __forkCalls?: { workspaceSaveState: Array<{ activeSessionKey?: string }>; forkHistoryLoads: number };
         }).__forkCalls;
         return {
-          workspaceUpdateCount: calls?.workspaceUpdate.length ?? 0,
+          workspaceActivationCount: calls?.workspaceSaveState.filter((value) => value.activeSessionKey === "agent:main:fork-1711111111111").length ?? 0,
           forkHistoryLoads: calls?.forkHistoryLoads ?? 0,
         };
       }), { timeout: 30_000 }).toEqual({
-        workspaceUpdateCount: 1,
+        workspaceActivationCount: 1,
         forkHistoryLoads: expect.any(Number),
       });
       await expect.poll(async () => app.evaluate(() => (
@@ -455,7 +460,7 @@ test.describe('Verse Claw chat session fork', () => {
       )), { timeout: 30_000 }).toBeGreaterThan(0);
       await expect(page.getByText('Fork should preserve the active transcript branch.')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-composer-input')).toHaveValue(SOURCE_DRAFT);
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       // #180: the lineage line names the parent by its display name, not the raw
       // session key (the key is already shown on the line above it).
       const lineageLine = page.getByTestId('chat-session-lineage');
@@ -492,9 +497,8 @@ test.describe('Verse Claw chat session fork', () => {
           draftInput: SOURCE_DRAFT,
         }),
       }));
-      expect(calls?.workspaceUpdate).toContainEqual(expect.objectContaining({
+      expect(calls?.workspaceSaveState).toContainEqual(expect.objectContaining({
         id: 'workspace-a',
-        activeSessionKey: FORK_SESSION_KEY,
         sessionKey: FORK_SESSION_KEY,
         state: expect.objectContaining({
           draftInput: SOURCE_DRAFT,
@@ -518,7 +522,7 @@ test.describe('Verse Claw chat session fork', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: SOURCE_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: SOURCE_SESSION_KEY, sessionId: 'fork-source-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: SOURCE_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -576,6 +580,10 @@ test.describe('Verse Claw chat session fork', () => {
           action?: string;
           payload?: Record<string, unknown>;
         }) => {
+          if (request.module === 'sessions' && request.action === 'fork') return respond(request.id, {
+            success: false, sessionKey: null, error: 'Parent context is too large to fork',
+          });
+          if (request.module === 'workspaces' && request.action === 'saveState') return respond(request.id, { success: true });
           if (request.module === 'workspaces' && request.action === 'update') {
             calls.workspaceUpdate.push(request.payload);
           }
@@ -588,7 +596,7 @@ test.describe('Verse Claw chat session fork', () => {
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
 
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await page.getByTestId('chat-session-fork').click();
       await expect(page.getByText('Transcript is too large to fork')).toBeVisible({ timeout: 30_000 });
       await page.getByRole('button', { name: 'Prepare handoff' }).click();
@@ -612,7 +620,7 @@ test.describe('Verse Claw chat session fork', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: SOURCE_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: SOURCE_SESSION_KEY, sessionId: 'fork-source-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: SOURCE_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -664,7 +672,7 @@ test.describe('Verse Claw chat session fork', () => {
       await expect(page.getByTestId('chat-composer-fork')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-handoff')).toHaveCount(0);
 
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await expect(page.getByTestId('chat-session-fork')).toBeDisabled();
       await expect(page.getByTestId('chat-session-handoff')).toBeDisabled();
     } finally {

@@ -239,6 +239,8 @@
         "runSummary": "サブエージェント {{count}} 個を開始しました",
         "runFailed": "サブエージェントの生成に失敗しました",
         "synthesisTitle": "統合結果",
+        "synthesisPending": "保留",
+        "synthesisPendingSummary": "実行または検証結果を待っています。",
         "synthesisEvidence": "証拠",
         "synthesisTraces": "Trace",
         "synthesisVerifier": "検証",

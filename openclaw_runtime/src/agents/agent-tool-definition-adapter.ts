@@ -33,6 +33,7 @@ import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "./runt
 import type { ToolDefinition } from "./sessions/index.js";
 import { normalizeToolName } from "./tool-policy.js";
 import { jsonResult, payloadTextResult } from "./tools/common.js";
+import { createExecutionTaskGuard } from "./execution-task-guard.js";
 
 type AnyAgentTool = AgentTool;
 type BeforeToolCallPreparingTool = AnyAgentTool & {
@@ -375,6 +376,8 @@ export function toToolDefinitions(
     const name = tool.name || "tool";
     const normalizedName = normalizeToolName(name);
     const beforeHookWrapped = isToolWrappedWithBeforeToolCallHook(tool);
+    const taskGuard = beforeHookWrapped ? null : createExecutionTaskGuard(hookContext?.workspaceDir ?? hookContext?.cwd,
+      hookContext?.sessionKey, hookContext?.sessionId, hookContext?.runId);
     return {
       name,
       label: tool.label ?? name,
@@ -409,6 +412,7 @@ export function toToolDefinitions(
               params: preparedParams,
             });
             const hookOutcome = await runBeforeToolCallHook({
+              taskScopeHandled: true,
               toolName: name,
               params: hookParams,
               ...hookMetadata,
@@ -449,7 +453,11 @@ export function toToolDefinitions(
             sessionId: hookContext?.sessionId,
             ...(hookContext?.runId ? { runId: hookContext.runId } : {}),
           });
-          const rawResult = await tool.execute(toolCallId, executeParams, signal, guardedOnUpdate);
+          const { executeManagedTaskTool } = await import("./execution-checkout-tools.js");
+          const executeTool = () => tool.execute(toolCallId, executeParams, signal, guardedOnUpdate);
+          const rawResult = beforeHookWrapped
+            ? await executeTool()
+            : await executeManagedTaskTool(hookContext, taskGuard, toolCallId, normalizedName, executeParams, signal, executeTool);
           recoveryEvalProbe("tool-return-before-receipt", {
             toolName: name,
             toolCallId,

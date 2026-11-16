@@ -1,0 +1,51 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-native-owner-test",
+  "nativeOwner": {
+    "pid": 44292,
+    "result": {
+      "ok": true,
+      "lease": {
+        "symbolKey": "::shared",
+        "holderId": "native-owner",
+        "acquiredAtMs": 100,
+        "expiresAtMs": 110,
+        "leaseId": "a5ff98e7-c174-4952-aee2-917dcb7d39e1",
+        "owner": {
+          "pid": 44292,
+          "incarnation": "134385466551792087"
+        }
+      }
+    }
+  },
+  "liveOwnerRefused": {
+    "ok": false,
+    "reason": "fenced",
+    "holderId": "native-owner",
+    "expiresAtMs": 110
+  },
+  "forgedRelease": false,
+  "exitCode": 0,
+  "admitted": {
+    "ok": true,
+    "lease": {
+      "symbolKey": "::shared",
+      "holderId": "replacement",
+      "acquiredAtMs": 112,
+      "expiresAtMs": 30112,
+      "leaseId": "e18312ba-d6e4-4692-a0b1-63d165672998",
+      "owner": {
+        "pid": 21800,
+        "incarnation": "134385466545783546"
+      }
+    }
+  },
+  "oldRelease": false,
+  "beforeExitWal": "{\"op\":\"acquire\",\"lease\":{\"symbolKey\":\"::shared\",\"holderId\":\"native-owner\",\"acquiredAtMs\":100,\"expiresAtMs\":110,\"leaseId\":\"a5ff98e7-c174-4952-aee2-917dcb7d39e1\",\"owner\":{\"pid\":44292,\"incarnation\":\"134385466551792087\"}},\"at\":100}\n{\"op\":\"fence\",\"lease\":{\"symbolKey\":\"::shared\",\"holderId\":\"native-owner\",\"acquiredAtMs\":100,\"expiresAtMs\":110,\"leaseId\":\"a5ff98e7-c174-4952-aee2-917dcb7d39e1\",\"owner\":{\"pid\":44292,\"incarnation\":\"134385466551792087\"},\"fencedAtMs\":111},\"at\":111}\n",
+  "afterExitWal": "{\"op\":\"acquire\",\"lease\":{\"symbolKey\":\"::shared\",\"holderId\":\"native-owner\",\"acquiredAtMs\":100,\"expiresAtMs\":110,\"leaseId\":\"a5ff98e7-c174-4952-aee2-917dcb7d39e1\",\"owner\":{\"pid\":44292,\"incarnation\":\"134385466551792087\"}},\"at\":100}\n{\"op\":\"fence\",\"lease\":{\"symbolKey\":\"::shared\",\"holderId\":\"native-owner\",\"acquiredAtMs\":100,\"expiresAtMs\":110,\"leaseId\":\"a5ff98e7-c174-4952-aee2-917dcb7d39e1\",\"owner\":{\"pid\":44292,\"incarnation\":\"134385466551792087\"},\"fencedAtMs\":111},\"at\":111}\n{\"op\":\"release\",\"symbolKey\":\"::shared\",\"holderId\":\"native-owner\",\"leaseId\":\"a5ff98e7-c174-4952-aee2-917dcb7d39e1\",\"at\":112,\"reason\":\"owner-exit-or-incarnation-replaced\"}\n{\"op\":\"acquire\",\"lease\":{\"symbolKey\":\"::shared\",\"holderId\":\"replacement\",\"acquiredAtMs\":112,\"expiresAtMs\":30112,\"leaseId\":\"e18312ba-d6e4-4692-a0b1-63d165672998\",\"owner\":{\"pid\":21800,\"incarnation\":\"134385466545783546\"}},\"at\":112}\n",
+  "effects": "native-owner-started\nnative-owner-exiting\n",
+  "limits": [
+    "agent-injected expiry clock; actual native process and WAL",
+    "this case does not measure aggregate provider budgets or full TF-0679"
+  ]
+}

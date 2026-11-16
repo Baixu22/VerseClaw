@@ -1,0 +1,12 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-authorization-recorder",
+  "authorization": {
+    "approvedBy": "owner",
+    "currency": "CNY",
+    "maxCost": 300,
+    "maxProviderCalls": 864,
+    "maxTotalTokens": 12000000,
+    "source": "Owner replies in chat 01a1b651-cdda-7143-a45e-3ca0aa926b43: 12M tokens / 864 calls; currency CNY; fee cap 300 CNY."
+  }
+}

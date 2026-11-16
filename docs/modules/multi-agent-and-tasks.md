@@ -1,5 +1,17 @@
 # 多智能体、任务与工作流
 
+任务快照读取持久事件与任务 owner 的记录。派生 JSON 缓存发生写锁争用时跳过该次刷新，读取与执行准入继续使用当前 owner 数据；显式缓存写入保留串行文件锁。
+
+后台队列派发读取聊天 owner 的接收回执。明确被拒绝的消息保留在原持久队列中并记录拒绝原因，可沿原会话继续核实和恢复。
+
+会话切换按同一工作区、逻辑会话与代次恢复阅读消息及相对位置，同时保留各自草稿。会话家族在指针或键盘交互期间保持已有行位置；状态和后代计数即时更新，离开后发布新增成员和排序。规范的 Gateway 聊天终态同步到运行状态，会话详情和列表共用活动运行投影；为幂等保留的终态记录和旧活动快照不会将已结束运行重新显示为进行中。
+
+未绑定负责人的项目保留导航入口并说明原因。任务读取失败区分权限拒绝与其它 owner 不可用，刷新沿原接口回读。依赖等待展示前置任务标题和状态；点击可定位并操作原任务，未加载依赖按需分页读取，缺失或不可读时保持等待。执行计划保留派发时的容量与写集安排原因，当前队列来自有效的会话资源快照；资源按钮进入已有存储总览。
+
+消息分支在 owner 转录边界缺失时保留禁用入口和刷新提示，忙态仍沿用会话可用性约束；首条问题没有 assistant 祖先时拒绝分支。普通模型文字仅作为建议，用户通过既有 Handoff 入口审阅、编辑并确认。取消预览保留源草稿。相同操作 ID 的重试复用原子会话，不同合法操作 ID 即使草稿相同也各自保留独立创建意图。
+
+Handoff 在激活前固定运行时确认的子会话代次。激活失败保留原操作与草稿；重试核对代次并复用原来的子会话，工作区确认激活后才开放首轮发送。
+
 > 面向问题：Agent、Persona、Role、Team、Subagent 分别是什么？普通 Chat 何时进入多智能体？Task Ledger、Task Loop、ClawGraph 和 Mission Control 各自拥有哪一层状态？
 
 ## 1. 身份模型
@@ -130,12 +142,17 @@ dependence 已满足的节点才进入 ready set。以下情况会 defer：
 
 - 都有 write-set；
 - 写集不冲突；
-- 或两个都是 verified worktree 隔离；
 - 否则串行/推迟。
+
+规划阶段按写集判断冲突，实际派发再由 worktree owner 验证 checkout 和 generation。
 
 `ResourceAwareWaveScheduler` 另有 wave immutability：已 started/completed 的 wave 不能被 re-plan；只能修改后续 planned wave。
 
-如果未显式给 worker cap，wave scheduler 的保守硬默认是 64，避免无限并发；真实产品路径通常由 session/resource policy 提供更低的有效上限。
+未显式配置 worker cap 时，wave scheduler 采用串行1并注明容量尚未测量。派发结果
+保持 pending；scheduled 记录规划数量，queued/running/completed/failed/unknown
+由实际 subagent registry 投影，completed 只计成功终态。
+开启handoff后，提交仍先返回queued。原registry在派发前读取并验证前序冻结输出，
+把带hash的有界内容附加到请求；缺失或错配输出会阻止后续派发。
 
 ## 7. Subagent 生命周期
 
@@ -292,7 +309,10 @@ Task Ledger 拥有用户可见任务事实、review flags、history 和 Task Loo
 
 会话的任务作用域来自同一 workspace 的 coordinator binding 与显式的 Task Ledger `sessionLink`。普通讨论可以为空；
 没有显式 task link、link 属于旧 generation、task 跨 workspace 或 task 缺失时，执行准入 fail closed。
+`sessions.delegate` 在调用 Gateway 前通过 Main 默认解析器读取 Task Ledger，按 session、taskRef 和 generation 匹配链接；同会话的其他任务链接不会遮挡当前请求。
 Fork 只获得只读 task 引用，不继承父会话写 claim；Handoff 需要重新绑定当前 generation。
+Main 在 fork/handoff 时把同 workspace、同源会话的显式业务 task 链接写入派生会话；重复链接只保留一份，turn check、缺失任务和旧 generation 链接不继承，任务完成状态保持原值。
+Fork 链接记录 Gateway 返回的新 generation，协调器仍需单独准入；Handoff 尚未创建运行时会话时 generation 为空，由协调器 owner 在会话建立后解析。
 
 ## 12. Task Ledger Working Context
 
@@ -397,6 +417,42 @@ Runtime 还包含：
 - ClawGraph/Task Loop 不能替代 Task Ledger 验收。
 - 多 agent 高并发 workspace 自动修改仍属于 NO-GO/受控边界。
 
+## 会话与任务链路
+
+项目名称打开 Workspace 持久关联的负责人会话，旁边的折叠控件只整理侧栏。会话家族沿 runtime 的 fork、spawn、parent 字段展示；工作组保持原有归属。关系详情逐跳显示实际父会话，来源未加载、缺失、冲突、循环和深度截断分别显示。Task Ledger 的 sessionLinks 只关联任务。
+
+会话列表按 runtime 提供的游标读取分页，只有首页读取 transcript 摘要；后续分页读取元数据。侧栏保留原有渐进渲染预算，较老的父会话也能成为家族入口。相同的草稿和面板状态不会重复提交保存。
+
+在任务清单点击“使用任务”可为当前会话选择已有业务任务，记录状态保持不变。运行或资源仍被原 writer 占用时，Main 拒绝切换任务；选择完成后按新 generation 重新读取任务范围。
+
+每个会话都有任务容器。普通讨论与已知纯读操作不创建业务任务；明确执行时，agent 通过 `task_control.start` 整理目标、约束和验收条件，原子建立或选择任务并领取执行凭据。首次工具效果先只读解析合同，核对运行代次、环境和旧 writer；通过最终运行校验后才领取所选任务。任务引用与执行回执写入同一账本。派发的 worker 根据 runtime 保存的 requester generation 取得对应执行任务；显式空写集 `[]` 保留只读职责，父任务 writer 不转移。Fork 只带只读引用，Handoff 在原 writer 静止后通过任务 owner 提升 epoch。权限由现有权限 owner 决定。
+
+任务账本的历史页可以打开关联会话，打开前核对记录的会话 generation；任务检查点中的产物沿用文件预览入口。执行结束和检查点保持为各自的记录，任务验收仍消费绑定合同版本与候选的验证回执。
+
+“在新会话中提问”保留所选问题之前的上下文，把编辑后的问题放入子会话草稿。Handoff 的按钮为“创建并发送”：Workspace 保存 source generation、操作标识、child 和首发 key；runtime 确认来源后完成创建。重启或响应丢失后先核对同一个 child。网关接收与 transcript 中的首轮记录是两个状态；结果未知时保留草稿并提供核实入口。恢复已创建的续接沿用已保存的草稿，新的问题可以在子会话中另行提交。
+
+会话身份加载完成后可准备 Handoff；加载期间入口显示原因。侧栏已发起的接力意图会等待同一目标就绪，预览只接收当前会话和代次的结果。
+
+Agents 面板将派发准入、实际执行、报告回传、验证回执、任务验收和父会话续行分列。单个 worker 的准入取自身回执；验证记录按任务版本、执行 epoch 和候选归组，任务验收由 Task owner 单独决定。活动快照保存 worker 的实际 child key；选择 worker 后读取其 transcript 和实际模型，并在实际发送边界核验 parent 与 child generation。任务清单展示账本记录状态；完成 owner 尚未提供可核对的验收回执时，自动验收显示不可用。
+
+领取事务同时核对首次读取的合同 revision 与 digest；准入期间修订合同会拒绝此次领取。受管进程把 session、generation 和 run 身份保存到既有资源 reservation，未设置数量限额时也保留归属记录。任务切换、环境切换和 Handoff 查询同会话的全部未结清进程，包括旧 generation；旧记录身份不全时保持占用，等待进程 owner 核实。普通执行检查仍按具体 run 核对持久资源。
+
+任务摘要从事件记录和任务合同重建。派生 JSON 缓存按文件锁串行写入；缓存写失败只记录诊断，已成功读取的任务仍可展示。权威事件或合同读取失败会显示 owner 不可用。
+
+资源清单逐项保留 owner 的已知与未知状态。工作树目录缺失或注册读取失败时，该项标为 unknown，会话代次、进程和准入占用仍按各自 owner 的结果显示；unknown 不作为资源空闲或可回收的依据。
+
+受管工具入口联合核对任务合同、会话代次、执行绑定和 checkout writer。writer 在工具之间保持占用，后台进程和未知效果须由原 owner 结清；规范任务委派通过持久父子凭据原子转移 checkout epoch。显式注册的 clone 通过原 TaskSystemStore 访问指定 authority，产物检查仍以实际检出目录为准；已有独立任务库不会被注册操作静默隐藏。受管 Mission 保存同一任务的合同版本、epoch、代次与 authority 引用，每次推进重新核验，业务完成依赖 Task owner 的验收回执。
+
+“在另一个检出中继续”使用 Workspace 保存迁移阶段，并复用 Session mutation journal 记录物理代次和 transcript 转移。原任务的目标、检查点和产物引用保持；源 claim 暂停后交接到新代次，目标完成合同及资源回读后开放。回复丢失、窗口重开或进程重启都沿同一 operationId 恢复；同 ID 的不同目标请求会拒绝。
+
+操作范围及恢复入口见[会话、任务与资源操作矩阵](../dev/session-lifecycle-control-matrix.md)。
+
+子代理 transcript 与任务 owner 的读取使用 Gateway 的常规请求预算，并共享调用方的逻辑截止时间；读取前后均核对 generation。
+
+子代理详情和名单面板按当前 child 会话代次读取任务 owner 的验证回执和验收状态，分别显示等待验收、已验收和已取消；刷新可回读核验后的状态。账本中的 worker 会话链接打开原有 transcript 面板，并保持正确负责人范围。验收读取失败时保留已读取的 transcript，任务验收显示不可用。
+
+费用读取当前 transcript 中的结构化 usage 记录；完整费用记录可汇总，缺失费用显示“未知”。
+
 ## 17. 源码索引
 
 - `openclaw_runtime/src/agents/role-contract.ts`
@@ -427,3 +483,24 @@ Runtime 还包含：
 - `docs/runtime-design/area-2-multi-agent-orchestration.md`
 
 延伸阅读：[产品概念边界](../clawx-product-semantics.md)、[Session 与 delegation](sessions.md)、[资源与可观测性](resources-and-observability.md)。
+### 持久任务与执行资格
+
+产品 Task Ledger 的执行契约保存 objective、constraints、acceptance、revision 和来源；仓库共用 SQLite 保存领取、epoch、attempt、检查点和工具回执。模型调用边界重新读取目标，受管工具检查捕获的 epoch。旧 Task Ledger 事件迁入事务存储，旧 JSONL 原件保留；已有节点可通过 adopt 保留 ID。任务完成支持约定文件哈希和实际 exec 检查回执，业务 owner-receipt 在对应 owner 尚未接入时返回明确拒绝。研发 Task Forest 不参与产品运行。详见 [完整规划](../dev/durable-task-system/PLAN.md)。
+
+`task_control` 提供领取、检查点、任务分解、相似候选、游标查询和效果回执恢复。父目标等待子项验收，深层任务恢复完整祖先目标；取消计划等待后代在途操作结清。子代理在实际派发前接收 writer，队列调度时重新核对原 owner，registry 终态后归还。`tasks.contract.accept`、`tasks.contract.receipt`、`tasks.contract.reconcile` 连接既有 verifier/effect owner，检查候选、会话代次和工具效果身份。任务事件支持按持久序号读取和确认，投影缓存可以重建。
+
+会话优先的任务交互：普通讨论保持无任务；agent 通过 task_control.start 原子定位与领取，目标和验证条件由工具从请求及项目事实整理。当前会话状态经 taskLedger.sessionTask 读取，版本身份由 Main 向 session owner 核对。会话顶部显示可展开、隐藏和重开的轻量任务面板，默认收起执行步骤；显示偏好独立于执行状态。任务账本的创建表单需要主动打开。计划到达不再自动展开会话侧栏，用户仍可主动查看环境、子代理与进程状态。
+
+视觉层级更新：顶部任务头是唯一目标状态面，会话导航只保留项目入口和会话选项，侧栏不再重复计划。步骤来自持久子任务、检查点或运行计划；只有完整计划才能计算比例，核验完成由任务 owner 决定。消息历史原文保持完整。画布去掉网格与装饰，输入框减轻阴影；底部仅在有真实文件变更时显示按路径去重的文件数，详情继续显示实际分支和工作树。初始会话不显示任务头或 Git 状态。
+
+归档设置中的“待确认操作”读取原 Main 生命周期记录；即使原会话行已经消失，也可按保存的操作继续。旧操作已经结束或被替换时会拒绝重放。Stop 在收到匹配运行的终止回执或同代次的空闲状态后才清理界面运行状态；迟到回包保持新代次和当前 agent 的列表。
+
+压缩、范围整理和检查点恢复携带出发时的物理 sessionId，通过原准入屏障和会话存储写入校验。缺少原写入日志身份的旧检查点显示无法核验来源。任务或会话拥有的检出由原生命周期流程回收；存储/Git 的普通删除入口保留这些对象。未推送提交通过仍存在的共享 Git ref 保留，孤立提交尚未获得持久引用时拒绝清理。
+
+视觉层级再次更新（2026-11-10，task-dock-composer-restraint）：运行中的任务停靠在输入框上方而非顶部，直到完成后收为一行回执；托盘显示短任务 ID（点击复制）、当前步骤、子任务 ID 与账本链接，菜单提供复制 ID、在任务账本中打开、展开/收起步骤、刷新与隐藏。会话任务范围由顶部横条改为页眉中的安静小标签，空/不可用/陈旧状态仍可区分。运行计划完成且本轮结束后托盘自动离开，记录保留在对话的回合摘要中。会话状态面板改为键值行：上下文用量（与输入框读数同源，未测量不显示）、在用连接器、变更与审阅入口、后台任务分组。
+
+工作树回收读取原 Task 的全部 checkpoint、验收证据和委派候选历史。已完成任务的历史产物先按原 SHA256 在共享 Git 引用可达的提交中核验，再写入 `artifact_retained` 回执；旧版本快照和当前 HEAD 分别保留。回执先提交，删除前再次读取 Git 字节，删除完成后追加 `worktree_cleanup_completed`。进程中断后按登记的原任务库身份续接。
+
+Git 工作树存在未提交内容时拒绝回收，声明的写集也不能豁免这项检查。实际删除使用 Git 自身的内容检查；Git 拒绝后保留目录，不转为递归强制删除。
+
+`task_control.history` 和宿主任务命令可按任务与事件序号反查目标、领取、运行、候选、检查和保留回执。`readRetainedArtifact` 按任务与回执身份返回经过完整 SHA256 校验的 base64 分页，默认每页 16 KiB，最多 64 KiB；目录已删除仍可读取。领取、首次建库、跨 clone 登记与删除共享执行域锁；活跃委派、未完成任务和未知效果继续阻止回收。Git 报告根与物理 `.git` 归属不符时，任务准入、Git 写入和清理拒绝继续。

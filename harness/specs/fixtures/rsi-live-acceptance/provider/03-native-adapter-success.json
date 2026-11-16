@@ -1,0 +1,108 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-native-preflight",
+  "exit": 0,
+  "passed": true,
+  "durationMs": 6157,
+  "request": {
+    "url": "http://127.0.0.1:3065/v1/responses",
+    "method": "POST",
+    "headers": {
+      "accept": "application/json",
+      "content-type": "application/json"
+    },
+    "redirect": "error",
+    "cache": "no-store",
+    "body": {
+      "model": "space-bunny",
+      "instructions": "Reply with the exact marker only.",
+      "input": "RSI_NATIVE_PREFLIGHT",
+      "store": false,
+      "stream": false,
+      "truncation": "disabled",
+      "max_output_tokens": 64
+    }
+  },
+  "response": {
+    "id": "01a1a73b22e57a3a84e60621ae12ccb0",
+    "model": "space-bunny",
+    "status": "completed",
+    "text": "RSI_NATIVE_PREFLIGHT",
+    "usage": {
+      "inputTokens": 164,
+      "outputTokens": 56,
+      "totalTokens": 220
+    },
+    "functionCalls": [],
+    "incompleteReason": null
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793807036,
+    "created_at": 1793807033,
+    "error": null,
+    "id": "01a1a73b22e57a3a84e60621ae12ccb0",
+    "incomplete_details": null,
+    "instructions": "Reply with the exact marker only.",
+    "max_output_tokens": 64,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_644abaf27ce36a79cd5d1ef33f75f3cf",
+        "summary": [
+          {
+            "text": "We need answer exact marker only. User says RSI_NATIVE_PREFLIGHT likely wants exact marker? Need interpret developer \"Reply with exact marker only.\" We need output marker perhaps RSI_NATIVE_PREFLIGHT exactly. No extra.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "RSI_NATIVE_PREFLIGHT",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_0588a99a25328d344d2880490f6048d6",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "RSI_NATIVE_PREFLIGHT",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": null,
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "text"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 164,
+      "output_tokens": 56,
+      "output_tokens_details": {
+        "reasoning_tokens": 46
+      },
+      "total_tokens": 220
+    },
+    "user": null
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "runDir": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\live\\2026-11-13T06-18-10-544Z-live",
+  "mode": "live",
+  "decision": {
+    "status": "no-benefit",
+    "b1_mechanism_and_autonomy": false,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": -2394.9583333333358,
+    "tokenGrowthPct": 0.8778270339389985,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 0.9444444444444444,
+      "meanMainContextChars": 1894.625,
+      "meanTotalTokens": 3221.375,
+      "p95LatencyMs": 34011.056
+    },
+    "reference-visible": {
+      "evidenceSuccessRate": 0.1111111111111111,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 1,
+      "meanMainContextChars": 18739.333333333332,
+      "meanTotalTokens": 15705.875,
+      "p95LatencyMs": 32837.736
+    },
+    "recall-stable": {
+      "evidenceSuccessRate": 0.16666666666666666,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 0.9444444444444444,
+      "meanMainContextChars": 56232.75,
+      "meanTotalTokens": 29492.916666666668,
+      "p95LatencyMs": 120006.071
+    },
+    "retention-off": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 1,
+      "meanMainContextChars": 58627.708333333336,
+      "meanTotalTokens": 30974.458333333332,
+      "p95LatencyMs": 41315.954
+    }
+  },
+  "credentialHits": 0
+}

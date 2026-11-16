@@ -22,36 +22,67 @@ export function warmupManagedPythonReadiness(): void {
   });
 }
 
-export async function terminateOwnedGatewayProcess(child: Electron.UtilityProcess): Promise<void> {
+const gatewayExitReceipts = new WeakSet<Electron.UtilityProcess>();
+const gatewayExitObservers = new WeakSet<Electron.UtilityProcess>();
+const gatewayTerminations = new WeakMap<Electron.UtilityProcess, Promise<void>>();
+
+/** Capture the original native exit event before the process can finish. */
+export function observeOwnedGatewayProcess(child: Electron.UtilityProcess): void {
+  if (gatewayExitObservers.has(child)) return;
+  gatewayExitObservers.add(child);
+  child.once('exit', () => { gatewayExitReceipts.add(child); });
+}
+
+export function terminateOwnedGatewayProcess(child: Electron.UtilityProcess): Promise<void> {
+  observeOwnedGatewayProcess(child);
+  if (gatewayExitReceipts.has(child)) return Promise.resolve();
+  const previous = gatewayTerminations.get(child);
+  if (previous) return previous;
   const terminateWindowsProcessTree = async (pid: number): Promise<void> => {
     const cp = await import('child_process');
     await new Promise<void>((resolve, reject) => {
-      cp.exec(`taskkill /F /PID ${pid} /T`, { timeout: 5000, windowsHide: true }, (error) => error ? reject(error) : resolve());
+      cp.execFile('taskkill.exe', ['/F', '/PID', String(pid), '/T'], { timeout: 5000, windowsHide: true }, (error) => error ? reject(error) : resolve());
     });
   };
 
-  await new Promise<void>((resolve, reject) => {
+  const termination = new Promise<void>((resolve, reject) => {
     let exited = false;
     let forced = false;
     let timeout: ReturnType<typeof setTimeout>;
+    let forcePidTimer: ReturnType<typeof setTimeout> | undefined;
     const forceTerminate = () => {
+      if (gatewayExitReceipts.has(child)) { onExit(); return; }
       if (exited || forced) return;
       forced = true;
       clearTimeout(timeout);
-      // taskkill can stall when Windows process enumeration is unavailable.
-      // Electron owns a native process handle; keep ownership until it exits.
+      // Give Electron's owned handle a brief chance to reap the child, then
+      // force the original PID if it still has not produced its exit receipt.
       timeout = setTimeout(() => {
+        if (gatewayExitReceipts.has(child)) { onExit(); return; }
         child.removeListener('exit', onExit);
         reject(new Error(`Owned Gateway process did not exit (pid=${child.pid ?? 'unknown'})`));
       }, 5000);
-      try {
-        if (process.platform !== 'win32' && child.pid) process.kill(child.pid, 'SIGKILL');
-        else child.kill();
-      } catch (error) {
-        clearTimeout(timeout);
-        child.removeListener('exit', onExit);
-        reject(error);
+      const forcePid = () => {
+        if (exited || gatewayExitReceipts.has(child)) return;
+        try {
+          if (child.pid) process.kill(child.pid, 'SIGKILL');
+          else child.kill();
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code === 'ESRCH') return;
+          clearTimeout(timeout);
+          child.removeListener('exit', onExit);
+          reject(error);
+        }
+      };
+      if (process.platform === 'win32') {
+        try {
+          if (child.kill()) {
+            forcePidTimer = setTimeout(forcePid, 250);
+            return;
+          }
+        } catch { /* The native PID path still needs to confirm termination. */ }
       }
+      forcePid();
     };
 
     // Register a single exit listener before any kill attempt to avoid
@@ -59,6 +90,7 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
     const onExit = () => {
       exited = true;
       clearTimeout(timeout);
+      clearTimeout(forcePidTimer);
       resolve();
     };
     child.once('exit', onExit);
@@ -81,6 +113,11 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
     }
 
   });
+  gatewayTerminations.set(child, termination);
+  void termination.then(() => {}, () => {
+    if (gatewayTerminations.get(child) === termination) gatewayTerminations.delete(child);
+  });
+  return termination;
 }
 
 export async function unloadLaunchctlGatewayService(): Promise<void> {

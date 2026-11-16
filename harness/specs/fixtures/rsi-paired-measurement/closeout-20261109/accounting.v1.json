@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "RsiCampaignAccounting/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-campaign-replay",
+  "campaignDigest": "b2c75553cfaab9c70262d7d8c77574f812786817652901ed3581d010a4a8f948",
+  "providerCalls": 791,
+  "accountedTokens": 11934418,
+  "knownTokens": 11933697,
+  "unknownUsageRequests": [
+    "provider-preflight"
+  ],
+  "currency": "CNY",
+  "spendingUpperBound": 0,
+  "billedCost": null,
+  "plannedAuthorization": {
+    "approvedBy": "owner",
+    "currency": "CNY",
+    "maxCost": 300,
+    "maxProviderCalls": 864,
+    "maxTotalTokens": 12000000,
+    "source": "Owner replies in chat 01a1b651-cdda-7143-a45e-3ca0aa926b43: 12M tokens / 864 calls; currency CNY; fee cap 300 CNY."
+  },
+  "preflightCalls": 2,
+  "trialProviderCalls": 789,
+  "reservationCount": 791,
+  "receiptCount": 791,
+  "reconciled": true,
+  "spendingBasis": "existing-free-quota",
+  "upstreamCreditDebit": null
+}

@@ -15,7 +15,7 @@ touchedAreas:
   - packages/versebrowser/src/engine/browser-control/**
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
-  - src/pages/Browser/index.tsx
+  - src/components/settings/BrowserSettingsPanel.tsx
   - src/components/file-preview/WorkspaceLiveBrowserPanel.tsx
   - src/components/file-preview/WorkspaceWebPreviewPanel.tsx
   - shared/i18n/locales/**/browser.json
@@ -23,7 +23,7 @@ touchedAreas:
   - packages/versebrowser/tests/agent-browser-service.test.ts
   - tests/unit/agent-browser-supervised-task-executor.test.ts
   - tests/unit/agent-browser-browser-control.test.ts
-  - tests/unit/browser-workbench.test.tsx
+  - tests/unit/agent-browser-gateway-bridge.test.ts
   - tests/unit/workspace-live-browser-panel.test.tsx
   - tests/e2e/agent-browser-workbench.spec.ts
   - tests/e2e/browser-security-recovery.spec.ts

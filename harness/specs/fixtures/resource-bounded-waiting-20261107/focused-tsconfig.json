@@ -1,0 +1,16 @@
+{
+  "extends": "../../../../tsconfig.node.json",
+  "compilerOptions": {
+    "rootDir": "../../../..",
+    "composite": false,
+    "noEmit": true,
+    "typeRoots": ["../../../../node_modules/@types"]
+  },
+  "files": [
+    "../../../../electron/services/resource-fabric.ts",
+    "../../../../openclaw_runtime/src/agents/resource-leases.ts",
+    "../../../../tests/unit/resource-fabric-bounded-waiting.test.ts"
+  ],
+  "include": [],
+  "exclude": []
+}

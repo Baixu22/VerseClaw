@@ -1,0 +1,79 @@
+{
+  "id": "zh-procedure",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "发布前必须先运行回归测试。所有结果通过后才部署。",
+    "taskComplete": true,
+    "lexicalHit": false
+  },
+  "admission": {
+    "sources": [
+      {
+        "id": "发布.md",
+        "lookup": "发布.md",
+        "path": "发布.md",
+        "title": "发布.md",
+        "excerpt": "发布前必须先运行回归测试。所有结果通过后才部署。",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:发布.md",
+          "owner": "memory-wiki",
+          "subjectId": "发布.md",
+          "revision": "1",
+          "contentDigest": "sha256:acfb82263c1c7981aca16058d9db0dfd3b391fc62dbd70a6616d642988c2926b",
+          "sourceRefs": [
+            "发布.md"
+          ]
+        }
+      }
+    ],
+    "rejections": [],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "发布.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": true,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": true,
+  "promptHash": "bba9876fbacd0463031248a1e321990c1413c68cfe4cd61f491cb094f5fbe786",
+  "provider": {
+    "text": "{\"claims\":[{\"text\":\"发布前必须先运行回归测试。\",\"citations\":[{\"sourceId\":\"memory-wiki:发布.md\",\"quote\":\"发布前必须先运行回归测试。\"}]}],\"unknowns\":[]}",
+    "responseId": "01a1ab5a47597d38b334c21404b3a5f7",
+    "model": "space-bunny",
+    "status": "completed",
+    "usage": {
+      "inputTokens": 445,
+      "outputTokens": 111,
+      "totalTokens": 556
+    }
+  },
+  "parsed": {
+    "claims": [
+      {
+        "text": "发布前必须先运行回归测试。",
+        "citations": [
+          {
+            "sourceId": "memory-wiki:发布.md",
+            "quote": "发布前必须先运行回归测试。"
+          }
+        ]
+      }
+    ],
+    "unknowns": []
+  },
+  "answer": "发布前必须先运行回归测试。",
+  "durationMs": 6389
+}

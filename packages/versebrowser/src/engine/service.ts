@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { once } from 'node:events';
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { electronApp, electronBrowserWindow } from '../host/electron-optional.ts';
@@ -111,6 +112,7 @@ import type { AgentBrowserRunner } from './cli-runner.ts';
 type AgentBrowserWindow = Pick<
   BrowserWindow,
   | 'close'
+  | 'destroy'
   | 'focus'
   | 'hide'
   | 'isDestroyed'
@@ -133,17 +135,23 @@ type AgentBrowserRecord = {
   runtimeExpiresAt?: number;
   /** P1-7：多标签页管理器，仅 browser-window 引擎可用。 */
   tabManager?: AgentBrowserTabManager;
+  closing?: Promise<void>;
 };
 
 export type AgentBrowserSupervisedRequestGuard = (
   url: string,
   options: {
+    sessionId?: string;
+    profile: string;
     enforceApprovedDomains: boolean;
     lookupAddresses?: (hostname: string) => Promise<Array<{ address: string; family: number }>>;
   },
 ) => Promise<void>;
 
 type AgentBrowserSupervisedGuardState = {
+  webContentsId: number;
+  profile: string;
+  sessionId: string;
   guard: AgentBrowserSupervisedRequestGuard;
   error?: unknown;
 };
@@ -276,7 +284,7 @@ function normalizeWorkspaceContext(value: unknown): string | undefined {
   if (value == null) return undefined;
   const normalized = String(value).trim();
   if (!normalized) return undefined;
-  return normalized.slice(0, 200);
+  return normalized;
 }
 
 function normalizeAuthStateName(value: unknown, profile: string): string | undefined {
@@ -397,9 +405,11 @@ export async function waitForWebContents(
   webContents: AgentBrowserWebContents,
   eventName: 'did-finish-load' | 'dom-ready',
   timeoutMs: number = NAVIGATION_TIMEOUT_MS,
+  loading?: Promise<unknown>,
 ): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const events = webContents as unknown as {
+      on: (eventName: string, listener: (...args: unknown[]) => void) => void;
       once: (eventName: string, listener: (...args: unknown[]) => void) => void;
       removeListener: (eventName: string, listener: (...args: unknown[]) => void) => void;
       stop: () => void;
@@ -417,6 +427,7 @@ export async function waitForWebContents(
       resolve();
     };
     const onFail = (...args: unknown[]) => {
+      if (args[4] === false) return; // An optional iframe is not the main navigation.
       if (settled) return;
       settled = true;
       const errorCode = typeof args[1] === 'number' ? args[1] : 0;
@@ -438,7 +449,15 @@ export async function waitForWebContents(
     }, timeoutMs);
     timer.unref?.();
     events.once(eventName, onReady);
-    events.once('did-fail-load', onFail);
+    events.on('did-fail-load', onFail);
+    // loadURL may reject without emitting did-fail-load. Its failure ends the
+    // same wait so an old timer cannot stop a subsequent navigation.
+    void loading?.catch(error => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(error);
+    });
   });
 }
 
@@ -469,6 +488,7 @@ export class AgentBrowserService {
   private readonly createWindow: (options: Electron.BrowserWindowConstructorOptions) => AgentBrowserWindow;
   private readonly now: () => Date;
   private readonly userDataPath: string | undefined;
+  private readonly closingSessions = new Set<string>();
   private boundaryChoiceNotifier: ((sessionId: string, message: import('../core/browser-control.ts').BrowserControlBoundaryChoiceRequestMessage) => void) | undefined;
   /**
    * 全局浏览器控制开关。默认关闭，刷新/重载后回退到关闭（不持久化）。
@@ -489,6 +509,13 @@ export class AgentBrowserService {
 
   list(): AgentBrowserSession[] {
     return [...this.sessions.values()].map((record) => ({ ...record.session }));
+  }
+
+  /** Host transport configuration runs before any window or destination request. */
+  protected async prepareBrowserSession(_session: AgentBrowserSession, _partition: string): Promise<void> {}
+  protected browserWindowDestroyed(_sessionId: string): void {}
+  protected resolveBrowserAddresses(_profile: string, hostname: string, lookupAddresses: (hostname: string) => Promise<Array<{ address: string; family: number }>>) {
+    return lookupAddresses(hostname);
   }
 
   async listProfiles(): Promise<AgentBrowserProfileEntry[]> {
@@ -678,7 +705,7 @@ export class AgentBrowserService {
     } finally {
       if (sessionId) {
         try {
-          this.close(sessionId);
+          await this.close(sessionId);
         } catch {
           // Validation sessions are best-effort cleanup.
         }
@@ -686,20 +713,21 @@ export class AgentBrowserService {
     }
   }
 
-  async open(payload: AgentBrowserOpenPayload = {}): Promise<{ session: AgentBrowserSession; textSample?: string }> {
-    return await this.openInternal(payload);
+  async open(payload: AgentBrowserOpenPayload = {}, requestGuard?: AgentBrowserSupervisedRequestGuard): Promise<{ session: AgentBrowserSession; textSample?: string }> {
+    return await this.openInternal(payload, requestGuard);
   }
 
   async openSupervised(
     payload: AgentBrowserOpenPayload,
     requestGuard: AgentBrowserSupervisedRequestGuard,
   ): Promise<{ session: AgentBrowserSession; textSample?: string }> {
-    return await this.openInternal(payload, requestGuard);
+    return await this.openInternal(payload, requestGuard, true);
   }
 
   private async openInternal(
     payload: AgentBrowserOpenPayload = {},
     requestGuard?: AgentBrowserSupervisedRequestGuard,
+    requireCompleteNetwork = false,
   ): Promise<{ session: AgentBrowserSession; textSample?: string }> {
     const mode = normalizeMode(payload.mode);
     const profile = normalizeProfile(payload.profile);
@@ -731,55 +759,81 @@ export class AgentBrowserService {
     };
     const url = normalizeHttpUrl(payload.url);
 
-    if (!requestGuard && this.managedEngine === 'agent-browser-cli') {
-      const cliRunner = this.requireCliRunner();
-      this.sessions.set(session.id, { session, engine: 'agent-browser-cli', runtimeMode });
-      const metadata = await cliRunner.open({ session, url, width, height });
-      await this.refreshCli(session.id, metadata);
-      return {
-        session: this.snapshot(session.id),
-        textSample: await cliRunner.textSample(this.snapshot(session.id), MAX_TEXT_SAMPLE),
-      };
-    }
-    if (connection.mode !== 'managed') {
-      throw new Error('Agent browser external browser access requires the bundled agent-browser CLI');
-    }
-
-    const window = this.createWindow({
-      show: mode === 'visible',
-      width,
-      height,
-      title: 'Agent Browser',
-      webPreferences: {
-        contextIsolation: true,
-        javascript: true,
-        nodeIntegration: false,
-        partition: agentBrowserProfilePartition(profile),
-        sandbox: true,
-      },
-    });
-    this.sessions.set(session.id, { session, window, engine: 'browser-window', runtimeMode });
-    // P1-7：初始化多标签页管理器，注册主窗口为首页
-    const record = this.sessions.get(session.id)!;
-    if (requestGuard) this.installSupervisedRequestGuard(record, requestGuard);
-    record.tabManager = new AgentBrowserTabManager({
-      createWindow: this.createWindow,
-      profile,
-      mode: mode === 'visible' ? 'visible' : 'hidden',
-      width,
-      height,
-    });
-    record.tabManager.registerMainWindow(window, url ?? '', '');
-    if (url) {
-      try {
-        await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
-        if (requestGuard) this.assertSupervisedRequestSafe(session.id);
-      } catch (error) {
-        if (requestGuard) this.close(session.id);
-        throw error;
+    try {
+      if (!requestGuard && this.managedEngine === 'agent-browser-cli') {
+        const cliRunner = this.requireCliRunner();
+        this.sessions.set(session.id, { session, engine: 'agent-browser-cli', runtimeMode });
+        const metadata = await cliRunner.open({ session, url, width, height });
+        await this.refreshCli(session.id, metadata);
+        return {
+          session: this.snapshot(session.id),
+          textSample: await cliRunner.textSample(this.snapshot(session.id), MAX_TEXT_SAMPLE),
+        };
       }
+      if (connection.mode !== 'managed') {
+        throw new Error('Agent browser external browser access requires the bundled agent-browser CLI');
+      }
+
+      const partition = agentBrowserProfilePartition(profile);
+      await this.prepareBrowserSession(session, partition);
+      const window = this.createWindow({
+        show: mode === 'visible',
+        width,
+        height,
+        title: 'Agent Browser',
+        webPreferences: {
+          contextIsolation: true,
+          javascript: true,
+          nodeIntegration: false,
+          partition,
+          sandbox: true,
+        },
+      });
+      this.sessions.set(session.id, { session, window, engine: 'browser-window', runtimeMode });
+      window.webContents.setWebRTCIPHandlingPolicy('disable_non_proxied_udp');
+      // P1-7：初始化多标签页管理器，注册主窗口为首页
+      const record = this.sessions.get(session.id)!;
+      window.webContents.once('destroyed', () => {
+        this.browserWindowDestroyed(session.id);
+        if (!this.closingSessions.has(session.id) && this.sessions.has(session.id)) void this.close(session.id).catch(() => {});
+      });
+      if (requestGuard) this.installSupervisedRequestGuard(record, requestGuard);
+      record.tabManager = new AgentBrowserTabManager({
+        createWindow: (options) => {
+          const page = this.createWindow(options);
+          page.webContents.setWebRTCIPHandlingPolicy('disable_non_proxied_udp');
+          page.webContents.once('destroyed', () => {
+            this.browserWindowDestroyed(session.id);
+            queueMicrotask(() => {
+              if (this.closingSessions.has(session.id) || !this.sessions.has(session.id)) return;
+              try { this.getRecord(session.id); } catch { /* No live page remains. */ }
+            });
+          });
+          if (requestGuard) this.installSupervisedRequestGuard({ ...record, window: page }, requestGuard);
+          return page;
+        },
+        profile,
+        mode: mode === 'visible' ? 'visible' : 'hidden',
+        width,
+        height,
+      });
+      record.tabManager.registerMainWindow(window, url ?? '', '');
+      if (url) {
+        await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
+        if (requireCompleteNetwork) this.assertSupervisedRequestSafe(session.id);
+      }
+      return { session: this.snapshot(session.id), textSample: await this.textSample(session.id) };
+    } catch (error) {
+      // Host-owned setup may have registered grants/proxies before a window or
+      // service record exists. Always unwind through the same virtual owner.
+      try { await this.close(session.id); }
+      catch (cleanupError) {
+        // A not-yet-published record can be absent while the Host's close
+        // finally still releases its setup. Retain actual cleanup failures.
+        if (this.sessions.has(session.id)) throw new AggregateError([error, cleanupError], 'Browser open and cleanup failed', { cause: cleanupError });
+      }
+      throw error;
     }
-    return { session: this.snapshot(session.id), textSample: await this.textSample(session.id) };
   }
 
   assertSupervisedRequestSafe(sessionId: string): void {
@@ -801,9 +855,9 @@ export class AgentBrowserService {
     }
     const waitUntil = payload.waitUntil === 'dom-ready' ? 'dom-ready' : 'did-finish-load';
     const window = this.requireWindow(record);
-    const wait = waitForWebContents(window.webContents, waitUntil);
-    await window.loadURL(url);
-    await wait;
+    const loading = Promise.resolve().then(() => window.loadURL(url));
+    const wait = waitForWebContents(window.webContents, waitUntil, NAVIGATION_TIMEOUT_MS, loading);
+    await Promise.all([loading, wait]);
     return await this.refresh(record);
   }
 
@@ -1114,40 +1168,49 @@ export class AgentBrowserService {
     return await this.refresh(record);
   }
 
-  close(sessionId: string): void {
-    const record = this.getRecord(sessionId);
+  close(sessionId: string): Promise<void> {
+    const record = this.sessions.get(sessionId);
+    if (!record) throw new Error(`Agent browser session not found: ${sessionId}`);
+    this.closingSessions.add(sessionId);
+    record.closing ??= this.closeOwnedRecord(sessionId, record).finally(() => {
+      record.closing = undefined; this.closingSessions.delete(sessionId);
+    });
+    return record.closing;
+  }
+
+  private async closeOwnedRecord(sessionId: string, record: AgentBrowserRecord): Promise<void> {
+    const guardedContents = record.window && !record.window.isDestroyed() ? record.window.webContents : undefined;
+    const guardedId = guardedContents?.id;
+    const guardedSession = guardedContents?.session;
+    if (record.engine === 'agent-browser-cli') {
+      await this.requireCliRunner().close(record.session);
+    } else {
+      const windows = record.tabManager
+        ? record.tabManager.listPages().map(page => record.tabManager!.getPageWindow(page.pageId)!)
+        : [this.requireWindow(record)];
+      for (const window of windows) {
+        if (window.isDestroyed()) continue;
+        // Host-owned termination bypasses page beforeunload handlers.
+        window.destroy();
+        if (!window.isDestroyed()) {
+          await once(window as unknown as NodeJS.EventEmitter, 'closed', { signal: AbortSignal.timeout(NAVIGATION_TIMEOUT_MS) });
+        }
+        if (!window.isDestroyed()) throw new Error('Browser close receipt did not confirm window destruction');
+      }
+    }
     this.sessions.delete(sessionId);
     const controlState = this.browserControlStates.get(sessionId);
     if (controlState) {
       this.browserControlStates.delete(sessionId);
       void controlState.connection.detach();
     }
-    if (record.engine === 'agent-browser-cli') {
-      void this.requireCliRunner().close(record.session);
-      return;
+    if (guardedId !== undefined && guardedSession) {
+      this.supervisedRequestGuards.delete(guardedId);
+      const sessionIds = this.supervisedRequestSessionIds.get(guardedSession);
+      sessionIds?.delete(guardedId);
+      if (sessionIds?.size === 0) this.supervisedRequestSessionIds.delete(guardedSession);
     }
-    if (record.window) {
-      const webContentsId = record.window.webContents.id;
-      this.supervisedRequestGuards.delete(webContentsId);
-      const sessionIds = this.supervisedRequestSessionIds.get(record.window.webContents.session);
-      sessionIds?.delete(webContentsId);
-      if (sessionIds?.size === 0) this.supervisedRequestSessionIds.delete(record.window.webContents.session);
-    }
-    // P1-7：关闭所有标签页窗口（主窗口 + newPage 创建的额外窗口）
-    if (record.tabManager) {
-      for (const page of record.tabManager.listPages()) {
-        const pageWindow = record.tabManager.getPageWindow(page.pageId);
-        if (pageWindow && !pageWindow.isDestroyed()) {
-          pageWindow.close();
-        }
-      }
-      record.tabManager.clear();
-    } else {
-      const window = this.requireWindow(record);
-      if (!window.isDestroyed()) {
-        window.close();
-      }
-    }
+    record.tabManager?.clear();
   }
 
   private installSupervisedRequestGuard(
@@ -1156,8 +1219,12 @@ export class AgentBrowserService {
   ): void {
     const window = this.requireWindow(record);
     const webContentsId = window.webContents.id;
-    const state: AgentBrowserSupervisedGuardState = { guard };
+    const state: AgentBrowserSupervisedGuardState = { guard, sessionId: record.session.id, profile: record.session.profile, webContentsId };
     this.supervisedRequestGuards.set(webContentsId, state);
+    window.webContents.once('destroyed', () => {
+      this.supervisedRequestGuards.delete(webContentsId);
+      this.supervisedRequestSessionIds.get(electronSession)?.delete(webContentsId);
+    });
     window.webContents.setWindowOpenHandler(() => {
       state.error = Object.assign(
         new Error('Supervised browser task popup navigation is denied'),
@@ -1172,6 +1239,12 @@ export class AgentBrowserService {
       this.supervisedRequestSessionIds.set(electronSession, sessionIds);
     }
     sessionIds.add(webContentsId);
+    window.webContents.once('destroyed', () => {
+      this.supervisedRequestGuards.delete(webContentsId);
+      const remaining = this.supervisedRequestSessionIds.get(electronSession);
+      remaining?.delete(webContentsId);
+      if (remaining?.size === 0) this.supervisedRequestSessionIds.delete(electronSession);
+    });
     if (this.supervisedRequestSessions.has(electronSession)) return;
     this.supervisedRequestSessions.add(electronSession);
     electronSession.webRequest.onBeforeRequest((details, callback) => {
@@ -1180,13 +1253,12 @@ export class AgentBrowserService {
         : undefined;
       const states = directState
         ? [directState]
-        : typeof details.webContentsId === 'number'
-          ? []
-          : [...(this.supervisedRequestSessionIds.get(electronSession) ?? [])]
-              .map((id) => this.supervisedRequestGuards.get(id))
-              .filter((entry): entry is AgentBrowserSupervisedGuardState => Boolean(entry));
+        : [...(this.supervisedRequestSessionIds.get(electronSession) ?? [])]
+            .map((id) => this.supervisedRequestGuards.get(id))
+            .filter((entry): entry is AgentBrowserSupervisedGuardState => Boolean(entry));
       if (states.length === 0) {
-        callback({ cancel: false });
+        // A profile with no active window cannot continue background requests.
+        callback({ cancel: true });
         return;
       }
       const enforceApprovedDomains = details.resourceType === 'mainFrame' || details.resourceType === 'subFrame';
@@ -1198,10 +1270,15 @@ export class AgentBrowserService {
         }));
       };
       void Promise.all(states.map((state) => state.guard(details.url, {
+        // Unattributed requests must not borrow a live window's approval.
+        sessionId: directState?.sessionId,
+        profile: state.profile,
         enforceApprovedDomains,
-        lookupAddresses,
+        lookupAddresses: hostname => this.resolveBrowserAddresses(state.profile, hostname, lookupAddresses),
       }))).then(() => {
-        callback({ cancel: false });
+        // DNS/policy lookup is asynchronous; closing a window revokes its
+        // pending requests too, not just requests arriving after destruction.
+        callback({ cancel: states.some(state => this.supervisedRequestGuards.get(state.webContentsId) !== state) });
       }).catch((error) => {
         for (const state of states) state.error = error;
         callback({ cancel: true });
@@ -1298,9 +1375,9 @@ export class AgentBrowserService {
     const { window, entry } = tabManager.navigatePage(payload.url, payload.pageId);
     const waitUntil = payload.waitUntil === 'dom-ready' ? 'dom-ready' : 'did-finish-load';
     // 先设置 wait promise 再 loadURL，避免竞态
-    const wait = waitForWebContents(window.webContents, waitUntil);
-    await window.loadURL(payload.url);
-    await wait;
+    const loading = Promise.resolve().then(() => window.loadURL(payload.url));
+    const wait = waitForWebContents(window.webContents, waitUntil, NAVIGATION_TIMEOUT_MS, loading);
+    await Promise.all([loading, wait]);
     tabManager.updatePageInfo(entry.pageId, {
       url: payload.url,
       title: window.webContents.getTitle(),
@@ -1339,8 +1416,17 @@ export class AgentBrowserService {
 
   private getRecord(sessionId: string): AgentBrowserRecord {
     const record = this.sessions.get(sessionId);
+    if (record?.closing) throw new Error(`Agent browser session is closing: ${sessionId}`);
+    if (record?.tabManager) {
+      record.tabManager.listPages();
+      const activeWindow = record.tabManager.getActiveWindow();
+      if (activeWindow && activeWindow !== record.window) {
+        record.window = activeWindow as AgentBrowserWindow;
+        this.resetBrowserControlState(sessionId);
+      }
+    }
     if (!record || (record.window?.isDestroyed() ?? false)) {
-      this.sessions.delete(sessionId);
+      if (record) void this.close(sessionId).catch(() => {});
       throw new Error(`Agent browser session not found: ${sessionId}`);
     }
     return record;

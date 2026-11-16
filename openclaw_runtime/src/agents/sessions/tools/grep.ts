@@ -156,6 +156,7 @@ function withWorkspaceSearchLease(
     execute: (toolCallId, params, signal, onUpdate, ctx) =>
       withWorkspaceResourceLease("workspaceSearch", normalizeWorkspaceLeaseKey(cwd), () =>
         execute(toolCallId, params, signal, onUpdate, ctx),
+        { signal },
       ),
   };
 }
@@ -276,6 +277,10 @@ function buildGrepToolDefinition(
             }
             args.push("--", pattern, searchPath);
 
+            if (signal?.aborted) {
+              settle(() => reject(new Error("Operation aborted")));
+              return;
+            }
             const child = spawn(rgPath, args, { stdio: ["ignore", "pipe", "pipe"] });
             const rl = createInterface({ input: child.stdout });
             let stderr = "";
@@ -285,6 +290,7 @@ function buildGrepToolDefinition(
             let aborted = false;
             let killedDueToLimit = false;
             const outputLines: string[] = [];
+            let childError: Error | undefined;
 
             const cleanup = () => {
               rl.close();
@@ -368,6 +374,7 @@ function buildGrepToolDefinition(
             });
 
             child.on("error", (error) => {
+              if (child.pid) { childError = error; return; }
               cleanup();
               settle(() => reject(new Error(`Failed to run ripgrep: ${error.message}`)));
             });
@@ -378,6 +385,7 @@ function buildGrepToolDefinition(
                   settle(() => reject(new Error("Operation aborted")));
                   return;
                 }
+                if (childError) { settle(() => reject(childError)); return; }
                 if (!killedDueToLimit && code !== 0 && code !== 1) {
                   const errorMsg = stderr.trim() || `ripgrep exited with code ${code}`;
                   settle(() => reject(new Error(errorMsg)));

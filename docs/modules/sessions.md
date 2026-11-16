@@ -163,11 +163,16 @@ Compaction 的目标是减小后续 prompt，而不是改写原始 transcript。
 
 ### 8.1 Handoff
 
+执行环境迁移与新建续接会话分别处理。Chat 工具栏的“在另一个检出中继续”保留逻辑 sessionKey 和业务任务，将物理代次、任务 epoch 与执行根按持久操作转交到已配置的工作区。源环境先关闭新效果并排空，目标 transcript、任务合同和产物回读确认后才开放。中断后使用同一操作继续恢复，不需要重述目标。目标必须与源使用同一任务 authority；独立 clone 需要已有的显式注册。
+
+迁移复制会话记录并保留源记录，检查点产物继续引用源检出的明确路径。产物校验失败会保留操作和原因，恢复原检查点版本后可继续。目标写入预留在绑定发布后释放；窗口在最后一步关闭时，“继续迁移”仍能完成释放。中断超过领取租期时，系统重新核对原任务、代次和资源排空后恢复资格。
+
 `prepareHandoff` / `createHandoff`：
 
 - 先验证 handoff ancestry；
 - 验证并持久化 Task Ledger lineage；
-- 创建新的目标会话；
+- runtime 创建并确认带直接父会话的新目标，保存 operationId、源代次、child 与首发 key；
+- “创建并发送”提交已审阅草稿作为首条消息；未知结果先核实既有回执，恢复时复用同一 child 和首发 key；
 - 源 session、源任务和源 goal 不因 handoff 自动消失；
 - 循环或不可读 lineage 被拒绝；
 - 写入被串行化，避免并发 handoff 竞争。
@@ -324,7 +329,7 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 | hop.kind | 证明它的字段 |
 |---|---|
 | `fork` | `forkedFromParent`，或 `forkedFromLeafId` + `parentSessionKey` |
-| `handoff` | `parentSessionKey` 且无 fork 事实 |
+| `handoff` | `parentSessionKey`，且无 fork 事实与 `spawnedBy` |
 | `spawn` | `spawnedBy` |
 | `unknown` | 该 entry 没有声明任何父会话（这是根，不是缺口） |
 

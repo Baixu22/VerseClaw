@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "path": "overlay-tests-result.json",
+      "sha256": "a17346ed2f6b3a8bd76cd0c582eb8a121077a923fb71bac7441328e5f7ddf44c"
+    },
+    {
+      "path": "overlay-tests.json",
+      "sha256": "f205112b03b34186d5de900deaf3cdfecff29accd91c64f71e7c51f5de74aab2"
+    },
+    {
+      "path": "overlay-tsconfig.web.json.json",
+      "sha256": "facbb0d99bedc7d865160e28a81cf8e7de044e5059ca37c89431e28ddfdd0659"
+    },
+    {
+      "path": "overlay-vitest-sources.json",
+      "sha256": "ed929f1eeec6d3cd45ececef33a15a06b0f6bb98d480fe1caa173d8718f054ce"
+    },
+    {
+      "path": "report.json",
+      "sha256": "83eb3120b0d0a8efa7185510205835717f00b25157d9cb2c57accda47729d0b0"
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "b650bd9e91a5bbfbb00403033d43c0a7525ba2658f2a484bf508be114aaf1794"
+    }
+  ]
+}

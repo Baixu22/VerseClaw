@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\output\\electron-process-run.json",
+  "sourceSha256": "5c96f7b28facdae84540e5942095cd3447b123a187d7b3838c62038f014617cf",
+  "result": {
+    "runRoot": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\.tmp\\e2e-runs\\verse-claw-e2e-run-gdwiuc",
+    "baseRoot": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\.tmp\\e2e-runs",
+    "runnerPid": 24636
+  }
+}

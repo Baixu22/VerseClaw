@@ -1,0 +1,186 @@
+[
+  {
+    "name": "candidate-node-types",
+    "exitCode": 2,
+    "candidate": "0dae838c3b5adff7ea0aecaae0199e132cd2efd6",
+    "resultSha256": "089fa1fa86093551fc9fa5ac1f8c9fb7478de4e5759621dab6928844fddedff3",
+    "logSha256": "2d8247b240efcaadfb7f24a1e21d3334d5e355fb008a0a7f3d11a9f02e1bc25a",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\candidate-node-types.result.json"
+  },
+  {
+    "name": "desktop-build-preflight1",
+    "exitCode": 134,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "2502e8dd756da67ca273b0489803132612975c9101a596cb13697f01a85a27c3",
+    "logSha256": "6bee3ec6dcd33d5598629b352949eaea633066182e2ebef916907d2e5cfb04ff",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\desktop-build-preflight1.result.json"
+  },
+  {
+    "name": "final-test-types",
+    "exitCode": 2,
+    "candidate": "81b84911a05da40d8bd9c0dc9f5c63cbbd071217",
+    "resultSha256": "dc74cbd4a3ae20881d6d51e11fff6a04214e45fe6cf73dbb7ca811d95dd24c2d",
+    "logSha256": "345c82c4f0d58ca5758eea72f8d430227a162a53e160cd7d1612035504ad8920",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final-test-types.result.json"
+  },
+  {
+    "name": "final2-worker",
+    "exitCode": 1,
+    "candidate": "d857255602a259845d144e5259da9f3ad5ecfff7",
+    "resultSha256": "467c5d46846c3153349a32b02ec587b294cdfbca415544adcbbe32394cdc75e2",
+    "logSha256": "00b15624047220259d5ab6d36095817f97bf73db96be0c0748584cb1faeda011",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final2-worker.result.json"
+  },
+  {
+    "name": "final3-scope",
+    "exitCode": 1,
+    "candidate": "35cbf9c5d8d38eee7d3e85f7baea20a8cf401875",
+    "resultSha256": "ef053ea06774fd025e9957fa9fa4f1660b7a5940f676bf0b48ebd2af26871449",
+    "logSha256": "c2cbbac121317a7a983216e3c8d7d977a37b84a1a351415b2236655cbf646492",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final3-scope.result.json"
+  },
+  {
+    "name": "final4-scope",
+    "exitCode": 1,
+    "candidate": "69dedf6e069be149dcc6d8f39e98cc70f3fe7676",
+    "resultSha256": "4e6e0241a22abcb0a4c52f8b4ec77caa1e2a140051d427b8a0e93b6ffdae0a84",
+    "logSha256": "c198c0d5a6b9518876318c220da121ce6525d1b605afc0e604f65fb0f873f2b1",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope.result.json"
+  },
+  {
+    "name": "final5-lifecycle-e2e",
+    "exitCode": 1,
+    "candidate": "fb00956ed041531b14dad5601ace0e78cf63c50e",
+    "resultSha256": "82df1241c83e2ebf4209adff6a9d39a60d9fda65461bfea5770a021765ddda94",
+    "logSha256": "ba1b43c9c31cb6bea91f85ed3ef7e3d48305d3ac82012f611d17d8b858893c4f",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final5-lifecycle-e2e.result.json"
+  },
+  {
+    "name": "final5-lifecycle-faults-e2e",
+    "exitCode": 1,
+    "candidate": "fb00956ed041531b14dad5601ace0e78cf63c50e",
+    "resultSha256": "b06297651d40caee3fdeefe4ce1f82eae79e202cc5e9f1279e17bb0f9ec55de2",
+    "logSha256": "37743b7198ea9dd769d182862649b6a40328b65401ade656cb55015d06b39277",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final5-lifecycle-faults-e2e.result.json"
+  },
+  {
+    "name": "final6-lifecycle-e2e",
+    "exitCode": 1,
+    "candidate": "7fa0e6d14c37d241337164d1502fc6c310a5504f",
+    "resultSha256": "bf1288cb6adb6833374f1502df45ec6fb0d212737558ebdfc47ca20444c9d645",
+    "logSha256": "6d1c9983dd077b2e072ddc6378e62ddac21792d09aacfa5326748ecbf2419370",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-e2e.result.json"
+  },
+  {
+    "name": "final6-lifecycle-faults-e2e",
+    "exitCode": 1,
+    "candidate": "7fa0e6d14c37d241337164d1502fc6c310a5504f",
+    "resultSha256": "10db0f221a94f79704ec371a429c04738851d8809c4346afc569fc6d52996089",
+    "logSha256": "24beefbbfca9b6204e36706b44960249c312586cb7403cdb834f30d17edf19ae",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-faults-e2e.result.json"
+  },
+  {
+    "name": "final6-test-types",
+    "exitCode": 2,
+    "candidate": "14cd32645caad318e6083817e0c26c1aa428dab0",
+    "resultSha256": "881050a6debd85897605cac4ea23ecbef9238b8c6818a2e89c9e2e1b4627be6c",
+    "logSha256": "d3d964d7a1561768007f1804f1480c17a94422ef3e76440239f628a1eb59039d",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-test-types.result.json"
+  },
+  {
+    "name": "final7-coordination",
+    "exitCode": 1,
+    "candidate": "a737502db0d3cb228548d12340dc9ebe1bc2c0db",
+    "resultSha256": "a27e5bc6fafce663070bb9a254e39a2536f42824cf86a467a8061484f9fe3586",
+    "logSha256": "8578ddc898222999eacbd2f87700ce44d574a4429012ca7abfead1fb3d084bbf",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final7-coordination.result.json"
+  },
+  {
+    "name": "observer-scope-red",
+    "exitCode": 1,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "5affe70a13c4bed5b89ba079d2ac856f42b4bbe8409daeb791f0f5b8fbb34b93",
+    "logSha256": "596e43417a3dbd25d6a64622f491149d5040323bdcb9a32b32885c4ff740f7f9",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\observer-scope-red.result.json"
+  },
+  {
+    "name": "observer-scope-red3",
+    "exitCode": 1,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "e3c85ad843b3555646e484a2d08420e42ea1b4d20a888d501af517aa75e2b4e0",
+    "logSha256": "f78b826d132d9c98624e53ccbb8b95946f5df3dd2574ffe3a2b4525c2f6e9b72",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\observer-scope-red3.result.json"
+  },
+  {
+    "name": "relay-owner-green",
+    "exitCode": 1,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "8eee6e275d1a07af57270d97d3c90c2269f972367d579299da4afca9be3df1c6",
+    "logSha256": "d4306ff56f882b58223029aa9b054471a076cac19ca267b70d0a52c677e1a08b",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\relay-owner-green.result.json"
+  },
+  {
+    "name": "relay-owner-red",
+    "exitCode": 1,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "ffbfcfbbf6139dc3b05077d02bafe7394321a523a9ba5374c2f0c34882956d0f",
+    "logSha256": "6c583a9ea70e24d6baab573c1b6d3394032ea76e60c6b24d9d9819ead514ba46",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\relay-owner-red.result.json"
+  },
+  {
+    "name": "resource-read-red",
+    "exitCode": 1,
+    "candidate": "fb00956ed041531b14dad5601ace0e78cf63c50e",
+    "resultSha256": "61b21bcfa5a80e758afe6b3444305fce41fec2b8a2e6b12c1f03ea0c8f5f7601",
+    "logSha256": "41411df415b92733b869246c9a3143a9eef2a940a977a18de71966c86b0b8b70",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\resource-read-red.result.json"
+  },
+  {
+    "name": "revision-race-red",
+    "exitCode": 1,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "86afa5dc1dee65cc39efb26ce0198c575d68840693e82cc75251b732501f3098",
+    "logSha256": "44dc62a47e3976133d0493139df8dd302610501d4c49ae55bc1d66784dc9a774",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\revision-race-red.result.json"
+  },
+  {
+    "name": "scoped-process-owner1",
+    "exitCode": 1,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "5d53d4b0e0753b2e9787e6fe7854fad4ed037443e24fa82403c0cb3d15987fdc",
+    "logSha256": "8724a159b30f10d056152296beb4ba4b2db7fb18ef76d2d7053f7f01cd3d496e",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\scoped-process-owner1.result.json"
+  },
+  {
+    "name": "scoped-process-runtime1",
+    "exitCode": 1,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "67a48c38fc62aaae79469e5825c37d8ed9edadaeccd2c6d665baedb614fcf80f",
+    "logSha256": "589af90a9b73e7b987cf645df615ab076aa5063f556d948e9410ecf2f6aced80",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\scoped-process-runtime1.result.json"
+  },
+  {
+    "name": "sidebar-navigation-fix",
+    "exitCode": 1,
+    "candidate": "d857255602a259845d144e5259da9f3ad5ecfff7",
+    "resultSha256": "ce4ef484d90f141d8f621b21dccef901eb09d384f2dbddfbf72f3d5b1deb2f28",
+    "logSha256": "e809721a09d8957def832b5cd0108220641b7bc0830e611e08b7954d68500b40",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\sidebar-navigation-fix.result.json"
+  },
+  {
+    "name": "types-web-preflight1",
+    "exitCode": 2,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "5066f24b216357ff6aa17db1aebecd3c1c28cba443caa3f667869798255e2b92",
+    "logSha256": "cb5903c54274eceb530b909b527286913a4e4cedd0644f7b8aa7806545e76005",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\types-web-preflight1.result.json"
+  },
+  {
+    "name": "worker-journey-preflight1",
+    "exitCode": 1,
+    "candidate": "fb774a694d68239b8dad716a1cfc9eaa0db76e2c",
+    "resultSha256": "f531da773e9b8f58a3d255aa7c9079907ecc0bb70bc4bd27d8957b98100a8e3a",
+    "logSha256": "5f996394fbc6b2a83aea003f906604f4e27a466df4fc426e702ae12e818c8f66",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\worker-journey-preflight1.result.json"
+  }
+]

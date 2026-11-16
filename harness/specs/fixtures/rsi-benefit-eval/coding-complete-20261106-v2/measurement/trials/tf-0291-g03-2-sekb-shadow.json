@@ -1,0 +1,539 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0291-g03-2-sekb-shadow",
+    "caseId": "tf-0291-g03",
+    "repeat": 2,
+    "arm": "sekb-shadow",
+    "caseDigest": "71ea1202e7e2677b13d1dfa43d9fb9bd44de92b1f638ba2c75349c548f040013",
+    "pairSeed": 14,
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "position": 41
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\",\n  \"acceptanceCriteria\": [\n    \"一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\",\n    \"样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\",\n    \"拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\",\n    \"显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\",\n    \"不改产品默认值/锁/approval；不删除原始证据。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"scripts/lib/trace-to-eval-sample.mjs\",\n    \"scripts/lib/trace-to-eval-sample.d.mts\",\n    \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n    \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.mjs\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.d.mts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "30c38f65b554fdd11dfe676c5143e161987d72dfbc82cd388498e83473612e74",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": false
+    },
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0291-g03-2-sekb-shadow",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [
+    {
+      "path": "scripts/lib/trace-to-eval-sample.mjs",
+      "content": "import { createHash } from \"node:crypto\";\n\nconst FORBIDDEN_KEYS = new Set([\n  \"rawprompt\",\n  \"prompt\",\n  \"messages\",\n  \"body\",\n  \"authorization\",\n  \"apikey\",\n  \"headers\",\n]);\n\nconst SECRET_VALUE_PATTERNS = [\n  /\\bsk-[A-Za-z0-9_-]{8,}\\b/,\n  /\\bphc_[A-Za-z0-9_-]{8,}\\b/,\n  /\\bghp_[A-Za-z0-9_-]{8,}\\b/,\n  /\\bAKIA[0-9A-Z]{16}\\b/,\n  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,\n];\n\nconst REPRODUCER_KINDS = new Set([\"scenario\", \"route\", \"command-id\"]);\n\nfunction isObject(value) {\n  return value !== null && typeof value === \"object\" && !Array.isArray(value);\n}\n\nfunction normalizedKey(key) {\n  return String(key).toLowerCase().replace(/[-_]/g, \"\");\n}\n\nfunction findUnsafeContent(value, location = \"trace\") {\n  if (typeof value === \"string\") {\n    for (const pattern of SECRET_VALUE_PATTERNS) {\n      if (pattern.test(value)) {\n        return { location, reason: \"credential-pattern\" };\n      }\n    }\n    return null;\n  }\n\n  if (Array.isArray(value)) {\n    for (let index = 0; index < value.length; index += 1) {\n      const found = findUnsafeContent(value[index], `${location}[${index}]`);\n      if (found) return found;\n    }\n    return null;\n  }\n\n  if (isObject(value)) {\n    for (const [key, child] of Object.entries(value)) {\n      const normalized = normalizedKey(key);\n      if (FORBIDDEN_KEYS.has(normalized)) {\n        return { location: `${location}.${key}`, reason: `forbidden-field:${normalized}` };\n      }\n      const found = findUnsafeContent(child, `${location}.${key}`);\n      if (found) return found;\n    }\n  }\n\n  return null;\n}\n\nfunction canonicalJson(value) {\n  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(\",\")}]`;\n  if (isObject(value)) {\n    return `{${Object.keys(value)\n      .sort()\n      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)\n      .join(\",\")}}`;\n  }\n  return JSON.stringify(value);\n}\n\nfunction sha256(value) {\n  return createHash(\"sha256\").update(value, \"utf8\").digest(\"hex\");\n}\n\nfunction boundedString(value, maxLength, field) {\n  if (typeof value !== \"string\" || value.length === 0 || value.length > maxLength) {\n    throw new TypeError(`${field} must be a non-empty string of at most ${maxLength} characters`);\n  }\n  return value;\n}\n\nfunction validateReproducer(reproducer) {\n  if (!isObject(reproducer)) throw new TypeError(\"reproducer must be an object\");\n  const { kind } = reproducer;\n  if (!REPRODUCER_KINDS.has(kind)) {\n    throw new TypeError(\"reproducer.kind must be scenario, route, or command-id\");\n  }\n  if (kind === \"scenario\") {\n    return {\n      kind,\n      scenarioId: boundedString(reproducer.scenarioId, 256, \"reproducer.scenarioId\"),\n    };\n  }\n  if (kind === \"route\") {\n    return {\n      kind,\n      routeId: boundedString(reproducer.routeId, 256, \"reproducer.routeId\"),\n      method: boundedString(reproducer.method, 16, \"reproducer.method\").toUpperCase(),\n    };\n  }\n  return {\n    kind,\n    commandId: boundedString(reproducer.commandId, 256, \"reproducer.commandId\"),\n  };\n}\n\nfunction validateSelector(selector) {\n  if (!isObject(selector)) throw new TypeError(\"selector must be an object\");\n  const runId = boundedString(selector.runId, 256, \"selector.runId\");\n  if (!Number.isSafeInteger(selector.attempt) || selector.attempt < 1) {\n    throw new TypeError(\"selector.attempt must be a positive safe integer\");\n  }\n  return { runId, attempt: selector.attempt };\n}\n\nfunction traceStatus(trace) {\n  return String(trace.status ?? trace.outcome ?? \"\").toLowerCase();\n}\n\nfunction isFailure(trace) {\n  const status = traceStatus(trace);\n  return status === \"failed\" || status === \"failure\" || status === \"error\";\n}\n\nfunction isPassOutcome(trace) {\n  const status = traceStatus(trace);\n  return [\"passed\", \"success\", \"successful\", \"rejected\", \"cancelled\", \"canceled\"].includes(status);\n}\n\nfunction expectedOutcome(trace) {\n  return isFailure(trace) ? \"fail\" : \"pass\";\n}\n\nfunction sampleId(trace, selector) {\n  return `trace-${selector.runId}-${selector.attempt}`;\n}\n\n/**\n * Convert one explicitly selected trace. The trace must already be sanitized.\n * This function performs no I/O and never mutates the supplied trace.\n */\nexport function traceToEvalSample(trace, options = {}) {\n  if (!isObject(trace)) throw new TypeError(\"trace must be an object\");\n  const unsafe = findUnsafeContent(trace);\n  if (unsafe) {\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\n    error.code = \"UNSANITIZED_TRACE\";\n    error.diagnostic = unsafe;\n    throw error;\n  }\n\n  const selector = validateSelector(trace.selector ?? options.selector);\n  const reproducer = validateReproducer(trace.reproducer ?? options.reproducer);\n  const outcome = expectedOutcome(trace);\n  const beforeFix = outcome === \"fail\" ? \"fail\" : \"pass\";\n  const afterFix = \"pass\";\n  const digestInput = {\n    sampleId: sampleId(trace, selector),\n    selector,\n    reproducer,\n    beforeFix,\n    afterFix,\n    evidence: trace.evidence ?? null,\n  };\n  const digest = sha256(canonicalJson(digestInput));\n\n  return {\n    schemaVersion: 1,\n    id: sampleId(trace, selector),\n    source: {\n      runId: selector.runId,\n      attempt: selector.attempt,\n    },\n    reproducer,\n    selector,\n    expectations: {\n      \"before-fix\": beforeFix,\n      \"after-fix\": afterFix,\n    },\n    digest,\n    digestAlgorithm: \"sha256\",\n  };\n}\n\n/**\n * Explicitly convert selected traces. `selectedTraceIds` is required and is\n * matched against trace.id (or trace.traceId). No discovery or background work\n * is performed. Every rejected trace produces its own diagnostic entry.\n */\nexport function convertSelectedTracesToEvalSamples(traces, options = {}) {\n  if (!Array.isArray(traces)) throw new TypeError(\"traces must be an array\");\n  if (!Array.isArray(options.selectedTraceIds)) {\n    throw new TypeError(\"options.selectedTraceIds must be an array\");\n  }\n\n  const selected = new Set(options.selectedTraceIds.map(String));\n  const samples = [];\n  const diagnostics = [];\n  for (const trace of traces) {\n    const id = trace && (trace.id ?? trace.traceId);\n    if (id === undefined || !selected.has(String(id))) continue;\n    try {\n      samples.push(traceToEvalSample(trace, options));\n    } catch (error) {\n      diagnostics.push({\n        traceId: String(id),\n        code: error.code ?? \"INVALID_TRACE\",\n        message: error.message,\n      });\n    }\n  }\n\n  return { samples, diagnostics };\n}\n\nexport function assertSanitizedTrace(trace) {\n  const unsafe = findUnsafeContent(trace);\n  if (unsafe) {\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\n    error.code = \"UNSANITIZED_TRACE\";\n    error.diagnostic = unsafe;\n    throw error;\n  }\n  return true;\nn}\n\nexport function isRawCredentialPattern(value) {\n  return typeof value === \"string\" && SECRET_VALUE_PATTERNS.some((pattern) => pattern.test(value));\n}\n\nexport default convertSelectedTracesToEvalSamples;\n"
+    },
+    {
+      "path": "scripts/lib/trace-to-eval-sample.d.mts",
+      "content": "export type Reproducer =\n  | { kind: \"scenario\"; scenarioId: string }\n  | { kind: \"route\"; routeId: string; method: string }\n  | { kind: \"command-id\"; commandId: string };\n\nexport interface TraceSelector {\n  runId: string;\n  attempt: number;\n}\n\nexport interface Trace {\n  id?: string;\n  traceId?: string;\n  status?: string;\n  outcome?: string;\n  selector: TraceSelector;\n  reproducer: Reproducer;\n  evidence?: unknown;\n  [key: string]: unknown;\n}\n\nexport interface EvalSample {\n  schemaVersion: 1;\n  id: string;\n  source: { runId: string; attempt: number };\n  reproducer: Reproducer;\n  selector: TraceSelector;\n  expectations: { \"before-fix\": \"fail\" | \"pass\"; \"after-fix\": \"pass\" };\n  digest: string;\n  digestAlgorithm: \"sha256\";\n}\n\nexport interface TraceDiagnostic {\n  traceId: string;\n  code: string;\n  message: string;\n}\n\nexport interface ConversionResult {\n  samples: EvalSample[];\n  diagnostics: TraceDiagnostic[];\n}\n\nexport interface ConversionOptions {\n  selectedTraceIds: string[];\n  selector?: TraceSelector;\n  reproducer?: Reproducer;\n}\n\nexport function traceToEvalSample(trace: Trace, options?: ConversionOptions): EvalSample;\nexport function convertSelectedTracesToEvalSamples(traces: Trace[], options: ConversionOptions): ConversionResult;\nexport function assertSanitizedTrace(trace: unknown): boolean;\nexport function isRawCredentialPattern(value: unknown): boolean;\n\nexport default convertSelectedTracesToEvalSamples;\n"
+    },
+    {
+      "path": "harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+      "content": "# G03：显式 trace → Eval Sample 转换器\n\n## 目标\n\n提供纯函数式、显式触发的转换器，将调用方选定的脱敏失败轨迹转换为可复跑评测样例。转换器不启动 daemon、不创建定时 automation、不访问网络，也不修改原始证据。\n\n## 输入与选择\n\n- `traces` 是调用方提供的轨迹集合。\n- `selectedTraceIds` 必须显式给出；只处理其中列出的 `trace.id` 或 `trace.traceId`。\n- 可选地由调用方传入最近 7 天内的 `runIds`，但库本身不查询运行记录。\n- 每条轨迹必须包含有界 `reproducer` 和 `selector`：\n  - `reproducer.kind` 只能是 `scenario`、`route` 或 `command-id`；不是 shell。\n  - `selector` 必须包含 `runId` 与正整数 `attempt`。\n\n## 安全拒绝规则\n\n发现以下字段即整条拒绝，不能写入样例：`raw prompt`、`prompt`、`messages`、`body`、`authorization`、`apiKey`、`headers`（大小写及下划线/连字符等价）。发现 `sk-`、`phc_`、`ghp_`、`AKIA` 或私钥块等凭据模式也整条拒绝。拒绝结果只进入逐轨迹诊断，不包含轨迹内容。\n\n## 期望结果\n\n真实失败轨迹产生 `before-fix: fail`、`after-fix: pass`；成功、拒绝、取消轨迹产生 `before-fix: pass`、`after-fix: pass`，避免修复回归。\n\n每个样例含 `schemaVersion`、稳定 `id`、`source`、`reproducer`、`selector`、`expectations`、`digestAlgorithm: sha256` 与 SHA-256 `digest`。digest 使用排序后的规范 JSON 计算，重复转换应得到相同值。\n\n## 验收\n\n1. 失败轨迹可生成一个含 bounded reproducer 与 selector 的样例。\n2. 非失败轨迹的两个期望均为 pass。\n3. 未脱敏或非法轨迹不会生成样例，每条有独立诊断。\n4. 未选中的轨迹不处理；空选择不产生样例。\n5. 库无文件、网络、进程、后台任务或定时任务副作用。\n6. 类型检查、scoped lint、harness validate/dry-run、凭据扫描通过，SHA256SUMS 可回读。\n"
+    },
+    {
+      "path": "docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md",
+      "content": "# G03 关闭说明：trace-to-eval-sample\n\n## 使用方式\n\n```js\nimport { convertSelectedTracesToEvalSamples } from \"../../scripts/lib/trace-to-eval-sample.mjs\";\n\nconst result = convertSelectedTracesToEvalSamples(traces, {\n  selectedTraceIds: [\"trace-123\"],\n});\n```\n\n调用方必须显式传入 `selectedTraceIds`。若业务层允许最近 7 天的 runIds，应先由业务层显式筛选，再将对应的 trace id 传入；本模块不进行日期查询或后台发现。\n\n## 设计约束\n\n- 模块是纯转换函数，不读写仓库、不发起网络请求、不启动进程或 daemon。\n- 原始轨迹不被修改或删除；输出仅含元数据、期望和摘要。\n- reproducer 仅支持 `scenario`、`route`、`command-id`，不接受 shell 命令。\n- selector 固定为 `runId` 与 `attempt`。\n- 摘要为 SHA-256，摘要输入采用键排序的规范 JSON，因此相同输入具有确定性 digest。\n\n## 脱敏门禁\n\n门禁递归检查整个轨迹。敏感字段名和常见凭据值模式命中时抛出 `UNSANITIZED_TRACE`；批处理捕获该错误并为该轨迹生成独立诊断。诊断只含 trace id、错误码和错误消息，不回显原始轨迹。\n\n## 回归语义\n\n失败轨迹的 `before-fix` 为 `fail`、`after-fix` 为 `pass`。成功、拒绝及取消轨迹的 `before-fix` 和 `after-fix` 都为 `pass`，用于验证修复不会引入回归。\n\n## 运维与验证\n\n该能力没有 automation、scheduler 或 daemon 配置，不改变产品默认值、锁或 approval 机制。发布前执行定向测试、类型检查、scoped lint、harness validate/dry-run 与凭据扫描，并确认 SHA256SUMS 可回读。\n"
+    }
+  ],
+  "execution": {
+    "status": "completed",
+    "failureClass": null,
+    "failureCategory": "model",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 66155,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 41,
+    "startedAt": "2026-11-06T12:48:55.125Z",
+    "endedAt": "2026-11-06T12:50:01.281Z",
+    "measurementBasis": "live-provider",
+    "note": "Single JSON-edits request; independent reference-bound final-state grading."
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793969362,
+    "created_at": 1793969361,
+    "error": null,
+    "id": "01a1b0e7bccd7c1681334c751dc3d87c",
+    "incomplete_details": null,
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "max_output_tokens": 16000,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_400b372526873499a41c3e3c47b6e480",
+        "summary": [
+          {
+            "text": "We need craft files. Need infer API unknown. Implement robust library exports likely functions. Need strict JSON only. Need Chinese request. Design module with traceToEvalSamples explicit. No filesystem/network. Input traces, options. Redaction detection. Reproducer kind scenario route command-id, selector runId attempt, digest deterministic sha256 via node crypto. Outputs samples. Rejected diagnostics separately. \"successful/rejected/cancelled traces remain pass\". A selected failure trajectory perhaps status failed and outcome? We can define.\n\nNeed type declarations.\n\nImplement broad API exports: convertTraceToEvalSample, convertSelectedTracesToEvalSamples, assertSanitizedTrace, createEvalSample, isRawCredentialPattern. Digest based canonical relevant data excluding digest. Reject sensitive keys recursively and value patterns. Note raw prompt/messages/body/authorization/apiKey/headers occurrence means keys forbidden, perhaps values raw prompt content detection. Pattern sk-, phc_, ghp_, AKIA, private key. Ensure no raw prompt key. Reproducer bounded: validate kind and no shell. scenario needs scenarioId, route needs routeId/method? command-id needs commandId. selector runId attempt integer.\n\nTrace model flexible. Explicit selected IDs, max 7 days. runIds mapping input. reject invalid selection? each rejected trace diagnostic. We can output.\n\nLet's craft code concise. No process effects. Use crypto okay.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"content\":\"import { createHash } from \\\"node:crypto\\\";\\n\\nconst FORBIDDEN_KEYS = new Set([\\n  \\\"rawprompt\\\",\\n  \\\"prompt\\\",\\n  \\\"messages\\\",\\n  \\\"body\\\",\\n  \\\"authorization\\\",\\n  \\\"apikey\\\",\\n  \\\"headers\\\",\\n]);\\n\\nconst SECRET_VALUE_PATTERNS = [\\n  /\\\\bsk-[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bphc_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bghp_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bAKIA[0-9A-Z]{16}\\\\b/,\\n  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,\\n];\\n\\nconst REPRODUCER_KINDS = new Set([\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"]);\\n\\nfunction isObject(value) {\\n  return value !== null && typeof value === \\\"object\\\" && !Array.isArray(value);\\n}\\n\\nfunction normalizedKey(key) {\\n  return String(key).toLowerCase().replace(/[-_]/g, \\\"\\\");\\n}\\n\\nfunction findUnsafeContent(value, location = \\\"trace\\\") {\\n  if (typeof value === \\\"string\\\") {\\n    for (const pattern of SECRET_VALUE_PATTERNS) {\\n      if (pattern.test(value)) {\\n        return { location, reason: \\\"credential-pattern\\\" };\\n      }\\n    }\\n    return null;\\n  }\\n\\n  if (Array.isArray(value)) {\\n    for (let index = 0; index < value.length; index += 1) {\\n      const found = findUnsafeContent(value[index], `${location}[${index}]`);\\n      if (found) return found;\\n    }\\n    return null;\\n  }\\n\\n  if (isObject(value)) {\\n    for (const [key, child] of Object.entries(value)) {\\n      const normalized = normalizedKey(key);\\n      if (FORBIDDEN_KEYS.has(normalized)) {\\n        return { location: `${location}.${key}`, reason: `forbidden-field:${normalized}` };\\n      }\\n      const found = findUnsafeContent(child, `${location}.${key}`);\\n      if (found) return found;\\n    }\\n  }\\n\\n  return null;\\n}\\n\\nfunction canonicalJson(value) {\\n  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(\\\",\\\")}]`;\\n  if (isObject(value)) {\\n    return `{${Object.keys(value)\\n      .sort()\\n      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)\\n      .join(\\\",\\\")}}`;\\n  }\\n  return JSON.stringify(value);\\n}\\n\\nfunction sha256(value) {\\n  return createHash(\\\"sha256\\\").update(value, \\\"utf8\\\").digest(\\\"hex\\\");\\n}\\n\\nfunction boundedString(value, maxLength, field) {\\n  if (typeof value !== \\\"string\\\" || value.length === 0 || value.length > maxLength) {\\n    throw new TypeError(`${field} must be a non-empty string of at most ${maxLength} characters`);\\n  }\\n  return value;\\n}\\n\\nfunction validateReproducer(reproducer) {\\n  if (!isObject(reproducer)) throw new TypeError(\\\"reproducer must be an object\\\");\\n  const { kind } = reproducer;\\n  if (!REPRODUCER_KINDS.has(kind)) {\\n    throw new TypeError(\\\"reproducer.kind must be scenario, route, or command-id\\\");\\n  }\\n  if (kind === \\\"scenario\\\") {\\n    return {\\n      kind,\\n      scenarioId: boundedString(reproducer.scenarioId, 256, \\\"reproducer.scenarioId\\\"),\\n    };\\n  }\\n  if (kind === \\\"route\\\") {\\n    return {\\n      kind,\\n      routeId: boundedString(reproducer.routeId, 256, \\\"reproducer.routeId\\\"),\\n      method: boundedString(reproducer.method, 16, \\\"reproducer.method\\\").toUpperCase(),\\n    };\\n  }\\n  return {\\n    kind,\\n    commandId: boundedString(reproducer.commandId, 256, \\\"reproducer.commandId\\\"),\\n  };\\n}\\n\\nfunction validateSelector(selector) {\\n  if (!isObject(selector)) throw new TypeError(\\\"selector must be an object\\\");\\n  const runId = boundedString(selector.runId, 256, \\\"selector.runId\\\");\\n  if (!Number.isSafeInteger(selector.attempt) || selector.attempt < 1) {\\n    throw new TypeError(\\\"selector.attempt must be a positive safe integer\\\");\\n  }\\n  return { runId, attempt: selector.attempt };\\n}\\n\\nfunction traceStatus(trace) {\\n  return String(trace.status ?? trace.outcome ?? \\\"\\\").toLowerCase();\\n}\\n\\nfunction isFailure(trace) {\\n  const status = traceStatus(trace);\\n  return status === \\\"failed\\\" || status === \\\"failure\\\" || status === \\\"error\\\";\\n}\\n\\nfunction isPassOutcome(trace) {\\n  const status = traceStatus(trace);\\n  return [\\\"passed\\\", \\\"success\\\", \\\"successful\\\", \\\"rejected\\\", \\\"cancelled\\\", \\\"canceled\\\"].includes(status);\\n}\\n\\nfunction expectedOutcome(trace) {\\n  return isFailure(trace) ? \\\"fail\\\" : \\\"pass\\\";\\n}\\n\\nfunction sampleId(trace, selector) {\\n  return `trace-${selector.runId}-${selector.attempt}`;\\n}\\n\\n/**\\n * Convert one explicitly selected trace. The trace must already be sanitized.\\n * This function performs no I/O and never mutates the supplied trace.\\n */\\nexport function traceToEvalSample(trace, options = {}) {\\n  if (!isObject(trace)) throw new TypeError(\\\"trace must be an object\\\");\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n\\n  const selector = validateSelector(trace.selector ?? options.selector);\\n  const reproducer = validateReproducer(trace.reproducer ?? options.reproducer);\\n  const outcome = expectedOutcome(trace);\\n  const beforeFix = outcome === \\\"fail\\\" ? \\\"fail\\\" : \\\"pass\\\";\\n  const afterFix = \\\"pass\\\";\\n  const digestInput = {\\n    sampleId: sampleId(trace, selector),\\n    selector,\\n    reproducer,\\n    beforeFix,\\n    afterFix,\\n    evidence: trace.evidence ?? null,\\n  };\\n  const digest = sha256(canonicalJson(digestInput));\\n\\n  return {\\n    schemaVersion: 1,\\n    id: sampleId(trace, selector),\\n    source: {\\n      runId: selector.runId,\\n      attempt: selector.attempt,\\n    },\\n    reproducer,\\n    selector,\\n    expectations: {\\n      \\\"before-fix\\\": beforeFix,\\n      \\\"after-fix\\\": afterFix,\\n    },\\n    digest,\\n    digestAlgorithm: \\\"sha256\\\",\\n  };\\n}\\n\\n/**\\n * Explicitly convert selected traces. `selectedTraceIds` is required and is\\n * matched against trace.id (or trace.traceId). No discovery or background work\\n * is performed. Every rejected trace produces its own diagnostic entry.\\n */\\nexport function convertSelectedTracesToEvalSamples(traces, options = {}) {\\n  if (!Array.isArray(traces)) throw new TypeError(\\\"traces must be an array\\\");\\n  if (!Array.isArray(options.selectedTraceIds)) {\\n    throw new TypeError(\\\"options.selectedTraceIds must be an array\\\");\\n  }\\n\\n  const selected = new Set(options.selectedTraceIds.map(String));\\n  const samples = [];\\n  const diagnostics = [];\\n  for (const trace of traces) {\\n    const id = trace && (trace.id ?? trace.traceId);\\n    if (id === undefined || !selected.has(String(id))) continue;\\n    try {\\n      samples.push(traceToEvalSample(trace, options));\\n    } catch (error) {\\n      diagnostics.push({\\n        traceId: String(id),\\n        code: error.code ?? \\\"INVALID_TRACE\\\",\\n        message: error.message,\\n      });\\n    }\\n  }\\n\\n  return { samples, diagnostics };\\n}\\n\\nexport function assertSanitizedTrace(trace) {\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n  return true;\\nn}\\n\\nexport function isRawCredentialPattern(value) {\\n  return typeof value === \\\"string\\\" && SECRET_VALUE_PATTERNS.some((pattern) => pattern.test(value));\\n}\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"content\":\"export type Reproducer =\\n  | { kind: \\\"scenario\\\"; scenarioId: string }\\n  | { kind: \\\"route\\\"; routeId: string; method: string }\\n  | { kind: \\\"command-id\\\"; commandId: string };\\n\\nexport interface TraceSelector {\\n  runId: string;\\n  attempt: number;\\n}\\n\\nexport interface Trace {\\n  id?: string;\\n  traceId?: string;\\n  status?: string;\\n  outcome?: string;\\n  selector: TraceSelector;\\n  reproducer: Reproducer;\\n  evidence?: unknown;\\n  [key: string]: unknown;\\n}\\n\\nexport interface EvalSample {\\n  schemaVersion: 1;\\n  id: string;\\n  source: { runId: string; attempt: number };\\n  reproducer: Reproducer;\\n  selector: TraceSelector;\\n  expectations: { \\\"before-fix\\\": \\\"fail\\\" | \\\"pass\\\"; \\\"after-fix\\\": \\\"pass\\\" };\\n  digest: string;\\n  digestAlgorithm: \\\"sha256\\\";\\n}\\n\\nexport interface TraceDiagnostic {\\n  traceId: string;\\n  code: string;\\n  message: string;\\n}\\n\\nexport interface ConversionResult {\\n  samples: EvalSample[];\\n  diagnostics: TraceDiagnostic[];\\n}\\n\\nexport interface ConversionOptions {\\n  selectedTraceIds: string[];\\n  selector?: TraceSelector;\\n  reproducer?: Reproducer;\\n}\\n\\nexport function traceToEvalSample(trace: Trace, options?: ConversionOptions): EvalSample;\\nexport function convertSelectedTracesToEvalSamples(traces: Trace[], options: ConversionOptions): ConversionResult;\\nexport function assertSanitizedTrace(trace: unknown): boolean;\\nexport function isRawCredentialPattern(value: unknown): boolean;\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"content\":\"# G03：显式 trace → Eval Sample 转换器\\n\\n## 目标\\n\\n提供纯函数式、显式触发的转换器，将调用方选定的脱敏失败轨迹转换为可复跑评测样例。转换器不启动 daemon、不创建定时 automation、不访问网络，也不修改原始证据。\\n\\n## 输入与选择\\n\\n- `traces` 是调用方提供的轨迹集合。\\n- `selectedTraceIds` 必须显式给出；只处理其中列出的 `trace.id` 或 `trace.traceId`。\\n- 可选地由调用方传入最近 7 天内的 `runIds`，但库本身不查询运行记录。\\n- 每条轨迹必须包含有界 `reproducer` 和 `selector`：\\n  - `reproducer.kind` 只能是 `scenario`、`route` 或 `command-id`；不是 shell。\\n  - `selector` 必须包含 `runId` 与正整数 `attempt`。\\n\\n## 安全拒绝规则\\n\\n发现以下字段即整条拒绝，不能写入样例：`raw prompt`、`prompt`、`messages`、`body`、`authorization`、`apiKey`、`headers`（大小写及下划线/连字符等价）。发现 `sk-`、`phc_`、`ghp_`、`AKIA` 或私钥块等凭据模式也整条拒绝。拒绝结果只进入逐轨迹诊断，不包含轨迹内容。\\n\\n## 期望结果\\n\\n真实失败轨迹产生 `before-fix: fail`、`after-fix: pass`；成功、拒绝、取消轨迹产生 `before-fix: pass`、`after-fix: pass`，避免修复回归。\\n\\n每个样例含 `schemaVersion`、稳定 `id`、`source`、`reproducer`、`selector`、`expectations`、`digestAlgorithm: sha256` 与 SHA-256 `digest`。digest 使用排序后的规范 JSON 计算，重复转换应得到相同值。\\n\\n## 验收\\n\\n1. 失败轨迹可生成一个含 bounded reproducer 与 selector 的样例。\\n2. 非失败轨迹的两个期望均为 pass。\\n3. 未脱敏或非法轨迹不会生成样例，每条有独立诊断。\\n4. 未选中的轨迹不处理；空选择不产生样例。\\n5. 库无文件、网络、进程、后台任务或定时任务副作用。\\n6. 类型检查、scoped lint、harness validate/dry-run、凭据扫描通过，SHA256SUMS 可回读。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"content\":\"# G03 关闭说明：trace-to-eval-sample\\n\\n## 使用方式\\n\\n```js\\nimport { convertSelectedTracesToEvalSamples } from \\\"../../scripts/lib/trace-to-eval-sample.mjs\\\";\\n\\nconst result = convertSelectedTracesToEvalSamples(traces, {\\n  selectedTraceIds: [\\\"trace-123\\\"],\\n});\\n```\\n\\n调用方必须显式传入 `selectedTraceIds`。若业务层允许最近 7 天的 runIds，应先由业务层显式筛选，再将对应的 trace id 传入；本模块不进行日期查询或后台发现。\\n\\n## 设计约束\\n\\n- 模块是纯转换函数，不读写仓库、不发起网络请求、不启动进程或 daemon。\\n- 原始轨迹不被修改或删除；输出仅含元数据、期望和摘要。\\n- reproducer 仅支持 `scenario`、`route`、`command-id`，不接受 shell 命令。\\n- selector 固定为 `runId` 与 `attempt`。\\n- 摘要为 SHA-256，摘要输入采用键排序的规范 JSON，因此相同输入具有确定性 digest。\\n\\n## 脱敏门禁\\n\\n门禁递归检查整个轨迹。敏感字段名和常见凭据值模式命中时抛出 `UNSANITIZED_TRACE`；批处理捕获该错误并为该轨迹生成独立诊断。诊断只含 trace id、错误码和错误消息，不回显原始轨迹。\\n\\n## 回归语义\\n\\n失败轨迹的 `before-fix` 为 `fail`、`after-fix` 为 `pass`。成功、拒绝及取消轨迹的 `before-fix` 和 `after-fix` 都为 `pass`，用于验证修复不会引入回归。\\n\\n## 运维与验证\\n\\n该能力没有 automation、scheduler 或 daemon 配置，不改变产品默认值、锁或 approval 机制。发布前执行定向测试、类型检查、scoped lint、harness validate/dry-run 与凭据扫描，并确认 SHA256SUMS 可回读。\\n\"}]}",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_06581e749a6169863c3125fa1778ebcb",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"content\":\"import { createHash } from \\\"node:crypto\\\";\\n\\nconst FORBIDDEN_KEYS = new Set([\\n  \\\"rawprompt\\\",\\n  \\\"prompt\\\",\\n  \\\"messages\\\",\\n  \\\"body\\\",\\n  \\\"authorization\\\",\\n  \\\"apikey\\\",\\n  \\\"headers\\\",\\n]);\\n\\nconst SECRET_VALUE_PATTERNS = [\\n  /\\\\bsk-[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bphc_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bghp_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bAKIA[0-9A-Z]{16}\\\\b/,\\n  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,\\n];\\n\\nconst REPRODUCER_KINDS = new Set([\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"]);\\n\\nfunction isObject(value) {\\n  return value !== null && typeof value === \\\"object\\\" && !Array.isArray(value);\\n}\\n\\nfunction normalizedKey(key) {\\n  return String(key).toLowerCase().replace(/[-_]/g, \\\"\\\");\\n}\\n\\nfunction findUnsafeContent(value, location = \\\"trace\\\") {\\n  if (typeof value === \\\"string\\\") {\\n    for (const pattern of SECRET_VALUE_PATTERNS) {\\n      if (pattern.test(value)) {\\n        return { location, reason: \\\"credential-pattern\\\" };\\n      }\\n    }\\n    return null;\\n  }\\n\\n  if (Array.isArray(value)) {\\n    for (let index = 0; index < value.length; index += 1) {\\n      const found = findUnsafeContent(value[index], `${location}[${index}]`);\\n      if (found) return found;\\n    }\\n    return null;\\n  }\\n\\n  if (isObject(value)) {\\n    for (const [key, child] of Object.entries(value)) {\\n      const normalized = normalizedKey(key);\\n      if (FORBIDDEN_KEYS.has(normalized)) {\\n        return { location: `${location}.${key}`, reason: `forbidden-field:${normalized}` };\\n      }\\n      const found = findUnsafeContent(child, `${location}.${key}`);\\n      if (found) return found;\\n    }\\n  }\\n\\n  return null;\\n}\\n\\nfunction canonicalJson(value) {\\n  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(\\\",\\\")}]`;\\n  if (isObject(value)) {\\n    return `{${Object.keys(value)\\n      .sort()\\n      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)\\n      .join(\\\",\\\")}}`;\\n  }\\n  return JSON.stringify(value);\\n}\\n\\nfunction sha256(value) {\\n  return createHash(\\\"sha256\\\").update(value, \\\"utf8\\\").digest(\\\"hex\\\");\\n}\\n\\nfunction boundedString(value, maxLength, field) {\\n  if (typeof value !== \\\"string\\\" || value.length === 0 || value.length > maxLength) {\\n    throw new TypeError(`${field} must be a non-empty string of at most ${maxLength} characters`);\\n  }\\n  return value;\\n}\\n\\nfunction validateReproducer(reproducer) {\\n  if (!isObject(reproducer)) throw new TypeError(\\\"reproducer must be an object\\\");\\n  const { kind } = reproducer;\\n  if (!REPRODUCER_KINDS.has(kind)) {\\n    throw new TypeError(\\\"reproducer.kind must be scenario, route, or command-id\\\");\\n  }\\n  if (kind === \\\"scenario\\\") {\\n    return {\\n      kind,\\n      scenarioId: boundedString(reproducer.scenarioId, 256, \\\"reproducer.scenarioId\\\"),\\n    };\\n  }\\n  if (kind === \\\"route\\\") {\\n    return {\\n      kind,\\n      routeId: boundedString(reproducer.routeId, 256, \\\"reproducer.routeId\\\"),\\n      method: boundedString(reproducer.method, 16, \\\"reproducer.method\\\").toUpperCase(),\\n    };\\n  }\\n  return {\\n    kind,\\n    commandId: boundedString(reproducer.commandId, 256, \\\"reproducer.commandId\\\"),\\n  };\\n}\\n\\nfunction validateSelector(selector) {\\n  if (!isObject(selector)) throw new TypeError(\\\"selector must be an object\\\");\\n  const runId = boundedString(selector.runId, 256, \\\"selector.runId\\\");\\n  if (!Number.isSafeInteger(selector.attempt) || selector.attempt < 1) {\\n    throw new TypeError(\\\"selector.attempt must be a positive safe integer\\\");\\n  }\\n  return { runId, attempt: selector.attempt };\\n}\\n\\nfunction traceStatus(trace) {\\n  return String(trace.status ?? trace.outcome ?? \\\"\\\").toLowerCase();\\n}\\n\\nfunction isFailure(trace) {\\n  const status = traceStatus(trace);\\n  return status === \\\"failed\\\" || status === \\\"failure\\\" || status === \\\"error\\\";\\n}\\n\\nfunction isPassOutcome(trace) {\\n  const status = traceStatus(trace);\\n  return [\\\"passed\\\", \\\"success\\\", \\\"successful\\\", \\\"rejected\\\", \\\"cancelled\\\", \\\"canceled\\\"].includes(status);\\n}\\n\\nfunction expectedOutcome(trace) {\\n  return isFailure(trace) ? \\\"fail\\\" : \\\"pass\\\";\\n}\\n\\nfunction sampleId(trace, selector) {\\n  return `trace-${selector.runId}-${selector.attempt}`;\\n}\\n\\n/**\\n * Convert one explicitly selected trace. The trace must already be sanitized.\\n * This function performs no I/O and never mutates the supplied trace.\\n */\\nexport function traceToEvalSample(trace, options = {}) {\\n  if (!isObject(trace)) throw new TypeError(\\\"trace must be an object\\\");\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n\\n  const selector = validateSelector(trace.selector ?? options.selector);\\n  const reproducer = validateReproducer(trace.reproducer ?? options.reproducer);\\n  const outcome = expectedOutcome(trace);\\n  const beforeFix = outcome === \\\"fail\\\" ? \\\"fail\\\" : \\\"pass\\\";\\n  const afterFix = \\\"pass\\\";\\n  const digestInput = {\\n    sampleId: sampleId(trace, selector),\\n    selector,\\n    reproducer,\\n    beforeFix,\\n    afterFix,\\n    evidence: trace.evidence ?? null,\\n  };\\n  const digest = sha256(canonicalJson(digestInput));\\n\\n  return {\\n    schemaVersion: 1,\\n    id: sampleId(trace, selector),\\n    source: {\\n      runId: selector.runId,\\n      attempt: selector.attempt,\\n    },\\n    reproducer,\\n    selector,\\n    expectations: {\\n      \\\"before-fix\\\": beforeFix,\\n      \\\"after-fix\\\": afterFix,\\n    },\\n    digest,\\n    digestAlgorithm: \\\"sha256\\\",\\n  };\\n}\\n\\n/**\\n * Explicitly convert selected traces. `selectedTraceIds` is required and is\\n * matched against trace.id (or trace.traceId). No discovery or background work\\n * is performed. Every rejected trace produces its own diagnostic entry.\\n */\\nexport function convertSelectedTracesToEvalSamples(traces, options = {}) {\\n  if (!Array.isArray(traces)) throw new TypeError(\\\"traces must be an array\\\");\\n  if (!Array.isArray(options.selectedTraceIds)) {\\n    throw new TypeError(\\\"options.selectedTraceIds must be an array\\\");\\n  }\\n\\n  const selected = new Set(options.selectedTraceIds.map(String));\\n  const samples = [];\\n  const diagnostics = [];\\n  for (const trace of traces) {\\n    const id = trace && (trace.id ?? trace.traceId);\\n    if (id === undefined || !selected.has(String(id))) continue;\\n    try {\\n      samples.push(traceToEvalSample(trace, options));\\n    } catch (error) {\\n      diagnostics.push({\\n        traceId: String(id),\\n        code: error.code ?? \\\"INVALID_TRACE\\\",\\n        message: error.message,\\n      });\\n    }\\n  }\\n\\n  return { samples, diagnostics };\\n}\\n\\nexport function assertSanitizedTrace(trace) {\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n  return true;\\nn}\\n\\nexport function isRawCredentialPattern(value) {\\n  return typeof value === \\\"string\\\" && SECRET_VALUE_PATTERNS.some((pattern) => pattern.test(value));\\n}\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"content\":\"export type Reproducer =\\n  | { kind: \\\"scenario\\\"; scenarioId: string }\\n  | { kind: \\\"route\\\"; routeId: string; method: string }\\n  | { kind: \\\"command-id\\\"; commandId: string };\\n\\nexport interface TraceSelector {\\n  runId: string;\\n  attempt: number;\\n}\\n\\nexport interface Trace {\\n  id?: string;\\n  traceId?: string;\\n  status?: string;\\n  outcome?: string;\\n  selector: TraceSelector;\\n  reproducer: Reproducer;\\n  evidence?: unknown;\\n  [key: string]: unknown;\\n}\\n\\nexport interface EvalSample {\\n  schemaVersion: 1;\\n  id: string;\\n  source: { runId: string; attempt: number };\\n  reproducer: Reproducer;\\n  selector: TraceSelector;\\n  expectations: { \\\"before-fix\\\": \\\"fail\\\" | \\\"pass\\\"; \\\"after-fix\\\": \\\"pass\\\" };\\n  digest: string;\\n  digestAlgorithm: \\\"sha256\\\";\\n}\\n\\nexport interface TraceDiagnostic {\\n  traceId: string;\\n  code: string;\\n  message: string;\\n}\\n\\nexport interface ConversionResult {\\n  samples: EvalSample[];\\n  diagnostics: TraceDiagnostic[];\\n}\\n\\nexport interface ConversionOptions {\\n  selectedTraceIds: string[];\\n  selector?: TraceSelector;\\n  reproducer?: Reproducer;\\n}\\n\\nexport function traceToEvalSample(trace: Trace, options?: ConversionOptions): EvalSample;\\nexport function convertSelectedTracesToEvalSamples(traces: Trace[], options: ConversionOptions): ConversionResult;\\nexport function assertSanitizedTrace(trace: unknown): boolean;\\nexport function isRawCredentialPattern(value: unknown): boolean;\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"content\":\"# G03：显式 trace → Eval Sample 转换器\\n\\n## 目标\\n\\n提供纯函数式、显式触发的转换器，将调用方选定的脱敏失败轨迹转换为可复跑评测样例。转换器不启动 daemon、不创建定时 automation、不访问网络，也不修改原始证据。\\n\\n## 输入与选择\\n\\n- `traces` 是调用方提供的轨迹集合。\\n- `selectedTraceIds` 必须显式给出；只处理其中列出的 `trace.id` 或 `trace.traceId`。\\n- 可选地由调用方传入最近 7 天内的 `runIds`，但库本身不查询运行记录。\\n- 每条轨迹必须包含有界 `reproducer` 和 `selector`：\\n  - `reproducer.kind` 只能是 `scenario`、`route` 或 `command-id`；不是 shell。\\n  - `selector` 必须包含 `runId` 与正整数 `attempt`。\\n\\n## 安全拒绝规则\\n\\n发现以下字段即整条拒绝，不能写入样例：`raw prompt`、`prompt`、`messages`、`body`、`authorization`、`apiKey`、`headers`（大小写及下划线/连字符等价）。发现 `sk-`、`phc_`、`ghp_`、`AKIA` 或私钥块等凭据模式也整条拒绝。拒绝结果只进入逐轨迹诊断，不包含轨迹内容。\\n\\n## 期望结果\\n\\n真实失败轨迹产生 `before-fix: fail`、`after-fix: pass`；成功、拒绝、取消轨迹产生 `before-fix: pass`、`after-fix: pass`，避免修复回归。\\n\\n每个样例含 `schemaVersion`、稳定 `id`、`source`、`reproducer`、`selector`、`expectations`、`digestAlgorithm: sha256` 与 SHA-256 `digest`。digest 使用排序后的规范 JSON 计算，重复转换应得到相同值。\\n\\n## 验收\\n\\n1. 失败轨迹可生成一个含 bounded reproducer 与 selector 的样例。\\n2. 非失败轨迹的两个期望均为 pass。\\n3. 未脱敏或非法轨迹不会生成样例，每条有独立诊断。\\n4. 未选中的轨迹不处理；空选择不产生样例。\\n5. 库无文件、网络、进程、后台任务或定时任务副作用。\\n6. 类型检查、scoped lint、harness validate/dry-run、凭据扫描通过，SHA256SUMS 可回读。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"content\":\"# G03 关闭说明：trace-to-eval-sample\\n\\n## 使用方式\\n\\n```js\\nimport { convertSelectedTracesToEvalSamples } from \\\"../../scripts/lib/trace-to-eval-sample.mjs\\\";\\n\\nconst result = convertSelectedTracesToEvalSamples(traces, {\\n  selectedTraceIds: [\\\"trace-123\\\"],\\n});\\n```\\n\\n调用方必须显式传入 `selectedTraceIds`。若业务层允许最近 7 天的 runIds，应先由业务层显式筛选，再将对应的 trace id 传入；本模块不进行日期查询或后台发现。\\n\\n## 设计约束\\n\\n- 模块是纯转换函数，不读写仓库、不发起网络请求、不启动进程或 daemon。\\n- 原始轨迹不被修改或删除；输出仅含元数据、期望和摘要。\\n- reproducer 仅支持 `scenario`、`route`、`command-id`，不接受 shell 命令。\\n- selector 固定为 `runId` 与 `attempt`。\\n- 摘要为 SHA-256，摘要输入采用键排序的规范 JSON，因此相同输入具有确定性 digest。\\n\\n## 脱敏门禁\\n\\n门禁递归检查整个轨迹。敏感字段名和常见凭据值模式命中时抛出 `UNSANITIZED_TRACE`；批处理捕获该错误并为该轨迹生成独立诊断。诊断只含 trace id、错误码和错误消息，不回显原始轨迹。\\n\\n## 回归语义\\n\\n失败轨迹的 `before-fix` 为 `fail`、`after-fix` 为 `pass`。成功、拒绝及取消轨迹的 `before-fix` 和 `after-fix` 都为 `pass`，用于验证修复不会引入回归。\\n\\n## 运维与验证\\n\\n该能力没有 automation、scheduler 或 daemon 配置，不改变产品默认值、锁或 approval 机制。发布前执行定向测试、类型检查、scoped lint、harness validate/dry-run 与凭据扫描，并确认 SHA256SUMS 可回读。\\n\"}]}",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": "low",
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "name": "rsi_coding_edits",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "edits": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "type": "object"
+              },
+              "maxItems": 32,
+              "type": "array"
+            }
+          },
+          "required": [
+            "edits"
+          ],
+          "type": "object"
+        },
+        "strict": true,
+        "type": "json_schema"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 924,
+      "input_tokens_details": {
+        "cached_tokens": 896
+      },
+      "output_tokens": 3842,
+      "output_tokens_details": {
+        "reasoning_tokens": 280
+      },
+      "total_tokens": 4766
+    },
+    "user": null
+  },
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\",\n  \"acceptanceCriteria\": [\n    \"一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\",\n    \"样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\",\n    \"拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\",\n    \"显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\",\n    \"不改产品默认值/锁/approval；不删除原始证据。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"scripts/lib/trace-to-eval-sample.mjs\",\n    \"scripts/lib/trace-to-eval-sample.d.mts\",\n    \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n    \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.mjs\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.d.mts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": {
+        "background": false,
+        "completed_at": 1793969362,
+        "created_at": 1793969361,
+        "error": null,
+        "id": "01a1b0e7bccd7c1681334c751dc3d87c",
+        "incomplete_details": null,
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "max_output_tokens": 16000,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "id": "rs_400b372526873499a41c3e3c47b6e480",
+            "summary": [
+              {
+                "text": "We need craft files. Need infer API unknown. Implement robust library exports likely functions. Need strict JSON only. Need Chinese request. Design module with traceToEvalSamples explicit. No filesystem/network. Input traces, options. Redaction detection. Reproducer kind scenario route command-id, selector runId attempt, digest deterministic sha256 via node crypto. Outputs samples. Rejected diagnostics separately. \"successful/rejected/cancelled traces remain pass\". A selected failure trajectory perhaps status failed and outcome? We can define.\n\nNeed type declarations.\n\nImplement broad API exports: convertTraceToEvalSample, convertSelectedTracesToEvalSamples, assertSanitizedTrace, createEvalSample, isRawCredentialPattern. Digest based canonical relevant data excluding digest. Reject sensitive keys recursively and value patterns. Note raw prompt/messages/body/authorization/apiKey/headers occurrence means keys forbidden, perhaps values raw prompt content detection. Pattern sk-, phc_, ghp_, AKIA, private key. Ensure no raw prompt key. Reproducer bounded: validate kind and no shell. scenario needs scenarioId, route needs routeId/method? command-id needs commandId. selector runId attempt integer.\n\nTrace model flexible. Explicit selected IDs, max 7 days. runIds mapping input. reject invalid selection? each rejected trace diagnostic. We can output.\n\nLet's craft code concise. No process effects. Use crypto okay.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"content\":\"import { createHash } from \\\"node:crypto\\\";\\n\\nconst FORBIDDEN_KEYS = new Set([\\n  \\\"rawprompt\\\",\\n  \\\"prompt\\\",\\n  \\\"messages\\\",\\n  \\\"body\\\",\\n  \\\"authorization\\\",\\n  \\\"apikey\\\",\\n  \\\"headers\\\",\\n]);\\n\\nconst SECRET_VALUE_PATTERNS = [\\n  /\\\\bsk-[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bphc_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bghp_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bAKIA[0-9A-Z]{16}\\\\b/,\\n  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,\\n];\\n\\nconst REPRODUCER_KINDS = new Set([\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"]);\\n\\nfunction isObject(value) {\\n  return value !== null && typeof value === \\\"object\\\" && !Array.isArray(value);\\n}\\n\\nfunction normalizedKey(key) {\\n  return String(key).toLowerCase().replace(/[-_]/g, \\\"\\\");\\n}\\n\\nfunction findUnsafeContent(value, location = \\\"trace\\\") {\\n  if (typeof value === \\\"string\\\") {\\n    for (const pattern of SECRET_VALUE_PATTERNS) {\\n      if (pattern.test(value)) {\\n        return { location, reason: \\\"credential-pattern\\\" };\\n      }\\n    }\\n    return null;\\n  }\\n\\n  if (Array.isArray(value)) {\\n    for (let index = 0; index < value.length; index += 1) {\\n      const found = findUnsafeContent(value[index], `${location}[${index}]`);\\n      if (found) return found;\\n    }\\n    return null;\\n  }\\n\\n  if (isObject(value)) {\\n    for (const [key, child] of Object.entries(value)) {\\n      const normalized = normalizedKey(key);\\n      if (FORBIDDEN_KEYS.has(normalized)) {\\n        return { location: `${location}.${key}`, reason: `forbidden-field:${normalized}` };\\n      }\\n      const found = findUnsafeContent(child, `${location}.${key}`);\\n      if (found) return found;\\n    }\\n  }\\n\\n  return null;\\n}\\n\\nfunction canonicalJson(value) {\\n  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(\\\",\\\")}]`;\\n  if (isObject(value)) {\\n    return `{${Object.keys(value)\\n      .sort()\\n      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)\\n      .join(\\\",\\\")}}`;\\n  }\\n  return JSON.stringify(value);\\n}\\n\\nfunction sha256(value) {\\n  return createHash(\\\"sha256\\\").update(value, \\\"utf8\\\").digest(\\\"hex\\\");\\n}\\n\\nfunction boundedString(value, maxLength, field) {\\n  if (typeof value !== \\\"string\\\" || value.length === 0 || value.length > maxLength) {\\n    throw new TypeError(`${field} must be a non-empty string of at most ${maxLength} characters`);\\n  }\\n  return value;\\n}\\n\\nfunction validateReproducer(reproducer) {\\n  if (!isObject(reproducer)) throw new TypeError(\\\"reproducer must be an object\\\");\\n  const { kind } = reproducer;\\n  if (!REPRODUCER_KINDS.has(kind)) {\\n    throw new TypeError(\\\"reproducer.kind must be scenario, route, or command-id\\\");\\n  }\\n  if (kind === \\\"scenario\\\") {\\n    return {\\n      kind,\\n      scenarioId: boundedString(reproducer.scenarioId, 256, \\\"reproducer.scenarioId\\\"),\\n    };\\n  }\\n  if (kind === \\\"route\\\") {\\n    return {\\n      kind,\\n      routeId: boundedString(reproducer.routeId, 256, \\\"reproducer.routeId\\\"),\\n      method: boundedString(reproducer.method, 16, \\\"reproducer.method\\\").toUpperCase(),\\n    };\\n  }\\n  return {\\n    kind,\\n    commandId: boundedString(reproducer.commandId, 256, \\\"reproducer.commandId\\\"),\\n  };\\n}\\n\\nfunction validateSelector(selector) {\\n  if (!isObject(selector)) throw new TypeError(\\\"selector must be an object\\\");\\n  const runId = boundedString(selector.runId, 256, \\\"selector.runId\\\");\\n  if (!Number.isSafeInteger(selector.attempt) || selector.attempt < 1) {\\n    throw new TypeError(\\\"selector.attempt must be a positive safe integer\\\");\\n  }\\n  return { runId, attempt: selector.attempt };\\n}\\n\\nfunction traceStatus(trace) {\\n  return String(trace.status ?? trace.outcome ?? \\\"\\\").toLowerCase();\\n}\\n\\nfunction isFailure(trace) {\\n  const status = traceStatus(trace);\\n  return status === \\\"failed\\\" || status === \\\"failure\\\" || status === \\\"error\\\";\\n}\\n\\nfunction isPassOutcome(trace) {\\n  const status = traceStatus(trace);\\n  return [\\\"passed\\\", \\\"success\\\", \\\"successful\\\", \\\"rejected\\\", \\\"cancelled\\\", \\\"canceled\\\"].includes(status);\\n}\\n\\nfunction expectedOutcome(trace) {\\n  return isFailure(trace) ? \\\"fail\\\" : \\\"pass\\\";\\n}\\n\\nfunction sampleId(trace, selector) {\\n  return `trace-${selector.runId}-${selector.attempt}`;\\n}\\n\\n/**\\n * Convert one explicitly selected trace. The trace must already be sanitized.\\n * This function performs no I/O and never mutates the supplied trace.\\n */\\nexport function traceToEvalSample(trace, options = {}) {\\n  if (!isObject(trace)) throw new TypeError(\\\"trace must be an object\\\");\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n\\n  const selector = validateSelector(trace.selector ?? options.selector);\\n  const reproducer = validateReproducer(trace.reproducer ?? options.reproducer);\\n  const outcome = expectedOutcome(trace);\\n  const beforeFix = outcome === \\\"fail\\\" ? \\\"fail\\\" : \\\"pass\\\";\\n  const afterFix = \\\"pass\\\";\\n  const digestInput = {\\n    sampleId: sampleId(trace, selector),\\n    selector,\\n    reproducer,\\n    beforeFix,\\n    afterFix,\\n    evidence: trace.evidence ?? null,\\n  };\\n  const digest = sha256(canonicalJson(digestInput));\\n\\n  return {\\n    schemaVersion: 1,\\n    id: sampleId(trace, selector),\\n    source: {\\n      runId: selector.runId,\\n      attempt: selector.attempt,\\n    },\\n    reproducer,\\n    selector,\\n    expectations: {\\n      \\\"before-fix\\\": beforeFix,\\n      \\\"after-fix\\\": afterFix,\\n    },\\n    digest,\\n    digestAlgorithm: \\\"sha256\\\",\\n  };\\n}\\n\\n/**\\n * Explicitly convert selected traces. `selectedTraceIds` is required and is\\n * matched against trace.id (or trace.traceId). No discovery or background work\\n * is performed. Every rejected trace produces its own diagnostic entry.\\n */\\nexport function convertSelectedTracesToEvalSamples(traces, options = {}) {\\n  if (!Array.isArray(traces)) throw new TypeError(\\\"traces must be an array\\\");\\n  if (!Array.isArray(options.selectedTraceIds)) {\\n    throw new TypeError(\\\"options.selectedTraceIds must be an array\\\");\\n  }\\n\\n  const selected = new Set(options.selectedTraceIds.map(String));\\n  const samples = [];\\n  const diagnostics = [];\\n  for (const trace of traces) {\\n    const id = trace && (trace.id ?? trace.traceId);\\n    if (id === undefined || !selected.has(String(id))) continue;\\n    try {\\n      samples.push(traceToEvalSample(trace, options));\\n    } catch (error) {\\n      diagnostics.push({\\n        traceId: String(id),\\n        code: error.code ?? \\\"INVALID_TRACE\\\",\\n        message: error.message,\\n      });\\n    }\\n  }\\n\\n  return { samples, diagnostics };\\n}\\n\\nexport function assertSanitizedTrace(trace) {\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n  return true;\\nn}\\n\\nexport function isRawCredentialPattern(value) {\\n  return typeof value === \\\"string\\\" && SECRET_VALUE_PATTERNS.some((pattern) => pattern.test(value));\\n}\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"content\":\"export type Reproducer =\\n  | { kind: \\\"scenario\\\"; scenarioId: string }\\n  | { kind: \\\"route\\\"; routeId: string; method: string }\\n  | { kind: \\\"command-id\\\"; commandId: string };\\n\\nexport interface TraceSelector {\\n  runId: string;\\n  attempt: number;\\n}\\n\\nexport interface Trace {\\n  id?: string;\\n  traceId?: string;\\n  status?: string;\\n  outcome?: string;\\n  selector: TraceSelector;\\n  reproducer: Reproducer;\\n  evidence?: unknown;\\n  [key: string]: unknown;\\n}\\n\\nexport interface EvalSample {\\n  schemaVersion: 1;\\n  id: string;\\n  source: { runId: string; attempt: number };\\n  reproducer: Reproducer;\\n  selector: TraceSelector;\\n  expectations: { \\\"before-fix\\\": \\\"fail\\\" | \\\"pass\\\"; \\\"after-fix\\\": \\\"pass\\\" };\\n  digest: string;\\n  digestAlgorithm: \\\"sha256\\\";\\n}\\n\\nexport interface TraceDiagnostic {\\n  traceId: string;\\n  code: string;\\n  message: string;\\n}\\n\\nexport interface ConversionResult {\\n  samples: EvalSample[];\\n  diagnostics: TraceDiagnostic[];\\n}\\n\\nexport interface ConversionOptions {\\n  selectedTraceIds: string[];\\n  selector?: TraceSelector;\\n  reproducer?: Reproducer;\\n}\\n\\nexport function traceToEvalSample(trace: Trace, options?: ConversionOptions): EvalSample;\\nexport function convertSelectedTracesToEvalSamples(traces: Trace[], options: ConversionOptions): ConversionResult;\\nexport function assertSanitizedTrace(trace: unknown): boolean;\\nexport function isRawCredentialPattern(value: unknown): boolean;\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"content\":\"# G03：显式 trace → Eval Sample 转换器\\n\\n## 目标\\n\\n提供纯函数式、显式触发的转换器，将调用方选定的脱敏失败轨迹转换为可复跑评测样例。转换器不启动 daemon、不创建定时 automation、不访问网络，也不修改原始证据。\\n\\n## 输入与选择\\n\\n- `traces` 是调用方提供的轨迹集合。\\n- `selectedTraceIds` 必须显式给出；只处理其中列出的 `trace.id` 或 `trace.traceId`。\\n- 可选地由调用方传入最近 7 天内的 `runIds`，但库本身不查询运行记录。\\n- 每条轨迹必须包含有界 `reproducer` 和 `selector`：\\n  - `reproducer.kind` 只能是 `scenario`、`route` 或 `command-id`；不是 shell。\\n  - `selector` 必须包含 `runId` 与正整数 `attempt`。\\n\\n## 安全拒绝规则\\n\\n发现以下字段即整条拒绝，不能写入样例：`raw prompt`、`prompt`、`messages`、`body`、`authorization`、`apiKey`、`headers`（大小写及下划线/连字符等价）。发现 `sk-`、`phc_`、`ghp_`、`AKIA` 或私钥块等凭据模式也整条拒绝。拒绝结果只进入逐轨迹诊断，不包含轨迹内容。\\n\\n## 期望结果\\n\\n真实失败轨迹产生 `before-fix: fail`、`after-fix: pass`；成功、拒绝、取消轨迹产生 `before-fix: pass`、`after-fix: pass`，避免修复回归。\\n\\n每个样例含 `schemaVersion`、稳定 `id`、`source`、`reproducer`、`selector`、`expectations`、`digestAlgorithm: sha256` 与 SHA-256 `digest`。digest 使用排序后的规范 JSON 计算，重复转换应得到相同值。\\n\\n## 验收\\n\\n1. 失败轨迹可生成一个含 bounded reproducer 与 selector 的样例。\\n2. 非失败轨迹的两个期望均为 pass。\\n3. 未脱敏或非法轨迹不会生成样例，每条有独立诊断。\\n4. 未选中的轨迹不处理；空选择不产生样例。\\n5. 库无文件、网络、进程、后台任务或定时任务副作用。\\n6. 类型检查、scoped lint、harness validate/dry-run、凭据扫描通过，SHA256SUMS 可回读。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"content\":\"# G03 关闭说明：trace-to-eval-sample\\n\\n## 使用方式\\n\\n```js\\nimport { convertSelectedTracesToEvalSamples } from \\\"../../scripts/lib/trace-to-eval-sample.mjs\\\";\\n\\nconst result = convertSelectedTracesToEvalSamples(traces, {\\n  selectedTraceIds: [\\\"trace-123\\\"],\\n});\\n```\\n\\n调用方必须显式传入 `selectedTraceIds`。若业务层允许最近 7 天的 runIds，应先由业务层显式筛选，再将对应的 trace id 传入；本模块不进行日期查询或后台发现。\\n\\n## 设计约束\\n\\n- 模块是纯转换函数，不读写仓库、不发起网络请求、不启动进程或 daemon。\\n- 原始轨迹不被修改或删除；输出仅含元数据、期望和摘要。\\n- reproducer 仅支持 `scenario`、`route`、`command-id`，不接受 shell 命令。\\n- selector 固定为 `runId` 与 `attempt`。\\n- 摘要为 SHA-256，摘要输入采用键排序的规范 JSON，因此相同输入具有确定性 digest。\\n\\n## 脱敏门禁\\n\\n门禁递归检查整个轨迹。敏感字段名和常见凭据值模式命中时抛出 `UNSANITIZED_TRACE`；批处理捕获该错误并为该轨迹生成独立诊断。诊断只含 trace id、错误码和错误消息，不回显原始轨迹。\\n\\n## 回归语义\\n\\n失败轨迹的 `before-fix` 为 `fail`、`after-fix` 为 `pass`。成功、拒绝及取消轨迹的 `before-fix` 和 `after-fix` 都为 `pass`，用于验证修复不会引入回归。\\n\\n## 运维与验证\\n\\n该能力没有 automation、scheduler 或 daemon 配置，不改变产品默认值、锁或 approval 机制。发布前执行定向测试、类型检查、scoped lint、harness validate/dry-run 与凭据扫描，并确认 SHA256SUMS 可回读。\\n\"}]}",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_06581e749a6169863c3125fa1778ebcb",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "output_text": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"content\":\"import { createHash } from \\\"node:crypto\\\";\\n\\nconst FORBIDDEN_KEYS = new Set([\\n  \\\"rawprompt\\\",\\n  \\\"prompt\\\",\\n  \\\"messages\\\",\\n  \\\"body\\\",\\n  \\\"authorization\\\",\\n  \\\"apikey\\\",\\n  \\\"headers\\\",\\n]);\\n\\nconst SECRET_VALUE_PATTERNS = [\\n  /\\\\bsk-[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bphc_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bghp_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bAKIA[0-9A-Z]{16}\\\\b/,\\n  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,\\n];\\n\\nconst REPRODUCER_KINDS = new Set([\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"]);\\n\\nfunction isObject(value) {\\n  return value !== null && typeof value === \\\"object\\\" && !Array.isArray(value);\\n}\\n\\nfunction normalizedKey(key) {\\n  return String(key).toLowerCase().replace(/[-_]/g, \\\"\\\");\\n}\\n\\nfunction findUnsafeContent(value, location = \\\"trace\\\") {\\n  if (typeof value === \\\"string\\\") {\\n    for (const pattern of SECRET_VALUE_PATTERNS) {\\n      if (pattern.test(value)) {\\n        return { location, reason: \\\"credential-pattern\\\" };\\n      }\\n    }\\n    return null;\\n  }\\n\\n  if (Array.isArray(value)) {\\n    for (let index = 0; index < value.length; index += 1) {\\n      const found = findUnsafeContent(value[index], `${location}[${index}]`);\\n      if (found) return found;\\n    }\\n    return null;\\n  }\\n\\n  if (isObject(value)) {\\n    for (const [key, child] of Object.entries(value)) {\\n      const normalized = normalizedKey(key);\\n      if (FORBIDDEN_KEYS.has(normalized)) {\\n        return { location: `${location}.${key}`, reason: `forbidden-field:${normalized}` };\\n      }\\n      const found = findUnsafeContent(child, `${location}.${key}`);\\n      if (found) return found;\\n    }\\n  }\\n\\n  return null;\\n}\\n\\nfunction canonicalJson(value) {\\n  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(\\\",\\\")}]`;\\n  if (isObject(value)) {\\n    return `{${Object.keys(value)\\n      .sort()\\n      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)\\n      .join(\\\",\\\")}}`;\\n  }\\n  return JSON.stringify(value);\\n}\\n\\nfunction sha256(value) {\\n  return createHash(\\\"sha256\\\").update(value, \\\"utf8\\\").digest(\\\"hex\\\");\\n}\\n\\nfunction boundedString(value, maxLength, field) {\\n  if (typeof value !== \\\"string\\\" || value.length === 0 || value.length > maxLength) {\\n    throw new TypeError(`${field} must be a non-empty string of at most ${maxLength} characters`);\\n  }\\n  return value;\\n}\\n\\nfunction validateReproducer(reproducer) {\\n  if (!isObject(reproducer)) throw new TypeError(\\\"reproducer must be an object\\\");\\n  const { kind } = reproducer;\\n  if (!REPRODUCER_KINDS.has(kind)) {\\n    throw new TypeError(\\\"reproducer.kind must be scenario, route, or command-id\\\");\\n  }\\n  if (kind === \\\"scenario\\\") {\\n    return {\\n      kind,\\n      scenarioId: boundedString(reproducer.scenarioId, 256, \\\"reproducer.scenarioId\\\"),\\n    };\\n  }\\n  if (kind === \\\"route\\\") {\\n    return {\\n      kind,\\n      routeId: boundedString(reproducer.routeId, 256, \\\"reproducer.routeId\\\"),\\n      method: boundedString(reproducer.method, 16, \\\"reproducer.method\\\").toUpperCase(),\\n    };\\n  }\\n  return {\\n    kind,\\n    commandId: boundedString(reproducer.commandId, 256, \\\"reproducer.commandId\\\"),\\n  };\\n}\\n\\nfunction validateSelector(selector) {\\n  if (!isObject(selector)) throw new TypeError(\\\"selector must be an object\\\");\\n  const runId = boundedString(selector.runId, 256, \\\"selector.runId\\\");\\n  if (!Number.isSafeInteger(selector.attempt) || selector.attempt < 1) {\\n    throw new TypeError(\\\"selector.attempt must be a positive safe integer\\\");\\n  }\\n  return { runId, attempt: selector.attempt };\\n}\\n\\nfunction traceStatus(trace) {\\n  return String(trace.status ?? trace.outcome ?? \\\"\\\").toLowerCase();\\n}\\n\\nfunction isFailure(trace) {\\n  const status = traceStatus(trace);\\n  return status === \\\"failed\\\" || status === \\\"failure\\\" || status === \\\"error\\\";\\n}\\n\\nfunction isPassOutcome(trace) {\\n  const status = traceStatus(trace);\\n  return [\\\"passed\\\", \\\"success\\\", \\\"successful\\\", \\\"rejected\\\", \\\"cancelled\\\", \\\"canceled\\\"].includes(status);\\n}\\n\\nfunction expectedOutcome(trace) {\\n  return isFailure(trace) ? \\\"fail\\\" : \\\"pass\\\";\\n}\\n\\nfunction sampleId(trace, selector) {\\n  return `trace-${selector.runId}-${selector.attempt}`;\\n}\\n\\n/**\\n * Convert one explicitly selected trace. The trace must already be sanitized.\\n * This function performs no I/O and never mutates the supplied trace.\\n */\\nexport function traceToEvalSample(trace, options = {}) {\\n  if (!isObject(trace)) throw new TypeError(\\\"trace must be an object\\\");\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n\\n  const selector = validateSelector(trace.selector ?? options.selector);\\n  const reproducer = validateReproducer(trace.reproducer ?? options.reproducer);\\n  const outcome = expectedOutcome(trace);\\n  const beforeFix = outcome === \\\"fail\\\" ? \\\"fail\\\" : \\\"pass\\\";\\n  const afterFix = \\\"pass\\\";\\n  const digestInput = {\\n    sampleId: sampleId(trace, selector),\\n    selector,\\n    reproducer,\\n    beforeFix,\\n    afterFix,\\n    evidence: trace.evidence ?? null,\\n  };\\n  const digest = sha256(canonicalJson(digestInput));\\n\\n  return {\\n    schemaVersion: 1,\\n    id: sampleId(trace, selector),\\n    source: {\\n      runId: selector.runId,\\n      attempt: selector.attempt,\\n    },\\n    reproducer,\\n    selector,\\n    expectations: {\\n      \\\"before-fix\\\": beforeFix,\\n      \\\"after-fix\\\": afterFix,\\n    },\\n    digest,\\n    digestAlgorithm: \\\"sha256\\\",\\n  };\\n}\\n\\n/**\\n * Explicitly convert selected traces. `selectedTraceIds` is required and is\\n * matched against trace.id (or trace.traceId). No discovery or background work\\n * is performed. Every rejected trace produces its own diagnostic entry.\\n */\\nexport function convertSelectedTracesToEvalSamples(traces, options = {}) {\\n  if (!Array.isArray(traces)) throw new TypeError(\\\"traces must be an array\\\");\\n  if (!Array.isArray(options.selectedTraceIds)) {\\n    throw new TypeError(\\\"options.selectedTraceIds must be an array\\\");\\n  }\\n\\n  const selected = new Set(options.selectedTraceIds.map(String));\\n  const samples = [];\\n  const diagnostics = [];\\n  for (const trace of traces) {\\n    const id = trace && (trace.id ?? trace.traceId);\\n    if (id === undefined || !selected.has(String(id))) continue;\\n    try {\\n      samples.push(traceToEvalSample(trace, options));\\n    } catch (error) {\\n      diagnostics.push({\\n        traceId: String(id),\\n        code: error.code ?? \\\"INVALID_TRACE\\\",\\n        message: error.message,\\n      });\\n    }\\n  }\\n\\n  return { samples, diagnostics };\\n}\\n\\nexport function assertSanitizedTrace(trace) {\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n  return true;\\nn}\\n\\nexport function isRawCredentialPattern(value) {\\n  return typeof value === \\\"string\\\" && SECRET_VALUE_PATTERNS.some((pattern) => pattern.test(value));\\n}\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"content\":\"export type Reproducer =\\n  | { kind: \\\"scenario\\\"; scenarioId: string }\\n  | { kind: \\\"route\\\"; routeId: string; method: string }\\n  | { kind: \\\"command-id\\\"; commandId: string };\\n\\nexport interface TraceSelector {\\n  runId: string;\\n  attempt: number;\\n}\\n\\nexport interface Trace {\\n  id?: string;\\n  traceId?: string;\\n  status?: string;\\n  outcome?: string;\\n  selector: TraceSelector;\\n  reproducer: Reproducer;\\n  evidence?: unknown;\\n  [key: string]: unknown;\\n}\\n\\nexport interface EvalSample {\\n  schemaVersion: 1;\\n  id: string;\\n  source: { runId: string; attempt: number };\\n  reproducer: Reproducer;\\n  selector: TraceSelector;\\n  expectations: { \\\"before-fix\\\": \\\"fail\\\" | \\\"pass\\\"; \\\"after-fix\\\": \\\"pass\\\" };\\n  digest: string;\\n  digestAlgorithm: \\\"sha256\\\";\\n}\\n\\nexport interface TraceDiagnostic {\\n  traceId: string;\\n  code: string;\\n  message: string;\\n}\\n\\nexport interface ConversionResult {\\n  samples: EvalSample[];\\n  diagnostics: TraceDiagnostic[];\\n}\\n\\nexport interface ConversionOptions {\\n  selectedTraceIds: string[];\\n  selector?: TraceSelector;\\n  reproducer?: Reproducer;\\n}\\n\\nexport function traceToEvalSample(trace: Trace, options?: ConversionOptions): EvalSample;\\nexport function convertSelectedTracesToEvalSamples(traces: Trace[], options: ConversionOptions): ConversionResult;\\nexport function assertSanitizedTrace(trace: unknown): boolean;\\nexport function isRawCredentialPattern(value: unknown): boolean;\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"content\":\"# G03：显式 trace → Eval Sample 转换器\\n\\n## 目标\\n\\n提供纯函数式、显式触发的转换器，将调用方选定的脱敏失败轨迹转换为可复跑评测样例。转换器不启动 daemon、不创建定时 automation、不访问网络，也不修改原始证据。\\n\\n## 输入与选择\\n\\n- `traces` 是调用方提供的轨迹集合。\\n- `selectedTraceIds` 必须显式给出；只处理其中列出的 `trace.id` 或 `trace.traceId`。\\n- 可选地由调用方传入最近 7 天内的 `runIds`，但库本身不查询运行记录。\\n- 每条轨迹必须包含有界 `reproducer` 和 `selector`：\\n  - `reproducer.kind` 只能是 `scenario`、`route` 或 `command-id`；不是 shell。\\n  - `selector` 必须包含 `runId` 与正整数 `attempt`。\\n\\n## 安全拒绝规则\\n\\n发现以下字段即整条拒绝，不能写入样例：`raw prompt`、`prompt`、`messages`、`body`、`authorization`、`apiKey`、`headers`（大小写及下划线/连字符等价）。发现 `sk-`、`phc_`、`ghp_`、`AKIA` 或私钥块等凭据模式也整条拒绝。拒绝结果只进入逐轨迹诊断，不包含轨迹内容。\\n\\n## 期望结果\\n\\n真实失败轨迹产生 `before-fix: fail`、`after-fix: pass`；成功、拒绝、取消轨迹产生 `before-fix: pass`、`after-fix: pass`，避免修复回归。\\n\\n每个样例含 `schemaVersion`、稳定 `id`、`source`、`reproducer`、`selector`、`expectations`、`digestAlgorithm: sha256` 与 SHA-256 `digest`。digest 使用排序后的规范 JSON 计算，重复转换应得到相同值。\\n\\n## 验收\\n\\n1. 失败轨迹可生成一个含 bounded reproducer 与 selector 的样例。\\n2. 非失败轨迹的两个期望均为 pass。\\n3. 未脱敏或非法轨迹不会生成样例，每条有独立诊断。\\n4. 未选中的轨迹不处理；空选择不产生样例。\\n5. 库无文件、网络、进程、后台任务或定时任务副作用。\\n6. 类型检查、scoped lint、harness validate/dry-run、凭据扫描通过，SHA256SUMS 可回读。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"content\":\"# G03 关闭说明：trace-to-eval-sample\\n\\n## 使用方式\\n\\n```js\\nimport { convertSelectedTracesToEvalSamples } from \\\"../../scripts/lib/trace-to-eval-sample.mjs\\\";\\n\\nconst result = convertSelectedTracesToEvalSamples(traces, {\\n  selectedTraceIds: [\\\"trace-123\\\"],\\n});\\n```\\n\\n调用方必须显式传入 `selectedTraceIds`。若业务层允许最近 7 天的 runIds，应先由业务层显式筛选，再将对应的 trace id 传入；本模块不进行日期查询或后台发现。\\n\\n## 设计约束\\n\\n- 模块是纯转换函数，不读写仓库、不发起网络请求、不启动进程或 daemon。\\n- 原始轨迹不被修改或删除；输出仅含元数据、期望和摘要。\\n- reproducer 仅支持 `scenario`、`route`、`command-id`，不接受 shell 命令。\\n- selector 固定为 `runId` 与 `attempt`。\\n- 摘要为 SHA-256，摘要输入采用键排序的规范 JSON，因此相同输入具有确定性 digest。\\n\\n## 脱敏门禁\\n\\n门禁递归检查整个轨迹。敏感字段名和常见凭据值模式命中时抛出 `UNSANITIZED_TRACE`；批处理捕获该错误并为该轨迹生成独立诊断。诊断只含 trace id、错误码和错误消息，不回显原始轨迹。\\n\\n## 回归语义\\n\\n失败轨迹的 `before-fix` 为 `fail`、`after-fix` 为 `pass`。成功、拒绝及取消轨迹的 `before-fix` 和 `after-fix` 都为 `pass`，用于验证修复不会引入回归。\\n\\n## 运维与验证\\n\\n该能力没有 automation、scheduler 或 daemon 配置，不改变产品默认值、锁或 approval 机制。发布前执行定向测试、类型检查、scoped lint、harness validate/dry-run 与凭据扫描，并确认 SHA256SUMS 可回读。\\n\"}]}",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": "low",
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "name": "rsi_coding_edits",
+            "schema": {
+              "additionalProperties": false,
+              "properties": {
+                "edits": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 32,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "edits"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "json_schema"
+          }
+        },
+        "tool_choice": "auto",
+        "tools": [],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 924,
+          "input_tokens_details": {
+            "cached_tokens": 896
+          },
+          "output_tokens": 3842,
+          "output_tokens_details": {
+            "reasoning_tokens": 280
+          },
+          "total_tokens": 4766
+        },
+        "user": null
+      },
+      "parsedResponse": {
+        "id": "01a1b0e7bccd7c1681334c751dc3d87c",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"content\":\"import { createHash } from \\\"node:crypto\\\";\\n\\nconst FORBIDDEN_KEYS = new Set([\\n  \\\"rawprompt\\\",\\n  \\\"prompt\\\",\\n  \\\"messages\\\",\\n  \\\"body\\\",\\n  \\\"authorization\\\",\\n  \\\"apikey\\\",\\n  \\\"headers\\\",\\n]);\\n\\nconst SECRET_VALUE_PATTERNS = [\\n  /\\\\bsk-[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bphc_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bghp_[A-Za-z0-9_-]{8,}\\\\b/,\\n  /\\\\bAKIA[0-9A-Z]{16}\\\\b/,\\n  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,\\n];\\n\\nconst REPRODUCER_KINDS = new Set([\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"]);\\n\\nfunction isObject(value) {\\n  return value !== null && typeof value === \\\"object\\\" && !Array.isArray(value);\\n}\\n\\nfunction normalizedKey(key) {\\n  return String(key).toLowerCase().replace(/[-_]/g, \\\"\\\");\\n}\\n\\nfunction findUnsafeContent(value, location = \\\"trace\\\") {\\n  if (typeof value === \\\"string\\\") {\\n    for (const pattern of SECRET_VALUE_PATTERNS) {\\n      if (pattern.test(value)) {\\n        return { location, reason: \\\"credential-pattern\\\" };\\n      }\\n    }\\n    return null;\\n  }\\n\\n  if (Array.isArray(value)) {\\n    for (let index = 0; index < value.length; index += 1) {\\n      const found = findUnsafeContent(value[index], `${location}[${index}]`);\\n      if (found) return found;\\n    }\\n    return null;\\n  }\\n\\n  if (isObject(value)) {\\n    for (const [key, child] of Object.entries(value)) {\\n      const normalized = normalizedKey(key);\\n      if (FORBIDDEN_KEYS.has(normalized)) {\\n        return { location: `${location}.${key}`, reason: `forbidden-field:${normalized}` };\\n      }\\n      const found = findUnsafeContent(child, `${location}.${key}`);\\n      if (found) return found;\\n    }\\n  }\\n\\n  return null;\\n}\\n\\nfunction canonicalJson(value) {\\n  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(\\\",\\\")}]`;\\n  if (isObject(value)) {\\n    return `{${Object.keys(value)\\n      .sort()\\n      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)\\n      .join(\\\",\\\")}}`;\\n  }\\n  return JSON.stringify(value);\\n}\\n\\nfunction sha256(value) {\\n  return createHash(\\\"sha256\\\").update(value, \\\"utf8\\\").digest(\\\"hex\\\");\\n}\\n\\nfunction boundedString(value, maxLength, field) {\\n  if (typeof value !== \\\"string\\\" || value.length === 0 || value.length > maxLength) {\\n    throw new TypeError(`${field} must be a non-empty string of at most ${maxLength} characters`);\\n  }\\n  return value;\\n}\\n\\nfunction validateReproducer(reproducer) {\\n  if (!isObject(reproducer)) throw new TypeError(\\\"reproducer must be an object\\\");\\n  const { kind } = reproducer;\\n  if (!REPRODUCER_KINDS.has(kind)) {\\n    throw new TypeError(\\\"reproducer.kind must be scenario, route, or command-id\\\");\\n  }\\n  if (kind === \\\"scenario\\\") {\\n    return {\\n      kind,\\n      scenarioId: boundedString(reproducer.scenarioId, 256, \\\"reproducer.scenarioId\\\"),\\n    };\\n  }\\n  if (kind === \\\"route\\\") {\\n    return {\\n      kind,\\n      routeId: boundedString(reproducer.routeId, 256, \\\"reproducer.routeId\\\"),\\n      method: boundedString(reproducer.method, 16, \\\"reproducer.method\\\").toUpperCase(),\\n    };\\n  }\\n  return {\\n    kind,\\n    commandId: boundedString(reproducer.commandId, 256, \\\"reproducer.commandId\\\"),\\n  };\\n}\\n\\nfunction validateSelector(selector) {\\n  if (!isObject(selector)) throw new TypeError(\\\"selector must be an object\\\");\\n  const runId = boundedString(selector.runId, 256, \\\"selector.runId\\\");\\n  if (!Number.isSafeInteger(selector.attempt) || selector.attempt < 1) {\\n    throw new TypeError(\\\"selector.attempt must be a positive safe integer\\\");\\n  }\\n  return { runId, attempt: selector.attempt };\\n}\\n\\nfunction traceStatus(trace) {\\n  return String(trace.status ?? trace.outcome ?? \\\"\\\").toLowerCase();\\n}\\n\\nfunction isFailure(trace) {\\n  const status = traceStatus(trace);\\n  return status === \\\"failed\\\" || status === \\\"failure\\\" || status === \\\"error\\\";\\n}\\n\\nfunction isPassOutcome(trace) {\\n  const status = traceStatus(trace);\\n  return [\\\"passed\\\", \\\"success\\\", \\\"successful\\\", \\\"rejected\\\", \\\"cancelled\\\", \\\"canceled\\\"].includes(status);\\n}\\n\\nfunction expectedOutcome(trace) {\\n  return isFailure(trace) ? \\\"fail\\\" : \\\"pass\\\";\\n}\\n\\nfunction sampleId(trace, selector) {\\n  return `trace-${selector.runId}-${selector.attempt}`;\\n}\\n\\n/**\\n * Convert one explicitly selected trace. The trace must already be sanitized.\\n * This function performs no I/O and never mutates the supplied trace.\\n */\\nexport function traceToEvalSample(trace, options = {}) {\\n  if (!isObject(trace)) throw new TypeError(\\\"trace must be an object\\\");\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n\\n  const selector = validateSelector(trace.selector ?? options.selector);\\n  const reproducer = validateReproducer(trace.reproducer ?? options.reproducer);\\n  const outcome = expectedOutcome(trace);\\n  const beforeFix = outcome === \\\"fail\\\" ? \\\"fail\\\" : \\\"pass\\\";\\n  const afterFix = \\\"pass\\\";\\n  const digestInput = {\\n    sampleId: sampleId(trace, selector),\\n    selector,\\n    reproducer,\\n    beforeFix,\\n    afterFix,\\n    evidence: trace.evidence ?? null,\\n  };\\n  const digest = sha256(canonicalJson(digestInput));\\n\\n  return {\\n    schemaVersion: 1,\\n    id: sampleId(trace, selector),\\n    source: {\\n      runId: selector.runId,\\n      attempt: selector.attempt,\\n    },\\n    reproducer,\\n    selector,\\n    expectations: {\\n      \\\"before-fix\\\": beforeFix,\\n      \\\"after-fix\\\": afterFix,\\n    },\\n    digest,\\n    digestAlgorithm: \\\"sha256\\\",\\n  };\\n}\\n\\n/**\\n * Explicitly convert selected traces. `selectedTraceIds` is required and is\\n * matched against trace.id (or trace.traceId). No discovery or background work\\n * is performed. Every rejected trace produces its own diagnostic entry.\\n */\\nexport function convertSelectedTracesToEvalSamples(traces, options = {}) {\\n  if (!Array.isArray(traces)) throw new TypeError(\\\"traces must be an array\\\");\\n  if (!Array.isArray(options.selectedTraceIds)) {\\n    throw new TypeError(\\\"options.selectedTraceIds must be an array\\\");\\n  }\\n\\n  const selected = new Set(options.selectedTraceIds.map(String));\\n  const samples = [];\\n  const diagnostics = [];\\n  for (const trace of traces) {\\n    const id = trace && (trace.id ?? trace.traceId);\\n    if (id === undefined || !selected.has(String(id))) continue;\\n    try {\\n      samples.push(traceToEvalSample(trace, options));\\n    } catch (error) {\\n      diagnostics.push({\\n        traceId: String(id),\\n        code: error.code ?? \\\"INVALID_TRACE\\\",\\n        message: error.message,\\n      });\\n    }\\n  }\\n\\n  return { samples, diagnostics };\\n}\\n\\nexport function assertSanitizedTrace(trace) {\\n  const unsafe = findUnsafeContent(trace);\\n  if (unsafe) {\\n    const error = new Error(`trace rejected: ${unsafe.reason} at ${unsafe.location}`);\\n    error.code = \\\"UNSANITIZED_TRACE\\\";\\n    error.diagnostic = unsafe;\\n    throw error;\\n  }\\n  return true;\\nn}\\n\\nexport function isRawCredentialPattern(value) {\\n  return typeof value === \\\"string\\\" && SECRET_VALUE_PATTERNS.some((pattern) => pattern.test(value));\\n}\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"content\":\"export type Reproducer =\\n  | { kind: \\\"scenario\\\"; scenarioId: string }\\n  | { kind: \\\"route\\\"; routeId: string; method: string }\\n  | { kind: \\\"command-id\\\"; commandId: string };\\n\\nexport interface TraceSelector {\\n  runId: string;\\n  attempt: number;\\n}\\n\\nexport interface Trace {\\n  id?: string;\\n  traceId?: string;\\n  status?: string;\\n  outcome?: string;\\n  selector: TraceSelector;\\n  reproducer: Reproducer;\\n  evidence?: unknown;\\n  [key: string]: unknown;\\n}\\n\\nexport interface EvalSample {\\n  schemaVersion: 1;\\n  id: string;\\n  source: { runId: string; attempt: number };\\n  reproducer: Reproducer;\\n  selector: TraceSelector;\\n  expectations: { \\\"before-fix\\\": \\\"fail\\\" | \\\"pass\\\"; \\\"after-fix\\\": \\\"pass\\\" };\\n  digest: string;\\n  digestAlgorithm: \\\"sha256\\\";\\n}\\n\\nexport interface TraceDiagnostic {\\n  traceId: string;\\n  code: string;\\n  message: string;\\n}\\n\\nexport interface ConversionResult {\\n  samples: EvalSample[];\\n  diagnostics: TraceDiagnostic[];\\n}\\n\\nexport interface ConversionOptions {\\n  selectedTraceIds: string[];\\n  selector?: TraceSelector;\\n  reproducer?: Reproducer;\\n}\\n\\nexport function traceToEvalSample(trace: Trace, options?: ConversionOptions): EvalSample;\\nexport function convertSelectedTracesToEvalSamples(traces: Trace[], options: ConversionOptions): ConversionResult;\\nexport function assertSanitizedTrace(trace: unknown): boolean;\\nexport function isRawCredentialPattern(value: unknown): boolean;\\n\\nexport default convertSelectedTracesToEvalSamples;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"content\":\"# G03：显式 trace → Eval Sample 转换器\\n\\n## 目标\\n\\n提供纯函数式、显式触发的转换器，将调用方选定的脱敏失败轨迹转换为可复跑评测样例。转换器不启动 daemon、不创建定时 automation、不访问网络，也不修改原始证据。\\n\\n## 输入与选择\\n\\n- `traces` 是调用方提供的轨迹集合。\\n- `selectedTraceIds` 必须显式给出；只处理其中列出的 `trace.id` 或 `trace.traceId`。\\n- 可选地由调用方传入最近 7 天内的 `runIds`，但库本身不查询运行记录。\\n- 每条轨迹必须包含有界 `reproducer` 和 `selector`：\\n  - `reproducer.kind` 只能是 `scenario`、`route` 或 `command-id`；不是 shell。\\n  - `selector` 必须包含 `runId` 与正整数 `attempt`。\\n\\n## 安全拒绝规则\\n\\n发现以下字段即整条拒绝，不能写入样例：`raw prompt`、`prompt`、`messages`、`body`、`authorization`、`apiKey`、`headers`（大小写及下划线/连字符等价）。发现 `sk-`、`phc_`、`ghp_`、`AKIA` 或私钥块等凭据模式也整条拒绝。拒绝结果只进入逐轨迹诊断，不包含轨迹内容。\\n\\n## 期望结果\\n\\n真实失败轨迹产生 `before-fix: fail`、`after-fix: pass`；成功、拒绝、取消轨迹产生 `before-fix: pass`、`after-fix: pass`，避免修复回归。\\n\\n每个样例含 `schemaVersion`、稳定 `id`、`source`、`reproducer`、`selector`、`expectations`、`digestAlgorithm: sha256` 与 SHA-256 `digest`。digest 使用排序后的规范 JSON 计算，重复转换应得到相同值。\\n\\n## 验收\\n\\n1. 失败轨迹可生成一个含 bounded reproducer 与 selector 的样例。\\n2. 非失败轨迹的两个期望均为 pass。\\n3. 未脱敏或非法轨迹不会生成样例，每条有独立诊断。\\n4. 未选中的轨迹不处理；空选择不产生样例。\\n5. 库无文件、网络、进程、后台任务或定时任务副作用。\\n6. 类型检查、scoped lint、harness validate/dry-run、凭据扫描通过，SHA256SUMS 可回读。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"content\":\"# G03 关闭说明：trace-to-eval-sample\\n\\n## 使用方式\\n\\n```js\\nimport { convertSelectedTracesToEvalSamples } from \\\"../../scripts/lib/trace-to-eval-sample.mjs\\\";\\n\\nconst result = convertSelectedTracesToEvalSamples(traces, {\\n  selectedTraceIds: [\\\"trace-123\\\"],\\n});\\n```\\n\\n调用方必须显式传入 `selectedTraceIds`。若业务层允许最近 7 天的 runIds，应先由业务层显式筛选，再将对应的 trace id 传入；本模块不进行日期查询或后台发现。\\n\\n## 设计约束\\n\\n- 模块是纯转换函数，不读写仓库、不发起网络请求、不启动进程或 daemon。\\n- 原始轨迹不被修改或删除；输出仅含元数据、期望和摘要。\\n- reproducer 仅支持 `scenario`、`route`、`command-id`，不接受 shell 命令。\\n- selector 固定为 `runId` 与 `attempt`。\\n- 摘要为 SHA-256，摘要输入采用键排序的规范 JSON，因此相同输入具有确定性 digest。\\n\\n## 脱敏门禁\\n\\n门禁递归检查整个轨迹。敏感字段名和常见凭据值模式命中时抛出 `UNSANITIZED_TRACE`；批处理捕获该错误并为该轨迹生成独立诊断。诊断只含 trace id、错误码和错误消息，不回显原始轨迹。\\n\\n## 回归语义\\n\\n失败轨迹的 `before-fix` 为 `fail`、`after-fix` 为 `pass`。成功、拒绝及取消轨迹的 `before-fix` 和 `after-fix` 都为 `pass`，用于验证修复不会引入回归。\\n\\n## 运维与验证\\n\\n该能力没有 automation、scheduler 或 daemon 配置，不改变产品默认值、锁或 approval 机制。发布前执行定向测试、类型检查、scoped lint、harness validate/dry-run 与凭据扫描，并确认 SHA256SUMS 可回读。\\n\"}]}",
+        "usage": {
+          "inputTokens": 924,
+          "outputTokens": 3842,
+          "totalTokens": 4766
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      }
+    }
+  ],
+  "grader": {
+    "schemaVersion": "RsiBenefitGrader/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-independent-final-state-grader",
+    "workspaceRevision": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+    "baselineSetup": null,
+    "oracleDigest": "5e2368cdb7d2e49317a8c4d2cc16cf15fda3d5791c2e598caa1e82f15b6d3170",
+    "oracleRevision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+    "oracleTestDigests": {
+      "tests/unit/trace-to-eval-sample.test.ts": "9895c0c9296985a31e8c1beceac7d3a1d3c4918899f1d84a3ea3441ba38c4d70"
+    },
+    "oracleUnchanged": true,
+    "failureClass": "assertion",
+    "diagnostics": [],
+    "commands": [
+      "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1"
+    ],
+    "responseDigest": "b3e163c8df5062f6f506b755366e62da7ad52f4d3c48767c4a515febfe5a6ca4",
+    "editsDigest": "c72152f49b2da49d1508416b282644694c553c2f13739917f14437e7930ba64c",
+    "isolation": {
+      "hiddenOracleVisible": false,
+      "unapprovedEgress": false,
+      "candidateChangedEvaluator": false
+    },
+    "reports": [
+      {
+        "command": "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 1,
+        "report": {
+          "numTotalTestSuites": 2,
+          "numPassedTestSuites": 0,
+          "numFailedTestSuites": 2,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 6,
+          "numPassedTests": 0,
+          "numFailedTests": 6,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793969390037,
+          "success": false,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "G03 trace-to-eval sample"
+                  ],
+                  "fullName": "G03 trace-to-eval sample turns a failure trace into a sample expected to fail before the fix and pass after",
+                  "status": "failed",
+                  "title": "turns a failure trace into a sample expected to fail before the fix and pass after",
+                  "duration": 5.127899999999954,
+                  "failureMessages": [
+                    "TypeError: selector must be an object\n    at validateSelector (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:111:34)\n    at traceToEvalSample (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:155:20)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/tests/unit/trace-to-eval-sample.test.ts:24:20\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G03 trace-to-eval sample"
+                  ],
+                  "fullName": "G03 trace-to-eval sample keeps success/refusal/cancelled traces as passing samples (a fix must not regress them)",
+                  "status": "failed",
+                  "title": "keeps success/refusal/cancelled traces as passing samples (a fix must not regress them)",
+                  "duration": 0.48109999999996944,
+                  "failureMessages": [
+                    "TypeError: selector must be an object\n    at validateSelector (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:111:34)\n    at traceToEvalSample (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:155:20)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/tests/unit/trace-to-eval-sample.test.ts:37:22\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G03 trace-to-eval sample"
+                  ],
+                  "fullName": "G03 trace-to-eval sample refuses a trace that is not redacted (raw prompt or secret-like value)",
+                  "status": "failed",
+                  "title": "refuses a trace that is not redacted (raw prompt or secret-like value)",
+                  "duration": 0.35820000000001073,
+                  "failureMessages": [
+                    "Error: trace rejected: forbidden-field:prompt at trace.prompt\n    at traceToEvalSample (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:149:19)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/tests/unit/trace-to-eval-sample.test.ts:44:24\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G03 trace-to-eval sample"
+                  ],
+                  "fullName": "G03 trace-to-eval sample rejects a reproducer that is not a bounded kind (no shell command)",
+                  "status": "failed",
+                  "title": "rejects a reproducer that is not a bounded kind (no shell command)",
+                  "duration": 0.49909999999999854,
+                  "failureMessages": [
+                    "TypeError: selector must be an object\n    at validateSelector (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:111:34)\n    at traceToEvalSample (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:155:20)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/tests/unit/trace-to-eval-sample.test.ts:55:19\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G03 trace-to-eval sample"
+                  ],
+                  "fullName": "G03 trace-to-eval sample is an explicit-trigger batch: selected traces only, with per-trace rejections",
+                  "status": "failed",
+                  "title": "is an explicit-trigger batch: selected traces only, with per-trace rejections",
+                  "duration": 0.8932999999999538,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_1__.traceToEvalSamples) is not a function\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/tests/unit/trace-to-eval-sample.test.ts:64:19\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G03 trace-to-eval sample"
+                  ],
+                  "fullName": "G03 trace-to-eval sample rejects a trace with a missing required field",
+                  "status": "failed",
+                  "title": "rejects a trace with a missing required field",
+                  "duration": 0.37350000000003547,
+                  "failureMessages": [
+                    "TypeError: selector must be an object\n    at validateSelector (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:111:34)\n    at traceToEvalSample (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/scripts/lib/trace-to-eval-sample.mjs:155:20)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/tests/unit/trace-to-eval-sample.test.ts:75:21\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793969390642,
+              "endTime": 1793969390649.3735,
+              "status": "failed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0291-g03-2-sekb-shadow/workspace/tests/unit/trace-to-eval-sample.test.ts"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

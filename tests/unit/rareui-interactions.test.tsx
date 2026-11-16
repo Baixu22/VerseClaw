@@ -5,6 +5,7 @@ import MarkdownPreview, { markdownOutline } from '@/components/file-preview/Mark
 import { DurationPicker } from '@/components/rareui/DurationPicker';
 import { ThemeSelector, type ThemeSelectorOption } from '@/components/rareui/ThemeSelector';
 import { DeleteButton } from '@/components/rareui/DeleteButton';
+import { NotificationBell } from '@/components/rareui/NotificationBell';
 import { buildCompletionActivity } from '@/components/rareui/completion-activity';
 import { getInitialCronSchedule, readCronTime, writeCronTime } from '@/pages/Cron';
 import type { UserRunCard } from '@/pages/Chat/execution-projection';
@@ -189,7 +190,7 @@ describe('Rare UI production adaptations', () => {
     expect(formatElapsed(-5_000)).toBe('0:00');
   });
 
-  it('shows running sessions live, rings amber when one waits, and colours the badge by severity', async () => {
+  it('shows live sessions, marks waiting sessions, and colours unread activity by severity', async () => {
     vi.doMock('react-router-dom', async (importOriginal) => ({
       ...await importOriginal<typeof import('react-router-dom')>(),
       useNavigate: () => () => undefined,
@@ -213,7 +214,10 @@ describe('Rare UI production adaptations', () => {
     const view = render(<TooltipProvider><CompletionActivityMenu liveSessions={live} /></TooltipProvider>);
     const bell = screen.getByTestId('chat-completion-bell');
     expect(bell).toHaveAttribute('data-live', 'running');
-    expect(screen.getByTestId('chat-activity-live-ring')).toBeInTheDocument();
+    // Running state is the session rows' own orb, not a private bell animation.
+    expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'streaming');
+    expect(screen.queryByTestId('chat-activity-bell-icon')).toBeNull();
+    expect(screen.queryByTestId('chat-activity-live-ring')).toBeNull();
     // Three unread, one of them an error: the badge says so in number and colour.
     expect(bell).toHaveAttribute('data-tone', 'error');
     expect(screen.getByTestId('chat-completion-unread-dot')).toHaveTextContent('3');
@@ -235,10 +239,27 @@ describe('Rare UI production adaptations', () => {
     // Opening the panel reads the entries; they stay marked as fresh while it is open.
     await waitFor(() => expect(screen.queryByTestId('chat-completion-unread-dot')).toBeNull());
     expect(items.every((item) => item.getAttribute('data-fresh') === 'true')).toBe(true);
+    // Entry glyphs reuse the row status glyphs; no trailing unread dots.
+    expect(items.map((item) => item.querySelector('[data-state]')?.getAttribute('data-state'))).toEqual(['error', 'success', 'success']);
+    expect(document.querySelector('.rare-activity-entry__fresh')).toBeNull();
 
     view.rerender(<TooltipProvider><CompletionActivityMenu liveSessions={[{ ...live[0], state: 'waiting' }]} /></TooltipProvider>);
     expect(screen.getByTestId('chat-completion-bell')).toHaveAttribute('data-live', 'waiting');
+    expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'waiting');
+    expect(screen.queryByTestId('chat-activity-waiting')).toBeNull();
     expect(screen.getByTestId('chat-activity-live-item')).toHaveAttribute('data-state', 'waiting');
+  });
+
+  it('draws live state with the row orb and keeps the corner for the unread count only', async () => {
+    const view = render(<NotificationBell count={12} live="waiting" tone="error" aria-label="Activity" />);
+    expect(screen.getByTestId('chat-completion-unread-dot')).toHaveTextContent('9+');
+    expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'waiting');
+    view.rerender(<NotificationBell count={0} live="waiting" aria-label="Activity" />);
+    await waitFor(() => expect(screen.queryByTestId('chat-completion-unread-dot')).toBeNull());
+    expect(screen.queryByTestId('chat-activity-waiting')).toBeNull();
+    view.rerender(<NotificationBell count={0} live="idle" aria-label="Activity" />);
+    expect(screen.queryByTestId('chat-activity-live-orb')).toBeNull();
+    expect(screen.getByTestId('chat-activity-bell-icon')).toBeInTheDocument();
   });
 
   it('shows an honest empty state when nothing ran and nothing is running', async () => {

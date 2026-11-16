@@ -1,0 +1,1146 @@
+{
+  "schema": "ContextInlineSpillRound6Verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "mode": "deterministic",
+  "candidate": {
+    "commit": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "tree": "888122eb7ee5be928d3c09c50dc3d998a81e40d3",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round6/design.freeze.json",
+    "sha256": "74fa9962f10ad1af65a79569dc6c51f6c49757fb45835c2cc9f3c7174a853e6d",
+    "commit": "ab8605136618bd021c1cf8772c18aac92dd83411"
+  },
+  "B7CleanCandidate": true,
+  "verifierAcceptedCleanCandidate": true,
+  "passed": true,
+  "sha256FilesVerified": 12,
+  "archivesVerified": 104,
+  "fifthRoundOriginalFilesPreserved": 32,
+  "fifthRoundVerdict": "mechanism-only / NO_GO",
+  "decision": {
+    "status": "inconclusive",
+    "verdict": "NO_GO",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": 22.5,
+    "tokenGrowthPct": 0,
+    "b7_evidence": true
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 8,
+      "pass": 2,
+      "successRate": 0.25,
+      "wilson95": [
+        0.071479212752109,
+        0.5907245696898311
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0,
+      "recallOkRate": 0,
+      "meanTurns": 1,
+      "meanMainContextChars": 1091.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0.004,
+      "p95LatencyMs": 0.013,
+      "failureClasses": {
+        "recall_not_attempted": 6,
+        "none": 2
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 8,
+      "pass": 8,
+      "successRate": 1,
+      "wilson95": [
+        0.6755924351161198,
+        1
+      ],
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "passAtK": 1,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3,
+      "meanMainContextChars": 17944.5,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0.032,
+      "p95LatencyMs": 0.055,
+      "failureClasses": {
+        "none": 8
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 8,
+      "pass": 8,
+      "successRate": 1,
+      "wilson95": [
+        0.6755924351161198,
+        1
+      ],
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "passAtK": 1,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3,
+      "meanMainContextChars": 40977.5,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0.032,
+      "p95LatencyMs": 0.046,
+      "failureClasses": {
+        "none": 8
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 8,
+      "pass": 4,
+      "successRate": 0.5,
+      "wilson95": [
+        0.21521606221387757,
+        0.7847839377861224
+      ],
+      "evidenceSuccessRate": 0.3333333333333333,
+      "controlSuccessRate": 1,
+      "passAtK": 0.3333333333333333,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3,
+      "meanMainContextChars": 40955,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0.047,
+      "p95LatencyMs": 0.064,
+      "failureClasses": {
+        "none": 4,
+        "recalled_text_evicted": 4
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 2,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 4,
+      "onlyA": 4,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 8,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 1
+    }
+  },
+  "evidenceComparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 2,
+      "onlyA": 4,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 6,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 1
+    }
+  },
+  "diagnostics": {
+    "responseStatuses": {
+      "executed": 80
+    },
+    "incompleteReasons": {},
+    "returnedModels": {},
+    "transportErrors": 0,
+    "missingUsage": 0,
+    "archiveSelection": {
+      "baseline-no-reference": {
+        "originalTarget": 0,
+        "otherArchive": 0,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 0,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 0
+      },
+      "reference-visible": {
+        "originalTarget": 16,
+        "otherArchive": 0,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 6,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5868
+      },
+      "recall-stable": {
+        "originalTarget": 16,
+        "otherArchive": 0,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 6,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5864
+      },
+      "retention-off": {
+        "originalTarget": 16,
+        "otherArchive": 0,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 6,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5864
+      }
+    },
+    "perRun": [
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-0-25c3dc",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-ef6038",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-0-5c7789",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-e20f22",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-0-991d70",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-b8939f",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-0-5b55b0",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-ce06f6",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-0-e80bb8",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-ddccd1",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-0-ab1927",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-c4cb93",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-0-a23d1b",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-f577b5",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-0-479e6c",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-f795f2",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-0-4de007",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-391a0d",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-0-321336",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-ae623b",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-0-e04cb2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-a0afab",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-0-ecd567",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-af9a7d",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-0-dc2e39",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-587b2a",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-0-81deb4",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-004e7d",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-0-d18eb0",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-a5d7b4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-0-dc9b33",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-dbd40b",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-0-728be6",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-700bef",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-0-bf59bf",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-8d3e32",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-0-cac3db",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-f67815",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-0-370e3e",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-0e4a4d",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-0-3ef204",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-7c8b8c",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-0-f0b543",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-421721",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-0-34cc73",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-c4337b",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-0-b2da4c",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-1-cc3f85",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      }
+    ],
+    "retentionPairs": {
+      "evidence": {
+        "pairs": 6,
+        "both": 2,
+        "onlyStable": 4,
+        "onlyOff": 0,
+        "neither": 0
+      },
+      "controls": {
+        "pairs": 2,
+        "both": 2,
+        "onlyStable": 0,
+        "onlyOff": 0,
+        "neither": 0
+      }
+    }
+  },
+  "engineeringAcceptedByAgent": false,
+  "productDefaultsChanged": false,
+  "productLocksChanged": false,
+  "releaseApproved": false
+}

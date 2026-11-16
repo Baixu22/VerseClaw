@@ -1,0 +1,210 @@
+[
+  {
+    "name": "core",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "vitest.terminal-resources.config.ts",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\unified-management-20261108\\r3-final-candidate/core.json"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 25.25,
+    "passed": 77,
+    "failed": 0,
+    "skipped": 0,
+    "total": 77
+  },
+  {
+    "name": "native",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "../vitest.terminal-resources.native.config.ts",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\unified-management-20261108\\r3-final-candidate/native.json"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108\\openclaw_runtime",
+    "exitCode": 0,
+    "seconds": 43.906,
+    "passed": 45,
+    "failed": 0,
+    "skipped": 0,
+    "total": 45
+  },
+  {
+    "name": "node-types",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.node.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 8.016
+  },
+  {
+    "name": "web-types",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.web.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 4.172
+  },
+  {
+    "name": "test-types",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.test.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 12.031
+  },
+  {
+    "name": "lint",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/eslint/bin/eslint.js",
+      "electron/main/ipc-handlers.ts",
+      "electron/services/terminal-api.ts",
+      "electron/services/terminal-session-manager.ts",
+      "electron/services/web-preview-api.ts",
+      "electron/services/web-preview-manager.ts",
+      "openclaw_runtime/src/agents/verseshell/governed-process.real-limits.test.ts",
+      "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+      "openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts",
+      "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+      "shared/host-api/contract.ts",
+      "shared/host-events/contract.ts",
+      "src/components/file-preview/WorkspaceTerminalPanel.tsx",
+      "tests/e2e/workspace-terminal-panel.spec.ts",
+      "tests/unit/terminal-resource-native.test.ts",
+      "tests/unit/terminal-resource-ownership.test.ts",
+      "tests/unit/terminal-session-manager.test.ts",
+      "tests/unit/web-preview-owner-api.test.ts",
+      "tests/unit/web-preview-startup-recovery.test.ts",
+      "vitest.terminal-resources.config.ts",
+      "vitest.terminal-resources.native.config.ts"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 4.797
+  },
+  {
+    "name": "contract",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/contract-check.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 3.391
+  },
+  {
+    "name": "comms-replay",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/comms/replay.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 0.328
+  },
+  {
+    "name": "comms-compare",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/comms/compare.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 0.203
+  },
+  {
+    "name": "harness",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "harness/src/cli.mjs",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/autonomy-terminal-resource-ownership.md",
+      "--since",
+      "dee28c8a2"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 1.0
+  },
+  {
+    "name": "harness-dry-run",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "harness/src/cli.mjs",
+      "run",
+      "--spec",
+      "harness/specs/tasks/autonomy-terminal-resource-ownership.md",
+      "--since",
+      "dee28c8a2",
+      "--dry-run"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 0.828
+  },
+  {
+    "name": "desktop-build",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "--max-old-space-size=6144",
+      "D:/ClawX/node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 50.781
+  },
+  {
+    "name": "electron",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/e2e/workspace-terminal-panel.spec.ts",
+      "--workers=1",
+      "--reporter=line,json"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 44.453,
+    "stats": {
+      "startTime": "2026-11-08T17:15:40.881Z",
+      "duration": 42475.717000000004,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+]

@@ -34,7 +34,11 @@ import {
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { readSessionMessagesAsync } from "../../gateway/session-utils.fs.js";
 import { logVerbose } from "../../globals.js";
-import { emitAgentEvent, registerAgentRunContext } from "../../infra/agent-events.js";
+import {
+  clearAgentRunContext,
+  emitAgentEvent,
+  registerAgentRunContext,
+} from "../../infra/agent-events.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { isAbortError } from "../../infra/unhandled-rejections.js";
 import { resolveMemoryFlushPlan } from "../../plugins/memory-state.js";
@@ -1217,6 +1221,7 @@ export async function runMemoryFlushIfNeeded(params: {
   const flushRunId = memoryDeps.randomUUID();
   if (params.sessionKey) {
     memoryDeps.registerAgentRunContext(flushRunId, {
+      memoryFlushOwner: params.replyOperation,
       sessionKey: params.sessionKey,
       ...(activeSessionEntry?.sessionId ? { sessionId: activeSessionEntry.sessionId } : {}),
       verboseLevel: params.resolvedVerboseLevel,
@@ -1479,5 +1484,6 @@ export async function runMemoryFlushIfNeeded(params: {
     }
   }
 
+  clearAgentRunContext(flushRunId);
   return activeSessionEntry;
 }

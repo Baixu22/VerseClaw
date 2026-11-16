@@ -1,0 +1,46 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-unified-relay-20261109
+
+ ❯ tests/unit/workspace-session.test.ts (13 tests | 1 failed) 217ms
+     ✓ keeps a newer navigation when new-session creation replies late 87ms
+     ✓ preserves the source after rejected creation and can retry the same intent 2ms
+     × keeps a source revisit during the last new-session await 64ms
+     ✓ creates new sessions inside the active workspace and current agent binding 3ms
+     ✓ does not activate a late fork after leaving and returning to the same source 1ms
+     ✓ does not activate a late handoff after leaving and returning to the same source 0ms
+     ✓ does not activate a project after its route is disposed during the workspace switch 54ms
+     ✓ restores the default workspace before creating a workspace-scoped new session 1ms
+     ✓ creates handoff sessions with the edited draft persisted in workspace state 1ms
+     ✓ keeps a newly created session in the current workgroup 1ms
+     ✓ forks sessions through Host API and preserves non-running workspace state 1ms
+     ✓ forwards an explicit fromLeafId when forking from a message (#180) 0ms
+     ✓ keeps the current view when Main refuses handoff creation 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/workspace-session.test.ts > workspace session helpers > keeps a source revisit during the last new-session await
+AssertionError: expected 'agent:reviewer:session-1794244855523-…' to be null
+
+- Expected:
+null
+
++ Received:
+"agent:reviewer:session-1794244855523-27czlr"
+
+ ❯ tests/unit/workspace-session.test.ts:205:25
+    203|     chatState.switchSession('agent:reviewer:old');
+    204|     release();
+    205|     await expect(created).resolves.toBeNull();
+       |                         ^
+    206|     expect(chatState.currentSessionKey).toBe('agent:reviewer:old');
+    207|     expect(chatState.resetSessionView).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 passed (13)
+   Start at  01:20:51
+   Duration  4.23s (transform 161ms, setup 235ms, import 45ms, tests 217ms, environment 3.43s)
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-new-session-tail-red.tests.json

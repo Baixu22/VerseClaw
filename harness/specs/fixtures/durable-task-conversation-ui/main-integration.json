@@ -1,0 +1,60 @@
+{
+  "driven_by": "agent",
+  "preservation": {
+    "driven_by": "agent",
+    "main": "20b394c734999b3162e73f74e652914d2f6df486",
+    "installedMatches": 61,
+    "unrelated": 2748,
+    "unrelatedPreserved": 2748,
+    "concurrentChanges": [],
+    "preservedMerges": [
+      "README.ja-JP.md",
+      "README.md",
+      "README.ru-RU.md",
+      "README.zh-CN.md",
+      "docs/modules/multi-agent-and-tasks.md",
+      "src/pages/Chat/index.tsx",
+      "tests/unit/chat-session-status-rail.test.tsx"
+    ]
+  },
+  "checks": {
+    "main-core": {
+      "passed": 62,
+      "total": 62,
+      "sha256": "41df946a0fdd96ffdebc768d7873a2ecaac2c4f3e34c1ae117c0f386c7eab1d1",
+      "rawPath": "D:/tmp/durable-task-conversation-20261108/main-core.json"
+    },
+    "main-ui-final": {
+      "passed": 49,
+      "total": 49,
+      "sha256": "cd6a50f10984f638beae6902c332da74f275040559368f1ee766bad310bcf326",
+      "rawPath": "D:/tmp/durable-task-conversation-20261108/main-ui-final.json"
+    },
+    "main-sidebar-dedup": {
+      "passed": 8,
+      "total": 8,
+      "sha256": "4f8e31c466f5b7bb5ceeb2539efb3b952c3c441b18975e38412d2a13314709d1",
+      "rawPath": "D:/tmp/durable-task-conversation-20261108/main-sidebar-dedup.json"
+    },
+    "source-sidebar-final": {
+      "passed": 6,
+      "total": 6,
+      "sha256": "983b781190340a8b31b03e271db7341131742efdb6d9d90b6d58e60e28367413",
+      "rawPath": "D:/tmp/durable-task-conversation-20261108/source-sidebar-final.json"
+    }
+  },
+  "assertionUpdate": "One local test expected automatic status opening; it was updated to the explicitly requested quiet default. The three-way merge temporarily included this assertion twice; the duplicate was removed and the complete sidebar suite passed again.",
+  "adjustment": {
+    "file": "D:/ClawX/tests/unit/chat-session-status-rail.test.tsx",
+    "relativePath": "tests/unit/chat-session-status-rail.test.tsx",
+    "beforeHash": "4539d269e0bed07117d937b241c77dfbf5b53bb5897881252d1a7a4395a3b766",
+    "afterHash": "3da9d014580bd16ed0523ab0444858f1b018e32a6208af5573fe407ad45944f5",
+    "reason": "User requested quiet conversation UI; only the old automatic-sidebar expectation was changed. Other local test edits were preserved."
+  },
+  "deduplication": {
+    "path": "tests/unit/chat-session-status-rail.test.tsx",
+    "beforeHash": "70bf72c003844bb6162cf3320f5c652c3bcd55f3a0bc54ec8649b21e1e0a7078",
+    "afterHash": "6d8eda351d4c923dbfa0a62aa4c5bab8d8ad45a5ffd6f1965cde70a8af536add",
+    "reason": "Three-way merge retained the same new default-quiet assertion twice; kept one identical copy and all other local tests"
+  }
+}

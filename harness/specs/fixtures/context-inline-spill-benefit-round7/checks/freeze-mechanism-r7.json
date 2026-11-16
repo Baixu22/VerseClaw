@@ -1,0 +1,44 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "freeze-mechanism-r7",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "D:/tmp/g7-closeout-pass-r7-01a1d34c/freeze-and-mechanism.mts"
+  ],
+  "startedAt": "2026-11-13T08:30:42.094Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "1a16bc17a6545bc5fd9a29dd7d314964d97493f3",
+    "tree": "2fb1175859d12a3dc078bfc01c2f4d5748fd0742",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T08:30:43.039Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "1a16bc17a6545bc5fd9a29dd7d314964d97493f3",
+    "tree": "2fb1175859d12a3dc078bfc01c2f4d5748fd0742",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\freeze-mechanism-r7.stdout.txt",
+      "bytes": 342,
+      "sha256": "370e233e9f82a04d531972e17e73760963f09833161a0499b4b02ee89eb1de78"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\freeze-mechanism-r7.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

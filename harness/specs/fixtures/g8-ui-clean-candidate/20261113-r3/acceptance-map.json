@@ -1,0 +1,122 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "nodes": [
+    {
+      "id": "TF-0783",
+      "criteria": [
+        {
+          "text": "助手头像与头像占位移除；正文、进度说明和最终答复保持可见，流式与历史回写不重复。",
+          "verified": true
+        },
+        {
+          "text": "运行过程默认精简，当前工具保留进度填充，等待阶段保留粒子动画；详情可通过键盘展开，审批与错误直接可见。",
+          "verified": true
+        },
+        {
+          "text": "198 项单测、Electron 核心及状态回归有磁盘证据，深浅色和窄屏截图由 agent 回读。",
+          "verified": true
+        },
+        {
+          "text": "在干净候选上完成自动复核，清理阶段不超时，测试类型和完整 changed-path Harness 门禁通过。",
+          "verified": true
+        }
+      ],
+      "unitGroup": {
+        "files": 19,
+        "plannedFiles": 19,
+        "passed": 291
+      },
+      "unitReports": [
+        "reports/unit/artifact-panel-store.test.ts.json",
+        "reports/unit/artifact-panel-subject-tabs.test.ts.json",
+        "reports/unit/artifact-panel.test.tsx.json",
+        "reports/unit/chat-artifact-panel-layout.test.tsx.json",
+        "reports/unit/chat-input.test.tsx.json",
+        "reports/unit/chat-message.test.tsx.json",
+        "reports/unit/chat-page-execution-graph.test.tsx.json",
+        "reports/unit/chat-render-reachability.test.tsx.json",
+        "reports/unit/chat-session-status-rail.test.tsx.json",
+        "reports/unit/chat-tool-card-suppression.test.tsx.json",
+        "reports/unit/composer-git-strip.test.tsx.json",
+        "reports/unit/execution-graph-card-badge.test.tsx.json",
+        "reports/unit/runtime-approval-prompt.test.tsx.json",
+        "reports/unit/session-activity-panel-sections.test.tsx.json",
+        "reports/unit/session-activity-panel.test.tsx.json",
+        "reports/unit/session-environment.test.ts.json",
+        "reports/unit/tool-ui-execution-surfaces.test.tsx.json",
+        "reports/unit/welcome-branch-picker.test.tsx.json",
+        "reports/unit/welcome-project-picker.test.tsx.json"
+      ],
+      "electronReports": [
+        "reports/electron/environment.json",
+        "reports/electron/workspace.json",
+        "reports/electron/output.json",
+        "reports/electron/welcome.json",
+        "reports/electron/yield.json"
+      ],
+      "sharedEvidence": [
+        "reports/typecheck.json",
+        "commands.json",
+        "harness.json",
+        "source-guard.json",
+        "path-ownership.json",
+        "visual-review.json",
+        "images.json",
+        "repository-ci-audit.json"
+      ]
+    },
+    {
+      "id": "TF-0819",
+      "criteria": [
+        {
+          "text": "模型选择器无作用范围选项，直接显示模型列表；新会话偏好与已有会话选择正确恢复。",
+          "verified": true
+        },
+        {
+          "text": "保存失败、队列消息和跨会话异步结果有自动回归。",
+          "verified": true
+        },
+        {
+          "text": "加号中心对齐，浅深色/窄窗口/滚动/减少动态效果和开合中间帧验证通过。",
+          "verified": true
+        },
+        {
+          "text": "形成干净候选并复核任务范围门禁后按仓库规则收口。",
+          "verified": true
+        }
+      ],
+      "unitGroup": {
+        "files": 9,
+        "plannedFiles": 9,
+        "passed": 149
+      },
+      "unitReports": [
+        "reports/unit/chat-agent-effort-popover.test.tsx.json",
+        "reports/unit/chat-input.test.tsx.json",
+        "reports/unit/chat-model-selection.test.ts.json",
+        "reports/unit/chat-target-routing.test.ts.json",
+        "reports/unit/composer-git-strip.test.tsx.json",
+        "reports/unit/git-ui.test.ts.json",
+        "reports/unit/model-brand.test.ts.json",
+        "reports/unit/session-activity-panel-sections.test.tsx.json",
+        "reports/unit/welcome-branch-picker.test.tsx.json"
+      ],
+      "electronReports": [
+        "reports/electron/popovers.json"
+      ],
+      "sharedEvidence": [
+        "reports/typecheck.json",
+        "commands.json",
+        "harness.json",
+        "source-guard.json",
+        "path-ownership.json",
+        "visual-review.json",
+        "images.json",
+        "repository-ci-audit.json"
+      ]
+    }
+  ]
+}

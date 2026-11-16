@@ -1,4 +1,5 @@
 import { existsSync, realpathSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import type {
   WorkspaceTerminalOpenPayload,
@@ -19,7 +20,9 @@ import {
   recordPermissionAudit,
 } from './permissions-api';
 import { TerminalSessionManager } from './terminal-session-manager';
-import { isTerminalResourceLeaseTimeoutError, withWorkspaceExecLease } from './resource-fabric';
+import { assertManagedPortsBindable, normalizeManagedPorts, managedProcessReservations, reconcileManagedProcessReservations } from '../../openclaw_runtime/src/agents/verseshell/managed-process-reservation';
+import { isTerminalResourceLeaseTimeoutError, ResourceFabricTimeoutError, withWorkspaceExecLease } from './resource-fabric';
+import { getHostDeadline } from '../utils/host-deadline-context';
 import { findSessionDeleteGateBySession, tryWithSessionDeleteGateLock } from './session-delete-gate';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
@@ -49,6 +52,9 @@ type RunPayload = {
 };
 
 type TerminalSessionPayload = {
+  workspaceId?: unknown;
+  sessionKey?: unknown;
+  expectedSessionId?: unknown;
   sessionId?: unknown;
   data?: unknown;
   cols?: unknown;
@@ -221,6 +227,11 @@ function normalizeString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
+function terminalOwnerScope(payload: unknown) {
+  const body: TerminalSessionPayload = isRecord(payload) ? payload : {};
+  return { workspaceId: normalizeString(body.workspaceId), sessionKey: normalizeString(body.sessionKey), expectedSessionId: normalizeString(body.expectedSessionId) };
+}
+
 function normalizeDimension(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? Math.floor(value) : undefined;
 }
@@ -267,6 +278,7 @@ async function runViaOpenClawExec(input: {
   gatewayManager: GatewayManager;
   command: string;
   timeoutMs: number;
+  deadline: number;
   cwd: string;
   risk: WorkspaceCommandRisk;
 }): Promise<TerminalExecutionOutcome> {
@@ -275,8 +287,12 @@ async function runViaOpenClawExec(input: {
   const payload = buildOpenClawExecPayload(input.command, input.cwd);
 
   for (const method of OPENCLAW_TERMINAL_RPC_METHODS) {
+    const remaining = input.deadline - Date.now();
+    if (remaining <= 0) throw new ResourceFabricTimeoutError({
+      resource: 'workspaceExec', leaseKey: resolveWorkspaceLeaseKey(input.cwd), timeoutMs: input.timeoutMs,
+    });
     try {
-      const result = await input.gatewayManager.rpc(method, payload, input.timeoutMs);
+      const result = await input.gatewayManager.rpc(method, payload, remaining);
       return normalizeGatewayExecResult({
         result,
         command: input.command,
@@ -356,11 +372,21 @@ async function runViaOpenClawExecWithLease(input: {
   risk: WorkspaceCommandRisk;
 }): Promise<TerminalExecutionOutcome> {
   const leaseKey = resolveWorkspaceLeaseKey(input.cwd);
+  const deadline = Math.min(Date.now() + input.timeoutMs, getHostDeadline()?.deadlineAtMs ?? Infinity);
   try {
     return await withWorkspaceExecLease(leaseKey, input.timeoutMs, () =>
-      runViaOpenClawExec(input),
+      runViaOpenClawExec({ ...input, deadline }),
+      { deadline, phase: input.risk === 'read' ? 'read' : input.risk === 'network' ? 'remote-wait' : 'execution',
+        operationKey: createHash('sha256').update(input.command).digest('hex') },
     );
   } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'RESOURCE_QUEUE_FULL') {
+      return {
+        result: { success: false, blocked: true, reason: error.message, cwd: input.cwd,
+          command: input.command, exitCode: null, stdout: '', stderr: '', durationMs: 0, risk: input.risk },
+        traceEvidence: { code: 'RUNTIME_ERROR', durationMs: 0 },
+      };
+    }
     if (!isTerminalResourceLeaseTimeoutError(error)) {
       throw error;
     }
@@ -560,6 +586,7 @@ export function createTerminalApi({
         // Gateway availability must not erase a caller-pinned generation.
       }
       const cwd = normalizeString(body.cwd) ?? workspace.rootPath;
+      const reservedPorts = normalizeManagedPorts(body.reservedPorts);
       if (!isPathInsideWorkspace(cwd, workspace.rootPath)) {
         throw new Error('Terminal cwd must be inside the active workspace');
       }
@@ -649,6 +676,8 @@ export function createTerminalApi({
       }
 
       const openResult = tryWithSessionDeleteGateLock(sessionKey, async () => {
+        await reconcileManagedProcessReservations();
+        await assertManagedPortsBindable(reservedPorts);
         if (await findSessionDeleteGateBySession(sessionKey)) {
           return {
             success: false,
@@ -671,6 +700,7 @@ export function createTerminalApi({
           kind: body.kind,
           command: body.command,
           keepOnLeave: body.keepOnLeave,
+          reservedPorts,
         });
         return buildSessionResult(snapshot);
       });
@@ -689,9 +719,13 @@ export function createTerminalApi({
       return openResult;
     },
     write: async (payload) => {
+      const scope: TerminalSessionPayload = isRecord(payload) ? payload : {};
       terminalManager.write({
         sessionId: requireSessionId(payload),
         data: requireWriteData(payload),
+        workspaceId: normalizeString(scope.workspaceId),
+        sessionKey: normalizeString(scope.sessionKey),
+        expectedSessionId: normalizeString(scope.expectedSessionId),
       });
       return { success: true };
     },
@@ -701,15 +735,16 @@ export function createTerminalApi({
         sessionId: requireSessionId(payload),
         cols: normalizeDimension(body.cols) ?? 80,
         rows: normalizeDimension(body.rows) ?? 24,
+        ...terminalOwnerScope(payload),
       });
       return buildSessionResult(snapshot);
     },
     interrupt: async (payload) => {
-      terminalManager.interrupt(requireSessionId(payload));
+      terminalManager.interrupt(requireSessionId(payload), terminalOwnerScope(payload));
       return { success: true };
     },
     close: async (payload) => {
-      const snapshot = terminalManager.close(requireSessionId(payload));
+      const snapshot = await terminalManager.close(requireSessionId(payload), 'user-close', terminalOwnerScope(payload));
       return buildSessionResult(snapshot);
     },
     status: async (payload) => {
@@ -732,6 +767,11 @@ export function createTerminalApi({
       });
       return {
         success: true,
+        processReservations: managedProcessReservations().map(row => ({
+          reservationId: row.id, owner: row.owner, phase: row.phase, ports: row.ports,
+          rootPids: row.rootPids ?? [], limit: row.limit ?? null,
+          ...(row.failure ? { reason: row.failure } : {}),
+        })),
         sessions: sessions.map((snapshot) => {
           const { success: _success, ...session } = buildSessionResult(snapshot);
           return session;

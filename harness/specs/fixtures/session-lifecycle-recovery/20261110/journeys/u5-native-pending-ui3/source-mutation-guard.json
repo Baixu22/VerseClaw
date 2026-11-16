@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "ok": true,
+  "sourceChanged": false,
+  "before": {
+    "status": "",
+    "trackedFilesSha256": "ea154f0db185d1a1a38e99b1e07ff503bf3cdf44c323674077dc67cf5124dc8e",
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "after": {
+    "status": "",
+    "trackedFilesSha256": "ea154f0db185d1a1a38e99b1e07ff503bf3cdf44c323674077dc67cf5124dc8e",
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -2908,9 +2908,19 @@ export type OpenClawPluginApi = {
   on: <K extends PluginHookName>(
     hookName: K,
     handler: PluginHookHandlerMap[K],
-    opts?: { priority?: number; timeoutMs?: number },
+    opts?: {
+      priority?: number;
+      timeoutMs?: number;
+      promptContribution?: import("../context-engine/prompt-contribution-authority.js").PromptContributionDeclaration;
+    },
   ) => void;
 };
+
+export type {
+  PromptContributionAuthority,
+  PromptContributionDeclaration,
+  PromptContributionScope,
+} from "../context-engine/prompt-contribution-authority.js";
 
 // Plugin hook contracts now live in hook-types.ts so hook runners can import a
 // leaf contract surface instead of pulling the full plugin runtime barrel.

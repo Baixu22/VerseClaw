@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from "node:util";
+import { isAsyncFunction } from "node:util/types";
 import {
   DEFAULT_RUNTIME_MEMORY_TYPE,
   findRuntimeMemoryFacts,
@@ -186,6 +188,7 @@ export class RuntimeMemoryStore {
   private lastWriteAt = 0;
   private readonly relationsById = new Map<string, RuntimeMemoryFactRelation>();
   private readonly relationOrder: string[] = [];
+  private pendingEvictions: RuntimeMemoryQueryableFact[] | undefined;
 
   constructor(options: RuntimeMemoryStoreOptions = {}) {
     this.maxEpisodes = normalizeBound(
@@ -209,6 +212,52 @@ export class RuntimeMemoryStore {
     this.evictionComplianceHook = options.evictionComplianceHook;
     // COMPASS 2.0 v2: 成本感知驱逐 v2 (默认 false)
     this.enableCostAwareEvictionV2 = options.enableCostAwareEvictionV2 ?? false;
+  }
+
+  /** Synchronous mutations share one rollback boundary, including capacity eviction. */
+  runAtomic<T>(operation: () => T): T {
+    if (isAsyncFunction(operation)) throw new Error("Memory transactions must be synchronous.");
+    const saveMap = <Key, Value>(map: Map<Key, Value>) => {
+      const before = new Map(map);
+      return () => { map.clear(); for (const [key, value] of before) map.set(key, value); };
+    };
+    const saveOrder = (order: string[]) => {
+      const before = [...order];
+      return () => { order.splice(0, order.length, ...before); };
+    };
+    const restore = [
+      saveMap(this.episodesById), saveMap(this.episodeIdByIdempotencyKey), saveOrder(this.episodeOrder),
+      saveMap(this.factsById), saveOrder(this.factOrder),
+      saveMap(this.invalidationsById), saveOrder(this.invalidationOrder),
+      saveMap(this.usageCounts), saveMap(this.lastAccessedAt),
+      saveMap(this.relationsById), saveOrder(this.relationOrder),
+    ];
+    const lastWriteAt = this.lastWriteAt;
+    const parentEvictions = this.pendingEvictions;
+    const evictions: RuntimeMemoryQueryableFact[] = [];
+    this.pendingEvictions = evictions;
+    try {
+      const result = operation();
+      if (result && typeof (result as { then?: unknown }).then === "function") {
+        throw new Error("Memory transactions must be synchronous.");
+      }
+      // External eviction effects belong to the successful outer mutation.
+      this.pendingEvictions = parentEvictions;
+      if (parentEvictions) parentEvictions.push(...evictions);
+      else for (const fact of evictions) this.notifyEviction(fact);
+      return result;
+    } catch (error) {
+      for (const reset of restore) reset();
+      this.lastWriteAt = lastWriteAt;
+      throw error;
+    } finally {
+      this.pendingEvictions = parentEvictions;
+    }
+  }
+
+  private notifyEviction(fact: RuntimeMemoryQueryableFact): void {
+    try { this.evictionComplianceHook?.(fact); }
+    catch { /* Existing eviction notifications are best-effort. */ }
   }
 
   recordFactAccess(factId: string): void {
@@ -339,6 +388,7 @@ export class RuntimeMemoryStore {
 
     const existing = this.invalidationsById.get(sanitized.value.invalidationId);
     if (existing !== undefined) {
+      if (!isDeepStrictEqual(existing, sanitized.value)) return makeStoreRejection("invalid_invalidation");
       return {
         accepted: true,
         stored: false,
@@ -598,11 +648,8 @@ export class RuntimeMemoryStore {
       // COMPASS 2.0: REDACT 合规门 — 在驱逐前调用 compliance hook.
       // hook 检查 fact.sensitivity, 若为 secret/secret_adjacent 则触发 REDACT 事件.
       if (fact && this.evictionComplianceHook) {
-        try {
-          this.evictionComplianceHook(fact);
-        } catch {
-          // 合规 hook 失败不阻断驱逐流程
-        }
+        if (this.pendingEvictions) this.pendingEvictions.push(fact);
+        else this.notifyEviction(fact);
       }
       this.factsById.delete(factId);
       this.usageCounts.delete(factId);

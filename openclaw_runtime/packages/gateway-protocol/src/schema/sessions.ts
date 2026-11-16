@@ -106,11 +106,7 @@ export const CompressionFactSchema = Type.Object(
   { additionalProperties: false },
 );
 
-function SemanticAtomVariantSchema(
-  severity: TSchema,
-  status: TSchema,
-  evidenceRefs: TSchema,
-) {
+function SemanticAtomVariantSchema(severity: TSchema, status: TSchema, evidenceRefs: TSchema) {
   return Type.Object(
     {
       id: NonEmptyString,
@@ -140,19 +136,21 @@ function SemanticAtomVariantSchema(
       supersedes: Type.Optional(Type.Array(NonEmptyString)),
       conflicts: Type.Optional(Type.Array(NonEmptyString)),
       updatedAt: Type.Optional(Type.Integer({ minimum: 0 })),
-      source: Type.Optional(Type.Object(
-        {
-          kind: Type.Union([
-            Type.Literal("summary"),
-            Type.Literal("message"),
-            Type.Literal("ledger"),
-            Type.Literal("cvk"),
-            Type.Literal("archive"),
-          ]),
-          ref: NonEmptyString,
-        },
-        { additionalProperties: false },
-      )),
+      source: Type.Optional(
+        Type.Object(
+          {
+            kind: Type.Union([
+              Type.Literal("summary"),
+              Type.Literal("message"),
+              Type.Literal("ledger"),
+              Type.Literal("cvk"),
+              Type.Literal("archive"),
+            ]),
+            ref: NonEmptyString,
+          },
+          { additionalProperties: false },
+        ),
+      ),
     },
     { additionalProperties: false },
   );
@@ -328,6 +326,11 @@ export const SessionsForkParamsSchema = Type.Object(
 export const SessionsSendParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
+    requesterSessionKey: Type.Optional(NonEmptyString),
+    expectedRequesterSessionId: Type.Optional(NonEmptyString),
+    workspaceId: Type.Optional(NonEmptyString),
+    workspaceDir: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     message: Type.String(),
     thinking: Type.Optional(Type.String()),
@@ -374,6 +377,7 @@ export const SessionsStopParamsSchema = Type.Object(
   {
     key: NonEmptyString,
     agentId: Type.Optional(NonEmptyString),
+    expectedSessionId: Type.Optional(NonEmptyString),
   },
   { additionalProperties: false },
 );
@@ -521,6 +525,7 @@ export const SessionsMutationReceiptSchema = Type.Object(
 export const SessionsCompactParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     maxLines: Type.Optional(Type.Integer({ minimum: 1 })),
     customInstructions: Type.Optional(Type.String()),
@@ -546,6 +551,7 @@ export const SessionsCompactParamsSchema = Type.Object(
 export const SessionsCompactRangeParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     customInstructions: Type.Optional(Type.String()),
     toLeafId: Type.Optional(NonEmptyString),
@@ -892,6 +898,7 @@ export const SessionsQueueDrainParamsSchema = Type.Object(
 export const SessionsRestoreCheckpointParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     checkpointId: NonEmptyString,
   },
@@ -935,7 +942,10 @@ export const SessionsRestoreCheckpointResultSchema = Type.Object(
     key: NonEmptyString,
     checkpointId: NonEmptyString,
     rolledBackTo: Type.String(),
-    mode: Type.Union([Type.Literal("legacy_checkpoint_fallback"), Type.Literal("event_log_replay")]),
+    mode: Type.Union([
+      Type.Literal("legacy_checkpoint_fallback"),
+      Type.Literal("event_log_replay"),
+    ]),
     evidenceSummary: Type.String(),
   },
   { additionalProperties: false },
@@ -1129,6 +1139,7 @@ export const SessionsCompactionBranchParamsSchema = Type.Object(
 export const SessionsCompactionRestoreParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     checkpointId: NonEmptyString,
   },

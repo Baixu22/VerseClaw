@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/context-prompt-owner",
+  "expectedRejection": true,
+  "observations": [
+    {
+      "operation": "unknown-pre-seal-producer",
+      "rejected": true
+    },
+    {
+      "operation": "post-seal-system-change",
+      "rejected": true,
+      "providerCalls": 0
+    }
+  ]
+}

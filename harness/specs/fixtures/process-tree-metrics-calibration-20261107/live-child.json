@@ -1,0 +1,76 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "first": {
+    "status": "ok",
+    "sampledAt": 1794047143285,
+    "rootPids": [
+      17944
+    ],
+    "processCount": 2,
+    "treeRssBytes": 22355968,
+    "treeCpuTimeMs": 3218.75,
+    "treeCpuPercent": null,
+    "ownerEpoch": "aa46b6a4-1631-44be-b2c7-98759ebad6a7",
+    "processes": [
+      {
+        "pid": 17944,
+        "parentPid": 43080,
+        "creationToken": "134385207336099560",
+        "rssBytes": 21491712,
+        "privateBytes": 21295104,
+        "cpuTimeMs": 3218.75,
+        "cpuPercent": null
+      },
+      {
+        "pid": 24252,
+        "parentPid": 17944,
+        "creationToken": "134385207336464760",
+        "rssBytes": 864256,
+        "privateBytes": 1282048,
+        "cpuTimeMs": 0,
+        "cpuPercent": null
+      }
+    ],
+    "queueDepth": 0,
+    "queueWaitMs": 0,
+    "source": "windows-cim"
+  },
+  "second": {
+    "status": "ok",
+    "sampledAt": 1794047149506,
+    "rootPids": [
+      17944
+    ],
+    "processCount": 2,
+    "treeRssBytes": 21487616,
+    "treeCpuTimeMs": 6531.25,
+    "treeCpuPercent": 53.25,
+    "ownerEpoch": "aa46b6a4-1631-44be-b2c7-98759ebad6a7",
+    "processes": [
+      {
+        "pid": 17944,
+        "parentPid": 43080,
+        "creationToken": "134385207336099560",
+        "rssBytes": 21487616,
+        "privateBytes": 21479424,
+        "cpuTimeMs": 6531.25,
+        "cpuPercent": 53.25
+      },
+      {
+        "pid": 24252,
+        "parentPid": 17944,
+        "creationToken": "134385207336464760",
+        "rssBytes": 0,
+        "privateBytes": 1282048,
+        "cpuTimeMs": 0,
+        "cpuPercent": 0
+      }
+    ],
+    "queueDepth": 0,
+    "queueWaitMs": 0,
+    "source": "windows-cim"
+  },
+  "exitCode": 0,
+  "observedExit": true
+}

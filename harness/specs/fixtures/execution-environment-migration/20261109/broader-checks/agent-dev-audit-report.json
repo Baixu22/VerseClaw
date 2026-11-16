@@ -1,0 +1,696 @@
+{
+  "schema": "clawx.agent-dev.audit.v1",
+  "generatedAt": "2026-11-09T00:11:04.594Z",
+  "policy": {
+    "schema": "clawx.agent-dev.audit.v1",
+    "passScore": 90,
+    "warnScore": 80,
+    "maxEvidenceAgeHours": 24,
+    "maxHistoryEntries": 20,
+    "hardVetoSeverities": [
+      "fail"
+    ],
+    "statusSemantics": {
+      "pass": "Score is at least 90 and no hard-veto findings exist.",
+      "warn": "Score is at least 80 and below 90 with no hard-veto findings.",
+      "fail": "Score is below 80 or at least one hard-veto finding exists."
+    }
+  },
+  "status": "fail",
+  "grade": "D",
+  "maturityLevel": "blocked",
+  "confidence": {
+    "level": "medium",
+    "reason": "4 generated evidence artifact(s) are stale.",
+    "freshGeneratedCount": 0,
+    "generatedSourceCount": 4,
+    "staleGeneratedCount": 4
+  },
+  "totalScore": 60,
+  "maxScore": 100,
+  "summary": {
+    "pass": 4,
+    "warn": 0,
+    "fail": 2,
+    "disqualifierCount": 8
+  },
+  "dimensions": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "maxScore": 20,
+      "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required.",
+      "score": 20,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "maxScore": 20,
+      "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist.",
+      "score": 0,
+      "findings": [
+        {
+          "id": "evidence-stale:workbench",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-workbench/evidence.json is 60.07h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "id": "evidence-stale:deep-test",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-deep-test/report.json is 60.07h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "id": "evidence-stale:deep-test-history",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-deep-test/history.json is 60.07h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "id": "evidence-stale:quality",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-quality/report.json is 60.07h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        }
+      ],
+      "status": "fail"
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "maxScore": 20,
+      "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage.",
+      "score": 20,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "maxScore": 20,
+      "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence.",
+      "score": 0,
+      "findings": [
+        {
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "id": "performance-limit:vitest-agent-dev",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "vitest-agent-dev exceeded hard limit: 180444ms > 21000ms.",
+          "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+        },
+        {
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "typecheck exceeded hard limit: 81259ms > 45000ms.",
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        },
+        {
+          "id": "performance-limit:contract",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "contract exceeded hard limit: 3977ms > 3000ms.",
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        },
+        {
+          "id": "performance-watch:playwright-agent-dev",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "playwright-agent-dev exceeded target: 38302ms > 25000ms.",
+          "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+        },
+        {
+          "id": "performance-watch:i18n",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "i18n exceeded target: 1103ms > 1000ms.",
+          "recommendation": "Keep literal namespace scans bounded to source and locale directories."
+        }
+      ],
+      "status": "fail"
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "maxScore": 10,
+      "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation.",
+      "score": 10,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "maxScore": 10,
+      "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded.",
+      "score": 10,
+      "findings": [],
+      "status": "pass"
+    }
+  ],
+  "scoreBreakdown": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "score": 20,
+      "maxScore": 20,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "score": 0,
+      "maxScore": 20,
+      "deducted": 20,
+      "status": "fail",
+      "reason": "4 finding(s) deducted 20 point(s).",
+      "findings": [
+        {
+          "id": "evidence-stale:workbench",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "id": "evidence-stale:deep-test",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "id": "evidence-stale:deep-test-history",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "id": "evidence-stale:quality",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        }
+      ]
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "score": 20,
+      "maxScore": 20,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "score": 0,
+      "maxScore": 20,
+      "deducted": 20,
+      "status": "fail",
+      "reason": "6 finding(s) deducted 20 point(s).",
+      "findings": [
+        {
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "id": "performance-limit:vitest-agent-dev",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+        },
+        {
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        },
+        {
+          "id": "performance-limit:contract",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        },
+        {
+          "id": "performance-watch:playwright-agent-dev",
+          "severity": "warn",
+          "estimatedPenalty": 3,
+          "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+        },
+        {
+          "id": "performance-watch:i18n",
+          "severity": "warn",
+          "estimatedPenalty": 3,
+          "recommendation": "Keep literal namespace scans bounded to source and locale directories."
+        }
+      ]
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "score": 10,
+      "maxScore": 10,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "score": 10,
+      "maxScore": 10,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    }
+  ],
+  "rubric": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "maxScore": 20,
+      "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required."
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "maxScore": 20,
+      "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist."
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "maxScore": 20,
+      "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage."
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "maxScore": 20,
+      "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence."
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "maxScore": 10,
+      "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation."
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "maxScore": 10,
+      "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded."
+    }
+  ],
+  "evidenceInventory": [
+    {
+      "id": "workbench",
+      "path": "artifacts/agent-dev-workbench/evidence.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:37:24.436Z",
+      "generatedAt": "2026-11-06T12:06:56.055Z",
+      "ageHours": 60.07,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-08T23:33:13.000Z",
+        "mtimeMs": 1794180793000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": false,
+      "fresh": false
+    },
+    {
+      "id": "deep-test",
+      "path": "artifacts/agent-dev-deep-test/report.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:37:24.434Z",
+      "generatedAt": "2026-11-06T12:06:56.096Z",
+      "ageHours": 60.07,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-08T23:33:13.000Z",
+        "mtimeMs": 1794180793000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": false,
+      "fresh": false
+    },
+    {
+      "id": "deep-test-history",
+      "path": "artifacts/agent-dev-deep-test/history.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:37:24.433Z",
+      "generatedAt": "2026-11-06T12:06:56.096Z",
+      "ageHours": 60.07,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-08T23:33:13.000Z",
+        "mtimeMs": 1794180793000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": false,
+      "fresh": false
+    },
+    {
+      "id": "quality",
+      "path": "artifacts/agent-dev-quality/report.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:37:24.435Z",
+      "generatedAt": "2026-11-06T12:06:55.501Z",
+      "ageHours": 60.07,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-08T23:33:13.000Z",
+        "mtimeMs": 1794180793000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": false,
+      "fresh": false
+    },
+    {
+      "id": "package-scripts",
+      "path": "package.json",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:37:58.067Z",
+      "generatedAt": null,
+      "ageHours": 5.55,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "agent-dev-runbook",
+      "path": "docs/agent-dev-control-plane.md",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:37:27.042Z",
+      "generatedAt": null,
+      "ageHours": 5.56,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "agent-instructions",
+      "path": "AGENTS.md",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:37:24.285Z",
+      "generatedAt": null,
+      "ageHours": 5.56,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "scenario-registry",
+      "path": "shared/agent-dev/scenarios.ts",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:38:00.518Z",
+      "generatedAt": null,
+      "ageHours": 5.55,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "regularization-tests",
+      "path": "tests/unit/agent-dev-regularization.test.ts",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-08T18:38:02.014Z",
+      "generatedAt": null,
+      "ageHours": 5.55,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    }
+  ],
+  "prioritizedFindings": [
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/report.json is 60.07h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "impact": "high",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:workbench",
+        "pnpm agent-dev:deep-test:reuse",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test-history",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/history.json is 60.07h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "impact": "high",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:workbench",
+        "pnpm agent-dev:deep-test:reuse",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:quality",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-quality/report.json is 60.07h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "impact": "high",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:workbench",
+        "pnpm agent-dev:deep-test:reuse",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:workbench",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-workbench/evidence.json is 60.07h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "impact": "high",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:workbench",
+        "pnpm agent-dev:deep-test:reuse",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-decision-blocked",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+      "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:contract",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "contract exceeded hard limit: 3977ms > 3000ms.",
+      "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:typecheck",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "typecheck exceeded hard limit: 81259ms > 45000ms.",
+      "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:vitest-agent-dev",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "vitest-agent-dev exceeded hard limit: 180444ms > 21000ms.",
+      "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-watch:i18n",
+      "severity": "warn",
+      "priority": "P1",
+      "message": "i18n exceeded target: 1103ms > 1000ms.",
+      "recommendation": "Keep literal namespace scans bounded to source and locale directories.",
+      "impact": "medium",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:fast",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-watch:playwright-agent-dev",
+      "severity": "warn",
+      "priority": "P1",
+      "message": "playwright-agent-dev exceeded target: 38302ms > 25000ms.",
+      "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
+      "impact": "medium",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:fast",
+        "pnpm agent-dev:audit:report"
+      ]
+    }
+  ],
+  "disqualifiers": [
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:workbench",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-workbench/evidence.json is 60.07h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/report.json is 60.07h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test-history",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/history.json is 60.07h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:quality",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-quality/report.json is 60.07h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-decision-blocked",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+      "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:vitest-agent-dev",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "vitest-agent-dev exceeded hard limit: 180444ms > 21000ms.",
+      "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:typecheck",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "typecheck exceeded hard limit: 81259ms > 45000ms.",
+      "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:contract",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "contract exceeded hard limit: 3977ms > 3000ms.",
+      "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+    }
+  ],
+  "recommendations": [
+    "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+    "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence.",
+    "Keep contract scanning text-based and bounded to host-api/service sources.",
+    "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+    "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.",
+    "Keep literal namespace scans bounded to source and locale directories.",
+    "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+  ]
+}

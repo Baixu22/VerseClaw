@@ -36,6 +36,13 @@ function handlers(overrides: Partial<ReclaimOwnerHandlers> = {}): ReclaimOwnerHa
 }
 
 describe('E2 resource owner inventory', () => {
+  it('retains a failed terminal owner result when another terminal was reclaimed', async () => {
+    const receipt = await reclaimLongSessionResources({ action: 'session-delete', scope: SCOPE,
+      owners: handlers({ terminals: { reclaim: () => ({ attempted: 2, reclaimed: 1, failed: 1, kept: 0 }), count: () => 1 } }),
+    });
+    expect(receipt.owners.find(owner => owner.kind === 'terminal')).toMatchObject({ outcome: 'failed', attempted: 2, reclaimed: 1 });
+  });
+
   it('describes exactly the five existing owners, with no universal resource table', () => {
     expect(RECLAIM_OWNERS.map((owner) => owner.kind)).toEqual([
       'terminal',

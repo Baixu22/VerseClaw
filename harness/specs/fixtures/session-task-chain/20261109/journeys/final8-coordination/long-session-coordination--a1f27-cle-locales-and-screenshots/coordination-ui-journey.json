@@ -1,0 +1,299 @@
+{
+  "schema": "clawx.long-session.coordination-ui-journey/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "workspaceId": "default",
+  "rootPath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-ucRlJ6\\verse-claw-e2e-home-ZusTP5\\.openclaw\\workspace",
+  "sessionKey": "agent:main:dashboard:0e9f439b-53bd-4155-b8e3-fcc33ea4a26a",
+  "sessionGeneration": "a93cc68e-3bfd-4bad-9cb5-5f2baf0609fe",
+  "taskRef": "3387c85e775869b4bbf473640c1d9a48a7e2646caf14a13e461dc6c1c91dd4f8",
+  "bindingRevision": 1,
+  "idempotencyKey": "coordination-ui-1794171321964",
+  "actualWorker": {
+    "delegationStatus": "accepted",
+    "orchestrationRunId": "orch_3e4da518-dbcf-4b2d-aacf-df15c1a2d877",
+    "batchId": "orch_3e4da518-dbcf-4b2d-aacf-df15c1a2d877:agent:main:dashboard:0e9f439b-53bd-4155-b8e3-fcc33ea4a26a:a93cc68e-3bfd-4bad-9cb5-5f2baf0609fe",
+    "status": "terminal",
+    "outcome": "failed",
+    "delivery": {
+      "state": "pending",
+      "delivered": 0,
+      "pending": 1,
+      "suspended": 0,
+      "failed": 0,
+      "discarded": 0,
+      "waitingForRequesterTurn": false
+    },
+    "member": {
+      "runId": "7c7cdfd0-aae3-4328-87fb-3b32339e146e",
+      "childSessionKey": "agent:main:subagent:5e0b3b45-f5e8-4600-beea-528f7ee809de",
+      "roleName": "architect",
+      "status": "failed",
+      "deliveryStatus": "pending"
+    }
+  },
+  "observed": {
+    "bindingStates": [
+      "ready",
+      "active",
+      "paused",
+      "active"
+    ],
+    "keyboard": {
+      "pause": "focus + Enter",
+      "resume": "focus + Enter",
+      "verifiedByHostReadback": true
+    },
+    "pausedState": {
+      "pauseControlAbsent": true,
+      "hostState": "paused"
+    },
+    "resumedState": {
+      "hostState": "active"
+    },
+    "ownerReads": {
+      "activityBackgroundRead": "known",
+      "activityCompletionBatchIds": [
+        "orch_3e4da518-dbcf-4b2d-aacf-df15c1a2d877:agent:main:dashboard:0e9f439b-53bd-4155-b8e3-fcc33ea4a26a:a93cc68e-3bfd-4bad-9cb5-5f2baf0609fe"
+      ],
+      "recoveryState": "ready",
+      "resourceEnvelope": {
+        "schema": "openclaw.resource-envelope/v1",
+        "generatedAt": 1794171329188,
+        "mode": "shadow",
+        "entries": [
+          {
+            "id": "main:process-tree",
+            "workspaceKey": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+            "kind": "agent-turn",
+            "priority": "foreground",
+            "owner": "main",
+            "activeSlots": 0,
+            "queuedCount": 0,
+            "queueWaitMs": 0,
+            "processCount": 7,
+            "treeRssBytes": 1049759744,
+            "treeCpuPercent": 0,
+            "pids": [
+              38084
+            ],
+            "processMeasurement": {
+              "status": "ok",
+              "sampledAt": 1794171310961,
+              "ownerEpoch": "86c99bf9-3299-400d-98ce-0635949d1f80",
+              "rootPids": [
+                38084
+              ],
+              "processes": [
+                {
+                  "pid": 38084,
+                  "parentPid": 44380,
+                  "creationToken": "134386449000064740",
+                  "rssBytes": 625004544,
+                  "privateBytes": 522604544,
+                  "cpuTimeMs": 8437.5,
+                  "cpuPercent": null
+                },
+                {
+                  "pid": 45120,
+                  "parentPid": 38084,
+                  "creationToken": "134386449070094220",
+                  "rssBytes": 59428864,
+                  "privateBytes": 14270464,
+                  "cpuTimeMs": 140.625,
+                  "cpuPercent": null
+                },
+                {
+                  "pid": 16332,
+                  "parentPid": 38084,
+                  "creationToken": "134386449074708060",
+                  "rssBytes": 199716864,
+                  "privateBytes": 95399936,
+                  "cpuTimeMs": 1531.25,
+                  "cpuPercent": null
+                },
+                {
+                  "pid": 13436,
+                  "parentPid": 38084,
+                  "creationToken": "134386449084554560",
+                  "rssBytes": 4861952,
+                  "privateBytes": 3137536,
+                  "cpuTimeMs": 15.625,
+                  "cpuPercent": null
+                },
+                {
+                  "pid": 2168,
+                  "parentPid": 38084,
+                  "creationToken": "134386449094864260",
+                  "rssBytes": 135135232,
+                  "privateBytes": 61927424,
+                  "cpuTimeMs": 437.5,
+                  "cpuPercent": null
+                },
+                {
+                  "pid": 46052,
+                  "parentPid": 13436,
+                  "creationToken": "134386449084723910",
+                  "rssBytes": 7237632,
+                  "privateBytes": 1282048,
+                  "cpuTimeMs": 0,
+                  "cpuPercent": null
+                },
+                {
+                  "pid": 32176,
+                  "parentPid": 13436,
+                  "creationToken": "134386449085074610",
+                  "rssBytes": 18374656,
+                  "privateBytes": 16629760,
+                  "cpuTimeMs": 46.875,
+                  "cpuPercent": null
+                }
+              ]
+            },
+            "reason": "main process tree sample",
+            "limits": {
+              "memoryBytes": 2147483648,
+              "cpuPercent": 400,
+              "processCount": 64,
+              "concurrencySlots": 8,
+              "queueLength": 32
+            },
+            "updatedAt": 1794171329187
+          }
+        ],
+        "totals": {
+          "activeSlots": 0,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 7,
+          "treeRssBytes": 1049759744,
+          "treeCpuPercent": 0
+        },
+        "exceeded": [],
+        "warnings": [
+          "gateway resource-envelope snapshot unavailable"
+        ],
+        "processTotals": {
+          "processCount": 7,
+          "rssBytes": 1049759744,
+          "privateBytes": 715251712,
+          "cpuPercent": null
+        },
+        "machineMemory": {
+          "sampledAt": 1794171329187,
+          "availablePhysicalBytes": 4845121536,
+          "totalPhysicalBytes": 16295432192
+        },
+        "machineCommit": {
+          "sampledAt": 1794171310961,
+          "committedBytes": 30065848320,
+          "commitLimitBytes": 54946750464
+        }
+      },
+      "activeBackgroundTerminalCount": 0
+    },
+    "windowLifecycle": {
+      "minimized": true,
+      "restored": true,
+      "visible": true
+    },
+    "taskLedgerNavigation": {
+      "hash": "#/task-ledger?nodeId=3387c85e775869b4bbf473640c1d9a48a7e2646caf14a13e461dc6c1c91dd4f8",
+      "includesNodeId": true
+    },
+    "workerNavigation": {
+      "childSessionKey": "agent:main:subagent:5e0b3b45-f5e8-4600-beea-528f7ee809de",
+      "sidebarSelected": true,
+      "returnedToCoordinator": true
+    },
+    "locales": [
+      {
+        "locale": "en",
+        "title": "Long-session coordinator",
+        "active": "active"
+      },
+      {
+        "locale": "zh",
+        "title": "长期会话协调",
+        "active": "已启用"
+      },
+      {
+        "locale": "ja",
+        "title": "長期セッション調整",
+        "active": "有効"
+      },
+      {
+        "locale": "ru",
+        "title": "Координатор долгой сессии",
+        "active": "активен"
+      }
+    ],
+    "quietWindow": {
+      "durationMs": 2500,
+      "completionBatchRowsBefore": 1,
+      "completionBatchRowsAfter": 1,
+      "completionBellUnreadBefore": 0,
+      "completionBellUnreadAfter": 0
+    },
+    "observedWorkerManagedStopControls": 0
+  },
+  "screenshots": [
+    {
+      "id": "wide",
+      "path": "coordination-wide.png",
+      "requestedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "contentSize": {
+        "width": 1281,
+        "height": 801
+      },
+      "browserViewport": {
+        "innerWidth": 1281,
+        "innerHeight": 801,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "bytes": 131218,
+      "sha256": "1099909a6b275bd63555395431e15ee284431364e728c23453e5cebdeeedb2b9"
+    },
+    {
+      "id": "narrow",
+      "path": "coordination-narrow.png",
+      "requestedViewport": {
+        "width": 680,
+        "height": 760
+      },
+      "contentSize": {
+        "width": 961,
+        "height": 761
+      },
+      "browserViewport": {
+        "innerWidth": 961,
+        "innerHeight": 761,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1442,
+        "height": 1142
+      },
+      "bytes": 104181,
+      "sha256": "3cefc2f0aa4d02e18af163315bdf9676cb986938d9dc9259ac5751b6020d454b"
+    }
+  ],
+  "transport": "built Electron Chat ResourceChip -> typed workspaces/taskLedger/settings host-api -> actual Main owner; sessions.delegate -> Gateway orchestrator -> persisted session activity completion batch",
+  "negativeCases": [
+    "While paused, the UI exposes resume only and the Workspace owner readback reports paused.",
+    "The observed completion worker is listed as a navigation target and does not receive a managed-resource stop control.",
+    "No new completion batch is synthesized during the quiet window."
+  ],
+  "limitations": [
+    "No live-provider model-quality turn was issued; the actual worker receipt can settle through the runtime failure path without provider text.",
+    "Narrow content requests are clamped by the existing Electron minimum width; both requested and actual pixels are recorded.",
+    "Managed-worktree deletion and backend-unavailable UI recovery remain owner-boundary evidence from C1-C3 rather than an injected destructive C4 journey."
+  ]
+}

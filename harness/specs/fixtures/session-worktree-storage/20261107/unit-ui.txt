@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/ClawX
+
+
+ Test Files  3 passed (3)
+      Tests  87 passed (87)
+   Start at  00:28:20
+   Duration  88.66s (transform 2.38s, setup 1.87s, import 21.99s, tests 10.95s, environment 34.83s)
+

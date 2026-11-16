@@ -1,0 +1,687 @@
+{
+  "schema": "clawx.process-metrics-calibration/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0831",
+  "candidate": {
+    "commit": "7088b5887a154090bd94f714236ab005de5c410d",
+    "tree": "31ba2ec29a4ad541070691a2fe85f3696fdcc7e6",
+    "dirty": false
+  },
+  "cleanAfter": true,
+  "tests": {
+    "tests": {
+      "total": 58,
+      "passed": 58,
+      "failed": 0,
+      "skipped": 0,
+      "success": true,
+      "cases": [
+        {
+          "name": "background work gate requires recovery evidence for every original pressure cause",
+          "status": "passed"
+        },
+        {
+          "name": "background work gate defers background work and resumes after low watermark plus dwell",
+          "status": "passed"
+        },
+        {
+          "name": "background work gate does not flip-flop while only the high-side condition remains",
+          "status": "passed"
+        },
+        {
+          "name": "background work gate foreground work is never deferred",
+          "status": "passed"
+        },
+        {
+          "name": "process tree sampler measures a live busy child by its creation identity and observes its exit",
+          "status": "passed"
+        },
+        {
+          "name": "process tree sampler computes tree CPU percent from cumulative CPU-time deltas",
+          "status": "passed"
+        },
+        {
+          "name": "process tree sampler fails closed when process discovery is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "process tree sampler reports empty roots as empty rather than a healthy process tree",
+          "status": "passed"
+        },
+        {
+          "name": "process tree sampler reads a real process tree for the current process",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelope host api fails closed when no trustworthy snapshot exists",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelope host api returns a measured snapshot when entries exist",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelope shadow ledger always admits in shadow mode while recording over-limit candidates",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelope shadow ledger rejects a browser resource entry that has no workspace identity",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelope shadow ledger merges Main and Gateway totals without letting adjacent leases hide them",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelope shadow ledger persists snapshots atomically and fails closed on malformed input",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelope shadow ledger rejects malformed identity metrics and mismatched producer epochs",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting enforces the exact waiting boundary and readmits after release",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting allows immediate grants with zero waiting slots",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting checks expired admission, waiting expiration and expiration at grant",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting enforces the exact waiting boundary and readmits after release",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting allows immediate grants with zero waiting slots",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting checks expired admission, waiting expiration and expiration at grant",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission rejects overflow before adding a timer or waiter",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission never invokes work cancelled between grant and callback",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission does not grant an already expired deadline",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits admits fresh history subscribers after abort without releasing abandoned work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits admits fresh history subscribers after deadline without releasing abandoned work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits expires the actual host caller while another history subscriber keeps its own deadline",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits removes a host-expired history waiter before it can start",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits fabric checks grant races and retains running capacity until work settles",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits runtime checks grant races and retains running capacity until work settles",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits isolates subscriber aborts and deadlines, including all leaving before work begins",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits passes only remaining history time and cancels abandoned queued flights",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits keeps a surviving subscriber when another deadline expires during shared work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits preserves shared rejection including undefined",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits preserves shared rejection including Error: failed",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration deduplicates overlapping Main/Gateway trees while preserving logical leases",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration uses the latest generation of a reused PID rather than adding both",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration rejects stale and future snapshots before their logical occupancy is added",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration selects the latest producer epoch and does not refresh a stale measurement on merge",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration starts a new CPU interval after PID reuse, discovery failure or an expired sample",
+          "status": "passed"
+        },
+        {
+          "name": "resource measurement owners holds background work for a busy Gateway while Main is idle and waits for measured recovery",
+          "status": "passed"
+        },
+        {
+          "name": "resource measurement owners projects the existing Gateway event-loop classification with an epoch and clears it on stop",
+          "status": "passed"
+        },
+        {
+          "name": "resource measurement owners feeds fresh event-loop pressure to the existing background gate",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy does not shed by default",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy sheds when the window is hidden and records an observable transition",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy restores normal load when the condition clears",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy does not count a transition when inputs change but effective state does not",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy applies documented reason precedence when several signals are active",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy window-hidden outranks power-saver",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy invokes the transition callback only on real transitions",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy stays responsive to a power-saver-only signal",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy reset() returns to the initial non-shedding state",
+          "status": "passed"
+        },
+        {
+          "name": "runtime efficiency power/idle policy returns defensive copies so callers cannot mutate internal state",
+          "status": "passed"
+        }
+      ]
+    },
+    "runtime-tests": {
+      "total": 43,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "success": true,
+      "cases": [
+        {
+          "name": "workspace resource leases caps workspaceSearch at 2 and queues the third with queuedMs > 0",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases serializes overlapping fileMutation paths and runs disjoint paths in parallel",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases serializes overlapping subtreeMutation paths and runs disjoint subtrees in parallel",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases keeps different workspace keys independent",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases caps 8 concurrent workspaceExec acquisitions at the workspace budget",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases releases idempotently without over-admitting the next batch",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases records gateway leases in the shadow resource envelope",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases rejects with a typed timeout error and reclaims the slot after release",
+          "status": "passed"
+        },
+        {
+          "name": "bash workspaceExec admission queues behind the workspace budget before spawning the shell",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers preserves write owner-confirmed completion after cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers preserves edit owner-confirmed completion after cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels bash while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels find while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels grep while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels write while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels edit while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers uses remaining bash time and retains the lease until observed child close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers keeps running find ownership through cancellation until close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers keeps running grep ownership through cancellation until close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers does not spawn grep after cancellation during asynchronous preparation",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: successful replacement applies a single unique replacement and returns diff/patch details",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: successful replacement applies multiple disjoint edits in one call",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures appends the current file contents as a hint when the text is not found",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures truncates the mismatch hint at 800 characters",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures reports ambiguous matches with an occurrence count and NO contents hint",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures rejects an empty oldText",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures rejects an empty edits array before touching the filesystem",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures reports a missing file with the Node error code only",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: line-ending round trips preserves CRLF endings and converts inserted LF newlines to CRLF",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: line-ending round trips preserves each existing ending in a mixed-endings file",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: line-ending round trips preserves lone-CR (classic Mac) line endings",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: BOM handling matches oldText ignoring the BOM and re-attaches the BOM on write",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: BOM handling preserves UTF-16LE encoding and BOM while editing decoded text",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: fuzzy matching boundaries keeps untouched punctuation and trailing whitespace during a fuzzy edit",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: prepareArguments legacy shapes converts top-level oldText/newText into an edits array",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: prepareArguments legacy shapes parses edits sent as a JSON string",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: create and overwrite creates a new file and reports the byte count in the success message",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: create and overwrite overwrites an existing file",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: create and overwrite creates missing parent directories automatically",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: create and overwrite writes empty content",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: line endings and byte counting writes CRLF content verbatim without normalizing line endings",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: line endings and byte counting reports the actual UTF-8 byte length in the success message",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: line endings and byte counting reports an astral emoji using its UTF-8 byte length",
+          "status": "passed"
+        }
+      ]
+    }
+  },
+  "commands": [
+    {
+      "id": "harness-context",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "context",
+        "--spec",
+        "harness/specs/tasks/process-tree-metrics-calibration-20261107.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 2281
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/process-tree-metrics-calibration-20261107.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 11578
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/process-tree-metrics-calibration-20261107.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 5047
+    },
+    {
+      "id": "tests",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/process-tree-sampler.test.ts",
+        "tests/unit/resource-envelope.test.ts",
+        "tests/unit/resource-envelope-api.test.ts",
+        "tests/unit/resource-metrics-calibration.test.ts",
+        "tests/unit/resource-metrics-owner.test.ts",
+        "tests/unit/background-work-gate.test.ts",
+        "tests/unit/resource-fabric-bounded-waiting.test.ts",
+        "tests/unit/runtime-efficiency-power-policy.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0831\\acceptance\\tests.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 76546
+    },
+    {
+      "id": "runtime-tests",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.resource-waiting.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0831\\acceptance\\runtime-tests.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 65250
+    },
+    {
+      "id": "types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "harness/specs/fixtures/process-tree-metrics-calibration-20261107/focused-tsconfig.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 14047
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/efficiency-orchestrator.ts",
+        "electron/services/resource-envelope.ts",
+        "openclaw_runtime/src/agents/resource-leases.ts",
+        "openclaw_runtime/src/gateway/server/event-loop-health.ts",
+        "openclaw_runtime/src/process/process-tree-sampler.ts",
+        "openclaw_runtime/src/resources/background-work-gate.ts",
+        "openclaw_runtime/src/resources/resource-envelope-snapshot-store.ts",
+        "openclaw_runtime/src/resources/resource-envelope.ts",
+        "shared/types/resources.ts",
+        "tests/unit/background-work-gate.test.ts",
+        "tests/unit/process-tree-sampler.test.ts",
+        "tests/unit/resource-envelope.test.ts",
+        "tests/unit/resource-metrics-calibration.test.ts",
+        "tests/unit/resource-metrics-owner.test.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0831\\acceptance\\lint.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 18453
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 734
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 235
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 32812
+    },
+    {
+      "id": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "d78ca54c835e54cfe86b2c8ad8cda7de05c5667f",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 203
+    }
+  ],
+  "negativeControls": {
+    "baselineCommit": "d78ca54c835e54cfe86b2c8ad8cda7de05c5667f",
+    "failed": 5,
+    "exitCode": 1
+  },
+  "units": {
+    "rssBytes": "resident working set bytes",
+    "privateBytes": "Windows private committed bytes; null when unavailable",
+    "cpuPercent": "100 per fully used core",
+    "machineMemory": "available/total physical bytes; separate from process counters",
+    "sampleTtlMs": 30000,
+    "cpuIntervalMaxMs": 60000
+  },
+  "sources": [
+    {
+      "path": "electron/services/efficiency-orchestrator.ts",
+      "sha256": "426b738c49abff8942819b9ba8c2498dcf8d23a7e6375f4ea7b70424ca3e0819"
+    },
+    {
+      "path": "electron/services/resource-envelope.ts",
+      "sha256": "b58a790601ce5c5acffc995b321965e44b44a9d1be4f06e96c20f7e0299b9bb0"
+    },
+    {
+      "path": "harness/specs/fixtures/process-tree-metrics-calibration-20261107/focused-tsconfig.json",
+      "sha256": "2ec16dd29395062e6f2f4592a51bbe528ec4644d99fead059eb1374b5006a8f2"
+    },
+    {
+      "path": "harness/specs/rules/process-metrics-identity-and-freshness.md",
+      "sha256": "b317694f99b58e64cf5b9f34de237c2a1fcaac42522851dab24f7d1e87ff9cbe"
+    },
+    {
+      "path": "harness/specs/tasks/process-tree-metrics-calibration-20261107.md",
+      "sha256": "1b8c8d82cf07a53790336491674fb3e888f4ad0182256cf733e1d3686f4c3dcb"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-leases.ts",
+      "sha256": "7305c2f6861d8232d12d6c5394355403cf86a4f704e5ae330ee1c14906c47faf"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server/event-loop-health.ts",
+      "sha256": "c96f0899f5a7f49dec19a24f19171c4de52af151307cd030e9699a67ba3b363f"
+    },
+    {
+      "path": "openclaw_runtime/src/process/process-tree-sampler.ts",
+      "sha256": "869bd1f21f632fd643f6a2fdb4a73d2959468c710a737321b51d026ea9167bc2"
+    },
+    {
+      "path": "openclaw_runtime/src/resources/background-work-gate.ts",
+      "sha256": "c5584dee051a8bae7dd27507fec679b9a1dda9c45522d0fe8e47f7f1d8015187"
+    },
+    {
+      "path": "openclaw_runtime/src/resources/resource-envelope-snapshot-store.ts",
+      "sha256": "b3123637b8bd47f16f6a557dea54b40a6cc3f793b7317885d8f1728b60455f42"
+    },
+    {
+      "path": "openclaw_runtime/src/resources/resource-envelope.ts",
+      "sha256": "9f80d4ad057e7e8f6e77dcb1bc428439b688fe3481a2679f858909804a58dfd1"
+    },
+    {
+      "path": "shared/types/resources.ts",
+      "sha256": "2ea94f699ddca78c849d4fd1b1f6e08bb1ab8ee0d50629ffa84c7db47813ee06"
+    },
+    {
+      "path": "tests/unit/background-work-gate.test.ts",
+      "sha256": "eaf411fd8721119e554ee03b91c259c1b5eda7858fa6a5fd8364794616c9c4e3"
+    },
+    {
+      "path": "tests/unit/process-tree-sampler.test.ts",
+      "sha256": "7a61a4a3b09b53f31a52d8efbdf55ed9f094dce34d39b37bdb76cff3162a8f4d"
+    },
+    {
+      "path": "tests/unit/resource-envelope.test.ts",
+      "sha256": "9a9a681bb30eb8c6d1effa9298eb2ee6ae4506945322180637e9d5bb8b6fe459"
+    },
+    {
+      "path": "tests/unit/resource-metrics-calibration.test.ts",
+      "sha256": "4dba91332914d28f3972fa137589376a719f63341392f2f607063192fb919aec"
+    },
+    {
+      "path": "tests/unit/resource-metrics-owner.test.ts",
+      "sha256": "7746495623399d2004242a15e7b6e564c43e56ac6cfb99fe9f1189729eb6962a"
+    }
+  ],
+  "dependencies": {
+    "root": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules"
+  },
+  "verdict": "pass"
+}

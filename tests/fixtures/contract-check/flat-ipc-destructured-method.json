@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-destructured-method",
+  "rule": "flat-ipc/bypass-registry",
+  "expect": "[flat-ipc/bypass-registry] ipcMain.handle('rogue:ast') is registered outside electron/main/ipc-handlers.ts",
+  "description": "An equivalent static IPC registration must not evade the existing admission gate.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\nconst { handle: admissionProbe } = ipcMain;\nadmissionProbe('rogue:ast', () => undefined);\n"
+    }
+  ]
+}

@@ -126,6 +126,22 @@ describe('workspaces api compatibility migration', () => {
     });
   });
 
+  it('publishes background membership after persistence without publishing draft-only edits',async()=>{
+    const {createWorkspacesApi,observeWorkspaceNavigation}=await import('@electron/services/workspaces-api');
+    const api=createWorkspacesApi();await api.list();
+    const observations:unknown[]=[];
+    const stop=observeWorkspaceNavigation(()=>observations.push(structuredClone(storeState.profiles)));
+    try{
+      await api.saveState({id:'legacy',sessionKey:'agent:research:new-child',state:{draftInput:'first'}});
+      expect(observations).toHaveLength(1);
+      expect(observations[0]).toEqual(expect.arrayContaining([expect.objectContaining({sessionStates:expect.objectContaining({
+        'agent:research:new-child':expect.objectContaining({draftInput:'first'}),
+      })})]));
+      await api.saveState({id:'legacy',sessionKey:'agent:research:new-child',state:{draftInput:'second'}});
+      expect(observations).toHaveLength(1);
+    }finally{stop();}
+  });
+
   it('normalizes legacy nested session folders and new parent input to one level', async () => {
     storeState.profiles[0] = {
       ...(storeState.profiles[0] as Record<string, unknown>),
@@ -578,6 +594,7 @@ describe('workspaces api compatibility migration', () => {
     const terminalManager = { registerWorkspace: vi.fn(), unregisterWorkspace: vi.fn() };
     const webPreviewManager = { registerWorkspace: vi.fn(), stopForWorkspace: vi.fn() };
     const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const { syncActiveWorkspacePermissionToRuntime, syncActiveWorkspaceRootToRuntime } = await import('@electron/services/workspace-runtime-sync');
     const api = createWorkspacesApi({ terminalManager, webPreviewManager } as never);
 
     await expect(api.switch({ id: 'other' })).resolves.toMatchObject({
@@ -587,6 +604,11 @@ describe('workspaces api compatibility migration', () => {
     expect(terminalManager.unregisterWorkspace).not.toHaveBeenCalled();
     expect(webPreviewManager.stopForWorkspace).not.toHaveBeenCalled();
     expect(terminalManager.registerWorkspace).toHaveBeenCalledWith(expect.objectContaining({ id: 'other' }));
+    const readForPermission = vi.mocked(syncActiveWorkspacePermissionToRuntime).mock.lastCall?.[0];
+    const readForRoot = vi.mocked(syncActiveWorkspaceRootToRuntime).mock.lastCall?.[0];
+    expect(readForPermission).toBeTypeOf('function');
+    expect(readForRoot).toBe(readForPermission);
+    expect(await readForPermission?.()).toMatchObject({ id: 'other', permissionMode: 'acceptEdits', rootPath: 'C:/other' });
   });
 
   it('workspace delete reclaims Main browser and managed-port owners', async () => {

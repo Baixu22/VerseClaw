@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
+const EXPECTED_SESSION_ID = 'compact-range-session-generation';
 const WORKSPACE_ID = 'workspace-compact-range';
 const USER_MESSAGE_ID = 'compact-range-user-1';
 const USER_MESSAGE_TEXT = 'Turn one: set up the workspace.';
@@ -64,7 +65,7 @@ function compactRangeMocks() {
     gatewayRpc: {
       [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
         success: true,
-        result: { sessions: [{ key: SESSION_KEY, displayName: 'main', updatedAt: FIXED_TIME_MS }] },
+        result: { sessions: [{ key: SESSION_KEY, sessionId: EXPECTED_SESSION_ID, displayName: 'main', updatedAt: FIXED_TIME_MS }] },
       },
       [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
         success: true,
@@ -127,6 +128,7 @@ function compactRangeMocks() {
       },
       [stableStringify(['sessions', 'compactRange', {
         sessionKey: SESSION_KEY,
+        expectedSessionId: EXPECTED_SESSION_ID,
         agentId: 'main',
         fromLeafId: USER_MESSAGE_ID,
       }])]: {
@@ -138,6 +140,7 @@ function compactRangeMocks() {
       },
       [stableStringify(['sessions', 'compactRange', {
         sessionKey: SESSION_KEY,
+        expectedSessionId: EXPECTED_SESSION_ID,
         agentId: 'main',
         toLeafId: USER_MESSAGE_ID,
       }])]: {
@@ -160,6 +163,7 @@ test.describe('Verse Claw located (range) compaction', () => {
       const page = await getStableWindow(app);
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', EXPECTED_SESSION_ID, { timeout: 30_000 });
 
       const messageRow = page.getByTestId('chat-message-0');
       const messageText = messageRow.locator('p').filter({ hasText: USER_MESSAGE_TEXT });
@@ -187,9 +191,11 @@ test.describe('Verse Claw located (range) compaction', () => {
         return calls.some((call) => {
           if (call?.module !== 'sessions' || call?.action !== 'compactRange') return false;
           const payload = (call.payload ?? {}) as Record<string, unknown>;
-          return payload.sessionKey === target.sessionKey && payload.fromLeafId === target.messageId;
+          return payload.sessionKey === target.sessionKey
+            && payload.expectedSessionId === target.expectedSessionId
+            && payload.fromLeafId === target.messageId;
         });
-      }, { sessionKey: SESSION_KEY, messageId: USER_MESSAGE_ID }), { timeout: 30_000 }).toBe(true);
+      }, { sessionKey: SESSION_KEY, expectedSessionId: EXPECTED_SESSION_ID, messageId: USER_MESSAGE_ID }), { timeout: 30_000 }).toBe(true);
     } finally {
       await closeElectronApp(app);
     }
@@ -203,6 +209,7 @@ test.describe('Verse Claw located (range) compaction', () => {
       const page = await getStableWindow(app);
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', EXPECTED_SESSION_ID, { timeout: 30_000 });
 
       const messageRow = page.getByTestId('chat-message-0');
       const messageText = messageRow.locator('p').filter({ hasText: USER_MESSAGE_TEXT });
@@ -218,9 +225,11 @@ test.describe('Verse Claw located (range) compaction', () => {
         return calls.some((call) => {
           if (call?.module !== 'sessions' || call?.action !== 'compactRange') return false;
           const payload = (call.payload ?? {}) as Record<string, unknown>;
-          return payload.sessionKey === target.sessionKey && payload.toLeafId === target.messageId;
+          return payload.sessionKey === target.sessionKey
+            && payload.expectedSessionId === target.expectedSessionId
+            && payload.toLeafId === target.messageId;
         });
-      }, { sessionKey: SESSION_KEY, messageId: USER_MESSAGE_ID }), { timeout: 30_000 }).toBe(true);
+      }, { sessionKey: SESSION_KEY, expectedSessionId: EXPECTED_SESSION_ID, messageId: USER_MESSAGE_ID }), { timeout: 30_000 }).toBe(true);
     } finally {
       await closeElectronApp(app);
     }

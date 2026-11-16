@@ -6,10 +6,19 @@
  */
 
 import { clampPositiveTimerTimeoutMs } from "@openclaw/normalization-core/number-coercion";
+import {
+  admitPromptContribution,
+  resolvePromptAuthorityMode,
+  PromptContributionAuthorityError,
+} from "../context-engine/prompt-contribution-authority.js";
 import { copyReplyPayloadMetadata, type ReplyPayload } from "../auto-reply/reply-payload.js";
 import { formatHookErrorForLog } from "../hooks/fire-and-forget.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { concatOptionalTextSegments } from "../shared/text/join-segments.js";
+import {
+  PLUGIN_PROMPT_MUTATION_AUTHORITIES,
+  PLUGIN_PROMPT_MUTATION_RESULT_FIELDS,
+} from "./hook-before-agent-start.types.js";
 import {
   type GateHookResult,
   type InputGateDecision,
@@ -186,6 +195,7 @@ type BeforeAgentFinalizeResultWithRetryCandidates = PluginHookBeforeAgentFinaliz
 };
 
 export type HookRunnerOptions = {
+  promptAuthorityMode?: "warn" | "enforce";
   logger?: HookRunnerLogger;
   /** If true, errors in hooks will be caught and logged instead of thrown */
   catchErrors?: boolean;
@@ -299,6 +309,8 @@ export function createHookRunner(
   options: HookRunnerOptions = {},
 ) {
   const logger = options.logger;
+  const promptAuthorityMode = options.promptAuthorityMode ??
+    resolvePromptAuthorityMode(process.env.OPENCLAW_PROMPT_AUTHORITY_MODE);
   const catchErrors = options.catchErrors ?? true;
   const failurePolicyByHook = {
     before_agent_run: "fail-closed",
@@ -662,6 +674,21 @@ export function createHookRunner(
         const timeoutMs = getModifyingHookTimeoutMs(hookName, hook);
         const handlerResult = timeoutMs ? await withHookTimeout(promise, timeoutMs) : await promise;
 
+        // Check each producer before merging, while attribution still exists.
+        // Rights come from registration, never from hook output.
+        if (handlerResult && (hookName === "before_prompt_build" || hookName === "before_agent_start")) {
+          const promptResult = handlerResult as PluginHookBeforePromptBuildResult;
+          for (const field of PLUGIN_PROMPT_MUTATION_RESULT_FIELDS) {
+            if (promptResult[field] !== undefined) {
+              admitPromptContribution(hook.pluginId, field, PLUGIN_PROMPT_MUTATION_AUTHORITIES[field], {
+                declaration: hook.promptContribution,
+                mode: promptAuthorityMode,
+                warn: logger ? (message) => logger.warn(message) : undefined,
+              });
+            }
+          }
+        }
+
         const shouldMergeResult =
           handlerResult !== undefined && (handlerResult !== null || policy.mergeNullResults);
         if (shouldMergeResult) {
@@ -681,6 +708,8 @@ export function createHookRunner(
           }
         }
       } catch (err) {
+        // An explicit deny is a host decision, not a fail-open plugin error.
+        if (err instanceof PromptContributionAuthorityError) throw err;
         handleHookError({ hookName, pluginId: hook.pluginId, error: err });
       }
     }

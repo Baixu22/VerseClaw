@@ -4,12 +4,15 @@ import {
 } from "../agents/goal-wake-durable-cleanup.js";
 import { resolveDurableHelperRoot } from "../agents/goal-wake-helper-protocol.js";
 import { createWorktreeService } from "../agents/worktree-service.js";
+import { observeWorktree } from "../agents/worktree-registry.js";
 import { captureProcessTrees } from "../process/os-containment.js";
 import { readProcessTreeSample } from "../process/process-tree-sampler.js";
 import { getProcessSupervisor } from "../process/supervisor/index.js";
 import { parseAgentSessionKey } from "../routing/session-key.js";
 import { sessionAdmissionRegistry, type SessionAdmissionIdentity } from "../sessions/session-admission-registry.js";
 import { resolveConfigDir } from "../utils.js";
+import { getRuntimeConfig } from '../config/config.js';
+import { resolveProjectIdForWorkspace, type WorkspaceId, type SessionKey } from '../../../shared/types/identity-scope.js';
 import type {
   LongSessionResourceInventory,
   SessionOwnerInventory,
@@ -81,6 +84,9 @@ export async function readRuntimeSessionResourceInventory(
   const generation = input.expectedSessionId?.trim() || null;
   const worktreeRoot = input.rootPath?.trim() || input.agentWorkspaceDir?.trim();
   const identity = identityFor(input);
+  const runtimeConfig = getRuntimeConfig();
+  const providerPolicy = runtimeConfig.runtime?.providerBudget;
+  const providerEnabled = providerPolicy && Object.values(providerPolicy).some(limits => limits && (limits.maxTokens !== undefined || limits.maxCostUsd !== undefined));
   if (!identity) {
     const detail = "runtime owner identity requires agentId, canonical session key and physical session generation";
     return {
@@ -96,6 +102,7 @@ export async function readRuntimeSessionResourceInventory(
         unknownOwner({ kind: "process", owner: "ProcessSupervisor+BashProcessRegistry", generation, detail }),
         unknownOwner({ kind: "admission-permit", owner: "SessionAdmissionRegistry", generation, detail }),
         unknownOwner({ kind: "worktree", owner: "WorktreeService", generation, detail }),
+        ...(providerEnabled ? [unknownOwner({ kind: 'provider', owner: 'ProviderOutboundBudget', generation, detail })] : []),
       ],
     };
   }
@@ -125,13 +132,21 @@ export async function readRuntimeSessionResourceInventory(
   ]);
   const processKnown = sample.status !== "unknown" && helperPids !== null && treeCapture.status !== "unknown";
   const admission = sessionAdmissionRegistry.snapshot(identity);
-  const worktrees = worktreeRoot
-    ? createWorktreeService(worktreeRoot).listOwned({
-      agentId: identity.agentId,
-      sessionKey: identity.canonicalSessionKey,
-      expectedSessionId: identity.expectedSessionId,
-    })
-    : null;
+  let worktrees: ReturnType<ReturnType<typeof createWorktreeService>["listOwned"]> | null = null;
+  let worktreesKnown = false;
+  let worktreeReadError: string | undefined;
+  try {
+    if (worktreeRoot) {
+      worktrees = createWorktreeService(worktreeRoot).listOwned({
+        agentId: identity.agentId, sessionKey: identity.canonicalSessionKey,
+        expectedSessionId: identity.expectedSessionId,
+      });
+      worktreesKnown = worktrees.every(record => observeWorktree(record) === "ready");
+    }
+  } catch (error) {
+    worktrees = null;
+    worktreeReadError = `workspace root ownership read failed: ${(error as NodeJS.ErrnoException).code ?? 'unavailable'}`;
+  }
 
   const owners: SessionOwnerInventory[] = [
     {
@@ -174,14 +189,14 @@ export async function readRuntimeSessionResourceInventory(
           kind: "worktree",
           owner: "WorktreeService",
           generation,
-          detail: "workspace root was not available; worktree occupancy is unknown",
+          detail: worktreeReadError ?? "workspace root was not available; worktree occupancy is unknown",
         })
       : {
           kind: "worktree",
           owner: "WorktreeService",
           authority: "managed",
           generation,
-          state: "known",
+          state: worktreesKnown ? "known" : "unknown",
           count: worktrees.length,
           pids: null,
           processTreePids: null,
@@ -192,8 +207,35 @@ export async function readRuntimeSessionResourceInventory(
           helperRefs: null,
           worktreeIds: worktrees.map((record) => record.id),
           sessionIds: null,
+          ...(worktreesKnown ? {} : { detail: "managed checkout registration is incomplete, missing or replaced" }),
         },
   ];
+
+  if (providerEnabled) {
+    try {
+      // Rebuild from the owner journal on every explicit inventory read. A
+      // cleared envelope/cache neither clears spending nor grants capacity.
+      const { providerSpendSnapshot } = await import('../agents/provider-spend-budget.js');
+      const { getSessionEntry } = await import('../config/sessions/store.js');
+      const { resolveStorePath } = await import('../config/sessions/paths.js');
+      const entry = getSessionEntry({ storePath: resolveStorePath(runtimeConfig.session?.store, { agentId: identity.agentId }), sessionKey: identity.canonicalSessionKey });
+      if (entry?.sessionId !== identity.expectedSessionId || (input.workspaceId && entry.workspaceId && input.workspaceId.trim() !== entry.workspaceId)) {
+        throw new Error('Provider inventory session scope mismatch');
+      }
+      const workspaceId = entry.workspaceId as WorkspaceId | undefined;
+      if (providerPolicy.project && !workspaceId) throw new Error('Provider inventory project scope unavailable');
+      const spend = providerSpendSnapshot({ ...(workspaceId ? { workspaceId, projectId: resolveProjectIdForWorkspace(workspaceId) } : {}),
+        sessionKey: identity.canonicalSessionKey as SessionKey, sessionGeneration: identity.expectedSessionId });
+      const session = spend.find(row => row.scope === 'session')!;
+      owners.push({ ...unknownOwner({ kind: 'provider', owner: 'ProviderOutboundBudget', generation,
+        detail: 'Provider-owner spend journal; amounts are token counts and integer microdollars, not invoices' }),
+        authority: 'managed', state: 'known', count: session.activeCalls, activePermits: session.activeCalls,
+        spend: spend.map(({ scopeKey: _key, ...value }) => value) });
+    } catch {
+      owners.push(unknownOwner({ kind: 'provider', owner: 'ProviderOutboundBudget', generation,
+        detail: 'Provider owner read unavailable; spending and remaining budget must not be inferred as zero' }));
+    }
+  }
 
   return {
     schema: "LongSessionResourceInventory/v1",

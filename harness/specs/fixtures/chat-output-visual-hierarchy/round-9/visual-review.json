@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-session-environment-relay",
+  "realHumanEvidence": false,
+  "reviewedFiles": [
+    "environment-inline-light.png",
+    "environment-overlay-light.png",
+    "environment-overlay-dark.png",
+    "environment-narrow.png",
+    "workspace-expanded.png",
+    "workspace-hidden.png"
+  ],
+  "observations": [
+    "Light and dark overlays use separated change/source/worker groups; source and worker previews show three rows with explicit overflow.",
+    "The 800px viewport keeps the entire manual card within the conversation; it does not widen the page.",
+    "The automatic panel sits beside the transcript without an overlay shadow; manual opening retains the transcript width.",
+    "The workspace has separate width and close controls; after close the conversation recovers its width and the toolbar entry remains."
+  ]
+}

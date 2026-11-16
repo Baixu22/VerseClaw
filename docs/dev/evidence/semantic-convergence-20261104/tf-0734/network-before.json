@@ -1,0 +1,251 @@
+{
+  "schema": "SemanticConvergenceBaseline/v1",
+  "generatedAt": "2026-11-04T00:00:00.000Z",
+  "candidate": {
+    "commit": "9d50e8ca14678fe6ad79af7317e5da068faef439",
+    "dirty": true
+  },
+  "measurementBoundary": "source-derived static baseline; no user-visible effect is claimed",
+  "metrics": [
+    {
+      "id": "RETRY-1",
+      "definition": "attempt identity collides with reversible budget count",
+      "formula": "identity==usedCount AND success decrements usedCount",
+      "value": 0,
+      "unit": "boolean",
+      "method": "static",
+      "limitation": "Source shape only; the contract test reproduces the collision dynamically.",
+      "sources": [
+        "openclaw_runtime/src/agents/request-attempt-budget.ts"
+      ]
+    },
+    {
+      "id": "RETRY-2",
+      "definition": "ambient charging layers present for one logical request",
+      "formula": "count(files charging ambient tryRecordAttempt without explicit opt-in gate)",
+      "value": 1,
+      "unit": "layers",
+      "method": "static",
+      "limitation": "After TF-0730 only provider transport charges ambient requests; retryAsync only charges an explicitly supplied budget. Dynamic recovery is measured by model-fallback.loop-termination.test.ts.",
+      "sources": [
+        "provider-transport",
+        "agent-auto-retry",
+        "model-fallback",
+        "retryAsync"
+      ]
+    },
+    {
+      "id": "MEM-1",
+      "definition": "agent self-edit emits human provenance labels",
+      "formula": "count(human_confirmation)+count(human_approved)+count(promotedBy human)",
+      "value": 5,
+      "unit": "labels",
+      "method": "static",
+      "limitation": "Persist is retired, so these labels are unreachable today; this is a recovery gate.",
+      "sources": [
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts"
+      ]
+    },
+    {
+      "id": "MEM-2",
+      "definition": "independent commit steps inside one logical memory update",
+      "formula": "sum(step count) for self-edit and curation",
+      "value": 4,
+      "unit": "steps",
+      "method": "static",
+      "limitation": "Transaction boundaries are inherited from the persistence port; values are candidate windows, not observed corruption.",
+      "sources": [
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts"
+      ]
+    },
+    {
+      "id": "VALID-1",
+      "definition": "status classes currently collapsed into valid=true",
+      "formula": "count(success, rateLimit, probe400)",
+      "value": 0,
+      "unit": "classes",
+      "method": "static",
+      "limitation": "Classes only; actual provider behavior varies by API. The 12-scenario matrix is the behavioral gate.",
+      "sources": [
+        "electron/services/providers/provider-validation.ts"
+      ]
+    },
+    {
+      "id": "VALID-2",
+      "definition": "validation state dimensions exposed by the result type",
+      "formula": "count(reachable, auth, protocol, model, rateLimited, ready)",
+      "value": 6,
+      "unit": "dimensions",
+      "method": "static",
+      "limitation": "Type-shape evidence; UI semantics are asserted by semantic-convergence-provider-validation-matrix.test.ts.",
+      "sources": [
+        "shared/host-api/contract.ts",
+        "electron/services/providers/provider-validation.ts"
+      ]
+    },
+    {
+      "id": "NET-1",
+      "definition": "validation requests sharing inference guarded policy",
+      "formula": "bothUseSharedPolicy ? 1 : 0",
+      "value": 0,
+      "unit": "boolean",
+      "method": "static",
+      "limitation": "Source contract: both call sites import the shared resolver; behaviour is asserted by semantic-convergence-provider-network-parity.test.ts.",
+      "sources": [
+        "electron/services/providers/provider-validation.ts",
+        "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+        "openclaw_runtime/src/agents/provider-network-policy.ts"
+      ]
+    },
+    {
+      "id": "NET-2",
+      "definition": "validation probe carries explicit deadline",
+      "formula": "deadline gate + signal present",
+      "value": 0,
+      "unit": "boolean",
+      "method": "static",
+      "limitation": "Source contract; probe coverage is measured as NET-3.",
+      "sources": [
+        "electron/services/providers/provider-validation.ts"
+      ]
+    },
+    {
+      "id": "NET-3",
+      "definition": "validation probes carrying the total deadline signal",
+      "formula": "count(models, responses, chat, anthropic probes with signal)",
+      "value": 0,
+      "unit": "probes",
+      "method": "static",
+      "limitation": "Static coverage of the four probe call sites; runtime abort behaviour is unit-tested.",
+      "sources": [
+        "electron/services/providers/provider-validation.ts"
+      ]
+    },
+    {
+      "id": "NET-4",
+      "definition": "policy parity between validation and inference",
+      "formula": "bothUseSharedPolicy ? 1 : 0",
+      "value": 0,
+      "unit": "boolean",
+      "method": "static",
+      "limitation": "Same resolver, same normalized fingerprint; behavioural matrix in semantic-convergence-provider-network-parity.test.ts.",
+      "sources": [
+        "openclaw_runtime/src/agents/provider-network-policy.ts"
+      ]
+    },
+    {
+      "id": "PROMPT-1",
+      "definition": "prompt mutation fields covered by an authority declaration",
+      "formula": "declaredAuthority ? 5 : 0",
+      "value": 0,
+      "unit": "fields",
+      "method": "static",
+      "limitation": "No producer-level declaration exists today; this counts the public field list.",
+      "sources": [
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts",
+        "openclaw_runtime/src/context-engine/context-candidate.ts"
+      ]
+    },
+    {
+      "id": "PROMPT-2",
+      "definition": "post-orchestrator additions outside the managed ledger",
+      "formula": "count(runtimeIntensitySystemPrompt, degradationNotice)",
+      "value": 2,
+      "unit": "additions",
+      "method": "static",
+      "limitation": "Counts code paths, not actual chars; the snapshot coverage test measures chars.",
+      "sources": [
+        "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"
+      ]
+    },
+    {
+      "id": "PROMPT-3",
+      "definition": "seal producer coverage matrix present",
+      "formula": "sealMatrix ? 1 : 0",
+      "value": 0,
+      "unit": "boolean",
+      "method": "static",
+      "limitation": "Seal is default-off; presence is not enforcement evidence.",
+      "sources": [
+        "openclaw_runtime/src/context-engine/rc03-seal-hook.ts"
+      ]
+    },
+    {
+      "id": "MEM-3",
+      "definition": "shared memory cache invalidated on write path",
+      "formula": "cacheInvalidationInQuery && cacheInvalidationInPreReply",
+      "value": 0,
+      "unit": "boolean",
+      "method": "static",
+      "limitation": "No write-path invalidation found; TTL is 30s.",
+      "sources": [
+        "openclaw_runtime/src/runtime-core/memory-query-tool.ts",
+        "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts"
+      ]
+    },
+    {
+      "id": "FACADE-1",
+      "definition": "production consumers of Stage5 facade",
+      "formula": "count(non-test files referencing facade)",
+      "value": 0,
+      "unit": "consumers",
+      "method": "static",
+      "limitation": "Includes golden-run by design; the node decides adopt-or-retire.",
+      "sources": [
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts"
+      ]
+    },
+    {
+      "id": "EMB-1",
+      "definition": "worst-case embedding time for 100 texts",
+      "formula": "REQUEST_TIMEOUT_MS * ceil(100 / MAX_BATCH_SIZE)",
+      "value": 390000,
+      "unit": "ms",
+      "method": "static",
+      "limitation": "Assumes every batch hits the timeout; no network measurement.",
+      "sources": [
+        "electron/services/knowledge-embedding-provider.ts"
+      ]
+    }
+  ],
+  "metricContract": {
+    "retry": {
+      "retry1Target": 0,
+      "retry2TargetMax": 1,
+      "retryRecoveryTarget": 1
+    },
+    "validation": {
+      "falseReadyTarget": 0,
+      "dimensionTarget": 6,
+      "scenarioCount": 12
+    },
+    "prompt": {
+      "authorityTarget": 5,
+      "accountedRatioTarget": 1,
+      "unregisteredMutationsTarget": 0
+    },
+    "memory": {
+      "humanLabelTarget": 0,
+      "partialWindowsTarget": 0,
+      "staleReadMaxSecondsTarget": 0
+    },
+    "embedding": {
+      "totalDeadlineMs": 120000
+    },
+    "scoreWeights": {
+      "correctness": 0.35,
+      "userImpact": 0.25,
+      "coverage": 0.2,
+      "costEfficiency": 0.1,
+      "evidenceQuality": 0.1
+    }
+  },
+  "limitations": [
+    "Metrics are source-derived; no provider request, E2E, or live user data was executed.",
+    "RETRY-2 counts layers, not a measured amplification ratio for one request.",
+    "MEM metrics are recovery gates because runtime.memory.persist is retired.",
+    "VALID-1/VALID-2 are static classifications; the 12-scenario matrix is the behavioral gate.",
+    "No real-human evidence is claimed."
+  ]
+}

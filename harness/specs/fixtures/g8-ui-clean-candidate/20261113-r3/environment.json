@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\environment-readback.json",
+  "sourceSha256": "57797d053593865055ac89f9f13640104433101702ce19cf54a70de8c31153bb",
+  "result": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "nodeVersion": "v24.22.1",
+    "pnpmVersion": "11.2.2",
+    "packageManager": "pnpm@11.2.2+sha512.36e6621fad506178936455e70247b8808ef4ec25797a9f437a93281a020484e2607f6a469a22e982987c3dbb8866e3071514ab10a4a1749e06edcd1ec118436f",
+    "electronVersion": "40.8.4",
+    "electronExecutable": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe",
+    "electronSha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e",
+    "temp": {
+      "TEMP": "D:/tmp",
+      "TMP": "D:/tmp",
+      "TMPDIR": null
+    },
+    "reusedInstalledDependencies": true
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "specPath": "harness\\specs\\tasks\\rsi-public-task-inputs.md",
+  "scenario": "rsi-public-task-inputs",
+  "taskType": null,
+  "startedAt": "2026-11-07T16:56:54.077Z",
+  "finishedAt": "2026-11-07T16:56:54.886Z",
+  "changedFiles": [
+    "docs/dev/rsi-capability-and-boundaries.md",
+    "harness/specs/fixtures/rsi-remediation-plan/SHA256SUMS",
+    "harness/specs/fixtures/rsi-remediation-plan/plan.v1.json",
+    "harness/specs/fixtures/rsi-task-inputs/SHA256SUMS",
+    "harness/specs/fixtures/rsi-task-inputs/public-bindings.v1.json",
+    "harness/specs/guides/rsi-remediation-roadmap.md",
+    "harness/specs/rules/rsi-public-input-boundary.md",
+    "harness/specs/tasks/rsi-public-task-inputs.md",
+    "scripts/lib/rsi-benefit-eval.d.mts",
+    "scripts/lib/rsi-benefit-eval.mjs",
+    "scripts/lib/rsi-coding-protocol.d.mts",
+    "scripts/lib/rsi-coding-protocol.mjs",
+    "scripts/lib/rsi-task-inputs.d.mts",
+    "scripts/lib/rsi-task-inputs.mjs",
+    "scripts/rsi-task-inputs.mjs",
+    "tests/unit/rsi-task-inputs.test.ts"
+  ],
+  "residualPaths": [],
+  "ownership": {
+    "checked": true,
+    "covered": [
+      "docs/dev/rsi-capability-and-boundaries.md",
+      "harness/specs/fixtures/rsi-remediation-plan/SHA256SUMS",
+      "harness/specs/fixtures/rsi-remediation-plan/plan.v1.json",
+      "harness/specs/fixtures/rsi-task-inputs/SHA256SUMS",
+      "harness/specs/fixtures/rsi-task-inputs/public-bindings.v1.json",
+      "harness/specs/guides/rsi-remediation-roadmap.md",
+      "harness/specs/rules/rsi-public-input-boundary.md",
+      "harness/specs/tasks/rsi-public-task-inputs.md",
+      "scripts/lib/rsi-benefit-eval.d.mts",
+      "scripts/lib/rsi-benefit-eval.mjs",
+      "scripts/lib/rsi-coding-protocol.d.mts",
+      "scripts/lib/rsi-coding-protocol.mjs",
+      "scripts/lib/rsi-task-inputs.d.mts",
+      "scripts/lib/rsi-task-inputs.mjs",
+      "scripts/rsi-task-inputs.mjs",
+      "tests/unit/rsi-task-inputs.test.ts"
+    ],
+    "residual": [],
+    "uncovered": []
+  },
+  "selectedProfiles": [
+    "rsi"
+  ],
+  "steps": [
+    {
+      "profile": "rules",
+      "name": "Backend communication boundary scan",
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "rsi",
+      "name": "RSI decision acceptance readback",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "rsi:decision:check"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "rsi",
+      "name": "RSI feedback pilot protocol",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "rsi:feedback:check"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "rsi",
+      "name": "RSI three-arm protocol",
+      "command": "node",
+      "args": [
+        "scripts/rsi-sekb-arms.mjs",
+        "--check",
+        "--json"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "rsi",
+      "name": "RSI TF-0604 corpus",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "rsi:tf0604:check"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "rsi",
+      "name": "RSI TF-0590 corpus",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "rsi:corpus:check"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "rsi",
+      "name": "RSI TF-0592 statistics",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "rsi:tf0592:check"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "rsi",
+      "name": "RSI measurement archive",
+      "command": "node",
+      "args": [
+        "scripts/rsi-measurement-archive.mjs",
+        "--check",
+        "--json"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    }
+  ],
+  "failures": [],
+  "result": "pass"
+}

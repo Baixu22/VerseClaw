@@ -7,11 +7,14 @@
  * declared verified" rule. UI wiring is covered by the Electron E2E.
  */
 import { describe, expect, it } from 'vitest';
+import type { ProviderValidationState } from '@shared/host-api/contract';
 import {
   classifyProviderValidationError,
   DEFAULT_SETUP_PROVIDER_VERIFICATION,
   isProviderRuntimeReady,
   isSetupVerificationComplete,
+  isSetupProviderReady,
+  providerValidationFeedback,
 } from '../../src/lib/setup-provider';
 import type { ProviderAccount, ProviderWithKeyInfo } from '../../src/lib/providers';
 
@@ -179,5 +182,84 @@ describe('FP-P1-01 isSetupVerificationComplete', () => {
         checkedAt: '2026-07-26T00:00:00Z',
       }),
     ).toBe(true);
+  });
+});
+
+/**
+ * TF-0733: the Setup failure copy must follow the structured state, not a
+ * message regex. Each state maps to exactly one bucket, so a 429 can never
+ * surface as "credentials rejected" and a non-auth 400 can never pass as
+ * verified.
+ */
+function state(overrides: Partial<ProviderValidationState>): ProviderValidationState {
+  return {
+    reachable: 'reachable',
+    auth: 'unknown',
+    protocol: 'unknown',
+    model: 'unknown',
+    rateLimited: false,
+    ready: false,
+    reason: 'unknown',
+    ...overrides,
+  };
+}
+
+describe('TF-0733 structured provider validation states', () => {
+  it.each([
+    ['429 rate limit', state({ rateLimited: true, retryAfterMs: 5000, reason: 'rate-limited' }), 'rate-limited'],
+    ['401 unauthorized', state({ auth: 'invalid', reason: 'unauthorized' }), 'credentials'],
+    ['non-auth 400', state({ auth: 'valid', protocol: 'compatible', reason: 'protocol-error' }), 'protocol'],
+    ['unknown model', state({ auth: 'valid', protocol: 'compatible', model: 'unavailable', reason: 'model-unavailable' }), 'model'],
+    ['network down', state({ reachable: 'unreachable', reason: 'network-error' }), 'network'],
+    ['5xx', state({ reason: 'server-error' }), 'service'],
+  ])('%s → %s', (_label, input, expected) => {
+    expect(
+      classifyProviderValidationError({
+        apiKeyPresent: true,
+        requiresApiKey: true,
+        state: input,
+      }),
+    ).toBe(expected);
+  });
+
+  it('a ready state is the only one that never classifies as a failure', () => {
+    const ready = state({ auth: 'valid', protocol: 'compatible', model: 'available', ready: true, reason: 'ok' });
+    expect(
+      isSetupProviderReady({
+        apiKeyPresent: true,
+        requiresApiKey: true,
+        state: ready,
+      }),
+    ).toBe(true);
+    expect(
+      isSetupProviderReady({
+        apiKeyPresent: true,
+        requiresApiKey: true,
+        state: state({ auth: 'valid', protocol: 'compatible', reason: 'protocol-error' }),
+      }),
+    ).toBe(false);
+    expect(
+      isSetupProviderReady({
+        apiKeyPresent: true,
+        requiresApiKey: true,
+        state: state({ rateLimited: true, reason: 'rate-limited' }),
+      }),
+    ).toBe(false);
+  });
+
+  it('providerValidationFeedback surfaces the retry window for 429', () => {
+    const feedback = providerValidationFeedback(
+      state({ rateLimited: true, retryAfterMs: 12_000, reason: 'rate-limited' }),
+    );
+    expect(feedback.key).toBe('rateLimited');
+    expect(feedback.retryAfterMs).toBe(12_000);
+  });
+
+  it('providerValidationFeedback never maps a non-auth 400 to invalidKey', () => {
+    const feedback = providerValidationFeedback(
+      state({ auth: 'valid', protocol: 'compatible', reason: 'protocol-error' }),
+      'Bad Request',
+    );
+    expect(feedback.key).toBe('protocolError');
   });
 });

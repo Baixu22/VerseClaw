@@ -128,6 +128,20 @@ type ImmutableProcessConfig = Readonly<{
   approvalToken?: string;
 }>;
 
+type ProcessAcquisition = {
+  workspace: Promise<string>;
+  canonicalWorkspace?: string;
+  key?: string;
+  error?: Error;
+  stopped: Promise<never>;
+  cancel: (error: Error) => void;
+};
+
+type ProcessStartup = {
+  workspace: string;
+  promise: Promise<ManagedAciProcess>;
+};
+
 type RequestEntry = {
   id: string;
   op: string;
@@ -141,6 +155,7 @@ type RequestEntry = {
   sent: boolean;
   retryable: boolean;
   retryCount: number;
+  removeAbortListener?: () => void;
 };
 
 type ManagedAciProcessOptions = Required<
@@ -171,6 +186,7 @@ const APPROVAL_TOKEN = /^apv_[a-f0-9]{16}$/;
 const APPROVAL_TOKEN_IN_TEXT = /apv_[a-f0-9]{16}/giu;
 const TRACE_ID = /^[A-Za-z0-9._:-]{1,128}$/u;
 const MAX_READ_ONLY_RETRIES = 1;
+const PROCESS_CONTROL_OPS = new Set(["process.write", "process.kill"]);
 const READ_ONLY_IDEMPOTENT_OPS = new Set([
   "file.view",
   "file.read_range",
@@ -371,6 +387,7 @@ class ManagedAciProcess implements AciTransport {
   private child: AciChildProcess | null = null;
   private state: VerseShellProcessHealth["state"] = "stopped";
   private startPromise: Promise<void> | null = null;
+  private shutdownPromise: Promise<void> | null = null;
   private restartTimer: NodeJS.Timeout | null = null;
   private restartAttempts = 0;
   private requestCounter = 0;
@@ -407,6 +424,9 @@ class ManagedAciProcess implements AciTransport {
   get idle(): boolean {
     return this.active === 0 && this.queue.length === 0 && this.pending.size === 0;
   }
+  references = 0;
+  private writeBlocked = false;
+  private removeDrainListener: (() => void) | undefined;
 
   health(): VerseShellProcessHealth {
     return {
@@ -469,7 +489,12 @@ class ManagedAciProcess implements AciTransport {
         ),
       );
     }
-    if (this.queue.length >= this.config.maxQueueSize) {
+    const queueLimit = op === "process.poll" ? Math.max(0, this.config.maxQueueSize - 1) : this.config.maxQueueSize;
+    const polls = [...this.pending.values()].filter(entry => entry.op === "process.poll").length;
+    const startsImmediately = this.state === "ready" && !this.writeBlocked && this.queue.length === 0
+      && this.active < this.config.maxConcurrency
+      && (op !== "process.poll" || polls < Math.max(1, this.config.maxConcurrency - 1));
+    if (this.queue.length >= queueLimit && !startsImmediately) {
       return Promise.reject(new AciTransportError("E_ACI_QUEUE_FULL", "VerseShell request queue is full"));
     }
 
@@ -520,11 +545,9 @@ class ManagedAciProcess implements AciTransport {
       };
       this.queue.push(entry);
       if (opts.signal) {
-        opts.signal.addEventListener(
-          "abort",
-          () => this.abortRequest(id),
-          { once: true },
-        );
+        const abort = () => this.abortRequest(id);
+        opts.signal.addEventListener("abort", abort, { once: true });
+        entry.removeAbortListener = () => opts.signal?.removeEventListener("abort", abort);
       }
       void this.ensureStarted()
         .then(() => this.drainQueue())
@@ -603,6 +626,8 @@ class ManagedAciProcess implements AciTransport {
 
     this.state = "handshaking";
     const observation = await this.sendHandshake();
+    if (this.disposed) throw new AciTransportError("E_ACI_SHUTDOWN", "ACI process is shut down");
+    if (this.killSwitchTripped || this.options.isKillSwitchTripped()) throw this.killSwitchError();
     this.validateHandshake(observation);
     this.state = "ready";
     this.lastError = undefined;
@@ -745,6 +770,7 @@ class ManagedAciProcess implements AciTransport {
       }
       this.pending.delete(entry.id);
       clearTimeout(entry.timer);
+      entry.removeAbortListener?.();
       if (!entry.op.startsWith("runtime.handshake")) this.active--;
       this._lastUsedAt = this.options.now();
       entry.resolve(frame.observation);
@@ -754,8 +780,13 @@ class ManagedAciProcess implements AciTransport {
 
   private drainQueue(): void {
     if (this.state !== "ready" || !this.child) return;
-    while (this.active < this.config.maxConcurrency && this.queue.length > 0) {
-      const entry = this.queue.shift()!;
+    while (!this.writeBlocked && this.active < this.config.maxConcurrency && this.queue.length > 0) {
+      const control = this.queue.findIndex(entry => PROCESS_CONTROL_OPS.has(entry.op));
+      const polls = [...this.pending.values()].filter(entry => entry.op === "process.poll").length;
+      const index = control >= 0 ? control : this.queue.findIndex(entry => entry.op !== "process.poll"
+        || polls < Math.max(1, this.config.maxConcurrency - 1));
+      if (index < 0) break;
+      const [entry] = this.queue.splice(index, 1);
       if (entry.sent) continue;
       entry.sent = true;
       this.active++;
@@ -777,13 +808,27 @@ class ManagedAciProcess implements AciTransport {
     const request = JSON.stringify({
       id: entry.id,
       op: entry.op,
-      args: entry.args,
+      // The pinned server consumes single JSONL requests serially. Bound each
+      // native wait so already-sent polls cannot exhaust a control's deadline.
+      args: entry.op === "process.poll"
+        ? { ...entry.args, wait_ms: Math.min(typeof entry.args.wait_ms === "number" ? entry.args.wait_ms : 0, Math.max(1, Math.floor(1000 / this.config.maxConcurrency))) }
+        : entry.args,
       agent: this.config.agentId,
       timeout_ms: Math.max(1, Math.min(entry.timeoutMs, remainingMs)),
       budget: { max_tokens: 4_000 },
     });
     try {
-      this.child.stdin.write(`${request}\n`, "utf8");
+      const child = this.child;
+      if (!child.stdin.write(`${request}\n`, "utf8")) {
+        this.writeBlocked = true;
+        const drained = () => {
+          if (this.child !== child) return;
+          this.removeDrainListener = undefined;
+          this.writeBlocked = false; this.drainQueue();
+        };
+        child.stdin.once("drain", drained);
+        this.removeDrainListener = () => child.stdin.removeListener("drain", drained);
+      }
     } catch (error) {
       this.pending.delete(entry.id);
       if (entry.sent && entry.op !== "runtime.handshake") this.active--;
@@ -868,6 +913,7 @@ class ManagedAciProcess implements AciTransport {
 
   private rejectEntry(entry: RequestEntry, error: Error): void {
     clearTimeout(entry.timer);
+    entry.removeAbortListener?.();
     if (error instanceof AciTransportError) {
       const metadata = lifecycleMetadata(this.key, this.state, entry, {
         ...error.metadata,
@@ -898,9 +944,11 @@ class ManagedAciProcess implements AciTransport {
   }
 
   private handleProcessClose(code: number | null, signal: NodeJS.Signals | null): void {
+    this.removeDrainListener?.(); this.removeDrainListener = undefined;
     const killSwitchTripped = this.killSwitchTripped || this.options.isKillSwitchTripped();
     const wasIntentional = this.intentionallyStopping || this.disposed || killSwitchTripped;
     this.child = null;
+    this.writeBlocked = false;
     this.stdoutBuffer = Buffer.alloc(0);
     if (killSwitchTripped) {
       this.state = "failed";
@@ -1051,8 +1099,12 @@ class ManagedAciProcess implements AciTransport {
     }
   }
 
-  async shutdown(): Promise<void> {
-    if (this.disposed) return;
+  shutdown(): Promise<void> {
+    return this.shutdownPromise ??= this.stop();
+  }
+
+  private async stop(): Promise<void> {
+    this.removeDrainListener?.(); this.removeDrainListener = undefined;
     this.disposed = true;
     this.intentionallyStopping = true;
     if (this.restartTimer) clearTimeout(this.restartTimer);
@@ -1070,7 +1122,13 @@ class ManagedAciProcess implements AciTransport {
       // Continue to process-tree termination below.
     }
     await Promise.race([closed, delay(this.options.shutdownGraceMs)]);
-    if (this.child) this.terminateNow();
+    if (this.child) {
+      this.terminateNow();
+      await Promise.race([closed, delay(this.options.shutdownGraceMs * 2)]);
+      if (this.child) {
+        throw new AciTransportError("E_ACI_SHUTDOWN", "ACI process exit is unverified after shutdown");
+      }
+    }
     this.child = null;
     this.state = "stopped";
   }
@@ -1088,11 +1146,16 @@ function asTransportError(error: unknown): Error {
 
 export class VerseShellProcessManager {
   private readonly processes = new Map<string, ManagedAciProcess>();
+  private readonly startups = new Map<string, ProcessStartup>();
+  private readonly acquisitions = new Set<ProcessAcquisition>();
+  private readonly closingWorkspaces = new Set<string>();
+  private readonly workspaceShutdowns = new Map<string, Promise<number>>();
   private readonly options: Required<VerseShellProcessManagerOptions> & {
     isKillSwitchTripped: () => boolean;
   };
   private readonly idleTimer: NodeJS.Timeout;
   private shuttingDown = false;
+  private shutdownPromise: Promise<void> | null = null;
   private killSwitchTripped = false;
 
   constructor(options: VerseShellProcessManagerOptions = {}) {
@@ -1124,10 +1187,16 @@ export class VerseShellProcessManager {
   async setKillSwitch(active: boolean, reason = "operator"): Promise<void> {
     this.killSwitchTripped = active;
     if (!active) return;
+    for (const acquisition of this.acquisitions) {
+      acquisition.cancel(new AciTransportError(
+        "E_ACI_KILL_SWITCH", "VerseShell execution is disabled by the operator kill switch",
+      ));
+    }
     await Promise.allSettled(
-      Array.from(this.processes.values(), (managed) => {
+      [...Array.from(this.processes.values(), (managed) => {
         managed.tripKillSwitch(reason);
-      }),
+        return managed.shutdown();
+      }), ...Array.from(this.startups.values(), (startup) => startup.promise)],
     );
   }
 
@@ -1136,6 +1205,34 @@ export class VerseShellProcessManager {
   }
 
   async getClient(config: VerseShellProcessConfig): Promise<VerseShellAciClient> {
+    let cancel!: (error: Error) => void;
+    const stopped = new Promise<never>((_resolve, reject) => { cancel = reject; });
+    const acquisition: ProcessAcquisition = {
+      workspace: canonicalWorkspace(config.workspace),
+      stopped,
+      cancel: (error) => {
+        if (acquisition.error) return;
+        acquisition.error = error;
+        cancel(error);
+      },
+    };
+    // Cancellation may arrive before the first await attaches to this promise.
+    void stopped.catch(() => {});
+    void acquisition.workspace.catch(() => {});
+    this.acquisitions.add(acquisition);
+    try {
+      this.assertAcquisitionOpen(acquisition);
+      const workspace = await Promise.race([acquisition.workspace, stopped]);
+      acquisition.canonicalWorkspace = workspace;
+      this.assertAcquisitionOpen(acquisition);
+      return await this.acquireClient(config, workspace, acquisition);
+    } finally {
+      this.acquisitions.delete(acquisition);
+    }
+  }
+
+  private assertAcquisitionOpen(acquisition: ProcessAcquisition): void {
+    if (acquisition.error) throw acquisition.error;
     if (this.shuttingDown) {
       throw new AciTransportError("E_ACI_SHUTDOWN", "ACI manager is shutting down");
     }
@@ -1145,7 +1242,16 @@ export class VerseShellProcessManager {
         "VerseShell execution is disabled by the operator kill switch",
       );
     }
-    const workspace = await canonicalWorkspace(config.workspace);
+    if (acquisition.canonicalWorkspace && this.closingWorkspaces.has(acquisition.canonicalWorkspace)) {
+      throw new AciTransportError("E_ACI_SHUTDOWN", "ACI workspace is shutting down");
+    }
+  }
+
+  private async acquireClient(
+    config: VerseShellProcessConfig,
+    workspace: string,
+    acquisition: ProcessAcquisition,
+  ): Promise<VerseShellAciClient> {
     const profile = resolveVerseShellPolicyProfile(config.policyProfile);
     const capabilities = canonicalCapabilityList(profile.capabilities);
     const policyProfile = validatePolicyProfile(profile.id);
@@ -1183,34 +1289,69 @@ export class VerseShellProcessManager {
       );
     }
     const key = processKey(withoutKey);
-    const existing = this.processes.get(key);
-    if (existing) return new VerseShellAciClient(existing);
-
-    await this.collectIdle();
-    if (this.processes.size >= this.options.maxProcesses) {
+    acquisition.key = key;
+    let startup = this.startups.get(key)?.promise;
+    let existing = this.processes.get(key);
+    if (!startup && !existing) {
+      await Promise.race([this.collectIdle(), acquisition.stopped]);
+      this.assertAcquisitionOpen(acquisition);
+      // Another caller may have reserved this identity while idle collection yielded.
+      startup = this.startups.get(key)?.promise;
+      existing = this.processes.get(key);
+    }
+    if (startup || existing) {
+      const managed = startup
+        ? await Promise.race([startup, acquisition.stopped])
+        : existing!;
+      await Promise.race([managed.ensureStarted(), acquisition.stopped]);
+      this.assertAcquisitionOpen(acquisition);
+      return new VerseShellAciClient(managed);
+    }
+    const occupied = new Set([...this.processes.keys(), ...this.startups.keys()]).size;
+    if (occupied >= this.options.maxProcesses) {
       throw new AciTransportError(
         "E_ACI_PROCESS_LIMIT",
         `VerseShell process limit (${this.options.maxProcesses}) reached`,
       );
     }
-    const binary = await this.options.resolveBinary();
-    if (!binary.verified) {
-      throw new AciTransportError(
-        "E_ACI_BINARY_UNVERIFIED",
-        "Bundled VerseShell resolver returned an unverified binary",
-      );
-    }
-    const immutable = Object.freeze({ ...withoutKey, key }) as ImmutableProcessConfig;
-    const managed = new ManagedAciProcess(immutable, Object.freeze({ ...binary }), this.options);
-    this.processes.set(key, managed);
+    // Reserve before invoking the asynchronous resolver; the same promise owns
+    // binary verification, spawn and handshake for every waiter of this key.
+    const promise = Promise.resolve().then(async () => {
+      this.assertAcquisitionOpen(acquisition);
+      const binary = await Promise.race([
+        Promise.resolve().then(() => this.options.resolveBinary()), acquisition.stopped,
+      ]);
+      this.assertAcquisitionOpen(acquisition);
+      if (!binary.verified) {
+        throw new AciTransportError(
+          "E_ACI_BINARY_UNVERIFIED", "Bundled VerseShell resolver returned an unverified binary",
+        );
+      }
+      const immutable = Object.freeze({ ...withoutKey, key }) as ImmutableProcessConfig;
+      const managed = new ManagedAciProcess(immutable, Object.freeze({ ...binary }), this.options);
+      this.processes.set(key, managed);
+      try {
+        await Promise.race([managed.ensureStarted(), acquisition.stopped]);
+        this.assertAcquisitionOpen(acquisition);
+        return managed;
+      } catch (error) {
+        await this.shutdownManaged(key, managed);
+        throw error;
+      }
+    });
+    this.startups.set(key, { workspace, promise });
     try {
-      await managed.ensureStarted();
-    } catch (error) {
-      this.processes.delete(key);
-      await managed.shutdown();
-      throw error;
+      const managed = await promise;
+      this.assertAcquisitionOpen(acquisition);
+      return new VerseShellAciClient(managed);
+    } finally {
+      if (this.startups.get(key)?.promise === promise) this.startups.delete(key);
     }
-    return new VerseShellAciClient(managed);
+  }
+
+  private async shutdownManaged(key: string, managed: ManagedAciProcess): Promise<void> {
+    await managed.shutdown();
+    if (this.processes.get(key) === managed) this.processes.delete(key);
   }
 
   health(key?: string): VerseShellProcessHealth | VerseShellProcessHealth[] | undefined {
@@ -1227,45 +1368,91 @@ export class VerseShellProcessManager {
   async collectIdle(): Promise<number> {
     const cutoff = this.options.now() - this.options.idleTtlMs;
     const expired = Array.from(this.processes.entries()).filter(
-      ([, managed]) => managed.idle && managed.lastUsedAt <= cutoff,
+      ([key, managed]) => !this.startups.has(key) && managed.references === 0 && managed.idle && managed.lastUsedAt <= cutoff,
     );
     await Promise.all(
-      expired.map(async ([key, managed]) => {
-        this.processes.delete(key);
-        await managed.shutdown();
-      }),
+      expired.map(([key, managed]) => this.shutdownManaged(key, managed)),
     );
     return expired.length;
   }
 
   async shutdownWorkspace(workspace: string): Promise<number> {
     const canonical = await canonicalWorkspace(workspace);
-    const matching = Array.from(this.processes.entries()).filter(
-      ([, managed]) => managed.workspace === canonical,
-    );
-    await Promise.all(
-      matching.map(async ([key, managed]) => {
-        this.processes.delete(key);
-        await managed.shutdown();
-      }),
-    );
-    return matching.length;
+    const existing = this.workspaceShutdowns.get(canonical);
+    if (existing) return existing;
+    const shutdown = this.stopWorkspace(canonical);
+    this.workspaceShutdowns.set(canonical, shutdown);
+    try {
+      return await shutdown;
+    } finally {
+      if (this.workspaceShutdowns.get(canonical) === shutdown) this.workspaceShutdowns.delete(canonical);
+    }
+  }
+
+  private async stopWorkspace(canonical: string): Promise<number> {
+    this.closingWorkspaces.add(canonical);
+    try {
+      await Promise.all(Array.from(this.acquisitions, async (acquisition) => {
+        if (await acquisition.workspace.catch(() => null) === canonical) {
+          acquisition.cancel(new AciTransportError("E_ACI_SHUTDOWN", "ACI workspace is shutting down"));
+        }
+      }));
+      const starting = [...this.startups.entries()].filter(([, entry]) => entry.workspace === canonical);
+      const matching = [...this.processes.entries()].filter(([, managed]) => managed.workspace === canonical);
+      const keys = new Set([...starting.map(([key]) => key), ...matching.map(([key]) => key)]);
+      await Promise.allSettled([
+        ...starting.map(([, entry]) => entry.promise),
+        ...matching.map(([key, managed]) => this.shutdownManaged(key, managed)),
+      ]);
+      return keys.size;
+    } finally {
+      this.closingWorkspaces.delete(canonical);
+    }
   }
 
   async shutdownProcess(key: string): Promise<boolean> {
+    const startup = this.startups.get(key);
     const managed = this.processes.get(key);
-    if (!managed) return false;
-    this.processes.delete(key);
-    await managed.shutdown();
+    if (!managed && !startup) return false;
+    for (const acquisition of this.acquisitions) {
+      if (acquisition.key === key) {
+        acquisition.cancel(new AciTransportError("E_ACI_SHUTDOWN", "ACI process is shutting down"));
+      }
+    }
+    await Promise.allSettled([
+      ...(startup ? [startup.promise] : []),
+      ...(managed ? [this.shutdownManaged(key, managed)] : []),
+    ]);
     return true;
   }
 
-  async shutdownAll(): Promise<void> {
-    if (this.shuttingDown) return;
+  /** A running lifecycle pins its existing executor; explicit shutdown remains owner authority. */
+  retainProcess(key: string): () => Promise<void> {
+    const managed = this.processes.get(key);
+    if (!managed) throw new AciTransportError("E_ACI_NOT_RUNNING", "Executor owner is unavailable");
+    managed.references++;
+    let released = false;
+    return async () => {
+      if (released) return;
+      released = true; managed.references--;
+      // A concurrent unscoped read or acquisition retains the executor until the
+      // existing idle collector can close it after that work finishes.
+      if (managed.references === 0 && managed.idle && this.processes.get(key) === managed
+        && ![...this.acquisitions].some(acquisition => acquisition.key === key)) await this.shutdownManaged(key, managed);
+    };
+  }
+
+  shutdownAll(): Promise<void> {
+    if (this.shutdownPromise) return this.shutdownPromise;
     this.shuttingDown = true;
     clearInterval(this.idleTimer);
-    const processes = Array.from(this.processes.values());
-    this.processes.clear();
-    await Promise.allSettled(processes.map((managed) => managed.shutdown()));
+    for (const acquisition of this.acquisitions) {
+      acquisition.cancel(new AciTransportError("E_ACI_SHUTDOWN", "ACI manager is shutting down"));
+    }
+    this.shutdownPromise = Promise.allSettled([
+      ...Array.from(this.startups.values(), (startup) => startup.promise),
+      ...Array.from(this.processes, ([key, managed]) => this.shutdownManaged(key, managed)),
+    ]).then(() => {});
+    return this.shutdownPromise;
   }
 }

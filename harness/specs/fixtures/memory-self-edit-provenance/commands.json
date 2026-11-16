@@ -1,0 +1,124 @@
+[
+  {
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/memory-self-edit-provenance.test.ts",
+      "tests/unit/runtime-memory-context-contracts.test.ts",
+      "tests/unit/runtime-memory-store.test.ts",
+      "tests/unit/runtime-memory-self-edit.test.ts",
+      "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+      "tests/unit/memory-self-edit-adapter.test.ts",
+      "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+      "--maxWorkers=1",
+      "--reporter=json",
+      "--outputFile=D:/tmp/tf0741/candidate-tests.json"
+    ],
+    "name": "unit",
+    "executable": "node",
+    "startedAt": "2026-11-04T12:57:29.4761887+00:00",
+    "elapsedMs": 39650,
+    "exitCode": 0,
+    "log": "D:\\tmp\\tf0741\\candidate-unit.log"
+  },
+  {
+    "args": [
+      "node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "D:/tmp/tf0741/tsconfig.json"
+    ],
+    "name": "typecheck",
+    "executable": "node",
+    "startedAt": "2026-11-04T12:58:09.2153824+00:00",
+    "elapsedMs": 1585,
+    "exitCode": 0,
+    "log": "D:\\tmp\\tf0741\\candidate-typecheck.log"
+  },
+  {
+    "args": [
+      "node_modules/eslint/bin/eslint.js",
+      "openclaw_runtime/src/runtime-core/memory-context.ts",
+      "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+      "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts",
+      "tests/unit/memory-self-edit-provenance.test.ts",
+      "tests/unit/runtime-memory-self-edit.test.ts",
+      "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+      "tests/unit/runtime-memory-context-contracts.test.ts",
+      "--max-warnings",
+      "0"
+    ],
+    "name": "lint",
+    "executable": "node",
+    "startedAt": "2026-11-04T12:58:10.8051176+00:00",
+    "elapsedMs": 3679,
+    "exitCode": 0,
+    "log": "D:\\tmp\\tf0741\\candidate-lint.log"
+  },
+  {
+    "args": [
+      "harness/src/cli.mjs",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/memory-self-edit-provenance.md",
+      "--since",
+      "7abbf58a3e1d4404f26076c54fd7ea00d75e26a3"
+    ],
+    "name": "harness-validate",
+    "executable": "node",
+    "startedAt": "2026-11-04T12:58:14.4878058+00:00",
+    "elapsedMs": 641,
+    "exitCode": 0,
+    "log": "D:\\tmp\\tf0741\\candidate-harness-validate.log"
+  },
+  {
+    "args": [
+      "harness/src/cli.mjs",
+      "run",
+      "--spec",
+      "harness/specs/tasks/memory-self-edit-provenance.md",
+      "--since",
+      "7abbf58a3e1d4404f26076c54fd7ea00d75e26a3",
+      "--dry-run"
+    ],
+    "name": "harness-plan",
+    "executable": "node",
+    "startedAt": "2026-11-04T12:58:15.1317686+00:00",
+    "elapsedMs": 604,
+    "exitCode": 0,
+    "log": "D:\\tmp\\tf0741\\candidate-harness-plan.log"
+  },
+  {
+    "args": [
+      "scripts/comms/replay.mjs"
+    ],
+    "name": "comms-replay",
+    "executable": "node",
+    "startedAt": "2026-11-04T12:58:15.7389331+00:00",
+    "elapsedMs": 266,
+    "exitCode": 0,
+    "log": "D:\\tmp\\tf0741\\candidate-comms-replay.log"
+  },
+  {
+    "args": [
+      "scripts/comms/compare.mjs"
+    ],
+    "name": "comms-compare",
+    "executable": "node",
+    "startedAt": "2026-11-04T12:58:16.0082804+00:00",
+    "elapsedMs": 186,
+    "exitCode": 0,
+    "log": "D:\\tmp\\tf0741\\candidate-comms-compare.log"
+  },
+  {
+    "args": [
+      "scripts/check-repository-artifacts.mjs"
+    ],
+    "name": "retention",
+    "executable": "node",
+    "startedAt": "2026-11-04T12:58:16.1970353+00:00",
+    "elapsedMs": 4750,
+    "exitCode": 0,
+    "log": "D:\\tmp\\tf0741\\candidate-retention.log"
+  }
+]

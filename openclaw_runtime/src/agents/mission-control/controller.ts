@@ -55,11 +55,23 @@ import {
   recordMissionEvent,
   saveMissionRun,
 } from "./store.js";
+import {
+  bindMissionManagedTask,
+  inspectMissionManagedTask,
+  isManagedMissionBridgeEnabled,
+  readMissionManagedTaskAcceptance,
+  requireMissionManagedTaskActive,
+  resolveMissionManagedTaskRuntime,
+  type InspectedMissionManagedTask,
+} from "./managed-task.js";
 import type {
   MissionConfig,
   MissionDecision,
   MissionEvidenceRef,
   MissionLifecycleEvent,
+  MissionManagedTaskAcceptanceReceipt,
+  MissionManagedTaskReference,
+  MissionManagedTaskRuntime,
   MissionMemoryCandidate,
   MissionPhase,
   MissionReviewerResult,
@@ -109,11 +121,54 @@ export type MissionControllerDeps = {
    * from the canonical session key (which addresses a different directory).
    */
   journalSessionId?: string;
+  /** Trusted current session/TaskSystemStore context for persistent managed Missions. */
+  managedTask?: MissionManagedTaskRuntime;
 };
 
 export type MissionRunResult = MissionRunRecord;
 
 const missionLocalControlPlaneConfigs = new WeakMap<MissionRunRecord, OpenClawConfig | undefined>();
+
+function readMissionManagedTask(record: MissionRunRecord): MissionManagedTaskReference | undefined {
+  const value = record.metadata?.managedTask;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  return value as MissionManagedTaskReference;
+}
+
+function currentMissionManagedTaskRuntime(
+  record: MissionRunRecord,
+  deps: MissionControllerDeps,
+): MissionManagedTaskRuntime | undefined {
+  const bridge = isManagedMissionBridgeEnabled();
+  const runtime =
+    deps.managedTask ??
+    resolveMissionManagedTaskRuntime(record.sessionKey, { required: bridge });
+  return bridge && runtime ? { ...runtime, required: true } : runtime;
+}
+
+function managedAcceptance(contract: {
+  acceptance: Array<{ id: string; description: string }>;
+}): string[] {
+  return contract.acceptance.map((criterion) =>
+    criterion.id + ": " + criterion.description,
+  );
+}
+
+function managedTaskText(contract: { objective: string; target: string }): string {
+  return contract.objective + "\nTarget: " + contract.target;
+}
+
+function managedAcceptanceEvidence(
+  receipt: MissionManagedTaskAcceptanceReceipt,
+): MissionEvidenceRef {
+  return {
+    type: "task_ledger",
+    ref: receipt.taskNodeId + ":accepted:" + receipt.acceptedEventSequence,
+    label: "TaskSystemStore acceptance receipt",
+    summary:
+      "Task " + receipt.taskNodeId + " accepted at revision " + receipt.revision + ".",
+  };
+}
 
 export type MissionKnowledgeInboxSourceRef = {
   id: string;
@@ -1045,6 +1100,28 @@ export function createMission(
   if (config.enabled === false) throw new Error("mission loop is disabled by configuration");
   const now = deps.now?.() ?? Date.now();
   const missionId = request.missionId?.trim() || (deps.idFactory ?? defaultId)("mission");
+  const managedBridge = isManagedMissionBridgeEnabled();
+  const requestedRuntime =
+    request.managedTask ??
+    deps.managedTask ??
+    (managedBridge
+      ? resolveMissionManagedTaskRuntime(request.sessionKey, { required: true })
+      : undefined);
+  const managedRuntime =
+    managedBridge && requestedRuntime
+      ? { ...requestedRuntime, required: true }
+      : requestedRuntime;
+  if (managedBridge && !managedRuntime)
+    throw new Error("MISSION_MANAGED_TASK_RUNTIME_REQUIRED");
+  const managedTask = managedRuntime
+    ? bindMissionManagedTask(managedRuntime, {
+        optional: managedRuntime.required !== true,
+      })
+    : null;
+  const objective = managedTask?.contract.objective ?? request.objective;
+  const acceptance = managedTask
+    ? managedAcceptance(managedTask.contract)
+    : (request.acceptance ?? []);
   let taskLedgerRootId: string | undefined;
   try {
     taskLedgerRootId = ensureLongTaskLedgerRoot({
@@ -1052,10 +1129,10 @@ export function createMission(
       sessionKey: request.sessionKey,
       ...(request.agentId ? { agentId: request.agentId } : {}),
       runId: missionId,
-      title: request.objective,
+      title: objective,
       source: "mission_loop",
       createdAt: now,
-      metadata: { missionId, acceptance: request.acceptance ?? [] },
+      metadata: { missionId, acceptance },
     });
   } catch {
     // Mission state remains authoritative if the ledger file is temporarily unavailable.
@@ -1065,8 +1142,8 @@ export function createMission(
     sessionKey: request.sessionKey,
     agentId: request.agentId,
     workspaceId: request.workspaceId,
-    objective: request.objective,
-    acceptance: request.acceptance ?? [],
+    objective,
+    acceptance,
     status: "idle",
     phase: "intake",
     tick: 0,
@@ -1086,6 +1163,12 @@ export function createMission(
       important: request.important ?? false,
       templateId: request.templateId ?? request.teamTemplateId,
       leadRole: request.leadRole ?? request.preferredLeadRole,
+      ...(managedTask
+        ? {
+            managedTask: managedTask.reference,
+            managedTaskTarget: managedTask.contract.target,
+          }
+        : {}),
     },
     createdAt: now,
     updatedAt: now,
@@ -1139,6 +1222,23 @@ export async function tickMission(
   missionLocalControlPlaneConfigs.set(record, cfg);
   const config = resolveAgentMissionConfig(cfg, record.agentId);
   const now = deps.now ?? Date.now;
+  const managedReference = readMissionManagedTask(record);
+  if (!managedReference && isManagedMissionBridgeEnabled())
+    throw new Error("MISSION_MANAGED_TASK_REFERENCE_REQUIRED");
+  let managedRuntime: MissionManagedTaskRuntime | undefined;
+  let managedSnapshot: InspectedMissionManagedTask | undefined;
+  if (managedReference) {
+    managedRuntime = currentMissionManagedTaskRuntime(record, deps);
+    if (!managedRuntime) throw new Error("MISSION_MANAGED_TASK_SESSION_CONTEXT_MISSING");
+    managedSnapshot = inspectMissionManagedTask(managedReference, managedRuntime);
+    record.objective = managedSnapshot.contract.objective;
+    record.acceptance = managedAcceptance(managedSnapshot.contract);
+    record.metadata = {
+      ...(record.metadata ?? {}),
+      managedTask: managedReference,
+      managedTaskTarget: managedSnapshot.contract.target,
+    };
+  }
   if (record.status === "paused" || record.status === "cancelled" || terminal(record.status)) {
     return clone(record);
   }
@@ -1203,6 +1303,70 @@ export async function tickMission(
       record.tick += 1;
       record.status = "running";
     }
+    if (
+      managedReference &&
+      managedSnapshot?.acceptanceReceipt &&
+      record.metadata?.managedTaskAcceptancePending === true
+    ) {
+      const receipt = managedSnapshot.acceptanceReceipt;
+      record.status = "complete";
+      record.phase = "complete";
+      record.lastDecision = "complete";
+      record.lastReason = "TaskSystemStore acceptance receipt verified.";
+      record.completedAt = now();
+      record.updatedAt = now();
+      record.metadata = {
+        ...(record.metadata ?? {}),
+        managedTask: managedReference,
+        managedTaskAcceptance: receipt,
+        managedTaskAcceptancePending: false,
+      };
+      record.evidenceRefs = [
+        ...record.evidenceRefs.filter(
+          (ref) =>
+            ref.ref !==
+            receipt.taskNodeId + ":accepted:" + receipt.acceptedEventSequence,
+        ),
+        managedAcceptanceEvidence(receipt),
+      ];
+      record.ticks.push({
+        tick: record.tick,
+        phase: "complete",
+        status: "complete",
+        decision: "complete",
+        taskLoopRunId: record.taskLoopRunId,
+        traceId: record.traceId,
+        lineage: record.lineage,
+        evidenceRefs: [...record.evidenceRefs],
+        createdAt: now(),
+        updatedAt: now(),
+      });
+      if (missionFencingEnabled && record.activeTickId) {
+        const finish = goalWakeController.finishMissionTick({
+          missionId: record.missionId,
+          expectedRevision: record.revision ?? 0,
+          activeTickId: record.activeTickId,
+          status: record.status,
+        });
+        if (!finish.ok) {
+          throw new Error(
+            "mission tick fencing finish failed for \"" +
+              input.missionId +
+              "\": " +
+              finish.reason +
+              (finish.message ? " (" + finish.message + ")" : ""),
+          );
+        }
+        record.revision = finish.revision;
+        record.activeTickId = null;
+        record.updatedAt = finish.row.updated_at;
+      }
+      const saved = saveMission(record);
+      if (typeof saved.revision === "number") record.revision = saved.revision;
+      emit(record, deps, { reviewerDecision: "complete" });
+      return clone(record);
+    }
+    if (managedSnapshot) requireMissionManagedTaskActive(managedSnapshot);
     const missionLineage = normalizeRuntimeLineage({
       sessionId: record.sessionKey,
       missionId: record.missionId,
@@ -1245,13 +1409,19 @@ export async function tickMission(
     record.phase = "execute";
     emit(record, deps);
     const shouldRunRepairTask = Boolean(input.repairBrief) || record.lastDecision === "repair";
+    const managedTaskPrompt = managedSnapshot
+      ? managedTaskText(managedSnapshot.contract)
+      : record.objective;
     const taskRequest: TaskLoopRunRequest = {
       task: shouldRunRepairTask
-        ? input.repairBrief || record.lastReason || record.objective
-        : record.objective,
+        ? (input.repairBrief || record.lastReason || record.objective) +
+          (managedSnapshot ? "\n\n" + managedTaskPrompt : "")
+        : managedTaskPrompt,
       sessionKey: record.sessionKey,
       agentId: record.agentId,
       workspaceId: record.workspaceId,
+      ...(managedReference ? { workspaceDir: managedReference.worktree } : {}),
+      ...(managedReference ? { managedTask: managedReference } : {}),
       taskLedgerRootId:
         typeof record.metadata?.taskLedgerRootId === "string"
           ? record.metadata.taskLedgerRootId
@@ -1552,9 +1722,51 @@ export async function tickMission(
         record.completedAt = now();
       }
     } else if (reviewer.decision === "complete") {
-      record.status = "complete";
-      record.phase = "complete";
-      record.completedAt = now();
+      if (managedReference) {
+        if (!managedRuntime) throw new Error("MISSION_MANAGED_TASK_SESSION_CONTEXT_MISSING");
+        const receipt = readMissionManagedTaskAcceptance(managedReference, managedRuntime);
+        if (receipt) {
+          record.status = "complete";
+          record.phase = "complete";
+          record.completedAt = now();
+          record.metadata = {
+            ...(record.metadata ?? {}),
+            managedTask: managedReference,
+            managedTaskAcceptance: receipt,
+            managedTaskAcceptancePending: false,
+          };
+          record.evidenceRefs = [
+            ...record.evidenceRefs.filter(
+              (ref) =>
+                ref.ref !==
+                receipt.taskNodeId + ":accepted:" + receipt.acceptedEventSequence,
+            ),
+            managedAcceptanceEvidence(receipt),
+          ];
+          record.remaining = record.remaining.filter(
+            (item) => item !== "TaskSystemStore acceptance receipt",
+          );
+        } else {
+          record.status = "sleeping";
+          record.phase = "collect_evidence";
+          record.lastDecision = "repair";
+          record.lastReason =
+            "Mission reviewer completed, but TaskSystemStore acceptance receipt is required.";
+          record.blockedReason = undefined;
+          record.nextWakeAt = now() + 60_000;
+          record.metadata = {
+            ...(record.metadata ?? {}),
+            managedTask: managedReference,
+            managedTaskAcceptancePending: true,
+          };
+          if (!record.remaining.includes("TaskSystemStore acceptance receipt"))
+            record.remaining = [...record.remaining, "TaskSystemStore acceptance receipt"];
+        }
+      } else {
+        record.status = "complete";
+        record.phase = "complete";
+        record.completedAt = now();
+      }
     } else if (reviewer.decision === "blocked") {
       record.status = "blocked";
       record.phase = "blocked";
@@ -1736,6 +1948,14 @@ export function resumeMission(
 ): MissionRunRecord {
   const record = (deps.getMission ?? getMissionRunFromStore)(missionId);
   if (!record) throw new Error(`unknown mission "${missionId}"`);
+  const managedReference = readMissionManagedTask(record);
+  if (!managedReference && isManagedMissionBridgeEnabled())
+    throw new Error("MISSION_MANAGED_TASK_REFERENCE_REQUIRED");
+  if (managedReference) {
+    const managedRuntime = currentMissionManagedTaskRuntime(record, deps);
+    if (!managedRuntime) throw new Error("MISSION_MANAGED_TASK_SESSION_CONTEXT_MISSING");
+    inspectMissionManagedTask(managedReference, managedRuntime);
+  }
   if (record.status === "paused") {
     record.status = "sleeping";
     record.phase = "schedule";

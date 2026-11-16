@@ -1,0 +1,15 @@
+{
+  "candidate": {
+    "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+    "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+    "dirty": false
+  },
+  "sourceHashes": {
+    "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+    "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+    "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+    "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+    "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+    "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+  }
+}

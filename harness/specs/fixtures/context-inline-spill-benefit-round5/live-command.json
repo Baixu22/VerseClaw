@@ -1,0 +1,39 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "r5-live",
+  "cwd": "C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "live",
+    "--out",
+    "D:\\tmp\\windows-inline-closeout-20261112\\inline-r5-live",
+    "--repeats",
+    "3",
+    "--max-turns",
+    "8"
+  ],
+  "started_at": "2026-11-12T16:02:52.476977+00:00",
+  "duration_seconds": 2818.625,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\r5-live.stdout.txt",
+      "bytes": 1689,
+      "sha256": "f98f192fd68b7b226001cf8d9781840b65df88fca4fbb30fab6da081145ea6c1"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\r5-live.stderr.txt",
+      "bytes": 21139,
+      "sha256": "2a302c4c23e3256a210f4ead01bfc4c4150e0aae84c6c7a99d82453dd4186c0d"
+    }
+  }
+}

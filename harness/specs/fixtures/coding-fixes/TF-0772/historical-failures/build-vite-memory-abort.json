@@ -1,0 +1,24 @@
+{
+  "at": 1794030875.8095176,
+  "reason": "cancelled owned Vite build under observed physical memory exhaustion; review identified a required source change",
+  "pid": 12532,
+  "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "--max-old-space-size=6144",
+    "node_modules/vite/bin/vite.js",
+    "build"
+  ],
+  "memory": {
+    "total": 16295432192,
+    "available": 8941568,
+    "percent": 99.9,
+    "used": 16286490624,
+    "free": 8941568
+  },
+  "children": [
+    {
+      "pid": 31880,
+      "name": "esbuild.exe"
+    }
+  ]
+}

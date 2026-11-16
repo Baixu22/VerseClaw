@@ -11,6 +11,7 @@ import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { TtsAutoMode } from "../config/types.tts.js";
 import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
 import type { ContextBlockSink } from "../context-engine/block.js";
+import type { PromptContributionDeclaration } from "../context-engine/prompt-contribution-authority.js";
 import type { RuntimeTaskStatus } from "../runtime-core/types.js";
 import type { RuntimeLineage } from "../runtime-core/lineage.js";
 import type {
@@ -1180,6 +1181,7 @@ export type PluginHookHandlerMap = {
 };
 
 export type PluginHookRegistration<K extends PluginHookName = PluginHookName> = {
+  promptContribution?: PromptContributionDeclaration;
   pluginId: string;
   hookName: K;
   handler: PluginHookHandlerMap[K];

@@ -933,7 +933,10 @@ export function resolveDeletedAgentIdFromSessionKey(
   return agentId;
 }
 
-export function loadSessionEntry(sessionKey: string, opts?: { agentId?: string; clone?: boolean }) {
+export function loadSessionEntry(
+  sessionKey: string,
+  opts?: { agentId?: string; clone?: boolean; skipCache?: boolean },
+) {
   const cfg = getRuntimeConfig();
   const key = normalizeOptionalString(sessionKey) ?? "";
   const target = resolveGatewaySessionStoreTargetWithStore({
@@ -941,6 +944,7 @@ export function loadSessionEntry(sessionKey: string, opts?: { agentId?: string; 
     key,
     ...(opts?.clone === false ? { clone: false } : {}),
     ...(opts?.agentId ? { agentId: opts.agentId } : {}),
+    ...(opts?.skipCache === true ? { skipCache: true } : {}),
   });
   const storePath = target.storePath;
   const store = target.store;
@@ -1352,6 +1356,7 @@ function resolveGatewaySessionStoreLookup(params: {
   canonicalKey: string;
   agentId: string;
   clone?: boolean;
+  skipCache?: boolean;
   initialStore?: Record<string, SessionEntry>;
 }): {
   storePath: string;
@@ -1364,7 +1369,7 @@ function resolveGatewaySessionStoreLookup(params: {
     agentId: params.agentId,
     storePath: resolveStorePath(params.cfg.session?.store, { agentId: params.agentId }),
   };
-  const loadOptions = params.clone === false ? { clone: false } : undefined;
+  const loadOptions = { clone: params.clone, skipCache: params.skipCache };
   let selectedStorePath = fallback.storePath;
   let selectedStore = params.initialStore ?? loadSessionStore(fallback.storePath, loadOptions);
   let selectedMatch = findFreshestStoreMatch(selectedStore, ...scanTargets);
@@ -1402,6 +1407,7 @@ function resolveExplicitDeletedLegacyMainStoreTarget(params: {
   cfg: OpenClawConfig;
   key: string;
   clone?: boolean;
+  skipCache?: boolean;
   scanLegacyKeys?: boolean;
 }): GatewaySessionStoreTargetWithStore | null {
   const parsed = parseAgentSessionKey(params.key);
@@ -1433,7 +1439,7 @@ function resolveExplicitDeletedLegacyMainStoreTarget(params: {
         match: { entry: SessionEntry; key: string };
       }
     | undefined;
-  const loadOptions = params.clone === false ? { clone: false } : undefined;
+  const loadOptions = { clone: params.clone, skipCache: params.skipCache };
   for (const target of resolveAllAgentSessionStoreTargetsSync(params.cfg)) {
     if (target.agentId !== legacyAgentId) {
       continue;
@@ -1478,6 +1484,7 @@ export function resolveGatewaySessionStoreTargetWithStore(params: {
   key: string;
   agentId?: string;
   clone?: boolean;
+  skipCache?: boolean;
   scanLegacyKeys?: boolean;
   store?: Record<string, SessionEntry>;
 }): GatewaySessionStoreTargetWithStore {
@@ -1486,6 +1493,7 @@ export function resolveGatewaySessionStoreTargetWithStore(params: {
     cfg: params.cfg,
     key,
     clone: params.clone,
+    skipCache: params.skipCache,
     scanLegacyKeys: params.scanLegacyKeys,
   });
   if (explicitDeletedMainTarget) {
@@ -1507,6 +1515,7 @@ export function resolveGatewaySessionStoreTargetWithStore(params: {
     canonicalKey,
     agentId,
     clone: params.clone,
+    skipCache: params.skipCache,
     initialStore: params.store,
   });
 

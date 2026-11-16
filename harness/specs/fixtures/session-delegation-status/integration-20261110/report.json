@@ -1,0 +1,1992 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "base": "390e39259429255b6712c84440be4f567e2ec25d",
+  "source": "44792b21de67a0b891adea9d247bcc83006499ab",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "before": "c2f7301afb6709ba23d0239ad33fb7fa20a501c729c24daf708583b751e4cd5a",
+      "after": "7934f8d004ee22ad52c4b44acabb1c02c85378f0a653ca821b9bbb8efa96e75e",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "README.md",
+      "before": "462a3a47cd6ee1d7aab630e546cd176a6d97992758f70f5be9eae969c2faace2",
+      "after": "6de6eb9e14b857ccd22c4ab73ea6cf5db68f81f2d8ee3682901517216cb811a7",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "README.ru-RU.md",
+      "before": "76e644619a534b175fc7c8bf9196f77e8e0fcfcc7623cc994086779d4512218d",
+      "after": "6b6c36bfd8402db8b47e727921b3f02ad216fd6672114775dced68e53c9e9eca",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "README.zh-CN.md",
+      "before": "8bafebce5a8066fef72583ab710460605ea388621d9de6b1a5c98632325d289c",
+      "after": "aa8ff34f2e9ba964f2dee555fa62d0416faa0362b89487ebc9cc8ca41e67e487",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "before": "f1a85fa5e97ffcbf619a683dfacb447cfcdfb3c84022ee515b8fc2f397382d2e",
+      "after": "5bc6b87d6fc67432e3aca049e49bd56ac53cdd64bc75aa86a96786ac0f4f8e6d",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "before": "9ef994fcab64e8312a307c735b037d8c5e4b17c14e6f93f6cc7d66c26fc2903e",
+      "after": "e140ffe4dae7776a9e16462a1f32772d4dc54346b9b5294077315dfd9b4da842",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "electron/services/task-ledger-api.ts",
+      "before": "8a2118c76d07e9a88e22404317e5bd8ab09db3f79cfd5f6b292da6af1a073e22",
+      "after": "f8674a3b8e754f43f1430ee32d503175ebaca0e919f19bd6f230d5a22a188972",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "electron/services/task-ledger-service.ts",
+      "before": "55f81ded472843e205fdfa0dfc5817d2354a0ef7d15a707c4aaea01546b598d0",
+      "after": "ed760146c185f51e613a02138856f5267a28e194f94f3c8228e31d7c6fcd6076",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "electron/services/task-system-service.ts",
+      "before": "1c5a21991c405550180e76e10e9972063a482ab6433fe07787ffb9abd3b28aee",
+      "after": "646d948dfdc6b35a5c668db0ebe95da0b5618cc0caeae3cebf8b42c7b3a6db51",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "before": "ffc1f7577cdb7e03ad4d47dcf961ece82d4908a0f3d6cc4e5411bdd1a4d3f1ae",
+      "after": "df8744d2fa426d4ebac30be296391057eb1183b35e7cafbfaf2eea5c5a839e11",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/REPORT.md",
+      "before": null,
+      "after": "5633a6443bdbc5a4cb1d0a0b7b0592ee3255f2a4eda1b627f3d4e45616d334e2",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/baseline/u4-combined-harness-ci.log.txt",
+      "before": null,
+      "after": "910cd4e2c1d43ab0efce0eae77dc3a50b90613860fdcc08fcbb9360f18e93d3c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/baseline/u4-combined-harness-ci.result.json",
+      "before": null,
+      "after": "fc0975075c93cd14c93fae09a216b7341631127ab4a0ad1f21b37d697680a255",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-combined-desktop.log.txt",
+      "before": null,
+      "after": "c4ef30818f481fcc614e375c7cf148f981852311adae77f5f45fc1341408f2ff",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-combined-desktop.result.json",
+      "before": null,
+      "after": "972a78463ff7910d294641c5e95763d26e778ecd645377acbbee6ae2576b448d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-combined-runtime.log.txt",
+      "before": null,
+      "after": "a6508270227f1ab5fe8cceadcfaf8f463014f0093ffd7f8ef516245c44445ea5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-combined-runtime.result.json",
+      "before": null,
+      "after": "f6f6f94115f090138e30d350dd59d5465eae9d0580e0255d5a8f3a5ef5000690",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-combined-typecheck.log.txt",
+      "before": null,
+      "after": "f9d833c807a228f432e60d41b11c7ee7feb4246aebf715a4fa5f80d56d6de703",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-combined-typecheck.result.json",
+      "before": null,
+      "after": "377df7546c91cfb03d7da84ccbd759f40eba2360676704bc1cc3a98d93e62695",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-en.log.txt",
+      "before": null,
+      "after": "7befc1b4ae54f90b7723e858b5dadf448ec922aea8faf43755b6f52f2ba07bda",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-en.result.json",
+      "before": null,
+      "after": "6b1595c0337b01dae8a6cdf4efbfe9b8f326895e0d4f96363d68a2c5f6993237",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-en.tests.json",
+      "before": null,
+      "after": "88135171a267007aaf718226ceffe58df5a077943228561354bc327b01bcbe88",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-ja.log.txt",
+      "before": null,
+      "after": "8616ead0a52a8f59077d275a5a40fe964adb60122984d93853f67b6c894a745f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-ja.result.json",
+      "before": null,
+      "after": "f0d72e1dd81c52a86b1d6836164bba7f0cb12ad0453f7e6911af328c1d5164fa",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-ja.tests.json",
+      "before": null,
+      "after": "226c695a5ae8342b01ddce3d3836fe3638bde095ceb2810bb59645b956f53876",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-ru.log.txt",
+      "before": null,
+      "after": "e144c87573c45ee881c7f8afe71606d0036d71875c8a170f0a06b050cee24a16",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-ru.result.json",
+      "before": null,
+      "after": "0734e408cc995e86680ebf82c3e0b4290c2283ee45a0cc134d7b1579bfdf6607",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-ru.tests.json",
+      "before": null,
+      "after": "93d116c2e06c1edb39defea45ffa034477950ab3308115b8b7eed485bfca6727",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-zh.log.txt",
+      "before": null,
+      "after": "646335b7e59311e061727b771f567b4fb2b17906fa5f14c5dc6b4735c61ecc4b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-zh.result.json",
+      "before": null,
+      "after": "a3487128fb1bf60f1a48c502f2debb1339ad1d8fe8f9865c0e28e17e263f62bd",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-acceptance-zh.tests.json",
+      "before": null,
+      "after": "83d1372bd049301dbd411e513855054688ef636ad23b32889a7fc16a7604983c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-active-parent.log.txt",
+      "before": null,
+      "after": "154960f76450b0ee70da0ec5e5490a1d01dfa3113e63ddd4edaf7b033303defa",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-active-parent.result.json",
+      "before": null,
+      "after": "7114130635138f17d71b1eadf920a77daccf8dbf6da0b5606ba13fe6206aedb1",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-active-parent.tests.json",
+      "before": null,
+      "after": "b8ed10a7168d5c1475096d54212a6fa7631651d9d114b65c446411069bba9b6a",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-controls.log.txt",
+      "before": null,
+      "after": "1e484525164b9d10874fbc18adbd713d091b3897d0b9c3421e612d520724b71d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-controls.result.json",
+      "before": null,
+      "after": "f716f02d52a0e98a9197e892ddaac559656760e5e0394967556c326e14e32fc5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-controls.tests.json",
+      "before": null,
+      "after": "7c55d9c6315e1d48616c37f2bf585a91f0dc7b24ce64b3cdad2df3ea4c91a259",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-derivation-retry.log.txt",
+      "before": null,
+      "after": "a2d7762af9272592b0e6d18876ca7e5fe06f3efbfbd812d1a4720124aaf7b067",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-derivation-retry.result.json",
+      "before": null,
+      "after": "51cc01b086af3f8614cece4326a8f45bcfabe5d2c6c5f4017e047c8a8fdfdc52",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-derivation-retry.tests.json",
+      "before": null,
+      "after": "6bf7c00c696303be50404078ffceabe7430dba9ce587b2d55334bbca2ce4fe41",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-isolation.log.txt",
+      "before": null,
+      "after": "9567fad6134ebe60a859aef666092f2a8f65050504e8a70176e532b0b8ecf259",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-isolation.result.json",
+      "before": null,
+      "after": "3cb1fd0ea9581ccb65ce7e871d8b6030a1dd1158e650381d01d328debc365b84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-isolation.tests.json",
+      "before": null,
+      "after": "ee56823e9597f6c8d1befae3232380077f63b53a5062bd4d0c522930d976331a",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-navigation.log.txt",
+      "before": null,
+      "after": "88ffb20a0613970165d718001d2e6dd86bb4021b2a8c0026a91e81ff3c9b0d7b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-navigation.result.json",
+      "before": null,
+      "after": "169979f841874ec7b962f489547811fae37b3d52180915148d4226ee7a5cfe33",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-navigation.tests.json",
+      "before": null,
+      "after": "0ac7207a77e007ac6f8f1eccfce3605b65ffbd833b0132ef4e7c5a8ec4366f37",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-owner-replay.log.txt",
+      "before": null,
+      "after": "1b34058e7f6d1991da0646433d38d41f8f03d223d03da6940772c817c74bcdf4",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-owner-replay.result.json",
+      "before": null,
+      "after": "ae2b5a23312a56249d471359db81c54c0cdf53e06accf2ba7a79929a79f8454f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-owner-replay.tests.json",
+      "before": null,
+      "after": "059b7daa059e54a39565aa297e1ed1984f53d2812d307841aecc1b808fc50b48",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-owner-unit.log.txt",
+      "before": null,
+      "after": "a492654ac446877b249c7302e9c8b85f170e217ef28603954e02464180bef65d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-owner-unit.result.json",
+      "before": null,
+      "after": "c6ce8666723ffa4e0af172d0d0af8e70fdf788e249cd388a294591d85d854677",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-owner-unit.tests.json",
+      "before": null,
+      "after": "c640dd10eceb95f82e38f0b290f2c48196979f8805b18e5dd0d9abdf17cd645f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-plan.log.txt",
+      "before": null,
+      "after": "9e9f68cd2cdfa313328db036a54023eb085e0cf0294c460b9e45fc783d25e44f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-final-plan.result.json",
+      "before": null,
+      "after": "000932e500f76c698ef4501b6d4bba849e818264f7dffeb38f85d6483ea7a572",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-comms-compare.log.txt",
+      "before": null,
+      "after": "0d62b298e016011e8656c7496c11080f01acd3823021f390566e843af071f834",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-comms-compare.result.json",
+      "before": null,
+      "after": "c4d6a6e6c14dd5e28ebafdb1a318d9a89f9708eadd09cc0c40c4a76203ee1ff8",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-comms-replay.log.txt",
+      "before": null,
+      "after": "59789846a5e37afd95689bf569af3d8eb7d285211fb936c727503f7c5ba55b4d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-comms-replay.result.json",
+      "before": null,
+      "after": "d83bacd53110482d379ff31dfd2270517e0ea7cf371bea382bff54ea37619f80",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-contract.log.txt",
+      "before": null,
+      "after": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-contract.result.json",
+      "before": null,
+      "after": "c4c7ffcfa52d8534397bbf1b64be20a8083eb04aa1253193b92fcd49335f3cfc",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-harness.log.txt",
+      "before": null,
+      "after": "71dceed99dd77b1d012c79e856d8b61802cdf928e642f8436a0fdaf1397b218b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-harness.result.json",
+      "before": null,
+      "after": "023144e59a9ef2e5cf86ad00d5d0b570de78108e8eb771c9b399341208c52694",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-i18n.log.txt",
+      "before": null,
+      "after": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-i18n.result.json",
+      "before": null,
+      "after": "bb30e36a1fce71364aeefacd8a63c6885c81a7a64ce540d9a38ee596f462ef30",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-lint.log.txt",
+      "before": null,
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-main-lint.result.json",
+      "before": null,
+      "after": "9d7ba09cf973aa8c123dedf28091024b79be6c6062216a2792f27e6e96bbcee0",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-merged-unit.log.txt",
+      "before": null,
+      "after": "b3148b54e122b0d9657a6c8cde9806f40db54c717d849a31924c9e20e023df8c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-merged-unit.result.json",
+      "before": null,
+      "after": "b2b3984ae83e7146290a324ca44057049617dc0d151cdf3c3a90dc5b1b7afff2",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/commands/u4-merged-unit.tests.json",
+      "before": null,
+      "after": "639659cc73937198370e041ce13d27b4ecfc9129b1d24b773c9264ec1c519d60",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/execution/build-pipeline.json",
+      "before": null,
+      "after": "6d4058d25d867448556ed784ef823a6bc3385bd12459c5c2eb0e29139d58f903",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/execution/e2e-family-retry-pipeline.json",
+      "before": null,
+      "after": "077b735bc630b1ce8794d26e8cd0cdb3b0111ba3c29ac32534a495f8e68fa22b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/execution/e2e-pipeline.json",
+      "before": null,
+      "after": "6e7af806b0e0dd3782cf6b908d132f810b63165e53bd1a9205772853b27506c9",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/execution/e2e-prestart-observations.jsonl",
+      "before": null,
+      "after": "e3aca40753877ee66574a4aaf712bc160605b0b4f1b659b8e16e8ce0046f31cc",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/execution/e2e-selected-pipeline.json",
+      "before": null,
+      "after": "d0f2e565fd33accbec7bb8da1a605a52d9e7a1722ed2aea86dbc52510f5d4de2",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures.json",
+      "before": null,
+      "after": "22d2c9e6e1ceabc2258f6633187d7c16ff5aa6a6e4e37fe026155d4ae36b7c90",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/cleanup-readback-red.log.txt",
+      "before": null,
+      "after": "f9f198f78aef1537da85578e4d7323e8970d8afa90d47e73fb41fa8e22f7aa41",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/cleanup-readback-red.result.json",
+      "before": null,
+      "after": "8759f0933a28ce8332dd3a77fb24e5902cb484be1ea164549df1dab1f7880e83",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/cleanup-readback-red.tests.json",
+      "before": null,
+      "after": "9b30fe2bb01497551f1e1eb5623576342c571e3aa47561d7988144a3363b883e",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/read-budget-red.log.txt",
+      "before": null,
+      "after": "31fe83d088e192422478240285fad2e2f9a9bb612da49e658bd82442a09f8f30",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/read-budget-red.result.json",
+      "before": null,
+      "after": "e574793bc2824c886706366d9c90a6ce6ca750569dcfeb9e604432bd1b088474",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/read-budget-red.tests.json",
+      "before": null,
+      "after": "7662422883a7bf74d2e53846571d9d683d1dd0fb6778430873fa16eb1e58d845",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation.log.txt",
+      "before": null,
+      "after": "359037e087469da101d0abaa02fa961e49c30e52939596de705efb5269493b3c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation.result.json",
+      "before": null,
+      "after": "17d174cb4fa5256f26f59358fc6de4af63376b136c4bf5870a361628848adccd",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation.tests.json",
+      "before": null,
+      "after": "9a8e728f613d37cbc67dcdad11a0aac35932abb5dc84c14b5cd243a584a4cf60",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/electron-process-cleanup.json",
+      "before": null,
+      "after": "0cfc09b66f980a661b71eb61b04cf0d6337b88b8e81dd69b676ee15bed414563",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/electron-process-run.json",
+      "before": null,
+      "after": "eba46589f8f033fd6835ae518b042282399b2c67ec1c8aca310e992e2ab501ca",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/error-context.md",
+      "before": null,
+      "after": "5c26da98f60d511f4035f9bdb5e85d1c11a0b533eb62dc92a6154358b0341dcb",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-layout.json",
+      "before": null,
+      "after": "79404327df62f66c5ca8cf3ec3c01792ba290be346a494b0af09c85d56c3a95b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/test-failed-1.png",
+      "before": null,
+      "after": "a09bfcf7803c5d2ebf82b7fca55ad6c92b99f5c5dd50c20bb216e5fff8064105",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/trace.zip",
+      "before": null,
+      "after": "8e4577e1b53037029ce4e170e4fd334fcf66b135c4d82ffe042d7221bf3330e0",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/ui-diagnostic-0.png",
+      "before": null,
+      "after": "453157cbc192befbb279215314322cfcf636af793f7f72b62ef26953fae2ec0b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/ui-diagnostics.json",
+      "before": null,
+      "after": "04826d2b673938ba908b09b270703e5a9cf4001f45967cb13043283503cd8539",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-fork-draft.png",
+      "before": null,
+      "after": "5f5b8e4b56e9418b42808346f05475ef18949daa5a922aad3e50a80dee0b6245",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-handoff-journey.json",
+      "before": null,
+      "after": "ccda1dd16c5bdafca03f49c8c3f46d53e75e289fd096b7691ac929b2aa5b3d36",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostic-0.png",
+      "before": null,
+      "after": "60700214531790ea5863403760976cd03fe7fcfe7a7b2567cb818f5ef6757340",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostics.json",
+      "before": null,
+      "after": "4885acd280091df60ce0b469f86e590c464eef9098264ceb8dd4e36153b78fad",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-derivation/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-harness-ci.log.txt",
+      "before": null,
+      "after": "570d07c4462be8166f130c0ab390b494b8a7d134d2bb9987c655093d7d700645",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-final-harness-ci.result.json",
+      "before": null,
+      "after": "35249a9ca24ee9fb8bf14ee1f3d54214cd754879389d0149d41f53e209cb73cf",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-main-unit.log.txt",
+      "before": null,
+      "after": "f6efed123395f5ffa392527c27b5060672dd2b8afcf7bea9136c1c860ec99149",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-main-unit.result.json",
+      "before": null,
+      "after": "6a4b0cd13a6d42d6d214530f6043ae66943285f8443c11be3f3d72f8bd0dfdcb",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-main-unit.tests.json",
+      "before": null,
+      "after": "3baa30436aa1850e63645519618e468b9749833c5a33ea178795326aa33c183a",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-merged-typecheck.log.txt",
+      "before": null,
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-merged-typecheck.result.json",
+      "before": null,
+      "after": "923ff7870d83faa17e66c5c265731c7f7bfae7e0d2ad870f7f0b5052439278b7",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-relay-final-fences.log.txt",
+      "before": null,
+      "after": "8a454de43ca0434bdb226a17a77794c451409751563210a3d7712d23bce9c741",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-relay-final-fences.result.json",
+      "before": null,
+      "after": "553f0513c845949218457f611272e64d2bd2d6379519c9f79f22eefce4174434",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-relay-final-fences.tests.json",
+      "before": null,
+      "after": "30e6fbc264a4595b4f5b92b2045a8b20314f04453233050370378b4579bd39e9",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-relay-typecheck.log.txt",
+      "before": null,
+      "after": "471f25aed2405675ec1fb835586e0466b4bf463f940bd6a5bca4cffb3df07062",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/failures/u4-relay-typecheck.result.json",
+      "before": null,
+      "after": "19b43527d7febd7cf139a15a1b4963bdb1b228b6b654eed82d13f12b8453bcc9",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/integration-preview/overlay-inputs.json",
+      "before": null,
+      "after": "54e80a8f2d8da1930dc8606f0f45289207d85cb0caa57e9a8c0eaebfd80a020d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/integration-preview/overlay-vitest-sources.json",
+      "before": null,
+      "after": "02aa42667483fae91aa306946a264996fb56b32fee9e2bb7f68b50e291808bbe",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/integration-preview/u4-main-overlay.log.txt",
+      "before": null,
+      "after": "68e156658f2aedce6c700c0356004686a4c306861204f6f698772b9177a503f6",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/integration-preview/u4-main-overlay.result.json",
+      "before": null,
+      "after": "8bdc295cbd767fd42581f825b8330c04157cec806daf9f68f99c042721ab6e45",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/integration-preview/u4-main-overlay.tests.json",
+      "before": null,
+      "after": "595249bc30a0051e1bcfc9db9c2ad06289a9d857ec87d61125016bc3d9c03f0f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/artifacts/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/accepted-worker-workspace/accepted.txt",
+      "before": null,
+      "after": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/electron-process-cleanup.json",
+      "before": null,
+      "after": "9eb1eed14c9fd9875269a1b98b8fe7cfc888a2e6372b61a7a46a4ed7b117624a",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/electron-process-run.json",
+      "before": null,
+      "after": "67d0ef40d473bef0f90a9e21c778f33a08777c2abd8fbb45389ef5f49fa84e7f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/worker-awaiting-acceptance.png",
+      "before": null,
+      "after": "ed52c4934de956980c7d4a67a7383698f336fdd222639b5529ed691dc64b2830",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/worker-cost-unknown.png",
+      "before": null,
+      "after": "dcb796b92b4b0ed9a1b32109d1f14089fece03b1383005124cf10f837bd39ddd",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/worker-owner-acceptance.json",
+      "before": null,
+      "after": "6845569fe28ea7563b5bb1c4c7be10aa04ceb175fd90ddbfb7014a44e753d884",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/worker-owner-accepted-en.png",
+      "before": null,
+      "after": "9bcc7fd0b5a6ebbd9c4af31ff9d0a759bfe49456551ee0063a12c32196f20717",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/worker-owner-accepted.png",
+      "before": null,
+      "after": "396451a6775c4b224af9513b6e3e2cb7d3b5d75bcbe1afcddda4ba04aee9e0ed",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/worker-owner-receipts.json",
+      "before": null,
+      "after": "9b0d757449e18cd374cc7962beb2c57a3e9e84b5cd962933b0de997c110c0f43",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/worker-owner-refresh.json",
+      "before": null,
+      "after": "3246fcf6f6248eb6390b5cba2755f21912aeb7312d4e21627508bbc4cddbea91",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-en/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/artifacts/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+      "before": null,
+      "after": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/electron-process-cleanup.json",
+      "before": null,
+      "after": "ffd3a543001c64fdd307e7737bcfdf11f0e941ef24aba6197156b4386c66be97",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/electron-process-run.json",
+      "before": null,
+      "after": "bfb1943418762cb4ec92a12d408d555a9823086085964c667fc83c7ff32c093a",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/worker-awaiting-acceptance.png",
+      "before": null,
+      "after": "736189d2c2852a2b12e476f5379b016611f7413b34c415f12edbeb9aeb258398",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/worker-cost-unknown.png",
+      "before": null,
+      "after": "471c9bbded8975a9158b408abd060846d14aea69b6e6fbd9a8e29c85ae44d501",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/worker-owner-acceptance.json",
+      "before": null,
+      "after": "2cdb8a8e4b3445637cbebfb403f941ac8651906ff8406a0baa72e47c80c93b4d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/worker-owner-accepted-ja.png",
+      "before": null,
+      "after": "aa2d08e3ab2c96557f0db8d61172b49ffa5e46f8e7e7ad3188e70c921ba0d16f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/worker-owner-accepted.png",
+      "before": null,
+      "after": "be14bc7fb9e5a8d6522aeb3858c623f7fde7db70fa51385dda2940ce27d571fe",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/worker-owner-receipts.json",
+      "before": null,
+      "after": "c50fe64be4232a40a57c62e62803b2a53abd4be132e360874f58fdf226f5154a",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/worker-owner-refresh.json",
+      "before": null,
+      "after": "ea208bf2456b3baec98df4003876af42294d181516ff3fc4e884172a613f5cb3",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ja/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/artifacts/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/accepted-worker-workspace/accepted.txt",
+      "before": null,
+      "after": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/electron-process-cleanup.json",
+      "before": null,
+      "after": "c8eed2a32abf4bd9a14a17b771b6c4cbc5861802fdfe42d9d580edd1518283c1",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/electron-process-run.json",
+      "before": null,
+      "after": "2172ba4c2968377d63955395ebe152660b9eda2abeda5d6f4dcb7dafc1905f36",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/worker-awaiting-acceptance.png",
+      "before": null,
+      "after": "1b5183c352fc2f5b04a2ec8425d6809afe1e1863993c1b500aeff862201c84e4",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/worker-cost-unknown.png",
+      "before": null,
+      "after": "a315a7a3bb32f68ec480d6940ae0e121382f2eccf2305a0373089f9165c2e862",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/worker-owner-acceptance.json",
+      "before": null,
+      "after": "d26314462c08aa40f20b49b4d5d49407e5ab7f1954c0fbf67fe0ae01b67ef670",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/worker-owner-accepted-ru.png",
+      "before": null,
+      "after": "a961e9c4c71c3f30403b176a2e2411cd5e43dae3f951b0e03a22f5590ca97055",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/worker-owner-accepted.png",
+      "before": null,
+      "after": "b791a2c5548824ff902731973b75de994caa3a3b353cbddd4d4ae8ca3f44f6ae",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/worker-owner-receipts.json",
+      "before": null,
+      "after": "0f365ef388f99320abd25efcd25cacf80e7eca4f8e48c57cd3a9fe26b398a11c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/worker-owner-refresh.json",
+      "before": null,
+      "after": "4c646c1eb913c849af29f651ff576e3d825b53c9576d31bec244082e224d6553",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-ru/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/artifacts/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/accepted-worker-workspace/accepted.txt",
+      "before": null,
+      "after": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/electron-process-cleanup.json",
+      "before": null,
+      "after": "0aadeebb5d649d73ab9dbe1d606519bc664031f9e3c28aed21b3704d4d721a6f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/electron-process-run.json",
+      "before": null,
+      "after": "691f3310e34ae4ec71e0b8a4aa1e416b590ccdb8e9b42c47f394fb378b555ece",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/worker-awaiting-acceptance.png",
+      "before": null,
+      "after": "4fbbdfe3bbcffacfe2f06ef14a598e52d016814c0da80e99280df07d0db22a00",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/worker-cost-unknown.png",
+      "before": null,
+      "after": "725f06b8a8453a433b953024748134515696a3fdf5397547103d0a271c563895",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/worker-owner-acceptance.json",
+      "before": null,
+      "after": "007d851e313900c31485fb2aa3b859d7e15433c511d9733f134e2a29e897b18c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/worker-owner-accepted-zh.png",
+      "before": null,
+      "after": "c05927e157da44c8d7973c48d7b988b1fdb4134c4567cf2242916215f73d5032",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/worker-owner-accepted.png",
+      "before": null,
+      "after": "1704c9926671d979cc70a198fd9ba30366ca8bfcb7165ce010918dbe0a6ec3b0",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/worker-owner-receipts.json",
+      "before": null,
+      "after": "54a6b4d461bbf032c75939fc7ce8c4ab88ea590f605a1d114a74c372f35eef1b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/worker-owner-refresh.json",
+      "before": null,
+      "after": "9125321411ed76ff551b28cb1bd24189d9c2c68c6355a0f3869f178f19be5d82",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-acceptance-zh/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-active-parent/artifacts/session-worker-task-journe-6264b--parent-turn-remains-active/active-parent-workspace/child.txt",
+      "before": null,
+      "after": "97bc8743613c61561d5629c5acc6d938dbb745df147fdf01de085b6bf7da5814",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-active-parent/electron-process-cleanup.json",
+      "before": null,
+      "after": "0086fa26d715976fbc162724a8359ec08293d5acf093cdd892f522c58c1b392f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-active-parent/electron-process-run.json",
+      "before": null,
+      "after": "8e3b36e5942460c220ef47b67f19113412f73d915140ae444d2300e4ab2e30fe",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-active-parent/session-worker-task-journe-6264b--parent-turn-remains-active/active-parent-transfer.json",
+      "before": null,
+      "after": "7e64d866be983b327ffc9892c08d90d362bb369f5b0ffbf1e4f6e99c904608c9",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-active-parent/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-active-parent/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-active-parent/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/artifacts/session-worker-task-journe-00810--scoped-follow-up-controls-/workspace/worker.txt",
+      "before": null,
+      "after": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/electron-process-cleanup.json",
+      "before": null,
+      "after": "d41da4a23c33c30fdd018c526011eb3df863659ec44703f78611d7673e0d5789",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/electron-process-run.json",
+      "before": null,
+      "after": "1caddfea330f4f2adbdb153925847ebbac066234e567365041cde4828f818da4",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/ui-diagnostic-0.png",
+      "before": null,
+      "after": "47a42d7402bae0c57256cf6fbe7129958aabfbbae10096dfb4f7c958a013d8b1",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/ui-diagnostics.json",
+      "before": null,
+      "after": "e1bd65b7b522433fdb10bc02b52c71bd4a16303c5b1688f44e73c3d3711c68f8",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/worker-before-followup.json",
+      "before": null,
+      "after": "16f9edcbfe182bf8190dad045596059c6e2bb3623cdbd0d3cea3079d6adbac4f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/worker-lifecycle.png",
+      "before": null,
+      "after": "907e0b55ef48abbd6d550b8180c57a6b42133b7ab7f96e0376bdc8c80749422c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/worker-main.log.txt",
+      "before": null,
+      "after": "f573076b415c6c526bb46c188c2e4e8ffff945a23f44a6d414b180e13027883c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/worker-queue-reconciled.png",
+      "before": null,
+      "after": "907824332f999d15cf8198c8785f515563b086620e8d1697331b414cc3b88121",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/worker-task-journey.json",
+      "before": null,
+      "after": "2711c29322fa189dc23a07ea629ddb641597a5da0e3c06446eb9767b2da7b21c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-controls/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/electron-process-cleanup.json",
+      "before": null,
+      "after": "c60cb6a389b4cdb0e7f0a22583edcf999ff4e854d167103e8be14487fe724fe2",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/electron-process-run.json",
+      "before": null,
+      "after": "4c9d8c01f6c6e964f341b6f6146bc5c0c6e309a0d661fc5865e547d336b76a95",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-collapsed-reduced-motion.png",
+      "before": null,
+      "after": "5cad78c76b7441a2af004c6627a9a3e0103aead495127e905cd510ec88d1ab63",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-dark-1280.png",
+      "before": null,
+      "after": "f7e8fc6cffa28b21ea4107bfad8808202f153704381b35a86e3b8c81f550756d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-dark-960.png",
+      "before": null,
+      "after": "99e068edc9de889317f99d0026014c48a2cb1cde5d4b88f95a8f1d4702887ecb",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-layout.json",
+      "before": null,
+      "after": "dc8a1333b9edb462da9fa20366652fbfc7b2c669f3e24191aab878acb7126208",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-light-1280.png",
+      "before": null,
+      "after": "d46653f8dc07bb2fe16f1806544f3e356424d2efb6da40edb155c331b5fcd362",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-light-960.png",
+      "before": null,
+      "after": "b034e5843fb6d1e62c268110b1c25cac5cc1b60307c562b623fcaf70e74761a6",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/ui-diagnostic-0.png",
+      "before": null,
+      "after": "c65efded7de6b9d5f04479cfa53ac8e6e86e30c61b56b0e5ff237f0468857c51",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/ui-diagnostics.json",
+      "before": null,
+      "after": "44da0d5c6cd0589ce7d05d880296114b3ed2db796a5914ae01131475e20a4cfc",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-fork-draft.png",
+      "before": null,
+      "after": "ab7ff38252d1b0235b5e35805e2fdac28f221b11481363d5afb1563923dce6e1",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-handoff-journey.json",
+      "before": null,
+      "after": "d53075b5c33f8932cf5361ab665824f8049a16d1ef342394ab7b442aa4e92e0f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostic-0.png",
+      "before": null,
+      "after": "b69dd39186d0c34c6a2f8564be914704e302dc45ad68263d111c5c8296555881",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostics.json",
+      "before": null,
+      "after": "8170e9a7b2f3872bd961c085c6cea6cd4241dc7a58e4c9505f7b3c16644443b1",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-derivation-retry/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/artifacts/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/workspace/worker.txt",
+      "before": null,
+      "after": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/electron-process-cleanup.json",
+      "before": null,
+      "after": "9b2aa9f2e670325249b733c8b89e17e6788db65723c319a96360a89319442627",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/electron-process-run.json",
+      "before": null,
+      "after": "d66df28593fb42aff3eecf6575362a564d938402bb2d8ef1b6e2e5b3503b36d4",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/read-only-worker-navigation.png",
+      "before": null,
+      "after": "ddb2050b26f03626d890a5bd3ec0be9234bd32cb695bf7bcdaab2a60ed2d7700",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/ui-diagnostic-0.png",
+      "before": null,
+      "after": "3d8e73e9e7645432f237520cdc95d5639d7b318a8b053671ef70ba244cbbf0a2",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/ui-diagnostics.json",
+      "before": null,
+      "after": "c7a2a220274f7e8715bbbce9e87d6459f25a8b78d42097a1a5e20f2d6a2349d1",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/worker-before-followup.json",
+      "before": null,
+      "after": "39eb37c5c94e84e8447b275a22cd078656c94743bc493846505b61f0ee40af2a",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/worker-lifecycle.png",
+      "before": null,
+      "after": "e2bc5367350506ebdd78cb2645b4a1b619da8e56176e21214411dcbb95d1642a",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/worker-main.log.txt",
+      "before": null,
+      "after": "3f534deafc8401a4b4b7ae3f22d00ed67b560e8ead9dd3c14e96774e997859de",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/worker-owner-isolation.json",
+      "before": null,
+      "after": "1492e04ee86125fd24d782095c7cb47be7547df812aceea5414108071941d571",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/worker-read-only-admission.json",
+      "before": null,
+      "after": "4ca3d3db96d3d7938ac6819f0629446ff1653c772b2da993a919d0eed5a54870",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/worker-task-journey.json",
+      "before": null,
+      "after": "cd8bd97dae9321e526236db14508af62df34fa09fe87b65a8f4b7fb9ae33026d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-isolation/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/artifacts/session-worker-task-journe-ca86a-coped-follow-up-navigation-/workspace/worker.txt",
+      "before": null,
+      "after": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/electron-process-cleanup.json",
+      "before": null,
+      "after": "a09fbbc1ce25965c81b349f5eecefeb0419f153e6cc9894a96e803412fc4901d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/electron-process-run.json",
+      "before": null,
+      "after": "3ec8944e9e8cfbf4727da62af3601cfa662794335bf88cfb6dc27d72c48808fa",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/ui-diagnostic-0.png",
+      "before": null,
+      "after": "fc0ed97ab532aad0ba4036ccac74fa16a9f1cbccddd00efe31e9742f40d0ec3c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/ui-diagnostics.json",
+      "before": null,
+      "after": "c08a647fe0956b0245de9f0fc802f170fb5e5e5aef7f42ef48019e8e78892207",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-before-followup.json",
+      "before": null,
+      "after": "a09ca27b722754724eeda79720e3764fe78bc096460259a2e732c831090462be",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-followup-start.json",
+      "before": null,
+      "after": "0b492d87c78a29bacbf8ed80bb0752c9b6a70d246a2a6855cd83f837be02530b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-lifecycle.png",
+      "before": null,
+      "after": "f1e57026da2dd0048bb73fe64df77782c040ccd995dfd6c311c951e5beabddd3",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-main.log.txt",
+      "before": null,
+      "after": "7f48b57a579cae047a1047d4f61de85d8b3e928d19fc806ef71f682a8d649f03",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-task-artifact.png",
+      "before": null,
+      "after": "a19ddb783179b95e6b6f081a75d1ac7d1fac31f1757347f8a72ee57489bfe290",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-task-journey.json",
+      "before": null,
+      "after": "aedebc19b11fae8f8184cd50cbce8d6e016d65fd383f5b139c904c898d83f610",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-task-transcript.png",
+      "before": null,
+      "after": "0905adb293f14d32bd3d90744eb64e9c017af68300ccc526d5a3f2db068bf7ee",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-navigation/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/electron-process-cleanup.json",
+      "before": null,
+      "after": "86851777e7ba8fa53b411e8ce6be36c72ae3e390d51bc05f64a0cd34da849120",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/electron-process-run.json",
+      "before": null,
+      "after": "6d477ef6251afce143fafd4952a2b80cc6cd3fd1c57ec3795b352a0791ed62fc",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/long-session-completion-co-12137--fenced-batch-after-restart/attachments/completion-continuation-e2e-202d0131bcea391b83030f72435b255281687d8a.json",
+      "before": null,
+      "after": "d221ab9272e457d595aff45d1d0b089202e20aa6e51af67c4844578a7ec45efd",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/long-session-completion-co-12137--fenced-batch-after-restart/completion-continuation-e2e.json",
+      "before": null,
+      "after": "d221ab9272e457d595aff45d1d0b089202e20aa6e51af67c4844578a7ec45efd",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/long-session-delegation-ad-f5568--durable-admission-receipts/attachments/delegation-admission-e2e-96259ab15c321331d556ff1d79a803aedad9aa09.json",
+      "before": null,
+      "after": "7d5c5c32dab5b8ad677848d32fa40d3edfc89891ae1c89e51d7195ae996e9491",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/long-session-delegation-ad-f5568--durable-admission-receipts/delegation-admission-e2e.json",
+      "before": null,
+      "after": "7d5c5c32dab5b8ad677848d32fa40d3edfc89891ae1c89e51d7195ae996e9491",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/source-mutation-guard.json",
+      "before": null,
+      "after": "6ddf98dd7550edce71939c4ba8f98532b4997597f6ef0d466364883b9fd4e4b5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/source-state-after.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/source-state-before.json",
+      "before": null,
+      "after": "80bbf1f31dbc0f55ca366b390cc87f88166b7017bb0292b7658e45a727d1ff84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/manifest.json",
+      "before": null,
+      "after": "a9ab0f61e4450054bb0c56e521099e3cfa259ae7dddde838f6651b49e85f2c8b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/recovery-index.json",
+      "before": null,
+      "after": "c2575660732747dc3ad7be3c497c57d78759b5eaec0440fb2a8b4a212fc120f8",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/report.json",
+      "before": null,
+      "after": "4e8e484c248249f175030f574d944cb857f3813365d90034e584977a5a567a17",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/source-review.md",
+      "before": null,
+      "after": "8bc1572d19d3dd0668a157712276c4c387c449467fa4cbc4a6b21d8787dba173",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/verify.py",
+      "before": null,
+      "after": "1ca019ac68fba48d1c29057ad82afc1e47a9e9945dd0b279445e4aa91a79eafa",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/session-delegation-status/20261110/visual-readback.json",
+      "before": null,
+      "after": "ddb15f8cf86fa9a5943a98ef1ce858e6c7ae5c41ba3074d35e5af29a7b73f846",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/tasks/session-delegation-status.md",
+      "before": "e09556fbf3d6b835b670a844a96d9fdfa9f3ca29bb83e0f58624654c2fd2175f",
+      "after": "7029e1fe2a8ee4e539d443f81bc976b4fff50b7c8d2112499fc1d1b4bb7dfe84",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+      "before": "a571e64c39c5c8f47ef62446603a4a8f1b025bee57879645328c9255356cdc5d",
+      "after": "32f75a9a5977c6c2e335ddd43b986112a85346754287e2f738f0899961bbab5c",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "before": "f68b435916d2d04d4dce02792e42aa180a568e25db1d1d05a954f7733f0341e1",
+      "after": "2d4183a9f1c244bd2f4bc50dbbcef4a146f301c86e3a155f3ec2fbeab228c73b",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/optional-model-catalog.ts",
+      "before": "c68ddf7ac52dd85a1ad224cb0a66eb5365b8a35ab69e56ac82907e84b6670664",
+      "after": "bb7351f4d7e47b1b277ed8cfd8a92fa2bb2332ebfa6ba4acb2a80bf0483072ba",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+      "before": "95ce4459cf9f309cc1ce160e77fd9956fe0d840097db86c3de5b4af3653711db",
+      "after": "fb267f7baeee49ad68666010285ec262d6b759df05651b856b6349b30c3646e1",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "before": "c7fe452edb73dee487e33c6136db4326595fde66a6706e4af62e737fdb990a6c",
+      "after": "9bcad380a21f597e129cfa0426e6a18c9fe3271058ee3a9da235d1dcd413c369",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "before": "f4946ef588da354a04891a709da68255d78676d75314c1255d94c44f0126594d",
+      "after": "20ba62fc1fc107c495cdafec30cf808e88d3805733d0f5cef1f34c67ef443a5b",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "before": "91aaad87a17c603547fe0fb5073fce557b9f7bd81fa3fe88a702091ed7d6d253",
+      "after": "0240ebfb238d2ad86e2d45f1582d34cf31dca2cfa4c6eb2afbaea7a9b9e192d0",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "before": "6e28d9e46efd24c789fb71a835fce12bc87dd696e35e9c4f55e2621273529110",
+      "after": "0edaebb20533e1622955791c39308b1387b5eef23d84596af5ad84b560554bea",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "before": "26807ddea9333fe46e8be5a572c3547db4a7799a2e1da478cacd0188c0c8397e",
+      "after": "6f5b583547fa314c5fbe357e708f96b5181c59edcc784df4390c4eacb9c19c56",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "shared/task-system/types.ts",
+      "before": "efb2e5be3480ee94bd007761a3c665d1d4666b7db22c708b573d1e80a27f4445",
+      "after": "da81048f06c2be80c8635c1ac24df53c4740983be52d482c8ad42e8b4e7c030d",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "src/components/chat/SessionDelegationStatus.tsx",
+      "before": "6dfec2aa7c3bdb402255a13b7c2f24e26f8b74ce52166e69803a49e98289ffd7",
+      "after": "c2ae3ca6bb3e404e753abcf74c159a27ce21b650f3dcd82186bf9dd992f1f733",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+      "before": "ad6457964c3e9986d70c017bfd74c89fda6358f9ea8751469d6ef0a275a66d80",
+      "after": "651ba87cec4d19c2a76b5e6b3ab51936ed7de9e8347e790b0eb242ef53c91a55",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+      "before": "9a42bf1804bed6c98662b7b6e7b26e317e3860cda07fdb6a6ab93bc8db0d7a5c",
+      "after": "6f5c08b9f5b81407fd2c27294e747946c683b5979957fd4d5dc9df84b7b84487",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "src/pages/TaskLedger/index.tsx",
+      "before": "0cb03d3640400549a1074e183da7a14a1f04bdadf5906e873591cf19bf724210",
+      "after": "60ccd92030b9cfb9563cbf382fe38c639e5a767b8796103227c9fa54ec04aa47",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+      "before": "24ef4b912c99194f6f59779fbf0e712540512b530afd8be446435dc025dbd0d4",
+      "after": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "before": "1074824d07d971c4d0179f2f2d604ab973c42fa2f5ba65c375e24c7c08605645",
+      "after": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/e2e/session-worker-task-journey.spec.ts",
+      "before": "670b3dc6153ca9c2687119dfa9904efafc8092ace39bad7d10d12b15eb3bfe0b",
+      "after": "fec0b07ba70bed4d3af32e6dc8374d43f3411165f80ba8c494c43b6eaac4c1f8",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/chat-send-input-mode.test.ts",
+      "before": "c5eac13a3f3c8c3191141c835c54613455e41a5d30ac99ad6785d6f236300269",
+      "after": "541cfef4cc11c5cbcf50a8cda2edf855cfd881a8dd311d463626438c29b5d2ff",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/durable-task-session-scope.test.ts",
+      "before": "b3fd43317342232684ace104ba3a82a5bff02a10a227bfdff8a90a0173ae2054",
+      "after": "70006e2805fb789288628205c67f25d1345620ccf622148f6c8144461358c6e1",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/electron-process-identity.test.ts",
+      "before": "dceffbda6de827d81f95043070e980c42b208feb7032cb291c559d1c09c1935d",
+      "after": "774bcc915df34cb3224180ad6cac01a25c91889e45cfa85f4f08878b6476fcd3",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/gateway-worker-history-metadata.test.ts",
+      "before": null,
+      "after": "0793e8853d4fef1a701c9ac69dce19d90617b2c5cac43330c88444df68b97806",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/host-services.test.ts",
+      "before": "3b78df73de7ef433492751144c63ca716f4f77e81e7c28449c3dc7c929d69cc8",
+      "after": "c7647580fd3c8358508c2ac6c3fa1c00c45192402011878bdea0347d470fb937",
+      "deleted": false,
+      "overlay": true
+    },
+    {
+      "path": "tests/unit/session-chain-panels.test.tsx",
+      "before": "b6465082f9b2ba52c197ab6cf260155aeb961bbbacfa7489ccfa31a1047544e8",
+      "after": "e474a38129af9eca3b573a9dc254cbf764884eff60274b82862f2f51d7e7eda8",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/session-delegation-status.test.tsx",
+      "before": "7ff319e5a13ffad68a56668a36c90854012763852a0cf8d9544c6246d1a6af9f",
+      "after": "06124ceb191565aceed3a58243419ca2aa25c6e238a40a42a5b9b478a664adc5",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/session-handoff-recovery.test.ts",
+      "before": "6c97b9266cda489ef021a051e63a01bc4d998e363f4a41b034645347ad641171",
+      "after": "88ec8fcf7c8ff64a2fac855ee1702b04ddf51804ff6ee6dddd0e1a16fd6698c8",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/session-task-scope-bridge.test.ts",
+      "before": "542c6580936e3edf8495512d1072a01c39511f783f8387a74907fb28c563cb8f",
+      "after": "a59a21d67ab0d144965f1aefd91d2972814f34d1401e6eb9d6778b5e6668b03f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/session-task-scope-completion.test.ts",
+      "before": "b17389fb3f893665c4aa273a52e28d48d4552e53ee03833c88e7ccb5c574d3e7",
+      "after": "39cb2e98139153a9f25fb10c2f9fe5bb691cd8d8cd6e3427b527f6ba65fd358f",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/task-ledger-snapshot-cache.test.ts",
+      "before": "69c30cb156f244cb67b109035e57a1e54889a29b2cdd580e6c37e014890c27ad",
+      "after": "d757dc856880cef947e089181cc63ca6486b332596151928a45235007bd33da0",
+      "deleted": false,
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/workspace-agents-panel-failure.test.tsx",
+      "before": "d166a6abdd6634ae0d6f84fc31399a364dede2ae5deba1292efe9aa111807bc9",
+      "after": "fbf2ea4aa5f0205248b4f430cff6255ff5f1dd270b6017252c18ab89018e208b",
+      "deleted": false,
+      "overlay": false
+    }
+  ],
+  "conflicts": [],
+  "stagedPathsPreserved": [],
+  "stagedBeforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "indexBeforeSha256": "6843de4cb83a3f99f474972ccfa68fba54cfd0ce5353f466cee99a31f9ce42e0",
+  "status": "integrated",
+  "commit": "44792b21de67a0b891adea9d247bcc83006499ab",
+  "treeMatches": true,
+  "stagedAfterSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "node": "TF-0660",
+  "evidence": "harness/specs/fixtures/session-delegation-status/20261110/report.json",
+  "mainWorktreeClean": false,
+  "overlayValidation": {
+    "unitPassed": 100,
+    "sourceFilesObserved": 385,
+    "sourceUnchanged": true,
+    "result": "harness/specs/fixtures/session-delegation-status/20261110/integration-preview/u4-main-overlay.result.json"
+  },
+  "verification": {
+    "unit": 227,
+    "electron": 12,
+    "originalCriteria": 9,
+    "retainedFiles": 239,
+    "indexedEvidenceVerified": true
+  }
+}

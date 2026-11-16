@@ -1,0 +1,43 @@
+{
+  "id": "tf0743-baseline",
+  "driven_by": "agent",
+  "actor": "codex/semantic-goal",
+  "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+  "base": "c6414f689878ece855b5a31ef03736611edcbc1a",
+  "candidate": {
+    "commit": "c6414f689878ece855b5a31ef03736611edcbc1a",
+    "tree": "5cce3caaa0b86359798f7b3304eaf52fd5b8f99d",
+    "dirty": true
+  },
+  "sourceHashes": {
+    "harness/specs/tasks/memory-read-consistency.md": "e34a2e2db0ecea6d984dc890cf52e82c06ef41c98a222b9a41ffe52d63b3eea5",
+    "tests/unit/memory-read-consistency.test.ts": "725f40901fc0683cbc331ac4d4cf6676d9c99c3f6c891c48df0979ffbbca0dde"
+  },
+  "sourceHashesAfter": {
+    "harness/specs/tasks/memory-read-consistency.md": "e34a2e2db0ecea6d984dc890cf52e82c06ef41c98a222b9a41ffe52d63b3eea5",
+    "tests/unit/memory-read-consistency.test.ts": "725f40901fc0683cbc331ac4d4cf6676d9c99c3f6c891c48df0979ffbbca0dde"
+  },
+  "sourceStable": true,
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/unit/memory-read-consistency.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile",
+    "D:/tmp/tf0743-baseline.json"
+  ],
+  "environment": {
+    "TEMP": "D:\\tmp",
+    "TMP": "D:\\tmp",
+    "MEMORY_READ_TRACE_PATH": "D:\\tmp\\tf0743-before-observations.json",
+    "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:\\tmp\\tf0743-baseline-cache"
+  },
+  "startedAt": "2026-11-05T12:32:47.222Z",
+  "completedAt": "2026-11-05T12:33:39.240Z",
+  "durationMs": 52047,
+  "exitCode": 1,
+  "log": "D:/tmp/tf0743-baseline.log"
+}

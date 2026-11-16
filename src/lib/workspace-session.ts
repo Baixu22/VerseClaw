@@ -8,6 +8,65 @@ import { hostApi } from '@/lib/host-api';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
 
+let navigationTail: Promise<unknown> = Promise.resolve();
+let navigationIntent = 0;
+
+export function workspaceOwnsSession(workspace: WorkspaceProfile | null | undefined, sessionKey: string): boolean {
+  return Boolean(workspace && (workspace.activeSessionKey === sessionKey
+    || Object.hasOwn(workspace.sessionStates ?? {}, sessionKey)
+    || Object.hasOwn(workspace.coordinatorBindings ?? {}, sessionKey)
+    || Object.values(workspace.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey)));
+}
+
+/** Resolve a legacy session-only selection through the same scoped navigation queue. */
+export function activateWorkspaceSession(sessionKey: string): Promise<boolean> {
+  return activateWorkspaceScopedSession(null, sessionKey);
+}
+
+/** Serialize selections; a null workspace resolves explicit ownership before recorded parents. */
+export function activateWorkspaceScopedSession(workspaceId: string | null, sessionKey: string, isCurrentIntent: () => boolean = () => true): Promise<boolean> {
+  const intent = ++navigationIntent;
+  const operation = navigationTail.catch(() => undefined).then(async () => {
+    if (intent !== navigationIntent || !isCurrentIntent()) return false;
+    const state = useWorkspacesStore.getState();
+    let workspace = workspaceId === null
+      ? state.profiles.find((profile) => workspaceOwnsSession(profile, sessionKey))
+      : state.profiles.find((profile) => profile.id === workspaceId);
+    if (workspaceId === null && !workspace) {
+      const byKey = new Map((useChatStore.getState().sessions ?? []).map((session) => [session.key, session]));
+      const seen = new Set([sessionKey]);
+      let parent = byKey.get(sessionKey)?.parentSessionKey;
+      while (!workspace && parent && !seen.has(parent)) {
+        seen.add(parent);
+        workspace = state.profiles.find((profile) => workspaceOwnsSession(profile, parent!));
+        parent = byKey.get(parent)?.parentSessionKey;
+      }
+    }
+    if (workspaceId !== null && !workspaceOwnsSession(workspace, sessionKey)) {
+      throw new Error('SESSION_WORKSPACE_ASSOCIATION_MISSING');
+    }
+    if (workspace) {
+      const inherited = !workspaceOwnsSession(workspace, sessionKey);
+      if (state.activeWorkspaceId !== workspace.id) {
+        const active = await state.switchWorkspace(workspace.id);
+        if (intent !== navigationIntent || !isCurrentIntent()) return false;
+        if (!active || active.id !== workspace.id) throw new Error('Workspace activation did not return the selected workspace');
+      }
+      if (intent !== navigationIntent || !isCurrentIntent()) return false;
+      await useWorkspacesStore.getState().saveWorkspaceState({
+        id: workspace.id, activeSessionKey: sessionKey, sessionKey,
+        // An unfiled child starts with its own UI state; an existing child draft is merged unchanged.
+        ...(inherited ? { state: {} } : {}),
+      });
+    }
+    if (intent !== navigationIntent || !isCurrentIntent()) return false;
+    useChatStore.getState().switchSession(sessionKey);
+    return true;
+  });
+  navigationTail = operation;
+  return operation;
+}
+
 export function getAgentIdFromSessionKey(sessionKey: string): string {
   if (!sessionKey.startsWith('agent:')) return 'main';
   const [, agentId] = sessionKey.split(':');
@@ -51,6 +110,10 @@ export function getWorkspaceAgentSessionKey(
   agentId: string,
 ): { sessionKey: string; isFresh: boolean } {
   const normalizedAgentId = agentId.trim() || 'main';
+  const activeSessionKey = workspace.activeSessionKey;
+  if (activeSessionKey && getAgentIdFromSessionKey(activeSessionKey) === normalizedAgentId) {
+    return { sessionKey: activeSessionKey, isFresh: false };
+  }
   const boundSessionKey = workspace.agentBindings?.[normalizedAgentId]?.sessionKey;
   if (boundSessionKey && getAgentIdFromSessionKey(boundSessionKey) === normalizedAgentId) {
     return { sessionKey: boundSessionKey, isFresh: false };
@@ -106,39 +169,49 @@ export async function clearWorkspaceActiveTopicMarker(rootPath: string | undefin
   } catch { /* Legacy topic reset is best-effort, as before. */ }
 }
 
-export async function createWorkspaceScopedNewSession(): Promise<string> {
+export function createWorkspaceScopedNewSession(): Promise<string | null> {
+  const intent = ++navigationIntent;
   const chatState = useChatStore.getState();
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
   const sourceSessionKey = chatState.currentSessionKey;
-  const workspace = await ensureActiveWorkspaceForSession();
-
-  if (!workspace?.id) {
-    chatState.newSession({ deferSessionEntry: true });
-    return useChatStore.getState().currentSessionKey;
-  }
-
-  const sessionKey = createFreshWorkspaceSessionKey(currentAgentId);
-  await hostApi.workspaces.update(workspace.id, {
-    agentId: currentAgentId,
-    activeSessionKey: sessionKey,
-    sessionKey,
-    state: { activeTopicId: null },
+  const sourceRevision = chatState.viewRevision;
+  const isSourceCurrent = () => intent === navigationIntent && useChatStore.getState().currentSessionKey === sourceSessionKey
+    && useChatStore.getState().viewRevision === sourceRevision;
+  const operation = navigationTail.catch(() => undefined).then(async () => {
+    if (!isSourceCurrent()) return null;
+    const workspace = await ensureActiveWorkspaceForSession();
+    if (!isSourceCurrent()) return null;
+    if (!workspace?.id) {
+      chatState.newSession({ deferSessionEntry: true });
+      return useChatStore.getState().currentSessionKey;
+    }
+    const sessionKey = createFreshWorkspaceSessionKey(currentAgentId);
+    await hostApi.workspaces.update(workspace.id, {
+      agentId: currentAgentId, activeSessionKey: sessionKey, sessionKey, state: { activeTopicId: null },
+    });
+    await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
+    if (!isSourceCurrent() || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id) return null;
+    await useWorkspacesStore.getState().fetchWorkspaces();
+    await clearWorkspaceActiveTopicMarker(workspace.rootPath);
+    if (!isSourceCurrent() || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id) return null;
+    chatState.resetSessionView(sessionKey, { deferSessionEntry: true });
+    return sessionKey;
   });
-  await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
-  await useWorkspacesStore.getState().fetchWorkspaces();
-  await clearWorkspaceActiveTopicMarker(workspace.rootPath);
-  chatState.resetSessionView(sessionKey, { deferSessionEntry: true });
-  return sessionKey;
+  navigationTail = operation;
+  return operation;
 }
 
-export async function createWorkspaceScopedHandoffSession(draftInput: string): Promise<string> {
+export async function createWorkspaceScopedHandoffSession(draftInput: string, options: { operationId?: string; sourceSessionKey?: string } = {}): Promise<string> {
   const chatState = useChatStore.getState();
+  const startingSessionKey = chatState.currentSessionKey;
+  const startingViewRevision = chatState.viewRevision;
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
-  const sourceSessionKey = chatState.currentSessionKey;
+  const sourceSessionKey = options.sourceSessionKey ?? chatState.currentSessionKey;
   const workspace = await ensureActiveWorkspaceForSession();
 
   const result = await hostApi.sessions.createHandoff({
     sessionKey: sourceSessionKey, agentId: currentAgentId, workspaceId: workspace?.id ?? null, draftInput,
+    ...(options.operationId ? { operationId: options.operationId } : {}),
   });
   if (!result.success || !result.sessionKey) throw new Error(result.error || 'Failed to create handoff session');
   const sessionKey = result.sessionKey;
@@ -149,7 +222,11 @@ export async function createWorkspaceScopedHandoffSession(draftInput: string): P
   await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
   await clearWorkspaceActiveTopicMarker(workspace.rootPath);
-  chatState.resetSessionView(sessionKey);
+  await chatState.loadSessions({ force: true });
+  const isCurrent = () => useChatStore.getState().currentSessionKey === startingSessionKey
+    && useChatStore.getState().viewRevision === startingViewRevision && useWorkspacesStore.getState().activeWorkspaceId === workspace.id;
+  if (!isCurrent()) return sessionKey;
+  await activateWorkspaceScopedSession(workspace.id, sessionKey, isCurrent);
   return sessionKey;
 }
 
@@ -166,9 +243,11 @@ function cloneForkableWorkspaceState(state: WorkspaceUiState | undefined): Works
 
 export async function createWorkspaceScopedForkSession(
   sourceSessionKey: string,
-  options: { fromLeafId?: string } = {},
+  options: { fromLeafId?: string; draftInput?: string } = {},
 ): Promise<string> {
   const chatState = useChatStore.getState();
+  const startingSessionKey = chatState.currentSessionKey;
+  const startingViewRevision = chatState.viewRevision;
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(sourceSessionKey || chatState.currentSessionKey);
   const workspace = await ensureActiveWorkspaceForSession();
   const result = await hostApi.sessions.fork({
@@ -190,27 +269,17 @@ export async function createWorkspaceScopedForkSession(
   }
 
   const sourceState = workspace.sessionStates?.[sourceSessionKey] ?? workspace.state;
-  await hostApi.workspaces.update(workspace.id, {
-    agentId: currentAgentId,
-    activeSessionKey: result.sessionKey,
+  await hostApi.workspaces.saveState({
+    id: workspace.id,
     sessionKey: result.sessionKey,
-    state: cloneForkableWorkspaceState(sourceState),
+    state: { ...cloneForkableWorkspaceState(sourceState), ...(options.draftInput !== undefined ? { draftInput: options.draftInput } : {}) },
   });
   await inheritSessionWorkgroup(workspace, sourceSessionKey, result.sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
-  try {
-    await hostApi.taskLedger.linkSession({
-      workspaceId: workspace.id,
-      sessionKey: result.sessionKey,
-      agentId: currentAgentId,
-      relation: 'forked_from',
-      sourceSessionKey,
-      summary: 'Forked conversation branch',
-      idempotencyKey: `session-fork:${sourceSessionKey}:${result.sessionKey}`,
-    });
-  } catch (error) {
-    console.warn('Failed to link forked session in Task Ledger:', error);
-  }
-  chatState.resetSessionView(result.sessionKey);
+  await chatState.loadSessions({ force: true });
+  const isCurrent = () => useChatStore.getState().currentSessionKey === startingSessionKey
+    && useChatStore.getState().viewRevision === startingViewRevision && useWorkspacesStore.getState().activeWorkspaceId === workspace.id;
+  if (!isCurrent()) return result.sessionKey;
+  await activateWorkspaceScopedSession(workspace.id, result.sessionKey, isCurrent);
   return result.sessionKey;
 }

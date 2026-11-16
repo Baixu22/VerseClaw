@@ -1,0 +1,98 @@
+[
+  {
+    "path": "src/components/chat/ComposerPopover.tsx",
+    "sha256": "1ecb7acd5bdf33329d9a97dc67e3703b1a8d517e222c5f7cb38d456377058b6e"
+  },
+  {
+    "path": "src/pages/Chat/ChatInput.tsx",
+    "sha256": "3dcbaa9758d7061824a3b9eb9b877e82ca0ad5dafff43fbe037e9b2966665ea4"
+  },
+  {
+    "path": "src/styles/codex-composer-menu.css",
+    "sha256": "29f09f0513b0cdd21ec5edd29b6e0564195f90be599d8b8dc0579e43492c5a3d"
+  },
+  {
+    "path": "tests/e2e/chat-composer-popovers.spec.ts",
+    "sha256": "72ca4ea9485ae6c324237c55c07a8a4a889f9ce5ef6f0a97ca5fbcea85c70d34"
+  },
+  {
+    "path": "harness/specs/tasks/chat-composer-popovers.md",
+    "sha256": "082c9aeb7d157918ef032180f0803ee43d67448161f9a08250ddecec0b2d77b7"
+  },
+  {
+    "path": "harness/specs/scenarios/windows-ui-v2.md",
+    "sha256": "450bca13e07d6e13eead05a69e2035c519acc8b201534d6eee0113fb87fa334d"
+  },
+  {
+    "path": "harness/specs/rules/ui-motion-material-system.md",
+    "sha256": "377d3a9dd6da2d51ccf480af6ce284302111d1585e1f497dda8be7750e6143fc"
+  },
+  {
+    "path": "README.md",
+    "sha256": "e3198142a6ac59361f4199b4a085c88a45fa6eafc39b7ab7585e43171ef46ac8"
+  },
+  {
+    "path": "README.zh-CN.md",
+    "sha256": "291c4d46b9d2c0df7c31815eb81f5c8082901d99823d1c0101b6b64aa950995b"
+  },
+  {
+    "path": "README.ja-JP.md",
+    "sha256": "4c64f10ee95f31c47992ae16d97b0f056174be1c321fb64ffbb5ea6ea49bfb9d"
+  },
+  {
+    "path": "src/styles/plus-menu-morph.css",
+    "sha256": "79d2073b8b424fdff7c98b0db419bf100f599cf5588214bbc210fb672ea7e8f6"
+  },
+  {
+    "path": "src/lib/chat-model-selection.ts",
+    "sha256": "1ef6fc3043699632d8d6ead95e41e13e48e730aad65c6cc6c41a7f1b233bfbb4"
+  },
+  {
+    "path": "src/stores/settings.ts",
+    "sha256": "da4720bdf894006f6db4bd14289037eb427d1938f5c69b4561518d3160118c15"
+  },
+  {
+    "path": "src/stores/chat.ts",
+    "sha256": "ef9fdb0730a32c904801c6c75757c3cecc90e03eb2bd346c51abe116ea930da7"
+  },
+  {
+    "path": "src/pages/Chat/index.tsx",
+    "sha256": "6e2d7755bd239f1dc4933f12bb62a3f29b6860ffca6e4a7c6fc0765c417c5792"
+  },
+  {
+    "path": "shared/chat/types.ts",
+    "sha256": "d794b36ea4065f59f7a7b4ffa46518d318ece8e94af00a5ba32dad924510985b"
+  },
+  {
+    "path": "tests/unit/chat-model-selection.test.ts",
+    "sha256": "3ffa502159f1f1b7d4da48ce8b38932f2134a30f0ec4012070e66227a64263f8"
+  },
+  {
+    "path": "tests/unit/chat-target-routing.test.ts",
+    "sha256": "cf808de97be5002e66069f83d7875b59a2383e8bd40edacd08ad9f38a8050664"
+  },
+  {
+    "path": "tests/unit/chat-input.test.tsx",
+    "sha256": "51adaa306ad9c7b78b2df1bbe30172914468c79c5bb8303d3b7fa072e9ba332b"
+  },
+  {
+    "path": "docs/dev/chat-model-selection.md",
+    "sha256": "b9ad18182fe09321fe7dc5cad37768fe8a0368d46deeab173f07138befb98daa"
+  },
+  {
+    "path": "tests/e2e/chat-model-picker.spec.ts",
+    "sha256": "8e439b65354e2ff89ec05d19fe1a115eb83631b25cf82c2e7a6b27d8a8918f1e"
+  },
+  {
+    "path": "tests/e2e/chat-model-picker-tiers.spec.ts",
+    "sha256": "bad13aa104e67b63a3a310eac8267e4b71873e4d5857ed4ff8852cb8b7c6ef96"
+  },
+  {
+    "path": "tests/e2e/chat-agent-effort.spec.ts",
+    "sha256": "d4e378eba9de551ebec800da5d57a83d61f22aef7808f9af7cbf3b58694fe411"
+  },
+  {
+    "path": ".gitignore",
+    "sha256": "f6e2a5aa6c4903e117d6079e4382af4d84481b59225a28745c7e5c5f38248c8b"
+  }
+]

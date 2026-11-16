@@ -1,0 +1,247 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "baseline": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+  "candidate": {
+    "commit": "b834bf3e1164544e8fde5c41b715d611c5dd4bf7",
+    "tree": "0eadb5e2e4a770fa8be10745f7e835aa8615bd48",
+    "dirty": false
+  },
+  "before": {
+    "files": 9158,
+    "components": [
+      [
+        "src/agents/embedded-agent-runner/tool-schema-runtime.ts",
+        "src/agents/runtime-plan/tools.ts",
+        "src/agents/tools-effective-inventory-build.ts",
+        "src/context-engine/assembler.ts",
+        "src/context-engine/chat-turn-vtoken-injection.ts",
+        "src/context-engine/cvk/engine.ts",
+        "src/context-engine/enhancement-kill-switch.ts",
+        "src/context-engine/model-capability-prompt.ts",
+        "src/context-engine/registry.ts",
+        "src/context-engine/runtime-flag-ack.ts",
+        "src/context-engine/working-memory-regather.ts",
+        "src/plugins/active-runtime-registry.ts",
+        "src/plugins/loader.ts",
+        "src/plugins/provider-discovery.runtime.ts",
+        "src/plugins/provider-hook-runtime.ts",
+        "src/plugins/provider-runtime.ts",
+        "src/plugins/providers.runtime.ts",
+        "src/plugins/registry.ts",
+        "src/plugins/runtime/standalone-runtime-registry-loader.ts",
+        "src/plugins/text-transforms.runtime.ts",
+        "src/plugins/tools.ts",
+        "src/runtime-core/index.ts",
+        "src/runtime-core/model-capability-effective-state.ts"
+      ]
+    ]
+  },
+  "after": {
+    "files": 9159,
+    "components": []
+  },
+  "limits": "Original checker relative static value imports/re-exports only; excludes dynamic loading, require and non-relative package boundaries.",
+  "baselineComponentEdges": [
+    {
+      "from": "src/agents/embedded-agent-runner/tool-schema-runtime.ts",
+      "to": [
+        "src/plugins/provider-runtime.ts"
+      ]
+    },
+    {
+      "from": "src/agents/runtime-plan/tools.ts",
+      "to": [
+        "src/agents/embedded-agent-runner/tool-schema-runtime.ts",
+        "src/plugins/tools.ts"
+      ]
+    },
+    {
+      "from": "src/agents/tools-effective-inventory-build.ts",
+      "to": [
+        "src/agents/runtime-plan/tools.ts",
+        "src/plugins/tools.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/assembler.ts",
+      "to": [
+        "src/context-engine/enhancement-kill-switch.ts",
+        "src/context-engine/working-memory-regather.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/chat-turn-vtoken-injection.ts",
+      "to": [
+        "src/context-engine/enhancement-kill-switch.ts",
+        "src/runtime-core/index.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/cvk/engine.ts",
+      "to": [
+        "src/context-engine/model-capability-prompt.ts",
+        "src/runtime-core/model-capability-effective-state.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/enhancement-kill-switch.ts",
+      "to": [
+        "src/runtime-core/index.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/model-capability-prompt.ts",
+      "to": [
+        "src/runtime-core/model-capability-effective-state.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/registry.ts",
+      "to": [
+        "src/context-engine/cvk/engine.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/runtime-flag-ack.ts",
+      "to": [
+        "src/context-engine/assembler.ts",
+        "src/context-engine/chat-turn-vtoken-injection.ts",
+        "src/context-engine/enhancement-kill-switch.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/working-memory-regather.ts",
+      "to": [
+        "src/context-engine/enhancement-kill-switch.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/active-runtime-registry.ts",
+      "to": [
+        "src/plugins/loader.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/loader.ts",
+      "to": [
+        "src/plugins/registry.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/provider-discovery.runtime.ts",
+      "to": [
+        "src/plugins/providers.runtime.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/provider-hook-runtime.ts",
+      "to": [
+        "src/plugins/active-runtime-registry.ts",
+        "src/plugins/providers.runtime.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/provider-runtime.ts",
+      "to": [
+        "src/plugins/provider-discovery.runtime.ts",
+        "src/plugins/provider-hook-runtime.ts",
+        "src/plugins/text-transforms.runtime.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/providers.runtime.ts",
+      "to": [
+        "src/plugins/active-runtime-registry.ts",
+        "src/plugins/loader.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/registry.ts",
+      "to": [
+        "src/context-engine/registry.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/runtime/standalone-runtime-registry-loader.ts",
+      "to": [
+        "src/plugins/active-runtime-registry.ts",
+        "src/plugins/loader.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/text-transforms.runtime.ts",
+      "to": [
+        "src/plugins/active-runtime-registry.ts"
+      ]
+    },
+    {
+      "from": "src/plugins/tools.ts",
+      "to": [
+        "src/plugins/active-runtime-registry.ts",
+        "src/plugins/runtime/standalone-runtime-registry-loader.ts"
+      ]
+    },
+    {
+      "from": "src/runtime-core/index.ts",
+      "to": [
+        "src/runtime-core/model-capability-effective-state.ts"
+      ]
+    },
+    {
+      "from": "src/runtime-core/model-capability-effective-state.ts",
+      "to": [
+        "src/agents/tools-effective-inventory-build.ts",
+        "src/context-engine/runtime-flag-ack.ts"
+      ]
+    }
+  ],
+  "candidateReplacementEdges": [
+    {
+      "from": "src/context-engine/chat-turn-vtoken-injection.ts",
+      "to": [
+        "src/context-engine/dcs-observability.ts",
+        "src/context-engine/enhancement-kill-switch.ts",
+        "src/context-engine/vtoken-rpc-client.ts",
+        "src/runtime-core/types.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/cvk/engine.ts",
+      "to": [
+        "src/context-engine/coding-tool-navigation.ts",
+        "src/context-engine/cvk/compiler.ts",
+        "src/context-engine/cvk/identity.ts",
+        "src/context-engine/cvk/identity.ts",
+        "src/context-engine/cvk/runtime-adapter.ts",
+        "src/context-engine/cvk/tool-call-gate.ts",
+        "src/context-engine/cvk/views.ts",
+        "src/context-engine/delegate.ts",
+        "src/context-engine/model-capability-prompt.ts",
+        "src/runtime-core/model-capability-effective-state.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/cvk/identity.ts",
+      "to": []
+    },
+    {
+      "from": "src/context-engine/enhancement-kill-switch.ts",
+      "to": [
+        "src/runtime-core/types.ts"
+      ]
+    },
+    {
+      "from": "src/context-engine/registry.ts",
+      "to": [
+        "src/context-engine/cvk/identity.ts",
+        "src/plugins/slots.ts",
+        "src/shared/global-singleton.ts"
+      ]
+    }
+  ],
+  "graphHashes": {
+    "baseline": "326b3211db7a1321a2585f6da862df7e5a2d474705f78fc1e579ed6cd5260122",
+    "candidate": "7c5ecae92eec9fe8e7477e7b482d4bd4b685aea3865d5b76b8c975f7ee51d168"
+  }
+}

@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0274-e01",
+  "source": {
+    "id": "tf-0274-e01",
+    "base": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+    "reference": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+    "productChanges": [
+      "scripts/agent-dev-benefit-eval.mjs",
+      "scripts/lib/reliability-aggregation.d.mts",
+      "scripts/lib/reliability-aggregation.mjs",
+      "shared/agent-dev/reliability-fixture.json"
+    ],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/e01-acceptance.json",
+    "sourceRecordDigest": "b0f0214881444c68e9c7b339a528c80cc9d2894831191cd6ee16ed8825afdb94",
+    "oraclePaths": [
+      "tests/unit/agent-dev-reliability-aggregation.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0274-e01",
+      "commands": [
+        "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/agent-dev-reliability-aggregation.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\reference\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 8,
+            "numPassedTests": 6,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793862697570,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability review regression: incomplete anchors cannot hide an observed unsafe outcome",
+                    "status": "failed",
+                    "title": "review regression: incomplete anchors cannot hide an observed unsafe outcome",
+                    "duration": 5.3156999999999925,
+                    "failureMessages": [
+                      "AssertionError: expected false to be true // Object.is equality\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0274-e01/reference/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts:19:39\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability review regression: malformed outcomes and duplicate case identities are rejected",
+                    "status": "failed",
+                    "title": "review regression: malformed outcomes and duplicate case identities are rejected",
+                    "duration": 1.2483999999999469,
+                    "failureMessages": [
+                      "AssertionError: expected [Function] to throw an error\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1551:16)\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/ClawX/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0274-e01/reference/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts:26:130\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)",
+                    "status": "passed",
+                    "title": "computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)",
+                    "duration": 0.6610000000000014,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability preserves missing/timeout/crash/skip as incomplete and excludes them from denominators",
+                    "status": "passed",
+                    "title": "preserves missing/timeout/crash/skip as incomplete and excludes them from denominators",
+                    "duration": 0.494700000000023,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability flags a flake only when the first scheduled trial failed and a later re-run passed",
+                    "status": "passed",
+                    "title": "flags a flake only when the first scheduled trial failed and a later re-run passed",
+                    "duration": 0.2950000000000159,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability fails the gate when a safety-required case is skipped",
+                    "status": "passed",
+                    "title": "fails the gate when a safety-required case is skipped",
+                    "duration": 0.23649999999997817,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability enforces positive (must pass) and negative (must reject) anchors",
+                    "status": "passed",
+                    "title": "enforces positive (must pass) and negative (must reject) anchors",
+                    "duration": 0.21020000000004302,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability reports insufficient-sample instead of passing when complete cases are below the gate",
+                    "status": "passed",
+                    "title": "reports insufficient-sample instead of passing when complete cases are below the gate",
+                    "duration": 0.20720000000000027,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793862698367,
+                "endTime": 1793862698376.2366,
+                "status": "failed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0274-e01/reference/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 8,
+      "numPassedTests": 6,
+      "numFailedTests": 2,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "assertion",
+      "timeoutMs": 180000,
+      "oracleHashBefore": "999778b5482753c035ab56dc693855ebdeaef55a24f69636a48e4a7fb39e0e50",
+      "oracleHashAfter": "999778b5482753c035ab56dc693855ebdeaef55a24f69636a48e4a7fb39e0e50",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-reliability-aggregation.md": "2351a1909b0130f4f518638644722f3413394ca3e1f6d673333e24c9340314f6",
+        "tests/unit/agent-dev-reliability-aggregation.test.ts": "6d446ed2fe11f82154645ad75e5822e7d0ab39ec296ec1f72a67405f7afe5ea9"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0274-e01",
+      "commands": [
+        "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/agent-dev-reliability-aggregation.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 1,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793862723696,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793862723696,
+                "endTime": 1793862723696,
+                "status": "failed",
+                "message": "Cannot find module '../../scripts/lib/reliability-aggregation.mjs' imported from D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0274-e01/baseline/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0274-e01/baseline/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "target-module-absent",
+      "timeoutMs": 180000,
+      "oracleHashBefore": "999778b5482753c035ab56dc693855ebdeaef55a24f69636a48e4a7fb39e0e50",
+      "oracleHashAfter": "999778b5482753c035ab56dc693855ebdeaef55a24f69636a48e4a7fb39e0e50",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-reliability-aggregation.md": "2351a1909b0130f4f518638644722f3413394ca3e1f6d673333e24c9340314f6",
+        "tests/unit/agent-dev-reliability-aggregation.test.ts": "6d446ed2fe11f82154645ad75e5822e7d0ab39ec296ec1f72a67405f7afe5ea9"
+      },
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "scripts/lib/reliability-aggregation.mjs",
+          "importer": "tests/unit/agent-dev-reliability-aggregation.test.ts",
+          "inTargetScope": true
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0274-e01\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": false,
+    "issues": [
+      "reference-oracle-not-passing"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

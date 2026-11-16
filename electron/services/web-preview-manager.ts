@@ -20,6 +20,7 @@ import { isWebPreviewAnnotationEnabled } from '@shared/workspace-preview-policy'
 import { isHtmlContentType, injectInspectorScript } from './web-preview-inspector';
 import { isPathInsideWorkspace } from './workspace-permissions';
 import type { TerminalSessionManager } from './terminal-session-manager';
+import { assertManagedPortsBindable, reconcileManagedProcessReservations } from '../../openclaw_runtime/src/agents/verseshell/managed-process-reservation';
 
 export type WebPreviewRuntimeSnapshot = {
   success: boolean;
@@ -47,6 +48,7 @@ type WebPreviewManagerContext = {
 };
 
 type StartInput = {
+  expectedSessionId?: string;
   workspace: WorkspaceProfile;
   mode?: WorkspacePreviewMode;
   targetPath?: string;
@@ -56,6 +58,7 @@ type StartInput = {
 };
 
 type RuntimeRecord = {
+  terminalOwner?: { workspaceId: string; sessionKey: string; expectedSessionId: string };
   workspaceId: string;
   mode: WorkspacePreviewMode;
   status: WorkspaceWebPreviewStatus;
@@ -311,6 +314,7 @@ export class WebPreviewManager {
   }
 
   private async startDevServer(input: StartInput): Promise<WebPreviewRuntimeSnapshot> {
+    if (!input.expectedSessionId) return { success: false, blocked: true, status: 'error', error: 'Preview session generation is unavailable' };
     const detected = await this.detect(input.workspace, input.targetPath);
     const launchConfig = input.launchConfig ?? detected.preferred;
     if (!launchConfig?.command) {
@@ -319,21 +323,39 @@ export class WebPreviewManager {
     if (!this.terminalManager) {
       return { success: false, status: 'error', error: 'Terminal manager unavailable for dev server preview' };
     }
+    const reservedPorts = launchConfig.expectedPort ? [launchConfig.expectedPort] : [];
+    await reconcileManagedProcessReservations();
+    await assertManagedPortsBindable(reservedPorts);
+    const terminalOwner = { workspaceId: input.workspace.id, sessionKey: input.workspace.activeSessionKey, expectedSessionId: input.expectedSessionId };
     const terminal = this.terminalManager.open({
       workspace: input.workspace,
       sessionKey: input.workspace.activeSessionKey,
+      expectedSessionId: input.expectedSessionId,
       cwd: launchConfig.cwd ?? input.workspace.rootPath,
       kind: 'webPreviewDevServer',
       command: launchConfig.command,
+      reservedPorts,
     });
     const expectedPort = launchConfig.expectedPort ?? null;
     const targetUrl = expectedPort ? `http://127.0.0.1:${expectedPort}/` : null;
     const previewId = randomUUID();
-    const { server, previewUrl, port } = await this.startProxy(
+    let proxy: Awaited<ReturnType<WebPreviewManager['startProxy']>>;
+    try { proxy = await this.startProxy(
       targetUrl ?? 'http://127.0.0.1:3000/',
       previewId,
       isWebPreviewAnnotationEnabled('devServer'),
-    );
+    ); } catch (error) {
+      try { if (terminal.sessionId) await this.terminalManager.close(terminal.sessionId, 'user-close', terminalOwner); }
+      catch (cleanupError) {
+        const pending = this.createRuntime({ workspaceId: input.workspace.id, mode: 'devServer', status: 'error',
+          rootPath: input.workspace.rootPath, targetPath: input.targetPath ?? null, targetUrl,
+          previewUrl: null, port: expectedPort, processSessionId: terminal.sessionId, terminalOwner, launchConfig, server: null, previewId });
+        pending.error = `Preview startup cleanup requires recovery: ${String(cleanupError)}`;
+        this.runtimes.set(input.workspace.id, pending); this.emitStatus(pending);
+      }
+      throw error;
+    }
+    const { server, previewUrl, port } = proxy;
     const runtime = this.createRuntime({
       workspaceId: input.workspace.id,
       mode: 'devServer',
@@ -344,6 +366,7 @@ export class WebPreviewManager {
       previewUrl,
       port,
       processSessionId: terminal.sessionId,
+      terminalOwner,
       launchConfig,
       server,
       previewId,
@@ -432,9 +455,12 @@ export class WebPreviewManager {
     await closeServer(runtime.server);
     if (runtime.processSessionId) {
       try {
-        this.terminalManager?.close(runtime.processSessionId, reason === 'workspace-switch' ? 'workspace-switch' : 'user-close');
+        await this.terminalManager?.close(runtime.processSessionId, reason === 'workspace-switch' ? 'workspace-switch' : 'user-close', runtime.terminalOwner);
       } catch {
-        // noop
+        runtime.status = 'error';
+        runtime.error = 'Managed preview process cleanup requires recovery';
+        this.emitStatus(runtime);
+        throw new Error(runtime.error);
       }
     }
     runtime.status = 'stopped';

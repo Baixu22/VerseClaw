@@ -14,6 +14,7 @@ import { getToolParamsRecord } from "../agent-tools.params.js";
 import { acquirePatchBatchLocks } from "../apply-patch-batch-lock.js";
 import type { AnyAgentTool } from "../agent-tools.types.js";
 import { toRelativeWorkspacePath } from "../path-policy.js";
+import { FsSafeError, root as fsRoot } from "../../infra/fs-safe.js";
 import { generateUnifiedPatch } from "../sessions/tools/edit-diff.js";
 import { jsonResult } from "./common.js";
 import {
@@ -30,7 +31,7 @@ import type {
   RemoteForgeErrorV1,
 } from "../../../../shared/types/remote-forge.js";
 
-import { journalEntryId, journalDirFor, snapshotBeforeWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
+import { getOrCreateWriteJournal, journalEntryId, journalDirFor, snapshotBeforeWrite, snapshotPreparedWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
 export * from "./write-journal-core.js";
 
 /** Preserve the original workspace path policy at the existing tool entrypoint. */
@@ -197,6 +198,7 @@ export function wrapToolWithWriteJournal(
   tool: AnyAgentTool,
   options: {
     workspaceRoot: string;
+    workspaceOnly?: boolean;
     sessionId?: string;
     enabled?: boolean;
     /** FP-P1-04: coding flags in force, recorded into each entry's lineage. */
@@ -228,45 +230,63 @@ export function wrapToolWithWriteJournal(
       const release = await acquirePatchBatchLocks(lockTargets);
       try {
         const snapshots: WriteJournalEntry[] = [];
+        const confinedRoot = options.workspaceOnly && paths.length > 0
+          ? await fsRoot(options.workspaceRoot)
+          : undefined;
         for (const filePath of paths) {
-          const entry = snapshotBeforeWrite({
-          workspaceRoot: options.workspaceRoot,
-          sessionId: options.sessionId,
-          filePath,
-          toolName: tool.name,
-          ...(toolCallId ? { requestId: toolCallId } : {}),
-          ...(options.flags ? { flags: options.flags } : {}),
-        });
-        if (entry) {
-          snapshots.push(entry);
+          const metadata = {
+            workspaceRoot: options.workspaceRoot,
+            sessionId: options.sessionId,
+            filePath,
+            toolName: tool.name,
+            ...(toolCallId ? { requestId: toolCallId } : {}),
+            ...(options.flags ? { flags: options.flags } : {}),
+          };
+          // Read through the existing rooted file handle after acquiring the
+          // lease: a path swapped while waiting must not leak into a snapshot.
+          let entry: WriteJournalEntry | null;
+          if (confinedRoot) {
+            const relative = toRelativeWorkspacePath(options.workspaceRoot, filePath);
+            let prior: Buffer | undefined;
+            try {
+              prior = (await confinedRoot.read(relative)).buffer;
+            } catch (error) {
+              if (!(error instanceof FsSafeError && error.code === "not-found")) throw error;
+            }
+            entry = snapshotPreparedWrite({ ...metadata, hadPrior: prior !== undefined, ...(prior !== undefined ? { priorContent: prior } : {}) });
+          } else {
+            entry = snapshotBeforeWrite(metadata);
+          }
+          if (entry) {
+            snapshots.push(entry);
+          }
         }
-      }
-      const result = await tool.execute(toolCallId, args, signal, onUpdate);
-      if (snapshots.length === 0) {
-        return result;
-      }
-      const prevDetails =
-        result.details && typeof result.details === "object" && !Array.isArray(result.details)
-          ? (result.details as Record<string, unknown>)
+        const result = await tool.execute(toolCallId, args, signal, onUpdate);
+        if (snapshots.length === 0) {
+          return result;
+        }
+        const prevDetails =
+          result.details && typeof result.details === "object" && !Array.isArray(result.details)
+            ? (result.details as Record<string, unknown>)
+            : {};
+        const detailsForLineage =
+          tool.name === "write"
+            ? (() => {
+                const {
+                  patch: _untrustedPatch,
+                  patchArtifacts: _untrustedArtifacts,
+                  patchArtifactError: _untrustedError,
+                  ...otherDetails
+                } = prevDetails;
+                return {
+                  ...otherDetails,
+                  ...projectFullFileWrite({ args, requestId: toolCallId, snapshots }),
+                };
+              })()
+            : prevDetails;
+        const patchLineage = toolCallId
+          ? bindPatchArtifactLineage({ details: detailsForLineage, snapshots, requestId: toolCallId })
           : {};
-      const detailsForLineage =
-        tool.name === "write"
-          ? (() => {
-              const {
-                patch: _untrustedPatch,
-                patchArtifacts: _untrustedArtifacts,
-                patchArtifactError: _untrustedError,
-                ...otherDetails
-              } = prevDetails;
-              return {
-                ...otherDetails,
-                ...projectFullFileWrite({ args, requestId: toolCallId, snapshots }),
-              };
-            })()
-          : prevDetails;
-      const patchLineage = toolCallId
-        ? bindPatchArtifactLineage({ details: detailsForLineage, snapshots, requestId: toolCallId })
-        : {};
         return {
           ...result,
           details: {
@@ -313,13 +333,28 @@ export function createUndoWriteTool(options: {
     }),
     execute: async (_id, args) => {
       const record = getToolParamsRecord(args) ?? {};
-      const steps = typeof record.steps === "number" ? record.steps : 1;
-      const outcome = undoLastWrites({
-        workspaceRoot: options.workspaceRoot,
-        sessionId: options.sessionId,
-        steps,
-        workspaceOnly: options.workspaceOnly,
-      });
+      if (record.steps !== undefined && (typeof record.steps !== "number" || !Number.isFinite(record.steps) || record.steps < 1)) {
+        throw new Error("steps must be a finite positive number");
+      }
+      const steps = Math.max(1, Math.floor(typeof record.steps === "number" ? record.steps : 1));
+      const journal = getOrCreateWriteJournal(options.workspaceRoot, options.sessionId?.trim() || "default");
+      const selected = journal.entries.slice(-steps).toReversed();
+      const release = await acquirePatchBatchLocks(selected.map((entry) => entry.absPath));
+      let outcome: Awaited<ReturnType<typeof undoLastWrites>>;
+      try {
+        // Empty selection is a no-op, not permission to undo a later new write.
+        outcome = selected.length === 0
+          ? { restored: [], errors: [], journalDir: journal.rootDir, remainingEntries: journal.entries.length }
+          : await undoLastWrites({
+              workspaceRoot: options.workspaceRoot,
+              sessionId: options.sessionId,
+              steps: selected.length,
+              workspaceOnly: options.workspaceOnly,
+              expectedEntries: selected.map(({ seq, relPath }) => ({ seq, relPath })),
+            });
+      } finally {
+        release();
+      }
       // FP-P1-04: partial restore is a FAILURE; the journal dir is reported so
       // a human can recover from the preserved snapshots.
       return jsonResult({

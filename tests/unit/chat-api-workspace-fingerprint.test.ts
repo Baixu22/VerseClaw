@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
+import {mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {TaskSystemStore} from '../../shared/task-system/store';
+import {resolveTaskDomain} from '../../shared/task-system/identity';
 
 function computeExpectedFingerprint(rootPath: string): string {
   const absolute = resolve(rootPath);
@@ -62,6 +66,19 @@ vi.mock('@electron/utils/token-usage', () => ({
  * instead of relying solely on attempt.ts local effectiveWorkspace.
  */
 describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)', () => {
+  it('keeps user text unchanged while restoring a task started without manual coordinator setup',async()=>{
+    const root=mkdtempSync(resolve(tmpdir(),'quiet-task-chat-'));const tasks=new TaskSystemStore(resolveTaskDomain(root));
+    try{
+      getWorkspaceRootPathByIdMock.mockResolvedValue(root);
+      tasks.start({contract:{objective:'Hidden persistent goal',target:'.',constraints:[],acceptance:[{id:'v',description:'Check behavior',verification:{kind:'owner-receipt',owner:'fixture'}}]}},'agent:main:main','g','start');
+      const gatewayManager={rpc:vi.fn(async(method:string)=>method==='sessions.describe'?{session:{sessionId:'g'}}:{runId:'quiet-run'}),getStatus:vi.fn(()=>({state:'running',gatewayReady:true}))};
+      const {createChatApi}=await import('@electron/services/chat-api');
+      await createChatApi({gatewayManager:gatewayManager as never}).sendWithMedia({sessionKey:'agent:main:main',workspaceId:'ws-app',message:'Continue the export fix.',idempotencyKey:'quiet-chat'});
+      const request=(gatewayManager.rpc.mock.calls as unknown[][]).find(call=>call[0]==='chat.send')?.[1] as {message:string};
+      expect(request.message).toBe('Continue the export fix.');
+      expect(tasks.binding('agent:main:main','g')?.contract.objective).toBe('Hidden persistent goal');
+    }finally{tasks.close();rmSync(root,{recursive:true,force:true});}
+  });
   beforeEach(() => {
     loadTaskLedgerSnapshotMock.mockReset();
     getWorkspaceRootPathByIdMock.mockReset();

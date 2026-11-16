@@ -22,6 +22,9 @@ import { createEmptySessionActivitySnapshot } from '@shared/types/session-activi
 import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { trajectoryViewFeed, type TrajectoryView } from '@/lib/trajectory-view';
+import { TrajectoryAssembler, type TrajectoryEventV2, type TrajectoryViewNode } from '@/lib/trajectory-assembler';
+import { lifecycleDefinitions, type LifecycleData } from '@/lib/trajectory-view/lifecycle';
 
 type SessionActivityEvent =
   | { channel: 'runtime'; payload: ChatRuntimeEvent }
@@ -38,6 +41,15 @@ const snapshotScopes = new Map<string, string | null>();
 const latestLoadRequestBySession = new Map<string, number>();
 const eventUnsubscribers: Array<() => void> = [];
 const mockTimers = new Map<string, ReturnType<typeof setTimeout>[]>();
+type TrajectorySubscription = {
+  workspaceId: string | null;
+  owner: SessionActivitySnapshot['session'];
+  // Retain only a run identity actually observed in this generation's owner read.
+  runId: string | null;
+  unsubscribe: () => void;
+};
+const trajectorySubscriptions = new Map<string, TrajectorySubscription>();
+const trajectoryViews = new Map<string, TrajectoryView>();
 let initialized = false;
 let loadRequestSequence = 0;
 
@@ -87,6 +99,7 @@ function policyMatchesScope(
   workspaceId: string | null,
   sessionKey: string,
 ): boolean {
+  if (snapshot.session.sessionKey !== sessionKey) return false;
   const policy = snapshot.policy;
   if (!policy) return true;
   if (policy.scope.sessionKey !== sessionKey) return false;
@@ -181,33 +194,12 @@ export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: 
 
   if (event.channel === 'runtime') {
     const runtime = event.payload;
-    if (!shouldApply(updatedAt, snapshot.session.updatedAt)) return snapshot;
-    if (runtime.type === 'run.started') {
-      next.session = {
-        ...snapshot.session,
-        runId: runtime.runId,
-        status: 'running',
-        startedAt: runtime.startedAt ?? updatedAt,
-        endedAt: null,
-        error: null,
-        updatedAt,
-      };
-    } else if (runtime.type === 'run.ended') {
-      next.session = {
-        ...snapshot.session,
-        runId: runtime.runId,
-        status: runtime.status === 'completed' ? 'completed' : runtime.status === 'aborted' ? 'aborted' : 'failed',
-        endedAt: runtime.endedAt ?? updatedAt,
-        error: runtime.error ?? null,
-        updatedAt,
-      };
-    } else if ('phase' in runtime && typeof runtime.phase === 'string') {
-      next.session = { ...snapshot.session, phase: runtime.phase, updatedAt };
-    }
     if (runtime.type === 'approval.updated' && ['pending', 'requested', 'waiting'].includes(String(runtime.status))) {
-      next.session = { ...next.session, status: 'waiting_approval', phase: runtime.phase ?? 'approval', updatedAt };
+      next.continuity = { ...snapshot.continuity,
+        blockedReason: runtime.message ?? runtime.title ?? snapshot.continuity.blockedReason };
+      return next;
     }
-    return next;
+    return snapshot;
   }
 
   if (event.channel === 'queue') {
@@ -325,9 +317,38 @@ function mockScenario(): SessionActivityMockScenario {
   return scenarios.includes(value as SessionActivityMockScenario) ? value as SessionActivityMockScenario : 'idle-clean';
 }
 
+export function sessionFromTrajectory(
+  view: TrajectoryView,
+  owner?: SessionActivitySnapshot['session'],
+  confirmedRunId: string | null | undefined = owner?.runId,
+): SessionActivitySnapshot['session'] {
+  // A session-key-only view cannot establish a physical generation or a new run.
+  if (owner && (view.sessionKey !== owner.sessionKey || !owner.sessionId
+    || !confirmedRunId || view.loading || view.error)) return owner;
+  const run = view.nodes.filter((node) => node.data.role === 'run'
+    && (!owner || node.data.runId === confirmedRunId)).at(-1)?.data;
+  if (!run) return owner ?? createEmptySessionActivitySnapshot(view.sessionKey).session;
+  // An idle owner may retain a known run's terminal display, never restart it.
+  if (owner && !owner.runId && !['completed', 'failed', 'aborted'].includes(run.status)) return owner;
+  return { ...owner, sessionKey: view.sessionKey, runId: run.runId, status: run.status,
+    startedAt: run.startedAt, endedAt: run.endedAt, error: run.error, updatedAt: run.updatedAt };
+}
+
+const MOCK_TIME = Date.parse('2026-11-07T00:00:00.000Z');
+function mockRunView(sessionKey: string, runId: string, status: 'running' | 'completed' | 'failed'): TrajectoryView {
+  const assembler = new TrajectoryAssembler(lifecycleDefinitions);
+  const start: TrajectoryEventV2 = { traceSchema: 'openclaw-trajectory', schemaVersion: 2, traceId: 'mock-trace',
+    source: 'runtime', ts: new Date(MOCK_TIME - 12_000).toISOString(), seq: 1, type: 'run/start', role: 'run', phase: 'start', runId, state: { status: 'running' } };
+  const events: TrajectoryEventV2[] = status === 'running' ? [start] : [start, { ...start,
+    seq: 2, ts: new Date(MOCK_TIME - 4_000).toISOString(), type: 'run/end', phase: 'end', state: { status } }];
+  assembler.replace(events);
+  return { sessionKey, nodes: assembler.getNodes() as readonly TrajectoryViewNode<LifecycleData>[],
+    lastSeq: events.length, legacyFallback: false, loading: false, error: false };
+}
+
 function mockSnapshot(sessionKey: string, scenario: SessionActivityMockScenario): SessionActivitySnapshot {
   const snapshot = createEmptySessionActivitySnapshot(sessionKey);
-  const now = Date.now();
+  const now = MOCK_TIME;
   if (scenario === 'git-dirty' || scenario === 'blocked-recovery') {
     snapshot.git = {
       isRepository: true, workspaceRoot: 'C:\\workspace', branch: 'feat/session-activity', ahead: 1, behind: 0,
@@ -337,7 +358,6 @@ function mockSnapshot(sessionKey: string, scenario: SessionActivityMockScenario)
     snapshot.availability.git = true;
   }
   if (scenario === 'running-task' || scenario === 'multi-subagent') {
-    snapshot.session = { ...snapshot.session, runId: 'mock-run', status: 'running', phase: 'execute', startedAt: now - 18_000, updatedAt: now };
     snapshot.tasks = [{ id: 'mock-mission', kind: 'mission', title: 'Workspace implementation', status: 'running', progress: 0.42, phase: 'execute', updatedAt: now, source: 'snapshot' }];
     snapshot.availability.tasks = true;
   }
@@ -361,33 +381,43 @@ function mockSnapshot(sessionKey: string, scenario: SessionActivityMockScenario)
     snapshot.availability.terminals = true;
   }
   if (scenario === 'blocked-recovery') {
-    snapshot.session = { ...snapshot.session, status: 'failed', phase: 'blocked', endedAt: now - 2_000, error: 'A checkpoint needs review before continuing.', updatedAt: now };
     snapshot.continuity = { queueCount: 2, contextPressure: 'high', checkpoint: true, blockedReason: 'Checkpoint review required' };
   }
   if (scenario === 'completed-recently') {
-    snapshot.session = { ...snapshot.session, runId: 'mock-completed', status: 'completed', phase: 'complete', startedAt: now - 30_000, endedAt: now - 4_000, updatedAt: now - 4_000 };
     snapshot.tasks = [{ id: 'mock-task', kind: 'taskLoop', title: 'Verified task loop', status: 'completed', progress: 1, phase: 'complete', updatedAt: now - 4_000, source: 'snapshot' }];
     snapshot.availability.tasks = true;
   }
+  if (scenario === 'running-task' || scenario === 'multi-subagent') snapshot.session = sessionFromTrajectory(mockRunView(sessionKey, 'mock-run', 'running'));
+  if (scenario === 'blocked-recovery') snapshot.session = sessionFromTrajectory(mockRunView(sessionKey, 'mock-recovery', 'failed'));
+  if (scenario === 'completed-recently') snapshot.session = sessionFromTrajectory(mockRunView(sessionKey, 'mock-completed', 'completed'));
+  snapshot.capturedAt = now;
   return snapshot;
 }
 
-function scheduleMock(sessionKey: string, scenario: SessionActivityMockScenario, apply: (event: SessionActivityEvent) => void): void {
+function scheduleMock(
+  sessionKey: string,
+  scenario: SessionActivityMockScenario,
+  apply: (event: SessionActivityEvent) => void,
+  complete: (view: TrajectoryView) => void,
+): void {
   const timers: ReturnType<typeof setTimeout>[] = [];
   if (scenario === 'running-task' || scenario === 'multi-subagent') {
-    timers.push(setTimeout(() => apply({ channel: 'runtime', payload: { type: 'run.ended', runId: 'mock-run', sessionKey, status: 'completed', endedAt: Date.now() } }), 4_500));
+    timers.push(setTimeout(() => complete(mockRunView(sessionKey, 'mock-run', 'completed')), 4_500));
   }
   if (scenario === 'multi-subagent') {
-    // `taskNodeId` must equal the seeded row's id, or `subagentLifecycleIdentityKey`
-    // derives a different key and the event appends a duplicate instead of
-    // settling the row that is already on screen.
-    timers.push(setTimeout(() => apply({ channel: 'subagent', payload: { runId: 'mock-child', taskNodeId: 'rail-node-1', sessionKey, roleName: 'explorer', childSessionKey: 'agent:explorer:rail-scout', agentId: 'explorer', status: 'completed', summary: '已定位 3 处可复用组件', ts: Date.now() } }), 3_200));
+    // Match the seeded row so completion settles it instead of adding a duplicate.
+    timers.push(setTimeout(() => apply({ channel: 'subagent', payload: {
+      runId: 'mock-child', taskNodeId: 'rail-node-1', sessionKey, roleName: 'explorer',
+      childSessionKey: 'agent:explorer:rail-scout', agentId: 'explorer', status: 'completed',
+      summary: '已定位 3 处可复用组件', ts: MOCK_TIME + 3_200,
+    } }), 3_200));
   }
   mockTimers.set(sessionKey, timers);
 }
 
 export type SessionActivityState = {
   snapshots: Record<string, SessionActivitySnapshot>;
+  scopedSnapshots: Record<string, SessionActivitySnapshot>;
   initialized: boolean;
   init: () => void;
   load: (input: { workspaceId?: string | null; sessionKey: string }) => Promise<SessionActivitySnapshot>;
@@ -395,28 +425,97 @@ export type SessionActivityState = {
   refreshGit: (workspaceId?: string | null, sessionKey?: string) => Promise<void>;
 };
 
+export function sessionActivityScopeKey(workspaceId: string | null | undefined, sessionKey: string): string {
+  return JSON.stringify([normalizeWorkspaceScope(workspaceId), sessionKey]);
+}
+
+export function selectSessionActivitySnapshot(state: SessionActivityState, workspaceId: string | null | undefined,
+  sessionKey: string, generation?: string): SessionActivitySnapshot | undefined {
+  const snapshot = state.scopedSnapshots[sessionActivityScopeKey(workspaceId, sessionKey)];
+  if (generation && snapshot?.session.sessionId && snapshot.session.sessionId !== generation) return undefined;
+  return snapshot;
+}
+
 export const useSessionActivityStore = create<SessionActivityState>((set, get) => {
+  const publishSnapshot = (workspaceId: string | null, snapshot: SessionActivitySnapshot) => {
+    const key = snapshot.session.sessionKey;
+    sessionSnapshots.set(key, snapshot);
+    set((state) => ({ snapshots: { ...state.snapshots, [key]: snapshot },
+      scopedSnapshots: { ...state.scopedSnapshots, [sessionActivityScopeKey(workspaceId, key)]: snapshot } }));
+  };
+  const disconnectTrajectory = (key: string) => {
+    const subscription = trajectorySubscriptions.get(key);
+    trajectorySubscriptions.delete(key);
+    trajectoryViews.delete(key);
+    subscription?.unsubscribe();
+  };
+  const applyTrajectory = (key: string, subscription: TrajectorySubscription, view: TrajectoryView) => {
+    if (trajectorySubscriptions.get(key) !== subscription || view.sessionKey !== key
+      || snapshotScopes.get(key) !== subscription.workspaceId) return;
+    const current = get().snapshots[key];
+    if (!current || !subscription.owner.sessionId
+      || current.session.sessionId !== subscription.owner.sessionId) return;
+    const previous = trajectoryViews.get(key);
+    if (previous && view.lastSeq < previous.lastSeq) return;
+    trajectoryViews.set(key, view);
+    const projected = sessionFromTrajectory(view, subscription.owner, subscription.runId);
+    if (projected === subscription.owner) return;
+    publishSnapshot(subscription.workspaceId, {
+      ...current, session: { ...current.session, ...projected },
+      capturedAt: Math.max(current.capturedAt, projected.updatedAt),
+    });
+  };
+  const connectTrajectory = (
+    key: string,
+    workspaceId: string | null,
+    owner: SessionActivitySnapshot['session'],
+  ) => {
+    if (!owner.sessionId) {
+      disconnectTrajectory(key);
+      return;
+    }
+    const current = trajectorySubscriptions.get(key);
+    if (current?.workspaceId === workspaceId && current.owner.sessionId === owner.sessionId) {
+      current.owner = owner;
+      // A null active run does not revoke a same-generation run's proven history.
+      if (owner.runId) current.runId = owner.runId;
+      const view = trajectoryViews.get(key);
+      if (view) applyTrajectory(key, current, view);
+      return current;
+    }
+    disconnectTrajectory(key);
+    const subscription: TrajectorySubscription = {
+      workspaceId, owner, runId: owner.runId ?? null, unsubscribe: () => {},
+    };
+    // connect publishes synchronously; install the token before registering.
+    trajectorySubscriptions.set(key, subscription);
+    subscription.unsubscribe = trajectoryViewFeed.connect(key, (view) => applyTrajectory(key, subscription, view));
+    return subscription;
+  };
   const applyEvent = (event: SessionActivityEvent) => {
     const key = routingSessionKey(event);
     if (!key) return;
     const current = get().snapshots[key] ?? createEmptySessionActivitySnapshot(key);
+    const generation = (event.channel === 'runtime' || event.channel === 'command') && 'sessionId' in event.payload
+      ? event.payload.sessionId : undefined;
+    if (generation && current.session.sessionId && generation !== current.session.sessionId) return;
+    const workspaceId = snapshotScopes.get(key) ?? null;
     const next = reduceSessionActivity(current, event);
-    if (next !== current) {
-      sessionSnapshots.set(key, next);
-      set((state) => ({ snapshots: { ...state.snapshots, [key]: next } }));
-      /* Permission changes can alter runtime-effective grants and capability
-       * facts without changing the session key. Refresh through the canonical
-       * host seam so the policy never retains an authorization snapshot from
-       * before the event. */
-      if (event.channel === 'runtime' && event.payload.type === 'approval.updated') {
-        const workspaceId = snapshotScopes.get(key) ?? null;
+    if (next !== current) publishSnapshot(workspaceId, next);
+    if (event.channel === 'runtime') {
+      // Runtime notifications request owner confirmation; they do not assign run identity.
+      if (event.payload.type === 'approval.updated' || event.payload.type === 'run.started'
+        || event.payload.type === 'run.ended') {
         void get().load({ workspaceId, sessionKey: key });
+      } else if (trajectorySubscriptions.has(key)) {
+        void trajectoryViewFeed.refresh(key);
       }
     }
   };
 
   return {
     snapshots: {},
+    scopedSnapshots: {},
     initialized: false,
     init: () => {
       if (initialized) return;
@@ -438,6 +537,8 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
       const requestedWorkspaceId = normalizeWorkspaceScope(workspaceId);
       const requestId = ++loadRequestSequence;
       latestLoadRequestBySession.set(sessionKey, requestId);
+      const isCurrentRequest = () => latestLoadRequestBySession.get(sessionKey) === requestId
+        && snapshotScopes.get(sessionKey) === requestedWorkspaceId;
       const isMockMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('mock') === '1';
       /*
        * Keep same-scope facts while refreshing so a failed re-read remains
@@ -446,23 +547,32 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
        */
       const previousScope = snapshotScopes.get(sessionKey);
       const sameScope = previousScope === undefined || previousScope === requestedWorkspaceId;
-      const previous = sameScope ? get().snapshots[sessionKey] : undefined;
+      const scopedKey = sessionActivityScopeKey(requestedWorkspaceId, sessionKey);
+      const previous = get().scopedSnapshots[scopedKey] ?? (sameScope ? get().snapshots[sessionKey] : undefined);
+      if (!sameScope || isMockMode) disconnectTrajectory(sessionKey);
+      for (const timer of mockTimers.get(sessionKey) ?? []) clearTimeout(timer);
+      mockTimers.delete(sessionKey);
       snapshotScopes.set(sessionKey, requestedWorkspaceId);
       const initial = isMockMode
         ? mockSnapshot(sessionKey, mockScenario())
         : markPolicyRefreshPending(previous ?? createEmptySessionActivitySnapshot(sessionKey));
-      sessionSnapshots.set(sessionKey, initial);
-      set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: initial } }));
+      publishSnapshot(requestedWorkspaceId, initial);
       if (isMockMode
         && (initial.session.status !== 'idle' || initial.git || initial.tasks.length || initial.terminals.length)) {
-        scheduleMock(sessionKey, mockScenario(), applyEvent);
+        scheduleMock(sessionKey, mockScenario(), (event) => {
+          if (isCurrentRequest()) applyEvent(event);
+        }, (view) => {
+          if (!isCurrentRequest()) return;
+          const current = get().snapshots[sessionKey];
+          if (!current) return;
+          publishSnapshot(requestedWorkspaceId, {
+            ...current, session: { ...current.session, ...sessionFromTrajectory(view) },
+          });
+        });
       }
 
       if (isMockMode) {
-        /* Git comes from `git.status()` even under mock, because the mock host
-         * bridge answers that call with the same fixture the review tab reads.
-         * Seeding a second git object into each scenario would let the status
-         * card's changed-line figures disagree with the diff they link to. */
+        /* Git comes from the same host fixture as the review tab. */
         void get().refreshGit(workspaceId, sessionKey);
         return initial;
       }
@@ -470,12 +580,7 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
       const [activityResult] = await Promise.allSettled([
         hostApi.sessionActivity.snapshot({ workspaceId: requestedWorkspaceId, sessionKey }),
       ]);
-      if (
-        latestLoadRequestBySession.get(sessionKey) !== requestId
-        || snapshotScopes.get(sessionKey) !== requestedWorkspaceId
-      ) {
-        return get().snapshots[sessionKey] ?? initial;
-      }
+      if (!isCurrentRequest()) return get().snapshots[sessionKey] ?? initial;
       const current = get().snapshots[sessionKey] ?? initial;
       const candidate = activityResult.status === 'fulfilled'
         && activityResult.value.success
@@ -487,12 +592,16 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
         : null;
       let snapshot = current;
       if (hydrated) {
-        const mergeItems = <T extends { id: string; updatedAt: number }>(base: T[], incoming: T[]) => incoming.reduce(upsert, base);
+        const generationChanged = Boolean(hydrated.session.sessionId
+          && current.session.sessionId !== hydrated.session.sessionId);
+        const runChanged = (current.session.runId ?? null) !== (hydrated.session.runId ?? null);
+        const mergeItems = <T extends { id: string; updatedAt: number }>(base: T[], incoming: T[]) => incoming.reduce(upsert, generationChanged ? [] : base);
         snapshot = {
           ...current,
           ...hydrated,
-          session: hydrated.session && hydrated.session.updatedAt >= current.session.updatedAt
-            ? { ...current.session, ...hydrated.session, sessionKey }
+          session: generationChanged || runChanged || hydrated.session.updatedAt >= current.session.updatedAt
+            ? { ...current.session, ...hydrated.session, sessionKey,
+              sessionId: hydrated.session.sessionId ?? current.session.sessionId }
             : current.session,
           tasks: mergeItems(current.tasks, hydrated.tasks),
           subagents: mergeItems(current.subagents, hydrated.subagents),
@@ -503,39 +612,38 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
           capturedAt: Math.max(current.capturedAt, hydrated.capturedAt),
         };
       } else {
-        /* A failed read or a response for another workspace is not evidence
-         * about this scope. Keep same-scope facts as stale and record the
-         * failure; never merge a cross-scope policy into the selected session. */
+        /* A failed owner read retains same-scope facts as stale. */
         snapshot = {
           ...current,
           backgroundRead: mergeBackgroundRead(current.backgroundRead, undefined),
         };
       }
-      sessionSnapshots.set(sessionKey, snapshot);
-      set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: snapshot } }));
-      return snapshot;
+      publishSnapshot(requestedWorkspaceId, snapshot);
+      if (!isCurrentRequest()) return get().snapshots[sessionKey] ?? snapshot;
+      if (!hydrated) return snapshot;
+      // Bind only the unmodified owner response, never a trajectory-derived identity.
+      const subscription = connectTrajectory(sessionKey, requestedWorkspaceId, hydrated.session);
+      if (subscription) await Promise.allSettled([trajectoryViewFeed.refresh(sessionKey)]);
+      if (!isCurrentRequest()) return get().snapshots[sessionKey] ?? snapshot;
+      return get().snapshots[sessionKey] ?? snapshot;
     },
     apply: applyEvent,
     refreshGit: async (workspaceId, sessionKey) => {
       if (!sessionKey) return;
       const requestedWorkspaceId = normalizeWorkspaceScope(workspaceId);
+      const requestId = latestLoadRequestBySession.get(sessionKey);
+      const generation = get().snapshots[sessionKey]?.session.sessionId;
       try {
         const result = await hostApi.git.status();
-        if (!result.success) return;
-        if (
-          requestedWorkspaceId !== null
-          && snapshotScopes.has(sessionKey)
-          && snapshotScopes.get(sessionKey) !== requestedWorkspaceId
-        ) {
-          return;
-        }
-        if (requestedWorkspaceId !== null && !snapshotScopes.has(sessionKey)) {
-          snapshotScopes.set(sessionKey, requestedWorkspaceId);
-        }
+        if (!result.success
+          || latestLoadRequestBySession.get(sessionKey) !== requestId
+          || get().snapshots[sessionKey]?.session.sessionId !== generation
+          || (snapshotScopes.has(sessionKey) && snapshotScopes.get(sessionKey) !== requestedWorkspaceId)) return;
+        if (!snapshotScopes.has(sessionKey)) snapshotScopes.set(sessionKey, requestedWorkspaceId);
         const current = get().snapshots[sessionKey] ?? createEmptySessionActivitySnapshot(sessionKey);
-        const next = { ...current, git: result.status, availability: { ...current.availability, git: true }, capturedAt: Date.now() };
-        sessionSnapshots.set(sessionKey, next);
-        set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: next } }));
+        publishSnapshot(requestedWorkspaceId, {
+          ...current, git: result.status, availability: { ...current.availability, git: true }, capturedAt: Date.now(),
+        });
       } catch {
         // Git is an optional source; the rest of the panel remains available.
       }
@@ -547,11 +655,17 @@ export function disposeSessionActivitySubscriptions(): void {
   while (eventUnsubscribers.length) eventUnsubscribers.pop()?.();
   for (const timers of mockTimers.values()) timers.forEach(clearTimeout);
   mockTimers.clear();
+  const subscriptions = [...trajectorySubscriptions.values()];
+  trajectorySubscriptions.clear();
+  for (const subscription of subscriptions) subscription.unsubscribe();
+  trajectoryViews.clear();
   sessionSnapshots.clear();
   snapshotScopes.clear();
   latestLoadRequestBySession.clear();
-  loadRequestSequence = 0;
+  // Do not reuse request IDs after disposal while old promises can still settle.
+  loadRequestSequence += 1;
   initialized = false;
+  useSessionActivityStore.setState({ snapshots: {}, scopedSnapshots: {}, initialized: false });
 }
 
 export type { SessionActivityEvent };

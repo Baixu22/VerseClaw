@@ -1,0 +1,1743 @@
+{
+  "schemaVersion": "RsiLiveAdmissionReport/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-admission-verifier",
+  "status": "ready-for-measurement",
+  "admissions": [
+    {
+      "taskId": "tf-0274-e01",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "73b56d4d2bf48ce7d55826249832db0da2fa38b8bdae09f553ed956cdc20dae2"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "56f2467cf1e2515e572682264eab3951101d3bad2460aa94a5c52e8b438f6163"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "5bcb7d2be28100736df0ae7515ba3e33e250b815c7b5059177d7dec4f3dd8046"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "efcefc728c672e0e2dff7e67d6f49713ed9b92822c8e8ec26c6846eb1179a506"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "a244fb23be9f5bcbab5975f72ebe2b5d9fe6843bfa13344d48c7a24411379a1b"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "e38e4d1e8392740e7a60e8ebc2ee8f8d2511f662f351d1dcca047b982cf29f7c"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "8302c868d4016155400b4cf10ed6bfacabc02dd92ba0c15defce65dbf28d7d1b"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "e077f668fea3c499e68703793fa9400ed230fb65837adca1cf98a7007f8702ee"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "2881052446592d43d416c27d7b672d32d14e1305706972f7bc22389e504b3ce7"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "60ed3ccfb6b491e01f92801d6b4f5fd546c4584baa04c363389953cd48d7ba6b"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "2a22f8ab0a28ba8816fb731fafd0e76413b2b870a44a499da9d4cb80ef91bfba"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "f8a6a04b5e7c57277e4ca6378e4c3f2595a7234bf0382079d3949901e4614c6b"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "6f5df24c7bf5df2eff05735a7e71ffef52bc091ffd2ed636f2f32e0d86ff2ce3"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "e25cc3b2c99804cac8cca89689e598fe82f78f8863ccd652e7d2fbe9a6115031"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "b07cdd527035c150c9ff687d43f4ef6f39c73b5fc20b9a2f247b02db83a8b1e5"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "81a8a6e667b6f1cf082f4e607066f82494bbc276f4acca7db0114fe07c53e9cd"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "a2ad839f977b43745cd0d3fe6a4731ce7e9a5fe28bfd954e64481e1a3bdf39e8"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "71393f526161a7be31c0cd16ecfa1a13a8659f44e7ad7bdbd35e0bf80501734e"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "c7bd213577f9d8ee1f301e05d17dbe15f0daeaa05900d2cdda97dfd299af1494"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "c24cc4d0469df79b3ad0c9591c7dffa2bef548afc676974f80c047980bd824c8"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "2ec7791d108097744e048a21addf93bfa8be149965e45c1e12e6211deda9abc9"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "e97a1d07edbf4cee930cdcdd61244bb967152701a3bbb4d73bf21dc9df709b51"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "1d0431ee2b840dae73fb554e2ad7b0d9d3f98e85539b4329ed7f1a44fbedbfa8"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "d2306726c1637b39f3acfd45517c255ab8bed3fe70837aab8a17ea471aa0f965"
+    }
+  ],
+  "provider": {
+    "status": "ready",
+    "receipt": "provider-preflight.json",
+    "responseId": "01a1af1cbd257aeaa1a9891fbfd8ef0e",
+    "usage": {
+      "inputTokens": 164,
+      "outputTokens": 16,
+      "totalTokens": 180
+    }
+  },
+  "trialSlots": [
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0274-e01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 1,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 1,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 2,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 2,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 2,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 3,
+      "arm": "sekb-off",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 3,
+      "arm": "sekb-shadow",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "repeat": 3,
+      "arm": "sekb-confirmed",
+      "status": "not-run",
+      "reason": "measurement-not-started"
+    }
+  ],
+  "claims": {
+    "taskQualityMeasured": false,
+    "benefit": false,
+    "promotionReady": false,
+    "realHuman": false,
+    "productLocksChanged": false
+  }
+}

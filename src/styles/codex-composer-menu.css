@@ -47,7 +47,7 @@
  * rhythm asks for.
  * ────────────────────────────────────────────────────────────────────────── */
 .codex-composer-menu {
-  --ccm-surface: var(--color-background-elevated-primary);
+  --ccm-surface: var(--color-background-control-panel);
   --ccm-ring: var(--color-border);
   --ccm-shadow: var(--shadow-xl-spread);
   --ccm-text-tertiary: var(--color-text-foreground-tertiary);
@@ -69,8 +69,8 @@
   border-radius: var(--radius-xl);
   background: var(--ccm-surface);
   box-shadow: var(--ccm-shadow);
-  -webkit-backdrop-filter: blur(var(--blur-sm));
-  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   overflow: hidden;
   animation: codex-composer-menu-in 140ms var(--ease-enter);
 }
@@ -155,9 +155,60 @@
   width: 300px;
 }
 
+/* Adjacent composer controls use the same surface as the compact add menu.
+ * Presence owns the blur/slide so exit stays visible without accepting input. */
+.codex-composer-menu.codex-composer-popover {
+  --ccm-surface: var(--color-background-control-panel);
+  width: 312px;
+  min-width: 0;
+  max-width: calc(100vw - 16px);
+  padding: 6px;
+  border-radius: var(--radius-xl);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  animation: none;
+}
+
+.codex-composer-popover[data-state='closed'] { pointer-events: none; }
+
+.codex-composer-popover .codex-composer-menu__option {
+  min-height: 48px;
+  padding: 8px;
+  gap: 8px;
+}
+
+.codex-composer-popover .codex-composer-menu__option-text small {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.codex-composer-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 4px 8px;
+  border: 1px solid var(--ccm-ring);
+  border-radius: var(--radius-md);
+  background: var(--color-background-secondary);
+  transition: border-color 160ms ease;
+}
+
+.codex-composer-search:focus-within { border-color: var(--color-border-focus); }
+.codex-composer-search input { min-width: 0; }
+
 .codex-execution-settings {
   padding: 8px;
 }
+
+.codex-model-options {
+  max-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.codex-model-options .codex-composer-menu__item { min-height: 34px; }
 
 .codex-execution-settings__row {
   display: grid;
@@ -212,6 +263,8 @@
   border-radius: var(--radius-lg);
   background: var(--color-background-secondary);
   animation: codex-execution-section-in 160ms var(--ease-enter);
+  max-height: 240px;
+  overflow-y: auto;
 }
 
 .codex-execution-settings__section--effort {
@@ -224,8 +277,8 @@
 }
 
 @keyframes codex-execution-section-in {
-  from { opacity: 0; transform: translateY(-3px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(4px); filter: blur(2px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 .codex-composer-menu__divider {
@@ -246,7 +299,7 @@
 
 .codex-composer-segmented button {
   min-width: 0;
-  height: 26px;
+  min-height: 28px;
   padding: 0 6px;
   border: 0;
   border-radius: calc(var(--radius-md) - 2px);
@@ -257,7 +310,8 @@
   letter-spacing: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.3;
 }
 
 .codex-composer-segmented button:hover,
@@ -273,7 +327,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .codex-composer-menu { animation: none; }
+  .codex-composer-menu,
+  .codex-execution-settings__section { animation: none; }
+  .codex-execution-settings__chevron { transition: none; }
 }
 
 /* Section label — `.codex-dropdown__label`, and the approval menu's head row.

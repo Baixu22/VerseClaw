@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "scope": "Development replay with unchanged baseline checker and untracked fixtures, not clean baseline acceptance.",
+  "checkerCommit": "bfcf57616b361a12845014b3f054b95e31c4021c",
+  "results": [
+    {
+      "fixture": "flat-ipc-bypass-registry",
+      "exitCode": 1,
+      "output": "Contract check fixtures applied: flat-ipc-bypass-registry\nContract check failed:\n- electron/main/ipc/host-invoke.ts:386: [flat-ipc/bypass-registry] ipcMain.handle('rogue:bypass') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry"
+    },
+    {
+      "fixture": "flat-ipc-computed-handle",
+      "exitCode": 0,
+      "output": "Contract check fixtures applied: flat-ipc-computed-handle\nContract check passed."
+    },
+    {
+      "fixture": "flat-ipc-spaced-handle",
+      "exitCode": 0,
+      "output": "Contract check fixtures applied: flat-ipc-spaced-handle\nContract check passed."
+    }
+  ]
+}

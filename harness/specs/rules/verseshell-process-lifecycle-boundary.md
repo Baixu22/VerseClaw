@@ -48,6 +48,16 @@ requiredProfiles:
 
 ## Cancellation And Cleanup
 
+- Concurrent acquisition of the same executor identity shares binary resolution, spawn and
+  handshake. An executor that is still starting consumes the instance process capacity, and
+  no client is published until the shared handshake succeeds.
+- Manager, workspace, process shutdown and the operator kill switch fence pending acquisitions.
+  Resolver or handshake completion after that fence must not create or publish another executor.
+  Concurrent shutdown callers wait for the same owned cleanup operation.
+- A managed payload reservation is returned when executor acquisition fails before start dispatch
+  or the executor explicitly rejects start. Uncertain effectful delivery or an unverified running
+  exit keeps its reservation until the existing owner establishes a terminal state.
+
 - Agent abort terminates a foreground process tree. Abort after an intentional background/yield
   detaches only the tool call.
 - Timeout and explicit kill terminate the full VerseShell-owned process tree and converge on a

@@ -105,14 +105,14 @@
 
 .codex-session-activity-rail[data-layer='inline'] {
   z-index: 1;
-  background: var(--color-background-elevated-secondary-opaque);
-  --csa-card: var(--color-background-elevated-primary-opaque);
+  background: var(--color-background-control-panel);
+  border-color: var(--color-border);
   box-shadow: none;
 }
 
 .codex-session-activity-rail[data-layer='overlay'] {
   z-index: var(--z-dropdown);
-  background: var(--color-background-elevated-primary-opaque);
+  background: var(--color-background-control-panel);
   box-shadow: var(--shadow-xl-spread);
 }
 
@@ -142,6 +142,11 @@
  * column of wrapped fragments. */
 @media (max-width: 1180px) {
   .codex-conversation-inset[data-rail='expanded'] { padding-right: 0; }
+  .codex-session-activity-rail[data-layer='inline'] {
+    background: var(--color-background-control-panel);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-xl-spread);
+  }
 }
 
 @media (max-width: 560px) {
@@ -165,20 +170,20 @@
  * menu's group spacing.
  */
 
-/* Each group is its own card — the structure is the outline, so the eye finds
- * a group by its box instead of reading titles to find where one ends. */
+/* One surface with quiet section boundaries, matching the transcript details. */
 .codex-session-activity .codex-session-activity__section {
   display: flex;
   flex-direction: column;
   min-width: 0;
   margin: 0 6px;
-  padding: 6px 4px;
-  border: 1px solid var(--csa-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-background-elevated-primary-opaque);
+  padding: 6px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 .codex-session-activity .codex-session-activity__section + .codex-session-activity__section {
-  margin-top: 8px;
+  margin-top: 4px;
+  border-top: 1px solid var(--csa-border);
 }
 /* A collapsed card is just its head. */
 .codex-session-activity .codex-session-activity__collapsible:not([open]) {
@@ -203,7 +208,7 @@
   color: var(--csa-text-strong);
   font-size: 13px;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Right-aligned summary on the head — a count, a progress figure, a state. */
@@ -250,6 +255,27 @@
   flex-direction: column;
   min-width: 0;
   padding-top: 2px;
+}
+
+.codex-session-activity__overflow {
+  max-height: 192px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.codex-session-activity__source > summary { list-style: none; }
+.codex-session-activity__source > summary::-webkit-details-marker { display: none; }
+.codex-session-activity__source[open] > summary .codex-session-activity__collapse-icon { transform: rotate(90deg); }
+.codex-session-activity__source-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 128px;
+  overflow: auto;
+  padding: 4px 10px 8px 36px;
+  color: var(--csa-text-secondary);
+  font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 /* ── Rows ───────────────────────────────────────────────────────────────────
@@ -420,7 +446,7 @@
  */
 
 .codex-session-activity [data-state='running'] { color: var(--csa-accent); }
-.codex-session-activity [data-state='ok'] { color: var(--csa-success); }
+.codex-session-activity [data-state='ok'] { color: var(--csa-text-tertiary); }
 .codex-session-activity [data-state='warn'] { color: var(--csa-warning); }
 .codex-session-activity [data-state='error'] { color: var(--csa-error); }
 .codex-session-activity [data-state='idle'] { color: var(--csa-text-tertiary); }
@@ -452,6 +478,26 @@
 .codex-session-activity .codex-session-activity__plan {
   padding: 0 var(--csa-gutter);
 }
+
+.codex-session-activity__recent > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 2px var(--csa-gutter);
+  color: var(--csa-text-tertiary);
+  font-size: 12px;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+}
+.codex-session-activity__recent > summary::-webkit-details-marker { display: none; }
+.codex-session-activity__recent > summary:hover { background: var(--csa-row-hover); }
+.codex-session-activity__recent > summary:focus-visible {
+  outline: 1px solid var(--csa-accent);
+  outline-offset: -1px;
+}
+.codex-session-activity__recent[open] > summary svg { transform: rotate(90deg); }
 
 /* ── Empty / footer ─────────────────────────────────────────────────────── */
 
@@ -486,9 +532,9 @@
 
 .codex-session-activity .codex-session-activity__policy-details {
   margin: 2px var(--csa-gutter) 4px;
-  border: 0.5px solid var(--csa-border);
+  border: 0;
   border-radius: var(--radius-md);
-  background: color-mix(in oklab, var(--csa-row-hover) 42%, transparent);
+  background: transparent;
   overflow: hidden;
 }
 
@@ -665,7 +711,7 @@
   box-shadow: 0 0.5px 0 var(--csa-border);
   margin-bottom: 6px;
   padding: 2px 16px;
-  background-color: var(--color-background-elevated-primary-opaque);
+  background-color: var(--color-background-control-panel);
 }
 .codex-session-activity-rail[data-layer='inline'] .codex-session-activity__head {
   background-color: var(--color-background-elevated-secondary-opaque);
@@ -678,7 +724,7 @@
   color: var(--csa-text-strong);
   font-size: 13px;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Status pill: the head's live count and any running/attention value. */
@@ -687,36 +733,23 @@
   align-items: center;
   gap: 5px;
   height: 18px;
-  padding: 0 7px;
-  border-radius: 999px;
-  background: color-mix(in oklab, currentColor 12%, transparent);
+  padding: 0;
+  background: transparent;
   font-size: 11px;
   line-height: 18px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.codex-session-activity .codex-session-activity__pulse {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: currentColor;
-  animation: codex-session-activity-pulse 1.4s ease-in-out infinite;
-}
-@keyframes codex-session-activity-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
+.codex-session-activity .codex-session-activity__pulse { flex: none; }
 
-/* Row values that carry a status read as a soft chip, so "失败" or "等待审批"
- * is scannable down the right edge instead of being one more grey word. */
+/* Text states share the command header's quiet treatment. Errors retain color. */
 .codex-session-activity .codex-session-activity__row:not(.is-stacked) > .codex-session-activity__row-value:is([data-state='ok'], [data-state='warn'], [data-state='error']):not(:empty) {
-  padding: 1px 7px;
-  border-radius: 999px;
-  background: color-mix(in oklab, currentColor 11%, transparent);
+  padding: 0;
+  background: transparent;
   font-size: 11px;
   line-height: 16px;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 /* ── Collapsible sections (policy, lifecycle boundaries) ─────────────────── */
@@ -761,8 +794,28 @@
   gap: 2px;
   margin: 0 6px 8px;
   padding: 8px 2px 6px;
-  border-radius: var(--radius-md);
-  background: color-mix(in oklab, var(--csa-error) 8%, transparent);
+  border-left: 2px solid var(--csa-warning);
+  border-radius: 0;
+  background: transparent;
+}
+.codex-session-activity .codex-session-activity__alerts[data-state='error'] {
+  border-left-color: var(--csa-error);
+}
+/* A status query that is only unavailable right now is not an incident: no
+ * coloured bar, tertiary ink, and the retry sits inline with the sentence. */
+.codex-session-activity .codex-session-activity__alerts[data-state='quiet'] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 2px 2px 6px;
+  border-left: 0;
+}
+.codex-session-activity .codex-session-activity__alerts[data-state='quiet'] .codex-session-activity__empty {
+  color: var(--csa-text-tertiary);
+}
+.codex-session-activity .codex-session-activity__alerts[data-state='quiet'] .codex-session-activity__retry {
+  margin: 0;
 }
 .codex-session-activity .codex-session-activity__alerts .codex-session-activity__empty {
   padding: 0 8px;
@@ -772,7 +825,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .codex-session-activity .codex-session-activity__pulse { animation: none; }
   .codex-session-activity .codex-session-activity__collapse-icon { transition: none; }
 }
 
@@ -843,3 +895,392 @@
 @media (prefers-reduced-motion: reduce) {
   .codex-session-policy__help summary { scroll-behavior: auto; }
 }
+
+/* ── Head identity ─────────────────────────────────────────────────────────
+ * Workspace name over its branch, beside a quiet tile — the card's anchor. */
+.codex-session-activity .codex-session-activity__head {
+  min-height: 44px;
+  padding: 6px 10px 6px 12px;
+}
+.codex-session-activity .codex-session-activity__head-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 0.5px solid var(--csa-border);
+  border-radius: var(--radius-md);
+  background: var(--color-background-elevated-secondary);
+  color: var(--csa-text-secondary);
+}
+.codex-session-activity .codex-session-activity__head-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.codex-session-activity .codex-session-activity__head-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  color: var(--csa-text-tertiary);
+  font-size: 11px;
+  line-height: 15px;
+}
+.codex-session-activity .codex-session-activity__head-meta > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ── Workspace linkage ─────────────────────────────────────────────────────
+ * The row whose page is the workspace's active tab carries the selected wash
+ * and an accent tick, so the card and the panel read as one surface. */
+.codex-session-activity .codex-session-activity__row.is-active {
+  background: var(--csa-row-hover);
+  box-shadow: inset 2px 0 0 var(--csa-accent);
+}
+
+/* ── Process console ───────────────────────────────────────────────────────
+ * A process is a toggle row over a live tail of its output. */
+.codex-session-activity .codex-session-activity__process {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 1px 0;
+  border-radius: var(--radius-md);
+  transition: background-color 120ms ease;
+}
+.codex-session-activity .codex-session-activity__process.is-expanded {
+  background: var(--color-background-elevated-secondary);
+  margin-block: 4px;
+}
+.codex-session-activity .codex-session-activity__process.is-active {
+  box-shadow: inset 2px 0 0 var(--csa-accent);
+}
+.codex-session-activity .codex-session-activity__process-head {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding-right: 4px;
+}
+.codex-session-activity .codex-session-activity__process-toggle {
+  display: grid;
+  grid-template-columns: var(--csa-icon-size) minmax(0, 1fr) auto var(--csa-trail-size);
+  align-items: center;
+  column-gap: var(--csa-icon-gap);
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 30px;
+  padding: 2px 0 2px var(--csa-gutter);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--csa-text-strong);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.codex-session-activity .codex-session-activity__process-toggle:hover,
+.codex-session-activity .codex-session-activity__process-toggle:focus-visible {
+  background: var(--csa-row-hover);
+  outline: none;
+}
+.codex-session-activity .codex-session-activity__process.is-expanded .codex-session-activity__process-toggle:hover {
+  background: transparent;
+}
+.codex-session-activity .codex-session-activity__process-toggle[aria-expanded='true'] .codex-session-activity__collapse-icon {
+  transform: rotate(90deg);
+}
+/* Process state uses the session rows' status orb (OrbStatus), sized like it. */
+.codex-session-activity .codex-session-activity__process-dot { justify-self: center; }
+.codex-session-activity .codex-session-activity__process-command {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+.codex-session-activity .codex-session-activity__console {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 8px 8px;
+  animation: codex-session-activity-rail-in 140ms var(--ease-enter);
+}
+.codex-session-activity .codex-session-activity__console-output {
+  max-height: 148px;
+  margin: 0;
+  padding: 8px 10px;
+  overflow: auto;
+  border: 0.5px solid var(--csa-border);
+  border-radius: var(--radius-md);
+  background: var(--color-background-control-panel);
+  color: var(--csa-text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+}
+.codex-session-activity .codex-session-activity__console-empty {
+  color: var(--csa-text-tertiary);
+  font-style: italic;
+}
+.codex-session-activity .codex-session-activity__console-meta {
+  padding: 0 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--csa-text-tertiary);
+  font-size: 11px;
+  line-height: 15px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .codex-session-activity .codex-session-activity__console { animation: none; }
+}
+
+/* ── Overview rows (上下文 / 连接器) ─────────────────────────────────────────
+ * The reference client's key–value list: the label leads with a disclosure
+ * chevron beside it, the reading sits on the right edge, and the detail folds
+ * open beneath. Native <details>, so the content stays in the DOM and in the
+ * accessibility tree once open. */
+.codex-session-activity .codex-session-activity__overview {
+  padding-block: 2px;
+}
+.codex-session-activity .codex-session-activity__kv > summary { list-style: none; }
+.codex-session-activity .codex-session-activity__kv > summary::-webkit-details-marker { display: none; }
+.codex-session-activity .codex-session-activity__kv-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 30px;
+  padding: 0 var(--csa-gutter);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 100ms ease;
+}
+.codex-session-activity .codex-session-activity__kv-head:hover,
+.codex-session-activity .codex-session-activity__kv-head:focus-visible {
+  background: var(--csa-row-hover);
+  outline: none;
+}
+.codex-session-activity .codex-session-activity__kv[open] > .codex-session-activity__kv-head .codex-session-activity__collapse-icon {
+  transform: rotate(90deg);
+}
+.codex-session-activity .codex-session-activity__kv-label {
+  flex: none;
+  color: var(--csa-text-strong);
+  font-size: 13px;
+  line-height: 18px;
+}
+.codex-session-activity .codex-session-activity__kv-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-left: auto;
+  overflow: hidden;
+  color: var(--csa-text-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.codex-session-activity .codex-session-activity__kv-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px var(--csa-gutter) 6px calc(var(--csa-gutter) + 8px);
+  animation: codex-session-activity-rail-in 140ms var(--ease-enter);
+}
+.codex-session-activity .codex-session-activity__kv-body.is-list {
+  padding-left: 0;
+  padding-right: 0;
+}
+.codex-session-activity .codex-session-activity__kv-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  color: var(--csa-text-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+.codex-session-activity .codex-session-activity__kv-line > span:last-child {
+  color: var(--csa-text-strong);
+  text-align: right;
+}
+
+/* Context meter: a short neutral track; only pressure tints it. */
+.codex-session-activity .codex-session-activity__meter {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 44px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--csa-text-strong) 10%, transparent);
+}
+.codex-session-activity .codex-session-activity__meter > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: color-mix(in oklab, var(--csa-text-strong) 55%, transparent);
+  transition: width 240ms var(--ease-enter);
+}
+.codex-session-activity .codex-session-activity__meter[data-state='warn'] > span { background: var(--csa-warning); }
+.codex-session-activity .codex-session-activity__meter[data-state='error'] > span { background: var(--csa-error); }
+/* The value text stays neutral; the meter carries the warning colour. */
+.codex-session-activity .codex-session-activity__kv-value[data-state='warn'],
+.codex-session-activity .codex-session-activity__kv-value[data-state='idle'] { color: var(--csa-text-tertiary); }
+
+/* ── Changes row ─────────────────────────────────────────────────────────── */
+.codex-session-activity .codex-session-activity__change {
+  display: grid;
+  grid-template-columns: var(--csa-icon-size) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--csa-icon-gap);
+  min-width: 0;
+  min-height: 40px;
+  padding: 4px var(--csa-gutter);
+  border-radius: var(--radius-md);
+}
+.codex-session-activity .codex-session-activity__change.is-active {
+  background: var(--csa-row-hover);
+  box-shadow: inset 2px 0 0 var(--csa-accent);
+}
+.codex-session-activity .codex-session-activity__change .codex-session-activity__delta {
+  font-size: 13px;
+  line-height: 18px;
+}
+.codex-session-activity .codex-session-activity__chip-button {
+  flex: none;
+  height: 24px;
+  padding: 0 10px;
+  border: 0.5px solid var(--csa-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--csa-text-strong);
+  font-size: 12px;
+  line-height: 22px;
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease;
+}
+.codex-session-activity .codex-session-activity__chip-button:hover,
+.codex-session-activity .codex-session-activity__chip-button:focus-visible {
+  background: var(--csa-row-hover);
+  outline: none;
+}
+.codex-session-activity .codex-session-activity__chip-button[aria-pressed='true'] {
+  background: var(--csa-row-hover);
+  border-color: transparent;
+}
+
+/* ── Background tasks group ──────────────────────────────────────────────
+ * One heading over the worker and process sub-lists; the sub-lists keep
+ * their own (smaller) titles so each still names what it holds. */
+.codex-session-activity .codex-session-activity__group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 4px 6px 0;
+  padding-top: 6px;
+  border-top: 1px solid var(--csa-border);
+}
+.codex-session-activity .codex-session-activity__group-head .codex-session-activity__section-summary[data-state='running'] {
+  color: var(--csa-accent);
+}
+.codex-session-activity .codex-session-activity__group > .codex-session-activity__section {
+  margin: 0;
+  padding-block: 2px;
+}
+.codex-session-activity .codex-session-activity__group > .codex-session-activity__section + .codex-session-activity__section {
+  margin-top: 0;
+  border-top: 0;
+}
+.codex-session-activity .codex-session-activity__group > .codex-session-activity__section > .codex-session-activity__section-head {
+  min-height: 22px;
+}
+.codex-session-activity .codex-session-activity__group > .codex-session-activity__section .codex-session-activity__section-title {
+  color: var(--csa-text-tertiary);
+  font-size: 11px;
+  line-height: 15px;
+  font-weight: 500;
+}
+.codex-session-activity .codex-session-activity__group + .codex-session-activity__section {
+  margin-top: 4px;
+  border-top: 1px solid var(--csa-border);
+}
+
+.codex-session-activity .codex-session-activity__elapsed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-session-activity .codex-session-activity__kv-body { animation: none; }
+  .codex-session-activity .codex-session-activity__meter > span { transition: none; }
+}
+
+/* ── "本轮注入了什么" card ────────────────────────────────────────────────
+ * A modal, but the same floating material as the environment card above: one
+ * raised surface, a 20px corner, hairline + depth, 28px header actions, rows
+ * instead of boxes-in-boxes. Colour is reserved for budget trimming. */
+.memory-injection-card {
+  box-shadow: 0 0 0 0.5px var(--color-border), var(--shadow-2xl);
+}
+.memory-injection-card__action {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-foreground-tertiary);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.memory-injection-card__action:hover:not(:disabled) {
+  background: var(--color-background-row-hover);
+  color: var(--color-text-foreground);
+}
+.memory-injection-card__action:focus-visible,
+.memory-injection-card__pill:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+.memory-injection-card__action:disabled { opacity: 0.5; }
+.memory-injection-card__pill {
+  height: 26px;
+  padding: 0 12px;
+  border: 0.5px solid var(--color-border-heavy);
+  border-radius: 999px;
+  color: var(--color-text-foreground);
+  font-size: 12px;
+  transition: background-color 120ms ease;
+}
+.memory-injection-card__pill:hover:not(:disabled) { background: var(--color-background-row-hover); }
+.memory-injection-card__pill:disabled { opacity: 0.5; }
+.memory-injection-card__group + .memory-injection-card__group {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--color-border);
+}
+.memory-injection-card__receipt {
+  display: grid;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: var(--radius-lg);
+  transition: background-color 100ms ease;
+}
+.memory-injection-card__receipt:hover { background: var(--color-background-row-hover); }

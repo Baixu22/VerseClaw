@@ -1,0 +1,45 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-unified-relay-20261109
+
+ ❯ tests/unit/workspace-session.test.ts (12 tests | 1 failed) 169ms
+     × keeps a newer navigation when new-session creation replies late 95ms
+     ✓ preserves the source after rejected creation and can retry the same intent 3ms
+     ✓ creates new sessions inside the active workspace and current agent binding 4ms
+     ✓ does not activate a late fork after leaving and returning to the same source 1ms
+     ✓ does not activate a late handoff after leaving and returning to the same source 1ms
+     ✓ does not activate a project after its route is disposed during the workspace switch 57ms
+     ✓ restores the default workspace before creating a workspace-scoped new session 1ms
+     ✓ creates handoff sessions with the edited draft persisted in workspace state 1ms
+     ✓ keeps a newly created session in the current workgroup 1ms
+     ✓ forks sessions through Host API and preserves non-running workspace state 1ms
+     ✓ forwards an explicit fromLeafId when forking from a message (#180) 0ms
+     ✓ keeps the current view when Main refuses handoff creation 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/workspace-session.test.ts > workspace session helpers > keeps a newer navigation when new-session creation replies late
+AssertionError: expected 'agent:reviewer:session-1794243431116-…' to be null
+
+- Expected:
+null
+
++ Received:
+"agent:reviewer:session-1794243431116-69uzci"
+
+ ❯ tests/unit/workspace-session.test.ts:177:25
+    175|     const navigation = activateWorkspaceScopedSession('workspace-a', n…
+    176|     release();
+    177|     await expect(created).resolves.toBeNull();
+       |                         ^
+    178|     await expect(navigation).resolves.toBe(true);
+    179|     expect(chatState.currentSessionKey).toBe(next);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  00:57:08
+   Duration  2.34s (transform 187ms, setup 300ms, import 84ms, tests 169ms, environment 1.49s)
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-new-session-red2.tests.json

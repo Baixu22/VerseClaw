@@ -10,6 +10,8 @@ import { CONTEXT_TOOL_SUMMARY_BY_NAME } from "../../context-engine/coding-tool-n
 import type { WorkspaceFactService } from "../../context-engine/factstore/workspace-fact-service.js";
 import { parseBooleanValue } from "../../utils/boolean.js";
 
+// The descriptor owns the names; the factory consumes and re-exports them.
+// Reading availability must not load the executable tool factory in reverse.
 export const CONTEXT_UNDERSTAND_TOOL_NAME = "context_understand";
 export const CONTEXT_IMPACT_TOOL_NAME = "context_impact";
 export const CONTEXT_REUSE_TOOL_NAME = "context_reuse";
@@ -34,22 +36,22 @@ export type ContextViewToolCatalogEntry = {
 
 export const CONTEXT_VIEW_TOOL_CATALOG: readonly ContextViewToolCatalogEntry[] = [
   {
-    name: "context_understand",
+    name: CONTEXT_UNDERSTAND_TOOL_NAME,
     selector: "fact.view.context_understand",
     summary: CONTEXT_TOOL_SUMMARY_BY_NAME.context_understand!,
   },
   {
-    name: "context_impact",
+    name: CONTEXT_IMPACT_TOOL_NAME,
     selector: "fact.view.context_impact",
     summary: CONTEXT_TOOL_SUMMARY_BY_NAME.context_impact!,
   },
   {
-    name: "context_reuse",
+    name: CONTEXT_REUSE_TOOL_NAME,
     selector: "fact.view.context_reuse",
     summary: CONTEXT_TOOL_SUMMARY_BY_NAME.context_reuse!,
   },
   {
-    name: "context_verify",
+    name: CONTEXT_VERIFY_TOOL_NAME,
     selector: "fact.view.context_verify",
     summary: CONTEXT_TOOL_SUMMARY_BY_NAME.context_verify!,
   },

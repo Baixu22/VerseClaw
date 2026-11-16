@@ -1,0 +1,5 @@
+1a16bc17a eval(context): retain clean G7 rerun and NO_GO verdict
+eb93671ab eval(context): compare G7 source blobs without EOL filtering
+1ad696a8f eval(context): bind clean G7 candidates and replay raw evidence
+ab8605136 eval(context): freeze G7 clean-candidate review before execution
+fcfd07211 test(windows): retain current acceptance failures

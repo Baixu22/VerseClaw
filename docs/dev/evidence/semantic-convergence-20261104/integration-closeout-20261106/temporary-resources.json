@@ -1,0 +1,2172 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/semantic-goal",
+  "removed": [
+    {
+      "path": "D:\\tmp\\tf0742-baseline-runtime.gate.json",
+      "bytes": 995
+    },
+    {
+      "path": "D:\\tmp\\tf0742-baseline-runtime.json",
+      "bytes": 804
+    },
+    {
+      "path": "D:\\tmp\\tf0742-baseline-runtime.log",
+      "bytes": 1161
+    },
+    {
+      "path": "D:\\tmp\\tf0742-baseline-sqlite.gate.json",
+      "bytes": 1446
+    },
+    {
+      "path": "D:\\tmp\\tf0742-baseline-sqlite.json",
+      "bytes": 9826
+    },
+    {
+      "path": "D:\\tmp\\tf0742-baseline-sqlite.log",
+      "bytes": 7167
+    },
+    {
+      "path": "D:\\tmp\\tf0742-baseline.gate.json",
+      "bytes": 1410
+    },
+    {
+      "path": "D:\\tmp\\tf0742-baseline.json",
+      "bytes": 808
+    },
+    {
+      "path": "D:\\tmp\\tf0742-baseline.log",
+      "bytes": 1180
+    },
+    {
+      "path": "D:\\tmp\\tf0742-before-observations.json",
+      "bytes": 2430
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-apply-3.log",
+      "bytes": 60
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-commands.json",
+      "bytes": 4115
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-export.log",
+      "bytes": 76
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-next.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-parent.log",
+      "bytes": 1445
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-save-1.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-save-2.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-save-3.log",
+      "bytes": 60
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-show.log",
+      "bytes": 3879
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-cli-validate.log",
+      "bytes": 17
+    },
+    {
+      "path": "D:\\tmp\\tf0742-close-proposal.json",
+      "bytes": 3526
+    },
+    {
+      "path": "D:\\tmp\\tf0742-closure-receipt.json",
+      "bytes": 2225
+    },
+    {
+      "path": "D:\\tmp\\tf0742-codex-fixed-bundle.cmd",
+      "bytes": 952
+    },
+    {
+      "path": "D:\\tmp\\tf0742-curate.mjs",
+      "bytes": 8803
+    },
+    {
+      "path": "D:\\tmp\\tf0742-current-todo.json",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0742-delivery-verification.json",
+      "bytes": 417
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-eviction-observations.json",
+      "bytes": 4205
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-eviction.gate.json",
+      "bytes": 3999
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-eviction.json",
+      "bytes": 6742
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-eviction.log",
+      "bytes": 3045
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-expanded-observations.json",
+      "bytes": 3845
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-expanded.gate.json",
+      "bytes": 3270
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-expanded.json",
+      "bytes": 6177
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-expanded.log",
+      "bytes": 2795
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-final.gate.json",
+      "bytes": 3998
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-final.log",
+      "bytes": 59
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-full-types.gate.json",
+      "bytes": 3726
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-full-types.log",
+      "bytes": 1843
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-observations.json",
+      "bytes": 3845
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-portable-observations.json",
+      "bytes": 4205
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-portable.gate.json",
+      "bytes": 3999
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-portable.json",
+      "bytes": 6472
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-portable.log",
+      "bytes": 2932
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-regression.gate.json",
+      "bytes": 3677
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-regression.json",
+      "bytes": 29880
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-regression.log",
+      "bytes": 13694
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-reviewfix-observations.json",
+      "bytes": 4205
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-reviewfix.gate.json",
+      "bytes": 4144
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-reviewfix.json",
+      "bytes": 24881
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-reviewfix.log",
+      "bytes": 11266
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-sqlite.gate.json",
+      "bytes": 3262
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-sqlite.json",
+      "bytes": 3398
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-sqlite.log",
+      "bytes": 1526
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-standard-observations.json",
+      "bytes": 4205
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-standard.gate.json",
+      "bytes": 3924
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-standard.json",
+      "bytes": 6737
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-standard.log",
+      "bytes": 3049
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-types-fixed.gate.json",
+      "bytes": 3104
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-types-fixed.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-types-latest.gate.json",
+      "bytes": 3822
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-types-latest.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-types-reviewed.gate.json",
+      "bytes": 3773
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-types-reviewed.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-types.gate.json",
+      "bytes": 3092
+    },
+    {
+      "path": "D:\\tmp\\tf0742-dev-types.log",
+      "bytes": 2574
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-atomic.gate.json",
+      "bytes": 3972
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-atomic.json",
+      "bytes": 7770
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-atomic.log",
+      "bytes": 3520
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-comms",
+      "bytes": 10876
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-comms-compare.gate.json",
+      "bytes": 3852
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-comms-compare.log",
+      "bytes": 3402
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-comms-replay.gate.json",
+      "bytes": 3848
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-comms-replay.log",
+      "bytes": 77
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-gates.mjs",
+      "bytes": 875
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-harness-plan.gate.json",
+      "bytes": 3946
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-harness-plan.log",
+      "bytes": 109
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-harness.gate.json",
+      "bytes": 3919
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-harness.log",
+      "bytes": 59
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-lint.gate.json",
+      "bytes": 4318
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-lint.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-observations.json",
+      "bytes": 4205
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-recipes.json",
+      "bytes": 4583
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-regression-worker-timeout.gate.json",
+      "bytes": 4394
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-regression-worker-timeout.json",
+      "bytes": 26995
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-regression-worker-timeout.log",
+      "bytes": 13675
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-regression.gate.json",
+      "bytes": 4393
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-regression.json",
+      "bytes": 29877
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-regression.log",
+      "bytes": 13693
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-review-metadata.json",
+      "bytes": 3816
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-review.json",
+      "bytes": 743
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-sequence.json",
+      "bytes": 384
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-typecheck.gate.json",
+      "bytes": 3810
+    },
+    {
+      "path": "D:\\tmp\\tf0742-final-typecheck.log",
+      "bytes": 1842
+    },
+    {
+      "path": "D:\\tmp\\tf0742-finalize-handoff.mjs",
+      "bytes": 2980
+    },
+    {
+      "path": "D:\\tmp\\tf0742-finish-forest.py",
+      "bytes": 2523
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-notes.md",
+      "bytes": 1342
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-1.txt",
+      "bytes": 35210
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-10.txt",
+      "bytes": 6857
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-2.txt",
+      "bytes": 34000
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-3.txt",
+      "bytes": 34026
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-4.txt",
+      "bytes": 34280
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-5.txt",
+      "bytes": 34577
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-6.txt",
+      "bytes": 34000
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-7.txt",
+      "bytes": 34202
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-8.txt",
+      "bytes": 35258
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review-source-9.txt",
+      "bytes": 34300
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review.json",
+      "bytes": 2324
+    },
+    {
+      "path": "D:\\tmp\\tf0742-fixed-review.txt",
+      "bytes": 1856
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-final-observations.json",
+      "bytes": 1277
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-final-tests.gate.json",
+      "bytes": 3998
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-final-tests.json",
+      "bytes": 22352
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-final-tests.log",
+      "bytes": 17792
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-final.gate.json",
+      "bytes": 3931
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-final.json",
+      "bytes": 30081
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-final.log",
+      "bytes": 21312
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-latest.gate.json",
+      "bytes": 3936
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-latest.json",
+      "bytes": 23887
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-latest.log",
+      "bytes": 18700
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-loaded.json",
+      "bytes": 951
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-observations.json",
+      "bytes": 1277
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen-vite",
+      "bytes": 122
+    },
+    {
+      "path": "D:\\tmp\\tf0742-frozen.config.ts",
+      "bytes": 1353
+    },
+    {
+      "path": "D:\\tmp\\tf0742-resume-gates.mjs",
+      "bytes": 884
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-findings.json",
+      "bytes": 2324
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-findings.log",
+      "bytes": 4731
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-instructions.txt",
+      "bytes": 474
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-notes.md",
+      "bytes": 1357
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-1.txt",
+      "bytes": 35210
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-2.txt",
+      "bytes": 34000
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-3.txt",
+      "bytes": 34026
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-4.txt",
+      "bytes": 34280
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-5.txt",
+      "bytes": 34599
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-6.txt",
+      "bytes": 34101
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-7.txt",
+      "bytes": 34101
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-8.txt",
+      "bytes": 35552
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-source-9.txt",
+      "bytes": 33742
+    },
+    {
+      "path": "D:\\tmp\\tf0742-review-tools-failed.log",
+      "bytes": 2790
+    },
+    {
+      "path": "D:\\tmp\\tf0742-run-check.mjs",
+      "bytes": 2932
+    },
+    {
+      "path": "D:\\tmp\\tf0742-runtime-probe-vite",
+      "bytes": 112
+    },
+    {
+      "path": "D:\\tmp\\tf0742-runtime-probe.config.ts",
+      "bytes": 312
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-metadata.json",
+      "bytes": 3816
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-notes.md",
+      "bytes": 1214
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-1.txt",
+      "bytes": 35210
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-10.txt",
+      "bytes": 9043
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-2.txt",
+      "bytes": 34000
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-3.txt",
+      "bytes": 34026
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-4.txt",
+      "bytes": 34280
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-5.txt",
+      "bytes": 34577
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-6.txt",
+      "bytes": 34000
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-7.txt",
+      "bytes": 34202
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-8.txt",
+      "bytes": 35212
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review-source-9.txt",
+      "bytes": 34346
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review.json",
+      "bytes": 743
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review.log",
+      "bytes": 2084
+    },
+    {
+      "path": "D:\\tmp\\tf0742-second-review.txt",
+      "bytes": 708
+    },
+    {
+      "path": "D:\\tmp\\tf0742-source-files.json",
+      "bytes": 645
+    },
+    {
+      "path": "D:\\tmp\\tf0742-sqlite.config.ts",
+      "bytes": 523
+    },
+    {
+      "path": "D:\\tmp\\tf0742-start-proposal.json",
+      "bytes": 2231
+    },
+    {
+      "path": "D:\\tmp\\tf0742-update-handoff.mjs",
+      "bytes": 978
+    },
+    {
+      "path": "D:\\tmp\\tf0742-write-handoff.mjs",
+      "bytes": 4213
+    },
+    {
+      "path": "D:\\tmp\\tf0743-baseline.gate.json",
+      "bytes": 1554
+    },
+    {
+      "path": "D:\\tmp\\tf0743-baseline.json",
+      "bytes": 7328
+    },
+    {
+      "path": "D:\\tmp\\tf0743-baseline.log",
+      "bytes": 8473
+    },
+    {
+      "path": "D:\\tmp\\tf0743-before-observations.json",
+      "bytes": 3818
+    },
+    {
+      "path": "D:\\tmp\\tf0743-build-review.mjs",
+      "bytes": 2412
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-comms",
+      "bytes": 10876
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-comms-compare.gate.json",
+      "bytes": 3103
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-comms-compare.log",
+      "bytes": 3402
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-comms-replay.gate.json",
+      "bytes": 3100
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-comms-replay.log",
+      "bytes": 77
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-harness.gate.json",
+      "bytes": 3177
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-harness.log",
+      "bytes": 62
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-lint.gate.json",
+      "bytes": 3505
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-lint.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-observations.json",
+      "bytes": 5775
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-plan.gate.json",
+      "bytes": 3183
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-plan.log",
+      "bytes": 109
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-regression.gate.json",
+      "bytes": 3765
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-regression.json",
+      "bytes": 29856
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-regression.log",
+      "bytes": 13377
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-typecheck.gate.json",
+      "bytes": 3113
+    },
+    {
+      "path": "D:\\tmp\\tf0743-clean-typecheck.log",
+      "bytes": 1843
+    },
+    {
+      "path": "D:\\tmp\\tf0743-close-apply-1.log",
+      "bytes": 64
+    },
+    {
+      "path": "D:\\tmp\\tf0743-close-commands.json",
+      "bytes": 1413
+    },
+    {
+      "path": "D:\\tmp\\tf0743-close-save-1.log",
+      "bytes": 64
+    },
+    {
+      "path": "D:\\tmp\\tf0743-close-tf0744-start.json",
+      "bytes": 2841
+    },
+    {
+      "path": "D:\\tmp\\tf0743-close-validate.log",
+      "bytes": 17
+    },
+    {
+      "path": "D:\\tmp\\tf0743-curate.mjs",
+      "bytes": 7340
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-compatible-observations.json",
+      "bytes": 5775
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-compatible.gate.json",
+      "bytes": 3711
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-compatible.json",
+      "bytes": 28259
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-compatible.log",
+      "bytes": 12965
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-final-observations.json",
+      "bytes": 5775
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-final.gate.json",
+      "bytes": 3377
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-final.json",
+      "bytes": 5084
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-final.log",
+      "bytes": 2344
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-lint.gate.json",
+      "bytes": 3195
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-lint.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-observations.json",
+      "bytes": 5169
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-race-observations.json",
+      "bytes": 5775
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-race.gate.json",
+      "bytes": 3436
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-race.json",
+      "bytes": 26921
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev-race.log",
+      "bytes": 11998
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev.gate.json",
+      "bytes": 2882
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev.json",
+      "bytes": 3571
+    },
+    {
+      "path": "D:\\tmp\\tf0743-dev.log",
+      "bytes": 1627
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-harness-plan.gate.json",
+      "bytes": 3198
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-harness-plan.log",
+      "bytes": 109
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-harness.gate.json",
+      "bytes": 3176
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-harness.log",
+      "bytes": 62
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-lint.gate.json",
+      "bytes": 3504
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-lint.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-regression.gate.json",
+      "bytes": 3701
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-regression.json",
+      "bytes": 29854
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-regression.log",
+      "bytes": 13349
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-typecheck.gate.json",
+      "bytes": 3062
+    },
+    {
+      "path": "D:\\tmp\\tf0743-final-typecheck.log",
+      "bytes": 48185
+    },
+    {
+      "path": "D:\\tmp\\tf0743-lint-latest.gate.json",
+      "bytes": 3506
+    },
+    {
+      "path": "D:\\tmp\\tf0743-lint-latest.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-driver.py",
+      "bytes": 2116
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-metadata.json",
+      "bytes": 3169
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-notes.md",
+      "bytes": 855
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-1.txt",
+      "bytes": 34191
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-2.txt",
+      "bytes": 33095
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-3.txt",
+      "bytes": 33014
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-4.txt",
+      "bytes": 32982
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-5.txt",
+      "bytes": 36325
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-6.txt",
+      "bytes": 34178
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-7.txt",
+      "bytes": 33047
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-8.txt",
+      "bytes": 33841
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-9.txt",
+      "bytes": 23261
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review-source-hashes.json",
+      "bytes": 2702
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review.json",
+      "bytes": 715
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review.log",
+      "bytes": 1925
+    },
+    {
+      "path": "D:\\tmp\\tf0743-review.txt",
+      "bytes": 680
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-apply-5.log",
+      "bytes": 65
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-commands.json",
+      "bytes": 3386
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-proposal.json",
+      "bytes": 1114
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-save-1.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-save-2.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-save-3.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-save-4.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-save-5.log",
+      "bytes": 65
+    },
+    {
+      "path": "D:\\tmp\\tf0743-start-validate.log",
+      "bytes": 17
+    },
+    {
+      "path": "D:\\tmp\\tf0743-typecheck-autoinstall-stopped.json",
+      "bytes": 3069
+    },
+    {
+      "path": "D:\\tmp\\tf0744-baseline.gate.json",
+      "bytes": 1459
+    },
+    {
+      "path": "D:\\tmp\\tf0744-baseline.json",
+      "bytes": 4157
+    },
+    {
+      "path": "D:\\tmp\\tf0744-baseline.log",
+      "bytes": 10637
+    },
+    {
+      "path": "D:\\tmp\\tf0744-before-observations.json",
+      "bytes": 312
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-comms",
+      "bytes": 10876
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-comms-compare.gate.json",
+      "bytes": 2251
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-comms-compare.log",
+      "bytes": 3402
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-comms-replay.gate.json",
+      "bytes": 2248
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-comms-replay.log",
+      "bytes": 77
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-harness.gate.json",
+      "bytes": 2297
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-harness.log",
+      "bytes": 64
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-lint.gate.json",
+      "bytes": 2386
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-lint.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-observations.json",
+      "bytes": 312
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-plan.gate.json",
+      "bytes": 2303
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-plan.log",
+      "bytes": 109
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-tests.gate.json",
+      "bytes": 2539
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-tests.json",
+      "bytes": 8533
+    },
+    {
+      "path": "D:\\tmp\\tf0744-clean-tests.log",
+      "bytes": 3672
+    },
+    {
+      "path": "D:\\tmp\\tf0744-close-apply-1.log",
+      "bytes": 66
+    },
+    {
+      "path": "D:\\tmp\\tf0744-close-commands.json",
+      "bytes": 1414
+    },
+    {
+      "path": "D:\\tmp\\tf0744-close-save-1.log",
+      "bytes": 66
+    },
+    {
+      "path": "D:\\tmp\\tf0744-close-tf0746-start.json",
+      "bytes": 3041
+    },
+    {
+      "path": "D:\\tmp\\tf0744-close-validate.log",
+      "bytes": 17
+    },
+    {
+      "path": "D:\\tmp\\tf0744-curate.mjs",
+      "bytes": 4491
+    },
+    {
+      "path": "D:\\tmp\\tf0744-dev-observations.json",
+      "bytes": 312
+    },
+    {
+      "path": "D:\\tmp\\tf0744-dev.gate.json",
+      "bytes": 2587
+    },
+    {
+      "path": "D:\\tmp\\tf0744-dev.json",
+      "bytes": 8531
+    },
+    {
+      "path": "D:\\tmp\\tf0744-dev.log",
+      "bytes": 3668
+    },
+    {
+      "path": "D:\\tmp\\tf0744-retention-before.log",
+      "bytes": 1531
+    },
+    {
+      "path": "D:\\tmp\\tf0746-adjust-deps-shards.mjs",
+      "bytes": 1601
+    },
+    {
+      "path": "D:\\tmp\\tf0746-adjust-tail.mjs",
+      "bytes": 934
+    },
+    {
+      "path": "D:\\tmp\\tf0746-agents.gate.json",
+      "bytes": 418839
+    },
+    {
+      "path": "D:\\tmp\\tf0746-agents.json",
+      "bytes": 15380
+    },
+    {
+      "path": "D:\\tmp\\tf0746-agents.log",
+      "bytes": 13868
+    },
+    {
+      "path": "D:\\tmp\\tf0746-agents.pid.json",
+      "bytes": 497
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-complete.gate.json",
+      "bytes": 86254
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-complete.log",
+      "bytes": 46608
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-complete.pid.json",
+      "bytes": 260
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-current.gate.json",
+      "bytes": 86194
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-current.log",
+      "bytes": 7797
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-current.pid.json",
+      "bytes": 211
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-fixed.gate.json",
+      "bytes": 86028
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-fixed.log",
+      "bytes": 46608
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-fixed.pid.json",
+      "bytes": 211
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-graph.config.ts",
+      "bytes": 930
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-graph.gate.json",
+      "bytes": 86248
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-graph.log",
+      "bytes": 46608
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-graph.pid.json",
+      "bytes": 259
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-resolved.gate.json",
+      "bytes": 86249
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-resolved.log",
+      "bytes": 10465
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-resolved.pid.json",
+      "bytes": 254
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-review-complete.mjs",
+      "bytes": 2498
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build-review.mjs",
+      "bytes": 2439
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build.config.ts",
+      "bytes": 605
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build.gate.json",
+      "bytes": 85835
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build.log",
+      "bytes": 46608
+    },
+    {
+      "path": "D:\\tmp\\tf0746-build.pid.json",
+      "bytes": 211
+    },
+    {
+      "path": "D:\\tmp\\tf0746-cleanup-e2e.gate.json",
+      "bytes": 86535
+    },
+    {
+      "path": "D:\\tmp\\tf0746-cleanup-e2e.json",
+      "bytes": 3936
+    },
+    {
+      "path": "D:\\tmp\\tf0746-cleanup-e2e.log",
+      "bytes": 1803
+    },
+    {
+      "path": "D:\\tmp\\tf0746-cleanup-e2e.pid.json",
+      "bytes": 358
+    },
+    {
+      "path": "D:\\tmp\\tf0746-cleanup-results",
+      "bytes": 21508
+    },
+    {
+      "path": "D:\\tmp\\tf0746-cleanup-trace-actions.py",
+      "bytes": 419
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-commands.json",
+      "bytes": 1496
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-retry-apply-4.log",
+      "bytes": 64
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-retry-commands.json",
+      "bytes": 2906
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-retry-save-1.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-retry-save-2.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-retry-save-3.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-retry-save-4.log",
+      "bytes": 64
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-retry-validate.log",
+      "bytes": 17
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-save-1.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-save-2.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-save-3.log",
+      "bytes": 115
+    },
+    {
+      "path": "D:\\tmp\\tf0746-close-tf0747-start.json",
+      "bytes": 3156
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms",
+      "bytes": 10876
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-compare-complete.gate.json",
+      "bytes": 86217
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-compare-complete.log",
+      "bytes": 3405
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-compare-complete.pid.json",
+      "bytes": 170
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-compare.gate.json",
+      "bytes": 86028
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-compare.log",
+      "bytes": 3396
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-compare.pid.json",
+      "bytes": 171
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-complete",
+      "bytes": 10876
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-replay-complete.gate.json",
+      "bytes": 86214
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-replay-complete.log",
+      "bytes": 80
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-replay-complete.pid.json",
+      "bytes": 170
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-replay.gate.json",
+      "bytes": 86025
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-replay.log",
+      "bytes": 71
+    },
+    {
+      "path": "D:\\tmp\\tf0746-comms-replay.pid.json",
+      "bytes": 170
+    },
+    {
+      "path": "D:\\tmp\\tf0746-contract-complete.gate.json",
+      "bytes": 86150
+    },
+    {
+      "path": "D:\\tmp\\tf0746-contract-complete.log",
+      "bytes": 23
+    },
+    {
+      "path": "D:\\tmp\\tf0746-contract-complete.pid.json",
+      "bytes": 172
+    },
+    {
+      "path": "D:\\tmp\\tf0746-contract.gate.json",
+      "bytes": 85971
+    },
+    {
+      "path": "D:\\tmp\\tf0746-contract.log",
+      "bytes": 23
+    },
+    {
+      "path": "D:\\tmp\\tf0746-contract.pid.json",
+      "bytes": 170
+    },
+    {
+      "path": "D:\\tmp\\tf0746-curate.mjs",
+      "bytes": 15323
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dependency-reuse.json",
+      "bytes": 6342
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-correct-observations.json",
+      "bytes": 5499
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-correct.gate.json",
+      "bytes": 1480
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-correct.json",
+      "bytes": 3373
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-correct.log",
+      "bytes": 4451
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-final-observations.json",
+      "bytes": 5206
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-final.gate.json",
+      "bytes": 1475
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-final.json",
+      "bytes": 4658
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-final.log",
+      "bytes": 6994
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-fixed-observations.json",
+      "bytes": 5108
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-fixed.gate.json",
+      "bytes": 1474
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-fixed.json",
+      "bytes": 4660
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-fixed.log",
+      "bytes": 6938
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http-observations.json",
+      "bytes": 1745
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http.gate.json",
+      "bytes": 1456
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http.json",
+      "bytes": 6144
+    },
+    {
+      "path": "D:\\tmp\\tf0746-dev-http.log",
+      "bytes": 8091
+    },
+    {
+      "path": "D:\\tmp\\tf0746-e2e-complete-results",
+      "bytes": 32099
+    },
+    {
+      "path": "D:\\tmp\\tf0746-e2e-complete.gate.json",
+      "bytes": 86553
+    },
+    {
+      "path": "D:\\tmp\\tf0746-e2e-complete.json",
+      "bytes": 53293
+    },
+    {
+      "path": "D:\\tmp\\tf0746-e2e-complete.log",
+      "bytes": 31743
+    },
+    {
+      "path": "D:\\tmp\\tf0746-e2e-complete.pid.json",
+      "bytes": 377
+    },
+    {
+      "path": "D:\\tmp\\tf0746-electron-diagnostic.cjs",
+      "bytes": 2134
+    },
+    {
+      "path": "D:\\tmp\\tf0746-electron-diagnostic2.cjs",
+      "bytes": 2638
+    },
+    {
+      "path": "D:\\tmp\\tf0746-embedded.gate.json",
+      "bytes": 418841
+    },
+    {
+      "path": "D:\\tmp\\tf0746-embedded.json",
+      "bytes": 5951
+    },
+    {
+      "path": "D:\\tmp\\tf0746-embedded.log",
+      "bytes": 3373
+    },
+    {
+      "path": "D:\\tmp\\tf0746-embedded.pid.json",
+      "bytes": 499
+    },
+    {
+      "path": "D:\\tmp\\tf0746-facade-observations.json",
+      "bytes": 312
+    },
+    {
+      "path": "D:\\tmp\\tf0746-fast.gate.json",
+      "bytes": 86615
+    },
+    {
+      "path": "D:\\tmp\\tf0746-fast.log",
+      "bytes": 1389
+    },
+    {
+      "path": "D:\\tmp\\tf0746-fast.pid.json",
+      "bytes": 412
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness-complete.gate.json",
+      "bytes": 86267
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness-complete.log",
+      "bytes": 72
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness-complete.pid.json",
+      "bytes": 266
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness-plan.gate.json",
+      "bytes": 86110
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness-plan.log",
+      "bytes": 109
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness-plan.pid.json",
+      "bytes": 273
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness.gate.json",
+      "bytes": 86088
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness.log",
+      "bytes": 72
+    },
+    {
+      "path": "D:\\tmp\\tf0746-harness.pid.json",
+      "bytes": 266
+    },
+    {
+      "path": "D:\\tmp\\tf0746-http-observations.json",
+      "bytes": 5499
+    },
+    {
+      "path": "D:\\tmp\\tf0746-http-reviewed.gate.json",
+      "bytes": 86336
+    },
+    {
+      "path": "D:\\tmp\\tf0746-http-reviewed.json",
+      "bytes": 3372
+    },
+    {
+      "path": "D:\\tmp\\tf0746-http-reviewed.log",
+      "bytes": 56
+    },
+    {
+      "path": "D:\\tmp\\tf0746-http-reviewed.pid.json",
+      "bytes": 334
+    },
+    {
+      "path": "D:\\tmp\\tf0746-i18n-complete.gate.json",
+      "bytes": 86138
+    },
+    {
+      "path": "D:\\tmp\\tf0746-i18n-complete.log",
+      "bytes": 18
+    },
+    {
+      "path": "D:\\tmp\\tf0746-i18n-complete.pid.json",
+      "bytes": 167
+    },
+    {
+      "path": "D:\\tmp\\tf0746-i18n.gate.json",
+      "bytes": 85958
+    },
+    {
+      "path": "D:\\tmp\\tf0746-i18n.log",
+      "bytes": 18
+    },
+    {
+      "path": "D:\\tmp\\tf0746-i18n.pid.json",
+      "bytes": 167
+    },
+    {
+      "path": "D:\\tmp\\tf0746-infra.gate.json",
+      "bytes": 418665
+    },
+    {
+      "path": "D:\\tmp\\tf0746-infra.json",
+      "bytes": 2540
+    },
+    {
+      "path": "D:\\tmp\\tf0746-infra.log",
+      "bytes": 48
+    },
+    {
+      "path": "D:\\tmp\\tf0746-infra.pid.json",
+      "bytes": 343
+    },
+    {
+      "path": "D:\\tmp\\tf0746-inspect-boot.cjs",
+      "bytes": 757
+    },
+    {
+      "path": "D:\\tmp\\tf0746-inspect-boot.mjs",
+      "bytes": 757
+    },
+    {
+      "path": "D:\\tmp\\tf0746-inspect-deps.mjs",
+      "bytes": 911
+    },
+    {
+      "path": "D:\\tmp\\tf0746-inspect-trace.py",
+      "bytes": 530
+    },
+    {
+      "path": "D:\\tmp\\tf0746-lint-complete.gate.json",
+      "bytes": 86371
+    },
+    {
+      "path": "D:\\tmp\\tf0746-lint-complete.log",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\tmp\\tf0746-lint-complete.pid.json",
+      "bytes": 375
+    },
+    {
+      "path": "D:\\tmp\\tf0746-locate-deps.mjs",
+      "bytes": 550
+    },
+    {
+      "path": "D:\\tmp\\tf0746-memory-observations.json",
+      "bytes": 5775
+    },
+    {
+      "path": "D:\\tmp\\tf0746-motion-deps.mjs",
+      "bytes": 738
+    },
+    {
+      "path": "D:\\tmp\\tf0746-motion-probe.mjs",
+      "bytes": 697
+    },
+    {
+      "path": "D:\\tmp\\tf0746-plan-complete.gate.json",
+      "bytes": 86274
+    },
+    {
+      "path": "D:\\tmp\\tf0746-plan-complete.log",
+      "bytes": 109
+    },
+    {
+      "path": "D:\\tmp\\tf0746-plan-complete.pid.json",
+      "bytes": 273
+    },
+    {
+      "path": "D:\\tmp\\tf0746-prepare-final.mjs",
+      "bytes": 1234
+    },
+    {
+      "path": "D:\\tmp\\tf0746-prompt-observations.json",
+      "bytes": 15011
+    },
+    {
+      "path": "D:\\tmp\\tf0746-recipes-final.json",
+      "bytes": 4479
+    },
+    {
+      "path": "D:\\tmp\\tf0746-recipes-remaining.json",
+      "bytes": 2040
+    },
+    {
+      "path": "D:\\tmp\\tf0746-recipes-tail.json",
+      "bytes": 1555
+    },
+    {
+      "path": "D:\\tmp\\tf0746-recipes.json",
+      "bytes": 3772
+    },
+    {
+      "path": "D:\\tmp\\tf0746-repair-deps-absolute.mjs",
+      "bytes": 1872
+    },
+    {
+      "path": "D:\\tmp\\tf0746-repair-deps.mjs",
+      "bytes": 1840
+    },
+    {
+      "path": "D:\\tmp\\tf0746-restore-diag-deps.mjs",
+      "bytes": 534
+    },
+    {
+      "path": "D:\\tmp\\tf0746-retention-pre.log",
+      "bytes": 4658
+    },
+    {
+      "path": "D:\\tmp\\tf0746-retry-invariants.gate.json",
+      "bytes": 418732
+    },
+    {
+      "path": "D:\\tmp\\tf0746-retry-invariants.json",
+      "bytes": 2362
+    },
+    {
+      "path": "D:\\tmp\\tf0746-retry-invariants.log",
+      "bytes": 59
+    },
+    {
+      "path": "D:\\tmp\\tf0746-retry-invariants.pid.json",
+      "bytes": 377
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-driver.py",
+      "bytes": 2138
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-initial-metadata.json",
+      "bytes": 1892
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-initial.json",
+      "bytes": 2310
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-metadata.json",
+      "bytes": 2072
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-notes.md",
+      "bytes": 1302
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-second.json",
+      "bytes": 2178
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-source-1.txt",
+      "bytes": 32951
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-source-2.txt",
+      "bytes": 32974
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-source-3.txt",
+      "bytes": 33061
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-source-4.txt",
+      "bytes": 14142
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review-source-hashes.json",
+      "bytes": 1254
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review.json",
+      "bytes": 1441
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review.log",
+      "bytes": 3075
+    },
+    {
+      "path": "D:\\tmp\\tf0746-review.txt",
+      "bytes": 1170
+    },
+    {
+      "path": "D:\\tmp\\tf0746-root.gate.json",
+      "bytes": 419944
+    },
+    {
+      "path": "D:\\tmp\\tf0746-root.json",
+      "bytes": 117942
+    },
+    {
+      "path": "D:\\tmp\\tf0746-root.log",
+      "bytes": 86593
+    },
+    {
+      "path": "D:\\tmp\\tf0746-root.pid.json",
+      "bytes": 1513
+    },
+    {
+      "path": "D:\\tmp\\tf0746-runtime-build.gate.json",
+      "bytes": 86203
+    },
+    {
+      "path": "D:\\tmp\\tf0746-runtime-build.log",
+      "bytes": 3606
+    },
+    {
+      "path": "D:\\tmp\\tf0746-runtime-build.pid.json",
+      "bytes": 179
+    },
+    {
+      "path": "D:\\tmp\\tf0746-runtime.gate.json",
+      "bytes": 419167
+    },
+    {
+      "path": "D:\\tmp\\tf0746-runtime.json",
+      "bytes": 48701
+    },
+    {
+      "path": "D:\\tmp\\tf0746-runtime.log",
+      "bytes": 23791
+    },
+    {
+      "path": "D:\\tmp\\tf0746-runtime.pid.json",
+      "bytes": 793
+    },
+    {
+      "path": "D:\\tmp\\tf0746-seal.mjs",
+      "bytes": 1038
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-diagnostic.gate.json",
+      "bytes": 86323
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-diagnostic.json",
+      "bytes": 8136
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-diagnostic.log",
+      "bytes": 3595
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-diagnostic.pid.json",
+      "bytes": 339
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-final.gate.json",
+      "bytes": 86523
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-final.json",
+      "bytes": 16229
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-final.log",
+      "bytes": 10214
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-final.pid.json",
+      "bytes": 334
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-fixed.gate.json",
+      "bytes": 86303
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-fixed.json",
+      "bytes": 6260
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-fixed.log",
+      "bytes": 2568
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-fixed.pid.json",
+      "bytes": 334
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-pass.gate.json",
+      "bytes": 86518
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-pass.json",
+      "bytes": 18990
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-pass.log",
+      "bytes": 11041
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-pass.pid.json",
+      "bytes": 333
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-trace.gate.json",
+      "bytes": 86303
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-trace.json",
+      "bytes": 7853
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-trace.log",
+      "bytes": 3411
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-trace.pid.json",
+      "bytes": 334
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-writable.gate.json",
+      "bytes": 86323
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-writable.json",
+      "bytes": 11886
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-writable.log",
+      "bytes": 6467
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e-writable.pid.json",
+      "bytes": 337
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e.gate.json",
+      "bytes": 86099
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e.json",
+      "bytes": 7765
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e.log",
+      "bytes": 5096
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-e2e.pid.json",
+      "bytes": 328
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-only-results",
+      "bytes": 1538
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-only.gate.json",
+      "bytes": 86546
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-only.json",
+      "bytes": 1997
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-only.log",
+      "bytes": 166
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-only.pid.json",
+      "bytes": 364
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-results",
+      "bytes": 16555
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-results-diagnostic",
+      "bytes": 30995
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-results-final",
+      "bytes": 42757
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-results-fixed",
+      "bytes": 30565
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-results-pass",
+      "bytes": 315034
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-results-trace",
+      "bytes": 30959
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-results-writable",
+      "bytes": 314562
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-selected-results",
+      "bytes": 315049
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-selected.gate.json",
+      "bytes": 86562
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-selected.json",
+      "bytes": 2966
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-selected.log",
+      "bytes": 540
+    },
+    {
+      "path": "D:\\tmp\\tf0746-settings-selected.pid.json",
+      "bytes": 367
+    },
+    {
+      "path": "D:\\tmp\\tf0746-setup-e2e.gate.json",
+      "bytes": 86472
+    },
+    {
+      "path": "D:\\tmp\\tf0746-setup-e2e.json",
+      "bytes": 38194
+    },
+    {
+      "path": "D:\\tmp\\tf0746-setup-e2e.log",
+      "bytes": 21484
+    },
+    {
+      "path": "D:\\tmp\\tf0746-setup-e2e.pid.json",
+      "bytes": 309
+    },
+    {
+      "path": "D:\\tmp\\tf0746-setup-results",
+      "bytes": 1760
+    },
+    {
+      "path": "D:\\tmp\\tf0746-source-deps.mjs",
+      "bytes": 936
+    },
+    {
+      "path": "D:\\tmp\\tf0746-test-sequence-final.json",
+      "bytes": 324
+    },
+    {
+      "path": "D:\\tmp\\tf0746-test-sequence-remaining.json",
+      "bytes": 107
+    },
+    {
+      "path": "D:\\tmp\\tf0746-test-sequence-tail.json",
+      "bytes": 158
+    },
+    {
+      "path": "D:\\tmp\\tf0746-test-sequence.json",
+      "bytes": 105
+    },
+    {
+      "path": "D:\\tmp\\tf0746-tests-final.mjs",
+      "bytes": 1130
+    },
+    {
+      "path": "D:\\tmp\\tf0746-tests-remaining.mjs",
+      "bytes": 1140
+    },
+    {
+      "path": "D:\\tmp\\tf0746-tests-tail.mjs",
+      "bytes": 1128
+    },
+    {
+      "path": "D:\\tmp\\tf0746-tests.mjs",
+      "bytes": 1118
+    },
+    {
+      "path": "D:\\tmp\\tf0746-trace-actions.py",
+      "bytes": 424
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck-final.gate.json",
+      "bytes": 86006
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck-final.log",
+      "bytes": 1837
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck-final.pid.json",
+      "bytes": 187
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck-fixed.gate.json",
+      "bytes": 86006
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck-fixed.log",
+      "bytes": 2313
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck-fixed.pid.json",
+      "bytes": 187
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck.gate.json",
+      "bytes": 85814
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck.log",
+      "bytes": 2315
+    },
+    {
+      "path": "D:\\tmp\\tf0746-typecheck.pid.json",
+      "bytes": 187
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-complete.gate.json",
+      "bytes": 86217
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-complete.log",
+      "bytes": 1842
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-complete.pid.json",
+      "bytes": 187
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-current.gate.json",
+      "bytes": 86215
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-current.log",
+      "bytes": 1843
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-current.pid.json",
+      "bytes": 186
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-final.gate.json",
+      "bytes": 86211
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-final.log",
+      "bytes": 1841
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-final.pid.json",
+      "bytes": 187
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-reviewed.gate.json",
+      "bytes": 86216
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-reviewed.log",
+      "bytes": 1840
+    },
+    {
+      "path": "D:\\tmp\\tf0746-types-reviewed.pid.json",
+      "bytes": 187
+    },
+    {
+      "path": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-3ci9vB",
+      "bytes": 22221
+    },
+    {
+      "path": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-agtu47",
+      "bytes": 0
+    },
+    {
+      "path": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-FIOuiI",
+      "bytes": 1899276
+    },
+    {
+      "path": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-mxAqwN",
+      "bytes": 1880381
+    },
+    {
+      "path": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-VHyylu",
+      "bytes": 25809
+    },
+    {
+      "path": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-xkCBdm",
+      "bytes": 36742
+    },
+    {
+      "path": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-XxHODP",
+      "bytes": 3370
+    },
+    {
+      "path": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-yPM7PQ",
+      "bytes": 23617
+    }
+  ],
+  "bytes": 14588121,
+  "policy": "only this task exact TF0742/3/4/6 outputs and uniquely scoped Electron run roots; compact primary summaries retained in local archive"
+}

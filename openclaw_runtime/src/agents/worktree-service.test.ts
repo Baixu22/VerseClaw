@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { codingObservability } from "../context-engine/coding-observability.js";
@@ -18,6 +18,12 @@ import { parseHandoffPack } from "../context-engine/block-store.js";
 import { createOrchestratorPlan } from "./orchestrator.js";
 import { normalizeIsolationMode } from "./orchestration-protocol.js";
 import { BUILT_IN_ROLE_CONTRACTS } from "./role-contract.js";
+
+function retainFixtureResult(root: string, reference: string): void {
+  execFileSync('git', ['add', '-A'], { cwd: root, windowsHide: true });
+  execFileSync('git', ['-c', 'commit.gpgsign=false', 'commit', '-qm', 'retained fixture result'], { cwd: root, windowsHide: true });
+  execFileSync('git', ['update-ref', 'refs/heads/' + reference, 'HEAD'], { cwd: root, windowsHide: true });
+}
 
 function initGitRepo(root: string): void {
   execFileSync("git", ["init"], { cwd: root, stdio: "ignore" });
@@ -55,7 +61,87 @@ describe("worktree-service (C4 interface)", () => {
     expect(listWorktreeDirs(root).includes("w1")).toBe(false);
   });
 
-  it("merge queue serializes and detects overlapping conflicts (2-worker same file)", () => {
+  it.each([".", "..", "", "CON", "NUL.txt", "COM1", "trail.", " lead"])("rejects reserved worktree id %j before touching control files", (id) => {
+    mkdirSync(path.join(root, ".openclaw"));
+    const marker = path.join(root, ".openclaw", "state.txt");
+    writeFileSync(marker, "must-survive");
+    expect(() => createWorktreeService(root).create(id)).toThrow(/worktree.*id/i);
+    expect(readFileSync(marker, "utf8")).toBe("must-survive");
+  });
+
+  it("does not delete an existing directory on repeated or unowned create", () => {
+    const svc = createWorktreeService(root);
+    const first = svc.create("owned");
+    const marker = path.join(first.root, "uncommitted.txt");
+    writeFileSync(marker, "preserve");
+    expect(() => svc.create("owned")).toThrow(/exists|conflict/);
+    __resetWorktreeRegistry();
+    expect(() => createWorktreeService(root).create("owned")).toThrow(/exists|conflict/);
+    expect(readFileSync(marker, "utf8")).toBe("preserve");
+  });
+
+  it("keeps normalization and truncated-prefix ids distinct", () => {
+    const svc = createWorktreeService(root);
+    const ids = ["scope:a", "scope?a", "x".repeat(70) + "a", "x".repeat(70) + "b"];
+    const records = ids.map((id) => svc.create(id));
+    expect(new Set(records.map((r) => r.root)).size).toBe(4);
+    expect(ids.map((id) => svc.pathFor(id))).toEqual(records.map((r) => r.root));
+    expect(records.every((r) => existsSync(r.root))).toBe(true);
+  });
+
+  it("refuses a replaced managed root or cleanup target", () => {
+    const external = mkdtempSync(path.join(tmpdir(), "worktree-external-"));
+    try {
+      const marker = path.join(external, "keep.txt");
+      writeFileSync(marker, "external");
+      const svc = createWorktreeService(root);
+      const rec = svc.create("worker");
+      renameSync(rec.root, rec.root + "-original");
+      symlinkSync(external, rec.root, process.platform === "win32" ? "junction" : "dir");
+      expect(() => svc.cleanup(rec.id)).toThrow();
+      expect(readFileSync(marker, "utf8")).toBe("external");
+      rmSync(path.join(root, ".openclaw/worktrees"), { recursive: true, force: true });
+      symlinkSync(external, path.join(root, ".openclaw/worktrees"), process.platform === "win32" ? "junction" : "dir");
+      expect(() => svc.create("other")).toThrow();
+      expect(existsSync(path.join(external, "other"))).toBe(false);
+      expect(readFileSync(marker, "utf8")).toBe("external");
+    } finally { rmSync(external, { recursive: true, force: true }); }
+  });
+
+  it("does not steal a live aged lock or execute after lock timeout", () => {
+    const dir = path.join(root, ".openclaw/worktrees");
+    mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, ".merge.lock");
+    const contents = `${process.pid}\n${Date.now() - 60000}\n`;
+    writeFileSync(file, contents);
+    expect(() => createWorktreeService(root).create("locked")).toThrow("worktree_legacy_lock_unavailable");
+    expect(existsSync(path.join(dir, "locked"))).toBe(false);
+    expect(readFileSync(file, "utf8")).toBe(contents);
+  }, 15000);
+
+  it("preserves untracked content in an inprocess worktree and a replacement directory", () => {
+    const svc = createWorktreeService(root);
+    const rec = svc.create("extra");
+    writeFileSync(path.join(rec.root, "user.txt"), "keep");
+    expect(() => svc.cleanup(rec.id)).toThrow(/user_content/);
+    renameSync(rec.root, rec.root + "-old");
+    mkdirSync(rec.root);
+    expect(() => svc.cleanup(rec.id)).toThrow(/worktree_replaced/);
+    expect(readFileSync(path.join(rec.root + "-old", "user.txt"), "utf8")).toBe("keep");
+  });
+
+  it("preserves a worker commit that has not been integrated", () => {
+    initGitRepo(root);
+    const svc = createWorktreeService(root, { backend: "git" });
+    const rec = svc.create("committed", { writeSet: ["src/a.ts"] });
+    writeFileSync(path.join(rec.root, "src/a.ts"), "worker change");
+    execFileSync("git", ["add", "src/a.ts"], { cwd: rec.root, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "worker"], { cwd: rec.root, stdio: "ignore" });
+    expect(() => svc.cleanup(rec.id)).toThrow(/unreferenced_commit/);
+    expect(readFileSync(path.join(rec.root, "src/a.ts"), "utf8")).toBe("worker change");
+  });
+
+  it("merge queue serializes and detects overlapping conflicts (2-worker same file)", async () => {
     const svc = createWorktreeService(root);
     const w1 = svc.create("w1", { seedFiles: ["src/a.ts"] });
     const w2 = svc.create("w2", { seedFiles: ["src/a.ts"] });
@@ -66,14 +152,14 @@ describe("worktree-service (C4 interface)", () => {
     expect(existsSync(path.join(w2.root, "src", "a.ts"))).toBe(true);
     svc.enqueueMerge({ worktreeId: "w1", changedFiles: ["src/a.ts"] });
     svc.enqueueMerge({ worktreeId: "w2", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(results[1]?.status).toBe("conflict");
     expect(readFileSync(path.join(root, "src", "a.ts"), "utf8")).toContain("a = 2");
     expect(codingObservability.rates().mergeReworkRate).toBeGreaterThan(0);
   });
 
-  it("conflict policy can return work to worker", () => {
+  it("conflict policy can return work to worker", async () => {
     const svc = createWorktreeService(root, { conflictPolicy: "return_worker" });
     const w1 = svc.create("w1", { seedFiles: ["src/a.ts"] });
     const w2 = svc.create("w2", { seedFiles: ["src/a.ts"] });
@@ -81,21 +167,21 @@ describe("worktree-service (C4 interface)", () => {
     writeFileSync(path.join(w2.root, "src", "a.ts"), "export const a = 3;\n");
     svc.enqueueMerge({ worktreeId: "w1", changedFiles: ["src/a.ts"] });
     svc.enqueueMerge({ worktreeId: "w2", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(results[1]?.status).toBe("rework");
     expect(results[1]?.reason).toMatch(/^return_worker:/);
   });
 
-  it("merge missing worktree fails cleanly", () => {
+  it("merge missing worktree fails cleanly", async () => {
     const svc = createWorktreeService(root);
     svc.enqueueMerge({ worktreeId: "ghost", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("conflict");
     expect(results[0]?.reason).toBe("missing_worktree");
   });
 
-  it("git backend creates isolated worktree when available (opt-in, not production default)", () => {
+  it("git backend creates isolated worktree when available (opt-in, not production default)", async () => {
     initGitRepo(root);
     const svc = createWorktreeService(root, { backend: "git" });
     expect(svc.backend).toBe("git");
@@ -104,9 +190,11 @@ describe("worktree-service (C4 interface)", () => {
     expect(existsSync(rec.root)).toBe(true);
     writeFileSync(path.join(rec.root, "src", "a.ts"), "export const a = 9;\n");
     svc.enqueueMerge({ worktreeId: "g1", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(readFileSync(path.join(root, "src", "a.ts"), "utf8")).toContain("a = 9");
+    expect(() => svc.cleanup("g1")).toThrow('worktree_cleanup_user_content_present');
+    retainFixtureResult(rec.root, 'retained-g1');
     svc.cleanup("g1");
     expect(svc.list().find((r) => r.id === "g1")?.status).toBe("cleaned");
     expect(listWorktreeDirs(root).includes("g1")).toBe(false);
@@ -115,6 +203,18 @@ describe("worktree-service (C4 interface)", () => {
   it("git backend falls back to inprocess when not a git repo", () => {
     const svc = createWorktreeService(root, { backend: "git" });
     expect(svc.backend).toBe("inprocess");
+  });
+
+  it("does not create a directory simulation when Git checkout creation fails", () => {
+    initGitRepo(root);
+    writeFileSync(path.join(root, ".git", "worktrees"), "block registry creation");
+    const svc = createWorktreeService(root, { backend: "git" });
+    expect(svc.backend).toBe("git");
+    expect(() => svc.create("failed-checkout")).toThrow();
+    expect(svc.inventory()).toMatchObject([{ availability: "incomplete", record: {
+      backend: "git", status: "creating", registration: { phase: "allocated" },
+    } }]);
+    expect(existsSync(path.join(root, ".openclaw", "worktrees", "failed-checkout", ".git"))).toBe(false);
   });
 
   it("resolveWorktreeBackend defaults to inprocess", () => {
@@ -126,10 +226,10 @@ describe("worktree-service (C4 interface)", () => {
 describe("C4 isolation request + HandoffPack coordinates", () => {
   it("normalizeIsolationMode defaults to shared", () => {
     expect(normalizeIsolationMode(undefined)).toBe("shared");
-    expect(normalizeIsolationMode(null)).toBe("shared");
+    expect(() => normalizeIsolationMode(null)).toThrow(/unsupported isolation/);
     expect(normalizeIsolationMode("shared")).toBe("shared");
     expect(normalizeIsolationMode("worktree")).toBe("worktree");
-    expect(normalizeIsolationMode("patch-flow")).toBe("shared");
+    expect(() => normalizeIsolationMode("patch-flow")).toThrow(/unsupported isolation/);
   });
 
   it("orchestrator plan isolation defaults shared and accepts worktree", () => {
@@ -222,7 +322,7 @@ describe("worktree-service C4-H hardening", () => {
     expect(readFileSync(path.join(rec.root, "src", "nested", "b.ts"), "utf8")).toContain("b = 1");
   });
 
-  it("git backend concurrent create/merge/cleanup stays isolated (C4-H)", () => {
+  it("git backend concurrent create/merge/cleanup stays isolated (C4-H)", async () => {
     initGitRepo(root);
     const svc = createWorktreeService(root, { backend: "git" });
     expect(svc.backend).toBe("git");
@@ -234,10 +334,16 @@ describe("worktree-service C4-H hardening", () => {
     writeFileSync(path.join(w2.root, "src", "a.ts"), "export const a = 3;\n");
     svc.enqueueMerge({ worktreeId: "g-a", changedFiles: ["src\\a.ts"] });
     svc.enqueueMerge({ worktreeId: "g-b", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(results[1]?.status).toBe("conflict");
+    expect(() => svc.cleanup("g-a")).toThrow('worktree_cleanup_user_content_present');
+    retainFixtureResult(w1.root, 'retained-ga');
     svc.cleanup("g-a");
+    expect(() => svc.cleanup("g-b")).toThrow('worktree_cleanup_user_content_present');
+    expect(readFileSync(path.join(w2.root, 'src', 'a.ts'), 'utf8')).toBe('export const a = 3;\n');
+    // Remove only this fixture's unintegrated change before exercising ordinary cleanup.
+    writeFileSync(path.join(w2.root, 'src', 'a.ts'), 'export const a = 1;\n');
     svc.cleanup("g-b");
     expect(listWorktreeDirs(root).includes("g-a")).toBe(false);
     expect(listWorktreeDirs(root).includes("g-b")).toBe(false);

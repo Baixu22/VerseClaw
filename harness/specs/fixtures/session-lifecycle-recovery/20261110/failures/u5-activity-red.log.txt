@@ -1,0 +1,122 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mD:/ClawX-work/session-task-unified-relay-20261109[39m
+
+[90mstdout[2m | tests/unit/chat-store-history-retry.test.ts[2m > [22m[2museChatStore startup history retry[2m > [22m[2mkeeps newer live activity when an older history page finishes
+[22m[39m🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+[90mstderr[2m | tests/unit/chat-store-history-retry.test.ts[2m > [22m[2museChatStore startup history retry[2m > [22m[2mkeeps startup retry active after rendering local transcript fallback
+[22m[39m[chat.history] startup retry scheduled {
+  sessionKey: [32m'agent:main:main'[39m,
+  attempt: [33m1[39m,
+  gatewayState: [32m'running'[39m,
+  errorKind: [32m'timeout'[39m,
+  error: [32m'Error: RPC timeout: chat.history'[39m
+}
+
+[90mstdout[2m | tests/unit/chat-store-history-retry.test.ts[2m > [22m[2museChatStore startup history retry[2m > [22m[2mkeeps the optimistic user message when completion refresh wins the transcript write race
+[22m[39m[sendMessage] RPC result: success=true, runId=run-media
+
+[90mstderr[2m | tests/unit/chat-store-history-retry.test.ts[2m > [22m[2museChatStore startup history retry[2m > [22m[2mkeeps the optimistic user message when completion refresh wins the transcript write race
+[22m[39m[sendMessage] Ignoring stale chat.send runId { runId: [32m'run-media'[39m, sessionKey: [32m'agent:main:main'[39m }
+
+[90mstdout[2m | tests/unit/chat-store-history-retry.test.ts[2m > [22m[2museChatStore startup history retry[2m > [22m[2mdoes not restore a pending optimistic message after deleting the session
+[22m[39m[sendMessage] RPC result: success=true, runId=run-media
+
+[90mstdout[2m | tests/unit/chat-store-history-retry.test.ts[2m > [22m[2museChatStore startup history retry[2m > [22m[2mdoes not emit a false no-response error when history poll shows tool progress
+[22m[39m[sendMessage] RPC result: success=true, runId=run-media
+
+[90mstdout[2m | tests/unit/chat-store-history-retry.test.ts[2m > [22m[2museChatStore startup history retry[2m > [22m[2msurfaces an idle-timeout hint when a role-only stream placeholder stalls the run
+[22m[39m[sendMessage] RPC result: success=true, runId=run-media
+
+[90mstdout[2m | tests/unit/chat-store-history-retry.test.ts[2m > [22m[2museChatStore startup history retry[2m > [22m[2mdoes not treat prior-turn assistant history as progress for a new send
+[22m[39m[sendMessage] RPC result: success=true, runId=run-media
+
+ [31m❯[39m tests/unit/chat-store-history-retry.test.ts [2m([22m[2m29 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 3007[2mms[22m[39m
+[31m     [31m×[31m keeps newer live activity when an older history page finishes[39m[33m 1253[2mms[22m[39m
+     [32m✓[39m uses the longer timeout only for the initial foreground history load[32m 27[2mms[22m[39m
+     [32m✓[39m renders local transcript fallback while the initial gateway history request is still pending[32m 47[2mms[22m[39m
+     [32m✓[39m keeps startup retry active after rendering local transcript fallback[32m 23[2mms[22m[39m
+     [32m✓[39m keeps local transcript fallback when gateway returns empty history[32m 22[2mms[22m[39m
+     [32m✓[39m forces the internal final-message reload through the quiet history cooldown[32m 83[2mms[22m[39m
+     [32m✓[39m keeps non-startup foreground loading safety timeout at 15 seconds[32m 27[2mms[22m[39m
+     [32m✓[39m keeps cached session messages visible without foreground loading overlay during refresh[32m 23[2mms[22m[39m
+     [32m✓[39m switchSession restores cached session messages immediately while refreshing in background[32m 26[2mms[22m[39m
+     [32m✓[39m does not re-arm Thinking state for stale main-session heartbeat tool history[32m 35[2mms[22m[39m
+     [32m✓[39m switchSession preserves unsynced optimistic user messages when switching back[32m 22[2mms[22m[39m
+     [32m✓[39m switchSession restores trusted tool results from the session history cache[32m 20[2mms[22m[39m
+     [32m✓[39m switchSession restores in-flight run state so Thinking indicator survives navigation[32m 21[2mms[22m[39m
+     [32m✓[39m treats the same session as a fresh foreground load after gateway runtime changes[32m 49[2mms[22m[39m
+     [33m[2m✓[22m[39m does not burn the first-load retry path when the first attempt becomes stale [33m 930[2mms[22m[39m
+     [32m✓[39m stops retrying once the user switches sessions mid-load[32m 33[2mms[22m[39m
+     [32m✓[39m keeps the optimistic user message when completion refresh wins the transcript write race[32m 43[2mms[22m[39m
+     [32m✓[39m does not restore a pending optimistic message after deleting the session[32m 28[2mms[22m[39m
+     [32m✓[39m keeps the run open across intermediate [thinking, toolCall] history snapshots[32m 33[2mms[22m[39m
+     [32m✓[39m keeps the run open for mixed [thinking, text, toolCall] turns with stopReason=toolUse[32m 28[2mms[22m[39m
+     [32m✓[39m closes the run when a final assistant reply (text, stopReason=endTurn) appears[32m 23[2mms[22m[39m
+     [32m✓[39m unsticks sending when history has a final reply after tools without pendingFinal[32m 22[2mms[22m[39m
+     [32m✓[39m keeps the run open for Anthropic-native [thinking, tool_use] (snake_case stop_reason)[32m 22[2mms[22m[39m
+     [32m✓[39m keeps the run open for OpenAI ChatCompletions message with tool_calls array[32m 23[2mms[22m[39m
+     [32m✓[39m closes the run for OpenAI ChatCompletions plain-text final reply[32m 22[2mms[22m[39m
+     [32m✓[39m clears a stale no-response error when history poll shows tool progress[32m 30[2mms[22m[39m
+     [32m✓[39m does not emit a false no-response error when history poll shows tool progress[32m 29[2mms[22m[39m
+     [32m✓[39m surfaces an idle-timeout hint when a role-only stream placeholder stalls the run[32m 26[2mms[22m[39m
+     [32m✓[39m does not treat prior-turn assistant history as progress for a new send[32m 34[2mms[22m[39m
+[90mstdout[2m | tests/unit/chat-store-session-label-fetch.test.ts[2m > [22m[2mchat store session label summary hydration[2m > [22m[2mhydrates sidebar titles immediately after sessions load because summaries do not use gateway chat.history
+[22m[39m🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ [31m❯[39m tests/unit/chat-store-session-label-fetch.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 598[2mms[22m[39m
+     [33m[2m✓[22m[39m hydrates sidebar titles immediately after sessions load because summaries do not use gateway chat.history [33m 381[2mms[22m[39m
+     [32m✓[39m hydrates existing sidebar session titles as soon as sessions load[32m 16[2mms[22m[39m
+     [32m✓[39m hydrates session labels through the host API instead of gateway chat.history fan-out[32m 25[2mms[22m[39m
+[31m     [31m×[31m retains newer live activity across older list and summary snapshots[39m[32m 25[2mms[22m[39m
+     [32m✓[39m does not re-request label hydration for unchanged sessions across repeated loadSessions calls[32m 119[2mms[22m[39m
+     [32m✓[39m re-requests a session summary when updatedAt changes after an empty result[32m 15[2mms[22m[39m
+     [32m✓[39m preserves user-renamed labels when visible session summaries refresh[32m 15[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/chat-store-history-retry.test.ts[2m > [22museChatStore startup history retry[2m > [22mkeeps newer live activity when an older history page finishes
+[31m[1mAssertionError[22m: expected 1794285974499 to be 1794285987499 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1794285987499[39m
+[31m+ 1794285974499[39m
+
+[36m [2m❯[22m tests/unit/chat-store-history-retry.test.ts:[2m94:62[22m[39m
+    [90m 92|[39m     [35mawait[39m useChatStore[33m.[39m[34mgetState[39m()[33m.[39m[34mloadHistory[39m([35mfalse[39m)[33m;[39m
+    [90m 93|[39m     expect(useChatStore.getState().messages.some(message => message.co…
+    [90m 94|[39m     expect(useChatStore.getState().sessionLastActivity[key]).toBe(live…
+    [90m   |[39m                                                              [31m^[39m
+    [90m 95|[39m   })[33m;[39m
+    [90m 96|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/chat-store-session-label-fetch.test.ts[2m > [22mchat store session label summary hydration[2m > [22mretains newer live activity across older list and summary snapshots
+[31m[1mAssertionError[22m: expected 1794285977499 to be 1794285987499 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1794285987499[39m
+[31m+ 1794285977499[39m
+
+[36m [2m❯[22m tests/unit/chat-store-session-label-fetch.test.ts:[2m342:62[22m[39m
+    [90m340|[39m     [35mawait[39m [33mPromise[39m[33m.[39m[34mresolve[39m()[33m;[39m [35mawait[39m [33mPromise[39m[33m.[39m[34mresolve[39m()[33m;[39m
+    [90m341|[39m     expect(useChatStore.getState().sessionLabels[key]).toBe('Original …
+    [90m342|[39m     expect(useChatStore.getState().sessionLastActivity[key]).toBe(live…
+    [90m   |[39m                                                              [31m^[39m
+    [90m343|[39m   })[33m;[39m
+    [90m344|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m34 passed[39m[22m[90m (36)[39m
+[2m   Start at [22m 12:59:01
+[2m   Duration [22m 9.44s[2m (transform 1.26s, setup 659ms, import 359ms, tests 3.60s, environment 3.95s)[22m
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-activity-red.tests.json

@@ -1,6 +1,6 @@
 {
   "schema": "SemanticAuthorityAdjudication/v1",
-  "description": "Machine form of the TF-0631 rulings in docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md for scripts/check-semantic-authority.mjs. Bookkeeping of adjudications, not a source of truth for owner, default or authority: every entry names registry ids, records the values it was adjudicated against (so exemption-stale rejects it once a registry changes) and carries reason, reviewCondition and the document section it transcribes. Sections: exemptions (structural, X-01..X-05), adjudicatedConflicts (registered-pending-fix, C-02..C-06), gaps (registered, G-01..G-06), conceptAliases (I-4), authorityBindings (A-01..A-03). C-01 is not an entry: its reading rule is implemented as owner-namespace and is not exemptable.",
+  "description": "Machine form of the TF-0631 rulings in docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md for scripts/check-semantic-authority.mjs. Bookkeeping of adjudications, not a source of truth for owner, default or authority: every entry names registry ids, records the values it was adjudicated against (so exemption-stale rejects it once a registry changes) and carries reason, reviewCondition and the document section it transcribes. Sections: exemptions (structural, X-01..X-05), adjudicatedConflicts (currently empty: C-02..C-06 resolved by TF-0790), gaps (registered, G-01..G-06), conceptAliases (I-4), authorityBindings (A-01..A-03). C-01 is not an entry: its reading rule is implemented as owner-namespace and is not exemptable.",
   "drivenBy": "agent",
   "adjudicatedBy": "TF-0631 (agent-driven); transcribed by TF-0632 (agent-driven)",
   "exemptions": [
@@ -911,138 +911,26 @@
       "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-05",
       "reason": "This linked document row carries a value outside the ComponentAuthorityDefaultMode enum (auto / deferred / diagnostics-only), so R-D3 cannot map it; it is listed, not judged.",
       "reviewCondition": "Re-evaluate if the document adopts enum vocabulary for this row; the entry then goes stale."
-    }
-  ],
-  "adjudicatedConflicts": [
+    },
     {
-      "id": "C-02/R-D1",
+      "id": "X-04",
       "rule": "default-activation",
-      "disposition": "registered-pending-fix",
-      "targetKind": "component",
-      "target": "working-memory-context-source",
-      "observed": {
-        "defaultMode": "opt-in",
-        "dispositionId": "component.working-memory-context",
-        "currentMode": "baseline"
-      },
-      "basis": "explicit-adjudication",
-      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-02",
-      "reason": "Adjudicated stale authority-manifest default: the component's own runtimeAvailabilitySource flag, the disposition catalog, docs/dev/default-config-matrix.md and docs/clawx-product-semantics.md all agree on the baseline activation TF-0494 landed; the manifest is the lone dissenting source and was not rewritten after closure. Registered pending fix; the rule is not relaxed.",
-      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for working-memory-context-source is corrected by a later node; exemption-stale then rejects this entry automatically."
-    },
-    {
-      "id": "C-02/R-D4",
-      "rule": "default-flag-risk",
-      "disposition": "registered-pending-fix",
-      "targetKind": "component",
-      "target": "working-memory-context-source",
-      "observed": {
-        "defaultMode": "opt-in",
-        "sourceFlag": "working-memory",
-        "flagRisk": "baseline-on"
-      },
-      "basis": "explicit-adjudication",
-      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-02",
-      "reason": "Adjudicated stale authority-manifest default: the component's own runtimeAvailabilitySource flag, the disposition catalog, docs/dev/default-config-matrix.md and docs/clawx-product-semantics.md all agree on the baseline activation TF-0494 landed; the manifest is the lone dissenting source and was not rewritten after closure. Registered pending fix; the rule is not relaxed.",
-      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for working-memory-context-source is corrected by a later node; exemption-stale then rejects this entry automatically."
-    },
-    {
-      "id": "C-03/R-D1",
-      "rule": "default-activation",
-      "disposition": "registered-pending-fix",
-      "targetKind": "component",
-      "target": "tool-registry-context-source",
-      "observed": {
-        "defaultMode": "opt-in",
-        "dispositionId": "component.tool-registry-context",
-        "currentMode": "baseline"
-      },
-      "basis": "explicit-adjudication",
-      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-03",
-      "reason": "Same shape as C-02: flag catalog, disposition catalog, default-matrix document and product-surface document agree on baseline activation from TF-0494; the authority manifest is the lone stale source. Registered pending fix; the rule is not relaxed.",
-      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for tool-registry-context-source is corrected by a later node; exemption-stale then rejects this entry automatically."
-    },
-    {
-      "id": "C-03/R-D4",
-      "rule": "default-flag-risk",
-      "disposition": "registered-pending-fix",
-      "targetKind": "component",
-      "target": "tool-registry-context-source",
-      "observed": {
-        "defaultMode": "opt-in",
-        "sourceFlag": "tool-registry",
-        "flagRisk": "baseline-on"
-      },
-      "basis": "explicit-adjudication",
-      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-03",
-      "reason": "Same shape as C-02: flag catalog, disposition catalog, default-matrix document and product-surface document agree on baseline activation from TF-0494; the authority manifest is the lone stale source. Registered pending fix; the rule is not relaxed.",
-      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for tool-registry-context-source is corrected by a later node; exemption-stale then rejects this entry automatically."
-    },
-    {
-      "id": "C-04/R-D2",
-      "rule": "default-retirement",
-      "disposition": "registered-pending-fix",
-      "targetKind": "component",
-      "target": "vtoken-context-source",
-      "observed": {
-        "defaultMode": "opt-in",
-        "dispositionId": "component.vtoken-context",
-        "disposition": "retired"
-      },
-      "basis": "explicit-adjudication",
-      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-04",
-      "reason": "Adjudicated as retired: the disposition catalog, the default-matrix row the manifest entry itself cites as runtimeAvailabilitySource, the product-surface document, docs/dev/vtoken-retirement-decision.md and the tracked TF-0496 verification fixtures all record retirement; the authority manifest still carries the pre-TF-0496 activation value. Registered pending fix.",
-      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for vtoken-context-source is set to retired by a later node."
-    },
-    {
-      "id": "C-04/R-D3",
-      "rule": "default-matrix-row",
-      "disposition": "registered-pending-fix",
-      "targetKind": "component",
-      "target": "vtoken-context-source",
-      "observed": {
-        "defaultMode": "opt-in",
-        "matrixRow": "VToken assembly",
-        "matrixValue": "retired"
-      },
-      "basis": "explicit-adjudication",
-      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-04",
-      "reason": "Adjudicated as retired: the disposition catalog, the default-matrix row the manifest entry itself cites as runtimeAvailabilitySource, the product-surface document, docs/dev/vtoken-retirement-decision.md and the tracked TF-0496 verification fixtures all record retirement; the authority manifest still carries the pre-TF-0496 activation value. Registered pending fix.",
-      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for vtoken-context-source is set to retired by a later node."
-    },
-    {
-      "id": "C-05/R-D3",
-      "rule": "default-matrix-row",
-      "disposition": "registered-pending-fix",
-      "targetKind": "component",
-      "target": "vtoken-bridge",
-      "observed": {
-        "defaultMode": "opt-in",
-        "matrixRow": "VToken bridge",
-        "matrixValue": "retired"
-      },
-      "basis": "explicit-adjudication",
-      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-05",
-      "reason": "Product default adjudicated as retired from the default-matrix row the manifest entry cites; both registries' activation value can only be read as test/diagnostic availability (disposition visibilityReason and currentConsumers), which the current enum cannot distinguish from product availability. Registered pending fix.",
-      "reviewCondition": "Remove once the manifest defaultMode / disposition currentMode for vtoken-bridge are corrected, or the enum gains a product-vs-diagnostic availability distinction."
-    },
-    {
-      "id": "C-06/R-D2",
-      "rule": "default-retirement",
-      "disposition": "registered-pending-fix",
+      "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "retired-surface-registry",
       "observed": {
-        "defaultMode": "retired",
-        "dispositionId": "component.retired-surface-registry",
-        "disposition": "internal"
+        "defaultMode": "internal",
+        "disposition": "internal",
+        "currentMode": "baseline"
       },
       "basis": "explicit-adjudication",
-      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-06",
-      "reason": "The manifest's `retired` describes the data the component owns and the product surface it links to, not the component's own lifecycle: it has a write authority row, update/record effects and two readers, and the disposition catalog records it as an active internal component (rule 3: descriptive fields are not status declarations). Registered pending fix.",
-      "reviewCondition": "Remove once a later node sets both the manifest defaultMode and the disposition targetDefaultMode for retired-surface-registry to the internal lifecycle value."
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "TF-0790 distinguishes the active internal retirement registry from the retired surfaces it describes. internal is visibility vocabulary, while baseline is activation; no same-axis default conflict is exempted.",
+      "reviewCondition": "Remove if the two vocabularies gain a directly comparable activation value; recorded observed values remain checked."
     }
   ],
+  "adjudicatedConflicts": [],
   "gaps": [
     {
       "id": "G-01",

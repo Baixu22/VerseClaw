@@ -345,7 +345,7 @@ test.describe('Sidebar session workgroups and archive', () => {
      * row height, so its absence is the thing worth locking.
      */
     await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText('Projects');
-    await expect(page.getByTestId('sidebar-session-project-toggle-workspace-folders'))
+    await expect(page.getByTestId('sidebar-project-open-workspace-folders'))
       .toContainText('Folder Test Workspace');
     await expect(page.locator('[data-testid^="sidebar-session-project-subtitle-"]')).toHaveCount(0);
     const stickyPosition = await page
@@ -386,6 +386,8 @@ test.describe('Sidebar session workgroups and archive', () => {
 
     await page.getByTestId(`sidebar-session-${SESSION_KEY_A}`).hover();
     await page.getByTestId(`sidebar-session-pin-${SESSION_KEY_A}`).click();
+    await page.getByTestId('sidebar-project-open-workspace-folders').focus();
+    await page.getByTestId('sidebar-project-open-workspace-folders').hover();
     await expect(page.getByTestId(`sidebar-session-pinned-${SESSION_KEY_A}`)).toBeVisible();
   });
 
@@ -661,6 +663,11 @@ test.describe('Sidebar session workgroups and archive', () => {
 
     // Click permanent delete.
     await page.getByTestId(`settings-archived-delete-${ARCHIVED_SESSION_KEY}`).click();
+    await expect(page.getByTestId('confirm-dialog-cancel-button')).toBeVisible();
+    await page.getByTestId('confirm-dialog-cancel-button').click();
+    await expect(page.getByTestId(`settings-archived-item-${ARCHIVED_SESSION_KEY}`)).toBeVisible();
+    await page.getByTestId(`settings-archived-delete-${ARCHIVED_SESSION_KEY}`).click();
+    await page.getByTestId('confirm-dialog-confirm-button').click();
     await expect(page.getByTestId(`settings-archived-item-${ARCHIVED_SESSION_KEY}`)).toBeHidden({ timeout: 5000 });
   });
 });

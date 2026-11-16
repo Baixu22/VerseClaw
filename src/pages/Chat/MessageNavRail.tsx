@@ -40,8 +40,10 @@ function Mark({ item, active, mouseY, onSelect }: {
   );
 }
 
-export function MessageNavRail({ items, scrollRef }: {
+export function MessageNavRail({ items, scrollRef, onSelect, firstVisibleIndex }: {
   items: MessageNavRailItem[]; scrollRef: React.RefObject<HTMLElement | null>;
+  onSelect?: (index: number) => void;
+  firstVisibleIndex?: number;
 }) {
   const { t } = useTranslation('chat');
   const railRef = useRef<HTMLDivElement>(null);
@@ -57,11 +59,15 @@ export function MessageNavRail({ items, scrollRef }: {
     const atBottom = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight <= 2;
     let current = items[0]?.index ?? null;
     for (const item of items) {
+      if (firstVisibleIndex !== undefined) {
+        if (item.index <= firstVisibleIndex) current = item.index;
+        continue;
+      }
       const anchor = scroller.querySelector<HTMLElement>(`#chat-message-${item.index}`);
       if (anchor && anchor.getBoundingClientRect().top <= readingLine) current = item.index;
     }
     setActiveIndex(atBottom ? items.at(-1)?.index ?? current : current);
-  }, [items, scrollRef]);
+  }, [items, scrollRef, firstVisibleIndex]);
   useEffect(() => {
     const scroller = scrollRef.current;
     if (!scroller) return;
@@ -85,6 +91,7 @@ export function MessageNavRail({ items, scrollRef }: {
         onPointerMove={(event) => mouseY.set(event.clientY)} onPointerLeave={() => mouseY.set(Infinity)}>
         {items.map((item) => <Mark key={item.index} item={item} active={item.index === activeIndex} mouseY={mouseY}
           onSelect={() => {
+            if (onSelect) { onSelect(item.index); setActiveIndex(item.index); return; }
             const scroller = scrollRef.current;
             const anchor = scroller?.querySelector<HTMLElement>(`#chat-message-${item.index}`);
             if (!scroller || !anchor) return;

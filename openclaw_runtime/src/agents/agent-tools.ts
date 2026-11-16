@@ -59,13 +59,13 @@ import {
   createSandboxedWriteTool,
   getToolParamsRecord,
   wrapToolMemoryFlushAppendOnlyWrite,
-  wrapToolWorkspaceRootGuard,
   wrapToolWorkspaceRootGuardWithOptions,
   wrapToolParamValidation,
   resolveToolPathAgainstWorkspaceRoot,
 } from "./agent-tools.read.js";
 import { cleanToolSchemaForGemini, normalizeToolParameters } from "./agent-tools.schema.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
+import { createPersistentTaskTool } from './tools/persistent-task-tool.js';
 import { extractApplyPatchTargetPaths } from "./apply-patch-paths.js";
 import { createApplyPatchTool, parsePatchText } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
@@ -877,6 +877,7 @@ export function createOpenClawCodingTools(options?: {
     if (kind !== "apply_patch") {
       next = wrapToolWithWriteJournal(next, {
         workspaceRoot: codingRoot,
+        workspaceOnly,
         sessionId: codingSessionId,
         enabled: writeJournalEnabled,
         flags: writeJournalFlags,
@@ -962,7 +963,14 @@ export function createOpenClawCodingTools(options?: {
           : { check: true, scopeKnown: false, targetPaths: [] };
       },
     });
-    return next;
+    // The kit reads pre-images and diagnostics before the inner tool executes.
+    // Confinement therefore wraps the whole kit, including its journal reads.
+    return kind !== "apply_patch" && workspaceOnly
+      ? wrapToolWorkspaceRootGuardWithOptions(next, codingRoot, {
+          containerWorkdir: sandbox?.containerWorkdir,
+          normalizeGuardedPathParams: true,
+        })
+      : next;
   };
   const memoryFlushWriteRoot = sandboxRoot ?? workspaceRoot;
   const includeCoreTools = options?.includeCoreTools !== false;
@@ -1056,33 +1064,17 @@ export function createOpenClawCodingTools(options?: {
     {
       name: "edit",
       build: () => {
-        const wrapped = sandboxRoot
+        return sandboxRoot
           ? createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
           : createHostWorkspaceEditTool(codingRoot, { workspaceOnly });
-        if (!workspaceOnly) {
-          return wrapped;
-        }
-        return sandboxRoot
-          ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
-              containerWorkdir: sandbox.containerWorkdir,
-            })
-          : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
       },
     },
     {
       name: "write",
       build: () => {
-        const wrapped = sandboxRoot
+        return sandboxRoot
           ? createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
           : createHostWorkspaceWriteTool(codingRoot, { workspaceOnly });
-        if (!workspaceOnly) {
-          return wrapped;
-        }
-        return sandboxRoot
-          ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
-              containerWorkdir: sandbox.containerWorkdir,
-            })
-          : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
       },
     },
   ];
@@ -1117,6 +1109,8 @@ export function createOpenClawCodingTools(options?: {
   // attempt/compact supplied BlockStore (+ sink for write) and session id.
   const dcsContextTools = createDcsContextAgentTools({
     sessionId: options?.sessionId,
+    archiveRecallRetention:
+      options?.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
     runSessionKey: options?.runSessionKey,
     agentSessionKey: options?.sessionKey,
     workspaceRoot: codingRoot,
@@ -1168,6 +1162,7 @@ export function createOpenClawCodingTools(options?: {
         scopeKey,
         sessionKey: options?.sessionKey,
         sessionId: options?.sessionId,
+        runId: options?.runId,
         sessionStore: options?.config?.session?.store,
         mainKey: options?.config?.session?.mainKey,
         sessionScope: options?.config?.session?.scope,
@@ -1351,6 +1346,7 @@ export function createOpenClawCodingTools(options?: {
     : [];
   const tools: AnyAgentTool[] = [
     ...base,
+    ...(options?.sessionKey && options?.sessionId && !sandbox ? [createPersistentTaskTool({ workspace: workspaceRoot,sessionKey:options.sessionKey,generation:options.sessionId })] : []),
     ...(includeShellTools && applyPatchTool ? [applyPatchTool as unknown as AnyAgentTool] : []),
     ...(execTool ? [execTool as unknown as AnyAgentTool] : []),
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),
@@ -1532,6 +1528,9 @@ export function createOpenClawCodingTools(options?: {
         ...(options?.config ? { config: options.config } : {}),
         cwd: codingRoot,
         workspaceDir: workspaceRoot,
+        ...(options?.sandbox?.enabled
+          ? { taskScopeProjectWorkspaceDir: options.sandbox.agentWorkspaceDir }
+          : {}),
         ...(options?.skillsSnapshot ? { skillsSnapshot: options.skillsSnapshot } : {}),
         ...(sandboxRoot && allowWorkspaceWrites
           ? { sandbox: { root: sandboxRoot, bridge: sandboxFsBridge! } }

@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "case": "Main durable task-committed",
+  "breakPoint": "task-committed",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "06ef9b31-a9a9-47e7-8f21-45b02a2f550a",
+  "operation": {
+    "id": "tf0866-process-operation",
+    "phase": "confirmed",
+    "sessionKey": "agent:main:tf0866-process-proof",
+    "sourceGeneration": "tf0866-source-generation",
+    "targetGeneration": "06ef9b31-a9a9-47e7-8f21-45b02a2f550a",
+    "reservationReleased": true
+  },
+  "journal": {
+    "state": "runtime_committed",
+    "requestDigest": "76bb1cc470595a1ed9eb23b6fd773f6abeb0d7925b749a7e09fd03786c0993cb",
+    "manifestDigest": "8a0627d5048a36e488a5f7947ef928b6c1c2f4201dc0dc48f357c1df0a6441f2"
+  },
+  "session": {
+    "sessionId": "06ef9b31-a9a9-47e7-8f21-45b02a2f550a",
+    "workspaceDir": "D:\\tmp\\tf0866-process-icWusu\\target",
+    "migrationState": "confirmed"
+  },
+  "artifactHashes": [
+    {
+      "path": "D:\\tmp\\tf0866-process-icWusu\\source\\result.txt",
+      "sha256": "2f1bf152cea586c7342529059c7961e615eafe8cf14d66b57c819c50cfae87bd"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 42624,
+      "breakPoint": "task-committed",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 29444,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:14:37.871Z",
+        "pid": 42624,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "task-committed"
+      },
+      {
+        "at": "2026-11-09T00:14:38.498Z",
+        "pid": 42624,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "task-committed",
+        "stage": "main-workspace-save-committed",
+        "operationPhase": "task-committed",
+        "targetGeneration": "06ef9b31-a9a9-47e7-8f21-45b02a2f550a"
+      },
+      {
+        "at": "2026-11-09T00:14:41.622Z",
+        "pid": 29444,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:14:42.150Z",
+        "pid": 29444,
+        "kind": "main-worker-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "phase": "confirmed"
+      }
+    ],
+    "breakSignal": {
+      "pid": 42624,
+      "point": "task-committed",
+      "at": "2026-11-09T00:14:38.497Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "main-workspace-save-committed",
+      "operationPhase": "task-committed",
+      "targetGeneration": "06ef9b31-a9a9-47e7-8f21-45b02a2f550a"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "phase": "confirmed",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "06ef9b31-a9a9-47e7-8f21-45b02a2f550a",
+      "taskNodeId": "f425088c-a3cf-4286-b5ac-0a3bbf1d4756",
+      "pid": 29444,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

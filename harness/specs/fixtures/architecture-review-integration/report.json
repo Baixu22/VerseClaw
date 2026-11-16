@@ -1,0 +1,69 @@
+{
+  "schema": "ArchitectureReviewIntegration/v1",
+  "driven_by": "agent",
+  "actor": "codex-architecture-review",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-06T03:38:42.422544+00:00",
+  "verdict": "pass-scoped-review-repair-and-merge-verification",
+  "candidate": {
+    "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+    "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+    "dirty": false
+  },
+  "testCandidate": {
+    "commit": "23d53a29a6a4fb53b3c76670589796bb5d710ce3",
+    "tree": "97b02c0e9dfca1c233f5c5065c6bd963b26470ea",
+    "dirty": false
+  },
+  "sourceParity": "No src/electron/shared/runtime/tests/scripts/package/lock changes between test and revalidation candidates; only task spec diffBase aligned with main.",
+  "integratedMain": "2fff49d09cf605b4d1e4808c77c8992e464aadb4",
+  "tests": {
+    "passed": 615,
+    "failed": 0,
+    "skipped": 0,
+    "groups": [
+      {
+        "id": "contract-tests",
+        "passed": 98,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "id": "architecture-tests",
+        "passed": 332,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "id": "owner-tests",
+        "passed": 136,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "id": "capability-tests",
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "id": "runtime-tests",
+        "passed": 30,
+        "failed": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "findings": {
+    "introduced": 5,
+    "existingBaseAlsoFixed": 1,
+    "remainingActionable": 0
+  },
+  "types": "node/web/test and VerseBrowser declarations exit0 after local dependency restoration",
+  "negativeEntryCoverage": "binding/default/import/unknown-method IPC probes and validator-noop --verify plus historical-gap/live-anchor distinction",
+  "historicalReportsUnchanged": true,
+  "remainingFailure": "LOC exit1: same offender paths/counts as main; earlier TF-0788 formatting retains +40 lines in an existing offender; review adds no runtime/tool lines.",
+  "landing": "Pending fast-forward main; local landing receipt and final handoff record outcome.",
+  "cleanup": "Pending main landing; prior raw evidence already archived with recovery index.",
+  "limitationsFile": "limits-and-attempts.json"
+}

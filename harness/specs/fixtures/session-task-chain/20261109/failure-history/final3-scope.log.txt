@@ -1,0 +1,121 @@
+
+Running 11 tests using 1 worker
+
+(node:43096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+  x   1 tests\e2e\project-agent-entry.spec.ts:7:5 › project entry keeps its coordinator, task scope and session drafts while disclosure only folds the list (47.4s)
+(node:29220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 tests\e2e\session-chain-scope-faults.spec.ts:262:5 › project Ledger warnings stay unavailable in the task drawer and preserve the current draft (8.2s)
+  ok  3 tests\e2e\session-chain-scope-faults.spec.ts:281:5 › Ledger transcript navigation rejects a replaced session generation (7.7s)
+  ok  4 tests\e2e\session-chain-scope-faults.spec.ts:301:7 › leaving Task Ledger cancels a pending artifact navigation after a delayed Main save reply (8.5s)
+  ok  5 tests\e2e\session-chain-scope-faults.spec.ts:301:7 › leaving Task Ledger cancels a pending return-session navigation after a delayed Main save reply (8.6s)
+  ok  6 tests\e2e\session-chain-scope-faults.spec.ts:338:5 › automatic Handoff reconciliation ignores an old generation reply after refreshing the same session key (9.2s)
+  ok  7 tests\e2e\session-chain-scope-faults.spec.ts:370:5 › manual Handoff verification keeps Project B and its input when Project A replies late (7.7s)
+  ok  8 tests\e2e\session-family-lifecycle.spec.ts:7:5 › archiving, restoring and deleting a parent preserves child navigation, tasks and produced files (31.8s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok  9 tests\e2e\session-task-scope-completion.spec.ts:14:5 › a real isolated schedule admits its first write without replacing the project coordinator (32.9s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+[fp-p1-harness] connection #6
+[fp-p1-harness] connection #7
+[fp-p1-harness] connection #8
+[fp-p1-harness] connection #9
+[fp-p1-harness] connection #10
+[fp-p1-harness] connection #11
+[fp-p1-harness] connection #12
+[fp-p1-harness] connection #13
+  ok 10 tests\e2e\session-task-scope-completion.spec.ts:67:5 › real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart (3.2m)
+[fp-p1-harness] connection #1
+  x  11 tests\e2e\session-task-scope-completion.spec.ts:201:5 › explicit UI task selection executes the newly selected canonical contract (36.6s)
+
+
+  1) tests\e2e\project-agent-entry.spec.ts:7:5 › project entry keeps its coordinator, task scope and session drafts while disclosure only folds the list 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('session-task-list')
+    Expected substring: [32m"Project A existing task"[39m
+    Received string:    [31m"Task owner unavailable"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('session-task-list')[22m
+    [2m    18 × locator resolved to <ul data-testid="session-task-list" class="space-y-1 overflow-y-auto py-1 max-h-36">…</ul>[22m
+    [2m       - unexpected value "Task owner unavailable"[22m
+
+
+      40 |     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Source draft preserved');
+      41 |     await page.getByTestId('session-tasks-toggle').click();
+    > 42 |     await expect(page.getByTestId('session-task-list')).toContainText(task.title);
+         |                                                         ^
+      43 |     await page.getByTestId(`session-task-select-${task.id}`).click();
+      44 |     await expect(page.getByTestId(`session-task-select-${task.id}`)).toBeDisabled();
+      45 |     await page.getByTestId('session-task-list').getByRole('link', { name: task.title }).click();
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\project-agent-entry.spec.ts:42:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final3-scope-results\project-agent-entry-projec-9a4df-closure-only-folds-the-list\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final3-scope-results\project-agent-entry-projec-9a4df-closure-only-folds-the-list\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final3-scope-results\project-agent-entry-projec-9a4df-closure-only-folds-the-list\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final3-scope-results\project-agent-entry-projec-9a4df-closure-only-folds-the-list\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\e2e\session-task-scope-completion.spec.ts:201:5 › explicit UI task selection executes the newly selected canonical contract 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoMatchObject[2m([22m[32mexpected[39m[2m)[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Object {[22m
+    [32m-   "state": "ready",[39m
+    [32m-   "taskNodeId": "2a8f454d-6747-492c-ae62-c91c1924e17d",[39m
+    [31m+   "state": "doing",[39m
+    [31m+   "taskNodeId": "228b0c2f-8d0c-409c-9b5c-12b9f8fa226e",[39m
+    [2m  }[22m
+
+      240 |     await expect(page.getByTestId(`session-task-select-${b.contract.taskNodeId}`)).toBeDisabled();
+      241 |     const selected = await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', { workspaceId: project.workspaceId, sessionKey: project.sessionKey });
+    > 242 |     expect(selected.task.contract).toMatchObject({ taskNodeId: b.contract.taskNodeId, state: 'ready' });
+          |                                    ^
+      243 |     await hostInvoke(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
+      244 |       message: 'SELECTED-TASK-EXECUTE', idempotencyKey: 'selection-execute-b' });
+      245 |     await expect.poll(() => readFile(target, 'utf8').catch(() => null), { timeout: 60_000 }).toBe('selected task result\n');
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-task-scope-completion.spec.ts:242:36
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final3-scope-results\session-task-scope-complet-38042-selected-canonical-contract\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final3-scope-results\session-task-scope-complet-38042-selected-canonical-contract\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final3-scope-results\session-task-scope-complet-38042-selected-canonical-contract\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final3-scope-results\session-task-scope-complet-38042-selected-canonical-contract\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\e2e\project-agent-entry.spec.ts:7:5 › project entry keeps its coordinator, task scope and session drafts while disclosure only folds the list 
+    tests\e2e\session-task-scope-completion.spec.ts:201:5 › explicit UI task selection executes the newly selected canonical contract 
+  9 passed (6.5m)

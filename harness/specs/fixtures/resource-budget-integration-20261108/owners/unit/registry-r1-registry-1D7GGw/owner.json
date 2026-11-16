@@ -1,0 +1,118 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-registry-native",
+  "processes": [
+    {
+      "pid": 39988,
+      "events": [
+        {
+          "ready": true,
+          "pid": 39988,
+          "before": 0
+        },
+        {
+          "admitted": true,
+          "pid": 39988,
+          "after": 1
+        }
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 19336,
+      "events": [
+        {
+          "ready": true,
+          "pid": 19336,
+          "before": 0
+        },
+        {
+          "admitted": false,
+          "pid": 19336,
+          "after": 0
+        }
+      ],
+      "exit": 0
+    }
+  ],
+  "saved": [
+    {
+      "runId": "queued-shared",
+      "childSessionKey": "agent:main:subagent:queued-shared",
+      "requesterSessionKey": "agent:main:controller",
+      "controllerSessionKey": "agent:main:controller",
+      "requesterDisplayKey": "agent:main:controller",
+      "requesterSessionId": "controller-generation",
+      "task": "controlled owner entry",
+      "cleanup": "keep",
+      "createdAt": 1794072912951,
+      "execution": {
+        "status": "interrupted",
+        "interruptedAt": 1794072922118,
+        "interruptionReason": "lost-execution-context"
+      },
+      "queuedDispatch": {
+        "params": {
+          "message": "controlled queue",
+          "sessionKey": "agent:main:subagent:queued-shared",
+          "idempotencyKey": "queued-shared"
+        },
+        "maxChildren": 1,
+        "controllerSessionId": "controller-generation",
+        "timeoutMs": 1000
+      },
+      "orchestration": {
+        "orchestrationRunId": "shared-orchestration",
+        "taskNodeId": "one",
+        "executionWave": 1,
+        "roleName": "implementer",
+        "isVerifier": false,
+        "phase": "worker",
+        "leadRole": "implementer",
+        "originalTask": "controlled queue",
+        "executionWaves": [
+          {
+            "wave": 1,
+            "taskNodeIds": [
+              "one"
+            ],
+            "roles": [
+              "implementer"
+            ]
+          }
+        ],
+        "taskGraph": {
+          "graphRunId": "shared-graph",
+          "mode": "auto",
+          "status": "planned",
+          "edges": [],
+          "nodes": [
+            {
+              "taskNodeId": "one",
+              "roleName": "implementer",
+              "task": "controlled queue",
+              "phase": "implementation",
+              "dependsOn": [],
+              "scope": "controlled queue",
+              "requiredCapabilities": [],
+              "status": "ready",
+              "attemptPolicy": {
+                "maxRepairAttempts": 0,
+                "maxRedoAttempts": 0
+              }
+            }
+          ]
+        }
+      },
+      "completion": {
+        "required": false
+      },
+      "delivery": {
+        "status": "not_required",
+        "lastError": null
+      },
+      "dispatchPending": true
+    }
+  ],
+  "databasePath": "D:\\tmp\\r1-registry-1D7GGw\\state\\openclaw.sqlite"
+}

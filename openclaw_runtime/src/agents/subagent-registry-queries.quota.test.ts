@@ -36,6 +36,19 @@ function toMap(runs: SubagentRunRecord[]): Map<string, SubagentRunRecord> {
 }
 
 describe("subagent spawn quota release (issue #32)", () => {
+  it('does not release capacity merely because an unended execution is old', () => {
+    const runs = toMap([makeRun({ createdAt: Date.now() - 3 * 60 * 60 * 1000,
+      startedAt: Date.now() - 3 * 60 * 60 * 1000, execution: { status: 'running' } })]);
+    expect(countActiveRunsForSessionFromRuns(runs, CONTROLLER)).toBe(1);
+  });
+
+  it('retains an ended parent slot while its old descendant still has no terminal evidence', () => {
+    const parent = makeRun({ endedAt: Date.now() - 10_000 });
+    const child = makeRun({ controllerSessionKey: parent.childSessionKey, requesterSessionKey: parent.childSessionKey,
+      createdAt: Date.now() - 3 * 60 * 60 * 1000, startedAt: Date.now() - 3 * 60 * 60 * 1000 });
+    expect(countActiveRunsForSessionFromRuns(toMap([parent, child]), CONTROLLER)).toBe(1);
+  });
+
   it("counts only still-running children, even when cleanup is pending", () => {
     const runs = toMap([
       // Live run: still occupies a slot.

@@ -1,0 +1,1 @@
+{"schema":"clawx.e3.required-tests/v1","mode":"worker-a","ok":true,"checks":[{"id":"worker-a","passed":true}]}

@@ -1,0 +1,155 @@
+
+Running 1 test using 1 worker
+
+(node:21212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T22:29:04.917Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-08T22:29:04.918Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-08T22:29:04.918Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=25520, ppid=44220
+[2026-11-08T22:29:04.918Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-08T22:29:04.946Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-08T22:29:04.946Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-08T22:29:04.946Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-08T22:29:04.946Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-08T22:29:05.023Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-08T22:29:05.023Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [25520:1109/062905.061:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[25520:1109/062905.061:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-08T22:29:05.134Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T22:29:05.134Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T22:29:05.232Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-08T22:29:05.233Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-08T22:29:05.238Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T22:29:05.238Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T22:29:05.239Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T22:29:05.239Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T22:29:05.313Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-08T22:29:05.313Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T22:29:05.882Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\joint-validation\electron-joint3-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\workspace\.verse-claw\harness
+[app:out] [2026-11-08T22:29:06.045Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T22:29:06.046Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[app:out] [2026-11-08T22:29:06.076Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[app:out] [2026-11-08T22:29:06.077Z] [INFO] Gateway start requested (port=55119)
+[app:out] [2026-11-08T22:29:06.081Z] [DEBUG] Device identity loaded (deviceId=27c362903834419fede1f24bc22ca0c1e84e9a335465211d6a87dcd6b3d9d388)
+[app:out] [2026-11-08T22:29:06.082Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-08T22:29:06.311Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:25520) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-08T22:29:06.516Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T22:29:06.709Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-08T22:29:06.742Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-08T22:29:06.745Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":169,"providerEnvMs":8,"channelStartupPolicyMs":2,"uvEnvMs":5,"mcpEnvMs":19,"runtimeConfigReadMs":0,"verseShellBundleMs":0,"totalMs":221,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-08T22:29:06.746Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=55119, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 55119 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-08T22:29:06.911Z] [INFO] Gateway process started (pid=44796)
+[app:out] [2026-11-08T22:29:06.911Z] [DEBUG] Gateway manager now owns process pid=44796
+[app:err] [2026-11-08T22:29:07.032Z] [WARN] [Gateway stderr] (node:44796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-08T22:29:07.033Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T22:29:09.001Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-08T22:29:10.119Z] [DEBUG] [Gateway stderr] (node:44796) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:out] [2026-11-08T22:29:10.120Z] [DEBUG] [Gateway stderr] (node:44796) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:err] [2026-11-08T22:29:10.120Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:err] [2026-11-08T22:29:12.052Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=b782e1c7-9579-4b0c-954e-1c8d858ff3c3 peer=127.0.0.1:54726->127.0.0.1:55119 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:55119 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T22:29:12.193Z] [DEBUG] Gateway ready after 19 attempt(s)
+[app:out] [2026-11-08T22:29:12.194Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:55119/ws)
+[app:err] [2026-11-08T22:29:12.197Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=da2e2354-fad9-4667-846e-e3789baac820 peer=127.0.0.1:54728->127.0.0.1:55119 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:55119 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T22:29:12.198Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T22:29:12.198Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-08T22:29:12.198Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T22:29:12.238Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:55119/ws)
+[app:err] [2026-11-08T22:29:12.239Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-08T22:29:13.504Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T22:29:13.504Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-08T22:29:13.504Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T22:29:13.820Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-08T22:29:14.023Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-08T22:29:14.024Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-08T22:29:14.025Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-08T22:29:14.026Z] [INFO] [metric] gateway.startup {"configSyncMs":601,"spawnToReadyMs":5281,"readyToConnectMs":1833,"totalMs":7715}
+[app:out] [2026-11-08T22:29:19.785Z] [INFO] [chat:sendWithMedia] Sending: message="Continuity context (owner-derived, bounded metadata; verify work with tools):
+schema=ContinuityConte", attachments=0, fileRefs=0
+[app:out] [2026-11-08T22:29:19.785Z] [INFO] [gateway-rpc] chat.send serialized id=92b0885c-4a1f-4325-825d-1af0efbedffd timeoutMs=900000 bytes=1077
+[app:out] [2026-11-08T22:29:19.786Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=92b0885c-4a1f-4325-825d-1af0efbedffd
+[app:err] [2026-11-08T22:29:20.146Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7727b4c6-a670-407e-b2cc-e5e0638fa021 id=92b0885c-4a1f-4325-825d-1af0efbedffd
+[app:err] [2026-11-08T22:29:20.146Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7727b4c6-a670-407e-b2cc-e5e0638fa021 id=92b0885c-4a1f-4325-825d-1af0efbedffd
+[app:err] [2026-11-08T22:29:20.147Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[app:err] [2026-11-08T22:29:20.154Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=WRITER-A sessionKey=agent:main:session-1794176945822-jointwriters loadSessionMs=0.593
+[app:err] [2026-11-08T22:29:20.270Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=WRITER-A sessionKey=agent:main:session-1794176945822-jointwriters attachments=0
+[app:err] [2026-11-08T22:29:20.271Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=WRITER-A sessionKey=agent:main:session-1794176945822-jointwriters
+[app:out] [2026-11-08T22:29:20.272Z] [INFO] [gateway-rpc] chat.send response id received durationMs=487
+[app:out] [2026-11-08T22:29:20.272Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"WRITER-A","status":"started"}
+[app:err] [2026-11-08T22:29:20.279Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7727b4c6-a670-407e-b2cc-e5e0638fa021 id=92b0885c-4a1f-4325-825d-1af0efbedffd
+[fp-p1-harness] connection #1
+[app:err] [2026-11-08T22:29:26.883Z] [WARN] [Gateway stderr] [31m[tools] write failed: checkout_writer_stale_credential raw_params={"path":"D:\\tmp\\unified-management-20261109\\joint-validation\\electron-joint3-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace\\result.txt","content":"writer-a\n"}[39m
+[app:out] [2026-11-08T22:30:20.426Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T22:30:20.426Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[app:out] [2026-11-08T22:30:20.427Z] [INFO] Sending kill to Gateway process (pid=44796)
+[app:err] [2026-11-08T22:30:20.449Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-08T22:30:20.449Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-08T22:30:20.913Z] [INFO] Gateway process exited (code=1, expected=yes)
+[2026-11-08T22:30:20.913Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-08T22:30:21.105Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T22:30:21.107Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:53798/caa0c66c-ba95-455f-806d-5ecb1c5c8709
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-08T22:30:21.124Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-08T22:30:21.124Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-08T22:30:21.124Z] [INFO] [ResourceTracker] Shutdown complete
+[app:out] [2026-11-08T22:30:21.124Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-08T22:30:21.124Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  x  1 tests\e2e\unified-effect-admission.spec.ts:9:5 › actual task effects keep one checkout writer until the owning run ends (1.4m)
+
+
+  1) tests\e2e\unified-effect-admission.spec.ts:9:5 › actual task effects keep one checkout writer until the owning run ends 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"writer-a[39m
+    [32m"[39m
+    Received: [31mnull[39m
+
+    Call Log:
+    - Timeout 60000ms exceeded while waiting on the predicate
+
+      51 |     });
+      52 |     await send(project.sessionKey,'WRITER-A');
+    > 53 |     await expect.poll(()=>readFile(target,'utf8').catch(()=>null),{timeout:60_000}).toBe('writer-a\n');
+         |     ^
+      54 |     await expect.poll(()=>held,{timeout:30_000}).toBe(true);
+      55 |     const during=await writer();expect(during).toHaveLength(1);
+      56 |     expect(during[0].owner.task.taskNodeId).toBe(a.contract.taskNodeId);
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\unified-effect-admission.spec.ts:53:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\joint-validation\electron-joint3-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\joint-validation\electron-joint3-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\joint-validation\electron-joint3-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\joint-validation\electron-joint3-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\unified-effect-admission.spec.ts:9:5 › actual task effects keep one checkout writer until the owning run ends 

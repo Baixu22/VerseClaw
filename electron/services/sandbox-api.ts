@@ -7,11 +7,7 @@ import type {
 import type { WorkspacePermissionMode } from '@shared/types/workspace';
 import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
-import {
-  detectSandboxProviders as detectCachedSandboxProviders,
-  detectSandboxProviderSnapshot,
-} from '../utils/sandbox-provider-detection';
-import { resolveSandboxEffectivePolicy } from '../utils/sandbox-policy-resolver';
+import { detectSandboxProviders as detectCachedSandboxProviders } from '../utils/sandbox-provider-detection';
 import {
   buildForcedDegradedVisibility,
 } from '../utils/sandbox-high-risk-gate';
@@ -19,69 +15,10 @@ export { getActiveSandboxHighRiskPolicy } from '@electron/utils/active-sandbox-h
 import { normalizeSandboxProviderId } from '../utils/workspace-runtime-permissions';
 import { isRecord } from './payload-utils';
 import { getActiveWorkspaceProfile } from './workspaces-api';
-
-type SandboxStoreDocument = {
-  profiles: SandboxProfile[];
-  activeProfileId?: string;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let sandboxStoreInstance: any = null;
-
-async function getSandboxStore() {
-  if (!sandboxStoreInstance) {
-    const Store = (await import('electron-store')).default;
-    sandboxStoreInstance = new Store<SandboxStoreDocument>({
-      name: 'sandbox-profiles',
-      defaults: {
-        profiles: [],
-      },
-    });
-  }
-  return sandboxStoreInstance;
-}
+import { getSandboxStore, resolveActiveSandboxPolicyForMode } from './sandbox-state';
+export { readActiveSandboxProfile, resolveActiveSandboxPolicyForMode } from './sandbox-state';
 
 export const detectSandboxProviders = detectCachedSandboxProviders;
-
-async function readSandboxProfiles(): Promise<{
-  profiles: SandboxProfile[];
-  activeProfileId?: string;
-}> {
-  const store = await getSandboxStore();
-  const profiles = Array.isArray(store.get('profiles')) ? store.get('profiles') as SandboxProfile[] : [];
-  const activeProfileId = typeof store.get('activeProfileId') === 'string'
-    ? store.get('activeProfileId') as string
-    : undefined;
-  return { profiles, activeProfileId };
-}
-
-export async function readActiveSandboxProfile(): Promise<SandboxProfile | null> {
-  const { profiles, activeProfileId } = await readSandboxProfiles();
-  const profile = profiles.find((entry) => entry.id === activeProfileId) ?? profiles[0] ?? null;
-  if (!profile) return null;
-  const providerId = normalizeSandboxProviderId(profile.providerId);
-  if (providerId === profile.providerId) return profile;
-  return { ...profile, providerId };
-}
-
-export async function resolveActiveSandboxPolicyForMode(permissionMode: WorkspacePermissionMode): Promise<{
-  policy: ReturnType<typeof resolveSandboxEffectivePolicy>;
-  providers: SandboxStatus['providers'];
-}> {
-  const [providerSnapshot, profile] = await Promise.all([
-    detectSandboxProviderSnapshot(),
-    readActiveSandboxProfile(),
-  ]);
-  return {
-    providers: providerSnapshot.providers,
-    policy: resolveSandboxEffectivePolicy({
-      permissionMode,
-      profile,
-      providers: providerSnapshot.providers,
-      docker: providerSnapshot.docker,
-    }),
-  };
-}
 
 export async function buildSandboxStatus(): Promise<SandboxStatus> {
   const workspace = await getActiveWorkspaceProfile();

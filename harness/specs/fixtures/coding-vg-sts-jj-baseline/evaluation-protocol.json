@@ -1,0 +1,182 @@
+{
+  "schema": "CodingJointEvaluationProtocol/v1",
+  "taskId": "TF-0764",
+  "driven_by": "agent",
+  "actor": "codex-coding-c0-builder",
+  "stage": "predeclared-inputs-not-measurements",
+  "productLocks": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  },
+  "corpus": [
+    {
+      "id": "httpx",
+      "origin": "https://github.com/encode/httpx.git",
+      "commit": "326b9431c761e1ef1e00b9f760d1f654c8db48c6",
+      "tree": "40173b1c8fd3f7895fb2e5ae91f41cf66f1d2cb8",
+      "runner": "pytest",
+      "selection": "STS-opt-in-only",
+      "fullOracle": [
+        "python",
+        "-m",
+        "pytest"
+      ],
+      "environment": "isolated target interpreter; pin complete distributions before any A/B run",
+      "dependencyInputs": [
+        "pyproject.toml",
+        "requirements.txt"
+      ]
+    },
+    {
+      "id": "packaging",
+      "origin": "https://github.com/pypa/packaging.git",
+      "commit": "7b898d9f0b343ca06993157fc328d7caad51d5c2",
+      "tree": "37d527564c7c335232e4bd594161917955b13f3e",
+      "runner": "pytest",
+      "selection": "STS-opt-in-only",
+      "fullOracle": [
+        "python",
+        "-m",
+        "pytest"
+      ],
+      "environment": "isolated target interpreter; pin complete distributions before any A/B run",
+      "dependencyInputs": [
+        "pyproject.toml"
+      ]
+    },
+    {
+      "id": "clawx-typescript",
+      "origin": "local ClawX repository",
+      "commit": "32236f49295fc73b7f63e1cbcb9216042f2ec359",
+      "runner": "vitest",
+      "selection": "not-applicable-to-pytest-STS",
+      "fullOracle": [
+        "pnpm",
+        "test"
+      ],
+      "environment": "Node/pnpm/package-lock identities from the same frozen candidate"
+    }
+  ],
+  "arms": [
+    {
+      "id": "A",
+      "path": "Git/worktree -> native coding -> full",
+      "scope": "full"
+    },
+    {
+      "id": "B",
+      "path": "VG/JJ -> governed execution -> full",
+      "scope": "full"
+    },
+    {
+      "id": "C",
+      "path": "VG/JJ -> STS selected -> required final full",
+      "scope": "selected+full",
+      "applicableRunners": [
+        "pytest"
+      ]
+    }
+  ],
+  "binding": [
+    "candidate tree",
+    "workspace/session/generation",
+    "tool binaries and protocols",
+    "test collection and node ids",
+    "interpreter and dependency distributions",
+    "argv/cwd",
+    "input hashes",
+    "receipts and cleanup"
+  ],
+  "budgets": {
+    "probeSeconds": 180,
+    "projectOracleSeconds": 1800,
+    "coreJourneyRepetitions": 3,
+    "faultWindowRepetitions": 3,
+    "coldWarmPairedRepetitions": 5,
+    "onTimeout": "record failure or unmeasured; never expand budget after observing results"
+  },
+  "metrics": [
+    "completion correctness",
+    "conflicts missed/false-positive",
+    "selection missed/failure recall",
+    "cold/warm wall time",
+    "CPU",
+    "peak RSS",
+    "setup/materialization/verification/full/cleanup costs",
+    "tokens if a live provider is used"
+  ],
+  "coldDefinition": "first full workflow after disposable setup; no OS-cache-clearing claim",
+  "faultWindows": [
+    "intent persisted before effect",
+    "effect before receipt",
+    "candidate materialized before verification",
+    "verification before integration",
+    "during cleanup"
+  ],
+  "cases": [
+    {
+      "id": "separate-good-combined-bad",
+      "input": "two generated worker branches change producer/consumer API incompatibly",
+      "oracle": "each individual tree passes its isolated tests; combined full fails; no merge/verification pass may be emitted"
+    },
+    {
+      "id": "delete-rename",
+      "input": "generated tracked modify/add/delete/rename across two worktrees",
+      "oracle": "final file tree equals expected change including deletions; no silent skipped paths"
+    },
+    {
+      "id": "stale-target",
+      "input": "edit base after worker snapshot before integration",
+      "oracle": "base edit preserved and conflict reported"
+    },
+    {
+      "id": "selected-miss",
+      "input": "plant failing pytest case outside selected ids, keep identical candidate for selected/full",
+      "oracle": "full reveals failure, selected cannot admit; missed counted"
+    },
+    {
+      "id": "collection-error",
+      "input": "unimportable test module or failing collection hook",
+      "oracle": "collection failure != empty/passed"
+    },
+    {
+      "id": "dynamic-fixture-change",
+      "input": "change conftest/parametrization/plugin on fixed corpus",
+      "oracle": "full oracle and node-id collection binding guard against missing dependent tests"
+    },
+    {
+      "id": "identity-drift",
+      "input": "change candidate/interpreter/dependency/receipt hash after planning",
+      "oracle": "reject stale/mismatched evidence"
+    },
+    {
+      "id": "cross-run-result",
+      "input": "use another run's verification/result in current envelope",
+      "oracle": "reject before summary/acceptance"
+    },
+    {
+      "id": "cancel-tree",
+      "input": "owned child process with late output, cancel during run",
+      "oracle": "correct owner tree dead and late output cannot become another run's result"
+    },
+    {
+      "id": "crash-reconcile",
+      "input": "real process kill in each predeclared fault window",
+      "oracle": "durable state agrees with disk effect; unknown reconciles, no duplicate mutation"
+    }
+  ],
+  "fullScopeRule": "selected, partial, zero executed, unknown or skipped can never satisfy required full",
+  "fixtureRule": "all effects run on generated/disposable copies, no user data; positive controls and negative controls share frozen inputs",
+  "modelRule": "scripted provider is mechanism evidence only; live quality or benefit requires separate explicit live-provider run",
+  "laterOwners": {
+    "VG": "TF-0775",
+    "JJ": "TF-0776",
+    "VS": "TF-0777",
+    "STS": "TF-0778",
+    "joint": "TF-0779",
+    "recovery": "TF-0780",
+    "package": "TF-0781",
+    "readiness": "TF-0782"
+  }
+}

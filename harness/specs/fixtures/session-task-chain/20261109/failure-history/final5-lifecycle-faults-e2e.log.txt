@@ -1,0 +1,51 @@
+
+Running 5 tests using 1 worker
+
+(node:15764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\chat-manual-compaction.spec.ts:15:7 › Verse Claw chat manual compaction › opens confirmation dialog and calls the session compaction Host API (8.4s)
+  ok 2 tests\e2e\long-session-lifecycle-faults.spec.ts:104:5 › real Host and Gateway archive/restore preserves history and rotates the physical generation (19.6s)
+  x  3 tests\e2e\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive (21.0s)
+(node:424) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:424) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 4 tests\e2e\runtime-lifecycle-governance.spec.ts:42:7 › runtime lifecycle governance › delete success removes the session and conversation switch keeps the app usable (8.6s)
+  ok 5 tests\e2e\runtime-lifecycle-governance.spec.ts:122:7 › runtime lifecycle governance › delete failure keeps the persisted operationId so a retry reuses it (9.0s)
+
+
+  1) tests\e2e\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"45b51354-d021-43bd-bbf2-0bc5c1753809"[39m
+    Received: [31mundefined[39m
+
+      270 |     });
+      271 |     expect(beforeStop.success).toBe(true);
+    > 272 |     expect(beforeStop.snapshot.session.sessionId).toBe(sessionId);
+          |                                                   ^
+      273 |     expect(beforeStop.snapshot.resources?.owners).toEqual(expect.arrayContaining([
+      274 |       expect.objectContaining({ kind: 'process', authority: 'managed', generation: sessionId }),
+      275 |       expect.objectContaining({ kind: 'admission-permit', authority: 'managed', generation: sessionId, activePermits: 0, waiters: 0 }),
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-lifecycle-faults.spec.ts:272:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-faults-e2e-results\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-faults-e2e-results\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-faults-e2e-results\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-faults-e2e-results\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive 
+  4 passed (1.2m)

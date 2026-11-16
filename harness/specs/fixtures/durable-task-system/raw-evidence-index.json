@@ -1,0 +1,86 @@
+[
+  {
+    "path": "D:/tmp/durable-task-system-20261107/unit-freeze.json",
+    "sha256": "2c51b01fb8afcc1d1358b71e8c944bfc80e7ad23fa8a0f3185026b95cef26428"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/regression-frozen.json",
+    "sha256": "5816cfe445a59a08cf4556d5d8bf1ec7b0ed6113fcb02d5d36e1f7b986b6bc52"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/runtime-regression-final.json",
+    "sha256": "167217ba9ab703106f57cd48bfa267ce5a4fd06a53ddab5f0228a1d4912cb147"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/runtime-build-bounded.result.json",
+    "sha256": "7d90945f5babc9fb99e4225fd90437ef64b02b9cd4c109affa90710929af7094"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/runtime-build-bounded.log",
+    "sha256": "f70f0096c11b28a60e11b94ab53c1d676b27006f2f76ac9f7774f216e9ee4537"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/e2e-layout.json",
+    "sha256": "076c4e0ac17ab9c421b05f12f5e0368d4c89538285bace7f192a2c0bfe05942b"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/e2e-frozen.json",
+    "sha256": "637ea58d83bc475cbf9ac63d3172266b98edba48e256fb642ab310f427a8059e"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/type-final-node.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/type-final-web.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/type-final-test.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/build-vite-layout.log",
+    "sha256": "735f293740e78de7963984f0e14986786b178ff43abf790b641d6a7a6f148a28"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/comms-replay.log",
+    "sha256": "f6596f6f6b2132efabd270180444899d70ac8906477868988d7fee8a3df0df5d"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/comms-compare.log",
+    "sha256": "934b048a5492d4ea0d813d5b516e366a19ccfafd12b18f06cac67417d0e1abc2"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/regression-ledger.json",
+    "sha256": "ab27b9f029f5711f251677e845466fc0d13980d25e649ffc8a8a2cb4b8c8ba88"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/regression-ledger-2.json",
+    "sha256": "5b97a22a38bd281218e3f89818e59307c9fc29da1c35cb91049b90df33e0d393"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/regression-expanded.json",
+    "sha256": "776ad18519c705857558fa5fdcc54ee3e78184b4047dbcea80c7fe4e3d85ae54"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/typecheck-full-3.log",
+    "sha256": "26ce3a916c11d81376e0e41921fbceb4a2e878c5a8258849d63116c54ebf80e6"
+  },
+  {
+    "path": "D:/ClawX-work/durable-task-system-20261107/artifacts/typecheck-cache/test-typecheck-errors.log",
+    "sha256": "e23c2c2b7cf7af380267a3407c6a12a5ee272323a0ae9a4a8ce4b3193186b442"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/tool-overhead-before.json",
+    "sha256": "7eb642d81712645f4d242817f19dd707a9e52723025f9b588c2b2d6a75dcf97a"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/tool-overhead-after.log",
+    "sha256": "f8f6312b056d0ca246449f8e5b1bfa85fbeb2274de87205d1620665ac21e9ab3"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/main-dependencies-restore.log",
+    "sha256": "6c8f9b96fe83dd35ef572b42d747da2fd42e76a4ed25d35f864b3c022198b65e"
+  }
+]

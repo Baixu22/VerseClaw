@@ -1,0 +1,55 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\electron-process-cleanup.json",
+  "sourceSha256": "f2c967b6170a5b043dc9fd21ecd744950555c9daec1f305ff24297e861798611",
+  "result": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\.tmp\\e2e-runs\\verse-claw-e2e-run-egjFkE",
+    "ledgerEntries": 5,
+    "checks": [
+      {
+        "pid": 43696,
+        "creationTime": 1794564331699,
+        "status": "exited"
+      },
+      {
+        "pid": 43588,
+        "creationTime": 1794564336342,
+        "status": "exited"
+      },
+      {
+        "pid": 13492,
+        "creationTime": 1794564336778,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 43696,
+          "creationTime": 1794564331699,
+          "status": "exited"
+        },
+        {
+          "pid": 43588,
+          "creationTime": 1794564336342,
+          "status": "exited"
+        },
+        {
+          "pid": 13492,
+          "creationTime": 1794564336778,
+          "status": "exited"
+        }
+      ]
+    ],
+    "owned": [],
+    "remaining": [],
+    "survivors": [],
+    "pendingLaunches": 0,
+    "status": "passed"
+  }
+}

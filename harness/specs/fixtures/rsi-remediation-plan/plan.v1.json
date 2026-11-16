@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "RsiRemediationPlan/v1",
+  "date": "2026-11-07",
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "baseCommit": "5ad905b44c2822caf6037df9278a8a260a27d3f9",
+  "baselineRunId": "2bb4141c-a536-443a-8b89-0fbfd0082edf",
+  "baselineDecision": "NO_GO/eliminate",
+  "protocols": {
+    "publicInputs": "RsiCodingTaskInputs/v1",
+    "contractsOnly": "RsiCodingCollector/v3",
+    "boundedTools": "RsiCodingCollector/v4"
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "title": "固化 RSI 修复节点、版本与验收路线",
+      "purpose": "把输入、执行、归因和演进修复放到一个可验证的依赖图中。",
+      "dependsOn": [],
+      "acceptance": [
+        "六段开发与规划节点均有交付、依赖、验收和失败分支。",
+        "旧 run、协议、产品权限和新资源冻结条件可读回。",
+        "规划源文件提交后通过 Task Forest validate/export，实际图与提案一致。"
+      ]
+    },
+    {
+      "id": "inputs",
+      "title": "补齐 RSI 公开接口与历史任务上下文",
+      "purpose": "让 coding subject 得到足够的公共接口信息，同时保持历史 oracle 的独立性。",
+      "dependsOn": [
+        "plan"
+      ],
+      "acceptance": [
+        "24 个任务绑定公共 API 或文档/CLI 契约、历史身份和来源摘要。",
+        "缺失模块有公开接口，所需契约没有实现体、隐藏测试或静默截断。",
+        "v3 仅前瞻启用；v1/v2 请求和旧测量可按原版本解释。",
+        "完整定向回归与 clean candidate、哈希、凭据扫描和磁盘读回通过。"
+      ]
+    },
+    {
+      "id": "collector",
+      "title": "实现有预算的 RSI 工具与修复循环",
+      "purpose": "让模型能够读必要源码并在公开检查后修正，分离执行能力和经验效果。",
+      "dependsOn": [
+        "inputs"
+      ],
+      "acceptance": [
+        "v4 冻结允许工具、读写范围、次数、tokens 和时限。",
+        "真实 task workspace 的读写及公开检查有可回放事件，最终隐藏 oracle 独立执行。",
+        "越界、输出上限、未知用量、中断、重复和预算耗尽保留准确终态。",
+        "受控集成回归、旧协议兼容和完整收据校验通过。"
+      ]
+    },
+    {
+      "id": "adoption",
+      "title": "接通经验采用身份与任务结果归因",
+      "purpose": "区分检索、实际采用和任务结果，为后续经验更新提供可靠数据。",
+      "dependsOn": [
+        "collector"
+      ],
+      "acceptance": [
+        "principle id/version 与 task/run/arm/repeat、实际采用和观察结果关联。",
+        "检索不增加采用；无出处、重复和 unknown 结果单独记录。",
+        "复用现有存储与权限；诊断与实验配对身份保持可验证。",
+        "生产调用与否决、幂等和结果未知路径有回归及实际事件读回。"
+      ]
+    },
+    {
+      "id": "evolution",
+      "title": "建立候选版本和受控多代经验演进",
+      "purpose": "把独立训练信号变成可选择、可淘汰和可撤回的经验或 prompt 候选。",
+      "dependsOn": [
+        "adoption"
+      ],
+      "acceptance": [
+        "训练、验证和最终 held-out 独立绑定，最终 held-out 不反馈给生成器。",
+        "至少两代候选有父版本、来源、选择/淘汰、原失败和预算记录。",
+        "选择门使用冻结收益、安全和成本条件，负结果不能晋级。",
+        "候选 off 状态可还原先前行为，产品默认与 evaluator 权限保持现有规则。"
+      ]
+    },
+    {
+      "id": "measurement",
+      "title": "执行新协议的完整配对收益测量",
+      "purpose": "在修复后的任务与执行条件下量化经验演进的真实效果。",
+      "dependsOn": [
+        "collector",
+        "evolution"
+      ],
+      "acceptance": [
+        "endpoint/model、价格依据、样本与全轮调用/tokens 预算在调用前冻结。",
+        "k=3，至少 20 个完整 case；pass^k/pass@k、95% 区间、功效与所有失败类别可复算。",
+        "公共接口和工具协议的影响单独识别，不借旧 run 对新版本追认。",
+        "原始响应、工具效果、oracle、真实用量和成本封存；未知字段保持 unknown。"
+      ]
+    },
+    {
+      "id": "decision",
+      "title": "完成独立收益裁决和行为回滚验收",
+      "purpose": "按证据决定经验候选的采用，并重新核对代码自改的准入。",
+      "dependsOn": [
+        "measurement"
+      ],
+      "acceptance": [
+        "独立角色从原始产物重算效果、污染、成本与安全结论。",
+        "候选 off/on/off 行为回滚有执行及续接证据。",
+        "5pp、95% 区间下界、10% 成本与安全/锚点门共同执行。",
+        "代码自改仅按阶段准入重评，产品发布和冻结默认值由既有权限决定。"
+      ]
+    }
+  ],
+  "resourceReservation": {
+    "providerCallsAuthorized": 0,
+    "wholeRunTokens": null,
+    "costBudget": null,
+    "freezeBeforeDispatch": true
+  },
+  "goalAcceptance": {
+    "completeIndependentPairsMinimum": 20,
+    "k": 3,
+    "absoluteImprovementMinimum": 0.05,
+    "pairedCi95LowerBoundGreaterThan": 0,
+    "costIncreaseMaximum": 0.1,
+    "safetyRegressionMaximum": 0,
+    "positiveBenefitRequiredForEffectiveLoop": true
+  },
+  "claims": {
+    "realHuman": false,
+    "benefit": false,
+    "promotionReady": false,
+    "productDefaultsChanged": false
+  },
+  "proposedExecutionEnvelope": {
+    "providerCallsPerSlot": 4,
+    "toolCallsPerSlot": 12,
+    "toolOutputCharsPerCall": 12000,
+    "editedFiles": 32,
+    "editBytes": 256000,
+    "publicInputChars": 100000,
+    "requestTimeoutMs": 240000,
+    "oracleTimeoutMs": 300000,
+    "slotProviderTimeoutMs": 900000,
+    "wholeRunProviderCalls": 864,
+    "wholeRunTokensProposed": 12000000,
+    "authorized": false,
+    "tools": [
+      "read_file",
+      "replace_file",
+      "check_public_contract"
+    ]
+  },
+  "taskFamilies": {
+    "moduleImplementation": 14,
+    "specificationVerification": 10
+  }
+}

@@ -4,7 +4,45 @@
 
 审查中心提供折叠、显式启用的 Change Context：四种比较方式、digest 锚定评论与显式审查结论。拉取变更复用现有审批、Git 与 Coding journal；审查通过不完成任务或合并代码。详见[工作区与编码](docs/modules/workspace-and-coding.md)。 Windows 源码宿主的验收范围与入口回滚见[受控启用与回滚](docs/dev/change-context-review-loop/rollout.md)。
 
+可通过 `runtime.providerBudget` 显式设置宿主、项目和会话预算；子调用继承会话 owner 的 workspace，预留与未知成本由运行时 owner 保留。覆盖范围和核销边界见[资源与观测](docs/modules/resources-and-observability.md)。
+
 # Verse Claw
+
+项目下拉菜单提供 Git 初始化、工作树创建与切换，并沿用各自会话和草稿。
+
+会话控制保留草稿，并按所属服务的确认结果显示状态。归档设置列出中断的归档、还原和删除操作，可继续原操作；上下文修改核对会话代次，存储页保留任务或会话管理的工作树。检查点恢复使用该会话记录的执行目录。
+
+Chat 可将同一会话和任务迁移到另一个已配置检出，保留目标与产物引用。系统核对源环境排空和目标所有权，中断后从已保存的操作继续恢复。
+聊天普通文本流按帧合并更新，批准、取消、错误和完成状态即时发布；当前回复增长时，已完成消息保持稳定。
+
+长会话按实际消息高度计算视口，已加载的早期轮次可在 DOM 上限内定位。历史、预览和投影缓存共享 32 MiB 载荷预算，淘汰后通过原有会话与媒体入口回读。
+
+兼容的文件订阅共享原生监听器，各自保留过滤规则和释放句柄。知识源目录重建后自动恢复监听，多个窗口共享 Main 的新鲜 Git 状态结果。
+
+受管进程按生命周期持有共享 executor，确认终态后释放自身引用。poll 调度为 stdin 和取消保留空间，输出按合计字节限额保留，并继续提供原有 artifact 引用。
+
+终端 PTY 与受管进程共享已声明的宿主容量；已知服务端口在启动前预留，旧代次终端拒绝控制，退出结果不确定时保留占用供恢复核对。详见[终端资源归属](harness/specs/guides/terminal-resource-ownership.md)。
+
+会话支持建立 Git 仓库、选择独立工作树并恢复草稿。`/storage` 与**设置 → 存储空间**共用资源页，可查看会话文件、进程内存和工作树占用。[操作与归属规则](docs/dev/session-worktree-storage.md)。
+
+Runtime 管理的工作树归属、创建阶段和合并意图持久保存在 SQLite 中。重启后可恢复归属；路径被替换、创建未完成或合并结果未知时保留资源并拒绝继续使用旧资格。[注册与恢复契约](harness/specs/guides/execution-domain-registry.md)。
+
+受管工具在执行前联合核对任务领取、会话代次和持久 checkout writer，并与现有合并、冻结和清理共用资源 owner。writer 在工具之间保持占用，未知效果与后台进程需要原 owner 结清。[写入占用契约](harness/specs/guides/checkout-writer-ownership.md)说明转交、恢复和外部写入边界。
+
+会话菜单采用浅灰／石墨灰的不透明表面，显示模型品牌图标和完整模型名，并在会话状态中标识关联工作树。
+
+打开会话会同步激活所属工作区并恢复草稿；分支操作即时刷新检出信息。子会话可在来源下展开，会话菜单支持搜索并去除重复项。[会话导航](docs/dev/chat-worktree-session-navigation.md)。
+
+会话生命周期统一由原始 v2 轨迹拼装结果驱动。Verifier 完成报告按配置把修复任务交给 lead，修复后再独立复验。
+
+Skill 配置直接写入运行时配置，受管技能可在详情中卸载。Agent Dev 报告采集正常聊天与工具事件，并对 token 用量去重。
+
+切换会话会恢复可见消息位置和草稿。后台工作更新自身状态，指针或键盘所在的家族行保持位置。空项目、权限失败和依赖等待显示具体原因与已有下一步入口；派发安排和当前队列观测分别展示。
+
+消息分支使用已记录的转录边界，缺少边界或当前不可操作时显示禁用原因。另开会话的建议沿用可编辑的 Handoff 预览，由明确的创建动作提交。
+
+会话身份加载完成后可准备 Handoff；侧栏发起的接力会等待身份就绪，预览始终对应当前会话代次。
+激活中断后，重试会复用原来的子会话，并在发送前核验会话代次。
 
 **在一个桌面工作空间里完成对话、编码、知识与 Agent 执行。**
 
@@ -24,17 +62,28 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 |---|---|---|
 | LLM 与模型 | 基于账户的供应商配置，OAuth/API Key/本地认证，协议适配，模型 fallback，单轮/会话模型覆盖，流式返回、工具循环、推理强度、token usage 与估算成本 | [LLM 与模型](docs/modules/llm-and-models.md) |
 | 会话与运行 | JSONL 追加型会话树、run、abort/stop/archive/delete、checkpoint、compaction、handoff/fork、可搜索侧栏、持久化分组与长会话 coordinator | [会话](docs/modules/sessions.md) |
-| 上下文与记忆 | Context Orchestrator、6,000 字符 turn budget、Workspace Context、上下文健康评分，以及基于独立 Role/Runtime store 的单一 Memory 产品面 | [上下文与记忆](docs/modules/context-and-memory.md) |
+| 上下文与记忆 | Context Orchestrator、6,000 字符受管注入预算与编排后分账、Workspace Context、上下文健康评分，以及基于独立 Role/Runtime store 的单一 Memory 产品面 | [上下文与记忆](docs/modules/context-and-memory.md) |
 | 工作区与编码 | Workspace preflight、四种权限模式、文件预览、PTY 终端、Web Preview、Git、Review Panel、write journal、stale-write guard 与 auto verify | [工作区与编码](docs/modules/workspace-and-coding.md) |
 | 知识库 | Markdown/wiki-first Library、Inbox → Draft → Steward → Proposal → explicit apply、Source Set、OKF、Runtime Lessons/SEKB、provenance 与 governance | [知识库](docs/modules/knowledge-base.md) |
 | 多智能体与任务 | Agent/Persona/Role 分层、9 个内置角色、路由、团队模板、资源感知波次、subagent admission、Task Ledger、Task Loop、ClawGraph | [多智能体与任务](docs/modules/multi-agent-and-tasks.md) |
+| 项目与会话导航 | 项目名进入负责人；项目视图保留显式关联的不同 agent 负责人。会话家族在原工作组内展开，并展示任务范围。任务历史可打开关联会话和检查点产物。分支问题保留为草稿；续接创建后发送首轮，支持重启后核实与恢复。 | [会话与任务链路](docs/modules/multi-agent-and-tasks.md) |
 | Verse 系列 | VerseGit 仓库/证据控制面、VerseShell 受控执行、VerseBrowser 驱动，以及已退役 VToken | [Verse 系列](docs/modules/verse-tools.md) |
-| 资源与可观测性 | 合作式 ResourceFabric、后台降载、进程/端口追踪、token/cost 上限、Trace、Issue、Problem、Session Activity 与恢复 | [资源与可观测性](docs/modules/resources-and-observability.md) |
+| 资源与可观测性 | ResourceFabric 有界操作延迟基线与内存/event-loop 压力控制、后台降载、进程追踪、token/cost 上限与恢复 | [资源与可观测性](docs/modules/resources-and-observability.md) |
 | 集成与其他表面 | 15 类渠道、Scheduled、Skills/MCP、Inbox、Remote Tasks、Code Review、VerseConf 文档、媒体、Billing 与 Agent Dev | [集成与页面](docs/modules/integrations-and-surfaces.md) |
 
 模块详解当前以简体中文维护；其中源码路径、API 名称和证据链接与语言无关。四个根 README 负责多语言入口。
 
-对话中的处理过程可折叠，最终答复保持可见。较长的文件替换会在会话栏内同时预览修改前后，无法断行的代码在预览中自动换行，展开后只在差异区域内横向滚动。命令预览从最新输出开始。两者均支持展开，复制仍包含完整的已保留内容。仓库变更条与会话输入框使用同一条居中列宽；工具调用以紧凑的状态芯片显示目标与耗时。
+对话采用无助手头像的统一正文列，进度说明与最终答复保持可见，执行详情和被动工具卡片默认收起。当前工具保留进度动画，错误和待批准操作直接可见。较长的文件替换会在会话栏内同时预览修改前后，无法断行的代码在预览中自动换行，展开后只在差异区域内横向滚动。命令预览从最新输出开始。两者均支持展开，复制仍包含完整的已保留内容。仓库变更条与会话输入框使用同一条居中列宽；工具调用以紧凑的状态芯片显示目标与耗时。
+
+会话状态采用统一的平面分组，已完成进程默认收进历史。打开进程后复用对话中的终端视图，支持复制完整输出，并在新日志到来时保留回看位置。工具调用与对应结果合并到一个展开入口，诊断信息置于末尾。
+
+会话环境在发生实际变更或活动后出现，将变更、已观察到的 MCP/Skill 使用和子代理收进简短摘要，详情按需展开。自动展开与会话并排，手动打开使用浮层卡片；关闭工作空间会保留页签和当前选中内容。
+
+空会话在输入框下方显示项目选择；项目菜单提供本地检出和工作树选择。已载入的空会话在 Gateway 断开后仍保留这些本地入口。三个快捷操作收进“快捷开始”。出现文件变更后，输入框下方显示变更入口，可展开分支搜索、切换和工作树操作。
+
+输入区的模型、知识库和权限菜单采用统一的紧凑浮层与加号菜单同款模糊展开动效。菜单自动适配窗口边界，切换入口时收起上一菜单，支持 Escape 关闭和减少动态效果设置。
+
+模型菜单直接选择模型。新会话沿用最近一次可用选择，已有会话保留各自的模型；切换从下一条消息生效。Agent 默认模型在设置中管理。
 
 运行时权限请求覆盖所属会话的输入区，显示命令、工作目录和允许的选项，页面其余部分仍可操作。处理完请求后恢复原输入框、草稿和附件。
 
@@ -50,17 +99,22 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 | `retired` | 仅为兼容、来源追溯或回滚检查保留 |
 | `agent-driven` | agent 生成并如实标注的证据，不是 real-human evidence |
 
-当前机器可读组件目录有 54 条：13 default、12 advanced、24 internal、5 retired、0 experiment。分类不等于运行时证明。详见[组件处置矩阵](docs/dev/component-disposition-matrix-20261021.md)。
+当前机器可读组件目录有 54 条：13 default、12 advanced、23 internal、6 retired、0 experiment。分类不等于运行时证明。详见[组件处置矩阵](docs/dev/component-disposition-matrix-20261021.md)。
 
 当前重要默认值：
 
 - Workspace Context 与只读 DCS context tools 在声明的健康/权限门槛下开启。
 - Runtime Memory injection、SEKB automatic writeback、Browser private network 不默认开启。
-- 记忆反馈与 SEKB 采用计数仅用于诊断；反馈不参与检索排序或保留决策。[RSI 证据与边界](docs/dev/rsi-capability-and-boundaries.md) 区分历史测量与确定性重放。
+- SEKB 按经验版本和运行记录显式采用，分别保存执行结果与独立任务判分。记忆反馈用于诊断，不参与检索排序或保留决策。详见 [RSI 证据与边界](docs/dev/rsi-capability-and-boundaries.md)。
+- 受控 RSI prompt 研究记录父版本、训练归因和冻结验证裁决，待测候选绑定独立封存的评估计划。
 - VToken 已退役；旧环境变量/配置不能重新启用生产 assembly 或 sidecar。
-- VerseGit default-off 且 landed-unwired；VerseShell 是 default-off controlled foundation；VerseBrowser 按 live driver snapshot 公布动作，而不是按完整契约数宣称可用。
+- VerseGit 与 VerseShell 仍默认关闭；宿主接入保留下述职责与权限边界。
 - Dreams 已退役；Image Generation 是开发者/测试门槛，不是正常产品导航。
 - `liveReady=false`、`productApproved=false`、`defaultOn=false` 仍是产品锁。
+
+<!-- VERSE-TOOLS-BOUNDARY-START -->
+**VerseGit 有界编码闭环：**默认关闭，尚未批准全面可用。win32-x64 M1 provider 提供仓库事实；候选验证通过 VerseShell 执行，宿主保有 write journal 与 Git apply。M4 landing/admission 未授权；`liveReady=false`、`productApproved=false` 保持冻结。VerseShell 仍默认关闭。VerseBrowser 只接受当前可用且绑定所属会话的运行时动作，模型参数不能代替宿主批准；请求级私网校验覆盖重定向和子资源。详见 [Verse 组件边界](docs/modules/verse-tools.md)。
+<!-- VERSE-TOOLS-BOUNDARY-END -->
 
 改默认值或做发布声明前，请先读[默认配置矩阵](docs/dev/default-config-matrix.md)、[产品语义](docs/clawx-product-semantics.md)和[能力声明矩阵](shared/capability-claims.ts)。
 
@@ -100,6 +154,8 @@ pnpm dev
 
 `pnpm dev` 会先构建 VerseBrowser、嵌入式 runtime 和 bundled skills，再打开 Vite 与 Electron。Gateway 通常需要 10–30 秒就绪；只打开 Vite 页面不能获得完整 Electron Host services。
 
+已构建的 Gateway 启动时先尝试原生加载已解析的 JavaScript Doctor 契约，减少 SDK 别名加载器准备。挂载源码与外部插件仍使用各自的契约，迁移检查照常执行。运行 `pnpm run build:runtime` 后，可用 `node scripts/measure-gateway-startup.mjs` 在隔离的回环环境和空缓存下对照测速；每个有效样本都必须实际调用被测加载器并完成认证 RPC。
+
 第一次使用：
 
 1. 完成 Setup。
@@ -109,7 +165,8 @@ pnpm dev
 5. 在 Inbox 处理审批。
 6. Knowledge 和 Memory 的持久变化必须经过各自 review surface。
 7. 在会话行上管理会话：悬停显示「置顶」和「⋯」（重命名、移至工作线、标为未读、分叉、接力、复制、可撤销的归档、删除）；右键打开同一菜单，过长的标题在悬停时滚动显示。
-8. 侧栏铃铛显示活动：有会话运行时铃铛带一圈运行指示（需要你处理时为琥珀色），面板列出进行中的会话及已用时长，以及完成、出错和审批事件；可在铃铛菜单或 Settings → Session & Recovery 控制系统通知。
+   子会话以浅缩进和细引导线表示层级，折叠时显示数量。紧凑顶部保留无底框的工作区和会话名；点击标题可搜索、切换及返回来源会话，检查点、分叉、接力、刷新、恢复、迁移和记忆诊断集中在「更多」。深色通过不同石墨灰区分侧栏、正文与抬高的输入区。空任务范围默认隐藏，设置 → 会话与恢复提供安静展示选项。
+8. 会话运行或等待处理时，侧栏铃铛显示与该会话行相同的状态球；右上角数字表示未读活动数。面板列出进行中的会话及已用时长，以及完成、出错和审批事件；可在铃铛菜单或 Settings → Session & Recovery 控制系统通知。
 
 Release 中实际发布的版本才是可下载版本。构建目标存在不代表当前版本一定提供对应安装包。
 
@@ -170,11 +227,14 @@ flowchart LR
 - 会话使用 JSONL transcript；运行态还使用 SQLite。
 - Token 历史来自 session transcript 的结构化 usage；成本是估算值。
 - Knowledge 使用 `memory-wiki` vault 和本地 governance metadata。
+- 监听目录通过快照核对新增、修改与撤销，补偿停机期间的变化；变更只进入带版本的待审候选。
+- Librarian 问答与有界追问通过已配置 Gateway 模型处理准入后的证据，核验逐项原文引用与版本；部分读取、冲突和模型失败明确披露。Studio 继续生成待审摘录草稿。
+- 中文词法、长文有界续读、按 provider 隔离的 embedding 缓存和版本绑定的 Steward 发现共用来源准入。可选公共 GitHub 目录连接器将更新与撤销送入 Inbox；其他 SaaS 连接器尚未实现。
 - 日志、trace、截图、Task Forest 与 handoff 默认是本地工作数据，除非明确整理为 curated evidence。
 
 本地存储不等于离线执行。在线模型、渠道、浏览器和外部工具会按配置接收数据。不要把凭据、私人 transcript、原始日志提交到仓库或公开 issue。
 
-VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契约方法不代表 Electron 已实现 81 项能力；参见[调用方式与驱动限制](packages/README.md#versebrowser-integration-and-invocation)。私网导航需要由 Main 批准，并绑定会话与 origin。自动验收在 Main 执行 agent 驱动的批准；请求中自行填写的批准标记不授予权限。
+VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契约方法不代表 Electron 已实现 81 项能力；参见[调用方式与驱动限制](packages/README.md#versebrowser-integration-and-invocation)。私网导航需要由 Main 批准，并绑定会话与 origin。自动验收在 Main 执行 agent 驱动的批准；请求中自行填写的批准标记不授予权限。 导航失败会立即清理等待状态，后续导航独立执行。 浏览器清理在原窗口确认关闭后释放占用。
 
 <a id="development"></a>
 
@@ -210,6 +270,8 @@ UI 改动应补 Electron E2E 和 en/zh/ja/ru 文案。通信路径改动还应�
 
 [Responses 验收合同](harness/specs/tasks/product-acceptance-space-bunny.md)覆盖本地服务的推理后正文、一次工具往返、会话隔离、取消与 provider 故障。中断的 Responses 流不能成功结束任务，也不能派发参数不完整的工具调用；这些检查不构成模型或发布批准。
 
+[核心产品矩阵](harness/specs/tasks/product-acceptance-matrix.md)将九组用户旅程映射到冻结的测试源码，并记录每个批次的执行结果与剩余验收项。串行批次可通过 `--build-proof` 复用同一份已核验构建，执行预算按用例声明的超时计算。
+
 完整门禁与证据规则见[开发与验证](docs/modules/development-and-validation.md)。
 
 <a id="troubleshooting"></a>
@@ -218,7 +280,7 @@ UI 改动应补 Electron E2E 和 en/zh/ja/ru 文案。通信路径改动还应�
 
 | 现象 | 排查方式 |
 |---|---|
-| Knowledge 显示 `unknown method: wiki.status` | 启用并加载 `memory-wiki`，再初始化 vault；Gateway 就绪不够。 |
+| Knowledge 显示 `unknown method: wiki.status` | 通过 Knowledge 配置启用插件加载和 `memory-wiki`，再初始化 vault；现有插件策略阻止启用时，配置操作会返回原因。 |
 | pnpm 版本不符 / 安装失败 | 核对 Node.js 24.x、固定 pnpm、两个 dependency workspace 与 lockfile。 |
 | Electron executable 缺失 | 运行 `node node_modules/electron/install.js` 并检查下载。 |
 | Gateway 一直不可用 | 查看 Settings → System & Runtime 与日志；先 Doctor，再考虑 Doctor Fix。 |
@@ -250,9 +312,29 @@ UI 改动应补 Electron E2E 和 en/zh/ja/ru 文案。通信路径改动还应�
 
 Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell 团队的 ClawX 工作。仓库使用 [MIT License](LICENSE)。Bundled components 各自保留许可证和 source obligations，包括 [VerseShell notices](resources/verseshell/SOURCE.md)。部分会话/工作区交互（包括网页搜索来源卡片）适配自 Swami Malode 的 [Rare UI](https://rareui.com)，归属信息保留在 `src/components/rareui`。
 
+### 持久任务执行
+
+子代理详情按当前会话读取任务 owner 的验收状态。任务 owner 接受核验证据后，可刷新查看已验收结果。验证回执与任务 owner 验收分别显示；账本中的 worker 链接打开对应 transcript 面板。
+
+“任务账本 → 持久任务”保存独立于聊天历史的目标、约束与验收检查。同一仓库的本地 Git 工作树共享任务领取；执行前核对会话归属，模型请求前恢复当前目标。验收可使用精确文件内容检查，或带输入文件清单的命令检查；命令仍通过现有工具权限执行。详见[任务系统架构](docs/dev/durable-task-system/PLAN.md)。
+
+受管工作树回收前，会把历史任务产物保留到经过核验的 Git 引用，并在原任务历史记录保留回执。删除检出目录后，agent 仍能追溯验收并读取产物。任务仍在执行、效果未结清或产物缺少匹配快照时，工作树继续保留。
+
+回收会保留忽略文件、被 Git 索引标记隐藏的编辑，以及尚无核验副本的进程内文件和权限。Git 与存储页删除入口共用隐藏索引检查；确认未删除的原生脏文件拒绝可重试，删除结果未知时继续保留执行权预留。
+
+Git 与存储页删除的最终归属检查和原生删除，与任务建库、领取使用同一执行域屏障，防止删除过程中产生新的任务领取。
+
+修改隐式 main agent 的模型或名称时保留工作区继承关系，后续项目切换仍决定其执行目录；显式配置的 agent 工作区继续按原配置使用。
+
+任务列表支持搜索、状态筛选与加载后续页。Agent 可以查询相似任务，并将目标拆成有依赖的子任务，保留父目标和约束。取消计划时等待在途效果结清；验收和故障恢复读取现有运行 owner 的回执。
+
+任务由 agent 在会话中管理。运行中的任务停靠在输入框上方，显示标题、可复制的短任务 ID、当前步骤和真实步骤进度，直到任务完成后收为一行回执；菜单可在任务账本中打开、展开步骤或隐藏面板，均不改变任务本身。会话任务范围改为顶部的安静小标签，不再是压在对话上的横条。会话状态面板改为简洁的键值列表：上下文用量、在用连接器、变更与审阅入口，以及后台子 Agent 和命令。文件实际发生变化后才在输入框下方显示小入口；真实分支和工作树操作放在详情中。
+
 恢复实现与证据：可选 execution writer 将工具生命周期相位存入 TaskFlow，在副作用前以 CAS 领取执行权，只恢复 owner 已授权的工作。生命周期与执行 writer 都必须显式选择 `taskflow`，默认仍为 `legacy`；未知副作用进入对账。后续修复已处理待投递答复的run归属和启动恢复排序，验证边界见[后续修复报告](docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md)。[2026-11-05实测](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md)保留60个真实provider答案与30个主故障窗口；候选终态分类改善，但冻结时延门槛仍为FAIL/NO-GO。
 
 子代理恢复在 `OPENCLAW_RECOVERY_AUTHORITY_MODE=authority` 且两种 writer 都选择 `taskflow` 时，先提交决定和预算，再派发 RPC；未知结果保留为对账状态。恢复工具事件接入当前运行订阅，更新投递记录与完成状态。见[恢复准入指南](docs/dev/recovery-contract/GA-READINESS-20261106.md)。
+
+受管工作树的成果回流通过现有 Coding 日志保留删除、重命名和二进制字节；持久工作树回执核对重复完成与重启，目标内容漂移时拒绝覆盖。 清理会保留未声明和被 Git 忽略的本地文件。可执行权限变更在整合前被拒绝。
 
 主会话在相同模式下使用统一准入，保留原有三次恢复预算。Session owner 在响应数据发送前记录输出边界，未知输出和待投递答复保留用于对账。
 

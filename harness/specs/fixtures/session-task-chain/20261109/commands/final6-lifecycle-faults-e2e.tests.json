@@ -1,0 +1,328 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/session-task-validation/final6-lifecycle-faults-e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-manual-compaction.spec.ts",
+      "file": "chat-manual-compaction.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat manual compaction",
+          "file": "chat-manual-compaction.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opens confirmation dialog and calls the session compaction Host API",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8689,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:50:27.506Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b42b4a4135bedb2d56bf-879a0bc20dc846c887d0",
+              "file": "chat-manual-compaction.spec.ts",
+              "line": 15,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "long-session-lifecycle-faults.spec.ts",
+      "file": "long-session-lifecycle-faults.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Host and Gateway archive/restore preserves history and rotates the physical generation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16720,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:50:36.217Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "lifecycle-receipt",
+                      "contentType": "application/json",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-faults-e2e-results\\long-session-lifecycle-fau-bc49e-tes-the-physical-generation\\attachments\\lifecycle-receipt-f6322e2ac317763ae9f3805963836c701a7ee67d.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "84d6968766c4e326d759-2d7421aadf7ae5e8d348",
+          "file": "long-session-lifecycle-faults.spec.ts",
+          "line": 104,
+          "column": 5
+        },
+        {
+          "title": "real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 21805,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/workspace root/i\u001b[39m\nReceived string:  \u001b[31m\"worktree owner read failed: ENOENT\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/workspace root/i\u001b[39m\nReceived string:  \u001b[31m\"worktree owner read failed: ENOENT\"\u001b[39m\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-lifecycle-faults.spec.ts:285:36",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-lifecycle-faults.spec.ts",
+                      "column": 36,
+                      "line": 285
+                    },
+                    "snippet": "  283 |     expect(['known', 'unknown']).toContain(worktreeOwner?.state);\n  284 |     if (worktreeOwner?.state === 'unknown') {\n> 285 |       expect(worktreeOwner.detail).toMatch(/workspace root/i);\n      |                                    ^\n  286 |       expect(worktreeOwner.count).toBeNull();\n  287 |     }\n  288 |     expect(worktreeOwner?.generation).toBe(sessionId);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-lifecycle-faults.spec.ts",
+                        "column": 36,
+                        "line": 285
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/workspace root/i\u001b[39m\nReceived string:  \u001b[31m\"worktree owner read failed: ENOENT\"\u001b[39m\n\n  283 |     expect(['known', 'unknown']).toContain(worktreeOwner?.state);\n  284 |     if (worktreeOwner?.state === 'unknown') {\n> 285 |       expect(worktreeOwner.detail).toMatch(/workspace root/i);\n      |                                    ^\n  286 |       expect(worktreeOwner.count).toBeNull();\n  287 |     }\n  288 |     expect(worktreeOwner?.generation).toBe(sessionId);\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-lifecycle-faults.spec.ts:285:36"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:50:52.945Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-faults-e2e-results\\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-faults-e2e-results\\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final6-lifecycle-faults-e2e-results\\long-session-lifecycle-fau-9abf1-rminal-and-preserve-archive\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\long-session-lifecycle-faults.spec.ts",
+                    "column": 36,
+                    "line": 285
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "84d6968766c4e326d759-527a6fba53f7c37f8b76",
+          "file": "long-session-lifecycle-faults.spec.ts",
+          "line": 173,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "runtime-lifecycle-governance.spec.ts",
+      "file": "runtime-lifecycle-governance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "runtime lifecycle governance",
+          "file": "runtime-lifecycle-governance.spec.ts",
+          "line": 41,
+          "column": 6,
+          "specs": [
+            {
+              "title": "delete success removes the session and conversation switch keeps the app usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8661,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:51:15.386Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7246080869020a6b1c47-f918f642b731f803d083",
+              "file": "runtime-lifecycle-governance.spec.ts",
+              "line": 42,
+              "column": 7
+            },
+            {
+              "title": "delete failure keeps the persisted operationId so a retry reuses it",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7353,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-08T20:51:24.064Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7246080869020a6b1c47-9096e8aba46ab40c5b03",
+              "file": "runtime-lifecycle-governance.spec.ts",
+              "line": 122,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T20:50:26.580Z",
+    "duration": 66582.746,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

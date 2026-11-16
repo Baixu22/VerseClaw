@@ -1,0 +1,535 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\results.json",
+  "sourceSha256": "d41e41b9d451751456d24b2e655752fe790959686319c43dd2cd6eb4e2f09bdb",
+  "result": {
+    "config": {
+      "configFile": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\playwright.config.ts",
+      "rootDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+      "forbidOnly": false,
+      "fullyParallel": false,
+      "globalSetup": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+      "globalTeardown": null,
+      "globalTimeout": 0,
+      "grep": {},
+      "grepInvert": null,
+      "maxFailures": 0,
+      "metadata": {
+        "actualWorkers": 1
+      },
+      "preserveOutput": "always",
+      "projects": [
+        {
+          "outputDir": "D:/tmp/g8-ui-r3-20261113-01a1d351/electron/final/output/output",
+          "repeatEach": 1,
+          "retries": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "id": "",
+          "name": "",
+          "testDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+          "testIgnore": [
+            "**/resource-lifecycle-soak.spec.ts",
+            "**/product-acceptance-space-bunny.spec.ts",
+            "**/product-acceptance-moyu.spec.ts"
+          ],
+          "testMatch": [
+            "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+          ],
+          "timeout": 90000
+        }
+      ],
+      "quiet": false,
+      "reporter": [
+        [
+          "line"
+        ],
+        [
+          "json"
+        ]
+      ],
+      "reportSlowTests": {
+        "max": 5,
+        "threshold": 300000
+      },
+      "shard": null,
+      "tags": [],
+      "updateSnapshots": "missing",
+      "updateSourceMethod": "patch",
+      "version": "1.59.0",
+      "workers": 1,
+      "webServer": null
+    },
+    "suites": [
+      {
+        "title": "chat-file-changes.spec.ts",
+        "file": "chat-file-changes.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Verse Claw chat file changes",
+            "file": "chat-file-changes.spec.ts",
+            "line": 124,
+            "column": 6,
+            "specs": [
+              {
+                "title": "shows line stats on generated file cards",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 15437,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:00:29.388Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "chat-git-diff-narrow",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-file-changes-Verse-Cl-22b2f-ats-on-generated-file-cards\\attachments\\chat-git-diff-narrow-df668a639bf267cb91d5a9d96be05297a998d920.png"
+                          }
+                        ]
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "fd14a13cd8bcd8fd7b54-9ea124fb0ebf638cb159",
+                "file": "chat-file-changes.spec.ts",
+                "line": 125,
+                "column": 7
+              },
+              {
+                "title": "opens html files from chat as rendered previews",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 17194,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:00:44.841Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "fd14a13cd8bcd8fd7b54-d4fe4cc0191c462de1f8",
+                "file": "chat-file-changes.spec.ts",
+                "line": 219,
+                "column": 7
+              },
+              {
+                "title": "keeps an attached file selected after switching through workspace",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 15860,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:01:02.049Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "fd14a13cd8bcd8fd7b54-5ca7879a75da2ba9eb80",
+                "file": "chat-file-changes.spec.ts",
+                "line": 328,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "chat-tool-ui-execution-surfaces.spec.ts",
+        "file": "chat-tool-ui-execution-surfaces.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Tool UI execution surfaces",
+            "file": "chat-tool-ui-execution-surfaces.spec.ts",
+            "line": 107,
+            "column": 6,
+            "specs": [
+              {
+                "title": "renders official execution surfaces in light, dark, and narrow layouts",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 17255,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:01:17.933Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "tool-ui-execution-light",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-light-58f97324d99c044436a6dd8fe7d6c39458f17853.png"
+                          },
+                          {
+                            "name": "tool-ui-execution-dark",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-dark-d66ac71f678e20b641c3e9235cebe9784e4ea5e9.png"
+                          },
+                          {
+                            "name": "tool-ui-execution-narrow",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-narrow-6a6037e5f7569a26f24d1ee0f3bdbd20fdee5b14.png"
+                          },
+                          {
+                            "name": "tool-ui-execution-640",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-640-8b775f26ea82ac0dae67bb4053d5d614b20ea86d.png"
+                          }
+                        ]
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "fbdc74cf16e7047c807a-5368bbec17e918a4037a",
+                "file": "chat-tool-ui-execution-surfaces.spec.ts",
+                "line": 108,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "chat-turn-summary-collapse.spec.ts",
+        "file": "chat-turn-summary-collapse.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Verse Claw chat turn summary collapse",
+            "file": "chat-turn-summary-collapse.spec.ts",
+            "line": 149,
+            "column": 6,
+            "specs": [
+              {
+                "title": "keeps live activity compact, animated and readable without assistant avatars",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 24470,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:01:35.208Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "8431e429a3efaf24759e-d93ce219608a2379a486",
+                "file": "chat-turn-summary-collapse.spec.ts",
+                "line": 150,
+                "column": 7
+              },
+              {
+                "title": "collapses completed long task process and expands details on demand",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 22121,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:01:59.692Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "8431e429a3efaf24759e-4313b82ec5dc9a3673ec",
+                "file": "chat-turn-summary-collapse.spec.ts",
+                "line": 211,
+                "column": 7
+              },
+              {
+                "title": "leaves short conversations unwrapped",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 27507,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:02:21.828Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "8431e429a3efaf24759e-202f5033f3cb39b39ee0",
+                "file": "chat-turn-summary-collapse.spec.ts",
+                "line": 287,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "runtime-approval-bridge.spec.ts",
+        "file": "runtime-approval-bridge.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Runtime approval bridge",
+            "file": "runtime-approval-bridge.spec.ts",
+            "line": 28,
+            "column": 6,
+            "specs": [
+              {
+                "title": "covers the composer without a modal and restores its draft after approval",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 20836,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:02:49.389Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "runtime-approval-geometry-light",
+                            "contentType": "application/json",
+                            "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsImFjdG9yIjoiY29kZXgtZzgtdWktMDFhMWQzNTEiLCJyZWFsSHVtYW5FdmlkZW5jZSI6ZmFsc2UsImdlb21ldHJ5Ijp7ImluVmlld3BvcnQiOnRydWUsIm5vSG9yaXpvbnRhbE92ZXJmbG93Ijp0cnVlLCJjb250cm9scyI6W3sidGVzdElkIjoicnVudGltZS1hcHByb3ZhbC1jb21tYW5kIiwibGVmdCI6MTYuNjY2NjU2NDk0MTQwNjI1LCJyaWdodCI6MTYuNjY2NjU2NDk0MTQwNjI1LCJib3R0b20iOjEyNS4zMzMzMjA2MTc2NzU3OH0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWRlbnkiLCJsZWZ0IjoxNi42NjY2NTY0OTQxNDA2MjUsInJpZ2h0Ijo2NjMuNTcyOTI1NTY3NjI3LCJib3R0b20iOjEyLjY2NjY1NjQ5NDE0MDYyNX0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWFsbG93LWFsd2F5cyIsImxlZnQiOjUxOS44OTU4NDM1MDU4NTk0LCJyaWdodCI6MTE1LjA2MjQ4NDc0MTIxMDk0LCJib3R0b20iOjEyLjY2NjY1NjQ5NDE0MDYyNX0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWFsbG93LW9uY2UiLCJsZWZ0Ijo2MjguOTM3NTMwNTE3NTc4MSwicmlnaHQiOjE2LjY2NjYzMzYwNTk1NzAzLCJib3R0b20iOjEyLjY2NjY1NjQ5NDE0MDYyNX1dfX0="
+                          },
+                          {
+                            "name": "runtime-approval-geometry-dark",
+                            "contentType": "application/json",
+                            "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsImFjdG9yIjoiY29kZXgtZzgtdWktMDFhMWQzNTEiLCJyZWFsSHVtYW5FdmlkZW5jZSI6ZmFsc2UsImdlb21ldHJ5Ijp7ImluVmlld3BvcnQiOnRydWUsIm5vSG9yaXpvbnRhbE92ZXJmbG93Ijp0cnVlLCJjb250cm9scyI6W3sidGVzdElkIjoicnVudGltZS1hcHByb3ZhbC1jb21tYW5kIiwibGVmdCI6MTYuNjY2NjU2NDk0MTQwNjI1LCJyaWdodCI6MTYuNjY2NjU2NDk0MTQwNjI1LCJib3R0b20iOjEyNS4zMzMzMjA2MTc2NzU3OH0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWRlbnkiLCJsZWZ0IjoxNi42NjY2NTY0OTQxNDA2MjUsInJpZ2h0Ijo2NjMuNTcyOTI1NTY3NjI3LCJib3R0b20iOjEyLjY2NjY1NjQ5NDE0MDYyNX0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWFsbG93LWFsd2F5cyIsImxlZnQiOjUxOS44OTU4NDM1MDU4NTk0LCJyaWdodCI6MTE1LjA2MjQ4NDc0MTIxMDk0LCJib3R0b20iOjEyLjY2NjY1NjQ5NDE0MDYyNX0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWFsbG93LW9uY2UiLCJsZWZ0Ijo2MjguOTM3NTMwNTE3NTc4MSwicmlnaHQiOjE2LjY2NjYzMzYwNTk1NzAzLCJib3R0b20iOjEyLjY2NjY1NjQ5NDE0MDYyNX1dfX0="
+                          },
+                          {
+                            "name": "runtime-approval-geometry-narrow",
+                            "contentType": "application/json",
+                            "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsImFjdG9yIjoiY29kZXgtZzgtdWktMDFhMWQzNTEiLCJyZWFsSHVtYW5FdmlkZW5jZSI6ZmFsc2UsImdlb21ldHJ5Ijp7ImluVmlld3BvcnQiOnRydWUsIm5vSG9yaXpvbnRhbE92ZXJmbG93Ijp0cnVlLCJjb250cm9scyI6W3sidGVzdElkIjoicnVudGltZS1hcHByb3ZhbC1jb21tYW5kIiwibGVmdCI6MTYuNjY2NjY0MTIzNTM1MTU2LCJyaWdodCI6MTYuNjY2NzA5ODk5OTAyMzQ0LCJib3R0b20iOjEyNS4zMzMzNTExMzUyNTM5fSx7InRlc3RJZCI6InJ1bnRpbWUtYXBwcm92YWwtZGVueSIsImxlZnQiOjE2LjY2NjY2NDEyMzUzNTE1NiwicmlnaHQiOjQ2My40MDYyOTE5NjE2Njk5LCJib3R0b20iOjEyLjY2NjY1NjQ5NDE0MDYyNX0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWFsbG93LWFsd2F5cyIsImxlZnQiOjMxOS43MjkxNzE3NTI5Mjk3LCJyaWdodCI6MTE1LjA2MjUzMDUxNzU3ODEyLCJib3R0b20iOjEyLjY2NjY1NjQ5NDE0MDYyNX0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWFsbG93LW9uY2UiLCJsZWZ0Ijo0MjguNzcwODI4MjQ3MDcwMywicmlnaHQiOjE2LjY2NjcwOTg5OTkwMjM0NCwiYm90dG9tIjoxMi42NjY2NTY0OTQxNDA2MjV9XX19"
+                          },
+                          {
+                            "name": "runtime-approval-geometry-zoom150",
+                            "contentType": "application/json",
+                            "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsImFjdG9yIjoiY29kZXgtZzgtdWktMDFhMWQzNTEiLCJyZWFsSHVtYW5FdmlkZW5jZSI6ZmFsc2UsImdlb21ldHJ5Ijp7ImluVmlld3BvcnQiOnRydWUsIm5vSG9yaXpvbnRhbE92ZXJmbG93Ijp0cnVlLCJjb250cm9scyI6W3sidGVzdElkIjoicnVudGltZS1hcHByb3ZhbC1jb21tYW5kIiwibGVmdCI6MTYuODg4ODg1NDk4MDQ2ODc1LCJyaWdodCI6MjMuNTU1NTQxOTkyMTg3NSwiYm90dG9tIjoxMTguNjY2NjUyNjc5NDQzMzZ9LHsidGVzdElkIjoicnVudGltZS1hcHByb3ZhbC1kZW55IiwibGVmdCI6MTYuODg4ODg1NDk4MDQ2ODc1LCJyaWdodCI6MjU2LjY4MDU1MzQzNjI3OTMsImJvdHRvbSI6MTIuODg4OTAwNzU2ODM1OTM4fSx7InRlc3RJZCI6InJ1bnRpbWUtYXBwcm92YWwtYWxsb3ctYWx3YXlzIiwibGVmdCI6MTEyLjU2MjQ5MjM3MDYwNTQ3LCJyaWdodCI6MTE1LjcyOTE2NDEyMzUzNTE2LCJib3R0b20iOjEyLjg4ODkwMDc1NjgzNTkzOH0seyJ0ZXN0SWQiOiJydW50aW1lLWFwcHJvdmFsLWFsbG93LW9uY2UiLCJsZWZ0IjoyMjIuMDQ4NjA2ODcyNTU4NiwicmlnaHQiOjE2Ljg4ODg4NTQ5ODA0Njg3NSwiYm90dG9tIjoxMi44ODg5MDA3NTY4MzU5Mzh9XX19"
+                          }
+                        ]
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "408b928db53c9f4f25dd-83c59f7be415120aeaad",
+                "file": "runtime-approval-bridge.spec.ts",
+                "line": 29,
+                "column": 7
+              },
+              {
+                "title": "answers a pending runtime approval from the conversation input area",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 33769,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:03:10.247Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "408b928db53c9f4f25dd-7a8a71608fba5a8ada76",
+                "file": "runtime-approval-bridge.spec.ts",
+                "line": 161,
+                "column": 7
+              },
+              {
+                "title": "offers only the decisions the runtime listed for the request",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 16653,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:03:44.036Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "408b928db53c9f4f25dd-3cdd2579daad4293f167",
+                "file": "runtime-approval-bridge.spec.ts",
+                "line": 212,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "stats": {
+      "startTime": "2026-11-13T10:00:28.414Z",
+      "duration": 214006.257,
+      "expected": 10,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+}

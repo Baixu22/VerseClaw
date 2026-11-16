@@ -92,15 +92,23 @@ function sessionIdForRequest(action: string, payload: Record<string, unknown>): 
 }
 
 function preparePayloadForOwner(request: AgentBrowserBridgeRequest): Record<string, unknown> {
-  if (request.action !== 'open') return request.payload;
   const ownerKey = ownerSessionKey(request);
-  if (!ownerKey) return request.payload;
+  for (const key of ['userApproval', 'runtimeMode', 'targetMode', 'privateNetworkApprovedBy', 'privateNetworkOrigin']) {
+    if (request.payload[key] !== undefined) {
+      throw ownershipError('E_HOST_AUTHORITY_REQUIRED', `Agent browser ${key} is owned by the host, not a runtime argument`);
+    }
+  }
+  for (const key of ['sessionKey', 'agentSessionKey']) {
+    const claimedOwner = readString(request.payload[key]);
+    if (claimedOwner && claimedOwner !== ownerKey) {
+      throw ownershipError('E_OWNER_MISMATCH', 'Agent browser payload cannot replace the runtime session owner');
+    }
+  }
+  if (request.action !== 'open' || !ownerKey) return request.payload;
   return {
     ...request.payload,
-    ...(request.payload.sessionKey === undefined ? { sessionKey: ownerKey } : {}),
-    ...(request.payload.agentId === undefined && request.correlation?.agentId
-      ? { agentId: request.correlation.agentId }
-      : {}),
+    sessionKey: ownerKey,
+    ...(request.correlation?.agentId ? { agentId: request.correlation.agentId } : {}),
   };
 }
 
@@ -127,8 +135,15 @@ function assertRequestOwnership(
   payload: Record<string, unknown>,
 ): void {
   const ownerKey = ownerSessionKey(request);
+  if (request.action === 'status') return;
+  if (!ownerKey) {
+    throw ownershipError('E_OWNER_MISSING', 'Agent browser runtime access requires an owning session');
+  }
   const sessionId = sessionIdForRequest(request.action, payload);
-  if (!ownerKey || !sessionId) return;
+  if (request.action === 'open') return;
+  if (!sessionId) {
+    throw ownershipError('E_SESSION_NOT_FOUND', 'Agent browser action requires an owned browser session');
+  }
   const session = listSessions(service).find((candidate) => readString(asRecord(candidate)?.id) === sessionId);
   if (!session) {
     throw ownershipError('E_SESSION_NOT_FOUND', `Agent browser session not found: ${sessionId}`);
@@ -178,7 +193,7 @@ type CapabilityProvider = () => ModelActionCapabilitySnapshot;
 
 function assertActionAvailable(action: string, capabilities: CapabilityProvider): void {
   const entry = capabilities().actions.find((candidate) => candidate.action === action);
-  if (!entry) return; // not part of the model action vocabulary: keep existing behaviour
+  if (!entry) throw capabilityError(action, 'outside the runtime action vocabulary');
   if (!entry.available) throw capabilityError(action, entry.reason ?? 'unavailable');
 }
 
@@ -193,10 +208,12 @@ function withCapabilities(result: unknown, request: AgentBrowserBridgeRequest, c
 function filterStatusResult(result: unknown, request: AgentBrowserBridgeRequest): unknown {
   const ownerKey = ownerSessionKey(request);
   const record = asRecord(result);
-  if (!ownerKey || !record || !Array.isArray(record.sessions)) return result;
+  if (!record || !Array.isArray(record.sessions)) return result;
   return {
     ...record,
-    sessions: record.sessions.filter((session) => readString(asRecord(session)?.sessionKey) === ownerKey),
+    sessions: ownerKey
+      ? record.sessions.filter((session) => readString(asRecord(session)?.sessionKey) === ownerKey)
+      : [],
   };
 }
 
@@ -205,10 +222,8 @@ async function invokeAgentBrowser(
   request: AgentBrowserBridgeRequest,
   payload: Record<string, unknown>,
   api?: CompleteHostServiceRegistry['agentBrowser'],
-  capabilities: CapabilityProvider = getAgentBrowserCapabilities,
 ): Promise<unknown> {
   await assertBrowserAllowedUnderSandbox(request.action);
-  assertActionAvailable(request.action, capabilities);
   const owner = ownerSessionKey(request);
   if (owner) {
     await ensureAgentBrowserControlForOwnedSession(service, owner, request.action, sessionIdForRequest(request.action, payload));
@@ -256,7 +271,7 @@ async function invokeAgentBrowser(
     case 'getConsoleMessages':
       return { success: true, ...(await service.getConsoleMessages(payload as never)) };
     case 'close':
-      service.close(String(payload.sessionId ?? ''));
+      await service.close(String(payload.sessionId ?? ''));
       return { success: true };
     default:
       throw new Error(`Unsupported agent browser action: ${request.action}`);
@@ -293,12 +308,13 @@ export function registerAgentBrowserGatewayBridge(
     }
     void (async () => {
       try {
+        assertActionAvailable(request.action, capabilities);
         const payload = preparePayloadForOwner(request);
         assertRequestOwnership(service, request, payload);
         logger.debug('[agent-browser-bridge] Dispatching action=' + request.action + ' requestId=' + request.requestId);
         const result = withCapabilities(
           filterStatusResult(
-            await invokeAgentBrowser(service, request, payload, api, capabilities),
+            await invokeAgentBrowser(service, request, payload, api),
             request,
           ),
           request,

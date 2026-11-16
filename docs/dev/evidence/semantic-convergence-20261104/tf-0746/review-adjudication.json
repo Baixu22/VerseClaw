@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "rawHelperExit": 1,
+  "rawFindings": 1,
+  "acceptedFindings": 0,
+  "rejectedFindings": [
+    {
+      "title": "Settings 400 assertion requires a request the validation flow never makes",
+      "reason": "Contradicted by actual Main HTTP observation: 400 /models is followed by 400 /chat/completions; validateOpenAiCompatibleKey lines 734-741 calls performChatCompletionsProbe on fallback. The unchanged Settings test has now passed exit 0 on this candidate.",
+      "evidence": [
+        "settings-observations.json",
+        "electron-settings-rerun.json"
+      ],
+      "source": "electron/services/providers/provider-validation.ts:734"
+    }
+  ],
+  "priorAcceptedFindingsResolved": [
+    "Kill tree before parent, assert owned descendant gone.",
+    "Use production classifyStreamFailure instead of a test-authored retry predicate.",
+    "Allocate second profile using the unique fixture directory without an env prerequisite."
+  ],
+  "scopeNote": "Setup coverage uses the existing setup-first-run-fp-p1-01.spec.ts, whose two cases passed in electron-initial.json."
+}

@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "files": [
+    "long-history-en.png",
+    "long-history-zh.png",
+    "long-history-ja.png",
+    "long-history-ru.png"
+  ],
+  "checks": [
+    "Final image is visible at the bottom in all four locales",
+    "Long text wraps within the conversation column",
+    "Composer and navigation remain visible without overlap"
+  ]
+}

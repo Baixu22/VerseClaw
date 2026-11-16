@@ -1,0 +1,18 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "name": "harness-selection",
+  "argv": [
+    "C:/Program Files/nodejs/node.exe",
+    "harness/src/cli.mjs",
+    "run",
+    "--spec",
+    "harness/specs/tasks/coding-mcp-result-fidelity.md",
+    "--dry-run"
+  ],
+  "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+  "exitCode": 0,
+  "seconds": 1.0042269229888916,
+  "log": "harness-selection.log",
+  "output": "Harness report: D:\\ClawX-work\\coding-vg-sts-jj-20261104\\artifacts\\harness\\latest.md\nHarness result: pass\n"
+}

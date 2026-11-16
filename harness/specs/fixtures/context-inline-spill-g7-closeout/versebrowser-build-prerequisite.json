@@ -1,0 +1,9 @@
+{
+  "schema": "G7BuildPrerequisite/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "package": "packages/versebrowser",
+  "dependencies": "C:/Users/27933/Desktop/clawx/ClawX/packages/versebrowser/node_modules",
+  "operation": "Reuse existing installed dependencies; check upstream patch without rewriting it, build local declarations."
+}

@@ -1,0 +1,267 @@
+{
+  "candidate": "5ffd2d5ef7d48f2969b8ac7e4f5776b0f463a390",
+  "productCandidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444",
+  "validationOnlyDiff": [
+    "tests/e2e/durable-task-pagination.spec.ts"
+  ],
+  "records": [
+    {
+      "name": "task-tests",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.task-system.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/durable-task-system-20261108/closure-task-tests.json"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 628,
+      "status": "finished",
+      "startedAt": "2026-11-08T05:58:50.675Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-task-tests.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 15433,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "gateway-tests",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.gateway.config.ts",
+        "src/gateway/server-methods/persistent-task-acceptance.test.ts",
+        "src/gateway/server-methods/sessions.lifecycle.fork-lineage.test.ts",
+        "src/gateway/server-methods/sessions.lifecycle.fork-reject.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/durable-task-system-20261108/closure-gateway-tests.json"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107/openclaw_runtime",
+      "pid": 36404,
+      "status": "finished",
+      "startedAt": "2026-11-08T05:59:06.148Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-gateway-tests.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 29293,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "runtime-delegation",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents-core.config.ts",
+        "src/agents/persistent-task-spawn.integration.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/durable-task-system-20261108/closure-runtime-delegation.json"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107/openclaw_runtime",
+      "pid": 33164,
+      "status": "finished",
+      "startedAt": "2026-11-08T05:59:35.500Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-runtime-delegation.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 13661,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "owner-regressions",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/task-ledger-service.test.ts",
+        "tests/unit/task-ledger-process.test.ts",
+        "tests/unit/task-ledger-reference.test.ts",
+        "tests/unit/task-ledger-reference-inheritance.test.ts",
+        "tests/unit/autonomy-subagent-admission.test.ts",
+        "tests/unit/autonomy-subagent-persistence.test.ts",
+        "tests/unit/autonomy-orchestration-waves.test.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/session-storage-api.test.ts",
+        "tests/unit/chat-history-budget-reload.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/durable-task-system-20261108/closure-owner-regressions.json"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 45400,
+      "status": "finished",
+      "startedAt": "2026-11-08T05:59:49.212Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-owner-regressions.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 61651,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "types",
+      "args": [
+        "scripts/typecheck-agent-dev.mjs"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 10440,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:00:50.925Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-types.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 59153,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "contract",
+      "args": [
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 31804,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:01:50.169Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-contract.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 2541,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "i18n",
+      "args": [
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 39132,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:01:52.749Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-i18n.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 448,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "comms-replay",
+      "args": [
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 13480,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:01:53.257Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-comms-replay.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 305,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "comms-compare",
+      "args": [
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 29740,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:01:53.620Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-comms-compare.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 198,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "harness",
+      "args": [
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/durable-task-planning-recovery.md"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 21024,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:01:53.882Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-harness.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 927,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "desktop-build",
+      "args": [
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 32016,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:01:54.862Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-desktop-build.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 52625,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "smoke",
+      "args": [
+        "scripts/smoke-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 44808,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:02:47.761Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-smoke.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 15949,
+      "candidate": "2bedd79dc3deebdd3c17e03ec3ca9373af157444"
+    },
+    {
+      "name": "e2e",
+      "args": [
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/durable-task-system.spec.ts",
+        "tests/e2e/durable-task-lifecycle.spec.ts",
+        "tests/e2e/durable-task-pagination.spec.ts",
+        "--workers=1",
+        "--reporter=json"
+      ],
+      "cwd": "D:/ClawX-work/durable-task-system-20261107",
+      "pid": 25892,
+      "status": "finished",
+      "startedAt": "2026-11-08T06:11:13.717Z",
+      "log": "D:/tmp/durable-task-system-20261108/closure-e2e-retry.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 74985,
+      "candidate": "5ffd2d5ef7d48f2969b8ac7e4f5776b0f463a390",
+      "replacesFailedRecord": "D:/tmp/durable-task-system-20261108/closure-checks.result.json"
+    },
+    {
+      "name": "types-final-test",
+      "candidate": "5ffd2d5ef7d48f2969b8ac7e4f5776b0f463a390",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "status": "finished",
+      "exitCode": 0,
+      "log": "D:/tmp/durable-task-system-20261108/closure-final-test-types.log"
+    }
+  ]
+}

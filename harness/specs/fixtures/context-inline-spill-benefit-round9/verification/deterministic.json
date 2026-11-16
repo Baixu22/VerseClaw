@@ -1,0 +1,1314 @@
+{
+  "schema": "ContextInlineSpillRound9Verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "mode": "deterministic",
+  "candidate": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/design.freeze.json",
+    "sha256": "72a5e7d4d8c6bc74b1d35340b01c0aca5508c39b3bf3448cc33ba42014436241",
+    "commit": "69884a18a614886ad1712331b860465cb9a644a7"
+  },
+  "B7CleanCandidate": true,
+  "verifierAcceptedCleanCandidate": true,
+  "passed": true,
+  "sha256FilesVerified": 12,
+  "archivesVerified": 182,
+  "fifthRoundOriginalFilesPreserved": 32,
+  "fifthRoundVerdict": "mechanism-only / NO_GO",
+  "decision": {
+    "status": "inconclusive",
+    "verdict": "NO_GO",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": -373.75,
+    "tokenGrowthPct": 0,
+    "b7_evidence": true
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 8,
+      "pass": 2,
+      "successRate": 0.25,
+      "wilson95": [
+        0.071479212752109,
+        0.5907245696898311
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0,
+      "recallOkRate": 0,
+      "meanTurns": 1,
+      "meanMainContextChars": 1612.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0,
+      "p95LatencyMs": 0,
+      "failureClasses": {
+        "recall_not_attempted": 6,
+        "none": 2
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 8,
+      "pass": 8,
+      "successRate": 1,
+      "wilson95": [
+        0.6755924351161198,
+        1
+      ],
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "passAtK": 1,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.25,
+      "meanMainContextChars": 18844.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0,
+      "p95LatencyMs": 0,
+      "failureClasses": {
+        "none": 8
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 8,
+      "pass": 8,
+      "successRate": 1,
+      "wilson95": [
+        0.6755924351161198,
+        1
+      ],
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "passAtK": 1,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.25,
+      "meanMainContextChars": 19242.5,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0,
+      "p95LatencyMs": 0,
+      "failureClasses": {
+        "none": 8
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 8,
+      "pass": 2,
+      "successRate": 0.25,
+      "wilson95": [
+        0.071479212752109,
+        0.5907245696898311
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4,
+      "meanMainContextChars": 19616.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0,
+      "p95LatencyMs": 0,
+      "failureClasses": {
+        "recalled_text_evicted": 6,
+        "none": 2
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 2,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 2,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 8,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 1
+    }
+  },
+  "evidenceComparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 0,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 6,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 1
+    }
+  },
+  "diagnostics": {
+    "responseStatuses": {
+      "executed": 92
+    },
+    "incompleteReasons": {},
+    "returnedModels": {},
+    "transportErrors": 0,
+    "missingUsage": 0,
+    "archiveSelection": {
+      "baseline-no-reference": {
+        "originalTarget": 0,
+        "otherArchive": 0,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 0,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 0
+      },
+      "reference-visible": {
+        "originalTarget": 18,
+        "otherArchive": 0,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 6,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5869
+      },
+      "recall-stable": {
+        "originalTarget": 18,
+        "otherArchive": 0,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 6,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5865
+      },
+      "retention-off": {
+        "originalTarget": 24,
+        "otherArchive": 0,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 6,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5865
+      }
+    },
+    "perRun": [
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "det-visible-2",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-4",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "det-visible-6",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      }
+    ],
+    "retentionPairs": {
+      "evidence": {
+        "pairs": 6,
+        "both": 0,
+        "onlyStable": 6,
+        "onlyOff": 0,
+        "neither": 0
+      },
+      "controls": {
+        "pairs": 2,
+        "both": 2,
+        "onlyStable": 0,
+        "onlyOff": 0,
+        "neither": 0
+      }
+    }
+  },
+  "engineeringAcceptedByAgent": false,
+  "productDefaultsChanged": false,
+  "productLocksChanged": false,
+  "releaseApproved": false,
+  "pressureProvenance": {
+    "source": "tool",
+    "events": 42,
+    "originalLogBytesPreserved": true,
+    "userAssistantCadencePreserved": true,
+    "additionalToolPressureChars": 11405,
+    "sourceOfInstruction": "fixed agent-driven continue instruction"
+  },
+  "round6EvidencePreserved": {
+    "files": 105,
+    "sha256": "bf1a231b46b2fbdb849368816bf210fa7c18f9c1cb22b97cd87f0f36ada14a69",
+    "verdict": "NO_GO"
+  },
+  "navigationFromVisibleInput": {
+    "frames": 92,
+    "fieldLocations": 12,
+    "sourceInputsRecomputed": true,
+    "oracleValuesCopied": false,
+    "baseInputBytesPreserved": true,
+    "toolCallsOrigin": "deterministic scripted policy"
+  },
+  "round7EvidencePreserved": {
+    "files": 237,
+    "sha256": "5ddc7f8860fd732a51dc678ce8f38be019c87ed234d5336219d8704ba83c9276",
+    "verdict": "NO_GO",
+    "failedBenefitGates": [
+      "b2_task_benefit",
+      "b4_non_inferiority"
+    ]
+  },
+  "visibleBookmark": {
+    "runs": 24,
+    "maxAddedChars": 241,
+    "source": "initially visible exec reference in existing agent question",
+    "allCurrentQuestionsRecomputed": true,
+    "payloadCopied": false,
+    "modelArgumentsRewritten": false
+  },
+  "round8EvidencePreserved": {
+    "files": 212,
+    "sha256": "01a595ef65e4cfbcc8dfbc171107a5fb258c94cf66e274cabded166a82446384",
+    "verdict": "NO_GO",
+    "failedBenefitGates": [
+      "b1_mechanism_and_autonomy",
+      "b4_non_inferiority",
+      "b6_budget"
+    ]
+  }
+}

@@ -4,7 +4,12 @@ import type {
   OrchestrationTaskNode,
 } from '../../openclaw_runtime/src/agents/orchestration-protocol';
 import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
-import { scheduleResourceAwareWaves } from '../../openclaw_runtime/src/agents/orchestration-resource-scheduler';
+import { scheduleResourceAwareWaves, type ResourceSchedulerOptions } from '../../openclaw_runtime/src/agents/orchestration-resource-scheduler';
+import { createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 function node(params: {
   taskNodeId: string;
@@ -71,6 +76,13 @@ function role(params: {
 }
 
 describe('resource-aware orchestration scheduler', () => {
+  it.each([undefined, 0.5, Number.NaN, Number.POSITIVE_INFINITY])('never treats unmeasured cap %s as infinite or a zero-sized wave', (maxActiveRoles) => {
+    const result = scheduleResourceAwareWaves({ graph: graph([
+      node({ taskNodeId: 'a', roleName: 'planner' }), node({ taskNodeId: 'b', roleName: 'reviewer' }),
+    ]), roles: [role({ name: 'planner' }), role({ name: 'reviewer' })], options: { maxActiveRoles } });
+    expect(result.metrics.concurrencyCap).toBe(1);
+    expect(result.waves.map(wave => wave.taskNodeIds)).toEqual([['a'], ['b']]);
+  });
   it('produces deterministic waves and metrics for identical task graphs', () => {
     const inputGraph = graph([
       node({ taskNodeId: 'planner-1', roleName: 'planner' }),
@@ -95,7 +107,8 @@ describe('resource-aware orchestration scheduler', () => {
     expect(first.metrics).toMatchObject({
       queued: 3,
       running: 0,
-      completed: 3,
+      scheduled: 3,
+      completed: 0,
       skipped: 0,
       concurrencyCap: 2,
     });
@@ -309,15 +322,44 @@ describe('resource-aware orchestration scheduler', () => {
     expect(result.waves[0]?.deferredReasons).toContain('write-set-conflict');
   });
 
-  it('allows overlapping writers in one wave only after verified checkout isolation', () => {
+  it('does not accept a caller boolean as checkout proof', () => {
     const result = scheduleResourceAwareWaves({
       graph: graph([
         node({ taskNodeId: 'implementer-1', roleName: 'implementer', writeSet: ['src/shared.ts'], isolation: 'worktree' }),
         node({ taskNodeId: 'implementer-2', roleName: 'implementer', writeSet: ['src/shared.ts'], isolation: 'worktree' }),
       ]),
       roles: [role({ name: 'implementer', tools: ['read', 'write'] })],
-      options: { maxActiveRoles: 2, verifiedWorktreeIsolation: true },
+      options: { maxActiveRoles: 2, verifiedWorktreeIsolation: true } as ResourceSchedulerOptions,
     });
-    expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([['implementer-1', 'implementer-2']]);
+    expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([['implementer-1'], ['implementer-2']]);
+  });
+
+  it('admits only distinct live Git records from the worktree owner', () => {
+    const root = mkdtempSync(join(tmpdir(), 's4-scheduler-'));
+    try {
+      const git = (...args: string[]) => execFileSync('git', args, { cwd: root, windowsHide: true, stdio: 'pipe' });
+      git('init'); git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'fixture');
+      const service = createWorktreeService(root, { backend: 'git' });
+      const a = service.create('a'); const b = service.create('b');
+      const simulated = createWorktreeService(root).create('simulated');
+      const taskGraph = graph([
+        node({ taskNodeId: 'a', roleName: 'implementer', writeSet: ['same.ts'], isolation: 'worktree' }),
+        node({ taskNodeId: 'b', roleName: 'implementer', writeSet: ['same.ts'], isolation: 'worktree' }),
+      ]);
+      for (const [second, allowed] of [[b, true], [a, false], [{ ...b }, false], [simulated, false]] as const) {
+        const result = scheduleResourceAwareWaves({ graph: taskGraph,
+          roles: [role({ name: 'implementer', tools: ['read', 'write'] })],
+          options: { maxActiveRoles: 2, worktreeRecords: new Map([['a', a], ['b', second]]) },
+        });
+        expect(result.waves).toHaveLength(allowed ? 1 : 2);
+      }
+      rmSync(b.root, { recursive: true, force: true });
+      expect(scheduleResourceAwareWaves({ graph: taskGraph,
+        roles: [role({ name: 'implementer', tools: ['write'] })],
+        options: { worktreeRecords: new Map([['a', a], ['b', b]]) },
+      }).waves).toHaveLength(2);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

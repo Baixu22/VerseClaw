@@ -55,20 +55,65 @@
     "archived": {
       "title": "アーカイブ",
       "description": "アーカイブした会話を復元、または完全に削除します。"
+    },
+    "storage": {
+      "title": "ストレージ",
+      "description": "会話ファイル、実行中のプロセス、Git ワークツリーを管理します。"
     }
   },
   "recovery": {
+    "presentationTitle": "会話の表示",
+    "notificationsTitle": "アクティビティの通知と履歴",
+    "quiet": {
+      "title": "控えめな表示",
+      "description": "対応が必要なときだけアクティビティを開き、完了後は実行の詳細を折りたたみます。バックグラウンドの処理は続行します。",
+      "apply": "控えめな表示を使う",
+      "active": "有効"
+    },
     "activityTitle": "セッションと復旧",
     "currentTitle": "現在のセッションの復旧",
-    "enabled": { "title": "セッション状態パネルを表示", "description": "実際のアクティビティがあるとき、Chat の横に実行状態を表示します。" },
-    "autoExpand": { "title": "自動展開", "description": "デスクトップでパネルを開くタイミングを選択します。", "active": "アクティブ時", "attention": "確認が必要な時", "never": "展開しない" },
-    "completedRunsExpanded": { "title": "完了した実行アクティビティを展開したままにする", "description": "完了した実行の詳細を既定で表示します。このセッションで手動で閉じた実行は閉じたままです。" },
-    "showGit": { "title": "ワークスペース Git を表示", "description": "ワークスペースのブランチと変更状態を含めます。" },
-    "showCommands": { "title": "Agent コマンドを表示", "description": "対話型ターミナルと構造化コマンドの概要を表示します。" },
-    "notifications": { "title": "復旧とブロック通知", "description": "実際の復旧またはブロック信号の確認が必要なときに通知します。" },
-    "desktopNotifications": { "title": "デスクトップ通知", "description": "実行の完了、失敗、承認待ちをシステム通知で知らせます。ベルメニューからオフにできますが、アプリ内の通知は残ります。" },
-    "retention": { "title": "最近のアクティビティ保持", "description": "完了したアクティビティをパネルに表示する期間を制限します。transcript やランタイム リソースの保持期間は変わりません。", "none": "保持しない", "five": "5 分", "fifteen": "15 分" },
-    "session": { "title": "セッション", "description": "確認するワークスペースセッションを選択します。" },
+    "enabled": {
+      "title": "セッション状態パネルを表示",
+      "description": "実際のアクティビティがあるとき、Chat の横に実行状態を表示します。"
+    },
+    "autoExpand": {
+      "title": "自動展開",
+      "description": "デスクトップでパネルを開くタイミングを選択します。",
+      "active": "アクティブ時",
+      "attention": "確認が必要な時",
+      "never": "展開しない"
+    },
+    "completedRunsExpanded": {
+      "title": "完了した実行アクティビティを展開したままにする",
+      "description": "完了した実行の詳細を既定で表示します。このセッションで手動で閉じた実行は閉じたままです。"
+    },
+    "showGit": {
+      "title": "ワークスペース Git を表示",
+      "description": "ワークスペースのブランチと変更状態を含めます。"
+    },
+    "showCommands": {
+      "title": "Agent コマンドを表示",
+      "description": "対話型ターミナルと構造化コマンドの概要を表示します。"
+    },
+    "notifications": {
+      "title": "復旧とブロック通知",
+      "description": "実際の復旧またはブロック信号の確認が必要なときに通知します。"
+    },
+    "desktopNotifications": {
+      "title": "デスクトップ通知",
+      "description": "実行の完了、失敗、承認待ちをシステム通知で知らせます。ベルメニューからオフにできますが、アプリ内の通知は残ります。"
+    },
+    "retention": {
+      "title": "最近のアクティビティ保持",
+      "description": "完了したアクティビティをパネルに表示する期間を制限します。transcript やランタイム リソースの保持期間は変わりません。",
+      "none": "保持しない",
+      "five": "5 分",
+      "fifteen": "15 分"
+    },
+    "session": {
+      "title": "セッション",
+      "description": "確認するワークスペースセッションを選択します。"
+    },
     "runAction": "実行",
     "openConversation": "会話を開く",
     "healthy": "このセッションに復旧の必要はありません。",
@@ -235,6 +280,14 @@
       "step2": "ブラウザでログインページを開いてください。",
       "step3": "コードを貼り付けてアクセスを承認してください。",
       "requestingCode": "セキュアログインコードを取得中..."
+    },
+    "validation": {
+      "rateLimited": "プロバイダーによるレート制限",
+      "rateLimitedWithRetry": "プロバイダーがレート制限中です。約 {{seconds}} 秒後に再試行してください。",
+      "protocolError": "エンドポイントがリクエスト形式を拒否しました。Base URL と API プロトコルを確認してください。",
+      "modelUnavailable": "エンドポイントには到達でき、キーも有効ですが、指定したモデルは利用できません。",
+      "network": "プロバイダーのエンドポイントに到達できません。ネットワークまたはプロキシ設定を確認してください。",
+      "service": "プロバイダーが予期しない応答を返しました。"
     }
   },
   "gateway": {
@@ -598,6 +651,11 @@
       "description": "working memory、context tools、関連フラグ向けの高度な opt-in DCS (BlockStore) control plane です。default は off/shared/shadow のままで、このパネル自体は release approval を意味しません。書き込み可能な switch は app settings と config flags の openclaw.json を保存し、実行中の Gateway を再起動します。",
       "modeOptIn": "状態: opt-in（オプトイン）",
       "defaultLabel": "デフォルト",
+      "retired": {
+        "label": "廃止済み",
+        "description": "この機能は廃止されています。設定、旧リクエストのパラメーター、復元された記録から有効にすることはできません。",
+        "alternative": "通常のコーディングツールと書き込みログを使用してください。同時に変更する場合は、ワークツリー分離を明示的に選択します。"
+      },
       "enableLabel": "有効化",
       "rollbackLabel": "ロールバック",
       "riskLabel": "リスク",
@@ -908,6 +966,66 @@
       "failed": "対応が必要",
       "partial": "一部のみ",
       "off": "オフ"
+    }
+  },
+  "storage": {
+    "title": "ストレージ",
+    "description": "会話ファイル、実行中のプロセス、Git ワークツリーを管理します。",
+    "environment": "作業ディレクトリ",
+    "environmentHint": "各ディレクトリは独自の会話、ファイル、ターミナルを保持します。",
+    "local": "ローカル",
+    "worktree": "ワークツリー",
+    "init": "Git リポジトリを作成",
+    "initialized": "Git リポジトリを作成しました",
+    "createWorktree": "新しいワークツリー",
+    "branchName": "新しいブランチ",
+    "baseBranch": "開始ブランチ",
+    "committedOnly": "コミット済みの内容から作成します。変更を含めるには先にコミットしてください。",
+    "createAndOpen": "作成して開く",
+    "cancel": "キャンセル",
+    "operationFailed": "操作を完了できませんでした。",
+    "loadFailed": "作業ディレクトリを読み込めません。",
+    "search": "会話・ワークツリーを検索",
+    "refresh": "更新",
+    "loading": "ストレージとプロセスを測定中…",
+    "overview": "使用状況",
+    "memoryHint": "メモリは実行中のプロセスを測定します。会話の値はアプリの値に含まれる場合があり、合算しません。",
+    "appMemory": "アプリのメモリ",
+    "sessionFiles": "会話ファイル",
+    "sessionFilesHint": "ワークスペースの会話履歴と同じディレクトリの実行記録。",
+    "workingFiles": "作業ディレクトリのファイル",
+    "workingFilesHint": "生成ファイルを含みます。共有 Git オブジェクトとリンク先を除外。≥ は一部の測定値です。",
+    "sessions": "会話",
+    "sessionsHint": "不要な会話のターミナル、ブラウザー、管理対象サーバーを解放できます。",
+    "empty": "該当する項目がありません",
+    "processMemory": "プロセス {{value}}",
+    "resources": "ターミナル {{terminals}} · ブラウザー {{browsers}} · サーバー {{servers}}",
+    "openSession": "会話を開く",
+    "release": "解放",
+    "released": "{{count}} 件のリソースを解放しました",
+    "releasePartial": "{{count}} 件を解放できませんでした。更新して確認してください。",
+    "worktrees": "Git ワークツリー",
+    "worktreesHint": "ワークツリーは履歴を共有し、作業ファイルを別々に保持します。",
+    "idle": "削除可能",
+    "remove": "削除",
+    "removed": "ワークツリーを削除し、ブランチは保持しました",
+    "archived": "アーカイブした会話",
+    "archivedHint": "会話の復元、または保存ファイルの完全削除。",
+    "manage": "管理",
+    "measuredAt": "測定時刻 {{time}}",
+    "releaseTitle": "会話のリソースを解放しますか？",
+    "releaseHint": "選択した会話のターミナル、ブラウザー、サーバーを停止します。履歴とファイルは保持します。",
+    "removeTitle": "このワークツリーを削除しますか？",
+    "removeHint": "未使用の作業ディレクトリを削除し、ブランチを保持します。使用中・変更済みのものは保持します。",
+    "protected": {
+      "owner": "会話またはタスクが管理しています。元のワークフローから解放してください。",
+      "primary": "メインの作業ディレクトリ",
+      "active": "現在のワークスペース",
+      "locked": "Git でロック中",
+      "sessions": "ワークスペースに関連付け済み",
+      "resources": "プロセスが実行中",
+      "dirty": "ローカルファイル・変更あり",
+      "unavailable": "ディレクトリが利用不可"
     }
   }
 }

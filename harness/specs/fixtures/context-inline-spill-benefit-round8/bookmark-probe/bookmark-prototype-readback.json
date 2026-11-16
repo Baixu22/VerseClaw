@@ -1,0 +1,26 @@
+{
+  "schema": "G7VisibleBookmarkMechanismProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-13T11:04:58.423Z",
+  "source": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\live\\2026-11-13T10-54-31-031Z-live\\runs.jsonl",
+  "capturedBytes": 4151295,
+  "capturedSha256": "91f2573c15edb9a35a2c55332d412f04596e107098c921edb70228ad5e8f8ecf",
+  "checks": [
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 1,
+      "originalUri": "context-archive://benefit-deploy-token-recall-stable-1/deploy-token-1-5e36b1597128f7ef.context-archive.json",
+      "observedFirstUri": "context-archive://benefit-deploy-token-recall-stable-1/deploy-token-1-5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8.context-archive.json",
+      "initialInputSha256": "47a7d9665b90ff949aeeb9f715e6c26c3e6b6aa1f3c13174534b66f7c9ed28e3",
+      "currentInputSha256": "a227a1b13178c0699ffc31d270ce37f932bfe35c90284d59d48da9c7a2d27c74",
+      "recoveredWithoutArgumentRewrite": true
+    }
+  ],
+  "protectedSource": "existing agent-driven user question",
+  "copiedContent": "initially visible URI/checksum only",
+  "mode": "deterministic",
+  "liveBenefitEvaluated": false,
+  "taskForestUpdated": false
+}

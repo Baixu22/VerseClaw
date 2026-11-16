@@ -34,7 +34,7 @@ touchedAreas:
   - tests/unit/task-ledger-service.test.ts
   - tests/unit/task-loop-controller.test.ts
   - tests/unit/mission-context-pack.test.ts
-  - tests/unit/chat-runtime-event-handlers.test.ts
+  - tests/unit/chat-event-dedupe.test.ts
   - tests/e2e/chat-long-task-control.spec.ts
 expectedUserBehavior:
   - Ordinary Chat remains lightweight and does not enter `/loop` recovery, checkpoint, intervention, or Task Ledger root state unless the user explicitly starts `/loop`.
@@ -58,7 +58,7 @@ requiredRules:
 requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/loop-context-pack-contract.md
   - pnpm run typecheck
-  - pnpm exec vitest run tests/unit/loop-context-pack.test.ts tests/unit/long-task-control.test.ts tests/unit/user-message-queue.test.ts tests/unit/task-ledger-service.test.ts tests/unit/task-loop-controller.test.ts tests/unit/mission-context-pack.test.ts tests/unit/chat-runtime-event-handlers.test.ts
+  - pnpm exec vitest run tests/unit/loop-context-pack.test.ts tests/unit/long-task-control.test.ts tests/unit/user-message-queue.test.ts tests/unit/task-ledger-service.test.ts tests/unit/task-loop-controller.test.ts tests/unit/mission-context-pack.test.ts tests/unit/chat-event-dedupe.test.ts
   - pnpm exec playwright test tests/e2e/chat-long-task-control.spec.ts
   - pnpm run comms:replay
   - pnpm run comms:compare

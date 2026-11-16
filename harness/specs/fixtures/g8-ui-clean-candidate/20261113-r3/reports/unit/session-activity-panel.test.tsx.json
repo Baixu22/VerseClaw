@@ -1,0 +1,156 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\session-activity-panel-tsx.json",
+  "sourceSha256": "b059b68a6d06cd60a8c22f5387411bf1bd47c023a4d949dd27b0dbf4ce547216",
+  "result": {
+    "numTotalTestSuites": 3,
+    "numPassedTestSuites": 3,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 9,
+    "numPassedTests": 9,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563364897,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel"
+            ],
+            "fullName": "SessionActivityPanel renders goal, process, and lineage states from the read-only snapshot",
+            "status": "passed",
+            "title": "renders goal, process, and lineage states from the read-only snapshot",
+            "duration": 47.106199999999944,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel"
+            ],
+            "fullName": "SessionActivityPanel exposes no lifecycle buttons or actions in the projection sections",
+            "status": "passed",
+            "title": "exposes no lifecycle buttons or actions in the projection sections",
+            "duration": 7.096000000000004,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel"
+            ],
+            "fullName": "SessionActivityPanel returns nothing for an empty snapshot",
+            "status": "passed",
+            "title": "returns nothing for an empty snapshot",
+            "duration": 0.9155000000000655,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel"
+            ],
+            "fullName": "SessionActivityPanel surfaces an unavailable Git query instead of treating it as no repository",
+            "status": "passed",
+            "title": "surfaces an unavailable Git query instead of treating it as no repository",
+            "duration": 1.8304000000000542,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel"
+            ],
+            "fullName": "SessionActivityPanel surfaces an unavailable terminal query instead of treating it as no terminal",
+            "status": "passed",
+            "title": "surfaces an unavailable terminal query instead of treating it as no terminal",
+            "duration": 2.140100000000075,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel"
+            ],
+            "fullName": "SessionActivityPanel keeps retry semantics for unavailable status queries",
+            "status": "passed",
+            "title": "keeps retry semantics for unavailable status queries",
+            "duration": 3.817800000000034,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel background read state"
+            ],
+            "fullName": "SessionActivityPanel background read state 'shows a warning with the last-read da…'",
+            "status": "passed",
+            "title": "'shows a warning with the last-read da…'",
+            "duration": 1.7263000000000375,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel background read state"
+            ],
+            "fullName": "SessionActivityPanel background read state 'keeps a first read that never happene…'",
+            "status": "passed",
+            "title": "'keeps a first read that never happene…'",
+            "duration": 0.6322999999999865,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "SessionActivityPanel background read state"
+            ],
+            "fullName": "SessionActivityPanel background read state 'shows the normal empty state for a su…'",
+            "status": "passed",
+            "title": "'shows the normal empty state for a su…'",
+            "duration": 0.5866000000000895,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563366479,
+        "endTime": 1794563366545.5867,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/session-activity-panel.test.tsx"
+      }
+    ]
+  }
+}

@@ -1,0 +1,3150 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-session-chain-scope-faults",
+  "evidenceType": "electron-host-fixture",
+  "case": "leaving Task Ledger cancels a pending return-session navigation after a delayed Main save reply",
+  "faultOwner": "Main host:invoke fixture",
+  "status": "passed",
+  "artifactRoot": "D:/tmp/session-chain-scope-faults-NAMuI3",
+  "rendererScopeBefore": {
+    "sessionKey": "agent:main:scope-source-a",
+    "workspaceId": "scope-workspace-a",
+    "generation": "generation-a-1",
+    "route": "/",
+    "selectedSessionKey": "agent:main:scope-source-a"
+  },
+  "assertions": {
+    "destination": "return-session",
+    "sourceDraft": "Preserve source draft for return-session",
+    "currentWorkspaceId": "scope-workspace-a",
+    "currentSessionKey": "agent:main:scope-source-a",
+    "preservedRoute": "settings/archived",
+    "currentInput": "Current archive search after return-session",
+    "restoredSourceDraft": "Preserve source draft for return-session",
+    "artifactOpened": false
+  },
+  "rendererScopeAfter": {
+    "sessionKey": "agent:main:scope-source-a",
+    "workspaceId": "scope-workspace-a",
+    "generation": "generation-a-1",
+    "route": "/projects/scope-workspace-a"
+  },
+  "ownerReadback": {
+    "profiles": [
+      {
+        "id": "scope-workspace-a",
+        "name": "Scope Project A",
+        "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+        "agentId": "main",
+        "selectedAgentId": "main",
+        "activeSessionKey": "agent:main:scope-source-a",
+        "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+        "agentBindings": {
+          "main": {
+            "workspaceId": "scope-workspace-a",
+            "agentId": "main",
+            "sessionKey": "agent:main:scope-source-a"
+          }
+        },
+        "permissionMode": "fullAccess",
+        "state": {
+          "draftInput": "Preserve source draft for return-session",
+          "readingPosition": {
+            "generation": "generation-a-1",
+            "scrollTop": 0
+          },
+          "composerRunState": "idle",
+          "activeTopicId": null,
+          "knowledgeScope": "none",
+          "knowledgeMode": "suggest",
+          "artifactPanel": {
+            "open": false,
+            "expanded": false,
+            "tabs": []
+          },
+          "turnSummaryExpanded": {},
+          "turnSummaryStepDetailsExpanded": {}
+        },
+        "sessionStates": {
+          "agent:main:scope-source-a": {
+            "draftInput": "Preserve source draft for return-session",
+            "readingPosition": {
+              "generation": "generation-a-1",
+              "scrollTop": 0
+            },
+            "composerRunState": "idle",
+            "activeTopicId": null,
+            "knowledgeScope": "none",
+            "knowledgeMode": "suggest",
+            "artifactPanel": {
+              "open": false,
+              "expanded": false,
+              "tabs": []
+            },
+            "turnSummaryExpanded": {},
+            "turnSummaryStepDetailsExpanded": {}
+          },
+          "agent:main:scope-neighbor-a": {
+            "draftInput": "Neighbor A draft"
+          }
+        },
+        "sessionFolders": [],
+        "sessionFolderAssignments": {},
+        "createdAt": 1,
+        "updatedAt": 1,
+        "lastOpenedAt": 1
+      },
+      {
+        "id": "scope-workspace-b",
+        "name": "Scope Project B",
+        "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\b",
+        "agentId": "main",
+        "selectedAgentId": "main",
+        "activeSessionKey": "agent:main:scope-source-b",
+        "projectCoordinatorSessionKey": "agent:main:scope-source-b",
+        "agentBindings": {
+          "main": {
+            "workspaceId": "scope-workspace-b",
+            "agentId": "main",
+            "sessionKey": "agent:main:scope-source-b"
+          }
+        },
+        "permissionMode": "fullAccess",
+        "state": {
+          "draftInput": "Source B draft"
+        },
+        "sessionStates": {
+          "agent:main:scope-source-b": {
+            "draftInput": "Source B draft"
+          }
+        },
+        "sessionFolders": [],
+        "sessionFolderAssignments": {},
+        "createdAt": 1,
+        "updatedAt": 1,
+        "lastOpenedAt": 1
+      }
+    ],
+    "activeWorkspaceId": "scope-workspace-a",
+    "sessions": [
+      {
+        "key": "agent:main:scope-source-a",
+        "sessionId": "generation-a-1",
+        "displayName": "Scope Source A",
+        "updatedAt": 3,
+        "messageCount": 2
+      },
+      {
+        "key": "agent:main:scope-neighbor-a",
+        "sessionId": "neighbor-generation",
+        "displayName": "Scope Neighbor A",
+        "updatedAt": 2,
+        "messageCount": 2
+      },
+      {
+        "key": "agent:main:scope-source-b",
+        "sessionId": "generation-b-1",
+        "displayName": "Scope Source B",
+        "updatedAt": 1,
+        "messageCount": 2
+      }
+    ],
+    "ledgers": {
+      "scope-workspace-a": {
+        "schemaVersion": 1,
+        "workspaceId": "ledger-scope-workspace-a",
+        "sourceWorkspaceId": "scope-workspace-a",
+        "generatedAt": "2026-11-08T00:00:00.000Z",
+        "nodes": [
+          {
+            "id": "scope-fixture-task",
+            "kind": "task",
+            "title": "Scope fixture task",
+            "status": "todo",
+            "createdAt": "2026-11-08T00:00:00.000Z",
+            "updatedAt": "2026-11-08T00:00:00.000Z",
+            "evidenceRefs": [
+              {
+                "type": "file",
+                "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                "label": "Scope fixture result"
+              }
+            ]
+          }
+        ],
+        "edges": [],
+        "rootNodeIds": [
+          "scope-fixture-task"
+        ],
+        "activeNodeIds": [],
+        "blockedNodeIds": [],
+        "reviewNodeIds": [],
+        "currentGoalId": null,
+        "recentDecisions": [],
+        "sessionLinks": [
+          {
+            "id": "scope-task-link",
+            "sessionKey": "agent:main:scope-source-a",
+            "sessionGeneration": "generation-a-1",
+            "nodeId": "scope-fixture-task",
+            "createdAt": "2026-11-08T00:00:00.000Z"
+          }
+        ],
+        "warnings": [],
+        "eventsCount": 2
+      },
+      "scope-workspace-b": {
+        "schemaVersion": 1,
+        "workspaceId": "ledger-scope-workspace-b",
+        "sourceWorkspaceId": "scope-workspace-b",
+        "generatedAt": "2026-11-08T00:00:00.000Z",
+        "nodes": [],
+        "edges": [],
+        "rootNodeIds": [],
+        "activeNodeIds": [],
+        "blockedNodeIds": [],
+        "reviewNodeIds": [],
+        "currentGoalId": null,
+        "recentDecisions": [],
+        "sessionLinks": [],
+        "warnings": [],
+        "eventsCount": 0
+      }
+    },
+    "calls": [
+      {
+        "id": "b77ca878-9101-4797-a4d3-ef65b0e9647f",
+        "module": "window",
+        "action": "isMaximized",
+        "payload": {}
+      },
+      {
+        "id": "09234bdf-787d-42d4-8eba-c5a22b0357f9",
+        "module": "permissions",
+        "action": "approvals",
+        "payload": {
+          "includeExpired": true,
+          "limit": 200
+        }
+      },
+      {
+        "id": "dc5006cb-99b8-400d-b785-857863d40a65",
+        "module": "remoteTasks",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "2aed20d0-fcdd-4385-bc61-a3c08942461d",
+        "module": "agentBrowser",
+        "action": "tasks",
+        "payload": {}
+      },
+      {
+        "id": "7880bd3d-53e6-4cfe-9534-a98be54ef6a8",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "inbox.operator.list",
+          "params": {}
+        }
+      },
+      {
+        "id": "b386a6c2-3642-4b57-91cd-5f4281f8a451",
+        "module": "agents",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "411e1b13-6cb4-4999-87c5-3fdca582742d",
+        "module": "window",
+        "action": "isVisible",
+        "payload": {}
+      },
+      {
+        "id": "83e50aa9-5cf3-419e-8439-56e4e83fc086",
+        "module": "window",
+        "action": "isVisible",
+        "payload": {}
+      },
+      {
+        "id": "16591fee-df0b-42f9-9e86-5a1368263ad8",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {},
+        "data": {
+          "success": true
+        },
+        "endedAt": 1794169507340
+      },
+      {
+        "id": "b33a270e-a1ec-41f9-a528-d3fe4f14ef7d",
+        "module": "runtimeApprovals",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "0fe7a4c7-308e-4ef7-a3d6-9c001a804f1a",
+        "module": "providers",
+        "action": "accounts",
+        "payload": {}
+      },
+      {
+        "id": "0ae60001-abe8-43cf-9f03-4f55dcb92d54",
+        "module": "providers",
+        "action": "accountKeyInfo",
+        "payload": {}
+      },
+      {
+        "id": "6505bb84-ea6b-4d6e-962e-e3d87571c81f",
+        "module": "providers",
+        "action": "vendors",
+        "payload": {}
+      },
+      {
+        "id": "abe08a46-1d5b-4dea-961d-f7318f6c9cb8",
+        "module": "providers",
+        "action": "getDefaultAccount",
+        "payload": {}
+      },
+      {
+        "id": "bd91fc7a-4097-440e-9609-71569a7e0d2e",
+        "module": "gateway",
+        "action": "status",
+        "payload": {}
+      },
+      {
+        "id": "bde9d13f-0a87-46f6-99f5-ab64096cb794",
+        "module": "sessionActivity",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": null,
+          "sessionKey": "agent:main:main"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "session": {
+              "sessionKey": "agent:main:scope-source-a",
+              "runId": null,
+              "status": "idle",
+              "startedAt": null,
+              "endedAt": null,
+              "error": null,
+              "updatedAt": 0,
+              "key": "agent:main:main"
+            },
+            "git": null,
+            "tasks": [],
+            "subagents": [],
+            "completionBatches": [],
+            "terminals": [],
+            "goals": [],
+            "processes": [],
+            "lineage": [],
+            "continuity": {
+              "queueCount": 0,
+              "contextPressure": null,
+              "checkpoint": false,
+              "blockedReason": null
+            },
+            "availability": {
+              "git": false,
+              "tasks": false,
+              "subagents": true,
+              "terminals": false,
+              "continuity": true
+            },
+            "backgroundRead": {
+              "state": "unknown",
+              "readAt": null,
+              "failedAt": null
+            },
+            "capturedAt": 1794169506875
+          }
+        },
+        "endedAt": 1794169507341
+      },
+      {
+        "id": "c7ad0d61-6a5e-4844-9446-7b349538d5a7",
+        "module": "agents",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "7fc6e5eb-4d57-45c1-a5bf-9e82457c14a5",
+        "module": "workspaces",
+        "action": "list",
+        "payload": {},
+        "data": {
+          "success": true,
+          "profiles": [
+            {
+              "id": "scope-workspace-a",
+              "name": "Scope Project A",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-a",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-a",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-a"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source A draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-a": {
+                  "draftInput": "Source A draft"
+                },
+                "agent:main:scope-neighbor-a": {
+                  "draftInput": "Neighbor A draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            },
+            {
+              "id": "scope-workspace-b",
+              "name": "Scope Project B",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\b",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-b",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-b",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-b",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-b"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source B draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-b": {
+                  "draftInput": "Source B draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            }
+          ],
+          "activeWorkspaceId": "scope-workspace-a",
+          "activeWorkspace": {
+            "id": "scope-workspace-a",
+            "name": "Scope Project A",
+            "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+            "agentId": "main",
+            "selectedAgentId": "main",
+            "activeSessionKey": "agent:main:scope-source-a",
+            "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+            "agentBindings": {
+              "main": {
+                "workspaceId": "scope-workspace-a",
+                "agentId": "main",
+                "sessionKey": "agent:main:scope-source-a"
+              }
+            },
+            "permissionMode": "fullAccess",
+            "state": {
+              "draftInput": "Source A draft"
+            },
+            "sessionStates": {
+              "agent:main:scope-source-a": {
+                "draftInput": "Source A draft"
+              },
+              "agent:main:scope-neighbor-a": {
+                "draftInput": "Neighbor A draft"
+              }
+            },
+            "sessionFolders": [],
+            "sessionFolderAssignments": {},
+            "createdAt": 1,
+            "updatedAt": 1,
+            "lastOpenedAt": 1
+          }
+        },
+        "endedAt": 1794169507342
+      },
+      {
+        "id": "2fafba8a-cd1d-4056-9b9d-7546d83bbc62",
+        "module": "settings",
+        "action": "getAll",
+        "payload": {}
+      },
+      {
+        "id": "24b38e55-dd87-409c-ac65-029141b01037",
+        "module": "gateway",
+        "action": "status",
+        "payload": {}
+      },
+      {
+        "id": "6439bcec-f6e8-4530-8fd4-de4657d2041a",
+        "module": "providers",
+        "action": "accounts",
+        "payload": {}
+      },
+      {
+        "id": "a2b09215-917e-46bd-88e9-1e220af23ff4",
+        "module": "providers",
+        "action": "accountKeyInfo",
+        "payload": {}
+      },
+      {
+        "id": "86515825-121a-4de0-b21c-ca13ddabe336",
+        "module": "providers",
+        "action": "vendors",
+        "payload": {}
+      },
+      {
+        "id": "a7e6dbae-18d6-4ce4-8e0e-eb405c898fbf",
+        "module": "providers",
+        "action": "getDefaultAccount",
+        "payload": {}
+      },
+      {
+        "id": "aa1e1db9-5cf1-48bb-bf9d-976341423c27",
+        "module": "sessionActivity",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": null,
+          "sessionKey": "agent:main:main"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "session": {
+              "sessionKey": "agent:main:scope-source-a",
+              "runId": null,
+              "status": "idle",
+              "startedAt": null,
+              "endedAt": null,
+              "error": null,
+              "updatedAt": 0,
+              "key": "agent:main:main"
+            },
+            "git": null,
+            "tasks": [],
+            "subagents": [],
+            "completionBatches": [],
+            "terminals": [],
+            "goals": [],
+            "processes": [],
+            "lineage": [],
+            "continuity": {
+              "queueCount": 0,
+              "contextPressure": null,
+              "checkpoint": false,
+              "blockedReason": null
+            },
+            "availability": {
+              "git": false,
+              "tasks": false,
+              "subagents": true,
+              "terminals": false,
+              "continuity": true
+            },
+            "backgroundRead": {
+              "state": "unknown",
+              "readAt": null,
+              "failedAt": null
+            },
+            "capturedAt": 1794169506875
+          }
+        },
+        "endedAt": 1794169507371
+      },
+      {
+        "id": "8f4a0e5b-22f1-44ac-ba87-cbbc960abf2b",
+        "module": "efficiency",
+        "action": "getState",
+        "payload": {}
+      },
+      {
+        "id": "ae12627f-238b-4337-aeb0-8517872ee42c",
+        "module": "resourceTracker",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "4473dbba-77f7-4b0a-b766-1561cbd4fafd",
+        "module": "sessionActivity",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": null,
+          "sessionKey": "agent:main:main"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "session": {
+              "sessionKey": "agent:main:scope-source-a",
+              "runId": null,
+              "status": "idle",
+              "startedAt": null,
+              "endedAt": null,
+              "error": null,
+              "updatedAt": 0,
+              "key": "agent:main:main"
+            },
+            "git": null,
+            "tasks": [],
+            "subagents": [],
+            "completionBatches": [],
+            "terminals": [],
+            "goals": [],
+            "processes": [],
+            "lineage": [],
+            "continuity": {
+              "queueCount": 0,
+              "contextPressure": null,
+              "checkpoint": false,
+              "blockedReason": null
+            },
+            "availability": {
+              "git": false,
+              "tasks": false,
+              "subagents": true,
+              "terminals": false,
+              "continuity": true
+            },
+            "backgroundRead": {
+              "state": "unknown",
+              "readAt": null,
+              "failedAt": null
+            },
+            "capturedAt": 1794169506875
+          }
+        },
+        "endedAt": 1794169507380
+      },
+      {
+        "id": "56ea4304-9ce3-44cc-8345-db2264ee277d",
+        "module": "providers",
+        "action": "accounts",
+        "payload": {}
+      },
+      {
+        "id": "a53a24d2-f83a-4174-b0a6-5677a12a3ea3",
+        "module": "providers",
+        "action": "accountKeyInfo",
+        "payload": {}
+      },
+      {
+        "id": "976f2791-91d6-4de4-8206-e56674341855",
+        "module": "providers",
+        "action": "vendors",
+        "payload": {}
+      },
+      {
+        "id": "42d40982-04ee-4b2b-868f-3409bc0504ea",
+        "module": "providers",
+        "action": "getDefaultAccount",
+        "payload": {}
+      },
+      {
+        "id": "dba1590a-ff1d-467e-aa31-043c0f46b68e",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169507403
+      },
+      {
+        "id": "b9fe444b-bba9-4dd1-acfe-dac1619dd496",
+        "module": "taskLedger",
+        "action": "sessionTask",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:main"
+        }
+      },
+      {
+        "id": "28cd59ef-c15a-416b-b13e-79de9bf1449b",
+        "module": "git",
+        "action": "status",
+        "payload": {}
+      },
+      {
+        "id": "5a39c4dc-b645-4bef-9761-4dd8c726bb12",
+        "module": "workspaces",
+        "action": "list",
+        "payload": {},
+        "data": {
+          "success": true,
+          "profiles": [
+            {
+              "id": "scope-workspace-a",
+              "name": "Scope Project A",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-a",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-a",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-a"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source A draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-a": {
+                  "draftInput": "Source A draft"
+                },
+                "agent:main:scope-neighbor-a": {
+                  "draftInput": "Neighbor A draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            },
+            {
+              "id": "scope-workspace-b",
+              "name": "Scope Project B",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\b",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-b",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-b",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-b",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-b"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source B draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-b": {
+                  "draftInput": "Source B draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            }
+          ],
+          "activeWorkspaceId": "scope-workspace-a",
+          "activeWorkspace": {
+            "id": "scope-workspace-a",
+            "name": "Scope Project A",
+            "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+            "agentId": "main",
+            "selectedAgentId": "main",
+            "activeSessionKey": "agent:main:scope-source-a",
+            "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+            "agentBindings": {
+              "main": {
+                "workspaceId": "scope-workspace-a",
+                "agentId": "main",
+                "sessionKey": "agent:main:scope-source-a"
+              }
+            },
+            "permissionMode": "fullAccess",
+            "state": {
+              "draftInput": "Source A draft"
+            },
+            "sessionStates": {
+              "agent:main:scope-source-a": {
+                "draftInput": "Source A draft"
+              },
+              "agent:main:scope-neighbor-a": {
+                "draftInput": "Neighbor A draft"
+              }
+            },
+            "sessionFolders": [],
+            "sessionFolderAssignments": {},
+            "createdAt": 1,
+            "updatedAt": 1,
+            "lastOpenedAt": 1
+          }
+        },
+        "endedAt": 1794169507405
+      },
+      {
+        "id": "7d2d4142-f408-4118-9fbf-11417001d6a9",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169507405
+      },
+      {
+        "id": "38b4a972-9849-4dc3-9ea3-b98a733122cc",
+        "module": "sessionActivity",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:main"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "session": {
+              "sessionKey": "agent:main:scope-source-a",
+              "runId": null,
+              "status": "idle",
+              "startedAt": null,
+              "endedAt": null,
+              "error": null,
+              "updatedAt": 0,
+              "key": "agent:main:main"
+            },
+            "git": null,
+            "tasks": [],
+            "subagents": [],
+            "completionBatches": [],
+            "terminals": [],
+            "goals": [],
+            "processes": [],
+            "lineage": [],
+            "continuity": {
+              "queueCount": 0,
+              "contextPressure": null,
+              "checkpoint": false,
+              "blockedReason": null
+            },
+            "availability": {
+              "git": false,
+              "tasks": false,
+              "subagents": true,
+              "terminals": false,
+              "continuity": true
+            },
+            "backgroundRead": {
+              "state": "unknown",
+              "readAt": null,
+              "failedAt": null
+            },
+            "capturedAt": 1794169506875
+          }
+        },
+        "endedAt": 1794169507405
+      },
+      {
+        "id": "876527ae-20a3-4bfa-b25d-901e4fae3378",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:main",
+          "reconcile": true
+        },
+        "data": {
+          "success": true,
+          "operation": null
+        },
+        "endedAt": 1794169507405
+      },
+      {
+        "id": "68ad3cb1-7002-48e1-b2e5-3dafaac42459",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "chat.history",
+          "params": {
+            "sessionKey": "agent:main:scope-source-a",
+            "limit": 200,
+            "maxChars": 500000
+          },
+          "timeoutMs": 35000
+        },
+        "data": {
+          "success": true,
+          "messages": [
+            {
+              "id": "scope-user",
+              "role": "user",
+              "content": "Scope fixture discussion",
+              "timestamp": 1700000000000
+            },
+            {
+              "id": "scope-assistant",
+              "role": "assistant",
+              "content": "Scope fixture response",
+              "timestamp": 1700000000001
+            }
+          ]
+        },
+        "endedAt": 1794169507405
+      },
+      {
+        "id": "a97151d3-69ef-4cdd-a090-e3eb5249ae19",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169507405
+      },
+      {
+        "id": "a4ea0b90-fffd-42b9-b048-88582dcd2e5f",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169507422
+      },
+      {
+        "id": "fa696981-6b16-495d-8e25-84fa2a24a441",
+        "module": "taskLedger",
+        "action": "sessionTask",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a"
+        }
+      },
+      {
+        "id": "8d8cc877-e6f9-4f05-bfff-5a4a9615845e",
+        "module": "git",
+        "action": "status",
+        "payload": {}
+      },
+      {
+        "id": "54ded8b9-5f97-4d2a-88a2-56cd4a544344",
+        "module": "workspaces",
+        "action": "list",
+        "payload": {},
+        "data": {
+          "success": true,
+          "profiles": [
+            {
+              "id": "scope-workspace-a",
+              "name": "Scope Project A",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-a",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-a",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-a"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source A draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-a": {
+                  "draftInput": "Source A draft"
+                },
+                "agent:main:scope-neighbor-a": {
+                  "draftInput": "Neighbor A draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            },
+            {
+              "id": "scope-workspace-b",
+              "name": "Scope Project B",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\b",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-b",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-b",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-b",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-b"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source B draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-b": {
+                  "draftInput": "Source B draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            }
+          ],
+          "activeWorkspaceId": "scope-workspace-a",
+          "activeWorkspace": {
+            "id": "scope-workspace-a",
+            "name": "Scope Project A",
+            "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+            "agentId": "main",
+            "selectedAgentId": "main",
+            "activeSessionKey": "agent:main:scope-source-a",
+            "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+            "agentBindings": {
+              "main": {
+                "workspaceId": "scope-workspace-a",
+                "agentId": "main",
+                "sessionKey": "agent:main:scope-source-a"
+              }
+            },
+            "permissionMode": "fullAccess",
+            "state": {
+              "draftInput": "Source A draft"
+            },
+            "sessionStates": {
+              "agent:main:scope-source-a": {
+                "draftInput": "Source A draft"
+              },
+              "agent:main:scope-neighbor-a": {
+                "draftInput": "Neighbor A draft"
+              }
+            },
+            "sessionFolders": [],
+            "sessionFolderAssignments": {},
+            "createdAt": 1,
+            "updatedAt": 1,
+            "lastOpenedAt": 1
+          }
+        },
+        "endedAt": 1794169507424
+      },
+      {
+        "id": "c5278178-12dc-4f2c-9243-dc502d3768c8",
+        "module": "sessionActivity",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "session": {
+              "sessionKey": "agent:main:scope-source-a",
+              "runId": null,
+              "status": "idle",
+              "startedAt": null,
+              "endedAt": null,
+              "error": null,
+              "updatedAt": 0,
+              "key": "agent:main:scope-source-a",
+              "sessionId": "generation-a-1"
+            },
+            "git": null,
+            "tasks": [],
+            "subagents": [],
+            "completionBatches": [],
+            "terminals": [],
+            "goals": [],
+            "processes": [],
+            "lineage": [],
+            "continuity": {
+              "queueCount": 0,
+              "contextPressure": null,
+              "checkpoint": false,
+              "blockedReason": null
+            },
+            "availability": {
+              "git": false,
+              "tasks": false,
+              "subagents": true,
+              "terminals": false,
+              "continuity": true
+            },
+            "backgroundRead": {
+              "state": "unknown",
+              "readAt": null,
+              "failedAt": null
+            },
+            "capturedAt": 1794169506875
+          }
+        },
+        "endedAt": 1794169507424
+      },
+      {
+        "id": "3d0474b2-0b33-437a-8d53-07dd06973725",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "reconcile": true
+        },
+        "data": {
+          "success": true,
+          "operation": null
+        },
+        "endedAt": 1794169507424
+      },
+      {
+        "id": "4a1617f4-51a1-45a1-b07d-262aa9b86b1f",
+        "module": "permissions",
+        "action": "approvals",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:main",
+          "status": "pending",
+          "limit": 50
+        }
+      },
+      {
+        "id": "8e9fb833-40c2-4ee3-9fd2-54a21366dbe0",
+        "module": "permissions",
+        "action": "approvals",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "status": "pending",
+          "limit": 50
+        }
+      },
+      {
+        "id": "79b6b82e-4c55-4956-9cb1-5176f8200788",
+        "module": "gateway",
+        "action": "status",
+        "payload": {}
+      },
+      {
+        "id": "5468f5ab-1809-4046-968e-cb91e0249c7b",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "sessions.list",
+          "params": {
+            "includeDerivedTitles": true,
+            "includeLastMessage": true
+          }
+        },
+        "data": {
+          "sessions": [
+            {
+              "key": "agent:main:scope-source-a",
+              "sessionId": "generation-a-1",
+              "displayName": "Scope Source A",
+              "updatedAt": 3,
+              "messageCount": 2
+            },
+            {
+              "key": "agent:main:scope-neighbor-a",
+              "sessionId": "neighbor-generation",
+              "displayName": "Scope Neighbor A",
+              "updatedAt": 2,
+              "messageCount": 2
+            },
+            {
+              "key": "agent:main:scope-source-b",
+              "sessionId": "generation-b-1",
+              "displayName": "Scope Source B",
+              "updatedAt": 1,
+              "messageCount": 2
+            }
+          ],
+          "totalCount": 3,
+          "hasMore": false
+        },
+        "endedAt": 1794169507456
+      },
+      {
+        "id": "e37b16db-a031-470d-9e27-2a2ef7f26099",
+        "module": "sessionActivity",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "session": {
+              "sessionKey": "agent:main:scope-source-a",
+              "runId": null,
+              "status": "idle",
+              "startedAt": null,
+              "endedAt": null,
+              "error": null,
+              "updatedAt": 0,
+              "key": "agent:main:scope-source-a",
+              "sessionId": "generation-a-1"
+            },
+            "git": null,
+            "tasks": [],
+            "subagents": [],
+            "completionBatches": [],
+            "terminals": [],
+            "goals": [],
+            "processes": [],
+            "lineage": [],
+            "continuity": {
+              "queueCount": 0,
+              "contextPressure": null,
+              "checkpoint": false,
+              "blockedReason": null
+            },
+            "availability": {
+              "git": false,
+              "tasks": false,
+              "subagents": true,
+              "terminals": false,
+              "continuity": true
+            },
+            "backgroundRead": {
+              "state": "unknown",
+              "readAt": null,
+              "failedAt": null
+            },
+            "capturedAt": 1794169506875
+          }
+        },
+        "endedAt": 1794169507459
+      },
+      {
+        "id": "133c14e7-148e-458a-9164-72108f4b72ea",
+        "module": "taskLedger",
+        "action": "appendEvents",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "events": [
+            {
+              "type": "node_created",
+              "actor": "assistant",
+              "taskId": "agent:main:scope-source-a:turn:wtq80i",
+              "sessionId": "agent:main:scope-source-a",
+              "idempotencyKey": "turn-node:agent:main:scope-source-a:turn:wtq80i",
+              "payload": {
+                "node": {
+                  "id": "agent:main:scope-source-a:turn:wtq80i",
+                  "title": "User asked: \"Scope fixture discussion\". ",
+                  "kind": "check",
+                  "parentId": null,
+                  "status": "done",
+                  "owner": "agent",
+                  "priority": "normal",
+                  "tags": [],
+                  "description": "User asked: \"Scope fixture discussion\". ",
+                  "evidenceRefs": [
+                    {
+                      "type": "session",
+                      "ref": "agent:main:scope-source-a",
+                      "label": "Turn transcript"
+                    }
+                  ],
+                  "metadata": {
+                    "sourceWorkspaceId": "scope-workspace-a"
+                  },
+                  "createdAt": "2026-11-08T20:25:07.583Z",
+                  "updatedAt": "2026-11-08T20:25:07.583Z",
+                  "completedAt": "2026-11-08T20:25:07.583Z"
+                }
+              }
+            },
+            {
+              "type": "session_linked",
+              "actor": "assistant",
+              "taskId": "agent:main:scope-source-a:turn:wtq80i",
+              "sessionId": "agent:main:scope-source-a",
+              "idempotencyKey": "turn-link:agent:main:scope-source-a:turn:wtq80i",
+              "payload": {
+                "sessionLink": {
+                  "id": "agent:main:scope-source-a:turn:wtq80i",
+                  "sessionKey": "agent:main:scope-source-a",
+                  "nodeId": "agent:main:scope-source-a:turn:wtq80i",
+                  "relation": "related",
+                  "summary": "User asked: \"Scope fixture discussion\". ",
+                  "createdAt": "2026-11-08T20:25:07.583Z"
+                }
+              }
+            }
+          ],
+          "idempotencyKey": "turn:agent:main:scope-source-a:1794169507583"
+        }
+      },
+      {
+        "id": "bc67f394-2dae-4fe6-991c-3d23d1417aea",
+        "module": "sessions",
+        "action": "summaries",
+        "payload": {
+          "sessionKeys": [
+            "agent:main:scope-neighbor-a",
+            "agent:main:scope-source-b"
+          ]
+        }
+      },
+      {
+        "id": "56154c58-5472-4cd0-b0ea-7821c8143185",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169507657
+      },
+      {
+        "id": "3851b856-78f5-489e-b2fe-cb75a650eb5c",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "reconcile": true
+        },
+        "data": {
+          "success": true,
+          "operation": null
+        },
+        "endedAt": 1794169507658
+      },
+      {
+        "id": "5303c8f9-50e0-4975-abd7-ffa1092c965f",
+        "module": "workspaces",
+        "action": "saveState",
+        "payload": {
+          "id": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "state": {
+            "readingPosition": {
+              "scrollTop": 0
+            }
+          }
+        },
+        "data": {
+          "success": true
+        },
+        "endedAt": 1794169507658
+      },
+      {
+        "id": "1f2a7b09-6ac4-471d-a53f-7d211db6c4fd",
+        "module": "workspaces",
+        "action": "saveState",
+        "payload": {
+          "id": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "state": {
+            "draftInput": "Preserve source draft for return-session",
+            "composerRunState": "idle",
+            "activeTopicId": null,
+            "knowledgeScope": "none",
+            "knowledgeMode": "suggest",
+            "artifactPanel": {
+              "open": false,
+              "expanded": false,
+              "tabs": []
+            },
+            "turnSummaryExpanded": {},
+            "turnSummaryStepDetailsExpanded": {}
+          }
+        },
+        "held": true,
+        "data": {
+          "success": true
+        },
+        "endedAt": 1794169508673
+      },
+      {
+        "id": "8e1ab93a-8519-495d-908b-4ceb2736fa56",
+        "module": "usage",
+        "action": "contextRange",
+        "payload": {
+          "sessionKey": "agent:main:scope-source-a",
+          "modelRef": "fixture/model",
+          "messageCount": 2,
+          "usedTokens": null
+        }
+      },
+      {
+        "id": "93cd06fe-29f2-4336-8cd9-83ca2f5020cb",
+        "module": "usage",
+        "action": "live",
+        "payload": {
+          "sessionKey": "agent:main:scope-source-a",
+          "runId": null,
+          "streaming": false
+        }
+      },
+      {
+        "id": "55022246-ff9a-49d6-b3eb-258f94d58714",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:scope-source-a",
+          "agentId": "main"
+        }
+      },
+      {
+        "id": "0834f8c9-322b-490f-91a5-7d0efca6dc08",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:scope-source-a",
+          "agentId": "main"
+        }
+      },
+      {
+        "id": "e392d460-af70-4178-bb5d-2ccb53661db7",
+        "module": "permissions",
+        "action": "approvals",
+        "payload": {
+          "includeExpired": true,
+          "limit": 200
+        }
+      },
+      {
+        "id": "1ab8ee02-c7a6-4e3d-acdb-2d0f3547e6c2",
+        "module": "remoteTasks",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "9b714896-7eb4-427d-9c1e-07d921b9da91",
+        "module": "agentBrowser",
+        "action": "tasks",
+        "payload": {}
+      },
+      {
+        "id": "df6f5019-f995-4e99-8f0c-d480cfc61495",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "inbox.operator.list",
+          "params": {}
+        }
+      },
+      {
+        "id": "cb5b2df5-93ce-43f4-a644-f109a96f6f88",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169508257
+      },
+      {
+        "id": "dc46ed35-0fe1-4668-b96f-42a4417214de",
+        "module": "sessions",
+        "action": "listArchived",
+        "payload": {}
+      },
+      {
+        "id": "9b7506aa-cc79-4fc6-832d-c1f925995ff0",
+        "module": "workspaces",
+        "action": "saveState",
+        "payload": {
+          "id": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "state": {
+            "readingPosition": {
+              "generation": "generation-a-1",
+              "scrollTop": 0
+            }
+          }
+        },
+        "data": {
+          "success": true
+        },
+        "endedAt": 1794169508675
+      },
+      {
+        "id": "af47b7a7-d804-4daf-8b85-931bbe350176",
+        "module": "permissions",
+        "action": "approvals",
+        "payload": {
+          "includeExpired": true,
+          "limit": 200
+        }
+      },
+      {
+        "id": "ab43a8df-d773-4975-a2fb-aa3ce4a18bfd",
+        "module": "remoteTasks",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "5379c17c-8cbd-4fda-bf71-c81d9a902295",
+        "module": "agentBrowser",
+        "action": "tasks",
+        "payload": {}
+      },
+      {
+        "id": "06542c92-66d9-41db-9b38-ee910be0def8",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "inbox.operator.list",
+          "params": {}
+        }
+      },
+      {
+        "id": "61d225f4-5055-490c-8802-d66e8fe6ab0e",
+        "module": "agents",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "62175667-cca6-497d-92dc-783f07af9555",
+        "module": "window",
+        "action": "isVisible",
+        "payload": {}
+      },
+      {
+        "id": "4bc70883-3b4f-4114-9e92-87121628e68f",
+        "module": "window",
+        "action": "isVisible",
+        "payload": {}
+      },
+      {
+        "id": "255fd142-e77e-4004-872b-4f043fbb9e45",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169508845
+      },
+      {
+        "id": "64b3e917-8fee-40d2-b1e4-530dfd3b35eb",
+        "module": "taskLedger",
+        "action": "sessionTask",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a"
+        }
+      },
+      {
+        "id": "94661729-4712-4d2d-8f12-22d59a8eb0cd",
+        "module": "runtimeApprovals",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "96a7d821-010a-4495-b10a-9d0e77c5d5d4",
+        "module": "providers",
+        "action": "accounts",
+        "payload": {}
+      },
+      {
+        "id": "cdef01d2-90a8-45d2-be41-476f10e93361",
+        "module": "providers",
+        "action": "accountKeyInfo",
+        "payload": {}
+      },
+      {
+        "id": "516103de-3906-495a-a72e-4370de5b4cbf",
+        "module": "providers",
+        "action": "vendors",
+        "payload": {}
+      },
+      {
+        "id": "77819c0b-a1f4-4782-9e97-3b5accf18b41",
+        "module": "providers",
+        "action": "getDefaultAccount",
+        "payload": {}
+      },
+      {
+        "id": "ecab630c-93ed-467c-be8c-5c257748246a",
+        "module": "git",
+        "action": "status",
+        "payload": {}
+      },
+      {
+        "id": "6e44fc42-a484-440b-af2e-2ef10c05d3d7",
+        "module": "workspaces",
+        "action": "list",
+        "payload": {},
+        "data": {
+          "success": true,
+          "profiles": [
+            {
+              "id": "scope-workspace-a",
+              "name": "Scope Project A",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-a",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-a",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-a"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Preserve source draft for return-session",
+                "readingPosition": {
+                  "generation": "generation-a-1",
+                  "scrollTop": 0
+                },
+                "composerRunState": "idle",
+                "activeTopicId": null,
+                "knowledgeScope": "none",
+                "knowledgeMode": "suggest",
+                "artifactPanel": {
+                  "open": false,
+                  "expanded": false,
+                  "tabs": []
+                },
+                "turnSummaryExpanded": {},
+                "turnSummaryStepDetailsExpanded": {}
+              },
+              "sessionStates": {
+                "agent:main:scope-source-a": {
+                  "draftInput": "Preserve source draft for return-session",
+                  "readingPosition": {
+                    "generation": "generation-a-1",
+                    "scrollTop": 0
+                  },
+                  "composerRunState": "idle",
+                  "activeTopicId": null,
+                  "knowledgeScope": "none",
+                  "knowledgeMode": "suggest",
+                  "artifactPanel": {
+                    "open": false,
+                    "expanded": false,
+                    "tabs": []
+                  },
+                  "turnSummaryExpanded": {},
+                  "turnSummaryStepDetailsExpanded": {}
+                },
+                "agent:main:scope-neighbor-a": {
+                  "draftInput": "Neighbor A draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            },
+            {
+              "id": "scope-workspace-b",
+              "name": "Scope Project B",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\b",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-b",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-b",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-b",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-b"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source B draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-b": {
+                  "draftInput": "Source B draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            }
+          ],
+          "activeWorkspaceId": "scope-workspace-a",
+          "activeWorkspace": {
+            "id": "scope-workspace-a",
+            "name": "Scope Project A",
+            "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+            "agentId": "main",
+            "selectedAgentId": "main",
+            "activeSessionKey": "agent:main:scope-source-a",
+            "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+            "agentBindings": {
+              "main": {
+                "workspaceId": "scope-workspace-a",
+                "agentId": "main",
+                "sessionKey": "agent:main:scope-source-a"
+              }
+            },
+            "permissionMode": "fullAccess",
+            "state": {
+              "draftInput": "Preserve source draft for return-session",
+              "readingPosition": {
+                "generation": "generation-a-1",
+                "scrollTop": 0
+              },
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {}
+            },
+            "sessionStates": {
+              "agent:main:scope-source-a": {
+                "draftInput": "Preserve source draft for return-session",
+                "readingPosition": {
+                  "generation": "generation-a-1",
+                  "scrollTop": 0
+                },
+                "composerRunState": "idle",
+                "activeTopicId": null,
+                "knowledgeScope": "none",
+                "knowledgeMode": "suggest",
+                "artifactPanel": {
+                  "open": false,
+                  "expanded": false,
+                  "tabs": []
+                },
+                "turnSummaryExpanded": {},
+                "turnSummaryStepDetailsExpanded": {}
+              },
+              "agent:main:scope-neighbor-a": {
+                "draftInput": "Neighbor A draft"
+              }
+            },
+            "sessionFolders": [],
+            "sessionFolderAssignments": {},
+            "createdAt": 1,
+            "updatedAt": 1,
+            "lastOpenedAt": 1
+          }
+        },
+        "endedAt": 1794169508851
+      },
+      {
+        "id": "86eef58d-9d15-4784-a544-f41d21f85b73",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169508851
+      },
+      {
+        "id": "dc7c1fc0-a15e-40ca-b33f-3234e85c3a24",
+        "module": "sessionActivity",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "session": {
+              "sessionKey": "agent:main:scope-source-a",
+              "runId": null,
+              "status": "idle",
+              "startedAt": null,
+              "endedAt": null,
+              "error": null,
+              "updatedAt": 0,
+              "key": "agent:main:scope-source-a",
+              "sessionId": "generation-a-1"
+            },
+            "git": null,
+            "tasks": [],
+            "subagents": [],
+            "completionBatches": [],
+            "terminals": [],
+            "goals": [],
+            "processes": [],
+            "lineage": [],
+            "continuity": {
+              "queueCount": 0,
+              "contextPressure": null,
+              "checkpoint": false,
+              "blockedReason": null
+            },
+            "availability": {
+              "git": false,
+              "tasks": false,
+              "subagents": true,
+              "terminals": false,
+              "continuity": true
+            },
+            "backgroundRead": {
+              "state": "unknown",
+              "readAt": null,
+              "failedAt": null
+            },
+            "capturedAt": 1794169506875
+          }
+        },
+        "endedAt": 1794169508851
+      },
+      {
+        "id": "3161e1b2-a225-4c98-8644-667820c066ea",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "reconcile": true
+        },
+        "data": {
+          "success": true,
+          "operation": null
+        },
+        "endedAt": 1794169508851
+      },
+      {
+        "id": "7b152ff2-ce99-4602-b2a8-34440bf67d61",
+        "module": "agents",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "8c5e3225-234d-4802-9220-d26f76dae181",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "chat.history",
+          "params": {
+            "sessionKey": "agent:main:scope-source-a",
+            "limit": 200,
+            "maxChars": 500000
+          }
+        },
+        "data": {
+          "success": true,
+          "messages": [
+            {
+              "id": "scope-user",
+              "role": "user",
+              "content": "Scope fixture discussion",
+              "timestamp": 1700000000000
+            },
+            {
+              "id": "scope-assistant",
+              "role": "assistant",
+              "content": "Scope fixture response",
+              "timestamp": 1700000000001
+            }
+          ]
+        },
+        "endedAt": 1794169508851
+      },
+      {
+        "id": "4eb2c5d2-c77b-4cc5-9027-89eb964a9efc",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169508851
+      },
+      {
+        "id": "8323de12-66cc-402e-9a8a-d743821fd451",
+        "module": "permissions",
+        "action": "approvals",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "status": "pending",
+          "limit": 50
+        }
+      },
+      {
+        "id": "aab4c3a8-9a81-4c3c-a44c-846f32afc20a",
+        "module": "resourceTracker",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "9db43c22-b048-418e-8ab2-eeb7b592cc16",
+        "module": "taskLedger",
+        "action": "appendEvents",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "events": [
+            {
+              "type": "node_created",
+              "actor": "assistant",
+              "taskId": "agent:main:scope-source-a:turn:wtq80i",
+              "sessionId": "agent:main:scope-source-a",
+              "idempotencyKey": "turn-node:agent:main:scope-source-a:turn:wtq80i",
+              "payload": {
+                "node": {
+                  "id": "agent:main:scope-source-a:turn:wtq80i",
+                  "title": "User asked: \"Scope fixture discussion\". ",
+                  "kind": "check",
+                  "parentId": null,
+                  "status": "done",
+                  "owner": "agent",
+                  "priority": "normal",
+                  "tags": [],
+                  "description": "User asked: \"Scope fixture discussion\". ",
+                  "evidenceRefs": [
+                    {
+                      "type": "session",
+                      "ref": "agent:main:scope-source-a",
+                      "label": "Turn transcript"
+                    }
+                  ],
+                  "metadata": {
+                    "sourceWorkspaceId": "scope-workspace-a"
+                  },
+                  "createdAt": "2026-11-08T20:25:08.942Z",
+                  "updatedAt": "2026-11-08T20:25:08.942Z",
+                  "completedAt": "2026-11-08T20:25:08.942Z"
+                }
+              }
+            },
+            {
+              "type": "session_linked",
+              "actor": "assistant",
+              "taskId": "agent:main:scope-source-a:turn:wtq80i",
+              "sessionId": "agent:main:scope-source-a",
+              "idempotencyKey": "turn-link:agent:main:scope-source-a:turn:wtq80i",
+              "payload": {
+                "sessionLink": {
+                  "id": "agent:main:scope-source-a:turn:wtq80i",
+                  "sessionKey": "agent:main:scope-source-a",
+                  "nodeId": "agent:main:scope-source-a:turn:wtq80i",
+                  "relation": "related",
+                  "summary": "User asked: \"Scope fixture discussion\". ",
+                  "createdAt": "2026-11-08T20:25:08.942Z"
+                }
+              }
+            }
+          ],
+          "idempotencyKey": "turn:agent:main:scope-source-a:1794169508943"
+        }
+      },
+      {
+        "id": "e7681fc0-a2a9-43dc-acea-c7f406fdd626",
+        "module": "permissions",
+        "action": "approvals",
+        "payload": {
+          "includeExpired": true,
+          "limit": 200
+        }
+      },
+      {
+        "id": "78580210-644b-4e08-a656-0dcea8021bd4",
+        "module": "remoteTasks",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "7febbd8d-7f70-434c-bbee-9b26dc0b1e8d",
+        "module": "agentBrowser",
+        "action": "tasks",
+        "payload": {}
+      },
+      {
+        "id": "ccebd6a8-7d28-48f2-a04b-9feafe101604",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "inbox.operator.list",
+          "params": {}
+        }
+      },
+      {
+        "id": "f505f811-cae7-4642-a7f7-be9dbb7be720",
+        "module": "workspaces",
+        "action": "list",
+        "payload": {},
+        "data": {
+          "success": true,
+          "profiles": [
+            {
+              "id": "scope-workspace-a",
+              "name": "Scope Project A",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-a",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-a",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-a"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Preserve source draft for return-session",
+                "readingPosition": {
+                  "generation": "generation-a-1",
+                  "scrollTop": 0
+                },
+                "composerRunState": "idle",
+                "activeTopicId": null,
+                "knowledgeScope": "none",
+                "knowledgeMode": "suggest",
+                "artifactPanel": {
+                  "open": false,
+                  "expanded": false,
+                  "tabs": []
+                },
+                "turnSummaryExpanded": {},
+                "turnSummaryStepDetailsExpanded": {}
+              },
+              "sessionStates": {
+                "agent:main:scope-source-a": {
+                  "draftInput": "Preserve source draft for return-session",
+                  "readingPosition": {
+                    "generation": "generation-a-1",
+                    "scrollTop": 0
+                  },
+                  "composerRunState": "idle",
+                  "activeTopicId": null,
+                  "knowledgeScope": "none",
+                  "knowledgeMode": "suggest",
+                  "artifactPanel": {
+                    "open": false,
+                    "expanded": false,
+                    "tabs": []
+                  },
+                  "turnSummaryExpanded": {},
+                  "turnSummaryStepDetailsExpanded": {}
+                },
+                "agent:main:scope-neighbor-a": {
+                  "draftInput": "Neighbor A draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            },
+            {
+              "id": "scope-workspace-b",
+              "name": "Scope Project B",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\b",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-b",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-b",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-b",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-b"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source B draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-b": {
+                  "draftInput": "Source B draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            }
+          ],
+          "activeWorkspaceId": "scope-workspace-a",
+          "activeWorkspace": {
+            "id": "scope-workspace-a",
+            "name": "Scope Project A",
+            "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+            "agentId": "main",
+            "selectedAgentId": "main",
+            "activeSessionKey": "agent:main:scope-source-a",
+            "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+            "agentBindings": {
+              "main": {
+                "workspaceId": "scope-workspace-a",
+                "agentId": "main",
+                "sessionKey": "agent:main:scope-source-a"
+              }
+            },
+            "permissionMode": "fullAccess",
+            "state": {
+              "draftInput": "Preserve source draft for return-session",
+              "readingPosition": {
+                "generation": "generation-a-1",
+                "scrollTop": 0
+              },
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {}
+            },
+            "sessionStates": {
+              "agent:main:scope-source-a": {
+                "draftInput": "Preserve source draft for return-session",
+                "readingPosition": {
+                  "generation": "generation-a-1",
+                  "scrollTop": 0
+                },
+                "composerRunState": "idle",
+                "activeTopicId": null,
+                "knowledgeScope": "none",
+                "knowledgeMode": "suggest",
+                "artifactPanel": {
+                  "open": false,
+                  "expanded": false,
+                  "tabs": []
+                },
+                "turnSummaryExpanded": {},
+                "turnSummaryStepDetailsExpanded": {}
+              },
+              "agent:main:scope-neighbor-a": {
+                "draftInput": "Neighbor A draft"
+              }
+            },
+            "sessionFolders": [],
+            "sessionFolderAssignments": {},
+            "createdAt": 1,
+            "updatedAt": 1,
+            "lastOpenedAt": 1
+          }
+        },
+        "endedAt": 1794169509041
+      },
+      {
+        "id": "dd0923f2-ae63-46c3-9151-5154dce4b69a",
+        "module": "window",
+        "action": "isVisible",
+        "payload": {}
+      },
+      {
+        "id": "320bc11b-ad56-4db2-ba15-34655f19cc68",
+        "module": "window",
+        "action": "isVisible",
+        "payload": {}
+      },
+      {
+        "id": "d6118fb3-fdc5-42ca-aadd-b8a3ba794a8e",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169509064
+      },
+      {
+        "id": "e841c73d-c02e-475e-9333-b1c4328ec70b",
+        "module": "taskLedger",
+        "action": "sessionTask",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a"
+        }
+      },
+      {
+        "id": "78781857-dbfb-44f5-a6ca-a270e7a2f6e9",
+        "module": "runtimeApprovals",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "c8c74595-1ba2-4161-87ce-2bb4cdb6fcac",
+        "module": "providers",
+        "action": "accounts",
+        "payload": {}
+      },
+      {
+        "id": "e1450509-392a-4663-b6f4-498611e071df",
+        "module": "providers",
+        "action": "accountKeyInfo",
+        "payload": {}
+      },
+      {
+        "id": "9fab3487-c0b5-4ce7-a430-968ad7b7910b",
+        "module": "providers",
+        "action": "vendors",
+        "payload": {}
+      },
+      {
+        "id": "5c1db1db-b610-43fd-9b59-7ddb863a7508",
+        "module": "providers",
+        "action": "getDefaultAccount",
+        "payload": {}
+      },
+      {
+        "id": "62ac06f2-a504-4e2f-98dc-bcd16d3b5ad0",
+        "module": "git",
+        "action": "status",
+        "payload": {}
+      },
+      {
+        "id": "3dff6e2a-42f0-4c4c-8818-db417b92aa9a",
+        "module": "workspaces",
+        "action": "list",
+        "payload": {},
+        "data": {
+          "success": true,
+          "profiles": [
+            {
+              "id": "scope-workspace-a",
+              "name": "Scope Project A",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-a",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-a",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-a"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Preserve source draft for return-session",
+                "readingPosition": {
+                  "generation": "generation-a-1",
+                  "scrollTop": 0
+                },
+                "composerRunState": "idle",
+                "activeTopicId": null,
+                "knowledgeScope": "none",
+                "knowledgeMode": "suggest",
+                "artifactPanel": {
+                  "open": false,
+                  "expanded": false,
+                  "tabs": []
+                },
+                "turnSummaryExpanded": {},
+                "turnSummaryStepDetailsExpanded": {}
+              },
+              "sessionStates": {
+                "agent:main:scope-source-a": {
+                  "draftInput": "Preserve source draft for return-session",
+                  "readingPosition": {
+                    "generation": "generation-a-1",
+                    "scrollTop": 0
+                  },
+                  "composerRunState": "idle",
+                  "activeTopicId": null,
+                  "knowledgeScope": "none",
+                  "knowledgeMode": "suggest",
+                  "artifactPanel": {
+                    "open": false,
+                    "expanded": false,
+                    "tabs": []
+                  },
+                  "turnSummaryExpanded": {},
+                  "turnSummaryStepDetailsExpanded": {}
+                },
+                "agent:main:scope-neighbor-a": {
+                  "draftInput": "Neighbor A draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            },
+            {
+              "id": "scope-workspace-b",
+              "name": "Scope Project B",
+              "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\b",
+              "agentId": "main",
+              "selectedAgentId": "main",
+              "activeSessionKey": "agent:main:scope-source-b",
+              "projectCoordinatorSessionKey": "agent:main:scope-source-b",
+              "agentBindings": {
+                "main": {
+                  "workspaceId": "scope-workspace-b",
+                  "agentId": "main",
+                  "sessionKey": "agent:main:scope-source-b"
+                }
+              },
+              "permissionMode": "fullAccess",
+              "state": {
+                "draftInput": "Source B draft"
+              },
+              "sessionStates": {
+                "agent:main:scope-source-b": {
+                  "draftInput": "Source B draft"
+                }
+              },
+              "sessionFolders": [],
+              "sessionFolderAssignments": {},
+              "createdAt": 1,
+              "updatedAt": 1,
+              "lastOpenedAt": 1
+            }
+          ],
+          "activeWorkspaceId": "scope-workspace-a",
+          "activeWorkspace": {
+            "id": "scope-workspace-a",
+            "name": "Scope Project A",
+            "rootPath": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a",
+            "agentId": "main",
+            "selectedAgentId": "main",
+            "activeSessionKey": "agent:main:scope-source-a",
+            "projectCoordinatorSessionKey": "agent:main:scope-source-a",
+            "agentBindings": {
+              "main": {
+                "workspaceId": "scope-workspace-a",
+                "agentId": "main",
+                "sessionKey": "agent:main:scope-source-a"
+              }
+            },
+            "permissionMode": "fullAccess",
+            "state": {
+              "draftInput": "Preserve source draft for return-session",
+              "readingPosition": {
+                "generation": "generation-a-1",
+                "scrollTop": 0
+              },
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {}
+            },
+            "sessionStates": {
+              "agent:main:scope-source-a": {
+                "draftInput": "Preserve source draft for return-session",
+                "readingPosition": {
+                  "generation": "generation-a-1",
+                  "scrollTop": 0
+                },
+                "composerRunState": "idle",
+                "activeTopicId": null,
+                "knowledgeScope": "none",
+                "knowledgeMode": "suggest",
+                "artifactPanel": {
+                  "open": false,
+                  "expanded": false,
+                  "tabs": []
+                },
+                "turnSummaryExpanded": {},
+                "turnSummaryStepDetailsExpanded": {}
+              },
+              "agent:main:scope-neighbor-a": {
+                "draftInput": "Neighbor A draft"
+              }
+            },
+            "sessionFolders": [],
+            "sessionFolderAssignments": {},
+            "createdAt": 1,
+            "updatedAt": 1,
+            "lastOpenedAt": 1
+          }
+        },
+        "endedAt": 1794169509069
+      },
+      {
+        "id": "1bb84bde-d41f-47be-9cbc-5e2866eb6012",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169509069
+      },
+      {
+        "id": "6d230951-26e2-4e5c-9e01-d1695b938e3e",
+        "module": "sessionActivity",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "session": {
+              "sessionKey": "agent:main:scope-source-a",
+              "runId": null,
+              "status": "idle",
+              "startedAt": null,
+              "endedAt": null,
+              "error": null,
+              "updatedAt": 0,
+              "key": "agent:main:scope-source-a",
+              "sessionId": "generation-a-1"
+            },
+            "git": null,
+            "tasks": [],
+            "subagents": [],
+            "completionBatches": [],
+            "terminals": [],
+            "goals": [],
+            "processes": [],
+            "lineage": [],
+            "continuity": {
+              "queueCount": 0,
+              "contextPressure": null,
+              "checkpoint": false,
+              "blockedReason": null
+            },
+            "availability": {
+              "git": false,
+              "tasks": false,
+              "subagents": true,
+              "terminals": false,
+              "continuity": true
+            },
+            "backgroundRead": {
+              "state": "unknown",
+              "readAt": null,
+              "failedAt": null
+            },
+            "capturedAt": 1794169506875
+          }
+        },
+        "endedAt": 1794169509069
+      },
+      {
+        "id": "b8abc226-c642-4368-98ce-0273cb1425a9",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "reconcile": true
+        },
+        "data": {
+          "success": true,
+          "operation": null
+        },
+        "endedAt": 1794169509069
+      },
+      {
+        "id": "b3fac21f-d879-47f4-b749-de41b8995c98",
+        "module": "agents",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "92ad8c14-045d-45a7-9df2-1f0929481d23",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "chat.history",
+          "params": {
+            "sessionKey": "agent:main:scope-source-a",
+            "limit": 200,
+            "maxChars": 500000
+          }
+        },
+        "data": {
+          "success": true,
+          "messages": [
+            {
+              "id": "scope-user",
+              "role": "user",
+              "content": "Scope fixture discussion",
+              "timestamp": 1700000000000
+            },
+            {
+              "id": "scope-assistant",
+              "role": "assistant",
+              "content": "Scope fixture response",
+              "timestamp": 1700000000001
+            }
+          ]
+        },
+        "endedAt": 1794169509069
+      },
+      {
+        "id": "46c297f0-41ff-4825-aea8-20b973f7529e",
+        "module": "taskLedger",
+        "action": "snapshot",
+        "payload": {
+          "workspaceId": "scope-workspace-a"
+        },
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "ledger-scope-workspace-a",
+            "sourceWorkspaceId": "scope-workspace-a",
+            "generatedAt": "2026-11-08T00:00:00.000Z",
+            "nodes": [
+              {
+                "id": "scope-fixture-task",
+                "kind": "task",
+                "title": "Scope fixture task",
+                "status": "todo",
+                "createdAt": "2026-11-08T00:00:00.000Z",
+                "updatedAt": "2026-11-08T00:00:00.000Z",
+                "evidenceRefs": [
+                  {
+                    "type": "file",
+                    "ref": "D:\\tmp\\session-chain-scope-faults-NAMuI3\\a\\result.txt",
+                    "label": "Scope fixture result"
+                  }
+                ]
+              }
+            ],
+            "edges": [],
+            "rootNodeIds": [
+              "scope-fixture-task"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "reviewNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "sessionLinks": [
+              {
+                "id": "scope-task-link",
+                "sessionKey": "agent:main:scope-source-a",
+                "sessionGeneration": "generation-a-1",
+                "nodeId": "scope-fixture-task",
+                "createdAt": "2026-11-08T00:00:00.000Z"
+              }
+            ],
+            "warnings": [],
+            "eventsCount": 2
+          }
+        },
+        "endedAt": 1794169509069
+      },
+      {
+        "id": "bbffd9b4-8696-4e5e-b295-36e2baa463e6",
+        "module": "permissions",
+        "action": "approvals",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "sessionKey": "agent:main:scope-source-a",
+          "status": "pending",
+          "limit": 50
+        }
+      },
+      {
+        "id": "3f79ec77-e275-4bf7-9956-e2a304ac6947",
+        "module": "resourceTracker",
+        "action": "list",
+        "payload": {}
+      },
+      {
+        "id": "02763d57-1e2f-4b58-8a70-9e0dd5853e71",
+        "module": "taskLedger",
+        "action": "appendEvents",
+        "payload": {
+          "workspaceId": "scope-workspace-a",
+          "events": [
+            {
+              "type": "node_created",
+              "actor": "assistant",
+              "taskId": "agent:main:scope-source-a:turn:wtq80i",
+              "sessionId": "agent:main:scope-source-a",
+              "idempotencyKey": "turn-node:agent:main:scope-source-a:turn:wtq80i",
+              "payload": {
+                "node": {
+                  "id": "agent:main:scope-source-a:turn:wtq80i",
+                  "title": "User asked: \"Scope fixture discussion\". ",
+                  "kind": "check",
+                  "parentId": null,
+                  "status": "done",
+                  "owner": "agent",
+                  "priority": "normal",
+                  "tags": [],
+                  "description": "User asked: \"Scope fixture discussion\". ",
+                  "evidenceRefs": [
+                    {
+                      "type": "session",
+                      "ref": "agent:main:scope-source-a",
+                      "label": "Turn transcript"
+                    }
+                  ],
+                  "metadata": {
+                    "sourceWorkspaceId": "scope-workspace-a"
+                  },
+                  "createdAt": "2026-11-08T20:25:09.134Z",
+                  "updatedAt": "2026-11-08T20:25:09.134Z",
+                  "completedAt": "2026-11-08T20:25:09.134Z"
+                }
+              }
+            },
+            {
+              "type": "session_linked",
+              "actor": "assistant",
+              "taskId": "agent:main:scope-source-a:turn:wtq80i",
+              "sessionId": "agent:main:scope-source-a",
+              "idempotencyKey": "turn-link:agent:main:scope-source-a:turn:wtq80i",
+              "payload": {
+                "sessionLink": {
+                  "id": "agent:main:scope-source-a:turn:wtq80i",
+                  "sessionKey": "agent:main:scope-source-a",
+                  "nodeId": "agent:main:scope-source-a:turn:wtq80i",
+                  "relation": "related",
+                  "summary": "User asked: \"Scope fixture discussion\". ",
+                  "createdAt": "2026-11-08T20:25:09.134Z"
+                }
+              }
+            }
+          ],
+          "idempotencyKey": "turn:agent:main:scope-source-a:1794169509135"
+        }
+      }
+    ],
+    "operations": {
+      "scope-workspace-a": null,
+      "scope-workspace-b": null
+    },
+    "fault": {
+      "module": "workspaces",
+      "action": "saveState",
+      "workspaceId": "scope-workspace-a",
+      "sessionKey": "agent:main:scope-source-a",
+      "draftInput": "Preserve source draft for return-session",
+      "taken": true,
+      "released": true,
+      "finished": true
+    }
+  }
+}

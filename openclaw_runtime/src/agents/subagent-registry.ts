@@ -3,10 +3,11 @@
  *
  * Owns registration, lifecycle, delivery retry, steering, orphan recovery, persistence, and cleanup for child runs.
  */
-import { createHash } from "node:crypto";
 import type { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
 import { getRuntimeConfig } from "../config/config.js";
+import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from '../config/agent-limits.js';
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { PATCH_FLOW_RETIRED } from "../context-engine/coding-runtime-flags.js";
 import type { ResolveContextEngineOptions } from "../context-engine/registry.js";
 import type { ContextEngine, SubagentEndReason } from "../context-engine/types.js";
 import { callGateway } from "../gateway/call.js";
@@ -26,6 +27,7 @@ import {
   releaseLeasedAgentSteeringItemsFromSubagentRuns,
 } from "./agent-steering-queue.js";
 import { makeTaskLedgerEntry, taskGraphVerifierNode } from "./orchestration-protocol.js";
+import { canonicalWorktreePath } from './worktree-registry.js';
 import { buildOrchestrationCompletionBatches } from "./orchestration-completion-batches.js";
 import { isAbortedAgentStopReason } from "./run-termination.js";
 import { hasReservedSubagentRecovery } from "./subagent-recovery-state.js";
@@ -59,10 +61,6 @@ import {
 } from "./subagent-registry-helpers.js";
 import { createSubagentRegistryLifecycleController } from "./subagent-registry-lifecycle.js";
 import type { CandidateApplyHost } from "./orchestration-candidate-apply.js";
-import {
-  applyDeferredPatchFlow,
-  recordDeferredPatchFlowCompletion,
-} from "./orchestration-patch-flow.js";
 import { subagentRuns } from "./subagent-registry-memory.js";
 import {
   countActiveDescendantRunsFromRuns,
@@ -91,6 +89,8 @@ import {
 } from "./subagent-registry-state.js";
 import { configureSubagentRegistrySteerRuntime } from "./subagent-registry-steer-runtime.js";
 import type { SubagentRunRecord } from "./subagent-registry.types.js";
+import { createSubagentDispatchQueue, type QueuedSubagentDispatchResult } from './subagent-registry-dispatch.js';
+import { withSubagentRegistryCapacity, refreshSubagentRegistrySnapshot } from './subagent-registry.store.sqlite.js';
 import {
   loadSubagentSessionEntry,
   resolveCompletionFromSessionEntry,
@@ -107,7 +107,6 @@ export {
   resolveSubagentSessionStatus,
 } from "./subagent-registry-helpers.js";
 const log = createSubsystemLogger("agents/subagent-registry");
-const deferredPatchFlowRunsInProgress = new Set<string>();
 
 type SubagentAnnounceModule = Pick<
   typeof import("./subagent-announce.js"),
@@ -119,6 +118,9 @@ type BrowserCleanupModule = Pick<
 >;
 
 type SubagentRegistryDeps = {
+  withCapacity: typeof withSubagentRegistryCapacity;
+  refreshRuns: typeof refreshSubagentRegistrySnapshot;
+  dispatchQueuedSubagent(entry: SubagentRunRecord): Promise<QueuedSubagentDispatchResult>;
   callGateway: typeof callGateway;
   captureSubagentCompletionReply: SubagentAnnounceModule["captureSubagentCompletionReply"];
   cleanupBrowserSessionsForLifecycleEnd: typeof cleanupBrowserSessionsForLifecycleEnd;
@@ -158,6 +160,9 @@ async function loadCleanupBrowserSessionsForLifecycleEnd(): Promise<
 }
 
 const defaultSubagentRegistryDeps: SubagentRegistryDeps = {
+  withCapacity: withSubagentRegistryCapacity,
+  refreshRuns: refreshSubagentRegistrySnapshot,
+  dispatchQueuedSubagent: async entry => (await import('./subagent-spawn.js')).dispatchQueuedSubagentRun(entry),
   callGateway,
   captureSubagentCompletionReply: async (sessionKey, options) =>
     (await loadSubagentAnnounceModule()).captureSubagentCompletionReply(sessionKey, options),
@@ -380,6 +385,7 @@ type CompleteSubagentRunParams = {
 async function completeSubagentRunWithRecovery(params: CompleteSubagentRunParams, source: string) {
   try {
     await completeSubagentRun(params);
+    await subagentDispatchQueue.drain();
     await maybeStartDeferredOrchestrationVerifier(params.runId);
     return;
   } catch (error) {
@@ -404,6 +410,7 @@ async function completeSubagentRunWithRecovery(params: CompleteSubagentRunParams
 
   try {
     await completeSubagentRun(params);
+    await subagentDispatchQueue.drain();
     await maybeStartDeferredOrchestrationVerifier(params.runId);
     return;
   } catch (retryError) {
@@ -512,7 +519,8 @@ async function processCompletedOrchestrationWorktrees(
     return;
   }
 
-  const baseRoot = mergeable.find((worker) => worker.workspaceDir)?.workspaceDir;
+  let baseRoot = mergeable.find(worker => worker.orchestration?.worktreeVerificationCandidate?.baseRoot)?.orchestration?.worktreeVerificationCandidate?.baseRoot
+    ?? mergeable.find(worker => worker.workspaceDir)?.workspaceDir;
   if (!baseRoot) {
     for (const worker of mergeable) {
       applyOrchestrationWorkerPatch(worker, {
@@ -527,40 +535,147 @@ async function processCompletedOrchestrationWorktrees(
   }
 
   try {
-    const { mergeOrchestrationWorktrees } = await import("./orchestration-worktree-merge.js");
-    const results = mergeOrchestrationWorktrees({
-      baseRoot,
-      workers: mergeable.map((worker) => ({
+    const { createWorktreeService, resolveExecutionCheckout } = await import('./worktree-service.js');
+    const { resolveOrchestrationContext } = await import('./orchestration-workspace-context.js');
+    const resolveTarget = (worker: SubagentRunRecord, inspect: boolean) => {
+      const meta = worker.orchestration!;
+      const savedBase = meta.worktreeVerificationCandidate?.baseRoot;
+      if (savedBase) {
+        const original = createWorktreeService(savedBase).list().find(record => record.id === meta.worktreeId && record.generation === meta.worktreeGeneration);
+        // This is a terminal lookup: it neither recreates a checkout nor grants a writer.
+        if (original?.status === 'cleaned' && original.mergeResult?.status === 'merged') {
+          if (!original.owner || original.owner.sessionKey !== worker.requesterSessionKey) throw new Error('worktree-parent-owner-unavailable');
+          return { baseRoot: savedBase, backend: original.backend, record: original };
+        }
+      }
+      if (!worker.workspaceDir) throw new Error('workspaceDir-unavailable');
+      const checkout = resolveExecutionCheckout(worker.workspaceDir);
+      if (checkout.worktreeId !== null && (checkout.worktreeId !== meta.worktreeId || checkout.basis.generation !== meta.worktreeGeneration)) {
+        throw new Error('worktree_completion_scope_mismatch');
+      }
+      const record = checkout.service.list().find(value => value.id === meta.worktreeId && value.generation === meta.worktreeGeneration);
+      // The registry chooses the backend; only Git has physical checkout proof.
+      // Inprocess keeps its recorded generation and content baseline checks.
+      if (!record || (inspect && (record.backend === 'git'
+        ? checkout.service.inspectIsolation(record.id, record.generation).status !== 'verified'
+        : checkout.service.listChangedFiles(record.id, record.generation).source === 'unavailable'))) throw new Error('worktree_completion_isolation_unverified');
+      if (!record.owner || record.owner.sessionKey !== worker.requesterSessionKey) throw new Error('worktree-parent-owner-unavailable');
+      return { baseRoot: checkout.baseRoot, backend: record.backend, record };
+    };
+    // Resolve the target first; strict isolation waits for the preceding merge to settle.
+    const targets = mergeable.map(worker => resolveTarget(worker, false));
+    if (targets.some(target => canonicalWorktreePath(target.baseRoot) !== canonicalWorktreePath(targets[0]!.baseRoot))) throw new Error('worktree_completion_target_mismatch');
+    baseRoot = targets[0]!.baseRoot;
+    const parents = targets.map(target => resolveOrchestrationContext({
+      sessionKey: target.record.owner!.sessionKey,
+      expectedSessionGeneration: target.record.owner!.expectedSessionId,
+      workspaceDir: baseRoot,
+    }, () => subagentRegistryDeps.getRuntimeConfig()));
+    for (const [index, worker] of mergeable.entries()) applyOrchestrationWorkerPatch(worker, {
+      worktreeBackend: targets[index]!.backend, worktreeMergeBaseRoot: baseRoot,
+    });
+    const { mergeOrchestrationWorktrees, freezeOrchestrationWorktreeCandidate } = await import("./orchestration-worktree-merge.js");
+    const worktreeInputs: import('./orchestration-worktree-merge.js').OrchestrationWorktreeMergeWorker[] = mergeable.map((worker) => ({
         taskNodeId: worker.orchestration?.taskNodeId ?? worker.runId,
         worktreeId: worker.orchestration!.worktreeId!,
+        worktreeGeneration: worker.orchestration?.worktreeGeneration ?? "",
         declaredWriteSet: worker.orchestration?.worktreeWriteSet ?? [],
-      })),
-      conflictPolicy: "mark_conflict",
+      }));
+    await mergeOrchestrationWorktrees({
+      baseRoot, workers: worktreeInputs, conflictPolicy: "mark_conflict",
+      assertParentCurrent: () => { for (const parent of parents) parent.assertWorkspaceCurrent?.(); },
+      prepare: async () => {
+        const pendingIndexes = worktreeInputs.flatMap((_, index) => typeof mergeable[index]!.orchestration?.worktreeMergeProcessedAt === 'number' ? [] : [index]);
+        for (const index of pendingIndexes) {
+          const current = resolveTarget(mergeable[index]!, true);
+          if (canonicalWorktreePath(current.baseRoot) !== canonicalWorktreePath(baseRoot!)) throw new Error('worktree_completion_target_mismatch');
+          targets[index] = current;
+          applyOrchestrationWorkerPatch(mergeable[index]!, { worktreeBackend: current.backend, worktreeMergeBaseRoot: current.baseRoot });
+        }
+        const gitIndexes = pendingIndexes.filter(index => targets[index]!.backend === 'git');
+        const gitWorkers = gitIndexes.map(index => mergeable[index]!);
+        const gitInputs = gitIndexes.map(index => worktreeInputs[index]!);
+        if (gitWorkers.length > 0) {
+          const { inspectOrchestrationCandidate, inspectOrchestrationCandidateTarget } = await import('./orchestration-candidate.js');
+          const saved = gitWorkers.map(worker => worker.orchestration?.worktreeVerificationCandidate);
+          const previous = saved[0];
+          let candidate: import('../../../shared/types/versegit.js').VerseGitCandidateResult;
+          if (saved.some(Boolean)) {
+            if (!previous || saved.some(value => !value || value.manifest.candidateId !== previous.manifest.candidateId)
+              || !inspectOrchestrationCandidate(previous)) throw new Error('worktree_saved_candidate_unavailable');
+            if (inspectOrchestrationCandidateTarget(baseRoot!, previous.manifest)) {
+              candidate = { status: 'frozen', manifest: previous.manifest, materializedPath: previous.materializedPath, issues: [] };
+            } else {
+              for (const worker of gitWorkers) applyOrchestrationWorkerPatch(worker, {
+                worktreeMergeStatus: 'conflict', worktreeMergeReason: 'saved_candidate_target_changed',
+                worktreeWriteSetMismatch: [], worktreeMergeProcessedAt: processedAt,
+              });
+              return pendingIndexes.filter(index => typeof mergeable[index]!.orchestration?.worktreeMergeProcessedAt !== 'number').map(index => worktreeInputs[index]!);
+            }
+          } else candidate = freezeOrchestrationWorktreeCandidate({ baseRoot: baseRoot!, workers: gitInputs });
+          if (candidate.status !== "frozen") {
+            // Shared or external writes make the Git baseline dirty. Preserve both
+            // outputs as a conflict rather than implicitly committing host changes.
+            for (const worker of gitWorkers) applyOrchestrationWorkerPatch(worker, {
+              worktreeMergeStatus: candidate.status === 'conflict' || candidate.reason === 'main_worktree_dirty' ? 'conflict' : 'error',
+              worktreeWriteSetMismatch: [], worktreeMergeReason: "worktree_candidate_unavailable:" + candidate.reason,
+              worktreeMergeProcessedAt: processedAt,
+            });
+          } else {
+            const { orchestrationCandidatePostimages } = await import('./orchestration-candidate.js');
+            for (const input of gitInputs) {
+              const snapshot = candidate.manifest.workerSnapshots.find(worker => worker.taskNodeId === input.taskNodeId && worker.worktreeRole === input.worktreeId);
+              if (!snapshot) throw new Error('worktree_candidate_snapshot_missing');
+              input.expectedPostimages = orchestrationCandidatePostimages(baseRoot!, candidate.manifest, snapshot.changedFiles);
+            }
+            for (const worker of gitWorkers) applyOrchestrationWorkerPatch(worker, {
+              worktreeVerificationCandidate: { manifest: candidate.manifest, materializedPath: candidate.materializedPath, baseRoot },
+            });
+            persistSubagentRuns();
+          }
+        }
+        return pendingIndexes.filter(index => typeof mergeable[index]!.orchestration?.worktreeMergeProcessedAt !== 'number').map(index => worktreeInputs[index]!);
+      },
+      onComplete: results => {
+        const identity = (id: string | undefined, generation: string | undefined) => JSON.stringify([id, generation]);
+        const byWorktreeId = new Map(results.map((result) => [identity(result.worktreeId, result.worktreeGeneration), result]));
+        for (const worker of mergeable) {
+          if (typeof worker.orchestration?.worktreeMergeProcessedAt === 'number') continue;
+          const result = byWorktreeId.get(identity(worker.orchestration!.worktreeId, worker.orchestration!.worktreeGeneration));
+          if (!result || result.status === 'missing') continue;
+          applyOrchestrationWorkerPatch(worker, {
+            worktreeMergeStatus: result?.status ?? "error",
+            worktreeWriteSetMismatch: result?.writeSetMismatch ?? [],
+            worktreeMergeJournalRef: result?.journalRef,
+            worktreeMergeHashes: result?.hashes,
+            worktreeMergeRecoveryRequired: result?.recoveryRequired,
+            worktreeMergeReason: result?.reason,
+            worktreeMergeProcessedAt: processedAt,
+          });
+        }
+        persistSubagentRuns();
+      },
     });
-    const byWorktreeId = new Map(results.map((result) => [result.worktreeId, result]));
-    for (const worker of mergeable) {
-      const result = byWorktreeId.get(worker.orchestration!.worktreeId!);
-      applyOrchestrationWorkerPatch(worker, {
-        worktreeMergeStatus: result?.status ?? "error",
-        worktreeWriteSetMismatch: result?.writeSetMismatch ?? [],
-        ...(result?.reason ? { worktreeMergeReason: result.reason } : {}),
-        worktreeMergeProcessedAt: processedAt,
-      });
-    }
   } catch (error) {
     log.warn("failed to process orchestration worktree merges", { error });
+    const carried = (error as { worktreeMergeResults?: import("./orchestration-worktree-merge.js").OrchestrationWorktreeMergeResult[] })?.worktreeMergeResults;
     for (const worker of mergeable) {
+      if (typeof worker.orchestration?.worktreeMergeProcessedAt === 'number') continue;
+      const result = Array.isArray(carried) ? carried.find(item => item.worktreeId === worker.orchestration?.worktreeId
+        && item.worktreeGeneration === worker.orchestration?.worktreeGeneration) : undefined;
       applyOrchestrationWorkerPatch(worker, {
-        worktreeMergeStatus: "error",
-        worktreeWriteSetMismatch: [],
-        worktreeMergeReason: error instanceof Error ? error.message : String(error),
-        worktreeMergeProcessedAt: processedAt,
+        worktreeMergeJournalRef: result?.journalRef,
+        worktreeMergeHashes: result?.hashes,
+        worktreeMergeRecoveryRequired: result?.recoveryRequired,
+        worktreeMergeStatus: result && result.status !== 'missing' ? result.status : 'error',
+        worktreeWriteSetMismatch: result?.writeSetMismatch ?? [],
+        worktreeMergeReason: result && result.status !== 'missing' ? result.reason : (error instanceof Error ? error.message : String(error)),
+        ...(result && result.status !== 'missing' ? { worktreeMergeProcessedAt: processedAt } : {}),
       });
     }
+    persistSubagentRuns();
   }
-  persistSubagentRuns();
-}
-function buildVerifierTask(params: { originalTask: string; workers: SubagentRunRecord[] }): string {
+}function buildVerifierTask(params: { originalTask: string; workers: SubagentRunRecord[] }): string {
   const sections = params.workers.map((worker, index) => {
     const meta = worker.orchestration;
     const status = worker.outcome?.status ?? "unknown";
@@ -571,6 +686,18 @@ function buildVerifierTask(params: { originalTask: string; workers: SubagentRunR
       `childRunId: ${worker.runId}`,
       `childSessionKey: ${worker.childSessionKey}`,
       `status: ${status}${error ? ` (${error})` : ""}`,
+      ...(meta?.worktreeId ? [
+        `worktreeIntegration: ${meta.worktreeMergeStatus ?? "missing"}`,
+        `worktreeIntegrationReason: ${meta.worktreeMergeReason ?? "none"}`,
+        `worktreeJournal: ${meta.worktreeMergeJournalRef ?? "unavailable"}`,
+        `integratedPostimages: ${JSON.stringify(meta.worktreeMergeHashes ?? {})}`,
+        `worktreeBackend: ${meta.worktreeBackend ?? 'unknown'}`,
+        `worktreeIntegrationBaseRoot: ${meta.worktreeMergeBaseRoot ?? 'unavailable'}`,
+        `verificationCandidate: ${JSON.stringify(meta.worktreeVerificationCandidate ?? null)}`,
+        meta.worktreeVerificationCandidate
+          ? "Execute checks in the exact materialized candidate directory and report its commit, tree, inputDigest and check artifacts; an unmerged or unknown result requires fail or repair_required."
+          : "Verify the integrated content and postimage hashes in worktreeIntegrationBaseRoot and report its check artifacts; an unmerged or unknown result requires fail or repair_required.",
+      ] : []),
       "",
       selectResultTextForOrchestration(worker),
     ].join("\n");
@@ -594,9 +721,14 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
   }
   const orchestrationRunId = completedMeta.orchestrationRunId;
   const workers = listOrchestrationWorkers(orchestrationRunId);
-  const expectedWorkerRunIds = completedMeta.expectedWorkerRunIds?.length
-    ? completedMeta.expectedWorkerRunIds
-    : workers.map((worker) => worker.runId);
+  // The whole plan is frozen before any worker is started. A fast first wave
+  // must not trigger verification while later nodes are still being enqueued.
+  const expectedNodeIds = completedMeta.taskGraph?.nodes.filter(node => !node.isVerifier).map(node => node.taskNodeId) ?? [];
+  if (expectedNodeIds.some(id => !workers.some(worker => worker.orchestration?.taskNodeId === id))) return;
+  const expectedWorkerRunIds =
+    completedMeta.expectedWorkerRunIds?.length
+      ? completedMeta.expectedWorkerRunIds
+      : workers.map((worker) => worker.runId);
   const expectedWorkers = expectedWorkerRunIds
     .map((runId) => subagentRuns.get(runId))
     .filter((entry): entry is SubagentRunRecord => Boolean(entry?.orchestration));
@@ -610,112 +742,70 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
   if (!latestMeta) {
     return;
   }
-  if (latestMeta.patchFlowExecution === true) {
-    if (latestMeta.patchFlowStatus === undefined) {
-      if (deferredPatchFlowRunsInProgress.has(orchestrationRunId)) {
-        return;
-      }
-      const host = subagentRegistryDeps.candidateApplyHost;
-      const workspaceDir =
-        expectedWorkers.find((worker) => worker.workspaceDir)?.workspaceDir ??
-        completed.workspaceDir;
-      if (!host || !workspaceDir) {
-        markOrchestrationWorkers({
-          workers: expectedWorkers,
-          patch: {
-            patchFlowStatus: "blocked",
-            patchFlowAppliedAt: Date.now(),
-            patchFlowError: !host ? "candidate_apply_host_missing" : "patch_flow_workspace_missing",
-            verifierSkippedReason: "candidate-apply-host-missing",
-            verifierSkippedAt: Date.now(),
-          },
-        });
-        return;
-      }
-      deferredPatchFlowRunsInProgress.add(orchestrationRunId);
-      try {
-        const outcome = await applyDeferredPatchFlow({
-          workers: expectedWorkers,
-          workspaceDir,
-          candidateApply: {
-            host,
-            journal: {
-              workspaceRoot: workspaceDir,
-              sessionId: completed.requesterSessionKey,
-              requestId: `orchestration:${orchestrationRunId}:candidate-apply`,
-              enabled: true,
-            },
-          },
-        });
-        const traceDigest = createHash("sha256")
-          .update(JSON.stringify(outcome.trace ?? []))
-          .digest("hex");
-        const journalRefs = (outcome.results ?? []).flatMap(
-          (result) => result.journal?.snapshotIds ?? [],
-        );
-        const completionSink = subagentRegistryDeps.completionFactSink;
-        const completionFactRecord = recordDeferredPatchFlowCompletion({
-          outcome,
-          sink: completionSink,
-          sessionId: completed.requesterSessionKey,
-          runId: orchestrationRunId,
-          actor: "codex",
-        });
-        markOrchestrationWorkers({
-          workers: expectedWorkers,
-          patch: {
-            patchFlowStatus: outcome.status,
-            patchFlowResults: outcome.results,
-            patchFlowAppliedAt: outcome.appliedAt,
-            ...(outcome.error ? { patchFlowError: outcome.error } : {}),
-            ...(outcome.candidate
-              ? {
-                  patchFlowCandidateId: outcome.candidate.candidateId,
-                  patchFlowCandidateTreeOid: outcome.candidate.candidateTreeOid,
-                  patchFlowCandidateInputDigest: outcome.candidate.candidateInputDigest,
-                }
-              : {}),
-            patchFlowTraceDigest: traceDigest,
-            patchFlowJournalRefs: [...new Set(journalRefs)],
-            ...(completionFactRecord?.fact
-              ? {
-                  completionFactId: completionFactRecord.fact.factId,
-                  completionFactStatus: completionFactRecord.status,
-                  completionHostOutcome: completionFactRecord.fact.hostOutcome,
-                  completionProviderProjection: completionFactRecord.fact.providerProjection,
-                  completionActiveSessionRisk: completionFactRecord.fact.activeSessionRisk,
-                }
-              : {
-                  completionFactStatus: completionSink ? "unavailable" : "not_configured",
-                }),
-          },
-        });
-      } finally {
-        deferredPatchFlowRunsInProgress.delete(orchestrationRunId);
-      }
-      latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
-      if (!latestMeta) {
-        return;
-      }
-    }
-    if (latestMeta.patchFlowStatus !== "applied") {
-      if (!latestMeta.verifierSkippedReason) {
-        markOrchestrationWorkers({
-          workers: expectedWorkers,
-          patch: {
-            verifierSkippedReason: "candidate-apply-not-complete",
-            verifierSkippedAt: Date.now(),
-          },
-        });
-      }
+  const legacyWorkers = expectedWorkers.filter(
+    (worker) => worker.orchestration?.patchFlowExecution === true,
+  );
+  const pendingLegacyWorkers = legacyWorkers.filter(
+    (worker) => worker.orchestration?.patchFlowStatus === undefined,
+  );
+  if (PATCH_FLOW_RETIRED && pendingLegacyWorkers.length > 0) {
+    // Restored statuses can differ between siblings. Block only pending legacy
+    // effects; already recorded apply outcomes keep their original identity.
+    markOrchestrationWorkers({
+      workers: pendingLegacyWorkers,
+      patch: {
+        patchFlowStatus: "blocked",
+        patchFlowError: "patch_flow_retired",
+        verifierSkippedReason: "retired-patch-flow",
+        verifierSkippedAt: Date.now(),
+      },
+    });
+    return;
+  }
+  const unappliedLegacyWorkers = legacyWorkers.filter(
+    (worker) => worker.orchestration?.patchFlowStatus !== "applied",
+  );
+  if (unappliedLegacyWorkers.length > 0) {
+    markOrchestrationWorkers({
+      workers: unappliedLegacyWorkers.filter(
+        (worker) => !worker.orchestration?.verifierSkippedReason,
+      ),
+      patch: {
+        verifierSkippedReason: "candidate-apply-not-complete",
+        verifierSkippedAt: Date.now(),
+      },
+    });
+    return;
+  }
+  const ordinaryWorkers = expectedWorkers.filter(
+    (worker) => worker.orchestration?.patchFlowExecution !== true,
+  );
+  if (ordinaryWorkers.length > 0) await processCompletedOrchestrationWorktrees(ordinaryWorkers);
+  latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
+  if (!latestMeta) {
+    return;
+  }
+  if (latestMeta.verifierStartedRunId || latestMeta.verifierSkippedReason) return;
+  const successfulWorkers = expectedWorkers.filter(worker => worker.outcome?.status === 'ok');
+  if (successfulWorkers.length === 0) {
+    markOrchestrationWorkers({ workers: expectedWorkers, patch: { verifierSkippedReason: 'all-workers-failed', verifierSkippedAt: Date.now() } });
+    return;
+  }
+  const successfulWorktrees = successfulWorkers.filter(worker => worker.orchestration?.isolation === 'worktree');
+  const successfulGitWorktrees = successfulWorktrees.filter(worker => worker.orchestration?.worktreeBackend !== 'inprocess');
+  latestMeta = (successfulGitWorktrees[0] ?? successfulWorktrees[0] ?? successfulWorkers[0])!.orchestration ?? latestMeta;
+  if (latestMeta.patchFlowExecution !== true && successfulGitWorktrees.length > 0) {
+    const candidates = successfulGitWorktrees.map(worker => worker.orchestration?.worktreeVerificationCandidate);
+    const candidate = candidates[0];
+    const { inspectOrchestrationCandidate } = await import('./orchestration-candidate.js');
+    latestMeta = expectedWorkers.find(worker => worker.orchestration)?.orchestration;
+    if (!latestMeta || latestMeta.verifierStartedRunId || latestMeta.verifierSkippedReason) return;
+    if (!candidate || candidates.some(value => !value || value.manifest.candidateId !== candidate.manifest.candidateId)
+      || !inspectOrchestrationCandidate(candidate)) {
+      markOrchestrationWorkers({ workers: expectedWorkers, patch: { verifierSkippedReason: 'worktree-candidate-unavailable', verifierSkippedAt: Date.now() } });
       return;
     }
-  } else {
-    await processCompletedOrchestrationWorktrees(expectedWorkers);
-    latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
-    if (!latestMeta) {
-      return;
-    }
+    latestMeta = successfulGitWorktrees[0]!.orchestration!;
   }
   if (latestMeta.verifierStartedRunId || latestMeta.verifierSkippedReason) {
     return;
@@ -724,14 +814,6 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
     markOrchestrationWorkers({
       workers: expectedWorkers,
       patch: { verifierSkippedReason: "no-verifier-role", verifierSkippedAt: Date.now() },
-    });
-    return;
-  }
-  const successfulWorkers = expectedWorkers.filter((worker) => worker.outcome?.status === "ok");
-  if (successfulWorkers.length === 0) {
-    markOrchestrationWorkers({
-      workers: expectedWorkers,
-      patch: { verifierSkippedReason: "all-workers-failed", verifierSkippedAt: Date.now() },
     });
     return;
   }
@@ -797,7 +879,8 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
       {
         agentSessionKey: completed.controllerSessionKey ?? completed.requesterSessionKey,
         completionOwnerKey: completed.requesterSessionKey,
-        workspaceDir: completed.workspaceDir,
+        workspaceDir: latestMeta.worktreeVerificationCandidate?.materializedPath ?? latestMeta.worktreeMergeBaseRoot
+          ?? successfulWorkers[0]!.workspaceDir ?? completed.workspaceDir,
       },
       { spawn: spawnSubagentDirect },
     );
@@ -1034,6 +1117,12 @@ function resumeSubagentRun(runId: string) {
   if (entry.cleanupCompletedAt) {
     return;
   }
+  if (entry.queuedDispatch && !entry.dispatchPending && typeof entry.endedAt !== 'number') {
+    startSweeper();
+    void subagentDispatchQueue.drain().catch(error => log.warn('queued dispatch recovery failed', { error }));
+    return;
+  }
+  if (entry.dispatchPending && typeof entry.endedAt !== 'number') return;
   if (typeof entry.endedAt === "number" && isDeliverySuspended(entry)) {
     return;
   }
@@ -1309,6 +1398,19 @@ async function sweepSubagentRuns() {
         scheduleSubagentOrphanRecovery({ delayMs: 1_000 });
         continue;
       }
+      if (entry.queuedDispatch && !entry.dispatchPending && typeof entry.endedAt !== 'number') continue;
+      // A transport failure leaves dispatch unknown. Only a real terminal
+      // event/session receipt or confirmed cancellation may free this row.
+      if (entry.dispatchPending && typeof entry.endedAt !== 'number') {
+        const completion = resolveSubagentSessionCompletion({
+          childSessionKey: entry.childSessionKey, fallbackEndedAt: now, notBeforeMs: entry.createdAt,
+        });
+        if (completion) await completeSubagentRunWithRecovery({
+          runId, startedAt: completion.startedAt, endedAt: completion.endedAt,
+          outcome: completion.outcome, reason: completion.reason, triggerCleanup: true,
+        }, 'dispatch-reservation-terminal');
+        continue;
+      }
       if (isSuspendedPendingFinalDelivery(entry)) {
         const suspendedAgeMs = now - (entry.delivery?.suspendedAt ?? now);
         const expired = suspendedAgeMs >= resolveSuspendedDeliveryExpiryMs(entry);
@@ -1376,21 +1478,11 @@ async function sweepSubagentRuns() {
             continue;
           }
 
-          await completeSubagentRunWithRecovery(
-            {
-              runId,
-              endedAt: now,
-              outcome: {
-                status: "error",
-                error: "subagent run lost active execution context",
-              },
-              reason: SUBAGENT_ENDED_REASON_ERROR,
-              sendFarewell: true,
-              accountId: entry.requesterOrigin?.accountId,
-              triggerCleanup: true,
-            },
-            "sweeper-lost-context",
-          );
+          if (entry.execution?.status !== 'interrupted') {
+            entry.execution = { ...entry.execution, status: 'interrupted', interruptedAt: now,
+              interruptionReason: 'lost-execution-context' };
+            mutated = true;
+          }
           continue;
         }
       }
@@ -1449,6 +1541,7 @@ async function sweepSubagentRuns() {
     if (mutated) {
       persistSubagentRuns();
     }
+    await subagentDispatchQueue.drain();
     if (subagentRuns.size === 0) {
       stopSweeper();
     }
@@ -1622,7 +1715,28 @@ const subagentRunManager = createSubagentRunManager({
   resolveSubagentSessionStartedAt,
   notifyContextEngineSubagentEnded,
   completeCleanupBookkeeping,
-  completeSubagentRun,
+  completeSubagentRun: params => completeSubagentRunWithRecovery(params, 'registry-wait'),
+});
+
+const subagentDispatchQueue = createSubagentDispatchQueue({
+  runs: subagentRuns,
+  persist: persistSubagentRunsOrThrow,
+  refresh: () => subagentRegistryDeps.refreshRuns(subagentRuns),
+  claim: (entry, cap, claim) => subagentRegistryDeps.withCapacity({
+    controller: entry.controllerSessionKey ?? entry.requesterSessionKey, maxChildren: cap, queuedRunId: entry.runId,
+  }, claim),
+  capacity: () => subagentRegistryDeps.getRuntimeConfig().agents?.defaults?.subagents?.maxChildrenPerAgent
+    ?? DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT,
+  dispatch: entry => subagentRegistryDeps.dispatchQueuedSubagent(entry),
+  accepted: (entry, runId) => {
+    const { queuedDispatch: _request, dispatchPending: _pending, ...record } = entry;
+    subagentRunManager.registerSubagentRun({ ...record, runId, reservationRunId: entry.runId });
+  },
+  rejected: async (entry, error) => {
+    await completeSubagentRun({ runId: entry.runId, outcome: { status: 'error', error },
+      reason: SUBAGENT_ENDED_REASON_ERROR, triggerCleanup: false });
+  },
+  warn: error => log.warn('queued subagent dispatch remains unknown', { error }),
 });
 
 configureSubagentRegistrySteerRuntime({
@@ -1669,6 +1783,21 @@ export function updateSubagentRunContextFoldMetadata(
   }
   persistSubagentRuns();
   return true;
+}
+
+/** Reserve under the shared owner transaction before the first dispatch await. */
+export function reserveSubagentRun(params: RegisterSubagentRunParams, maxChildren: number): boolean {
+  if (!Number.isSafeInteger(maxChildren) || maxChildren < 1) throw new Error('invalid subagent capacity');
+  const controller = params.controllerSessionKey ?? params.requesterSessionKey;
+  return subagentRegistryDeps.withCapacity({ controller, maxChildren }, () => subagentRunManager.reserveSubagentRun(params));
+}
+
+export function enqueueSubagentRun(params: RegisterSubagentRunParams & { queuedDispatch: NonNullable<SubagentRunRecord['queuedDispatch']> }): void {
+  if (!Number.isSafeInteger(params.queuedDispatch.maxChildren) || params.queuedDispatch.maxChildren < 1) {
+    throw new Error('invalid queued subagent capacity');
+  }
+  subagentRunManager.reserveSubagentRun(params);
+  void subagentDispatchQueue.drain().catch(error => log.warn('queued subagent admission failed', { error }));
 }
 
 export function updateSubagentRunOrchestrationMetadata(
@@ -1737,6 +1866,9 @@ export function resetSubagentRegistryForTests(opts?: { persist?: boolean }) {
 }
 
 export const testing = {
+  processCompletedOrchestrationWorktrees,
+  buildVerifierTask,
+  maybeStartDeferredOrchestrationVerifier,
   async sweepOnceForTests() {
     await sweepSubagentRuns();
   },
@@ -1747,6 +1879,14 @@ export const testing = {
           ...overrides,
         }
       : defaultSubagentRegistryDeps;
+    if (overrides && !overrides.withCapacity && overrides.persistSubagentRunsToDiskOrThrow
+      && overrides.persistSubagentRunsToDiskOrThrow !== persistSubagentRunsToDiskOrThrow) {
+      subagentRegistryDeps.withCapacity = (scope, reserve) => {
+        if (countActiveRunsForSessionFromRuns(subagentRuns, scope.controller) >= scope.maxChildren) return false;
+        reserve(); return true;
+      };
+      if (!overrides.refreshRuns) subagentRegistryDeps.refreshRuns = () => {};
+    }
   },
 } as const;
 
@@ -1844,7 +1984,9 @@ export function markSubagentRunTerminated(params: {
   childSessionKey?: string;
   reason?: string;
 }): number {
-  return subagentRunManager.markSubagentRunTerminated(params);
+  const updated = subagentRunManager.markSubagentRunTerminated(params);
+  if (updated) void subagentDispatchQueue.drain().catch(error => log.warn('queued cancellation progression failed', { error }));
+  return updated;
 }
 
 export function listSubagentRunsForRequester(

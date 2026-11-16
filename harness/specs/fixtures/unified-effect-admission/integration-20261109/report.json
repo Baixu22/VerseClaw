@@ -1,0 +1,795 @@
+{
+  "base": "dbe8f3e5c39ebef350705937dc05b9790c1d3b63",
+  "source": "f715e5d5047675398b0da581b19ac9cfa355b386",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "before": "ebd201530b5b069bac3ef8e38248f1392b5fce4549c42548d0209781711acb95",
+      "after": "500b630afe8e34f2b6dfe133b72eb6e17bc89de71a6d5e3879c7aa43de24e200",
+      "overlay": true
+    },
+    {
+      "path": "README.md",
+      "before": "4f26846e3d103bfd2d800db007255ebf0823305786cf29aaba322c1847cd8e99",
+      "after": "f0fe4e49b7c94d10dec92b706e25e758fb69020e89872b2b50c50e7587bb2325",
+      "overlay": true
+    },
+    {
+      "path": "README.ru-RU.md",
+      "before": "1452412d07cfc781c7ed47ef4570da25e701f4afb188acb4350a8b998d168021",
+      "after": "bb87bd3aeebb10e6e93e56e9c5438adb37c5c77c1a78c565a82289781d503244",
+      "overlay": true
+    },
+    {
+      "path": "README.zh-CN.md",
+      "before": "aed01f979d96892f9e45bf5df3cc783e5e1b1cb7e6191c652e0969fb53b65b40",
+      "after": "f29f1c80295d54cfde05651353c99804043d34140fb30d463ea99da8de5f3a83",
+      "overlay": true
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "before": "0d16d853a90f8fd3fbb8a643e7fb6f04f0f9fdab86ee96ba1bba349e5159d818",
+      "after": "0017ff7aafdd834ecaa2e27b66ff1a265e5a5f34383ede8c02f135ede11daa3c",
+      "overlay": false
+    },
+    {
+      "path": "electron/gateway/process-launcher.ts",
+      "before": "a4c99840f7fe2e87c74788773c388c5eb50f5d453853687d226353d0b352803e",
+      "after": "9ffed924534f7dcbd12128940e8c14f443b9188daadb97e2ff9c03ac811c14a3",
+      "overlay": false
+    },
+    {
+      "path": "electron/services/task-system-service.ts",
+      "before": "67993928c71f6231e9cbee9e357770dc094a77d2993fb65001fc7499badb6f89",
+      "after": "33544ddd02094d85feb5a5a8f5c1a2d01b66eae3b1301724221844c353b2fa67",
+      "overlay": false
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "before": "191c6914d7f5fe4e60e3c09c49440970f7779461fc70868669f5f97abf67e222",
+      "after": "77a184fb54c6df0c9f2d5f008c6c497c158c4283c48d028270d8ceb198c5d7d0",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/REPORT.md",
+      "before": null,
+      "after": "d16be2e99cf251ba7321c895593a3b05aa3202f3f34e04653aa69879b889fb08",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/desktop-build4.log.txt",
+      "before": null,
+      "after": "14d6acb001b5fbf09128cb8008e5c2af26b7c40f21e80bee1111ee242e64fe73",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/desktop-build4.result.json",
+      "before": null,
+      "after": "54d54783a403c2c37fc6cbedabe156a2e74beb5e8829f7240d8bcb3e82f857f6",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-artifacts.log.txt",
+      "before": null,
+      "after": "9914f84c949ff32617474f6444a48f3445c667bf4412e85306f808d4b96a82ba",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-artifacts.result.json",
+      "before": null,
+      "after": "0878833de6b3db472db142a6022ea7718d5d17c396c6b3d0e42ede884a1f8b42",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-comms-compare.log.txt",
+      "before": null,
+      "after": "bc4fafa949a4dea2116433e7d880db1d721cb21a904dce8901f013160bd64201",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-comms-compare.result.json",
+      "before": null,
+      "after": "1e1c7ee32d6e189861165f13bf94f6bc3674a61de0cd920940d2ff5d1f4f11f6",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-comms-replay.log.txt",
+      "before": null,
+      "after": "2644fa7312eeb88242d6d925fae3eb1eb55cce5e4aed8b2feb34772163f94c91",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-comms-replay.result.json",
+      "before": null,
+      "after": "e0b92e0d5220116faecad35edebe44837bffbe55f51c95ed64297e82f6c3da33",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-contract.log.txt",
+      "before": null,
+      "after": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-contract.result.json",
+      "before": null,
+      "after": "07f626c5982110ea89995d77eecef0eb760198acd989c065e56328b902967bb5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-harness-preview.log.txt",
+      "before": null,
+      "after": "407dd8a3a825e2dc5edc528b8ce69b3717205fa079b081794c7d9f4ffb9111ec",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-harness-preview.result.json",
+      "before": null,
+      "after": "c7e77d755ea6552fd2809fa23b9e28c9db8e32eb49ddbade26b680960ecc5665",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-harness.log.txt",
+      "before": null,
+      "after": "b8982a6eaa1ccb07c1b5abdb945c20ca0823a5961caa3446f24f83d080f86fef",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-harness.result.json",
+      "before": null,
+      "after": "d826687e3da3658d8032c267a8b95cbd09e355d37211b6ec09efda3158221cf0",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-joint-e2e.log.txt",
+      "before": null,
+      "after": "653be2fa145187dacf872419c4ec125cd4018609c52fcc9ce43389b2a2ea3ca1",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-joint-e2e.result.json",
+      "before": null,
+      "after": "0e491056a8ea11209d92d1d1511f4feac17230ff8323ae1e6e997e0631c7582f",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final-joint-e2e.tests.json",
+      "before": null,
+      "after": "0a0611fc63126c53edb3f65646d9d73dff37502cab673cb06c536f26a2bda0e5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-a4.log.txt",
+      "before": null,
+      "after": "cfb71803ab15b9209be20523c83788a7becbb648e01a26ed5cfc78cbed54c9aa",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-a4.result.json",
+      "before": null,
+      "after": "5c958ad5fbcae5d00b6854ad7c5c7a985f7e9e76752c8c517e2a5106936a8550",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-a4.tests.json",
+      "before": null,
+      "after": "90885638777f33d1e80712595f82e552fb053e69668e7572d6499f57aa86e6ed",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-durable.log.txt",
+      "before": null,
+      "after": "f7d0b01da1e251b34bf9f7c8bb89e82f310a318f96b2c461f202fd948235ebad",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-durable.result.json",
+      "before": null,
+      "after": "563633e0d5a57e97ca5bbf472d144a003f244e236e3ac0bbe6ca699df9c9dd13",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-durable.tests.json",
+      "before": null,
+      "after": "d1c96ee8e20e6ce8d722f067f2e20dde56d6e55319d0c3fd616b0549abd564c7",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-focused-e2e.log.txt",
+      "before": null,
+      "after": "74fa753b387d6bc0b26d688d91f49bcb910ba71a6780f76b0b8958a66481f323",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-focused-e2e.result.json",
+      "before": null,
+      "after": "f1079e4923ac1d9b67f0bd34968d181a352d0aa27c2226669f158e37bc8867c5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-focused-e2e.tests.json",
+      "before": null,
+      "after": "93cbcd8c5c3d2ee77642c4f22852ef32e645956f4b09159528ef94f910154bf9",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-joint.log.txt",
+      "before": null,
+      "after": "a3fd1d71babfd0c036ce86f1dc8208e45659885a8e058e5f20ab86f6be6a3a2c",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-joint.result.json",
+      "before": null,
+      "after": "00a302e6e0f9109e089a0959a3088232c189c546c5f1b063483b25cc3b0b8097",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-joint.tests.json",
+      "before": null,
+      "after": "54106cd3e849666def7ddab8715c0b71ffaeab73b9d44fc35bc044c81923b867",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-mission.log.txt",
+      "before": null,
+      "after": "fc1862e5b29e3079ba2bb4854ff77cd3fcd15784acf13ba88952bd7354787281",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-mission.result.json",
+      "before": null,
+      "after": "afc4e3c50c4556547220cf533fef9408ae3fd8bb6e88480e66c4bf14ef5b1635",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-mission.tests.json",
+      "before": null,
+      "after": "5201ad08e4146293bb3cfdbca29698b9dd412a9c43976c48083020890c979072",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-node.log.txt",
+      "before": null,
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-node.result.json",
+      "before": null,
+      "after": "6cd594bc8d6492554cae24e82e7a2d264231e25d0895c207beb8527a8c8ceb7e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-test.log.txt",
+      "before": null,
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-test.result.json",
+      "before": null,
+      "after": "cbce60dc52d3359a4eba49c8291ba528de48a72aadb67b01092ef13b01f11b57",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-web.log.txt",
+      "before": null,
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-web.result.json",
+      "before": null,
+      "after": "7372e285d133252b3af3ec75b6fec03da7d65cfcec63d6dea408dd72a53d30a5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-writers.log.txt",
+      "before": null,
+      "after": "c396952fca2a0a542eddbe6c893ec8f53ad80bd7c8e2043475b3fe99f6c38a38",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-writers.result.json",
+      "before": null,
+      "after": "918ccf298fd218158eda58ad87ff79783cebfb6bb3707d76f87b9d62fd067578",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/final2-writers.tests.json",
+      "before": null,
+      "after": "ac85d8c4f65c8c37267f41a85902756de891138fa346aef059628b382ff18790",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/runtime-build4.log.txt",
+      "before": null,
+      "after": "0de5da0744881e794ac2f33e02ec48845313b4fb4a09472ef35fe671dca88e68",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/commands/runtime-build4.result.json",
+      "before": null,
+      "after": "7b856bf3686790aa0f2cb83b66030003eec293f8c0c2ce74a0c616399c3a7c0d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/credential-scan.json",
+      "before": null,
+      "after": "676e6f0c8d6e7e6613be864f47c95ccd5081d5742bcb0ca9151c033dd3ad6b29",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/failures/electron-joint.log.txt",
+      "before": null,
+      "after": "96cd4a4e910ece7a879422c457ba9fd484b78fb42f13ef45d3618ab595a11618",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/failures/electron-joint.result.json",
+      "before": null,
+      "after": "4616ba8df44266dba18210ea6c8a9add023abd562718ed632c1d21f77f53e95e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/failures/electron-joint2.log.txt",
+      "before": null,
+      "after": "99c73315de25053741b0ba3b56b20d13d51785a844bcb45553566e39572928bd",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/failures/electron-joint2.result.json",
+      "before": null,
+      "after": "f2ceb047aafd296f8cda1a7ac3193f1b6fde797be8d29ab4de927c4bf34857cb",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/failures/electron-joint3.log.txt",
+      "before": null,
+      "after": "f94a903cf45d1452a846c2089dd6b0d4ff3f9b4b17766f87dae594be91595512",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/failures/electron-joint3.result.json",
+      "before": null,
+      "after": "09a9bb54a77fcdaa7e6d254a83cefb9648995ec6ce383b261c87c884fdf5df52",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/failures/test-types.log.txt",
+      "before": null,
+      "after": "58c194526aef2254d0908ab61cb7d9ff8d7f45ca85f7dae64c6ca3eca3c3926f",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/failures/test-types.result.json",
+      "before": null,
+      "after": "190996c57ecf42d1b37227a3bbe367f4275838f6b956814b49f2eca7e6a5e7c4",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-task-scope-complet-38042-selected-canonical-contract/canonical-task-selection.json",
+      "before": null,
+      "after": "507b383c6dc89cc9e73e1751983393140ed85a7e9f18341742b7e930d44a69d5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-task-scope-complet-38042-selected-canonical-contract/canonical-task-selection.png",
+      "before": null,
+      "after": "f399bb0c12693b27049b100ebd88befaf0402402705a070d656b7fc53c201c34",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-task-scope-complet-4a108-ing-the-project-coordinator/scheduled-task-scope.json",
+      "before": null,
+      "after": "7f13fd129b096ffffd6b909f4bad784eb6937e78daf60ab88ce5f9b7f655ba37",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-task-scope-complet-b4f76-handoff-child-after-restart/session-task-runtime.json",
+      "before": null,
+      "after": "831dd766773c271a18957dc955735d7237c765263766f3dc6f199d89e6e41f54",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-6264b--parent-turn-remains-active/active-parent-transfer.json",
+      "before": null,
+      "after": "d75b3ddb71eb7fcbcbec25a89e893ccf67bf9aa8a687b62360ef5cb32c484bef",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/read-only-worker-navigation.png",
+      "before": null,
+      "after": "2ac0341a9cd32e3fd2fb06c08a96f40d79bbb44d54dfec19d62747ce6363d4a8",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/ui-diagnostic-0.png",
+      "before": null,
+      "after": "e504a96a49d23310de91c37af69679d5423359ede1d8c89ebf79a9041926095a",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/ui-diagnostics.json",
+      "before": null,
+      "after": "0f0edbab28a476876dba845067fde94b331f2ade6427ee68d5cad7a709ecd15e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/worker-lifecycle.png",
+      "before": null,
+      "after": "f5ebfaac757f1ad5d3c5d672a70f7a074b53055b66dd5a5cd2cef9adbfd73fac",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/worker-queue-reconciled.png",
+      "before": null,
+      "after": "052c432cdc3938b3b50ecfbfefb7996553ec0245246f33fcee54f8a6a44513a0",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/worker-task-artifact.png",
+      "before": null,
+      "after": "6564738eefcfc4b36d4c423eeb4397e3cb9893588c5a17f8e9fddfc1621375f9",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/worker-task-journey.json",
+      "before": null,
+      "after": "2947bf0016502d3d56887f54de36d855d55d2106542d218eb68b269807afd045",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/worker-task-transcript.png",
+      "before": null,
+      "after": "d41d8cc450cd4ef43bc1d295c00c313a2ccc06972856b81087ab1006240497a1",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/unified-effect-admission-a-8fbae-r-until-the-owning-run-ends/joint-effect.json",
+      "before": null,
+      "after": "6a63a8a4096bb347804bd4be7477c29a5860321f7e3f657f893293a4f1eb5e54",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final-joint-e2e/unified-effect-admission-a-8fbae-r-until-the-owning-run-ends/joint-writers.png",
+      "before": null,
+      "after": "264c400f04c467f15d6418d75b85fea1e2bc461f561fae83e56593803f747ed6",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final2-focused-e2e/session-worker-task-journe-6264b--parent-turn-remains-active/active-parent-transfer.json",
+      "before": null,
+      "after": "9173b078893e6a9e7704c229b6a5fbcd939bcb3d8bfdb29d17df8caafcbb8b02",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final2-focused-e2e/unified-effect-admission-a-8fbae-r-until-the-owning-run-ends/joint-effect.json",
+      "before": null,
+      "after": "3251bd5b39f6d44d14a58729a2311ceaa5131e83fcdaa1088aa484764c4fa0a8",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/journeys/final2-focused-e2e/unified-effect-admission-a-8fbae-r-until-the-owning-run-ends/joint-writers.png",
+      "before": null,
+      "after": "9481483d2cd20684bfe7579ba96fdac08942eb275920525e5b09cc6453ece01e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/manifest.json",
+      "before": null,
+      "after": "6cc3c5dd7c638e9f56427029f574273060de28dad034f0a9ce0e4b019b2ecb57",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/report.json",
+      "before": null,
+      "after": "8a84974d4e3fb5b5e123088f9da9b4d36bc30671b5f7a34f1cb0aa53920cf351",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/review/checkout-transfer-review.md",
+      "before": null,
+      "after": "d0d459fdd485cf09f4ec761b48a93f9a366349de9771f3f196bf351f4ad0e1bc",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/review/joint-admission-lifetime-review.md",
+      "before": null,
+      "after": "485304eb451b876e2ef5c42ad793e3b8604a75a412c1f9d8be438b662372f11e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/review/joint-authority-routing-review.md",
+      "before": null,
+      "after": "f6108f11e98696cd9baad5c0cd5b109aa20e9abb553d127b7b92188e9be533b5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/review/joint-code-review.md",
+      "before": null,
+      "after": "9429de72ec5dfb7be4917012ab276b987f1c040d3ca08b77d543f9f2cad8b093",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/unified-effect-admission/20261109/verify.py",
+      "before": null,
+      "after": "cb3c0dee0643f3f49089cd37c6012448503fcfa19eaa58e5fd9abce6c735a914",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/guides/checkout-writer-ownership.md",
+      "before": "67d547be2a81377a6f3a24100ed01674ae9fd9f4a03a044d5c3be3530c2d6ece",
+      "after": "f7743e7cf312ec077a4c9d02dc76eaa5b89ca35a9765fb09700a66288f0df7ff",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/tasks/unified-effect-admission.md",
+      "before": null,
+      "after": "2df9d7227ff3b3a134d1211b40374ab7d30f664231baac1cbe3e42b34bc4b4c9",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tool-definition-adapter.ts",
+      "before": "1016d07f8472c848f4f0cc319aa9c56d1fb27a5b7dfde6f9c3cb0e39b6a1c976",
+      "after": "92fb06b01ed55c893e49782c4876b28762e33171ecc71f5eff38029fe925940e",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+      "before": "6a4af2a6c21ad0d91d39b2ae00cc736b898c1d191137ccbe9d8dcbf4dbe24330",
+      "after": "9caa09bb3d9853c761bc81b6a5aa27116997ff8745e88cc18b4c1a294e85c3c9",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "before": "6c595d5808ce9ee00d40a98b2492eece5994f631c8e6a64842b154a96dc69199",
+      "after": "d68594ff4dc371926fa899623bfa4cf5d0963ba27a8df9d5fa03e7c3e7f2375e",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-checkout-admission.ts",
+      "before": null,
+      "after": "a9801b2af12da4582d6cb70e37b276b97262d8b7479f29287f0f4b940fc6e835",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-checkout-tools.ts",
+      "before": null,
+      "after": "6762eeec0f020fbccaea21c98cc532ac6cdb5fa0631791bf921cccf0f2d3782f",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-domain.ts",
+      "before": "32eaf554e22c402f3e781f6044cb0039875cb051a68e12c5f5ed958c790aaa2a",
+      "after": "c613d98698dc939623c1dcb968f447db4011b381b0daddd59052cb9e84902f4c",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-authority.ts",
+      "before": null,
+      "after": "14ae84289b9ea0dcac2c65d0ebccde784a8d8c5b104aa02986b0ef69383eb9e7",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+      "before": "1506a2e3b51cc8fe1317692c124ae21e4f53eaaa45541b9e3d9171e288b59a0b",
+      "after": "360ce87cb1df891b7017afa5e178a46e88d5f19a7baeeee1628b19d062cab1ef",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/managed-task.test.ts",
+      "before": null,
+      "after": "e2b447397d4ea484977f5399b6ae22746d162e378d4f5c72eae7023869a39ae5",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/managed-task.ts",
+      "before": null,
+      "after": "05f2b63cf336b9153840848d846bc8f625e3810914e68c7fc59b039ffebff969",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/types.ts",
+      "before": "926e678971e3c9e9a88a752e00acfff2e1fb63504f53c5828e2aa7cebd61e8fd",
+      "after": "46711efb0648649893ff65a349ed7108341a0e5ec5b3caef377a44ccd07214a5",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/openclaw-tools.ts",
+      "before": "24d392b4d5b06789832c5d83b872375764f7949696c25c75151006c6b31e6f0d",
+      "after": "aa9f13bfc9cc5d55cc11d1b62405fb0a427b8530d1151f5a0d12ed32c32e6f8e",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/persistent-task-delegation.ts",
+      "before": "d8f093cd480a978394293b04746aa9dea83186163ae46f8d1af9c8461db63a14",
+      "after": "02cc5823724aad3ad60b20814fd633078ad72ca0e84c68880ffcc607a20b1f57",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/session-task-scope.ts",
+      "before": "e76800112d04e72e165230a8ba5ff21131bfcc7c87fc4f53cc990bd3b4414d45",
+      "after": "43d6ba70bc1a0e6a41bdd182e9ce81e2bfd78964b4862b606025a21085d65ef9",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "before": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "after": "34aea2163e308bbcb70b4f2c5b6124277069663f35d30689a2e8ea5e8a35f818",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/mission-loop-tool.ts",
+      "before": "18b627fe62c303d972a32fc0f39af08d88b8cedb2b01d96058095ba2295b2133",
+      "after": "a53b0eccbed7631a299619db6d8158fc1dded9bb9b4872352cc293f039885a2a",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+      "before": "0eb8faa3d458c4a49b2832f014d6a90ad2d7e7e000e476437d59b4339d2c3758",
+      "after": "433a705ccc3d25d9582a74ec49ab0c97a013d075e56a86b91d9c8fa5a7ed2538",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+      "before": "aaf6c81bc38a5f6cba1b1a8338eaa55a98712e5a9700877f5071bc35ccb9088c",
+      "after": "59ae50e0d519525a7fe61b843792683401d9fefb71b177dcd22a25d358e8d296",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-registry.ts",
+      "before": "1ceb8b4898b1a4f4e05536dd79f835fbc55ac3b75fe774ba65a7a05d30cb60dd",
+      "after": "5bdaf4c0863b567f5afd9c97f44fab5673063c8431c9cb417645c1726ca1fd9a",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-service.ts",
+      "before": "fa3e0d447b40fcbdeb9a3791d5edd0d753eefb5dc25a5591ff60d775632afb98",
+      "after": "3ddf5f9cbdc25ae00301ecc09f3f7678ed21ae8045bb362b2e8bf266507ba63a",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-writer.ts",
+      "before": "3d7e9718d7845fd614a006e74d123911a75493b694e05f9abc680ee94aa82403",
+      "after": "aecc42280ee6c37b74eb75c3d28b02e5de389ad0fbe7426d31b6c31671e4693c",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/mission-control-methods.ts",
+      "before": "5b51edb9de04bcca0c0f6005b884da1db9c11675eb5346758d5d24a74f2bb5fa",
+      "after": "5ebaa1f0bac198399bd479b6266790cd086295cf1806f15475dc0c69da1a65d0",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+      "before": "031f4729d209563728b1b0ab96dfbfd88270bf4587d7470e5634943eb209295b",
+      "after": "501ef6385cfa74ea3548dcc77554cfcc67bc52e56de6a335a591b14055596f04",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts",
+      "before": "1fd80be8d4b405c9240bfa5496f4fd13f9f1824394d4e91a24443a35664358f6",
+      "after": "0f07438b89417104f7ecbd11ec531cd7b9a7f3caff5a78a714bbac59b4c26694",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/tasks.ts",
+      "before": "0e054bef80764d698dea1c95c0b7343b3a3476b7a85b5ab2a21a13639fcf4a05",
+      "after": "fd40d4daa1bd87edd0ba2d9b723dc9591f78e52015cf58061538b2d5e50a35a1",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/infra/agent-events.ts",
+      "before": "8b0b221a1ef225ea4e65f9d32be363fafb06e2756beeaf78a0012cbb9e35c7a0",
+      "after": "24f13a21778f66fb72ec27638e35b1f603f837dd25addc62463484c74486ad39",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/state/execution-state-db.ts",
+      "before": null,
+      "after": "3ecd45a0f0c6925ca9248b5a1c51c1260d36fae2d0d15b5f1cae675a9c3478f9",
+      "overlay": false
+    },
+    {
+      "path": "shared/checkout-ownership.ts",
+      "before": null,
+      "after": "748c21cd5b9aafdc9c430026f51bf295143fdfd502786c60d7b868cffa2975c9",
+      "overlay": false
+    },
+    {
+      "path": "shared/session-task-scope.ts",
+      "before": "62163af6e98006ea1e409ca9d88784c98478ccc6d63d63f52de38d94814f1007",
+      "after": "9772c6c0e5677ea15711f2f830bff739db875d6708230989ebc0bd273ab5cf76",
+      "overlay": false
+    },
+    {
+      "path": "shared/task-system/identity.ts",
+      "before": "b18fddf63c62baf881a8d0e9a39eb8726a75ab1b0c6abdd0ee933704c9432d31",
+      "after": "0662a28fde847191cb41a86ba281eab7ebec4280470456e8a505998935ea6ca1",
+      "overlay": false
+    },
+    {
+      "path": "shared/task-system/runtime.ts",
+      "before": "f540f6f5386401780d8c3010ae2320a8452d42bcc4244ed753397fe5218ed704",
+      "after": "170443ea6d495c8d026d54077023f5bdbbfbdecce2d328eb5be156a59b14d575",
+      "overlay": false
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "before": "c9a70949e8780b11ca126086150c2c89764e5d225c9b74178dc9c55bac5fb6a0",
+      "after": "86a25309ee024b5f2a4a873f9af9608df72b84564b10c8e81efadcc60b365bb7",
+      "overlay": false
+    },
+    {
+      "path": "shared/task-system/types.ts",
+      "before": "530e919fb4f801fc8f583d93d8dc97e4c3ea0b86f970b2c7b0ac6c0580c055df",
+      "after": "efb2e5be3480ee94bd007761a3c665d1d4666b7db22c708b573d1e80a27f4445",
+      "overlay": false
+    },
+    {
+      "path": "tests/e2e/unified-effect-admission.spec.ts",
+      "before": null,
+      "after": "6aae57b6f5f15e35f9e8e8678d99ca31a10600595ae61c4d8a07dd96c29da4c1",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/checkout-writer-ownership.test.ts",
+      "before": "efa430b2e70b41b10e703206833c9a8e1d33afee27a41f2960c12826576c0607",
+      "after": "1196e2d8dc4c4fd0ea21576ecb7589216ee0af1b250fe71a09faad57d1069901",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/durable-task-authority-access.test.ts",
+      "before": null,
+      "after": "511371a00e0f204d220dfa96e13c93ce0acc00fdf16904b8d4c2a74933efc313",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/gateway-process-launcher-env.test.ts",
+      "before": "6af8389675605421dd7527c13bdc7605cb98bfa12077be8c6eeb1b99e26370b4",
+      "after": "90df02b09a722c56bff86b51ef93a719805fcf9dc8b73078c97b136c879c8337",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/mission-control-loop.test.ts",
+      "before": "b1cc40a2d04c54cb593f4d2d976595f228a8f1bc02451726427314b9b1cf0539",
+      "after": "8bf99c3e2964b22d4874357485ee53fe4f4f0c8b500f425532e2139fd59d8908",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/session-task-scope-completion.test.ts",
+      "before": "90455b7a0cf8ddfb79cb3db1f4afe6809961d880ee4b3a340460f3fc1743a649",
+      "after": "b17389fb3f893665c4aa273a52e28d48d4552e53ee03833c88e7ccb5c574d3e7",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/unified-effect-admission.test.ts",
+      "before": null,
+      "after": "22a397145203a31df343643ac09f0c31b2cea2c0cb23a6152756b4a55c9b8894",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/unified-task-authority.test.ts",
+      "before": null,
+      "after": "c2d2359c29894a7f275bc5a5abb4b7e7d163c7ef5a564c0f894cfa9581f210ba",
+      "overlay": false
+    },
+    {
+      "path": "vitest.unified-effect.config.ts",
+      "before": null,
+      "after": "71e443a211f5bd5f05e0dbeed835718177dec10fc2363d70d0c665eac023108f",
+      "overlay": false
+    }
+  ],
+  "status": "integrated",
+  "indexInitiallyEmpty": true,
+  "commit": "ebd7907554d3ad432447b61f2203fbd15e2488b4",
+  "treeMatches": true,
+  "driven_by": "agent",
+  "actor": "codex",
+  "acceptedNode": "TF-0865",
+  "sourceEvidence": "harness/specs/fixtures/unified-effect-admission/20261109/report.json",
+  "mainClean": false
+}

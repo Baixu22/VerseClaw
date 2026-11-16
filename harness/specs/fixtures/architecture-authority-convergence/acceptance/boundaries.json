@@ -1,0 +1,31 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "candidate": {
+    "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+    "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+    "dirty": false
+  },
+  "baseline": "3a362590d6b54e1e2083ec626d4cb9553905a3ad",
+  "protectedPaths": [
+    "electron",
+    "src",
+    "openclaw_runtime",
+    "shared/dcs/prod-flags-catalog.ts",
+    "shared/types/workspace.ts",
+    "shared/permission-effect-contract.ts",
+    "docs/dev/default-config-matrix.md",
+    "docs/clawx-product-semantics.md",
+    "package.json",
+    "pnpm-lock.yaml",
+    "scripts/check-semantic-authority.mjs"
+  ],
+  "protectedDiff": [],
+  "gapCounts": {
+    "description-gap": 18,
+    "external-owner": 16,
+    "implementation-gap": 1
+  },
+  "gapSourceHashesVerified": 35,
+  "structuralExceptionDelta": "Only add X-04 not-comparable for active internal retirement registry vs baseline activation. Original 54 entries and checker rules unchanged."
+}

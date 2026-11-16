@@ -1,4 +1,5 @@
 import { delegateCompactionToRuntime } from "../delegate.js";
+import { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "./identity.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { createRuntimeCapabilityStateGenerationGuard } from "../../runtime-core/model-capability-effective-state.js";
 import type { ContextStatusSnapshot } from "../../../../shared/types/context-family.js";
@@ -29,8 +30,7 @@ import {
   type ModelCapabilityPromptStateInput,
 } from "../model-capability-prompt.js";
 
-export { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "../types.js";
-import { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "../types.js";
+export { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "./identity.js";
 
 export type ContextRuntimeKitContextEngineOptions = {
   fixtureInput?: CvkCompilerFixtureInput;

@@ -1,5 +1,7 @@
 import { mkdirSync } from "node:fs";
+import { assertManagedPortsBindable, reconcileManagedProcessReservations } from "./managed-process-reservation.js";
 import { join } from "node:path";
+import { ByteTail } from "../byte-tail.js";
 import type { JsonObject, Observation } from "../../../../shared/verseshell/types.js";
 import type { TerminationReason } from "../../process/supervisor/types.js";
 import {
@@ -8,11 +10,13 @@ import {
   GovernedVerseShellError,
 } from "./governed-exec.js";
 import type { VerseShellProcessManager } from "./process-manager.js";
+import type { VerseShellAciClient } from "./aci-client.js";
 import {
   admitManagedProcess,
   resolveManagedProcessDefaultLimits,
   type ManagedProcessLease,
 } from "./managed-process-capacity.js";
+import type { ManagedProcessIdentity } from "./managed-process-reservation.js";
 import {
   resolveVerseShellCommandPlan,
   type VerseShellCommandPlan,
@@ -61,6 +65,7 @@ type LifecycleSnapshot = LifecycleIdentity & {
   timedOut: boolean;
   terminationReason?: string;
   cursor: number;
+  nextCursor: number;
   artifacts: string[];
 };
 
@@ -83,6 +88,7 @@ export type GovernedVerseShellProcessExit = {
 };
 
 export type GovernedVerseShellProcessHandle = {
+  executorKey: string;
   processId: string;
   runtimeId: string;
   pid: number;
@@ -138,6 +144,8 @@ export type GovernedProcessResourceReceipt = {
 };
 
 export type GovernedVerseShellProcessOptions = {
+  /** Host-declared local TCP ports, reserved before process.start. */
+  reservedPorts?: readonly number[];
   command: string;
   /** Host-owned argv produced before approval. */
   argv?: readonly string[];
@@ -154,6 +162,8 @@ export type GovernedVerseShellProcessOptions = {
   usePty: boolean;
   agentId: string;
   sessionId: string;
+  /** Optional task-scope identity; omitted by legacy/direct callers and treated as unknown. */
+  identity?: ManagedProcessIdentity;
   /** Host-owned parent trace for the complete lifecycle, never taken from operation args. */
   traceId?: string;
   hostPolicyApproved: boolean;
@@ -233,6 +243,10 @@ function parseSnapshot(
 
   const output = asRecord(data.output, "$observation.data.output");
   const cursor = integer(output.cursor, "$observation.data.output.cursor");
+  const nextCursor = output.next_cursor === undefined ? cursor : integer(output.next_cursor, "$observation.data.output.next_cursor");
+  if (nextCursor < cursor || (nextCursor > cursor && cursor === priorCursor && state !== "running")) {
+    throw new GovernedVerseShellError("E_VERSESHELL_LIFECYCLE_CURSOR", "Terminal output cursor cannot make progress");
+  }
   if (cursor < priorCursor) {
     throw new GovernedVerseShellError(
       "E_VERSESHELL_LIFECYCLE_CURSOR",
@@ -281,6 +295,7 @@ function parseSnapshot(
       ? data.termination_reason
       : undefined,
     cursor,
+    nextCursor,
     artifacts,
   };
 }
@@ -384,7 +399,12 @@ export async function startGovernedVerseShellProcess(
   };
   // Instance-wide occupancy is admitted before the process starts so several sessions cannot
   // each assume they own the whole declared capacity. No declaration means no counter.
-  const capacityAdmission = admitManagedProcess();
+  await reconcileManagedProcessReservations();
+  const capacityAdmission = admitManagedProcess({
+    ports: options.reservedPorts,
+    owner: `${options.agentId}:${options.sessionId}`,
+    ...(options.identity ? { identity: options.identity } : {}),
+  });
   if (!capacityAdmission.ok) {
     throw new GovernedVerseShellError(
       "E_PROCESS_CAPACITY_LIMIT",
@@ -411,72 +431,90 @@ export async function startGovernedVerseShellProcess(
     ...(appliedLimits.maxProcesses === undefined ? {} : { max_processes: appliedLimits.maxProcesses }),
   };
 
-  prepareVerseShellLifecycleRoot(baseConfig.workspace);
-  const firstClient = await manager.getClient(baseConfig);
   const traceId = options.traceId?.trim() || `verseshell-process:${options.sessionId}`;
   const releaseCapacity = (): boolean => capacityLease.release();
-  const first = await firstClient.execute("process.start", startArgs, {
-    timeoutMs: POLL_REQUEST_TIMEOUT_MS,
-    effectful: true,
-    traceId,
-  });
-  let client = firstClient;
-  let startObservation = first;
-  if (first.error?.code === "E_NEEDS_APPROVAL") {
-    if (!options.hostPolicyApproved) {
-      releaseCapacity();
-      throw observationError(first);
-    }
-    const token = approvalToken(first);
-    if (!token) {
-      releaseCapacity();
-      throw new GovernedVerseShellError(
-        "E_VERSESHELL_APPROVAL_CONTRACT",
-        "VerseShell did not return a valid action-bound approval token",
-      );
-    }
-    client = await manager.getClient({ ...baseConfig, approvalToken: token });
-    startObservation = await client.execute("process.start", startArgs, {
+  let firstClient: VerseShellAciClient | undefined;
+  let client: VerseShellAciClient | undefined;
+  let approvalRequired: boolean;
+  let snapshot: LifecycleSnapshot;
+  let startMayHaveRun = false;
+  let releaseExecutor: (() => Promise<void>) | undefined;
+  const dispatchStart = async (target: VerseShellAciClient): Promise<Observation> => {
+    // A transport rejection cannot prove that an effectful start was not delivered.
+    capacityLease.markDispatched();
+    startMayHaveRun = true;
+    const observation = await target.execute("process.start", startArgs, {
       timeoutMs: POLL_REQUEST_TIMEOUT_MS,
       effectful: true,
       traceId,
     });
-  }
-  if (!startObservation.ok) {
-    if (client !== firstClient) await manager.shutdownProcess(client.processKey);
-    releaseCapacity();
-    throw observationError(startObservation);
-  }
-  if (hasRequestedLimits) {
-    // The executor rejects unknown arguments and fails closed when the Job cannot be configured,
-    // so a started process means the limits were applied to its Job Object.
-    resourceReceipt.enforced = true;
-    resourceReceipt.enforcement = "job-object";
-    resourceReceipt.evidence = "job-object-configured";
-    resourceReceipt.detail =
-      "Job Object limits accepted at process start; the executor fails closed when " +
-      "SetInformationJobObject or AssignProcessToJobObject fails. The bundled executor exposes no " +
-      "QueryInformationJobObject readback, so effective kernel limits are not queried: " +
-      "maxMemoryBytes maps to the Windows per-process commit limit (JOB_OBJECT_LIMIT_PROCESS_MEMORY), " +
-      "which is neither RSS nor a job-wide total, and maxProcesses maps to " +
-      "JOB_OBJECT_LIMIT_ACTIVE_PROCESS for the whole tree.";
-  }
-  if (hasRequestedLimits && requestedLimits.requireEnforcement && !resourceReceipt.enforced) {
-    await manager.shutdownProcess(client.processKey);
-    releaseCapacity();
-    throw new GovernedVerseShellError(
-      "E_PROCESS_RESOURCE_LIMIT_UNSUPPORTED",
-      resourceReceipt.detail ?? "resource limits unsupported",
-    );
-  }
+    startMayHaveRun = observation.ok;
+    return observation;
+  };
 
-  let snapshot = parseSnapshot(
-    startObservation,
-    undefined,
-    0,
-    options.onStdout,
-    options.onStderr,
-  );
+  try {
+    await assertManagedPortsBindable(options.reservedPorts ?? []);
+    prepareVerseShellLifecycleRoot(baseConfig.workspace);
+    firstClient = await manager.getClient(baseConfig);
+    client = firstClient;
+    releaseExecutor = manager.retainProcess(client.processKey);
+    const first = await dispatchStart(firstClient);
+    approvalRequired = first.error?.code === "E_NEEDS_APPROVAL";
+    let startObservation = first;
+    if (first.error?.code === "E_NEEDS_APPROVAL") {
+      if (!options.hostPolicyApproved) throw observationError(first);
+      const token = approvalToken(first);
+      if (!token) {
+        throw new GovernedVerseShellError(
+          "E_VERSESHELL_APPROVAL_CONTRACT",
+          "VerseShell did not return a valid action-bound approval token",
+        );
+      }
+      client = await manager.getClient({ ...baseConfig, approvalToken: token });
+      const approvedRelease = manager.retainProcess(client.processKey);
+      const deniedRelease = releaseExecutor; releaseExecutor = approvedRelease;
+      await deniedRelease();
+      startObservation = await dispatchStart(client);
+    }
+    if (!startObservation.ok) throw observationError(startObservation);
+    if (hasRequestedLimits) {
+      // The executor rejects unknown arguments and fails closed when the Job cannot be configured,
+      // so a started process means the limits were applied to its Job Object.
+      resourceReceipt.enforced = true;
+      resourceReceipt.enforcement = "job-object";
+      resourceReceipt.evidence = "job-object-configured";
+      resourceReceipt.detail =
+        "Job Object limits accepted at process start; the executor fails closed when " +
+        "SetInformationJobObject or AssignProcessToJobObject fails. The bundled executor exposes no " +
+        "QueryInformationJobObject readback, so effective kernel limits are not queried: " +
+        "maxMemoryBytes maps to the Windows per-process commit limit (JOB_OBJECT_LIMIT_PROCESS_MEMORY), " +
+        "which is neither RSS nor a job-wide total, and maxProcesses maps to " +
+        "JOB_OBJECT_LIMIT_ACTIVE_PROCESS for the whole tree.";
+    }
+    if (hasRequestedLimits && requestedLimits.requireEnforcement && !resourceReceipt.enforced) {
+      await manager.shutdownProcess(client.processKey);
+      throw new GovernedVerseShellError(
+        "E_PROCESS_RESOURCE_LIMIT_UNSUPPORTED",
+        resourceReceipt.detail ?? "resource limits unsupported",
+      );
+    }
+    snapshot = parseSnapshot(startObservation, undefined, 0, options.onStdout, options.onStderr);
+    // Observation enriches recovery; inability to inspect the tree never grants
+    // a slot release. The native terminal receipt still owns that decision.
+    await capacityLease.observeProcess(snapshot.pid).catch(() => undefined);
+  } catch (error) {
+    if (!startMayHaveRun) {
+      try {
+        await releaseExecutor?.();
+      } finally {
+        releaseCapacity();
+      }
+    } else {
+      capacityLease.markUnknown("native-start-outcome-unconfirmed");
+    }
+    throw error;
+  }
+  const activeClient = client!;
   const identity: LifecycleIdentity = {
     process_id: snapshot.process_id,
     runtime_id: snapshot.runtime_id,
@@ -488,7 +526,7 @@ export async function startGovernedVerseShellProcess(
 
   const write = (data: string, eof: boolean): Promise<void> => {
     writeChain = writeChain.then(async () => {
-      const observation = await client.execute(
+      const observation = await activeClient.execute(
         "process.write",
         { ...ownerArgs(identity), data, encoding: "utf8", eof },
         { timeoutMs: POLL_REQUEST_TIMEOUT_MS, effectful: true, traceId },
@@ -543,16 +581,16 @@ export async function startGovernedVerseShellProcess(
   const waitPromise = (async (): Promise<GovernedVerseShellProcessExit> => {
     let retries = 0;
     try {
-      while (snapshot.state === "running") {
+      while (snapshot.state === "running" || snapshot.cursor < snapshot.nextCursor) {
         let observation: Observation;
         try {
-          observation = await client.execute(
+          observation = await activeClient.execute(
             "process.poll",
             {
               ...ownerArgs(identity),
               cursor: snapshot.cursor,
               max_bytes: 64 * 1024,
-              wait_ms: POLL_WAIT_MS,
+              wait_ms: snapshot.state === "running" ? POLL_WAIT_MS : 0,
             },
             { timeoutMs: POLL_REQUEST_TIMEOUT_MS, traceId },
           );
@@ -581,18 +619,28 @@ export async function startGovernedVerseShellProcess(
     } finally {
       settled = true;
       stdin.destroy();
-      await manager.shutdownProcess(client.processKey);
+      if (snapshot.state === "running") capacityLease.markUnknown("native-terminal-outcome-unconfirmed");
       // Capacity is only returned once a terminal state was observed. If the wait ended in an
       // unknown state the slot stays occupied (and is visible as a leak) rather than being
       // released on an unverified exit.
-      if (snapshot.state !== "running") {
-        releaseCapacity();
+      let portReleaseConfirmed = false;
+      try {
+        if (snapshot.state !== "running") {
+          await assertManagedPortsBindable(options.reservedPorts ?? []);
+          portReleaseConfirmed = true;
+          await releaseExecutor?.();
+        }
+      } finally {
+        if (snapshot.state !== "running" && portReleaseConfirmed) {
+          capacityLease.markTerminal();
+          releaseCapacity();
+        }
       }
     }
   })();
 
-  const approvalRequired = first.error?.code === "E_NEEDS_APPROVAL";
   return {
+    executorKey: activeClient.processKey,
     processId: identity.process_id,
     runtimeId: identity.runtime_id,
     pid: snapshot.pid,
@@ -602,8 +650,8 @@ export async function startGovernedVerseShellProcess(
     wait: async () => await waitPromise,
     resourceReceipt,
     kill: async (reason = "manual-cancel") => {
-      if (settled) return;
-      const observation = await client.execute(
+      if (settled && snapshot.state !== "running") return;
+      const observation = await activeClient.execute(
         "process.kill",
         { ...ownerArgs(identity), reason, wait_ms: 0 },
         { timeoutMs: POLL_REQUEST_TIMEOUT_MS, effectful: true, traceId },
@@ -623,24 +671,28 @@ export async function executeGovernedVerseShellProcessObserved(
   const manager = getGovernedVerseShellManager(options.manager);
   const startedAt = Date.now();
   const deadlineAt = options.deadlineAt ?? startedAt + (options.timeoutMs ?? 60_000);
-  let stdout = "";
-  let stderr = "";
+  const executionPlan = options.executionPlan ?? resolveVerseShellCommandPlan({
+    command: options.command, argv: options.argv, cwd: options.cwd, env: options.processEnv,
+    allowExplicitShell: options.shellMode !== "argv",
+  });
+  const output = new ByteTail(Math.min(Math.max(1, options.maxOutputBytes), executionPlan.profileDefinition.maxOutputBytes));
   const handle = await startGovernedVerseShellProcess({
     ...options,
+    executionPlan,
     manager,
     onStdout: (chunk) => {
-      stdout += chunk;
+      output.append("stdout", chunk);
       options.onStdout?.(chunk);
     },
     onStderr: (chunk) => {
-      stderr += chunk;
+      output.append("stderr", chunk);
       options.onStderr?.(chunk);
     },
   });
-  const health = manager.list().find((entry) => entry.pid === handle.pid);
-  const processKey = health?.key ?? `process-pid-${handle.pid}`;
-  const managerKey = health?.key ?? processKey;
+  const processKey = handle.executorKey;
+  const managerKey = handle.executorKey;
   const exit = await handle.wait();
+  const stdout = output.text("stdout"), stderr = output.text("stderr");
   const success = exit.state === "exited" && exit.exitCode === 0 && !exit.timedOut;
   const observation: Observation = {
     schema: "verseshell.observation/v1",
@@ -656,6 +708,7 @@ export async function executeGovernedVerseShellProcessObserved(
       stderr: { text: stderr },
       ...(exit.terminationReason ? { termination_reason: exit.terminationReason } : {}),
       artifacts: exit.artifacts,
+      output_bytes: { raw: output.rawBytes, retained: output.bytes, omitted: output.omittedBytes },
     },
     meta: {
       elapsed_ms: Date.now() - startedAt,

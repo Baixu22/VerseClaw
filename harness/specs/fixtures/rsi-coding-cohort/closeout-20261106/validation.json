@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "RsiCodingValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-relay-verifier",
+  "candidate": {
+    "commit": "feca048d749ad123780b7015e6e945b15bfc50ec",
+    "dirty": false
+  },
+  "tests": {
+    "command": "node node_modules/vitest/vitest.mjs run tests/unit/rsi-coding-collector.test.ts tests/unit/rsi-live-grader.test.ts tests/unit/rsi-live-acceptance.test.ts tests/unit/rsi-benefit-eval.test.ts tests/unit/rsi-responses-provider.test.ts --maxWorkers=1",
+    "exitCode": 0,
+    "passed": 86,
+    "failed": 0,
+    "files": 5
+  },
+  "harness": {
+    "command": "node harness/src/cli.mjs -- validate --spec harness/specs/tasks/rsi-coding-collector.md",
+    "exitCode": 0,
+    "noDiff": false
+  },
+  "scopedTypecheck": {
+    "exitCode": 0,
+    "config": "tsconfig.rsi.json"
+  },
+  "fullTypecheck": [
+    {
+      "project": "node",
+      "exitCode": 2,
+      "errorCount": 29,
+      "rsiPaths": []
+    },
+    {
+      "project": "web",
+      "exitCode": 2,
+      "errorCount": 57,
+      "rsiPaths": []
+    },
+    {
+      "project": "test",
+      "exitCode": 2,
+      "errorCount": 121,
+      "rsiPaths": []
+    }
+  ],
+  "dependencies": {
+    "freshInstall": false,
+    "reused": true,
+    "interruptedTypecheckScript": "pnpm auto-install began; stopped only the owned process tree, direct tsgo gates used subsequently."
+  },
+  "readmeReview": {
+    "files": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "changed": false,
+    "reason": "Existing diagnostic-only and no product-promotion boundaries remain correct; detailed collector behavior documented in capability boundaries."
+  }
+}

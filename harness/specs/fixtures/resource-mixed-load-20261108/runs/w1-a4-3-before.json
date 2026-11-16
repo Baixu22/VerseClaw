@@ -1,0 +1,6350 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "fixtureId": "resource-mixed-v1",
+  "fixtureSha256": "8e37c90dedcfb8f97c3a7e8a4f4b81915164a7553949e2a07577e270352aa357",
+  "workers": 4,
+  "windows": 1,
+  "variant": "before",
+  "sourceCommit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+  "status": "pass",
+  "expected": {
+    "build": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+    "corpus": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+    "retrieval": 241,
+    "logBytes": 524288
+  },
+  "semantics": "Scripted agent workers on the actual Main Fabric; real file/search/git/log/esbuild work; local HTTP wait; frozen chat history/stream; 128MiB controlled retained memory.",
+  "processBefore": {
+    "tree": {
+      "status": "ok",
+      "sampledAt": 1794161028672,
+      "rootPids": [
+        32572
+      ],
+      "processCount": 13,
+      "treeRssBytes": 1387868160,
+      "treeCpuTimeMs": 26406.25,
+      "treeCpuPercent": null,
+      "ownerEpoch": "bd62717f-c388-4902-abd8-7491a941acc2",
+      "processes": [
+        {
+          "pid": 32572,
+          "parentPid": 45072,
+          "creationToken": "134386346143437750",
+          "rssBytes": 592748544,
+          "privateBytes": 483086336,
+          "cpuTimeMs": 10281.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 42380,
+          "parentPid": 32572,
+          "creationToken": "134386346233417330",
+          "rssBytes": 58212352,
+          "privateBytes": 14303232,
+          "cpuTimeMs": 46.875,
+          "cpuPercent": null
+        },
+        {
+          "pid": 7752,
+          "parentPid": 32572,
+          "creationToken": "134386346238472080",
+          "rssBytes": 392237056,
+          "privateBytes": 272760832,
+          "cpuTimeMs": 6343.75,
+          "cpuPercent": null
+        },
+        {
+          "pid": 30344,
+          "parentPid": 32572,
+          "creationToken": "134386346248764980",
+          "rssBytes": 83144704,
+          "privateBytes": 59727872,
+          "cpuTimeMs": 2968.75,
+          "cpuPercent": null
+        },
+        {
+          "pid": 46924,
+          "parentPid": 32572,
+          "creationToken": "134386346259011410",
+          "rssBytes": 67149824,
+          "privateBytes": 48357376,
+          "cpuTimeMs": 2437.5,
+          "cpuPercent": null
+        },
+        {
+          "pid": 31516,
+          "parentPid": 32572,
+          "creationToken": "134386346262773560",
+          "rssBytes": 63389696,
+          "privateBytes": 35917824,
+          "cpuTimeMs": 1937.5,
+          "cpuPercent": null
+        },
+        {
+          "pid": 11244,
+          "parentPid": 32572,
+          "creationToken": "134386346266757640",
+          "rssBytes": 65785856,
+          "privateBytes": 40742912,
+          "cpuTimeMs": 1546.875,
+          "cpuPercent": null
+        },
+        {
+          "pid": 13780,
+          "parentPid": 32572,
+          "creationToken": "134386346270674380",
+          "rssBytes": 28962816,
+          "privateBytes": 19984384,
+          "cpuTimeMs": 734.375,
+          "cpuPercent": null
+        },
+        {
+          "pid": 43316,
+          "parentPid": 30344,
+          "creationToken": "134386346249721050",
+          "rssBytes": 7254016,
+          "privateBytes": 1306624,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 38972,
+          "parentPid": 46924,
+          "creationToken": "134386346260320990",
+          "rssBytes": 7254016,
+          "privateBytes": 1306624,
+          "cpuTimeMs": 31.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 42612,
+          "parentPid": 31516,
+          "creationToken": "134386346263672890",
+          "rssBytes": 7254016,
+          "privateBytes": 1327104,
+          "cpuTimeMs": 31.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 1176,
+          "parentPid": 11244,
+          "creationToken": "134386346267703590",
+          "rssBytes": 7258112,
+          "privateBytes": 1331200,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 44156,
+          "parentPid": 13780,
+          "creationToken": "134386346271652130",
+          "rssBytes": 7217152,
+          "privateBytes": 1318912,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        }
+      ],
+      "queueDepth": 0,
+      "queueWaitMs": 0,
+      "source": "windows-cim",
+      "machineCommit": {
+        "sampledAt": 1794161028672,
+        "committedBytes": 32920010752,
+        "commitLimitBytes": 54946947072
+      }
+    },
+    "handles": {
+      "status": "partial",
+      "rows": [
+        {
+          "pid": 32572,
+          "token": "134386346143437750",
+          "handles": 1206
+        },
+        {
+          "pid": 42380,
+          "token": "134386346233417330",
+          "handles": 332
+        },
+        {
+          "pid": 7752,
+          "token": "134386346238472080",
+          "handles": 396
+        }
+      ],
+      "total": 1934
+    }
+  },
+  "focusBeforeTyping": {
+    "attached": true,
+    "focused": true,
+    "value": ""
+  },
+  "workStartedAt": 1794161031222,
+  "work": {
+    "events": [
+      {
+        "id": 1,
+        "worker": 1,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 9.924399999999878,
+        "totalMs": 15.059000000001106,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 0,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 83.41319999999905,
+        "totalMs": 84.53110000000015,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 5,
+        "worker": 1,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 10.75210000000152,
+        "totalMs": 10.933000000000902,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 2,
+        "worker": 2,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 15,
+        "serviceMs": 98.10339999999997,
+        "totalMs": 113.38200000000143,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 3,
+        "worker": 3,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 15,
+        "serviceMs": 184.38810000000012,
+        "totalMs": 211.84039999999732,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 9,
+        "worker": 1,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 26,
+        "serviceMs": 151.96100000000297,
+        "totalMs": 214.2364000000016,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 7,
+        "worker": 3,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 90,
+        "serviceMs": 1.369699999999284,
+        "totalMs": 92.303100000001,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 6,
+        "worker": 2,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 112,
+        "serviceMs": 71.54130000000077,
+        "totalMs": 184.33510000000024,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 11,
+        "worker": 3,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 69,
+        "serviceMs": 1.3571999999985565,
+        "totalMs": 70.30529999999999,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 13,
+        "worker": 1,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 70,
+        "serviceMs": 2.4517000000014377,
+        "totalMs": 72.67989999999918,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 4,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 29,
+        "serviceMs": 350.3114999999998,
+        "totalMs": 379.9359999999979,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 39444,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 15,
+        "worker": 3,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 158.54190000000017,
+        "totalMs": 208.28219999999783,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 17,
+        "worker": 1,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 120,
+        "serviceMs": 13.941399999999703,
+        "totalMs": 134.33630000000267,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 10,
+        "worker": 2,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 3,
+        "serviceMs": 302.9086000000025,
+        "totalMs": 305.35889999999927,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 10836,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 8,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 120,
+        "serviceMs": 135.96320000000196,
+        "totalMs": 255.76860000000306,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 19,
+        "worker": 3,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 84,
+        "serviceMs": 42.49780000000101,
+        "totalMs": 125.73739999999816,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 12,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 1,
+        "serviceMs": 75.8752999999997,
+        "totalMs": 87.96190000000206,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 14,
+        "worker": 2,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 2,
+        "serviceMs": 99.02390000000014,
+        "totalMs": 101.49090000000069,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 23,
+        "worker": 3,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 87,
+        "serviceMs": 43.94789999999921,
+        "totalMs": 131.77470000000176,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 21,
+        "worker": 1,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 81,
+        "serviceMs": 211.46789999999964,
+        "totalMs": 292.66869999999835,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 18,
+        "worker": 2,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 32,
+        "serviceMs": 71.39939999999842,
+        "totalMs": 103.80099999999948,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 27,
+        "worker": 3,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 25,
+        "serviceMs": 161.91070000000036,
+        "totalMs": 188.66469999999754,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 25,
+        "worker": 1,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 124,
+        "serviceMs": 47.00249999999869,
+        "totalMs": 170.95699999999852,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 31,
+        "worker": 3,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 3,
+        "serviceMs": 0.7608000000000175,
+        "totalMs": 4.046699999998964,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 29,
+        "worker": 1,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 0.9176000000006752,
+        "totalMs": 1.6726999999991676,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 35,
+        "worker": 3,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 2.093299999996816,
+        "totalMs": 3.0372000000024855,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 16,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 12,
+        "serviceMs": 359.40869999999995,
+        "totalMs": 372.20960000000196,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 45392,
+              "closed": true,
+              "code": 0,
+              "signal": null
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 33,
+        "worker": 1,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 2,
+        "serviceMs": 154.77150000000256,
+        "totalMs": 156.89849999999933,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 39,
+        "worker": 3,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 161.77660000000105,
+        "totalMs": 161.85250000000087,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 37,
+        "worker": 1,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 43,
+        "serviceMs": 6.925900000002002,
+        "totalMs": 72.68309999999838,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 43,
+        "worker": 3,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 7,
+        "serviceMs": 1.9787999999971362,
+        "totalMs": 8.939500000000407,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 41,
+        "worker": 1,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 2,
+        "serviceMs": 1.0610999999989872,
+        "totalMs": 3.052299999999377,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 22,
+        "worker": 2,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 91,
+        "serviceMs": 320.0553000000036,
+        "totalMs": 411.5311999999976,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 756,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 47,
+        "worker": 3,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 39.13920000000144,
+        "totalMs": 40.20750000000044,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 20,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 122,
+        "serviceMs": 107.27940000000308,
+        "totalMs": 229.7577999999994,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 45,
+        "worker": 1,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 163.08490000000165,
+        "totalMs": 163.1163000000015,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 26,
+        "worker": 2,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 37,
+        "serviceMs": 122.09740000000238,
+        "totalMs": 158.4902000000002,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 24,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 77,
+        "serviceMs": 68.6111000000019,
+        "totalMs": 146.26150000000052,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 30,
+        "worker": 2,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 35,
+        "serviceMs": 77.79920000000129,
+        "totalMs": 112.73849999999948,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 28,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 77,
+        "serviceMs": 269.14010000000053,
+        "totalMs": 346.36989999999787,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 24424,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 34,
+        "worker": 2,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 230,
+        "serviceMs": 252.47059999999692,
+        "totalMs": 482.1798999999992,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 28552,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 32,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 217,
+        "serviceMs": 88.88389999999708,
+        "totalMs": 306.1550000000025,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 38,
+        "worker": 2,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 76,
+        "serviceMs": 88.1823000000004,
+        "totalMs": 164.8688000000002,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 36,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 76,
+        "serviceMs": 65.96869999999763,
+        "totalMs": 142.0454000000027,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 42,
+        "worker": 2,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 65,
+        "serviceMs": 63.08780000000115,
+        "totalMs": 128.21960000000036,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 40,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 63,
+        "serviceMs": 289.54139999999825,
+        "totalMs": 352.1275999999998,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 26572,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 46,
+        "worker": 2,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 252,
+        "serviceMs": 269.34439999999813,
+        "totalMs": 521.734800000002,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 40064,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 44,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 230,
+        "serviceMs": 100.0434000000023,
+        "totalMs": 330.18329999999696,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      }
+    ],
+    "samples": [
+      {
+        "at": 1794161031222,
+        "memory": {
+          "rss": 743104512,
+          "heapTotal": 189710336,
+          "heapUsed": 111402440,
+          "external": 143539083,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.00279,
+              "percentCPUUsage": 3.908719681042421,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 725688,
+              "peakWorkingSetSize": 725688,
+              "privateBytes": 611096
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0.04108536726240573,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 8.444615,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 418912,
+              "peakWorkingSetSize": 477248,
+              "privateBytes": 286484
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {},
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": []
+        }
+      },
+      {
+        "at": 1794161031474,
+        "memory": {
+          "rss": 749830144,
+          "heapTotal": 190431232,
+          "heapUsed": 113546276,
+          "external": 143159217,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.39451,
+              "percentCPUUsage": 9.700227028697537,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 732256,
+              "peakWorkingSetSize": 733876,
+              "privateBytes": 616420
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 8.827857,
+              "percentCPUUsage": 9.490435323530926,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 403656,
+              "peakWorkingSetSize": 477248,
+              "privateBytes": 271112
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 2,
+              "queued": 2,
+              "limit": 2,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 2,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161031737,
+        "memory": {
+          "rss": 755294208,
+          "heapTotal": 191873024,
+          "heapUsed": 115504884,
+          "external": 146894090,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.815094,
+              "percentCPUUsage": 9.99646331353296,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 737592,
+              "peakWorkingSetSize": 746700,
+              "privateBytes": 618496
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 9.229121,
+              "percentCPUUsage": 9.53828015061043,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 409324,
+              "peakWorkingSetSize": 477248,
+              "privateBytes": 276360
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 2,
+              "queued": 2,
+              "limit": 2,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 2,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161031991,
+        "memory": {
+          "rss": 756416512,
+          "heapTotal": 192593920,
+          "heapUsed": 116665940,
+          "external": 149917550,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.146311,
+              "percentCPUUsage": 8.15934038863269,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 738688,
+              "peakWorkingSetSize": 746700,
+              "privateBytes": 618684
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 9.615868,
+              "percentCPUUsage": 9.526952061138504,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 418800,
+              "peakWorkingSetSize": 477248,
+              "privateBytes": 285876
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 3,
+              "queued": 1,
+              "limit": 3,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 3,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161032246,
+        "memory": {
+          "rss": 751951872,
+          "heapTotal": 190758912,
+          "heapUsed": 110073932,
+          "external": 141900341,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.749849,
+              "percentCPUUsage": 14.782511149255019,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 734328,
+              "peakWorkingSetSize": 746836,
+              "privateBytes": 618256
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 10.032928,
+              "percentCPUUsage": 10.21488837247579,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 431312,
+              "peakWorkingSetSize": 477248,
+              "privateBytes": 294540
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 2,
+              "queued": 2,
+              "limit": 2,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 2,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161032501,
+        "memory": {
+          "rss": 757563392,
+          "heapTotal": 192200704,
+          "heapUsed": 111959328,
+          "external": 148975198,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 14.109453,
+              "percentCPUUsage": 8.816624104127193,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 739808,
+              "peakWorkingSetSize": 746836,
+              "privateBytes": 621360
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 10.400065,
+              "percentCPUUsage": 9.001880126950251,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 445852,
+              "peakWorkingSetSize": 477248,
+              "privateBytes": 308620
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 2,
+              "queued": 2,
+              "limit": 2,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 2,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032277,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032328,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032404,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032277,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032328,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032404,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161032751,
+        "memory": {
+          "rss": 763596800,
+          "heapTotal": 193642496,
+          "heapUsed": 113886712,
+          "external": 153965199,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 14.497774,
+              "percentCPUUsage": 9.704414957635759,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 745700,
+              "peakWorkingSetSize": 750548,
+              "privateBytes": 623484
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 10.788595,
+              "percentCPUUsage": 9.709715663498487,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 456784,
+              "peakWorkingSetSize": 477248,
+              "privateBytes": 319464
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 2,
+              "queued": 0,
+              "limit": 2,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 2,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032277,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032328,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032404,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032526,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032559,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032597,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032277,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032328,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032404,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032526,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032559,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032597,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161033010,
+        "memory": {
+          "rss": 751124480,
+          "heapTotal": 189566976,
+          "heapUsed": 109927284,
+          "external": 140128678,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 14.928214,
+              "percentCPUUsage": 10.378810675678803,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 733520,
+              "peakWorkingSetSize": 750548,
+              "privateBytes": 612672
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 11.195353,
+              "percentCPUUsage": 9.807863690375148,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 471060,
+              "peakWorkingSetSize": 477248,
+              "privateBytes": 333496
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 1,
+              "queued": 1,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032277,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032328,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032404,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032526,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032559,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032597,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032756,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032277,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032328,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032404,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032526,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032559,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032597,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032756,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161033275,
+        "memory": {
+          "rss": 753623040,
+          "heapTotal": 189566976,
+          "heapUsed": 110064944,
+          "external": 140128827,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.249297,
+              "percentCPUUsage": 7.5878019684429034,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 735960,
+              "peakWorkingSetSize": 750548,
+              "privateBytes": 614236
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 11.675572,
+              "percentCPUUsage": 11.348016326129368,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 488844,
+              "peakWorkingSetSize": 488844,
+              "privateBytes": 348592
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 1,
+              "queued": 1,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032277,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032328,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032404,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032526,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032559,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032597,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032756,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032277,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032328,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032404,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032526,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032559,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032597,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032756,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161033539,
+        "memory": {
+          "rss": 756604928,
+          "heapTotal": 189566976,
+          "heapUsed": 110335788,
+          "external": 140131025,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.566127,
+              "percentCPUUsage": 7.486531190926276,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 739320,
+              "peakWorkingSetSize": 750548,
+              "privateBytes": 617480
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.096668,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56852,
+              "peakWorkingSetSize": 56852,
+              "privateBytes": 13972
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.10508,
+              "percentCPUUsage": 10.149093191278606,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 510984,
+              "peakWorkingSetSize": 510984,
+              "privateBytes": 371368
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 1,
+              "queued": 1,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032277,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032328,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032404,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032526,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032559,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032597,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032756,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032277,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032328,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032404,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032526,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032559,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032597,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032756,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161033789,
+        "memory": {
+          "rss": 759328768,
+          "heapTotal": 189566976,
+          "heapUsed": 110655800,
+          "external": 140141568,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.878727,
+              "percentCPUUsage": 7.816344411238733,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 741532,
+              "peakWorkingSetSize": 750548,
+              "privateBytes": 619360
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.100721,
+              "percentCPUUsage": 0.10134526905381076,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56872,
+              "peakWorkingSetSize": 56872,
+              "privateBytes": 13984
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.492293,
+              "percentCPUUsage": 9.682106507597398,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 530676,
+              "peakWorkingSetSize": 530676,
+              "privateBytes": 390556
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 1,
+              "queued": 1,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032277,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032328,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032404,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032526,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032559,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032597,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032756,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032277,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032328,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032404,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032526,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032559,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032597,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032756,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161034054,
+        "memory": {
+          "rss": 757051392,
+          "heapTotal": 189566976,
+          "heapUsed": 110793948,
+          "external": 140141717,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 16.198825,
+              "percentCPUUsage": 7.5630947025400435,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 739556,
+              "peakWorkingSetSize": 750548,
+              "privateBytes": 619068
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.105655,
+              "percentCPUUsage": 0.11657688309233531,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56872,
+              "peakWorkingSetSize": 56872,
+              "privateBytes": 13984
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.886974,
+              "percentCPUUsage": 9.325334943785395,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 549784,
+              "peakWorkingSetSize": 549784,
+              "privateBytes": 410524
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 1,
+              "queued": 1,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032277,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032328,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032404,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032526,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032559,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032597,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032756,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032277,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032328,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032404,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032526,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032559,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032597,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032756,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794161034304,
+        "memory": {
+          "rss": 755908608,
+          "heapTotal": 189566976,
+          "heapUsed": 110934824,
+          "external": 140141866,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 16.48699,
+              "percentCPUUsage": 7.19583539762194,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 32572,
+            "type": "Browser",
+            "creationTime": 1794161014343.775,
+            "memory": {
+              "workingSetSize": 738192,
+              "peakWorkingSetSize": 750548,
+              "privateBytes": 615824
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.105655,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 42380,
+            "type": "Utility",
+            "creationTime": 1794161023341.733,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 56872,
+              "peakWorkingSetSize": 56872,
+              "privateBytes": 13984
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.283994,
+              "percentCPUUsage": 9.913920540808336,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 7752,
+            "type": "Tab",
+            "creationTime": 1794161023847.208,
+            "memory": {
+              "workingSetSize": 569052,
+              "peakWorkingSetSize": 569052,
+              "privateBytes": 428752
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\electron\\verse-claw-e2e-run-VZDnlX\\verse-claw-e2e-home-MV6Lz1\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794161031239,
+                  "from": 2,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031308,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031337,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031436,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031525,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031528,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031597,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031599,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031600,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031688,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031807,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031822,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031903,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031944,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161031945,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032032,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032044,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032088,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032114,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032186,
+                  "from": 3,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032277,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032328,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032404,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032526,
+                  "from": 2,
+                  "to": 3,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032559,
+                  "from": 3,
+                  "to": 4,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032597,
+                  "from": 4,
+                  "to": 2,
+                  "reason": "gradient2 latency sample"
+                },
+                {
+                  "at": 1794161032756,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794161031239,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031308,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031337,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031436,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031525,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031528,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031597,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031599,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031600,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031688,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031807,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031822,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031903,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031944,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161031945,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032032,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032044,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032088,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032114,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032186,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032277,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032328,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032404,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032526,
+              "from": 2,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032559,
+              "from": 3,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032597,
+              "from": 4,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794161032756,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      }
+    ],
+    "elapsedMs": 3134.2991,
+    "startedAt": 1794161031222,
+    "endedAt": 1794161034356,
+    "ownedChildren": 24,
+    "exitedChildren": 24,
+    "cpu": {
+      "user": 3922000,
+      "system": 719000
+    },
+    "active": 0,
+    "queued": 0,
+    "fair": true,
+    "pressureBytes": 134217728
+  },
+  "renderer": {
+    "inputRetained": true,
+    "finalTextCorrect": true,
+    "terminalCompleted": true,
+    "inputStartedAt": 1794161031231,
+    "samples": {
+      "recording": false,
+      "inputLatencies": [
+        82.40000000596046,
+        205,
+        98.09999999403954,
+        104.79999999701977,
+        88.69999999552965,
+        108,
+        80.89999999850988,
+        72.19999999552965,
+        79.90000000596046,
+        79.5,
+        78.70000000298023,
+        80.90000000596046,
+        77,
+        74.10000000149012,
+        60.5,
+        69.29999999701977,
+        60.399999998509884,
+        60.099999994039536,
+        70.30000000447035,
+        163.89999999850988,
+        58.5,
+        59.19999999552965
+      ],
+      "inputEvents": [
+        {
+          "at": 1794161031239.3,
+          "durationMs": 82.40000000596046,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161031336.7002,
+          "durationMs": 205,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161031711.7002,
+          "durationMs": 98.09999999403954,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161031974.2002,
+          "durationMs": 104.79999999701977,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161032255.2002,
+          "durationMs": 88.69999999552965,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161032500.8,
+          "durationMs": 108,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161032750,
+          "durationMs": 80.89999999850988,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161032962.6,
+          "durationMs": 72.19999999552965,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161033175.8,
+          "durationMs": 79.90000000596046,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161033390.4001,
+          "durationMs": 79.5,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161033602.3,
+          "durationMs": 78.70000000298023,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161033744.3,
+          "durationMs": 80.90000000596046,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161033984.5,
+          "durationMs": 77,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161034194.5,
+          "durationMs": 74.10000000149012,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161034394,
+          "durationMs": 60.5,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161034571.1,
+          "durationMs": 69.29999999701977,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161034754.7002,
+          "durationMs": 60.399999998509884,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161034926.7002,
+          "durationMs": 60.099999994039536,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161035102.3,
+          "durationMs": 70.30000000447035,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161035306.7002,
+          "durationMs": 163.89999999850988,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161035586.5,
+          "durationMs": 58.5,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794161035761.7002,
+          "durationMs": 59.19999999552965,
+          "target": "chat-composer-input"
+        }
+      ],
+      "scrollEvents": [
+        {
+          "at": 1794161031301.9001,
+          "durationMs": 412.1000000014901,
+          "top": 22139.333984375
+        },
+        {
+          "at": 1794161031688.4001,
+          "durationMs": 288.30000000447035,
+          "top": 21819.333984375
+        },
+        {
+          "at": 1794161031944.2002,
+          "durationMs": 314.79999999701977,
+          "top": 21150.666015625
+        },
+        {
+          "at": 1794161032218.3,
+          "durationMs": 283.70000000298023,
+          "top": 20610.666015625
+        },
+        {
+          "at": 1794161032464.5,
+          "durationMs": 281.8999999985099,
+          "top": 19980.666015625
+        },
+        {
+          "at": 1794161032713.5,
+          "durationMs": 249.10000000149012,
+          "top": 19312
+        },
+        {
+          "at": 1794161032962.6,
+          "durationMs": 212.10000000149012,
+          "top": 18681.333984375
+        },
+        {
+          "at": 1794161033174.5,
+          "durationMs": 218.29999999701977,
+          "top": 18653.333984375
+        },
+        {
+          "at": 1794161033354.6,
+          "durationMs": 249.5,
+          "top": 18973.333984375
+        },
+        {
+          "at": 1794161033557.1,
+          "durationMs": 189.29999999701977,
+          "top": 19293.333984375
+        },
+        {
+          "at": 1794161033794.7002,
+          "durationMs": 268.59999999403954,
+          "top": 19613.333984375
+        },
+        {
+          "at": 1794161034087.5,
+          "durationMs": 307.20000000298023,
+          "top": 19933.333984375
+        }
+      ],
+      "longTasks": [
+        76,
+        137,
+        67,
+        158,
+        83,
+        157,
+        90,
+        164,
+        76,
+        145,
+        96,
+        127,
+        73,
+        117,
+        63,
+        129,
+        71,
+        126,
+        66,
+        125,
+        67,
+        57,
+        63,
+        152,
+        69,
+        125,
+        62,
+        116,
+        53,
+        110,
+        61,
+        108,
+        53,
+        106,
+        54,
+        109,
+        63,
+        108,
+        107,
+        70,
+        110,
+        52,
+        109,
+        54,
+        113,
+        111,
+        107,
+        111,
+        112,
+        108,
+        105,
+        106,
+        108,
+        107,
+        140,
+        110,
+        258,
+        108,
+        112,
+        112,
+        119,
+        106,
+        107,
+        104,
+        119,
+        115,
+        114,
+        111,
+        119,
+        108,
+        100,
+        118,
+        105,
+        115,
+        109,
+        114,
+        108,
+        109,
+        119,
+        111,
+        106,
+        110,
+        117,
+        105,
+        112,
+        121,
+        119,
+        120,
+        115,
+        116,
+        109,
+        117,
+        117,
+        119,
+        144,
+        134,
+        123,
+        129,
+        176,
+        145,
+        333,
+        132,
+        145,
+        169,
+        155,
+        142,
+        159,
+        156,
+        158,
+        148,
+        152,
+        142,
+        146,
+        155,
+        151,
+        155,
+        152,
+        152,
+        141,
+        148,
+        163,
+        133,
+        114,
+        122,
+        118,
+        128,
+        122,
+        128,
+        119,
+        136,
+        135,
+        116,
+        123,
+        134,
+        128,
+        124,
+        123,
+        124,
+        118,
+        122,
+        123,
+        122,
+        121,
+        115,
+        166,
+        309,
+        128,
+        159,
+        157,
+        145,
+        178,
+        153,
+        127,
+        146,
+        124,
+        136,
+        137,
+        143,
+        131
+      ],
+      "longTaskEvents": [
+        {
+          "at": 1794161031242.2002,
+          "durationMs": 76
+        },
+        {
+          "at": 1794161031335.7002,
+          "durationMs": 137
+        },
+        {
+          "at": 1794161031472.9001,
+          "durationMs": 67
+        },
+        {
+          "at": 1794161031550.4001,
+          "durationMs": 158
+        },
+        {
+          "at": 1794161031722.2002,
+          "durationMs": 83
+        },
+        {
+          "at": 1794161031814,
+          "durationMs": 157
+        },
+        {
+          "at": 1794161031984.5,
+          "durationMs": 90
+        },
+        {
+          "at": 1794161032089,
+          "durationMs": 164
+        },
+        {
+          "at": 1794161032263.3,
+          "durationMs": 76
+        },
+        {
+          "at": 1794161032353.4001,
+          "durationMs": 145
+        },
+        {
+          "at": 1794161032508,
+          "durationMs": 96
+        },
+        {
+          "at": 1794161032615.6,
+          "durationMs": 127
+        },
+        {
+          "at": 1794161032754.1,
+          "durationMs": 73
+        },
+        {
+          "at": 1794161032841.4001,
+          "durationMs": 117
+        },
+        {
+          "at": 1794161032968.2002,
+          "durationMs": 63
+        },
+        {
+          "at": 1794161033040.5,
+          "durationMs": 129
+        },
+        {
+          "at": 1794161033180.6,
+          "durationMs": 71
+        },
+        {
+          "at": 1794161033262.4001,
+          "durationMs": 126
+        },
+        {
+          "at": 1794161033399.9001,
+          "durationMs": 66
+        },
+        {
+          "at": 1794161033474.5,
+          "durationMs": 125
+        },
+        {
+          "at": 1794161033609.8,
+          "durationMs": 67
+        },
+        {
+          "at": 1794161033685.4001,
+          "durationMs": 57
+        },
+        {
+          "at": 1794161033756.1,
+          "durationMs": 63
+        },
+        {
+          "at": 1794161033829.4001,
+          "durationMs": 152
+        },
+        {
+          "at": 1794161033990.4001,
+          "durationMs": 69
+        },
+        {
+          "at": 1794161034067.2002,
+          "durationMs": 125
+        },
+        {
+          "at": 1794161034202.6,
+          "durationMs": 62
+        },
+        {
+          "at": 1794161034274.5,
+          "durationMs": 116
+        },
+        {
+          "at": 1794161034397.5,
+          "durationMs": 53
+        },
+        {
+          "at": 1794161034458,
+          "durationMs": 110
+        },
+        {
+          "at": 1794161034577,
+          "durationMs": 61
+        },
+        {
+          "at": 1794161034644.1,
+          "durationMs": 108
+        },
+        {
+          "at": 1794161034760.2002,
+          "durationMs": 53
+        },
+        {
+          "at": 1794161034818.7002,
+          "durationMs": 106
+        },
+        {
+          "at": 1794161034930.6,
+          "durationMs": 54
+        },
+        {
+          "at": 1794161034991.3,
+          "durationMs": 109
+        },
+        {
+          "at": 1794161035107.2002,
+          "durationMs": 63
+        },
+        {
+          "at": 1794161035176.4001,
+          "durationMs": 108
+        },
+        {
+          "at": 1794161035291.2002,
+          "durationMs": 107
+        },
+        {
+          "at": 1794161035398.2002,
+          "durationMs": 70
+        },
+        {
+          "at": 1794161035474.6,
+          "durationMs": 110
+        },
+        {
+          "at": 1794161035590.6,
+          "durationMs": 52
+        },
+        {
+          "at": 1794161035649.8,
+          "durationMs": 109
+        },
+        {
+          "at": 1794161035765.4001,
+          "durationMs": 54
+        },
+        {
+          "at": 1794161035825.2002,
+          "durationMs": 113
+        },
+        {
+          "at": 1794161035949.3,
+          "durationMs": 111
+        },
+        {
+          "at": 1794161036067.3,
+          "durationMs": 107
+        },
+        {
+          "at": 1794161036179.8,
+          "durationMs": 111
+        },
+        {
+          "at": 1794161036296.2002,
+          "durationMs": 112
+        },
+        {
+          "at": 1794161036413.9001,
+          "durationMs": 108
+        },
+        {
+          "at": 1794161036527.3,
+          "durationMs": 105
+        },
+        {
+          "at": 1794161036644,
+          "durationMs": 106
+        },
+        {
+          "at": 1794161036756.5,
+          "durationMs": 108
+        },
+        {
+          "at": 1794161036870.1,
+          "durationMs": 107
+        },
+        {
+          "at": 1794161036983,
+          "durationMs": 140
+        },
+        {
+          "at": 1794161037128.3,
+          "durationMs": 110
+        },
+        {
+          "at": 1794161037242.8,
+          "durationMs": 258
+        },
+        {
+          "at": 1794161037506.9001,
+          "durationMs": 108
+        },
+        {
+          "at": 1794161037621,
+          "durationMs": 112
+        },
+        {
+          "at": 1794161037737.8,
+          "durationMs": 112
+        },
+        {
+          "at": 1794161037854.9001,
+          "durationMs": 119
+        },
+        {
+          "at": 1794161037979.5,
+          "durationMs": 106
+        },
+        {
+          "at": 1794161038091.8,
+          "durationMs": 107
+        },
+        {
+          "at": 1794161038204.1,
+          "durationMs": 104
+        },
+        {
+          "at": 1794161038313.9001,
+          "durationMs": 119
+        },
+        {
+          "at": 1794161038438.7002,
+          "durationMs": 115
+        },
+        {
+          "at": 1794161038559.2002,
+          "durationMs": 114
+        },
+        {
+          "at": 1794161038681.9001,
+          "durationMs": 111
+        },
+        {
+          "at": 1794161038799.7002,
+          "durationMs": 119
+        },
+        {
+          "at": 1794161038924,
+          "durationMs": 108
+        },
+        {
+          "at": 1794161039036.9001,
+          "durationMs": 100
+        },
+        {
+          "at": 1794161039143.8,
+          "durationMs": 118
+        },
+        {
+          "at": 1794161039268.7002,
+          "durationMs": 105
+        },
+        {
+          "at": 1794161039380.4001,
+          "durationMs": 115
+        },
+        {
+          "at": 1794161039501.4001,
+          "durationMs": 109
+        },
+        {
+          "at": 1794161039615.7002,
+          "durationMs": 114
+        },
+        {
+          "at": 1794161039735.5,
+          "durationMs": 108
+        },
+        {
+          "at": 1794161039850,
+          "durationMs": 109
+        },
+        {
+          "at": 1794161039963.7002,
+          "durationMs": 119
+        },
+        {
+          "at": 1794161040089.2002,
+          "durationMs": 111
+        },
+        {
+          "at": 1794161040206.7002,
+          "durationMs": 106
+        },
+        {
+          "at": 1794161040318.4001,
+          "durationMs": 110
+        },
+        {
+          "at": 1794161040435.1,
+          "durationMs": 117
+        },
+        {
+          "at": 1794161040558.5,
+          "durationMs": 105
+        },
+        {
+          "at": 1794161040669.9001,
+          "durationMs": 112
+        },
+        {
+          "at": 1794161040787.1,
+          "durationMs": 121
+        },
+        {
+          "at": 1794161040915.8,
+          "durationMs": 119
+        },
+        {
+          "at": 1794161041041,
+          "durationMs": 120
+        },
+        {
+          "at": 1794161041167.2002,
+          "durationMs": 115
+        },
+        {
+          "at": 1794161041288.3,
+          "durationMs": 116
+        },
+        {
+          "at": 1794161041412.3,
+          "durationMs": 109
+        },
+        {
+          "at": 1794161041527.4001,
+          "durationMs": 117
+        },
+        {
+          "at": 1794161041651.7002,
+          "durationMs": 117
+        },
+        {
+          "at": 1794161041774.2002,
+          "durationMs": 119
+        },
+        {
+          "at": 1794161041899.8,
+          "durationMs": 144
+        },
+        {
+          "at": 1794161042051.6,
+          "durationMs": 134
+        },
+        {
+          "at": 1794161042194.6,
+          "durationMs": 123
+        },
+        {
+          "at": 1794161042327.8,
+          "durationMs": 129
+        },
+        {
+          "at": 1794161042463.5,
+          "durationMs": 176
+        },
+        {
+          "at": 1794161042649,
+          "durationMs": 145
+        },
+        {
+          "at": 1794161042801.3,
+          "durationMs": 333
+        },
+        {
+          "at": 1794161043140.8,
+          "durationMs": 132
+        },
+        {
+          "at": 1794161043277.8,
+          "durationMs": 145
+        },
+        {
+          "at": 1794161043430.8,
+          "durationMs": 169
+        },
+        {
+          "at": 1794161043606.3,
+          "durationMs": 155
+        },
+        {
+          "at": 1794161043770.2002,
+          "durationMs": 142
+        },
+        {
+          "at": 1794161043924.1,
+          "durationMs": 159
+        },
+        {
+          "at": 1794161044090.3,
+          "durationMs": 156
+        },
+        {
+          "at": 1794161044252.9001,
+          "durationMs": 158
+        },
+        {
+          "at": 1794161044419.3,
+          "durationMs": 148
+        },
+        {
+          "at": 1794161044575.1,
+          "durationMs": 152
+        },
+        {
+          "at": 1794161044737.5,
+          "durationMs": 142
+        },
+        {
+          "at": 1794161044887,
+          "durationMs": 146
+        },
+        {
+          "at": 1794161045039.9001,
+          "durationMs": 155
+        },
+        {
+          "at": 1794161045202.1,
+          "durationMs": 151
+        },
+        {
+          "at": 1794161045361.2002,
+          "durationMs": 155
+        },
+        {
+          "at": 1794161045524.6,
+          "durationMs": 152
+        },
+        {
+          "at": 1794161045682.8,
+          "durationMs": 152
+        },
+        {
+          "at": 1794161045840.6,
+          "durationMs": 141
+        },
+        {
+          "at": 1794161045987.5,
+          "durationMs": 148
+        },
+        {
+          "at": 1794161046142.4001,
+          "durationMs": 163
+        },
+        {
+          "at": 1794161046311,
+          "durationMs": 133
+        },
+        {
+          "at": 1794161046449.6,
+          "durationMs": 114
+        },
+        {
+          "at": 1794161046569.3,
+          "durationMs": 122
+        },
+        {
+          "at": 1794161046697.8,
+          "durationMs": 118
+        },
+        {
+          "at": 1794161046822.9001,
+          "durationMs": 128
+        },
+        {
+          "at": 1794161046958,
+          "durationMs": 122
+        },
+        {
+          "at": 1794161047084.9001,
+          "durationMs": 128
+        },
+        {
+          "at": 1794161047218,
+          "durationMs": 119
+        },
+        {
+          "at": 1794161047342.7002,
+          "durationMs": 136
+        },
+        {
+          "at": 1794161047485.2002,
+          "durationMs": 135
+        },
+        {
+          "at": 1794161047627.4001,
+          "durationMs": 116
+        },
+        {
+          "at": 1794161047749.5,
+          "durationMs": 123
+        },
+        {
+          "at": 1794161047879.6,
+          "durationMs": 134
+        },
+        {
+          "at": 1794161048018.8,
+          "durationMs": 128
+        },
+        {
+          "at": 1794161048153.2002,
+          "durationMs": 124
+        },
+        {
+          "at": 1794161048282.1,
+          "durationMs": 123
+        },
+        {
+          "at": 1794161048410.2002,
+          "durationMs": 124
+        },
+        {
+          "at": 1794161048539.6,
+          "durationMs": 118
+        },
+        {
+          "at": 1794161048662.3,
+          "durationMs": 122
+        },
+        {
+          "at": 1794161048789.7002,
+          "durationMs": 123
+        },
+        {
+          "at": 1794161048918.5,
+          "durationMs": 122
+        },
+        {
+          "at": 1794161049046.9001,
+          "durationMs": 121
+        },
+        {
+          "at": 1794161049174.5,
+          "durationMs": 115
+        },
+        {
+          "at": 1794161049296.4001,
+          "durationMs": 166
+        },
+        {
+          "at": 1794161049468.9001,
+          "durationMs": 309
+        },
+        {
+          "at": 1794161049785,
+          "durationMs": 128
+        },
+        {
+          "at": 1794161049922,
+          "durationMs": 159
+        },
+        {
+          "at": 1794161050087.3,
+          "durationMs": 157
+        },
+        {
+          "at": 1794161050250.2002,
+          "durationMs": 145
+        },
+        {
+          "at": 1794161050403.7002,
+          "durationMs": 178
+        },
+        {
+          "at": 1794161050590.1,
+          "durationMs": 153
+        },
+        {
+          "at": 1794161050752.4001,
+          "durationMs": 127
+        },
+        {
+          "at": 1794161050886,
+          "durationMs": 146
+        },
+        {
+          "at": 1794161051039.3,
+          "durationMs": 124
+        },
+        {
+          "at": 1794161051170,
+          "durationMs": 136
+        },
+        {
+          "at": 1794161051312,
+          "durationMs": 137
+        },
+        {
+          "at": 1794161051457.9001,
+          "durationMs": 143
+        },
+        {
+          "at": 1794161051608.3,
+          "durationMs": 131
+        }
+      ]
+    },
+    "scrolls": [
+      {
+        "at": 1794161031301.9001,
+        "durationMs": 412.1000000014901,
+        "top": 22139.333984375
+      },
+      {
+        "at": 1794161031688.4001,
+        "durationMs": 288.30000000447035,
+        "top": 21819.333984375
+      },
+      {
+        "at": 1794161031944.2002,
+        "durationMs": 314.79999999701977,
+        "top": 21150.666015625
+      },
+      {
+        "at": 1794161032218.3,
+        "durationMs": 283.70000000298023,
+        "top": 20610.666015625
+      },
+      {
+        "at": 1794161032464.5,
+        "durationMs": 281.8999999985099,
+        "top": 19980.666015625
+      },
+      {
+        "at": 1794161032713.5,
+        "durationMs": 249.10000000149012,
+        "top": 19312
+      },
+      {
+        "at": 1794161032962.6,
+        "durationMs": 212.10000000149012,
+        "top": 18681.333984375
+      },
+      {
+        "at": 1794161033174.5,
+        "durationMs": 218.29999999701977,
+        "top": 18653.333984375
+      },
+      {
+        "at": 1794161033354.6,
+        "durationMs": 249.5,
+        "top": 18973.333984375
+      },
+      {
+        "at": 1794161033557.1,
+        "durationMs": 189.29999999701977,
+        "top": 19293.333984375
+      },
+      {
+        "at": 1794161033794.7002,
+        "durationMs": 268.59999999403954,
+        "top": 19613.333984375
+      },
+      {
+        "at": 1794161034087.5,
+        "durationMs": 307.20000000298023,
+        "top": 19933.333984375
+      }
+    ]
+  },
+  "processAfter": {
+    "tree": {
+      "status": "ok",
+      "sampledAt": 1794161071799,
+      "rootPids": [
+        32572
+      ],
+      "processCount": 13,
+      "treeRssBytes": 1451184128,
+      "treeCpuTimeMs": 141953.125,
+      "treeCpuPercent": null,
+      "ownerEpoch": "bd62717f-c388-4902-abd8-7491a941acc2",
+      "processes": [
+        {
+          "pid": 32572,
+          "parentPid": 45072,
+          "creationToken": "134386346143437750",
+          "rssBytes": 385720320,
+          "privateBytes": 271101952,
+          "cpuTimeMs": 55609.375,
+          "cpuPercent": 105.1
+        },
+        {
+          "pid": 42380,
+          "parentPid": 32572,
+          "creationToken": "134386346233417330",
+          "rssBytes": 58179584,
+          "privateBytes": 14249984,
+          "cpuTimeMs": 46.875,
+          "cpuPercent": 0
+        },
+        {
+          "pid": 7752,
+          "parentPid": 32572,
+          "creationToken": "134386346238472080",
+          "rssBytes": 593674240,
+          "privateBytes": 464584704,
+          "cpuTimeMs": 67796.875,
+          "cpuPercent": 142.49
+        },
+        {
+          "pid": 46304,
+          "parentPid": 32572,
+          "creationToken": "134386346673348880",
+          "rssBytes": 102420480,
+          "privateBytes": 77561856,
+          "cpuTimeMs": 4921.875,
+          "cpuPercent": null
+        },
+        {
+          "pid": 2316,
+          "parentPid": 32572,
+          "creationToken": "134386346677729530",
+          "rssBytes": 83767296,
+          "privateBytes": 60194816,
+          "cpuTimeMs": 4609.375,
+          "cpuPercent": null
+        },
+        {
+          "pid": 24168,
+          "parentPid": 32572,
+          "creationToken": "134386346681851300",
+          "rssBytes": 71049216,
+          "privateBytes": 50778112,
+          "cpuTimeMs": 3843.75,
+          "cpuPercent": null
+        },
+        {
+          "pid": 37920,
+          "parentPid": 32572,
+          "creationToken": "134386346686338020",
+          "rssBytes": 66486272,
+          "privateBytes": 47878144,
+          "cpuTimeMs": 3218.75,
+          "cpuPercent": null
+        },
+        {
+          "pid": 37540,
+          "parentPid": 32572,
+          "creationToken": "134386346693536520",
+          "rssBytes": 53624832,
+          "privateBytes": 29716480,
+          "cpuTimeMs": 1812.5,
+          "cpuPercent": null
+        },
+        {
+          "pid": 24164,
+          "parentPid": 46304,
+          "creationToken": "134386346674434130",
+          "rssBytes": 7249920,
+          "privateBytes": 1310720,
+          "cpuTimeMs": 31.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 41528,
+          "parentPid": 2316,
+          "creationToken": "134386346678675980",
+          "rssBytes": 7262208,
+          "privateBytes": 1331200,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 32552,
+          "parentPid": 24168,
+          "creationToken": "134386346682783120",
+          "rssBytes": 7254016,
+          "privateBytes": 1298432,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 4712,
+          "parentPid": 37920,
+          "creationToken": "134386346688213440",
+          "rssBytes": 7249920,
+          "privateBytes": 1318912,
+          "cpuTimeMs": 31.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 41064,
+          "parentPid": 37540,
+          "creationToken": "134386346694908150",
+          "rssBytes": 7245824,
+          "privateBytes": 1306624,
+          "cpuTimeMs": 0,
+          "cpuPercent": null
+        }
+      ],
+      "queueDepth": 0,
+      "queueWaitMs": 0,
+      "source": "windows-cim",
+      "machineCommit": {
+        "sampledAt": 1794161071799,
+        "committedBytes": 32805527552,
+        "commitLimitBytes": 54946947072
+      }
+    },
+    "handles": {
+      "status": "partial",
+      "rows": [
+        {
+          "pid": 32572,
+          "token": "134386346143437750",
+          "handles": 1221
+        },
+        {
+          "pid": 42380,
+          "token": "134386346233417330",
+          "handles": 329
+        },
+        {
+          "pid": 7752,
+          "token": "134386346238472080",
+          "handles": 397
+        }
+      ],
+      "total": 1947
+    }
+  },
+  "cleanup": {
+    "mainExited": true,
+    "launcherExited": true,
+    "graceful": true,
+    "closeSettled": true,
+    "processes": [
+      {
+        "pid": 32572,
+        "creationTime": 1794161014343,
+        "status": "exited"
+      },
+      {
+        "pid": 42380,
+        "creationTime": 1794161023341,
+        "status": "exited"
+      },
+      {
+        "pid": 7752,
+        "creationTime": 1794161023847,
+        "status": "exited"
+      }
+    ],
+    "errors": []
+  }
+}

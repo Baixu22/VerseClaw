@@ -1,0 +1,34 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "productSha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+  "originalPath": "D:\\ClawX\\resources\\bin\\win32-x64\\ae.exe",
+  "isolatedPath": "D:\\tmp\\tf0836\\ae-product-probe.exe",
+  "originalResult": {
+    "ok": false,
+    "error": {
+      "code": "E_PROCESS_PERSIST",
+      "message": "E_PROCESS_PERSIST: failed to persist starting record",
+      "recoverable": true
+    }
+  },
+  "isolatedResult": {
+    "ok": true,
+    "pid": 19468
+  },
+  "evidence": [
+    {
+      "path": "D:\\tmp\\tf0836\\raw-shipped.json",
+      "sha256": "83939f57edde270c90432687c7e563f437717446fb4b90a4cd8afb597490bbe5"
+    },
+    {
+      "path": "D:\\tmp\\tf0836\\raw-product-copy.json",
+      "sha256": "3b46431c37229bee8a5882c2d7fde559ff9eddb64422948dd6bc6123b9b8858b"
+    },
+    {
+      "path": "D:\\tmp\\tf0836\\raw-diagnostic-debug.json",
+      "sha256": "fa2571093f488359e8f2fb90d4bcf68d7b2a4b1237938846720d0981c5443e05"
+    }
+  ],
+  "conclusion": "Exact product bytes pass from the isolated acceptance path. Original path failure retained; underlying OS/path restriction was not changed. Diagnostic compiled binary was not used for acceptance."
+}

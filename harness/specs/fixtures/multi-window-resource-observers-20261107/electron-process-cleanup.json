@@ -1,0 +1,43 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0832\\electron-runs\\verse-claw-e2e-run-IbceS0",
+  "ledgerEntries": 10,
+  "checks": [
+    {
+      "pid": 34068,
+      "creationTime": 1794066799979,
+      "status": "exited"
+    },
+    {
+      "pid": 40784,
+      "creationTime": 1794066811290,
+      "status": "exited"
+    },
+    {
+      "pid": 16928,
+      "creationTime": 1794066811985,
+      "status": "exited"
+    },
+    {
+      "pid": 23820,
+      "creationTime": 1794066850065,
+      "status": "exited"
+    },
+    {
+      "pid": 40036,
+      "creationTime": 1794066857019,
+      "status": "exited"
+    },
+    {
+      "pid": 25456,
+      "creationTime": 1794066857468,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

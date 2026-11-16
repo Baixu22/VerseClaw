@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "title": "rsi-sekb-arms.d.mts still under-declares the report shape that the .mjs actually returns",
+      "body": "The patch adds only `promotion: PromotionVerdict` to the declared `buildArmsReport` return type, but the same declaration still omits fields the runtime returns in `scripts/rsi-sekb-arms.mjs`: `generatedAt`, `driven_by`, `actor`, `taskForestNode`, `protocolPath`, `runsPath`, and the per-comparison `varianceStatus` (`result.effect.varianceStatus ?? (sd === 0 ? 'degenerate' : 'estimated')`). The declaration is therefore still drifting from the implementation for the same reason this patch existed: a consumer reading e.g. `report.comparisons[0].varianceStatus` or `report.taskForestNode` gets a type error even though the runtime supplies it. Declaring those fields in the same edit would close the drift instead of leaving the next one for another residual pass.",
+      "priority": "P3",
+      "confidence": 0.45,
+      "category": "maintainability",
+      "code_location": {
+        "file_path": "scripts/rsi-sekb-arms.d.mts",
+        "line": 15
+      }
+    }
+  ],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "Verified the residual fix against the supplied source. The retirement alignment is consistent: `createMemoryRuntimeConfig` force-deletes `enableSessionStatePage`/`enablePreReplyRetrieval`, and `collectCompassContext` records `flag-off` skips with 0 chars, so the retired COMPASS mode's new expectations (SSP text absent from the wire, `charsRequested/charsApplied === 0`, no `ref:context:producer:compass-ssp`, empty `appliedFactIds`) are the correct post-retirement expectations, and the retired-compass it.each case correctly expects the CVK replacement to be admitted since the SSP no longer charges the ledger. Full-budget denial is still covered by the new `knowledge-full` mode: a 6000-char knowledge Block (`## Knowledge\\n` + 5988 chars) is collected on the `knowledge` channel through the active main-session BlockStore query, consumes the whole 6000-char turn budget, so the CVK message-replacement candidate is dropped (marker absent from both request bodies, `charsApplied === 6000`, `charsRequested > 6000`, and the replacement ref absent) \u2014 the same ordering evidence the removed `compass-full` case provided. The `promotion: PromotionVerdict` addition to the .d.mts matches the runtime's `evaluatePromotion` result and the shared `PromotionVerdict` type. One minor residual: the .d.mts still omits other fields the .mjs returns (see finding).",
+  "overall_confidence": 0.72
+}

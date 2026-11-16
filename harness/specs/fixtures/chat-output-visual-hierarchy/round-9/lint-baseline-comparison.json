@@ -1,0 +1,68 @@
+[
+  {
+    "path": "src/components/file-preview/panel-tab-meta.tsx",
+    "baseline": [
+      {
+        "rule": "react-refresh/only-export-components",
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "severity": 1
+      },
+      {
+        "rule": "react-refresh/only-export-components",
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "severity": 1
+      }
+    ],
+    "current": [
+      {
+        "rule": "react-refresh/only-export-components",
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "severity": 1
+      },
+      {
+        "rule": "react-refresh/only-export-components",
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "severity": 1
+      }
+    ],
+    "unchanged": true
+  },
+  {
+    "path": "src/pages/Chat/index.tsx",
+    "baseline": [
+      {
+        "rule": "react-refresh/only-export-components",
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "severity": 1
+      },
+      {
+        "rule": "react-refresh/only-export-components",
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "severity": 1
+      },
+      {
+        "rule": "react-hooks/exhaustive-deps",
+        "message": "The 'graphStepCache' logical expression could make the dependencies of useMemo Hook (at line N) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'graphStepCache' in its own useMemo() Hook.",
+        "severity": 1
+      }
+    ],
+    "current": [
+      {
+        "rule": "react-refresh/only-export-components",
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "severity": 1
+      },
+      {
+        "rule": "react-refresh/only-export-components",
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "severity": 1
+      },
+      {
+        "rule": "react-hooks/exhaustive-deps",
+        "message": "The 'graphStepCache' logical expression could make the dependencies of useMemo Hook (at line N) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'graphStepCache' in its own useMemo() Hook.",
+        "severity": 1
+      }
+    ],
+    "unchanged": true
+  }
+]

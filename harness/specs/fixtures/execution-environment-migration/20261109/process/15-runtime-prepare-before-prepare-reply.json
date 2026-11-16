@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "case": "Runtime prepare before-prepare-reply",
+  "breakPoint": "before-prepare-reply",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "tf0866-target-generation",
+  "operation": null,
+  "journal": {
+    "state": "store_committed",
+    "requestDigest": "9f13733fdeb07ed6c559b6a2f3392f45662b37580394d66f81853f7198a44811",
+    "manifestDigest": "fc8ec6a077e9de95b0b58e18a5930b21622cd9517991d931840111ba578398b7"
+  },
+  "session": {
+    "sessionId": "tf0866-target-generation",
+    "workspaceDir": "D:\\tmp\\tf0866-process-fBcPcL\\target",
+    "migrationState": "prepared"
+  },
+  "artifactHashes": [
+    {
+      "path": "result.txt",
+      "sha256": "missing:result.txt"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 45072,
+      "breakPoint": "before-prepare-reply",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 47464,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:15:37.955Z",
+        "pid": 45072,
+        "kind": "runtime-prepare-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "before-prepare-reply"
+      },
+      {
+        "at": "2026-11-09T00:15:38.075Z",
+        "pid": 45072,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "before-prepare-reply",
+        "stage": "runtime-before-prepare-reply",
+        "sessionKey": "agent:main:tf0866-process-proof",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:41.092Z",
+        "pid": 47464,
+        "kind": "runtime-prepare-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:41.166Z",
+        "pid": 47464,
+        "kind": "runtime-prepare-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "state": "prepared"
+      }
+    ],
+    "breakSignal": {
+      "pid": 45072,
+      "point": "before-prepare-reply",
+      "at": "2026-11-09T00:15:38.074Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "runtime-before-prepare-reply",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "operationId": "tf0866-process-operation"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "state": "prepared",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "tf0866-target-generation",
+      "taskNodeId": "4a49c598-6590-4bb8-88b3-a7eeeb5cbf4e",
+      "pid": 47464,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

@@ -6,6 +6,33 @@ import type { TurnInjectionAccounting } from "./turn-injection-budget.js";
 
 export const CONTEXT_FINAL_SNAPSHOT_SCHEMA = "ContextFinalSnapshot/v1" as const;
 
+export type PromptBudgetCoverage = {
+  managedChars: number;
+  postOrchestratorChars: number;
+  /** Full system prompt plus turn injection message charges; excludes ordinary history/user/tool data. */
+  totalPromptChars: number;
+  basePromptChars: number;
+  unaccountedChars: number;
+  overaccountedChars: number;
+  unbudgeted: boolean;
+};
+
+export function buildPromptBudgetCoverage(systemPrompt: string, budget: TurnInjectionAccounting): PromptBudgetCoverage {
+  const accounting = budget.promptAccounting;
+  const postEntries = Object.values(accounting?.postOrchestrator ?? {});
+  const postMessageChars = postEntries.filter(entry => entry.target === "message")
+    .reduce((sum, entry) => sum + entry.charsApplied, 0);
+  const postOrchestratorChars = postEntries.reduce((sum, entry) => sum + entry.charsApplied, 0);
+  const managedChars = budget.charsApplied;
+  const managedMessageChars = Math.max(0, managedChars - (accounting?.managedSystemChars ?? 0));
+  const totalPromptChars = systemPrompt.length + managedMessageChars + postMessageChars;
+  const basePromptChars = accounting?.basePromptChars ?? 0;
+  const delta = totalPromptChars - basePromptChars - managedChars - postOrchestratorChars;
+  return { managedChars, postOrchestratorChars, totalPromptChars, basePromptChars,
+    unaccountedChars: Math.max(0, delta), overaccountedChars: Math.max(0, -delta),
+    unbudgeted: accounting?.basePromptChars === undefined };
+}
+
 export type ContextFinalSnapshotInput = {
   turnId: string;
   sessionKey?: string;
@@ -31,7 +58,9 @@ export type ContextFinalSnapshot = {
   providerId?: string;
   attemptIndex: number;
   modelCallIndex: number;
+  /** Immutable finalization; RC-03 enforcement is reported separately. */
   sealed: true;
+  sealCoverage: 'disabled' | 'enforced';
   systemPromptDigest: string;
   messagesDigest: string;
   contextCompositionDigest: string;
@@ -39,6 +68,7 @@ export type ContextFinalSnapshot = {
   budgetDigest: string;
   budget: TurnInjectionAccounting;
   lineage: readonly ContextCandidateLineage[];
+  budgetCoverage: PromptBudgetCoverage;
   rc03PlanId?: string;
   bundleDigest?: string;
   createdAt: number;
@@ -100,12 +130,14 @@ function createSnapshot(input: ContextFinalSnapshotInput): ContextFinalSnapshot 
     attemptIndex,
     modelCallIndex,
     sealed: true,
+    sealCoverage: input.rc03PlanId ? 'enforced' : 'disabled',
     systemPromptDigest,
     messagesDigest,
     contextCompositionDigest,
     providerRequestDigest,
     budgetDigest,
     budget: input.budget,
+    budgetCoverage: buildPromptBudgetCoverage(systemPrompt ?? "", input.budget),
     lineage: input.projection.lineage,
     ...(input.rc03PlanId ? { rc03PlanId: input.rc03PlanId } : {}),
     ...(input.bundleDigest ? { bundleDigest: input.bundleDigest } : {}),

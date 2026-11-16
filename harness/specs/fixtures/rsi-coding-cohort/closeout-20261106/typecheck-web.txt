@@ -1,0 +1,58 @@
+shared/types/context-control-plane/artifacts.ts(14,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(220,17): error TS7006: Parameter 'plan' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(220,23): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(221,45): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(222,51): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(223,28): error TS7006: Parameter 'refId' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(335,17): error TS7006: Parameter 'grant' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(335,24): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(394,17): error TS7006: Parameter 'receipt' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(394,26): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+src/components/assistant-render/AssistantMarkdown.tsx(2,41): error TS2307: Cannot find module '@assistant-ui/react' or its corresponding type declarations.
+src/components/layout/SessionSearchModal.tsx(10,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/tool-ui/PendingRunApprovals.tsx(73,17): error TS2322: Type '{ id: string; title: string; description: string | undefined; icon: string; metadata: { key: string; value: string; }[]; variant: string; confirmLabel: string; cancelLabel: string; choice: PermissionApprovalDecision | undefined; onConfirm: () => Promise<...>; onCancel: () => Promise<...>; className: string; }' is not assignable to type 'IntrinsicAttributes & ApprovalCardProps'.
+  Property 'id' does not exist on type 'IntrinsicAttributes & ApprovalCardProps'.
+src/components/tool-ui/agent-interactions.tsx(3419,18): error TS2559: Type '{ type: "progress-tracker"; id: string; steps: { id: string; label: string; description?: string | undefined; status: "completed" | "failed" | "in-progress" | "pending"; }[]; elapsedTime?: number | undefined; choice?: { ...; } | undefined; }' has no properties in common with type 'IntrinsicAttributes & ProgressTrackerProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(82,3): error TS2339: Property 'id' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(83,3): error TS2339: Property 'title' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(84,3): error TS2339: Property 'description' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(85,3): error TS2339: Property 'icon' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(86,3): error TS2339: Property 'metadata' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(87,3): error TS2339: Property 'variant' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(88,3): error TS2339: Property 'confirmLabel' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(89,3): error TS2339: Property 'cancelLabel' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(91,3): error TS2339: Property 'choice' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(198,34): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/components/tool-ui/approval-card/approval-card.tsx(198,40): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/tool-ui/approval-card/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/code-diff/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(59,70): error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(159,28): error TS2339: Property 'id' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(160,31): error TS2339: Property 'steps' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(161,38): error TS2339: Property 'elapsedTime' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(204,23): error TS7006: Parameter 'step' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(204,29): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(245,37): error TS7006: Parameter 'step' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(265,23): error TS7006: Parameter 'step' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(265,29): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(343,3): error TS2339: Property 'id' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(344,3): error TS2339: Property 'steps' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(345,3): error TS2339: Property 'elapsedTime' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(347,3): error TS2339: Property 'choice' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/schema.ts(26,17): error TS7006: Parameter 'steps' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/schema.ts(26,24): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+src/components/tool-ui/shared/contract.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/shared/parse.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/shared/parse.ts(16,35): error TS7006: Parameter 'issue' implicitly has an 'any' type.
+src/components/tool-ui/shared/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/terminal/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/ui/apple-drawer.tsx(3,34): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/pages/Chat/ChatMessage.tsx(12,73): error TS2307: Cannot find module '@assistant-ui/react' or its corresponding type declarations.
+src/pages/Chat/index.tsx(21,8): error TS2307: Cannot find module '@assistant-ui/react' or its corresponding type declarations.
+src/pages/Chat/index.tsx(4376,17): error TS7031: Binding element 'abortSignal' implicitly has an 'any' type.
+src/pages/Chat/index.tsx(4376,30): error TS7031: Binding element 'messages' implicitly has an 'any' type.
+src/pages/Chat/index.tsx(4547,15): error TS7031: Binding element 'suggestion' implicitly has an 'any' type.
+src/pages/Setup/SetupCompleteMark.tsx(13,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/pages/Setup/index.tsx(7,59): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/pages/UiV2Showcase/index.tsx(3,34): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.

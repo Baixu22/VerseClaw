@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-instrument-revalidation",
+  "boundary": "Original evidence untouched. New instrument bindings are prospective static revalidation, not a backfilled product or provider run.",
+  "originalFiles": {
+    "harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json": "e3a51d6f8cf3e6c17b147dcd7b7b69ee2cd7edd0eaccfe0b4c838995411efa74",
+    "harness/specs/fixtures/agent-first-task-corpus/calibration-results.v1.json": "f7b9b6350db788d52ed1d51cce49137edbdc74857ff54ed94500d198522ca58b",
+    "harness/specs/fixtures/agent-first-task-corpus/calibration-samples.v1.json": "3503379316ef40c01aea2ff98175bf07e7353ebb277ce1251bc710550d3cdec9",
+    "harness/specs/fixtures/agent-first-task-corpus/credential-scan.json": "bcfbe31489054e501c617be62fc54fb3cbf2ec0a48580b92fc5f815b813fa4c4",
+    "harness/specs/fixtures/agent-first-task-corpus/model-calibration-attempt1.v1.json": "78ee91bdcbf8f93892502e129fb3b7919d9d08eeefe18963e32f23a52fda5b4c",
+    "harness/specs/fixtures/agent-first-task-corpus/model-calibration.v1.json": "3caecec9094eab67cab167c0cc9495f8111357d8b0efa080f37a7418308ee259",
+    "harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json": "469b613ff639bc25ed232d630fc460c102b70dcce969d427eda4fceec86e0b68",
+    "harness/specs/fixtures/agent-first-task-corpus/SHA256SUMS": "835a061554c29113eb57e11547d8f7bc2896cf09a206dd263d616d3640d307b8",
+    "harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json": "b62d7190d5a22b086827d6aad23d2ae7e46f92bbee5714db164506ef51fd8d61",
+    "harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json": "5321b09566f7c220a968c5d49684855cefe172207c81aea3a3465c8c2e98cf29",
+    "harness/specs/fixtures/rsi-evidence-loop/tf0592/negative-control-results.v1.json": "2786ae48cdd228e644973f1f672d4c902d0d2e0f6a4e654cd547565596f0d280",
+    "harness/specs/fixtures/rsi-evidence-loop/tf0592/negative-controls.v1.json": "1cae119bfd0af734b3649ab2845534e7d355d247a401d8a170dee4f8e2df5c8f",
+    "harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json": "1deffb89331834cba95d443829898f7cea59b18094aac51246e6899b9118c58d",
+    "harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS": "74eb9ddcdce13f542c976bacdbe3ac6ff9854c6cb3a291f87d781809db82ea24",
+    "harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json": "c858af70f0fa13d2fdecec30ae8df00cf5a9cb2ac09810c1a807ac2822222c8f",
+    "harness/specs/fixtures/rsi-evidence-loop/tf0592/validation-report.v1.json": "8c912a6c4852b925862d3c7be6faf2f2f05cbea76cd62b9c076169800db3dc53"
+  }
+}

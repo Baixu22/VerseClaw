@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "base": "df229c0c3b001b984d4896c10c1e8408ecf678a0",
+  "passed": 0,
+  "failed": 3,
+  "selected": 3,
+  "filteredOut": 8,
+  "exitCode": 1,
+  "cases": [
+    {
+      "name": "adaptive resource pressure contracts when latency worsens despite a full backlog",
+      "status": "failed",
+      "failure": "AssertionError: expected 8 to be less than or equal to 4"
+    },
+    {
+      "name": "adaptive resource pressure treats backlog as demand and grows gradually after healthy samples",
+      "status": "failed",
+      "failure": "AssertionError: expected 8 to be 2 // Object.is equality"
+    },
+    {
+      "name": "adaptive resource pressure isolates read, long execution and remote service latency",
+      "status": "failed",
+      "failure": "AssertionError: expected 2 to be 4 // Object.is equality"
+    }
+  ]
+}

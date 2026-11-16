@@ -82,12 +82,17 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
   const setTerminalPlacement = useArtifactPanel((s) => s.setTerminalPlacement);
   const expanded = useArtifactPanel((s) => s.expanded);
   const setExpanded = useArtifactPanel((s) => s.setExpanded);
+  const hidePanel = useArtifactPanel((s) => s.hide);
   const [newTabMenuOpen, setNewTabMenuOpen] = useState(false);
   const newTabButtonRef = useRef<HTMLButtonElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const activeTab = tabs.find((entry) => entry.id === activeTabId) ?? null;
   const openKinds = useMemo(() => tabs.map((entry) => entry.kind), [tabs]);
   const { visibleTabs, hiddenCount } = useTabStripOverflow(tabs, activeTabId, scrollAreaRef);
+
+  useEffect(() => useArtifactPanel.subscribe((state, previous) => {
+    if (previous.open && !state.open) setNewTabMenuOpen(false);
+  }), []);
 
   /* Persist the strip so reopening the session lands on the same tabs. The
    * store owns instance ids; only kinds are durable. */
@@ -247,11 +252,21 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
               ? <PanelRight className="h-4 w-4 pointer-events-none" />
               : <PanelRightOpen className="h-4 w-4 pointer-events-none" />}
           </button>
-          {/* No ✕ here. It duplicated the toolbar's workspace toggle, which
-            * already closes the panel when pressed while open — and that toggle
-            * is the one control the entry animation deliberately leaves standing,
-            * so it is the obvious place for "close" to live. This button keeps
-            * the distinct job it always had: how much width the panel takes. */}
+          <button
+            type="button"
+            className="rs-panel-control-btn"
+            aria-label={t('artifactPanel.actions.close')}
+            title={t('artifactPanel.actions.close')}
+            data-testid="artifact-panel-close"
+            onClick={() => {
+              hidePanel();
+              setNewTabMenuOpen(false);
+              onSessionStateChange?.({ open: false });
+              document.querySelector<HTMLButtonElement>('[data-testid="chat-workspace-toggle"]')?.focus();
+            }}
+          >
+            <X className="h-4 w-4 pointer-events-none" />
+          </button>
         </div>
       </div>
 

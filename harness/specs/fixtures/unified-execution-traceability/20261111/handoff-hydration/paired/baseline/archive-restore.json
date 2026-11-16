@@ -1,0 +1,460 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "baseline",
+  "journey": "archive-restore",
+  "status": "passed",
+  "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+  "homeDir": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-home-RH7R1z",
+  "profileDir": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-user-data-aJ2JSj",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6archiverestoretaskcontrol",
+  "setup": [
+    "isolated profile and Git fixture",
+    "scripted provider",
+    "project/session/history",
+    "persistent task contract",
+    "task/reference"
+  ],
+  "owner": {
+    "session": {
+      "key": "agent:main:session-1794324880636-uproject",
+      "kind": "direct",
+      "label": "U6 project coordinator",
+      "displayName": "U6 project coordinator",
+      "updatedAt": 1794325003126,
+      "sessionId": "02e92fd1-d95b-47b7-92ab-59cc110ae638",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 17,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "fault": null,
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-10T15:36:38.960Z",
+      "action": "hover",
+      "target": "session:source",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-10T15:36:39.346Z",
+      "action": "click",
+      "target": "session:more",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e3",
+      "at": "2026-11-10T15:36:41.778Z",
+      "action": "click",
+      "target": "testid:sidebar-session-context-delete",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e4",
+      "at": "2026-11-10T15:36:42.049Z",
+      "action": "click",
+      "target": "testid:session-delete-dialog-archive",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e5",
+      "at": "2026-11-10T15:36:42.554Z",
+      "action": "navigate",
+      "target": "#/",
+      "before": "",
+      "after": "#/",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e4",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e6",
+      "at": "2026-11-10T15:36:42.705Z",
+      "action": "click",
+      "target": "testid:sidebar-footer-menu-trigger",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    },
+    {
+      "id": "e7",
+      "at": "2026-11-10T15:36:42.758Z",
+      "action": "click",
+      "target": "testid:sidebar-archive",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived"
+    },
+    {
+      "id": "e8",
+      "at": "2026-11-10T15:36:42.944Z",
+      "action": "navigate",
+      "target": "#/settings/archived",
+      "before": "#/",
+      "after": "#/settings/archived",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e7",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e9",
+      "at": "2026-11-10T15:36:43.063Z",
+      "action": "click",
+      "target": "testid:settings-archived-restore-agent:main:session-1794324880636-uproject",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived"
+    },
+    {
+      "id": "e10",
+      "at": "2026-11-10T15:36:45.650Z",
+      "action": "click",
+      "target": "testid:settings-back-button",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    },
+    {
+      "id": "e11",
+      "at": "2026-11-10T15:36:45.666Z",
+      "action": "navigate",
+      "target": "#/",
+      "before": "#/settings/archived",
+      "after": "#/",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e10",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e12",
+      "at": "2026-11-10T15:36:45.670Z",
+      "action": "click",
+      "target": "testid:sidebar-session-agent:main:session-1794324880636-uproject",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    }
+  ],
+  "tracked_product_and_helper_diff_empty": false,
+  "build": {
+    "main_sha256": "8765c7bb76e0e0c44199b8230da6e00d148fb8b95a93e3f631be9368e01c8201",
+    "renderer_sha256": "6c4e9972be89c6b9c3ea07d78f9c15d42b617d651ae9c0b33962723e1849ab42",
+    "runtime_entry_sha256": "e2ca863305b66a323508c0caa73c3509647d01b6b2629059cce5af6cf999e7d5",
+    "manifest_sha256": "1053afd2ed00ee48d5532f1ab8f7f35f2db3610343f7f70145226f9d7ecaf549",
+    "manifest_path": "D:\\tmp\\unified-management-20261109\\baseline-validation\\build-manifest.json",
+    "side": "baseline",
+    "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976"
+  },
+  "driver_sha256": "79876ca2952852bcc78b3e195cef5199400335885b30fd97f0be05d8420d8732",
+  "helpers": {
+    "electron.ts": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "f2a284662312c70f5b0e3d3208ca348aeaa0840ab351af597c99942eba02e69e",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "identities": {
+    "project": {
+      "workspaceId": "u6-project",
+      "rootPath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\fixture\\source",
+      "sessionKey": "agent:main:session-1794324880636-uproject",
+      "generation": "da3c6cea-1387-4602-883f-c31f3ee5bd0b"
+    },
+    "child": null,
+    "taskNodeId": "ad46d85a-9fa7-40a0-bf83-743b98fb54a5",
+    "targetWorkspaceId": null
+  },
+  "task_readback": {
+    "success": true,
+    "tasks": [
+      {
+        "contract": {
+          "objective": "Retain the approved U6 artifact",
+          "constraints": [
+            "Retain prior progress"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Artifact contains the approved output",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "artifact.txt",
+                "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+              }
+            }
+          ],
+          "target": "artifact.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "u6-create"
+          },
+          "taskNodeId": "ad46d85a-9fa7-40a0-bf83-743b98fb54a5",
+          "domain": "524a79157453d2f2e7014ff299c1ddc3cf94a5a30907a8f4c5aca61c99a47874",
+          "revision": 1,
+          "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+          "state": "ready",
+          "createdAt": 1794324971964,
+          "updatedAt": 1794324971964
+        },
+        "claim": null,
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      }
+    ]
+  },
+  "archive": {
+    "before": {
+      "success": true,
+      "entries": [
+        {
+          "sessionKey": "agent:main:session-1794324880636-uproject",
+          "agentId": "main",
+          "transcriptPath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-user-data-aJ2JSj\\openclaw-source-state\\agents\\main\\sessions\\da3c6cea-1387-4602-883f-c31f3ee5bd0b.archived.jsonl",
+          "label": "U6 project coordinator",
+          "archivedAt": 1794325002292,
+          "originalWorkspaceId": null,
+          "originalFolderId": null,
+          "sessionsJsonSnapshot": {
+            "sessionId": "da3c6cea-1387-4602-883f-c31f3ee5bd0b",
+            "updatedAt": 1794324972545,
+            "label": "U6 project coordinator",
+            "sessionFile": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-user-data-aJ2JSj\\openclaw-source-state\\agents\\main\\sessions\\da3c6cea-1387-4602-883f-c31f3ee5bd0b.jsonl"
+          }
+        }
+      ]
+    },
+    "restored": {
+      "session": {
+        "key": "agent:main:session-1794324880636-uproject",
+        "kind": "direct",
+        "label": "U6 project coordinator",
+        "displayName": "U6 project coordinator",
+        "updatedAt": 1794325003126,
+        "sessionId": "02e92fd1-d95b-47b7-92ab-59cc110ae638",
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "thinkingDefault": "medium",
+        "totalTokens": 17,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "modelProvider": "custom-sessionc",
+        "model": "mock-coder",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 128000,
+        "hasActiveRun": false
+      }
+    },
+    "after": {
+      "success": true,
+      "entries": []
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "[agent fixture]\n\nRecorded objective: Retain the approved U6 artifact"
+            }
+          ],
+          "timestamp": 1794324972517,
+          "stopReason": "stop",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "totalTokens": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "api": "openai-responses",
+          "provider": "openclaw",
+          "model": "gateway-injected",
+          "__openclaw": {
+            "id": "2fc83776-7bbd-4910-aaea-d209d771a37d",
+            "recordTimestampMs": 1794324972517,
+            "seq": 1
+          }
+        }
+      ],
+      "model": "openclaw/gateway-injected"
+    }
+  },
+  "provider_log": [],
+  "reason": null,
+  "counts_source": "successful_events",
+  "counts": {
+    "identity_selection": 2,
+    "page_transition": 3,
+    "repeat_confirmation": 0,
+    "goal_restatement": 0,
+    "repeat_reminder": 0
+  }
+}

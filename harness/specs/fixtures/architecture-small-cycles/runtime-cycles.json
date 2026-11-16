@@ -1,0 +1,273 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "baselineCommit": "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f",
+  "candidate": {
+    "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+    "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+    "dirty": false
+  },
+  "baseline": {
+    "filesScanned": 9158,
+    "components": [
+      [
+        "src/agents/embedded-agent-runner/tool-schema-runtime.ts",
+        "src/agents/runtime-plan/tools.ts",
+        "src/agents/tools-effective-inventory-build.ts",
+        "src/context-engine/assembler.ts",
+        "src/context-engine/chat-turn-vtoken-injection.ts",
+        "src/context-engine/cvk/engine.ts",
+        "src/context-engine/enhancement-kill-switch.ts",
+        "src/context-engine/model-capability-prompt.ts",
+        "src/context-engine/registry.ts",
+        "src/context-engine/runtime-flag-ack.ts",
+        "src/context-engine/working-memory-regather.ts",
+        "src/plugins/active-runtime-registry.ts",
+        "src/plugins/loader.ts",
+        "src/plugins/provider-discovery.runtime.ts",
+        "src/plugins/provider-hook-runtime.ts",
+        "src/plugins/provider-runtime.ts",
+        "src/plugins/providers.runtime.ts",
+        "src/plugins/registry.ts",
+        "src/plugins/runtime/standalone-runtime-registry-loader.ts",
+        "src/plugins/text-transforms.runtime.ts",
+        "src/plugins/tools.ts",
+        "src/runtime-core/index.ts",
+        "src/runtime-core/model-capability-effective-state.ts"
+      ],
+      [
+        "src/agents/tools/context-agent-tools.ts",
+        "src/agents/tools/context-view-tool-surface.ts"
+      ]
+    ],
+    "componentSourceHashes": [
+      {
+        "file": "src/agents/embedded-agent-runner/tool-schema-runtime.ts",
+        "sha256": "99bfde204c1672180c3ed42a32802188473dfa7faf4419cfc5fe14a0dc2566d9"
+      },
+      {
+        "file": "src/agents/runtime-plan/tools.ts",
+        "sha256": "a631c83180034b265baf1bf8083ac50cb89996363cb9c6f7574770cad57e7d16"
+      },
+      {
+        "file": "src/agents/tools-effective-inventory-build.ts",
+        "sha256": "e6f49268e8a3a18e7b98ed74cd4bd75e3acfbf4c8aec321e8ac361afcc5edf3d"
+      },
+      {
+        "file": "src/agents/tools/context-agent-tools.ts",
+        "sha256": "a7d45d0c6adcd447e735a9ee2dc3a3f661427ac0302161bfb9d42e419844e0e3"
+      },
+      {
+        "file": "src/agents/tools/context-view-tool-surface.ts",
+        "sha256": "8166b373849f8cbc01af331b62a62e6adc39929c3dcfb5c2d9e4300ded66335b"
+      },
+      {
+        "file": "src/context-engine/assembler.ts",
+        "sha256": "22470211584dcff5ceb07010268321aff9211fdbe2d1b3186717f774a32cf216"
+      },
+      {
+        "file": "src/context-engine/chat-turn-vtoken-injection.ts",
+        "sha256": "2f4be3c00d8d76ea3a42b4cccc7d8980ac28209dbc63c88d80cc5324dcf3ec8e"
+      },
+      {
+        "file": "src/context-engine/cvk/engine.ts",
+        "sha256": "cb32226b7e677c44e9a5f1a631900d3e4606e2f1079ec17833369d9f12d0f98b"
+      },
+      {
+        "file": "src/context-engine/enhancement-kill-switch.ts",
+        "sha256": "69d132d250118ca6c1a68fc62e59455869a1b742dbc48be80100192f234651d6"
+      },
+      {
+        "file": "src/context-engine/model-capability-prompt.ts",
+        "sha256": "52d7af389456587c194b7d380b9d0f9ed3fc50882cb571cda47ac0dca303d8a3"
+      },
+      {
+        "file": "src/context-engine/registry.ts",
+        "sha256": "6892ac5bcb740cf97bdd2ab0e6bf2b7b129e09df82924de75419e39ed816e5a0"
+      },
+      {
+        "file": "src/context-engine/runtime-flag-ack.ts",
+        "sha256": "11a35cdd6d0a5845ae10ca072e4068e4942f3b44fd119226dcdb5a611e48ce3d"
+      },
+      {
+        "file": "src/context-engine/working-memory-regather.ts",
+        "sha256": "88a9cd0bf8e1ddc0585ffdcfb97fee9abafb1181fcdfd5d73d76bdf86e897e1e"
+      },
+      {
+        "file": "src/plugins/active-runtime-registry.ts",
+        "sha256": "84f17a5ef1d29fb25aebbaf3aa7cb503fa5e8ed012b243cbdfe247ca03837564"
+      },
+      {
+        "file": "src/plugins/loader.ts",
+        "sha256": "c66e9e01084d5d4ffb4fa82618fe17b32d445d9f40371a2c6afb6d7abd9081f7"
+      },
+      {
+        "file": "src/plugins/provider-discovery.runtime.ts",
+        "sha256": "f40af6bae62846efc27ea84e3bf853d159e6c4b3584cf6fb1c98be275dce1c0e"
+      },
+      {
+        "file": "src/plugins/provider-hook-runtime.ts",
+        "sha256": "a2be8819fe73e262372a47934afc3aabbe7e4bf1e7fe0f545ac377b2720fe321"
+      },
+      {
+        "file": "src/plugins/provider-runtime.ts",
+        "sha256": "fb8a9f5baa8f118b17d1e87a1fe2c4f1357d38734078f68db9cbe1dd07be9538"
+      },
+      {
+        "file": "src/plugins/providers.runtime.ts",
+        "sha256": "d1329b97e9a9e43bee6040671ebeee23558fa37659bc0fea7c01cdf2d819394e"
+      },
+      {
+        "file": "src/plugins/registry.ts",
+        "sha256": "eb56bdd911d8d738f8c677b088cce456a468c739165d3da4277d822681e431b1"
+      },
+      {
+        "file": "src/plugins/runtime/standalone-runtime-registry-loader.ts",
+        "sha256": "344d618645dd047a7fe46b60d56e840ffcb1689c87d8c0f702c5c1c516f8fefb"
+      },
+      {
+        "file": "src/plugins/text-transforms.runtime.ts",
+        "sha256": "6fa2cdb2610009eefe24cb520f4bfd80711de998da354963306bfc975cfd06f4"
+      },
+      {
+        "file": "src/plugins/tools.ts",
+        "sha256": "413fa7f36d6dec2521ea1810ccd31e044990135e4135fb946d45d80f4f986e40"
+      },
+      {
+        "file": "src/runtime-core/index.ts",
+        "sha256": "13a9ed9ade22c8f2bc23d3465be0fd21d2f6d31680abb9dc305ee6bec3834f62"
+      },
+      {
+        "file": "src/runtime-core/model-capability-effective-state.ts",
+        "sha256": "420b029e938eef182eeed817d0608309155a366ccf86fd617aace0011e2f6fc9"
+      }
+    ]
+  },
+  "after": {
+    "filesScanned": 9158,
+    "components": [
+      [
+        "src/agents/embedded-agent-runner/tool-schema-runtime.ts",
+        "src/agents/runtime-plan/tools.ts",
+        "src/agents/tools-effective-inventory-build.ts",
+        "src/context-engine/assembler.ts",
+        "src/context-engine/chat-turn-vtoken-injection.ts",
+        "src/context-engine/cvk/engine.ts",
+        "src/context-engine/enhancement-kill-switch.ts",
+        "src/context-engine/model-capability-prompt.ts",
+        "src/context-engine/registry.ts",
+        "src/context-engine/runtime-flag-ack.ts",
+        "src/context-engine/working-memory-regather.ts",
+        "src/plugins/active-runtime-registry.ts",
+        "src/plugins/loader.ts",
+        "src/plugins/provider-discovery.runtime.ts",
+        "src/plugins/provider-hook-runtime.ts",
+        "src/plugins/provider-runtime.ts",
+        "src/plugins/providers.runtime.ts",
+        "src/plugins/registry.ts",
+        "src/plugins/runtime/standalone-runtime-registry-loader.ts",
+        "src/plugins/text-transforms.runtime.ts",
+        "src/plugins/tools.ts",
+        "src/runtime-core/index.ts",
+        "src/runtime-core/model-capability-effective-state.ts"
+      ]
+    ],
+    "componentSourceHashes": [
+      {
+        "file": "src/agents/embedded-agent-runner/tool-schema-runtime.ts",
+        "sha256": "99bfde204c1672180c3ed42a32802188473dfa7faf4419cfc5fe14a0dc2566d9"
+      },
+      {
+        "file": "src/agents/runtime-plan/tools.ts",
+        "sha256": "a631c83180034b265baf1bf8083ac50cb89996363cb9c6f7574770cad57e7d16"
+      },
+      {
+        "file": "src/agents/tools-effective-inventory-build.ts",
+        "sha256": "e6f49268e8a3a18e7b98ed74cd4bd75e3acfbf4c8aec321e8ac361afcc5edf3d"
+      },
+      {
+        "file": "src/context-engine/assembler.ts",
+        "sha256": "22470211584dcff5ceb07010268321aff9211fdbe2d1b3186717f774a32cf216"
+      },
+      {
+        "file": "src/context-engine/chat-turn-vtoken-injection.ts",
+        "sha256": "2f4be3c00d8d76ea3a42b4cccc7d8980ac28209dbc63c88d80cc5324dcf3ec8e"
+      },
+      {
+        "file": "src/context-engine/cvk/engine.ts",
+        "sha256": "cb32226b7e677c44e9a5f1a631900d3e4606e2f1079ec17833369d9f12d0f98b"
+      },
+      {
+        "file": "src/context-engine/enhancement-kill-switch.ts",
+        "sha256": "69d132d250118ca6c1a68fc62e59455869a1b742dbc48be80100192f234651d6"
+      },
+      {
+        "file": "src/context-engine/model-capability-prompt.ts",
+        "sha256": "52d7af389456587c194b7d380b9d0f9ed3fc50882cb571cda47ac0dca303d8a3"
+      },
+      {
+        "file": "src/context-engine/registry.ts",
+        "sha256": "6892ac5bcb740cf97bdd2ab0e6bf2b7b129e09df82924de75419e39ed816e5a0"
+      },
+      {
+        "file": "src/context-engine/runtime-flag-ack.ts",
+        "sha256": "11a35cdd6d0a5845ae10ca072e4068e4942f3b44fd119226dcdb5a611e48ce3d"
+      },
+      {
+        "file": "src/context-engine/working-memory-regather.ts",
+        "sha256": "88a9cd0bf8e1ddc0585ffdcfb97fee9abafb1181fcdfd5d73d76bdf86e897e1e"
+      },
+      {
+        "file": "src/plugins/active-runtime-registry.ts",
+        "sha256": "84f17a5ef1d29fb25aebbaf3aa7cb503fa5e8ed012b243cbdfe247ca03837564"
+      },
+      {
+        "file": "src/plugins/loader.ts",
+        "sha256": "c66e9e01084d5d4ffb4fa82618fe17b32d445d9f40371a2c6afb6d7abd9081f7"
+      },
+      {
+        "file": "src/plugins/provider-discovery.runtime.ts",
+        "sha256": "f40af6bae62846efc27ea84e3bf853d159e6c4b3584cf6fb1c98be275dce1c0e"
+      },
+      {
+        "file": "src/plugins/provider-hook-runtime.ts",
+        "sha256": "a2be8819fe73e262372a47934afc3aabbe7e4bf1e7fe0f545ac377b2720fe321"
+      },
+      {
+        "file": "src/plugins/provider-runtime.ts",
+        "sha256": "fb8a9f5baa8f118b17d1e87a1fe2c4f1357d38734078f68db9cbe1dd07be9538"
+      },
+      {
+        "file": "src/plugins/providers.runtime.ts",
+        "sha256": "d1329b97e9a9e43bee6040671ebeee23558fa37659bc0fea7c01cdf2d819394e"
+      },
+      {
+        "file": "src/plugins/registry.ts",
+        "sha256": "eb56bdd911d8d738f8c677b088cce456a468c739165d3da4277d822681e431b1"
+      },
+      {
+        "file": "src/plugins/runtime/standalone-runtime-registry-loader.ts",
+        "sha256": "344d618645dd047a7fe46b60d56e840ffcb1689c87d8c0f702c5c1c516f8fefb"
+      },
+      {
+        "file": "src/plugins/text-transforms.runtime.ts",
+        "sha256": "6fa2cdb2610009eefe24cb520f4bfd80711de998da354963306bfc975cfd06f4"
+      },
+      {
+        "file": "src/plugins/tools.ts",
+        "sha256": "413fa7f36d6dec2521ea1810ccd31e044990135e4135fb946d45d80f4f986e40"
+      },
+      {
+        "file": "src/runtime-core/index.ts",
+        "sha256": "13a9ed9ade22c8f2bc23d3465be0fd21d2f6d31680abb9dc305ee6bec3834f62"
+      },
+      {
+        "file": "src/runtime-core/model-capability-effective-state.ts",
+        "sha256": "420b029e938eef182eeed817d0608309155a366ccf86fd617aace0011e2f6fc9"
+      }
+    ]
+  },
+  "largeComponentUnchanged": true,
+  "originalCheckerExitCode": 1,
+  "scope": "Original static import-cycle checker; remaining 23-file SCC is TF-0789. Full raw graphs remain in the private run archive."
+}

@@ -3,9 +3,10 @@
 // TF-0598: the three-arm readout must keep shadow distinguishable from
 // confirmed, reuse the single case-cluster instrument, and never promote from a
 // synthetic wiring fixture.
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join as joinPath, resolve as resolvePath, sep } from 'node:path';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 
 import {
@@ -14,6 +15,7 @@ import {
   buildArmsPlan,
   buildArmsReport,
   validateArmsProtocol,
+  validateArmsPack,
 } from '../../scripts/rsi-sekb-arms.mjs';
 
 const ROOT = process.cwd();
@@ -32,6 +34,16 @@ function tempRootWith(mutate: (runs: any) => void): string {
   writeFileSync(joinPath(dir, ARMS_RUNS_PATH), JSON.stringify(runs));
   return dir;
 }
+
+function improvingRun(runs: any): void {
+  runs.evidenceKind = 'live-provider';
+  runs.claims = { benefit: false, promotionReady: false, productLocksChanged: false, realHuman: false, providerCalls: 180 };
+  runs.arms = Object.fromEntries(['sekb-off', 'sekb-shadow', 'sekb-confirmed'].map((arm) => [arm,
+    Array.from({ length: 20 }, (_, index) => Array.from({ length: 3 }, (_, repeat) => ({
+      caseId: `case-${index}`, repeat: repeat + 1, success: arm === 'sekb-confirmed' && index < 6, tokens: 1000,
+    }))).flat(),
+  ]));
+}
 afterAll(() => {
   for (const path of created) {
     if (!resolvePath(path).startsWith(`${resolvePath(TEMP_ROOT)}${sep}rsi-sekb-arms-test-`)) throw new Error('unexpected cleanup path');
@@ -40,6 +52,54 @@ afterAll(() => {
 });
 
 describe('rsi sekb three-arm readout', () => {
+  it('verifies the retained report and rejects rehashed statistics', () => {
+    expect(validateArmsPack(ROOT).passed).toBe(true);
+    const root = tempRootWith(() => {});
+    const manifest = 'harness/specs/fixtures/rsi-sekb-arms/SHA256SUMS';
+    const lines = readFileSync(join(ROOT, manifest), 'utf8').trim().split(/\r?\n/u);
+    for (const line of lines) {
+      const path = line.slice(66);
+      mkdirSync(dirname(join(root, path)), { recursive: true });
+      copyFileSync(join(ROOT, path), join(root, path));
+    }
+    copyFileSync(join(ROOT, manifest), join(root, manifest));
+    const path = join(root, 'harness/specs/fixtures/rsi-sekb-arms/report.v1.json');
+    const report = JSON.parse(readFileSync(path, 'utf8'));
+    report.claims.promotionReady = true;
+    writeFileSync(path, JSON.stringify(report));
+    writeFileSync(join(root, manifest), lines.map((line) => {
+      const input = line.slice(66);
+      return `${createHash('sha256').update(readFileSync(join(root, input))).digest('hex')}  ${input}`;
+    }).join('\n') + '\n');
+    expect(validateArmsPack(root).errors).toEqual(['report-recomputation']);
+  });
+
+  it.each(['partial-pair', 'shadow-drift', 'safety-violation', 'unknown-evidence', 'partial-cost'])(
+    'review regression: refuses promotion for %s', (mutation) => {
+      const root = tempRootWith((runs) => {
+        improvingRun(runs);
+        if (mutation === 'partial-pair') runs.arms['sekb-confirmed'].push({ caseId: 'partial', repeat: 1, success: false, tokens: 1000 });
+        if (mutation === 'shadow-drift') runs.arms['sekb-shadow'][0].success = true;
+        if (mutation === 'safety-violation') runs.arms['sekb-confirmed'][0].safetyViolation = true;
+        if (mutation === 'unknown-evidence') delete runs.evidenceKind;
+        if (mutation === 'partial-cost') delete runs.arms['sekb-confirmed'][0].tokens;
+      });
+      const report = buildArmsReport(root);
+      expect(report.status).not.toBe('promote');
+      expect(report.promotion.status).not.toBe('promote');
+      expect(report.claims.promotionReady).toBe(false);
+    });
+
+  it('review regression: rejects an eligible comparison with the wrong baseline', () => {
+    const protocol = readProtocol();
+    protocol.comparisons.find((entry: any) => entry.role === 'promotion-eligible').baseline = 'sekb-shadow';
+    expect(validateArmsProtocol(protocol).passed).toBe(false);
+  });
+
+  it('review regression: reports pass@k instead of silently omitting it', () => {
+    expect(buildArmsReport(ROOT).arms['sekb-off'].passAtK).toEqual(expect.any(Number));
+  });
+
   it('accepts the checked-in protocol', () => {
     const result = validateArmsProtocol(readProtocol());
     expect(result.errors).toEqual([]);
@@ -93,6 +153,7 @@ describe('rsi sekb three-arm readout', () => {
   it('derives a promotion state for a real run instead of a bare insufficient-evidence', () => {
     const root = tempRootWith((runs) => {
       runs.evidenceKind = 'live-provider';
+      runs.claims.providerCalls = 180;
       for (const arm of Object.values(runs.arms) as any[]) for (const row of arm) row.tokens = 1000;
     });
     const report = buildArmsReport(root);
@@ -105,7 +166,7 @@ describe('rsi sekb three-arm readout', () => {
     expect(report.claims.promotionReady).toBe(false);
   });
 
-  it('promotes a real run whose interval clears zero and whose cost stays inside the ceiling', () => {
+  it('reports numerical eligibility without authorizing promotion from an unverified run', () => {
     const root = tempRootWith((runs) => {
       runs.evidenceKind = 'live-provider';
       const off: any[] = [];
@@ -125,7 +186,7 @@ describe('rsi sekb three-arm readout', () => {
 
     expect(report.promotion.status).toBe('promote');
     expect(report.status).toBe('promote');
-    expect(report.claims.promotionReady).toBe(true);
+    expect(report.claims.promotionReady).toBe(false);
   });
 
   it('treats a missing cost dimension as a promotion disqualifier', () => {

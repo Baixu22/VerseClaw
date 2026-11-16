@@ -1,0 +1,274 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-new-session-ui3-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-workspace-header.spec.ts",
+      "file": "chat-workspace-header.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat workspace header",
+          "file": "chat-workspace-header.spec.ts",
+          "line": 70,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keeps sidebar new chat scoped to the active workspace and preserves drafts after owner refusal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 34473,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:52.973Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:52.973Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [32524:1110/030253.096:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[32524:1110/030253.096:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:53.350Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:53.352Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:53.356Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:02:53.356Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:02:53.356Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:02:53.357Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:56.408Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:56.408Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:02:56.409Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:02:56.409Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:57.178Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:02:57.178Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:02:57.178Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:02:57.178Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:02:59.630Z] [INFO] Gateway stop requested\n[2026-11-09T19:02:59.631Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:64505/0df2c8b8-07fb-43e6-9925-21b8cca0ea2f\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:02.188Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:02.189Z] [INFO] [ResourceTracker] Stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:02.189Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:02.189Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:02.190Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-09T19:02:40.880Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "new-session-refusal-recovery",
+                          "contentType": "application/json",
+                          "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsImFjdG9yIjoicGxheXdyaWdodC11NS1uZXctc2Vzc2lvbiIsImZpeHR1cmUiOiJIb3N0IG93bmVyIHJlamVjdGlvbiBmb2xsb3dlZCBieSBvcmlnaW5hbCBVSSByZXRyeSIsInNvdXJjZURyYWZ0UmV0YWluZWQiOnRydWUsImNhbGxzIjp7IndvcmtzcGFjZVVwZGF0ZSI6W3siaWQiOiJ3b3Jrc3BhY2UtMSIsImFnZW50SWQiOiJtYWluIiwiYWN0aXZlU2Vzc2lvbktleSI6ImFnZW50Om1haW46c2Vzc2lvbi0xNzk0MjUwOTc3MTc4LWN0cnIyYiIsInNlc3Npb25LZXkiOiJhZ2VudDptYWluOnNlc3Npb24tMTc5NDI1MDk3NzE3OC1jdHJyMmIiLCJzdGF0ZSI6eyJhY3RpdmVUb3BpY0lkIjpudWxsfX1dLCJ3b3Jrc3BhY2VTYXZlU3RhdGUiOlt7ImlkIjoid29ya3NwYWNlLTEiLCJzZXNzaW9uS2V5IjoiYWdlbnQ6bWFpbjptYWluIiwic3RhdGUiOnsiZHJhZnRJbnB1dCI6IiIsImNvbXBvc2VyUnVuU3RhdGUiOiJpZGxlIiwiYWN0aXZlVG9waWNJZCI6bnVsbCwia25vd2xlZGdlU2NvcGUiOiJub25lIiwia25vd2xlZGdlTW9kZSI6InN1Z2dlc3QiLCJhcnRpZmFjdFBhbmVsIjp7Im9wZW4iOmZhbHNlLCJleHBhbmRlZCI6ZmFsc2UsInRhYnMiOltdfSwidHVyblN1bW1hcnlFeHBhbmRlZCI6e30sInR1cm5TdW1tYXJ5U3RlcERldGFpbHNFeHBhbmRlZCI6e319fSx7ImlkIjoid29ya3NwYWNlLTEiLCJzZXNzaW9uS2V5IjoiYWdlbnQ6bWFpbjptYWluIiwic3RhdGUiOnsiZHJhZnRJbnB1dCI6IlByZXNlcnZlIHRoaXMgc291cmNlIGRyYWZ0IGFmdGVyIHJlamVjdGVkIGNyZWF0aW9uIiwiY29tcG9zZXJSdW5TdGF0ZSI6ImlkbGUiLCJhY3RpdmVUb3BpY0lkIjpudWxsLCJrbm93bGVkZ2VTY29wZSI6Im5vbmUiLCJrbm93bGVkZ2VNb2RlIjoic3VnZ2VzdCIsImFydGlmYWN0UGFuZWwiOnsib3BlbiI6ZmFsc2UsImV4cGFuZGVkIjpmYWxzZSwidGFicyI6W119LCJ0dXJuU3VtbWFyeUV4cGFuZGVkIjp7fSwidHVyblN1bW1hcnlTdGVwRGV0YWlsc0V4cGFuZGVkIjp7fX19XSwicmVqZWN0ZWRVcGRhdGVzIjpbeyJpZCI6IndvcmtzcGFjZS0xIiwiYWdlbnRJZCI6Im1haW4iLCJhY3RpdmVTZXNzaW9uS2V5IjoiYWdlbnQ6bWFpbjpzZXNzaW9uLTE3OTQyNTA5NzY0MTEteHJoZjMyIiwic2Vzc2lvbktleSI6ImFnZW50Om1haW46c2Vzc2lvbi0xNzk0MjUwOTc2NDExLXhyaGYzMiIsInN0YXRlIjp7ImFjdGl2ZVRvcGljSWQiOm51bGx9fV19fQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4db553a0a2642d4224fb-a3cde7dea66d6d743bb4",
+              "file": "chat-workspace-header.spec.ts",
+              "line": 226,
+              "column": 58
+            },
+            {
+              "title": "keeps slash new chat scoped to the active workspace and preserves drafts after owner refusal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 29642,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:31.261Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:31.262Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T19:03:31.262Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=37608, ppid=47616\n[2026-11-09T19:03:31.262Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:03:31.560Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:03:31.561Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T19:03:31.561Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T19:03:31.561Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:31.616Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:31.616Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [37608:1110/030331.699:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:err] [37608:1110/030331.699:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T19:03:31.872Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:03:31.872Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:03:31.872Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:03:31.872Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:32.001Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:32.004Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:34.161Z] [INFO] Gateway stop requested\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:34.162Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:51022/93237d02-befd-49d7-855a-d12a369bac3c\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:34.209Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:34.210Z] [INFO] [ResourceTracker] Stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:34.210Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-09T19:03:34.210Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T19:03:34.210Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-09T19:03:15.376Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "new-session-refusal-recovery",
+                          "contentType": "application/json",
+                          "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsImFjdG9yIjoicGxheXdyaWdodC11NS1uZXctc2Vzc2lvbiIsImZpeHR1cmUiOiJIb3N0IG93bmVyIHJlamVjdGlvbiBmb2xsb3dlZCBieSBvcmlnaW5hbCBVSSByZXRyeSIsInNvdXJjZURyYWZ0UmV0YWluZWQiOnRydWUsImNhbGxzIjp7IndvcmtzcGFjZVVwZGF0ZSI6W3siaWQiOiJ3b3Jrc3BhY2UtMSIsImFnZW50SWQiOiJtYWluIiwiYWN0aXZlU2Vzc2lvbktleSI6ImFnZW50Om1haW46c2Vzc2lvbi0xNzk0MjUxMDEzNzI5LXJ0d2FpaiIsInNlc3Npb25LZXkiOiJhZ2VudDptYWluOnNlc3Npb24tMTc5NDI1MTAxMzcyOS1ydHdhaWoiLCJzdGF0ZSI6eyJhY3RpdmVUb3BpY0lkIjpudWxsfX1dLCJ3b3Jrc3BhY2VTYXZlU3RhdGUiOlt7ImlkIjoid29ya3NwYWNlLTEiLCJhY3RpdmVTZXNzaW9uS2V5IjoiYWdlbnQ6bWFpbjptYWluIiwic2Vzc2lvbktleSI6ImFnZW50Om1haW46bWFpbiIsInN0YXRlIjp7ImRyYWZ0SW5wdXQiOiIvbmV3IiwiY29tcG9zZXJSdW5TdGF0ZSI6ImlkbGUiLCJhY3RpdmVUb3BpY0lkIjpudWxsLCJrbm93bGVkZ2VTY29wZSI6Im5vbmUiLCJrbm93bGVkZ2VNb2RlIjoic3VnZ2VzdCIsImFydGlmYWN0UGFuZWwiOnsib3BlbiI6ZmFsc2UsImV4cGFuZGVkIjpmYWxzZSwidGFicyI6W119LCJ0dXJuU3VtbWFyeUV4cGFuZGVkIjp7fSwidHVyblN1bW1hcnlTdGVwRGV0YWlsc0V4cGFuZGVkIjp7fX19XSwicmVqZWN0ZWRVcGRhdGVzIjpbeyJpZCI6IndvcmtzcGFjZS0xIiwiYWdlbnRJZCI6Im1haW4iLCJhY3RpdmVTZXNzaW9uS2V5IjoiYWdlbnQ6bWFpbjpzZXNzaW9uLTE3OTQyNTEwMTM0NzgtZ2c5MnJwIiwic2Vzc2lvbktleSI6ImFnZW50Om1haW46c2Vzc2lvbi0xNzk0MjUxMDEzNDc4LWdnOTJycCIsInN0YXRlIjp7ImFjdGl2ZVRvcGljSWQiOm51bGx9fV19fQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4db553a0a2642d4224fb-29158a08d46a243f72dc",
+              "file": "chat-workspace-header.spec.ts",
+              "line": 226,
+              "column": 58
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-09T19:02:39.710Z",
+    "duration": 66728.14899999999,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

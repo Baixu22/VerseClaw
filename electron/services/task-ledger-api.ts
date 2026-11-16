@@ -1,6 +1,8 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import type { GatewayManager } from '../gateway/manager';
+import { listManagedTasks, pageManagedTasks, readSessionTask, taskSystemCommand, openTaskSystem } from './task-system-service';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type {
   TaskLedgerAddEdgePayload,
@@ -38,7 +40,7 @@ function normalizeNodeInput(payload: TaskLedgerCreateNodePayload): TaskLedgerNod
   const createdAt = nowIso();
   const input = payload.node;
   return {
-    id: randomUUID(),
+    id: payload.idempotencyKey ? createHash('sha256').update(`${payload.workspaceId??''}\0${payload.idempotencyKey}`).digest('hex') : randomUUID(),
     title: requireString(input.title, 'node.title'),
     kind: input.kind ?? 'task',
     parentId: input.parentId ?? null,
@@ -77,19 +79,25 @@ function requireDigest(value: unknown, label: string): string {
 }
 
 type CompletionOwnerReadResult =
-  | { ok: true; taskId: string; priorStatus: string; claim: import('../../shared/types/task-ledger').TaskLedgerCompletionClaim }
+  | { ok: true; taskId: string; priorStatus: string; claim: import('../../shared/types/task-ledger').TaskLedgerCompletionClaim;credential?:import('../../shared/task-system/types').TaskCredential }
   | { ok: false; reason: string };
 
 /**
- * A caller cannot self-certify completion. This seam is deliberately fail-closed
- * until the existing verifier and effect-receipt owners are read by id.
+ * Completion callers provide references; runtime owners re-read their records.
  */
-async function readCompletionClaimFromOwners(_params: {
+async function readCompletionClaimFromOwners(params: {
   workspaceId: string | null | undefined;
   refs: import('@shared/host-api/contract').TaskLedgerCompletionOwnerRefs;
   node: TaskLedgerNode | null;
+  gateway?:GatewayManager;
 }): Promise<CompletionOwnerReadResult> {
-  return { ok: false, reason: 'owner_receipt_readback_unavailable' };
+  if(!params.gateway||!params.workspaceId)return {ok:false,reason:'owner_receipt_readback_unavailable'};
+  const store=await openTaskSystem(params.workspaceId);
+  try{
+    if(!store?.has(params.refs.taskId))return {ok:false,reason:'task_execution_contract_required'};
+    const task=store.get(params.refs.taskId);if(!task.claim)return {ok:false,reason:'task_owner_missing'};
+    return await params.gateway.rpc<CompletionOwnerReadResult>('tasks.contract.receipt',{workspaceDir:task.claim.worktree,refs:params.refs},15_000);
+  }catch(error){return {ok:false,reason:error instanceof Error?error.message:String(error)};}finally{store?.close();}
 }
 
 function wrapSnapshot(snapshot: TaskLedgerSnapshot) {
@@ -146,8 +154,15 @@ document.getElementById('search').addEventListener('input',e=>{query=e.target.va
 </html>`;
 }
 
-export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger'] {
+export function createTaskLedgerApi(gatewayManager?: GatewayManager): CompleteHostServiceRegistry['taskLedger'] {
   return {
+    managedTasks: async (payload) => ({ success: true, tasks: await listManagedTasks(payload?.workspaceId) }),
+    queryTasks: async (payload) => ({ success: true, ...await pageManagedTasks(payload?.workspaceId, payload) }),
+    sessionTask: async (payload) => ({success:true,...await readSessionTask(payload.workspaceId,payload.sessionKey,gatewayManager,payload.expectedSessionGeneration)}),
+    command: async (payload) => {
+      try { return { success: true, result: await taskSystemCommand(payload.workspaceId,payload.command,gatewayManager) }; }
+      catch (error) { return { success: false, error: error instanceof Error ? error.message : String(error) }; }
+    },
     snapshot: async (payload) => wrapSnapshot(await loadTaskLedgerSnapshot(payload?.workspaceId)),
 
     appendEvents: async (payload) => wrapSnapshot(
@@ -250,6 +265,7 @@ export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger']
         workspaceId: payload.workspaceId,
         refs,
         node: before.nodes.find((candidate) => candidate.id === refs.taskId) ?? null,
+        gateway:gatewayManager,
       });
       if (!claim.ok) {
         return { success: false, accepted: false, reason: claim.reason, snapshot: before };
@@ -263,6 +279,10 @@ export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger']
       }
       if (node.kind === 'check' || node.kind === 'review' || node.kind === 'decision') {
         return { success: false, accepted: false, reason: 'task_kind_not_eligible', snapshot: before };
+      }
+      if(claim.credential&&payload.workspaceId){
+        await taskSystemCommand(payload.workspaceId,{action:'accept',credential:claim.credential,candidate:refs.candidateDigest},gatewayManager);
+        return {success:true,accepted:true,snapshot:await loadTaskLedgerSnapshot(payload.workspaceId)};
       }
       const snapshot = await appendTaskLedgerEvents(payload.workspaceId, [{
         type: 'status_changed',

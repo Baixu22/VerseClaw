@@ -1,0 +1,713 @@
+/*
+ * codex-composer-material.css — the composer's control and menu material.
+ *
+ * Quiet graphite controls, opaque sheets, a fine rim and soft elevation.
+ * Shared semantic tokens carry the light and dark palettes.
+ */
+
+.codex-composer-control {
+  --ccc-ring: color-mix(in oklab, var(--color-text-foreground) 9%, transparent);
+  border-radius: 999px;
+  padding: 0 10px;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    box-shadow 160ms ease;
+}
+
+.codex-composer-control:hover:not(:disabled),
+.codex-composer-control.is-active {
+  box-shadow: inset 0 0 0 1px var(--ccc-ring);
+}
+
+/* Icon-only controls stay circles. */
+.codex-composer-control.w-8 { padding: 0; }
+
+/* One chevron recipe for every trigger: rotates on open with the menu's ease. */
+.codex-composer-chevron {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  opacity: 0.6;
+  transition: transform 260ms var(--ease-enter), opacity 140ms ease;
+}
+
+.codex-composer-control:hover .codex-composer-chevron,
+.codex-composer-chevron.is-open { opacity: 1; }
+.codex-composer-chevron.is-open { transform: rotate(180deg); }
+
+/* ── Model trigger ────────────────────────────────────────────────────────
+ * Brand mark · short name · effort flame · chevron. The name is the last
+ * segment of the model id, so router prefixes no longer eat the width; the
+ * full ref and provider live in the tooltip and the menu. */
+.codex-model-picker-trigger {
+  max-width: min(320px, 40vw);
+  height: auto;
+  min-height: 32px;
+  gap: 6px;
+  padding: 6px 8px;
+}
+
+.codex-model-picker-label {
+  display: block;
+  min-width: 0;
+  color: var(--color-text-foreground);
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.codex-model-picker-trigger .codex-execution-settings__effort-shortcut {
+  width: 16px;
+  margin-left: 0;
+  opacity: 0.55;
+  transition: opacity 140ms ease, color 140ms ease;
+}
+
+.codex-model-picker-trigger:hover .codex-execution-settings__effort-shortcut,
+.codex-model-picker-trigger .codex-execution-settings__effort-shortcut.is-max {
+  opacity: 1;
+}
+
+/* Wrap controls before hiding model identity. This also handles a narrow chat
+ * column next to an open workspace panel on a wide window. */
+.codex-composer-actions-row { flex-wrap: wrap; row-gap: 4px; }
+.codex-composer-control-group { max-width: 100%; }
+
+.codex-header-menu,
+.sidebar-session-context-menu {
+  border-radius: var(--radius-xl);
+  background: var(--color-background-elevated-primary-opaque);
+  box-shadow: var(--shadow-xl-spread);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.codex-header-menu.chat-session-navigation-menu {
+  width: min(320px, calc(100vw - 16px));
+  max-height: calc(100vh - 80px);
+  overflow: hidden;
+  padding: 4px;
+}
+.codex-header-menu.chat-toolbar-more-menu {
+  width: min(256px, calc(100vw - 16px));
+  max-height: calc(100vh - 80px);
+}
+.chat-header-dropdown-trigger {
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.chat-header-session-trigger { max-width: 100%; }
+.chat-header-dropdown-trigger:is(:hover, .is-open) {
+  background: var(--color-background-row-hover);
+}
+.chat-header-dropdown-trigger:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+.chat-header-dropdown-trigger .chat-header-session-chevron { transition: transform 150ms ease; }
+.chat-toolbar-shell::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 11;
+  height: 1px;
+  background: var(--color-border);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+.chat-toolbar-shell[data-scrolled='true']::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .chat-toolbar-shell::after { transition: none; } }
+.chat-header-dropdown-trigger.is-open .chat-header-session-chevron { transform: rotate(180deg); }
+.chat-session-navigation-list { min-height: 0; max-height: 300px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.chat-session-navigation-row { min-height: 32px; padding-block: 6px; }
+.codex-header-menu__item:focus-visible { outline: none; background: var(--sp-menu-hover); color: var(--color-text-foreground); }
+.chat-session-navigation-row[aria-current='page'] { background: color-mix(in srgb, var(--color-text-foreground) 8%, transparent); }
+.chat-session-navigation-row[aria-current='page'] > svg:last-child { color: var(--color-text-foreground); }
+.chat-session-navigation-row[data-derived='true'] { padding-left: 18px; }
+.codex-header-menu__item:is([aria-checked='true'], [aria-current='page']) { background: color-mix(in srgb, var(--color-text-foreground) 8%, transparent); }
+
+.codex-header-menu.codex-header-menu--welcome-project {
+  background: var(--color-background-control-panel);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl-spread);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (max-width: 900px) {
+  .codex-model-picker-trigger {
+    width: auto;
+    max-width: min(260px, 45vw);
+    justify-content: flex-start;
+  }
+  .codex-model-picker-chevron { display: block; }
+}
+
+/* ── Brand mark ─────────────────────────────────────────────────────────── */
+.codex-model-brand {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  line-height: 0;
+}
+
+.codex-model-brand svg { display: block; }
+.codex-model-brand--mono { color: var(--color-text-foreground); }
+
+.codex-model-brand--unknown {
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-foreground) 7%, transparent);
+  color: var(--color-text-foreground-secondary);
+}
+
+/* ── Surface ────────────────────────────────────────────────────────────── */
+.codex-composer-menu.codex-composer-popover {
+  --ccm-edge: color-mix(in oklab, var(--color-text-foreground) 9%, transparent);
+  --ccm-sheen: color-mix(in oklab, #fff 70%, transparent);
+  --ccm-surface: var(--color-background-control-panel);
+  padding: 6px;
+  border: 0;
+  border-radius: var(--radius-2xl);
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--color-text-foreground) 2.5%, transparent), transparent 56px),
+    var(--ccm-surface);
+  box-shadow:
+    inset 0 0 0 1px var(--ccm-edge),
+    inset 0 1px 0 var(--ccm-sheen),
+    0 1px 2px rgb(0 0 0 / 0.06),
+    0 12px 32px -8px rgb(0 0 0 / 0.16),
+    0 32px 64px -24px rgb(0 0 0 / 0.18);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.dark .codex-composer-menu.codex-composer-popover {
+  --ccm-edge: color-mix(in oklab, #fff 8%, transparent);
+  --ccm-sheen: color-mix(in oklab, #fff 7%, transparent);
+  --ccm-surface: var(--color-background-control-panel);
+  box-shadow:
+    inset 0 0 0 1px var(--ccm-edge),
+    inset 0 1px 0 var(--ccm-sheen),
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 16px 40px -10px rgb(0 0 0 / 0.55),
+    0 40px 80px -30px rgb(0 0 0 / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-composer-chevron,
+  .codex-composer-control { transition: none; }
+}
+
+/* ── Rows ───────────────────────────────────────────────────────────────── */
+.codex-composer-popover .codex-composer-menu__item {
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.codex-composer-popover .codex-composer-menu__item[data-selected='true'],
+.codex-composer-popover .codex-composer-menu__item.is-active {
+  background: color-mix(in oklab, var(--color-text-foreground) 6%, transparent);
+}
+
+.codex-composer-popover .codex-composer-menu__item:hover:not(:disabled),
+.codex-composer-popover .codex-composer-menu__item:focus-visible {
+  background: color-mix(in oklab, var(--color-text-foreground) 8.5%, transparent);
+}
+
+.codex-composer-popover .codex-composer-menu__option {
+  min-height: 52px;
+  gap: 12px;
+  padding: 8px 10px;
+}
+
+.codex-composer-popover .codex-composer-menu__option-text { gap: 2px; }
+
+.codex-composer-popover .codex-composer-menu__option-text b {
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+.codex-composer-popover .codex-composer-menu__option-text small {
+  font-size: 12px;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+/* Section labels: small and quiet, only where a menu changes category. The
+ * first block of a menu never carries one. */
+.codex-composer-popover .codex-composer-menu__label {
+  min-height: 0;
+  padding: 10px 10px 6px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.codex-composer-popover .codex-composer-menu__label--divider {
+  margin-top: 6px;
+  border-top: 0;
+  box-shadow: inset 0 1px 0 var(--ccm-edge);
+}
+
+.codex-composer-popover .codex-composer-menu__divider {
+  margin: 6px 4px;
+  background: var(--ccm-edge);
+}
+
+.codex-composer-menu__count {
+  display: inline-grid;
+  min-width: 18px;
+  height: 18px;
+  place-items: center;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-foreground) 9%, transparent);
+  color: var(--color-text-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The workspace a permission applies to: one quiet line, not a title block. */
+.codex-composer-menu__context {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: 4px;
+  padding: 8px 10px 10px;
+  box-shadow: inset 0 -1px 0 var(--ccm-edge);
+  color: var(--ccm-text-tertiary);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.codex-composer-menu__context-icon { width: 14px; height: 14px; flex: none; }
+
+.codex-composer-menu__context-name {
+  flex: none;
+  max-width: 45%;
+  overflow: hidden;
+  color: var(--ccm-text-strong);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Paths truncate from the left so the folder name stays visible. */
+.codex-composer-menu__context-path {
+  min-width: 0;
+  overflow: hidden;
+  direction: rtl;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 11px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Model menu ─────────────────────────────────────────────────────────── */
+.codex-composer-popover.codex-composer-menu--model {
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+}
+
+.codex-composer-menu--model > .codex-composer-menu__divider,
+.codex-composer-menu--model > .codex-execution-settings__row,
+.codex-composer-menu--model > .codex-execution-settings__disclosure { flex: none; }
+
+.codex-model-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 300px;
+  min-height: 48px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.codex-model-options .codex-model-option {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  flex: none;
+  padding: 6px 10px 6px 6px;
+}
+
+.codex-model-options .codex-model-option__brand {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 9px;
+  background: color-mix(in oklab, var(--color-text-foreground) 5%, transparent);
+  box-shadow: inset 0 0 0 1px var(--ccm-edge);
+}
+
+.codex-model-option__text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Model names and provider namespaces remain fully readable at any width. */
+.codex-model-option__name {
+  display: block;
+  color: var(--ccm-text-strong);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.codex-model-option__source {
+  color: var(--ccm-text-tertiary);
+  font-size: 11.5px;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.codex-execution-settings__disclosure { overflow: hidden; }
+
+.codex-composer-popover .codex-execution-settings__row {
+  min-height: 40px;
+  padding: 0 10px;
+}
+
+/* ── Knowledge mode: a recessed track with a raised thumb. ──────────────── */
+.codex-composer-popover .codex-composer-segmented {
+  margin: 0 6px 6px;
+  padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-foreground) 5%, transparent);
+  box-shadow: inset 0 0 0 1px var(--ccm-edge);
+}
+
+.codex-composer-popover .codex-composer-segmented button {
+  min-height: 26px;
+  border-radius: 999px;
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.codex-composer-popover .codex-composer-segmented button:hover:not(.is-active) {
+  background: transparent;
+  box-shadow: none;
+  color: var(--ccm-text-strong);
+}
+
+.codex-composer-popover .codex-composer-segmented button.is-active {
+  background: var(--color-background-control-panel);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), inset 0 0 0 1px var(--ccm-edge);
+}
+
+.codex-composer-popover .codex-composer-search {
+  border: 0;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--color-text-foreground) 4.5%, transparent);
+  box-shadow: inset 0 0 0 1px var(--ccm-edge);
+  transition: box-shadow 160ms ease;
+}
+
+.codex-composer-popover .codex-composer-search:focus-within {
+  box-shadow: inset 0 0 0 1px var(--color-border-focus);
+}
+
+/* ── Session git strip ──────────────────────────────────────────────────── */
+.codex-git-strip {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 30px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px 0 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-foreground-secondary);
+  font-size: 12px;
+  line-height: 1;
+  text-align: left;
+  transition: background-color 140ms ease, box-shadow 160ms ease, color 140ms ease;
+}
+
+.codex-git-strip:hover:not(:disabled),
+.codex-git-strip[aria-expanded='true'] {
+  background: var(--color-background-row-hover);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-text-foreground) 9%, transparent);
+  color: var(--color-text-foreground);
+}
+
+.codex-git-strip:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+
+/* Kind chip: Branch (main checkout) or Worktree (linked checkout). The
+ * worktree variant is tinted so a session in an isolated tree is obvious. */
+.codex-git-kind {
+  display: inline-flex;
+  height: 22px;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px 0 7px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-foreground) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-text-foreground) 7%, transparent);
+  color: var(--color-text-foreground);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.codex-git-kind svg { width: 13px; height: 13px; }
+
+.codex-git-kind--worktree {
+  background: color-mix(in oklab, rgb(139 92 246) 13%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, rgb(139 92 246) 26%, transparent);
+  color: rgb(109 40 217);
+}
+
+.dark .codex-git-kind--worktree { color: rgb(196 181 253); }
+
+.codex-git-branch {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-foreground);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.codex-git-meta {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-foreground-tertiary);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.codex-git-dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in oklab, currentColor 18%, transparent);
+}
+
+.codex-git-state--clean { color: rgb(21 128 61); }
+.codex-git-state--dirty { color: rgb(180 83 9); }
+.codex-git-state--conflict { color: rgb(185 28 28); }
+.dark .codex-git-state--clean { color: rgb(74 222 128); }
+.dark .codex-git-state--dirty { color: rgb(251 191 36); }
+.dark .codex-git-state--conflict { color: rgb(248 113 113); }
+
+.codex-git-strip__tail {
+  display: inline-flex;
+  min-width: 0;
+  margin-left: auto;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-foreground-tertiary);
+}
+
+.codex-git-strip__tree {
+  max-width: 160px;
+  overflow: hidden;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 11.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Git menu: the same opaque material with grouped branch and worktree rows. */
+.codex-git-menu {
+  --ccm-edge: color-mix(in oklab, var(--color-text-foreground) 9%, transparent);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  width: min(480px, calc(100vw - 16px));
+  max-height: calc(60vh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px;
+  border-radius: var(--radius-2xl);
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--color-text-foreground) 2.5%, transparent), transparent 56px),
+    var(--color-background-control-panel);
+  box-shadow:
+    inset 0 0 0 1px var(--ccm-edge),
+    0 12px 32px -8px rgb(0 0 0 / 0.16),
+    0 32px 64px -24px rgb(0 0 0 / 0.18);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  scrollbar-width: thin;
+  transform-origin: left bottom;
+  animation: codex-git-menu-in 300ms var(--ease-enter) both;
+}
+
+.dark .codex-git-menu {
+  --ccm-edge: color-mix(in oklab, #fff 8%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in oklab, #fff 3%, transparent), transparent 56px),
+    var(--color-background-control-panel);
+  box-shadow:
+    inset 0 0 0 1px var(--ccm-edge),
+    inset 0 1px 0 color-mix(in oklab, #fff 7%, transparent),
+    0 16px 40px -10px rgb(0 0 0 / 0.55),
+    0 40px 80px -30px rgb(0 0 0 / 0.6);
+}
+
+@keyframes codex-git-menu-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); filter: blur(2px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-git-menu { animation: none; }
+}
+
+.codex-git-menu__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 4px 8px 6px;
+  box-shadow: inset 0 -1px 0 var(--ccm-edge);
+}
+
+.codex-git-menu__section {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  padding: 4px;
+}
+
+.codex-git-menu__section + .codex-git-menu__section {
+  padding-top: 10px;
+  box-shadow: inset 0 1px 0 var(--ccm-edge);
+}
+
+.codex-git-menu__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  color: var(--color-text-foreground-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.codex-git-menu__row {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 34px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text-foreground);
+  font-size: 12.5px;
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+
+.codex-git-menu__row:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--color-text-foreground) 7%, transparent);
+}
+
+.codex-git-menu__row[data-current='true'] {
+  background: color-mix(in oklab, var(--color-text-foreground) 5%, transparent);
+}
+
+.codex-git-menu__row:disabled { cursor: default; }
+.codex-git-menu__row svg { width: 14px; height: 14px; }
+
+.codex-git-menu__hint {
+  color: var(--color-text-foreground-tertiary);
+  font-size: 11px;
+}
+
+.codex-git-menu__field {
+  height: 32px;
+  min-width: 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-text-foreground) 4.5%, transparent);
+  box-shadow: inset 0 0 0 1px var(--ccm-edge);
+  color: var(--color-text-foreground);
+  font-size: 12px;
+  outline: none;
+  transition: box-shadow 160ms ease;
+}
+
+.codex-git-menu__field:focus,
+.codex-git-menu__field:focus-within { box-shadow: inset 0 0 0 1px var(--color-border-focus); }
+.codex-git-menu__field::placeholder { color: var(--color-text-foreground-tertiary); }
+
+.codex-git-menu__segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-foreground) 5%, transparent);
+  box-shadow: inset 0 0 0 1px var(--ccm-edge);
+}
+
+.codex-git-menu__segmented button {
+  min-height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-foreground-tertiary);
+  font-size: 11.5px;
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.codex-git-menu__segmented button[aria-pressed='true'] {
+  background: var(--color-background-control-panel);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), inset 0 0 0 1px var(--ccm-edge);
+  color: var(--color-text-foreground);
+}
+
+.codex-git-menu__primary {
+  display: inline-flex;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-text-foreground);
+  color: var(--color-background-control-panel);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 140ms ease, transform 160ms var(--ease-enter);
+}
+
+.codex-git-menu__primary:active:not(:disabled) { transform: scale(0.97); }
+.codex-git-menu__primary:disabled { opacity: 0.35; cursor: default; }
+.codex-git-menu__primary svg { width: 14px; height: 14px; }
+
+/* Welcome context: a session that lives in a linked worktree says so in colour. */
+.codex-welcome-context__subcontrol.is-worktree { color: rgb(109 40 217); }
+.dark .codex-welcome-context__subcontrol.is-worktree { color: rgb(196 181 253); }

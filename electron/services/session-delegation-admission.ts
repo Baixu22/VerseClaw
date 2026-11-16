@@ -4,6 +4,7 @@ import type {
   WorkspaceCoordinatorBindingResult,
 } from '@shared/host-api/contract';
 import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
+import { resolveSessionTaskScope, type SessionTaskScopeInput } from '../../shared/session-task-scope';
 import {
   SESSION_DELEGATION_RECEIPT_SCHEMA,
   type SessionDelegationBudget,
@@ -43,6 +44,15 @@ export type SessionDelegationDependencies = {
   getActiveWorkspaceId: () => Promise<string | null>;
   gatewayRpc: (payload: GatewayRpcPayload) => unknown | Promise<unknown>;
   describeSessionGeneration: (sessionKey: string) => Promise<string | null>;
+  assertTaskAdmission?: (input: { workspaceRoot: string; taskRef: string; sessionKey: string; generation: string; requestId: string }) => Promise<void>;
+  resolveTaskScope: (input: {
+    workspaceId: string;
+    sessionKey: string;
+    taskRef: string;
+    bindingRevision: number;
+    bindingState: WorkspaceCoordinatorBinding['state'];
+    sessionGeneration: string;
+  }) => SessionTaskScopeInput | Promise<SessionTaskScopeInput>;
   stopEpoch: (sessionKey: string) => number;
   now?: () => Date;
 };
@@ -331,6 +341,26 @@ export async function executeSessionDelegation(
   if (generationBefore !== payload.expectedSessionGeneration) {
     return { success: false, status: 'rejected', error: 'Parent session generation changed before admission' };
   }
+  const scope = resolveSessionTaskScope(await deps.resolveTaskScope({
+    workspaceId: payload.workspaceId,
+    sessionKey: payload.sessionKey,
+    taskRef: payload.taskRef,
+    bindingRevision: binding.bindingRevision,
+    bindingState: binding.state,
+    sessionGeneration: payload.expectedSessionGeneration,
+  }));
+  if (scope.status !== 'ready') {
+    return {
+      success: false,
+      status: 'rejected',
+      error: `Task scope admission is ${scope.status}: ${'reason' in scope ? scope.reason : 'unknown'}`,
+    };
+  }
+  try {
+    await deps.assertTaskAdmission?.({workspaceRoot:binding.environment.canonicalRoot,taskRef:payload.taskRef,sessionKey:payload.sessionKey,generation:generationBefore,requestId:payload.idempotencyKey});
+  } catch(error) {
+    return {success:false,status:'rejected',error:error instanceof Error?error.message:String(error)};
+  }
   const stopEpochBefore = deps.stopEpoch(payload.sessionKey);
   const inFlight = buildPendingReceipt({
     payload,
@@ -362,6 +392,7 @@ export async function executeSessionDelegation(
   try {
     gatewayResult = await deps.gatewayRpc({
       method: 'orchestrator.run',
+      expectedWorkspaceId: payload.workspaceId,
       params: {
         task: payload.task,
         sessionKey: payload.sessionKey,
@@ -419,6 +450,13 @@ export async function executeSessionDelegation(
     };
   }
 
+  if (isRecord(gatewayResult) && gatewayResult.rejectedBeforeDispatch === true) {
+    const receipt: SessionDelegationReceipt = { ...inFlight, status: 'rejected',
+      authorization: { ...inFlight.authorization, grantState: 'rejected' },
+      errors: [typeof gatewayResult.error === 'string' ? gatewayResult.error : 'Main rejected the dispatch scope'] };
+    await deps.commitAdmission(recordFromReceipt(requestHash, 'terminal', receipt, now(), inFlightRecord.createdAt));
+    return resultForReceipt(receipt);
+  }
   const runtimeReceipt = isRecord(gatewayResult)
     ? readDelegationReceipt(gatewayResult.delegationReceipt)
     : null;

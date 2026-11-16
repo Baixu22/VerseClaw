@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "case": "Runtime prepare after-store-commit",
+  "breakPoint": "after-store-commit",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "tf0866-target-generation",
+  "operation": null,
+  "journal": {
+    "state": "store_committed",
+    "requestDigest": "5880f8d796fb6b0e6fd05b5c367cd53c959749e8c89bd6836586266d91e8a563",
+    "manifestDigest": "df4bf30116592d257835ea9cf4060332472f2f93850b8f4f1a9d821821401e1b"
+  },
+  "session": {
+    "sessionId": "tf0866-target-generation",
+    "workspaceDir": "D:\\tmp\\tf0866-process-YpdbrN\\target",
+    "migrationState": "prepared"
+  },
+  "artifactHashes": [
+    {
+      "path": "result.txt",
+      "sha256": "missing:result.txt"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 28176,
+      "breakPoint": "after-store-commit",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 45836,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:15:31.113Z",
+        "pid": 28176,
+        "kind": "runtime-prepare-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "after-store-commit"
+      },
+      {
+        "at": "2026-11-09T00:15:31.240Z",
+        "pid": 28176,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "after-store-commit",
+        "stage": "runtime-after-store-commit",
+        "sessionKey": "agent:main:tf0866-process-proof",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:34.432Z",
+        "pid": 45836,
+        "kind": "runtime-prepare-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:34.506Z",
+        "pid": 45836,
+        "kind": "runtime-prepare-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "state": "prepared"
+      }
+    ],
+    "breakSignal": {
+      "pid": 28176,
+      "point": "after-store-commit",
+      "at": "2026-11-09T00:15:31.238Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "runtime-after-store-commit",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "operationId": "tf0866-process-operation"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "state": "prepared",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "tf0866-target-generation",
+      "taskNodeId": "8af8a707-edcf-4cf1-8822-a5cae77a8e67",
+      "pid": 45836,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "closeout-proposal-save",
+  "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+  "command": [
+    "python",
+    "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+    "proposal-save",
+    "--proposal-file",
+    "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/closure-proposal-input.json",
+    "--workspace",
+    "D:/ClawX",
+    "--lock-timeout",
+    "10"
+  ],
+  "startedAt": "2026-11-13T13:49:49.418Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T13:49:50.756Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-proposal-save.stdout.txt",
+      "bytes": 72,
+      "sha256": "7d00b4ec769322d2bb59116271a8e384b88cc498e0de915ce42eebf7fbb15b04"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-proposal-save.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

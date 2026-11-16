@@ -62,6 +62,14 @@ const CORE_TOOL_SECTION_ORDER: Array<{ id: string; label: string }> = [
 
 const CORE_TOOL_DEFINITIONS: CoreToolDefinition[] = [
   {
+    id: "task_control",
+    label: "task_control",
+    description: "Persist goals, claim tasks and resume durable task work",
+    sectionId: "sessions",
+    profiles: ["coding"],
+    includeInOpenClawGroup: true,
+  },
+  {
     id: "read",
     label: "read",
     description: "Read file contents",

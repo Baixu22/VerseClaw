@@ -270,15 +270,38 @@ function functionCallSse(name: string, args: Record<string, unknown>): string {
 }
 
 describe("RC-03R real-entry seal and dual v1 receipts", () => {
-  it.each(["fit", "oversize", "compass-full", "kill", "throw", "summary", "orphan", "passthrough", "window", "normalized", "source-failure"] as const)(
+  it.each(["fit", "oversize", "retired-compass", "knowledge-full", "kill", "throw", "summary", "orphan", "passthrough", "window", "normalized", "source-failure"] as const)(
     "ContextEngine replacement obeys the shared budget at the real wire: %s", async (mode) => {
       const marker = "ENGINE-REPLACEMENT:";
       const text = marker + "R".repeat(mode === "oversize" ? 8000 : 100);
-      const admitted = mode === "fit" || mode === "summary" || mode === "orphan" || mode === "normalized" || mode === "source-failure";
+      const admitted = mode === "fit" || mode === "retired-compass" || mode === "summary" || mode === "orphan" || mode === "normalized" || mode === "source-failure";
       const injectedMessage = { role: "user" as const, content: mode === "normalized"
         ? [{ type: "text" as const, text: "" }, { type: "text" as const, text }] : text, timestamp: 1 };
       const failedQuery = mode === "source-failure"
         ? vi.spyOn(BlockStore.prototype, "query").mockImplementation(() => { throw new Error("fixture read failure"); })
+        : undefined;
+      // Retired SSP input spends nothing. Exercise a full knowledge budget via
+      // the active BlockStore/Assembler path so replacement denial stays covered.
+      const knowledgeText = "K".repeat(6000 - "## Knowledge\n".length);
+      const knowledgeQuery = mode === "knowledge-full"
+        ? vi.spyOn(BlockStore.prototype, "query").mockImplementation(async (query) =>
+            !query.block_types || query.block_types.includes("knowledge")
+              ? [{
+                  block_id: "knowledge:compass:rc03-budget-fixture",
+                  block_type: "knowledge",
+                  source_system: "compass",
+                  session_id: "agent:main:main",
+                  presence: { always_on: true, priority: 1 },
+                  entities: [],
+                  valid_at: new Date(0),
+                  mutability: "system_managed",
+                  summary: "Agent-driven knowledge budget fixture",
+                  full_content: knowledgeText,
+                  compression_depth: 0,
+                  entity_extraction_status: "empty",
+                }]
+              : [],
+          )
         : undefined;
       const runId = `tf0013-replacement-${mode}`;
       const appliedProducers: boolean[] = [];
@@ -301,7 +324,8 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
       const root = tempRoot();
       const config = runConfig(path.join(root, "workspace"), mode === "summary" ? 32_768 : 200_000,
         mode === "kill" ? { runtime: { contextEnhancement: { killSwitch: true } } }
-          : mode === "source-failure" ? { runtime: { contextBlock: { "working-memory": { enabled: true } } } } : {},
+          : mode === "source-failure" ? { runtime: { contextBlock: { "working-memory": { enabled: true } } } }
+          : mode === "knowledge-full" ? { runtime: { contextBlock: { compass: { enabled: true } } } } : {},
       );
       const spy = installTransportSpy((index) => {
         appliedProducers.push(getRc03SealPlan(runId)?.preSealProducers.some(
@@ -312,7 +336,8 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
       try {
         const params = runParams(root, {
           config, runId, modelRun: false, promptMode: "minimal", disableTools: false,
-          ...(mode === "compass-full" ? { compassContext: {
+          ...(mode === "knowledge-full" ? { sessionKey: "agent:main:main" } : {}),
+          ...(mode === "retired-compass" ? { compassContext: {
             sessionKey: "agent:main:rc03",
             injection: { sspString: "K".repeat(6000), iFrameRefreshed: false },
             candidateFactIds: [], appliedFactIds: [],
@@ -343,8 +368,11 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
         expect(request.body.includes("ORIGINAL-HISTORY:")).toBe(mode !== "summary" && mode !== "window" && mode !== "normalized");
         if (mode === "orphan") expect(request.body.includes("ORPHAN-CONTEXT")).toBe(true);
         expect(request.body.includes("FAILED-ENGINE-MUTATION")).toBe(false);
+        if (mode === "retired-compass") expect(request.body).not.toContain("K".repeat(6000));
       }
+      if (mode === "knowledge-full") expect(spy.captured[0]?.body).toContain("K".repeat(100));
       if (failedQuery) expect(failedQuery).toHaveBeenCalled();
+      if (knowledgeQuery) expect(knowledgeQuery).toHaveBeenCalled();
       expect(appliedProducers).toEqual([admitted || mode === "window", admitted || mode === "window"]);
       if (mode === "kill") {
         expect(store().list({ kind: "context" })).toHaveLength(0);
@@ -360,6 +388,10 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
       } else if (mode === "oversize") {
         expect(budget.charsRequested).toBeGreaterThan(6000);
         expect(budget.charsApplied).toBe(0);
+      } else if (mode === "knowledge-full") {
+        expect(budget.charsRequested).toBeGreaterThan(6000);
+        expect(budget.charsApplied).toBe(6000);
+        expect(first.selected_json).toContain("ref:context:context-block%3Acompass%3Aknowledge:");
       }
     }, 60_000,
   );
@@ -534,8 +566,13 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
     ).toEqual([]);
   }, 60_000);
 
-  it("COMPASS candidates reach the real wire only after the shared budget projection", async () => {
+  it("retired COMPASS candidates spend no budget and never reach the real wire", async () => {
     resetShadowCensusDiagnosticsForTest();
+    // Isolate the retired producer from unrelated CVK diagnostics while keeping
+    // the actual runner, candidate admission, seal and transport receipts.
+    vi.spyOn(ContextRuntimeKitContextEngine.prototype, "assemble").mockImplementation(
+      async ({ messages }) => ({ messages, estimatedTokens: 1 }),
+    );
     const compassContext = {
       sessionKey: "agent:main:rc03",
       injection: { sspString: "COMPASS-BUDGET:" + "S".repeat(8000), iFrameRefreshed: false },
@@ -556,16 +593,16 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
       spy.restore();
     }
     const body = spy.captured[0]?.body ?? "";
-    expect(body).toContain("COMPASS-BUDGET:");
-    expect(body).not.toContain("S".repeat(6001));
-    expect(body.match(/COMPASS-BUDGET:/g)).toHaveLength(1);
+    expect(body).not.toContain("COMPASS-BUDGET:");
+    expect(body).not.toContain("S".repeat(6000));
     const { context } = expectV1Pairs("compass-budget", spy.captured);
     expect(
       context.some((row) => row.selected_json?.includes("ref:context:producer:compass-ssp")),
-    ).toBe(true);
+    ).toBe(false);
     const budget = JSON.parse(context[0]!.budget_json ?? "{}");
-    expect(budget.charsRequested).toBe(compassContext.injection.sspString.length);
-    expect(budget.charsApplied).toBe(6000);
+    expect(budget.charsRequested).toBe(0);
+    expect(budget.charsApplied).toBe(0);
+    expect(compassContext.appliedFactIds).toEqual([]);
     expect(getShadowCensusDiagnostics().failures).toEqual([]);
   }, 60_000);
 

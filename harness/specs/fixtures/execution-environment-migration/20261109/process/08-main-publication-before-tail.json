@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "case": "Main publication before tail",
+  "breakPoint": "publication-before-tail",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "0f00505d-c32e-452e-85c0-3abdabfec163",
+  "operation": {
+    "id": "tf0866-process-operation",
+    "phase": "confirmed",
+    "sessionKey": "agent:main:tf0866-process-proof",
+    "sourceGeneration": "tf0866-source-generation",
+    "targetGeneration": "0f00505d-c32e-452e-85c0-3abdabfec163",
+    "reservationReleased": true
+  },
+  "journal": {
+    "state": "runtime_committed",
+    "requestDigest": "7875424fe5454db8f22df77d8d712a3bc46089055d9cbb80a3a2647d6bfb3487",
+    "manifestDigest": "678375bc66990924acb69a18b1dd60537daf7ad388b24a8724fd0e4171a25902"
+  },
+  "session": {
+    "sessionId": "0f00505d-c32e-452e-85c0-3abdabfec163",
+    "workspaceDir": "D:\\tmp\\tf0866-process-QlEd1O\\target",
+    "migrationState": "confirmed"
+  },
+  "artifactHashes": [
+    {
+      "path": "D:\\tmp\\tf0866-process-QlEd1O\\source\\result.txt",
+      "sha256": "2f1bf152cea586c7342529059c7961e615eafe8cf14d66b57c819c50cfae87bd"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 16936,
+      "breakPoint": "publication-before-tail",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 6764,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:14:53.066Z",
+        "pid": 16936,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "publication-before-tail"
+      },
+      {
+        "at": "2026-11-09T00:14:53.658Z",
+        "pid": 16936,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "publication-before-tail",
+        "stage": "main-active-and-confirmed-publication-committed",
+        "operationPhase": "confirmed",
+        "targetGeneration": "0f00505d-c32e-452e-85c0-3abdabfec163"
+      },
+      {
+        "at": "2026-11-09T00:14:56.530Z",
+        "pid": 6764,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:14:56.889Z",
+        "pid": 6764,
+        "kind": "main-worker-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "phase": "confirmed"
+      }
+    ],
+    "breakSignal": {
+      "pid": 16936,
+      "point": "publication-before-tail",
+      "at": "2026-11-09T00:14:53.657Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "main-active-and-confirmed-publication-committed",
+      "operationPhase": "confirmed",
+      "targetGeneration": "0f00505d-c32e-452e-85c0-3abdabfec163"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "phase": "confirmed",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "0f00505d-c32e-452e-85c0-3abdabfec163",
+      "taskNodeId": "02421417-92d0-4416-ba01-f1b02cd09749",
+      "pid": 6764,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

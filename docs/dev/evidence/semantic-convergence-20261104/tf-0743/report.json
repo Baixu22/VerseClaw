@@ -1,0 +1,85 @@
+{
+  "schema": "MemoryReadConsistencyReport/v1",
+  "node": "TF-0743",
+  "driven_by": "agent",
+  "actor": "codex/tf0743",
+  "candidate": {
+    "commit": "fe52d6f5ad3ea24ba4576deb0a5248d49456e529",
+    "tree": "606c8cda55c8bdf8a238c214480104317abf7bc3",
+    "dirty": false
+  },
+  "tests": {
+    "total": 87,
+    "passed": 87,
+    "failed": 0,
+    "skipped": 0
+  },
+  "focusedReadCases": 14,
+  "acceptance": [
+    {
+      "criterion": "same-process stale_read_max_seconds=0",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "observations.json"
+      ],
+      "scope": "immediate read after committed update, forget and owner append under a fixed clock; no wall-clock throughput claim"
+    },
+    {
+      "criterion": "cross-process has explicit stale marker",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "observations.json"
+      ],
+      "scope": "separate SQLite connection and spawned Node writer, plus commit during retrieval/read-completion races"
+    },
+    {
+      "criterion": "readers share revision check or explicitly name scope",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "source-manifest.json"
+      ],
+      "scope": "query/recall share SQLite owner tokens and sqlite-connection-snapshot scope; unknown revision and uncommitted transactions stay stale"
+    }
+  ],
+  "metrics": {
+    "readCases": 14,
+    "passedReadCases": 14,
+    "observedSameProcessStaleReadSeconds": 0,
+    "clock": "agent-controlled logical clock; not latency benchmark"
+  },
+  "review": {
+    "findings": 0,
+    "confidence": 0.91,
+    "exitCode": 0
+  },
+  "decision": {
+    "status": "keep-retired",
+    "persist": false,
+    "productLocksChanged": false,
+    "releaseReady": false,
+    "realHumanEvidence": false
+  },
+  "baseline": {
+    "candidate": "c6414f689878ece855b5a31ef03736611edcbc1a",
+    "tests": {
+      "total": 9,
+      "passed": 1,
+      "failed": 8,
+      "skipped": 0
+    },
+    "limitation": "Initial nine-case development fixture; final suite expanded to fourteen and uses schema object mapping. Original observations remain unchanged, not represented as a byte-identical final-suite replay."
+  },
+  "environmentFailure": {
+    "status": "resolved",
+    "reason": "pnpm automatic dependency reconciliation prevented compiler startup; 18 owned descendants stopped; rerun with pnpm_config_verify_deps_before_run=warn passed all node/web/test projects"
+  },
+  "limitations": [
+    "Persistence and tools remain retired in production; tests use process-only flag mocks, local SQLite and agent-driven inputs.",
+    "Freshness is the observed connection snapshot; another process can commit after return. Tokens are connection-scoped and include conservative metadata-table invalidation.",
+    "Node 22 compatibility is tested by hiding the Node 24 property through a proxy; this run executes Node 24, not a separate Node 22 binary.",
+    "No live-provider, GA, persistence restoration or default graduation."
+  ]
+}

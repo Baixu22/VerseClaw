@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "baselineCommit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+  "scope": "candidate regression tests on baseline product source",
+  "expectedFailures": 3,
+  "observedFailures": [
+    {
+      "name": "VerseShell startup capacity rollback returns capacity when executor acquisition fails before dispatch and permits retry",
+      "failures": [
+        "AssertionError: expected { live: 1, peakLive: 1, …(5) } to match object { live: +0, completed: 1, …(1) }\n(4 matching properties omitted from actual)\n    at Proxy.<anonymous> (file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+expect@4.1.7/node_modules/@vitest/expect/dist/index.js:1283:10)\n    at Proxy.<anonymous> (file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+expect@4.1.7/node_modules/@vitest/expect/dist/index.js:1156:15)\n    at Proxy.methodWrapper (file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at D:/tmp/performance-type-baseline-20261107/openclaw_runtime/src/agents/verseshell/governed-process.test.ts:151:43\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      ]
+    },
+    {
+      "name": "VerseShellProcessManager shares one pending resolver, spawn and handshake across concurrent callers",
+      "failures": [
+        "AssertionError: expected \"vi.fn()\" to be called once, but got 8 times\n    at D:/tmp/performance-type-baseline-20261107/openclaw_runtime/src/agents/verseshell/process-manager.test.ts:251:27\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      ]
+    },
+    {
+      "name": "VerseShellProcessManager counts pending binary resolution against the cap for distinct keys",
+      "failures": [
+        "AssertionError: expected [ { status: 'fulfilled', …(1) }, …(1) ] to have a length of 1 but got 2\n    at Proxy.<anonymous> (file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+expect@4.1.7/node_modules/@vitest/expect/dist/index.js:1389:20)\n    at Proxy.<anonymous> (file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+expect@4.1.7/node_modules/@vitest/expect/dist/index.js:1156:15)\n    at Proxy.methodWrapper (file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at D:/tmp/performance-type-baseline-20261107/openclaw_runtime/src/agents/verseshell/process-manager.test.ts:278:71\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      ]
+    }
+  ]
+}

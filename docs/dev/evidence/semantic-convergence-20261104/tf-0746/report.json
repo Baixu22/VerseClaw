@@ -1,0 +1,84 @@
+{
+  "schema": "SemanticConvergenceFinalMatrixReport/v1",
+  "node": "TF-0746",
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "generatedAt": "2026-11-05T16:59:05.089Z",
+  "candidate": {
+    "commit": "300631d8588062209a06236d552ddf1f8b08eb52",
+    "tree": "84ab86f182bc71bb62bd15596b21af054217ae29",
+    "dirty": false
+  },
+  "decision": {
+    "status": "matrix-complete",
+    "acceptancePassed": true,
+    "persist": false,
+    "productLocksChanged": false,
+    "releaseReady": false,
+    "realHumanEvidence": false
+  },
+  "suites": {
+    "root": {
+      "total": 329,
+      "passed": 329,
+      "failed": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "total": 124,
+      "passed": 124,
+      "failed": 0,
+      "skipped": 0
+    },
+    "agents": {
+      "total": 36,
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0
+    },
+    "embedded": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "retry-invariants": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    "infra": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totalPassed": 511,
+  "electron": {
+    "uniqueCases": 4,
+    "passed": 4,
+    "skipped": 0,
+    "initialCommandExit": 1,
+    "failedLaunchReplayedOnSameCandidate": true,
+    "rerunCommandExit": 0
+  },
+  "matrixRows": 13,
+  "findings": 10,
+  "declaredNegativeCases": 156,
+  "declaredNegativePassRate": 1,
+  "review": {
+    "rawFindings": 1,
+    "acceptedFindings": 0,
+    "adjudication": "review-adjudication.json"
+  },
+  "limitations": [
+    "Program development acceptance, not full root/Runtime/all-platform or GA acceptance.",
+    "Initial Electron batch had a launch timeout; its other three cases and the exact failed case rerun share the same source candidate. Original failed batch remains failed in the retained report.",
+    "Network/provider and memory faults are agent-driven local HTTP/SQLite simulations, not live third-party or real-human evidence.",
+    "Build uses an explicit resolver for existing locked motion12/13 packages because shared pnpm links were incomplete; dependency reuse is recorded.",
+    "Runtime build is from 8892d05ef; every runtime/build source blob is unchanged at this candidate, verified by the recorded diff.",
+    "Reviewer last finding is rejected against real HTTP events and production fallback code; raw reviewer exit1 is preserved rather than relabelled clean."
+  ]
+}

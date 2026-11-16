@@ -1,0 +1,31 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "runs": [
+    {
+      "path": "D:\\tmp\\tf0833\\baseline-smoke.json",
+      "reason": "Initial reused runtime bundle rejected by mtime freshness guard; baseline rebuilt before measurement.",
+      "sha256": "525981698702a9f6552f37e6b678dd5e12624a4c8f4aa75a3a805e65aedd6feb"
+    },
+    {
+      "path": "D:\\tmp\\tf0833\\candidate-build-commands.json",
+      "reason": "TypeScript check-only configuration omitted VerseBrowser dist; emitted with tsconfig.build.json before accepted candidate runs.",
+      "sha256": "eb87af086a545a6d6aa8d4d408d4a802bb4364bdfe870066c8baaec5ab6e8019"
+    },
+    {
+      "path": "D:\\tmp\\tf0833\\candidate-build-repair-commands.json",
+      "reason": "Additional read-only upstream patch check failed on the reused dependency installation; dependencies were not changed. Both variants use the same installed upstream packages.",
+      "sha256": "a8ac3d05f3f8ce6b41c30179e90976608062b37cd30ea691f14d76f0091d629e"
+    },
+    {
+      "path": "D:\\tmp\\tf0833\\paired\\commands.json",
+      "reason": "Earlier 00656920f candidate completed native measurements but cache refresh defect was reproduced separately; accepted comparison uses f4a9502c5.",
+      "sha256": "b6ea56ecda7e4cc3c8177719dee059ab808dc504b26076d8c235d464d17aea60"
+    },
+    {
+      "path": "D:\\tmp\\tf0833\\dev-final\\commands.json",
+      "reason": "Initial web typecheck reported possibly undefined cache; fixed before candidate freeze.",
+      "sha256": "1b061afa571013b8bc2cef9c85eaf483419e8e362c27454e3bc2f0267327e4e8"
+    }
+  ]
+}

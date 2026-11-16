@@ -1,0 +1,25 @@
+{
+  "schema": "PromptAuthorityStaticMeasurement/v1",
+  "driven_by": "agent",
+  "actor": "codex/prompt-authority",
+  "sourceSnapshot": {
+    "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+    "tree": "be287894c58222959238611b31564bca17e5d33e",
+    "sourcePath": "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts",
+    "sourceBlob": "7e7a7bf4a9219a31d97a324d90ddb7fd773840ff",
+    "readMode": "git-show"
+  },
+  "driverCandidate": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+  "metric": {
+    "id": "PROMPT-1",
+    "definition": "prompt mutation fields mapped to required authority",
+    "formula": "count(explicit PLUGIN_PROMPT_MUTATION_AUTHORITIES field mappings)",
+    "value": 5,
+    "unit": "fields",
+    "method": "static",
+    "limitation": "Field-map coverage only; separate behavioral tests verify producer admission in explicit enforce mode. This does not prove global default enforcement.",
+    "sources": [
+      "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts"
+    ]
+  }
+}

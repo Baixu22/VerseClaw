@@ -29,18 +29,15 @@ vi.mock('@/lib/file-preview-client', () => ({
 }));
 
 describe('ChatMessage attachment dedupe', () => {
-  it('renders the assistant avatar in a fully clipped stable slot', () => {
+  it('renders assistant text without an avatar or a reserved avatar column', () => {
     renderMessage(
       <ChatMessage
         message={{ id: 'assistant-avatar', role: 'assistant', content: 'Avatar check' }}
       />,
     );
 
-    const avatar = screen.getByTestId('chat-assistant-avatar');
-    const image = avatar.querySelector('img');
-    expect(avatar).toHaveClass('h-8', 'w-8', 'overflow-hidden', 'rounded-full');
-    expect(image?.parentElement).toHaveStyle({ width: '32px', height: '32px' });
-    expect(image).toHaveClass('h-full', 'w-full', 'object-cover');
+    expect(screen.queryByTestId('chat-assistant-avatar')).not.toBeInTheDocument();
+    expect(screen.getByText('Avatar check')).toBeVisible();
   });
 
   it('keeps attachment-only assistant replies visible even when process attachments are suppressed', () => {
@@ -354,6 +351,20 @@ describe('ChatMessage attachment dedupe', () => {
   });
 });
 
+describe('ChatMessage range readiness', () => {
+  it('keeps its boundary action disabled until the owner scope is ready', () => {
+    const onCompactRange = vi.fn();
+    const message: RawMessage = { role: 'user', id: 'provider-id', __openclaw: { id: 'owner-leaf' }, content: 'Keep this boundary.' };
+    const view = renderMessage(<ChatMessage message={message} onCompactRange={onCompactRange} compactDisabledReason="Session generation is still loading" />);
+    const action = screen.getByTestId('chat-user-message-summarize-from');
+    expect(action).toBeDisabled(); expect(action).toHaveAttribute('title', 'Session generation is still loading');
+    fireEvent.click(action); expect(onCompactRange).not.toHaveBeenCalled();
+    view.rerender(<TooltipProvider><ChatMessage message={message} onCompactRange={onCompactRange} /></TooltipProvider>);
+    fireEvent.click(screen.getByTestId('chat-user-message-summarize-from'));
+    expect(onCompactRange).toHaveBeenCalledWith('owner-leaf', 'from');
+  });
+});
+
 describe('ChatMessage LaTeX rendering', () => {
   it('renders inline `$...$` math with KaTeX', () => {
     const message: RawMessage = {
@@ -550,7 +561,7 @@ describe('ChatMessage image copy', () => {
 });
 
 describe('ChatMessage Tool UI rendering', () => {
-  it('renders fenced Tool UI plan payloads as structured cards and removes the raw JSON block', () => {
+  it('renders fenced Tool UI plan payloads on demand and removes the raw JSON block', async () => {
     const message: RawMessage = {
       role: 'assistant',
       content: [
@@ -574,7 +585,9 @@ describe('ChatMessage Tool UI rendering', () => {
 
     const { container } = renderMessage(<ChatMessage message={message} />);
 
-    expect(screen.getByTestId('chat-tool-ui-plan')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-tool-ui-plan')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('chat-tool-process-details').querySelector('summary')!);
+    expect(await screen.findByTestId('chat-tool-ui-plan')).toBeVisible();
     expect(screen.getByText('Implementation plan')).toBeInTheDocument();
     expect(screen.getByText('Read the current renderer')).toBeInTheDocument();
     expect(screen.getByText('Review the steps before continuing.')).toBeInTheDocument();
@@ -618,7 +631,7 @@ describe('ChatMessage Tool UI rendering', () => {
     expect(onSubmit.mock.calls[0][0]).toContain('"careful"');
   });
 
-  it('parses relaxed Tool UI wrapper arrays from component-specific fences', () => {
+  it('parses relaxed Tool UI wrapper arrays from component-specific fences', async () => {
     const message: RawMessage = {
       role: 'assistant',
       content: [
@@ -645,13 +658,14 @@ describe('ChatMessage Tool UI rendering', () => {
 
     const { container } = renderMessage(<ChatMessage message={message} />);
 
-    expect(screen.getByTestId('chat-tool-ui-plan')).toHaveTextContent('Relaxed rollout');
     expect(screen.getByTestId('chat-tool-ui-option-list')).toHaveTextContent('Fallback choice');
+    fireEvent.click(screen.getByTestId('chat-tool-process-details').querySelector('summary')!);
+    expect(await screen.findByTestId('chat-tool-ui-plan')).toHaveTextContent('Relaxed rollout');
     expect(screen.getByText('Render card')).toBeInTheDocument();
     expect(container).not.toHaveTextContent("component: 'plan'");
   });
 
-  it('converts Markdown plan checklists into plan cards', () => {
+  it('converts Markdown plan checklists into plan cards', async () => {
     const message: RawMessage = {
       role: 'assistant',
       content: [
@@ -669,7 +683,8 @@ describe('ChatMessage Tool UI rendering', () => {
 
     const { container } = renderMessage(<ChatMessage message={message} />);
 
-    expect(screen.getByTestId('chat-tool-ui-plan')).toHaveTextContent('Plan');
+    fireEvent.click(screen.getByTestId('chat-tool-process-details').querySelector('summary')!);
+    expect(await screen.findByTestId('chat-tool-ui-plan')).toHaveTextContent('Plan');
     expect(screen.getByText('Adapt the Tool UI parser')).toBeInTheDocument();
     expect(screen.getByText('Before touching code:')).toBeInTheDocument();
     expect(screen.getByText('Then verify the UI.')).toBeInTheDocument();
@@ -730,5 +745,43 @@ describe('ChatMessage Tool UI rendering', () => {
 
     expect(screen.queryByTestId('chat-tool-ui-plan')).not.toBeInTheDocument();
     expect(container).toHaveTextContent('"todos"');
+  });
+});
+
+describe('ChatMessage Fork action identity and availability', () => {
+  it('keeps a missing boundary visible and disabled, and never bypasses busy message actions', () => {
+    const onFork = vi.fn();
+    const missing: RawMessage = { role: 'user', id: 'provider-message-id', __openclaw: {}, content: 'A question with no owner boundary.' };
+    const view = renderMessage(<ChatMessage message={missing} onForkFromMessage={onFork} />);
+    const action = () => view.getByTestId('chat-user-message-fork');
+    expect(action()).toBeDisabled();
+    const missingReason = action().getAttribute('aria-description');
+    expect(missingReason).toBeTruthy();
+    fireEvent.click(action());
+    expect(onFork).not.toHaveBeenCalled();
+    const anchored: RawMessage = { ...missing, __openclaw: { id: 'owner-entry-id' } };
+    for (const busy of [
+      { canResendUserMessage: false, isStreaming: false },
+      { canResendUserMessage: true, isStreaming: true },
+    ]) {
+      view.rerender(<TooltipProvider><ChatMessage message={anchored} onForkFromMessage={onFork} {...busy} /></TooltipProvider>);
+      expect(action()).toBeDisabled();
+      expect(action().getAttribute('aria-description')).toBeTruthy();
+      expect(action().getAttribute('aria-description')).not.toBe(missingReason);
+      fireEvent.click(action());
+      expect(onFork).not.toHaveBeenCalled();
+    }
+    view.rerender(<TooltipProvider><ChatMessage message={anchored} onForkFromMessage={onFork}
+      canResendUserMessage isStreaming={false} /></TooltipProvider>);
+    expect(action()).toBeEnabled();
+    fireEvent.click(action());
+    expect(onFork).toHaveBeenCalledExactlyOnceWith('owner-entry-id');
+    view.rerender(<TooltipProvider><ChatMessage message={{ role: 'user', content: 'No identity at all' }}
+      onForkFromMessage={onFork} /></TooltipProvider>);
+    expect(action()).toBeDisabled();
+    fireEvent.click(action());
+    expect(onFork).toHaveBeenCalledTimes(1);
+    view.rerender(<TooltipProvider><ChatMessage message={anchored} /></TooltipProvider>);
+    expect(view.queryByTestId('chat-user-message-fork')).toBeNull();
   });
 });

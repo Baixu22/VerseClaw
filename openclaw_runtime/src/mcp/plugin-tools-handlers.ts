@@ -1,12 +1,12 @@
 // Plugin MCP tool handlers route plugin tool calls through the active runtime.
+import { randomUUID } from "node:crypto";
 import {
   isToolWrappedWithBeforeToolCallHook,
   rewrapToolWithBeforeToolCallHook,
   wrapToolWithBeforeToolCallHook,
 } from "../agents/agent-tools.before-tool-call.js";
 import type { AnyAgentTool } from "../agents/tools/common.js";
-import { formatErrorMessage } from "../infra/errors.js";
-import { coerceChatContentText } from "../shared/chat-content.js";
+import { mcpToolError, toMcpToolResult } from "../shared/mcp-tool-result.js";
 
 type CallPluginToolParams = {
   name: string;
@@ -52,21 +52,11 @@ export function createPluginToolsMcpHandlers(tools: AnyAgentTool[]) {
         };
       }
       try {
-        const result = await tool.execute(`mcp-${Date.now()}`, params.arguments ?? {}, signal);
-        const rawContent =
-          result && typeof result === "object" && "content" in result
-            ? (result as { content?: unknown }).content
-            : result;
-        return {
-          content: Array.isArray(rawContent)
-            ? rawContent
-            : [{ type: "text", text: coerceChatContentText(rawContent) }],
-        };
+        signal?.throwIfAborted();
+        const result = await tool.execute(`mcp-${randomUUID()}`, params.arguments ?? {}, signal);
+        return toMcpToolResult(result, signal);
       } catch (err) {
-        return {
-          content: [{ type: "text", text: `Tool error: ${formatErrorMessage(err)}` }],
-          isError: true,
-        };
+        return mcpToolError(err, signal);
       }
     },
   };

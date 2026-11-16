@@ -30,6 +30,7 @@ import {
 } from "../channels/thread-bindings-policy.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { capturePersistentTaskDelegationIntent, preparePersistentTaskDelegation, recordPersistentTaskDispatch, returnPersistentTaskWriter, type PreparedTaskDelegation } from "./persistent-task-delegation.js";
 import type { SubagentSpawnPreparation } from "../context-engine/types.js";
 import { stringifyRouteThreadId } from "../plugin-sdk/channel-route.js";
 import { listRegisteredPluginAgentPromptGuidance } from "../plugins/command-registry-state.js";
@@ -69,7 +70,9 @@ import {
   getSubagentRootFromSessionStore,
 } from "./subagent-depth.js";
 import { buildSubagentInitialUserMessage } from "./subagent-initial-user-message.js";
-import { countActiveRunsForSession, registerSubagentRun } from "./subagent-registry.js";
+import { countActiveRunsForSession, enqueueSubagentRun, getSubagentRunByRunId, registerSubagentRun, releaseSubagentRun, reserveSubagentRun } from "./subagent-registry.js";
+import { resolveExecutionCheckout } from './worktree-service.js';
+import type { QueuedSubagentDispatchResult } from './subagent-registry-dispatch.js';
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
 import { normalizeWriteSetPaths } from "./orchestration-protocol.js";
 import { resolveSubagentRunTimerDelayMs } from "./subagent-run-timeout.js";
@@ -221,12 +224,15 @@ export type SpawnSubagentContext = {
   requesterAgentIdOverride?: string;
   /** Explicit workspace directory for subagent to inherit (optional). */
   workspaceDir?: string;
+  /** Recheck the parent session owner before the child Gateway run is dispatched. */
+  assertWorkspaceCurrent?: () => void;
   inheritedToolAllowlist?: string[];
   inheritedToolDenylist?: string[];
 };
 
 export type SpawnSubagentResult = {
   status: "accepted" | "forbidden" | "error";
+  runState?: 'queued';
   childSessionKey?: string;
   runId?: string;
   mode?: SpawnSubagentMode;
@@ -302,6 +308,77 @@ function readGatewayRunId(response: Awaited<ReturnType<typeof callGateway>>): st
   return typeof runId === "string" && runId ? runId : undefined;
 }
 
+function isConfirmedSubagentDeletion(value: unknown): boolean {
+  return typeof value === "object" && value !== null && "ok" in value && value.ok === true
+    && "deleted" in value && value.deleted === true;
+}
+
+function releaseCancelledSpawnRun(runId: string, childSessionKey: string): void {
+  if (getSubagentRunByRunId(runId)?.childSessionKey === childSessionKey) releaseSubagentRun(runId);
+}
+
+async function assertVerifierCandidate(orchestration: TeamOrchestrationMetadata | undefined, workspaceDir: string | undefined): Promise<void> {
+  if (orchestration?.phase !== 'verifier' || !orchestration.worktreeVerificationCandidate) return;
+  const { inspectOrchestrationCandidate } = await import('./orchestration-candidate.js');
+  if (!workspaceDir || !inspectOrchestrationCandidate({ ...orchestration.worktreeVerificationCandidate, materializedPath: workspaceDir })) {
+    throw new Error('verification candidate expired before dispatch');
+  }
+}
+
+/** Executes only this registry's already-prepared agent request after rechecking its owner. */
+export async function dispatchQueuedSubagentRun(entry: import('./subagent-registry.types.js').SubagentRunRecord): Promise<QueuedSubagentDispatchResult> {
+  const queued = entry.queuedDispatch;
+  if (!queued) return { status: 'rejected', error: 'queued dispatch payload missing' };
+  if (queued.params.sessionKey !== entry.childSessionKey || queued.params.idempotencyKey !== entry.runId) {
+    return { status: 'rejected', error: 'queued dispatch identity mismatch' };
+  }
+  let release: () => void;
+  let taskDelegation: PreparedTaskDelegation | null = null;
+  try {
+    const cfg = loadSubagentConfig();
+    const controller = entry.controllerSessionKey ?? entry.requesterSessionKey;
+    const target = resolveGatewaySessionStoreTarget({ cfg, key: controller });
+    const parent = resolveStoreEntryByKeys(loadSessionStore(target.storePath, { clone: false }), target.storeKeys);
+    if (!parent?.sessionId || parent.sessionId !== queued.controllerSessionId) {
+      return { status: 'rejected', error: 'orchestration controller generation changed or unavailable' };
+    }
+    if (entry.orchestration?.phase === 'verifier' && entry.orchestration.worktreeVerificationCandidate) {
+      await assertVerifierCandidate(entry.orchestration, entry.workspaceDir);
+    } else if (entry.orchestration?.worktreeBackend === 'git') {
+      const meta = entry.orchestration;
+      if (!entry.workspaceDir || !meta.worktreeId || !meta.worktreeGeneration) {
+        return { status: 'rejected', error: 'worktree isolation expired before queued dispatch' };
+      }
+      const checkout = resolveExecutionCheckout(entry.workspaceDir);
+      if ((checkout.worktreeId !== null && (checkout.worktreeId !== meta.worktreeId || checkout.basis.generation !== meta.worktreeGeneration))
+        || checkout.service.inspectIsolation(meta.worktreeId, meta.worktreeGeneration).status !== 'verified') {
+        return { status: 'rejected', error: 'worktree isolation expired before queued dispatch' };
+      }
+    }
+    if (queued.persistentTask) {
+      const childTarget = resolveGatewaySessionStoreTarget({ cfg, key: entry.childSessionKey });
+      const child = resolveStoreEntryByKeys(loadSessionStore(childTarget.storePath, { skipCache: true, clone: false }), childTarget.storeKeys);
+      if (child?.sessionId !== queued.persistentTask.childGeneration) return { status: 'rejected', error: 'queued task child generation changed' };
+    }
+    release = acquireSessionAdmissionPermit({ agentId: normalizeAgentId(parseAgentSessionKey(controller)?.agentId),
+      canonicalSessionKey: target.canonicalKey ?? controller, expectedSessionId: queued.controllerSessionId }, 'subagent-spawn');
+  } catch (error) { return { status: "rejected", error: summarizeError(error) }; }
+  try {
+    try {
+      await assertVerifierCandidate(entry.orchestration, entry.workspaceDir);
+      taskDelegation = queued.persistentTask ? preparePersistentTaskDelegation(queued.persistentTask) : null;
+    }
+    catch (error) { return { status: 'rejected', error: summarizeError(error) }; }
+    const response = await callSubagentGateway({ method: 'agent', params: queued.params, timeoutMs: queued.timeoutMs });
+    const runId = readGatewayRunId(response);
+    recordPersistentTaskDispatch(taskDelegation, runId === entry.runId ? 'dispatched' : 'unknown', entry.runId);
+    return runId === entry.runId ? { status: 'accepted', runId } : { status: 'unknown', error: 'queued agent returned a missing or mismatched run identity' };
+  } catch (error) {
+    try { recordPersistentTaskDispatch(taskDelegation, 'unknown', entry.runId); } catch { /* Retain prepared ownership for reconciliation. */ }
+    return { status: 'unknown', error: summarizeError(error) };
+  } finally { release(); }
+}
+
 function buildResolvedSubagentModelMetadata(
   resolvedModel?: string,
 ): Pick<SpawnSubagentResult, "resolvedModel" | "resolvedProvider"> {
@@ -349,6 +426,9 @@ function buildDirectChildSessionPatch(patch: Record<string, unknown>): Partial<S
   }
   if (typeof patch.spawnedWorkspaceDir === "string" && patch.spawnedWorkspaceDir.trim()) {
     entry.spawnedWorkspaceDir = patch.spawnedWorkspaceDir.trim();
+  }
+  if (typeof patch.workspaceId === "string" && patch.workspaceId.trim()) {
+    entry.workspaceId = patch.workspaceId.trim();
   }
   if (typeof patch.spawnedCwd === "string" && patch.spawnedCwd.trim()) {
     entry.spawnedCwd = patch.spawnedCwd.trim();
@@ -1202,8 +1282,10 @@ export async function spawnSubagentDirect(
 
   const maxChildren =
     cfg.agents?.defaults?.subagents?.maxChildrenPerAgent ?? DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT;
+  const queuedOrchestration = Boolean(params.orchestration?.taskNodeId && params.orchestration.executionWave
+    && params.orchestration.taskGraph && params.orchestration.executionWaves?.length);
   const activeChildren = countActiveRunsForSession(requesterInternalKey);
-  if (activeChildren >= maxChildren) {
+  if (!queuedOrchestration && activeChildren >= maxChildren) {
     return {
       status: "forbidden",
       error: `sessions_spawn has reached max active children for this session (${activeChildren}/${maxChildren})`,
@@ -1238,7 +1320,7 @@ export async function spawnSubagentDirect(
   const spawnedWorkspaceDir = resolveSpawnedWorkspaceInheritance({
     config: cfg,
     targetAgentId,
-    explicitWorkspaceDir: inheritedWorkspaceDir,
+    explicitWorkspaceDir: spawnedCwd ?? inheritedWorkspaceDir,
   });
   const requesterOrigin = normalizeDeliveryContext({
     channel: ctx.agentChannel,
@@ -1362,8 +1444,13 @@ export async function spawnSubagentDirect(
     }
   };
 
+  const budgetRequesterTarget = resolveGatewaySessionStoreTarget({ cfg, key: requesterInternalKey });
+  const budgetRequesterEntry = resolveStoreEntryByKeys(loadSessionStore(budgetRequesterTarget.storePath, { clone: false }), budgetRequesterTarget.storeKeys);
+  const budgetWorkspaceId = normalizeOptionalString(budgetRequesterEntry?.workspaceId);
+  const budgetRequesterGeneration = budgetRequesterEntry?.sessionId;
   const initialChildSessionPatch: Record<string, unknown> = {
     spawnDepth: childDepth,
+    ...(budgetWorkspaceId ? { workspaceId: budgetWorkspaceId } : {}),
     // #179: inherit the chain root (or start one at the requester when it has no
     // parent), so depth *and* origin are both readable from the child's row.
     spawnRootSessionKey:
@@ -1608,6 +1695,50 @@ export async function spawnSubagentDirect(
   });
   const parentAdmissionStore = loadSessionStore(parentAdmissionTarget.storePath, { clone: false });
   const parentAdmissionEntry = resolveStoreEntryByKeys(parentAdmissionStore, parentAdmissionTarget.storeKeys);
+
+  // TF-0082 generation pin: snapshot the completion requester's sessionId at
+  // spawn so a late completion can never steer a post-reset/forked parent.
+  const completionRequesterTarget = resolveGatewaySessionStoreTarget({
+    cfg,
+    key: ownership.completionRequesterSessionKey,
+  });
+  const completionRequesterStore = loadSessionStore(completionRequesterTarget.storePath, {
+    clone: false,
+  });
+  const completionRequesterSessionId = resolveStoreEntryByKeys(
+    completionRequesterStore,
+    completionRequesterTarget.storeKeys,
+  )?.sessionId;
+  const reservedRun: Parameters<typeof registerSubagentRun>[0] = {
+    runId: childIdem,
+    childSessionKey,
+    controllerSessionKey: ownership.controllerSessionKey,
+    requesterSessionKey: ownership.completionRequesterSessionKey,
+    requesterSessionId: completionRequesterSessionId,
+    requesterOrigin,
+    requesterDisplayKey: ownership.completionRequesterDisplayKey,
+    task,
+    taskName,
+    cleanup,
+    label: label || undefined,
+    model: resolvedModel,
+    agentDir: targetAgentDir,
+    workspaceDir: spawnedMetadata.workspaceDir,
+    runTimeoutSeconds,
+    expectsCompletionMessage: shouldAnnounceCompletion,
+    spawnMode,
+    attachmentsDir: attachmentAbsDir,
+    attachmentsRootDir: attachmentRootDir,
+    retainAttachmentsOnKeep: retainOnSessionKeep,
+    orchestration: params.orchestration,
+  };
+  let dispatchReserved = false;
+  let taskDelegation: PreparedTaskDelegation | null = null;
+  const returnTaskAfterConfirmedDelete = (deleted: unknown) => {
+    if (!taskDelegation || !isConfirmedSubagentDeletion(deleted)) return;
+    const parent = resolveStoreEntryByKeys(loadSessionStore(parentAdmissionTarget.storePath, { skipCache: true, clone: false }), parentAdmissionTarget.storeKeys);
+    returnPersistentTaskWriter({ workspace: taskDelegation.workspace, childSessionKey, runId: taskDelegation.record.childRunId, endedAt: Date.now(), outcome: 'deleted-before-start', parentGeneration: parent?.sessionId });
+  };
   const releaseSubagentPermit = acquireSessionAdmissionPermit(
     {
       agentId: requesterAgentId,
@@ -1617,12 +1748,15 @@ export async function spawnSubagentDirect(
     "subagent-spawn",
   );
   try {
+    if (budgetWorkspaceId && (!budgetRequesterGeneration || parentAdmissionEntry?.sessionId !== budgetRequesterGeneration
+      || parentAdmissionEntry.workspaceId !== budgetWorkspaceId)) throw new Error('parent budget scope changed before subagent dispatch');
     const {
       spawnedBy: _spawnedBy,
       workspaceDir: _workspaceDir,
       ...publicSpawnedMetadata
     } = spawnedMetadata;
-    const response = await callSubagentGateway({
+    ctx.assertWorkspaceCurrent?.();
+    const dispatchRequest = {
       method: "agent",
       params: {
         message: childTaskMessage,
@@ -1652,12 +1786,37 @@ export async function spawnSubagentDirect(
         ...publicSpawnedMetadata,
       },
       timeoutMs: resolveSubagentAgentGatewayTimeoutMs(runTimeoutSeconds),
-    });
-    const runId = readGatewayRunId(response);
-    if (runId) {
+    };
+    const childTarget = resolveGatewaySessionStoreTarget({cfg, key: childSessionKey});
+    const childEntry = resolveStoreEntryByKeys(loadSessionStore(childTarget.storePath, {skipCache:true,clone:false}), childTarget.storeKeys);
+    const taskIntent = capturePersistentTaskDelegationIntent({workspace:ctx.workspaceDir,childWorkspace:spawnedCwd??spawnedWorkspaceDir,parentSessionKey:requesterInternalKey,parentGeneration:parentAdmissionEntry?.sessionId,childSessionKey,childGeneration:childEntry?.sessionId,childRunId:childIdem,observer:params.orchestration?.isVerifier===true || params.writeSet?.length === 0});
+    if (queuedOrchestration) {
+      if (!parentAdmissionEntry?.sessionId) throw new Error('orchestration controller generation unavailable');
+      enqueueSubagentRun({ ...reservedRun, cleanup: 'keep', queuedDispatch: {
+        params: dispatchRequest.params, timeoutMs: dispatchRequest.timeoutMs,
+        controllerSessionId: parentAdmissionEntry.sessionId, maxChildren,
+        ...(taskIntent ? {persistentTask: taskIntent} : {}),
+      } });
+      releaseSubagentPermit();
+    } else {
+      dispatchReserved = reserveSubagentRun(reservedRun, maxChildren);
+      if (!dispatchReserved) {
+        releaseSubagentPermit();
+        await rollbackPreparedContextEngine(contextEnginePreparation);
+        await cleanupFailedSpawnBeforeAgentStart({ childSessionKey, attachmentAbsDir,
+          emitLifecycleHooks: threadBindingReady, deleteTranscript: true });
+        return { status: "forbidden", error: `sessions_spawn has reached max active children for this session (${maxChildren}/${maxChildren})`, childSessionKey };
+      }
+      await assertVerifierCandidate(params.orchestration, spawnedCwd ?? spawnedWorkspaceDir ?? ctx.workspaceDir);
+      taskDelegation = taskIntent ? preparePersistentTaskDelegation(taskIntent) : null;
+      const response = await callSubagentGateway(dispatchRequest);
+      const runId = readGatewayRunId(response);
+      if (!runId) throw new Error('subagent dispatch returned no run identity');
       childRunId = runId;
+      recordPersistentTaskDispatch(taskDelegation, "dispatched", childRunId);
     }
   } catch (err) {
+    try { recordPersistentTaskDispatch(taskDelegation, "unknown", childIdem); } catch { /* Keep the prepared claim. */ }
     await rollbackPreparedContextEngine(contextEnginePreparation);
     if (attachmentAbsDir) {
       try {
@@ -1700,7 +1859,7 @@ export async function spawnSubagentDirect(
     // Always delete the provisional child session after a failed spawn attempt.
     // If we already emitted subagent_ended above, suppress a duplicate lifecycle hook.
     try {
-      await callSubagentGateway({
+      const deletion = await callSubagentGateway({
         method: "sessions.delete",
         params: {
           key: childSessionKey,
@@ -1710,8 +1869,10 @@ export async function spawnSubagentDirect(
         },
         timeoutMs: SUBAGENT_CONTROL_GATEWAY_TIMEOUT_MS,
       });
+      if (dispatchReserved && isConfirmedSubagentDeletion(deletion)) releaseCancelledSpawnRun(childIdem, childSessionKey);
+      returnTaskAfterConfirmedDelete(deletion);
     } catch {
-      // Best-effort only.
+      // Keep the persisted reservation: dispatch/cancellation is still unknown.
     }
     const messageText = summarizeError(err);
     return {
@@ -1723,45 +1884,11 @@ export async function spawnSubagentDirect(
   }
 
   try {
-    // TF-0082 generation pin: snapshot the completion requester's sessionId at
-    // spawn so a late completion can never steer a post-reset/forked parent.
-    const completionRequesterTarget = resolveGatewaySessionStoreTarget({
-      cfg,
-      key: ownership.completionRequesterSessionKey,
-    });
-    const completionRequesterStore = loadSessionStore(completionRequesterTarget.storePath, {
-      clone: false,
-    });
-    const completionRequesterSessionId = resolveStoreEntryByKeys(
-      completionRequesterStore,
-      completionRequesterTarget.storeKeys,
-    )?.sessionId;
-    registerSubagentRun({
-      runId: childRunId,
-      childSessionKey,
-      controllerSessionKey: ownership.controllerSessionKey,
-      requesterSessionKey: ownership.completionRequesterSessionKey,
-      requesterSessionId: completionRequesterSessionId,
-      requesterOrigin,
-      requesterDisplayKey: ownership.completionRequesterDisplayKey,
-      task,
-      taskName,
-      cleanup,
-      label: label || undefined,
-      model: resolvedModel,
-      agentDir: targetAgentDir,
-      workspaceDir: spawnedMetadata.workspaceDir,
-      runTimeoutSeconds,
-      expectsCompletionMessage: shouldAnnounceCompletion,
-      spawnMode,
-      attachmentsDir: attachmentAbsDir,
-      attachmentsRootDir: attachmentRootDir,
-      retainAttachmentsOnKeep: retainOnSessionKeep,
-      orchestration: params.orchestration,
-    });
+    if (!queuedOrchestration) registerSubagentRun({ ...reservedRun, runId: childRunId, reservationRunId: childIdem });
     releaseSubagentPermit();
   } catch (err) {
     releaseSubagentPermit();
+    try { recordPersistentTaskDispatch(taskDelegation, "unknown", childIdem); } catch { /* Keep the claim until the owner confirms cleanup. */ }
     await rollbackPreparedContextEngine(contextEnginePreparation);
     if (attachmentAbsDir) {
       try {
@@ -1771,7 +1898,7 @@ export async function spawnSubagentDirect(
       }
     }
     try {
-      await callSubagentGateway({
+      const deletion = await callSubagentGateway({
         method: "sessions.delete",
         params: {
           key: childSessionKey,
@@ -1781,8 +1908,13 @@ export async function spawnSubagentDirect(
         },
         timeoutMs: SUBAGENT_CONTROL_GATEWAY_TIMEOUT_MS,
       });
+      if (isConfirmedSubagentDeletion(deletion)) {
+        releaseCancelledSpawnRun(childIdem, childSessionKey);
+        if (childRunId !== childIdem) releaseCancelledSpawnRun(childRunId, childSessionKey);
+      }
+      returnTaskAfterConfirmedDelete(deletion);
     } catch {
-      // Best-effort cleanup only.
+      // Keep the persisted reservation until the execution owner proves it ended.
     }
     return {
       status: "error",
@@ -1835,11 +1967,12 @@ export async function spawnSubagentDirect(
   });
   return {
     status: "accepted",
+    ...(queuedOrchestration ? { runState: "queued" as const } : {}),
     childSessionKey,
     runId: childRunId,
     mode: spawnMode,
     taskName,
-    note: preparedSpawnContext.forkFallbackNote
+    note: queuedOrchestration ? "Queued by the runtime owner; execution and completion are pending." : preparedSpawnContext.forkFallbackNote
       ? `${acceptedNote} ${preparedSpawnContext.forkFallbackNote}`
       : acceptedNote,
     ...resolvedModelMetadata,

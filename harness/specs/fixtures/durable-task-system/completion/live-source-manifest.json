@@ -1,0 +1,9 @@
+{
+  "candidate": "0e36bfbf5fe443c7d75c90e7d6792e36fbc85e21",
+  "files": {
+    "shared/task-system/store.ts": "4d3e262a509b8fddddc334628fe82cbd9eaab4491dae0ead3a2e6e0ad382a731",
+    "shared/task-system/runtime.ts": "c090d43b9753bcde34d93b8b2b74da9e8682a648451242031fe3c1ce17e197c6",
+    "shared/task-system/identity.ts": "e6d16c51eb07c2155da850ffd43bda239eb71a20a94555095dffa52ab0ed58e4",
+    "scripts/evaluate-durable-task-continuity.mjs": "b3aaa67f7f8e8d4facf16be3b91f9232e0993b2dc0a5626204584fd1c03c88dc"
+  }
+}

@@ -1,0 +1,110 @@
+
+ RUN  v4.1.1 C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX
+
+ ❯ tests/unit/context-inline-spill-retention.test.ts (38 tests | 2 failed | 36 skipped) 33ms
+     ↓ reproduces page-in followed by eviction through the real pruner without retention
+     ↓ retains the verified text at age three, then returns to the original pruner at age four
+     ↓ keeps ordinary tools prunable while preserving user text and assistant reasoning
+     ↓ fails closed on ineligible recall provenance: missing-origin
+     ↓ fails closed on ineligible recall provenance: foreign-session
+     ↓ fails closed on ineligible recall provenance: wrong-tool
+     ↓ fails closed on ineligible recall provenance: wrong-call
+     ↓ fails closed on ineligible recall provenance: wrong-checksum
+     ↓ fails closed on ineligible recall provenance: already-trimmed
+     ↓ fails closed on ineligible recall provenance: missing-content
+     ↓ fails closed on ineligible recall provenance: null-block
+     ↓ does not issue provenance for checksum failure, missing archive, or a foreign session
+     ↓ bounds all retained text and protects only the newest duplicate archive page
+     ↓ does not protect an older page when the newest verified recall exceeds the cap
+     ↓ preserves verified provenance through internal session replay
+     ↓ keeps lineage through guarded disk persistence for large ascii pages
+     ↓ keeps lineage through guarded disk persistence for large cjk pages
+     ↓ uses the production provider transform before details stripping: enabled=false
+     ↓ uses the production provider transform before details stripping: enabled=true
+     × rejects incomplete call-id lineage instead of repairing it into a valid binding 25ms
+     × rejects missing, negative, fractional and unsafe archive page offsets 5ms
+     ↓ keeps only verified lineage across the existing call-id rewrite: strict
+     ↓ keeps only verified lineage across the existing call-id rewrite: strict9
+     ↓ keeps only verified lineage across the existing call-id rewrite: openai-responses
+     ↓ carries verified lineage when a replay drops an unpaired function-call item id
+     ↓ does not refresh the window or inject messages on repeated projection
+     ↓ also excludes the retained result from hard-clear candidates
+     ↓ wires the session-scoped extension flag into both pruning and its would-trim report
+     ↓ uses the same protection for aggregate truncation without exceeding its existing budget
+     ↓ protects multiple fitting recalls under separate single and aggregate limits
+     ↓ does not reserve truncation notices for recalls that remain intact
+     ↓ enforces the final size after a converter adds visible text: enabled=false
+     ↓ enforces the final size after a converter adds visible text: enabled=true
+     ↓ does not reattach lineage to a recall whose converter changed the projection
+     ↓ converts an observation-masking replacement before dispatch and keeps its lineage internal
+     ↓ uses the legacy plan when multi-block notice floors leave insufficient aggregate budget
+     ↓ preserves the same recall in transcript replacement and does not claim protected text is reducible
+     ↓ keeps the flag off by default and exactly replays the frozen pre-implementation tool/pruning/compaction outputs
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/context-inline-spill-retention.test.ts > Inline/Spill archive recall retention > rejects incomplete call-id lineage instead of repairing it into a valid binding
+AssertionError: expected [ { index: +0, chars: 4427, …(5) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "ageTurns": 0,
++     "archiveUri": "context-archive://session-inline-spill-retention/inline-spill-retention-observation-5193f84cda71bcb2.context-archive.json",
++     "chars": 4427,
++     "checksum": "sha256:5193f84cda71bcb25e767f9c5fe09e9c1630db073a1abd35ecea707f83797f50",
++     "index": 0,
++     "recalledTurn": 0,
++     "toolCallId": undefined,
++   },
++ ]
+
+ ❯ tests/unit/context-inline-spill-retention.test.ts:458:84
+    456|       const details = malformed.details as Record<string, unknown>;
+    457|       Object.assign(details.archiveRecallOrigin as Record<string, unkn…
+    458|       expect(getRetainedArchiveRecalls([malformed], { enabled: true, s…
+       |                                                                                    ^
+    459|       const rewritten = preserveArchiveRecallOriginAfterIdRewrite(malf…
+    460|         ...malformed,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/context-inline-spill-retention.test.ts > Inline/Spill archive recall retention > rejects missing, negative, fractional and unsafe archive page offsets
+AssertionError: expected [ { index: +0, chars: 4427, …(5) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "ageTurns": 0,
++     "archiveUri": "context-archive://session-inline-spill-retention/inline-spill-retention-observation-5193f84cda71bcb2.context-archive.json",
++     "chars": 4427,
++     "checksum": "sha256:5193f84cda71bcb25e767f9c5fe09e9c1630db073a1abd35ecea707f83797f50",
++     "index": 0,
++     "recalledTurn": 0,
++     "toolCallId": "recall-call",
++   },
++ ]
+
+ ❯ tests/unit/context-inline-spill-retention.test.ts:474:84
+    472|       details.offset = offset;
+    473|       (details.archiveRecallOrigin as Record<string, unknown>).offset …
+    474|       expect(getRetainedArchiveRecalls([malformed], { enabled: true, s…
+       |                                                                                    ^
+    475|     }
+    476|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 36 skipped (38)
+   Start at  23:04:39
+   Duration  13.61s (transform 7.93s, setup 437ms, import 12.73s, tests 33ms, environment 0ms)
+
+JSON report written to D:/tmp/context-inline-spill-closeout-20261103/malformed-lineage-regressions-before-fix-vitest.json

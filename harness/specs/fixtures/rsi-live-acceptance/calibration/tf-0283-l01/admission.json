@@ -1,0 +1,571 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0283-l01",
+  "source": {
+    "id": "tf-0283-l01",
+    "base": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+    "reference": "f42bb417b862784ad37e3f488f844cc697dbea51",
+    "productChanges": [],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/l01-acceptance.json",
+    "sourceRecordDigest": "0e0a4139520eec9ce4940ee7ea1e61e7eb86fd14c2e92cf0a37ccc97d368e141",
+    "oraclePaths": [
+      "tests/unit/task-ledger-working-context-single-source.test.ts",
+      "tests/unit/context-control-plane-stage3-contracts.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/task-ledger-working-context-single-source.test.ts tests/unit/context-control-plane-stage3-contracts.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0283-l01",
+      "commands": [
+        "pnpm exec vitest run tests/unit/task-ledger-working-context-single-source.test.ts tests/unit/context-control-plane-stage3-contracts.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/task-ledger-working-context-single-source.test.ts tests/unit/context-control-plane-stage3-contracts.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/task-ledger-working-context-single-source.test.ts",
+            "tests/unit/context-control-plane-stage3-contracts.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 4,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 14,
+            "numPassedTests": 14,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793809097549,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract constructs bounded proposals with owner defaults and rejects raw content",
+                    "status": "passed",
+                    "title": "constructs bounded proposals with owner defaults and rejects raw content",
+                    "duration": 12.123199999999997,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract projects proposals/accept/reject deterministically and only accepted entries become candidates",
+                    "status": "passed",
+                    "title": "projects proposals/accept/reject deterministically and only accepted entries become candidates",
+                    "duration": 5.1525000000001455,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract fails closed on duplicate accept and records the reason",
+                    "status": "passed",
+                    "title": "fails closed on duplicate accept and records the reason",
+                    "duration": 1.125899999999092,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract never accepts expired proposals and keeps them queryable as expired",
+                    "status": "passed",
+                    "title": "never accepts expired proposals and keeps them queryable as expired",
+                    "duration": 0.8995999999988271,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract preserves concurrent cross-actor proposals as a conflict set",
+                    "status": "passed",
+                    "title": "preserves concurrent cross-actor proposals as a conflict set",
+                    "duration": 2.3069999999988795,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract merges only explicit copyFields and preserves parent/child conflicts",
+                    "status": "passed",
+                    "title": "merges only explicit copyFields and preserves parent/child conflicts",
+                    "duration": 1.6908999999996013,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract keeps the legacy snapshot projection side-effect free for Stage 3 events",
+                    "status": "passed",
+                    "title": "keeps the legacy snapshot projection side-effect free for Stage 3 events",
+                    "duration": 1.5278999999991356,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract fails closed on malformed decisions with queryable reasons",
+                    "status": "passed",
+                    "title": "fails closed on malformed decisions with queryable reasons",
+                    "duration": 0.8244999999988067,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract fails closed when a proposal event has an illegal actor",
+                    "status": "passed",
+                    "title": "fails closed when a proposal event has an illegal actor",
+                    "duration": 0.4554000000007363,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract exposes an empty deterministic snapshot",
+                    "status": "passed",
+                    "title": "exposes an empty deterministic snapshot",
+                    "duration": 0.5327000000015687,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793809108185,
+                "endTime": 1793809108212.5327,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-20261104/admission-run/calibration/tf-0283-l01/reference/workspace/tests/unit/context-control-plane-stage3-contracts.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "L01 working-context single source"
+                    ],
+                    "fullName": "L01 working-context single source persists through the JSONL ledger and reads back a consistent projection",
+                    "status": "passed",
+                    "title": "persists through the JSONL ledger and reads back a consistent projection",
+                    "duration": 28.44250000000011,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L01 working-context single source"
+                    ],
+                    "fullName": "L01 working-context single source is idempotent across a replayed batch (no duplicate events, identical projection)",
+                    "status": "passed",
+                    "title": "is idempotent across a replayed batch (no duplicate events, identical projection)",
+                    "duration": 17.298900000000003,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L01 working-context single source"
+                    ],
+                    "fullName": "L01 working-context single source surfaces a write failure instead of reporting success",
+                    "status": "passed",
+                    "title": "surfaces a write failure instead of reporting success",
+                    "duration": 10.478999999999928,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L01 working-context single source"
+                    ],
+                    "fullName": "L01 working-context single source keeps workspaces isolated on the single ledger",
+                    "status": "passed",
+                    "title": "keeps workspaces isolated on the single ledger",
+                    "duration": 24.126499999999965,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793809109136,
+                "endTime": 1793809109216.1265,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-20261104/admission-run/calibration/tf-0283-l01/reference/workspace/tests/unit/task-ledger-working-context-single-source.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 14,
+      "numPassedTests": 14,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "timeoutMs": 120000,
+      "oracleHashBefore": "dca3595190d0d07b870297c270fe33a6a86f6891aed0391e2da82e1e7c13b19a",
+      "oracleHashAfter": "dca3595190d0d07b870297c270fe33a6a86f6891aed0391e2da82e1e7c13b19a",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-working-context-single-source.md": "bb977807573bb95d30f239c2656e2172be7f4ce93cb19baf6a8b1fe51f6f32a3",
+        "tests/unit/task-ledger-working-context-single-source.test.ts": "035ace35109f4f02fb7baade3ddba5f80edc7551d5b1ffc85535653c20a95616",
+        "tests/unit/context-control-plane-stage3-contracts.test.ts": "77c8ac298029b581cc63542cbe45973d7fca58de0f270f2283eb5732e06bcff7"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0283-l01",
+      "commands": [
+        "pnpm exec vitest run tests/unit/task-ledger-working-context-single-source.test.ts tests/unit/context-control-plane-stage3-contracts.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/task-ledger-working-context-single-source.test.ts tests/unit/context-control-plane-stage3-contracts.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/task-ledger-working-context-single-source.test.ts",
+            "tests/unit/context-control-plane-stage3-contracts.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\baseline\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 4,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 14,
+            "numPassedTests": 14,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793809156929,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract constructs bounded proposals with owner defaults and rejects raw content",
+                    "status": "passed",
+                    "title": "constructs bounded proposals with owner defaults and rejects raw content",
+                    "duration": 4.691299999999501,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract projects proposals/accept/reject deterministically and only accepted entries become candidates",
+                    "status": "passed",
+                    "title": "projects proposals/accept/reject deterministically and only accepted entries become candidates",
+                    "duration": 4.1185999999997875,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract fails closed on duplicate accept and records the reason",
+                    "status": "passed",
+                    "title": "fails closed on duplicate accept and records the reason",
+                    "duration": 1.1792999999997846,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract never accepts expired proposals and keeps them queryable as expired",
+                    "status": "passed",
+                    "title": "never accepts expired proposals and keeps them queryable as expired",
+                    "duration": 0.823699999999917,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract preserves concurrent cross-actor proposals as a conflict set",
+                    "status": "passed",
+                    "title": "preserves concurrent cross-actor proposals as a conflict set",
+                    "duration": 0.6916000000001077,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract merges only explicit copyFields and preserves parent/child conflicts",
+                    "status": "passed",
+                    "title": "merges only explicit copyFields and preserves parent/child conflicts",
+                    "duration": 1.228900000000067,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract keeps the legacy snapshot projection side-effect free for Stage 3 events",
+                    "status": "passed",
+                    "title": "keeps the legacy snapshot projection side-effect free for Stage 3 events",
+                    "duration": 1.397399999999834,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract fails closed on malformed decisions with queryable reasons",
+                    "status": "passed",
+                    "title": "fails closed on malformed decisions with queryable reasons",
+                    "duration": 0.7527999999992971,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract fails closed when a proposal event has an illegal actor",
+                    "status": "passed",
+                    "title": "fails closed when a proposal event has an illegal actor",
+                    "duration": 0.3897000000006301,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "Stage 3 Working Context contract"
+                    ],
+                    "fullName": "Stage 3 Working Context contract exposes an empty deterministic snapshot",
+                    "status": "passed",
+                    "title": "exposes an empty deterministic snapshot",
+                    "duration": 0.5378999999993539,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793809162942,
+                "endTime": 1793809162958.5378,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-20261104/admission-run/calibration/tf-0283-l01/baseline/workspace/tests/unit/context-control-plane-stage3-contracts.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "L01 working-context single source"
+                    ],
+                    "fullName": "L01 working-context single source persists through the JSONL ledger and reads back a consistent projection",
+                    "status": "passed",
+                    "title": "persists through the JSONL ledger and reads back a consistent projection",
+                    "duration": 23.782200000000103,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L01 working-context single source"
+                    ],
+                    "fullName": "L01 working-context single source is idempotent across a replayed batch (no duplicate events, identical projection)",
+                    "status": "passed",
+                    "title": "is idempotent across a replayed batch (no duplicate events, identical projection)",
+                    "duration": 9.305200000000013,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L01 working-context single source"
+                    ],
+                    "fullName": "L01 working-context single source surfaces a write failure instead of reporting success",
+                    "status": "passed",
+                    "title": "surfaces a write failure instead of reporting success",
+                    "duration": 4.688699999999926,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L01 working-context single source"
+                    ],
+                    "fullName": "L01 working-context single source keeps workspaces isolated on the single ledger",
+                    "status": "passed",
+                    "title": "keeps workspaces isolated on the single ledger",
+                    "duration": 5.654099999999971,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793809158730,
+                "endTime": 1793809158773.654,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-20261104/admission-run/calibration/tf-0283-l01/baseline/workspace/tests/unit/task-ledger-working-context-single-source.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 14,
+      "numPassedTests": 14,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "timeoutMs": 120000,
+      "oracleHashBefore": "dca3595190d0d07b870297c270fe33a6a86f6891aed0391e2da82e1e7c13b19a",
+      "oracleHashAfter": "dca3595190d0d07b870297c270fe33a6a86f6891aed0391e2da82e1e7c13b19a",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-working-context-single-source.md": "bb977807573bb95d30f239c2656e2172be7f4ce93cb19baf6a8b1fe51f6f32a3",
+        "tests/unit/task-ledger-working-context-single-source.test.ts": "035ace35109f4f02fb7baade3ddba5f80edc7551d5b1ffc85535653c20a95616",
+        "tests/unit/context-control-plane-stage3-contracts.test.ts": "77c8ac298029b581cc63542cbe45973d7fca58de0f270f2283eb5732e06bcff7"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-20261104\\admission-run\\calibration\\tf-0283-l01\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": false,
+    "issues": [
+      "baseline-already-passes"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

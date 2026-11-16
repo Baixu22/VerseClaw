@@ -9,9 +9,9 @@
   "mutations": [
     {
       "file": "scripts/check-semantic-authority-adjudication.json",
-      "anchor": "\"id\": \"C-02/R-D1\"",
-      "find": "  \"adjudicatedConflicts\": [\n    {\n      \"id\": \"C-02/R-D1\",",
-      "replace": "  \"adjudicatedConflicts\": [\n    {\n      \"id\": \"C-01/probe\",\n      \"rule\": \"owner-namespace\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"working-memory-context-source\",\n      \"observed\": {\n        \"owner\": \"probe\"\n      },\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-01\",\n      \"reason\": \"probe: attempt to register an owner conflict as pending-fix\",\n      \"reviewCondition\": \"probe\"\n    },\n    {\n      \"id\": \"C-02/R-D1\","
+      "anchor": "\"adjudicatedConflicts\": []",
+      "find": "  \"adjudicatedConflicts\": []",
+      "replace": "  \"adjudicatedConflicts\": [\n    {\n      \"id\": \"C-01/probe\",\n      \"rule\": \"owner-namespace\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"working-memory-context-source\",\n      \"observed\": {\n        \"owner\": \"probe\"\n      },\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-02\",\n      \"reason\": \"Adjudicated stale authority-manifest default: the component's own runtimeAvailabilitySource flag, the disposition catalog, docs/dev/default-config-matrix.md and docs/clawx-product-semantics.md all agree on the baseline activation TF-0494 landed; the manifest is the lone dissenting source and was not rewritten after closure. Registered pending fix; the rule is not relaxed.\",\n      \"reviewCondition\": \"Remove once shared/component-authority-manifest.ts defaultMode for working-memory-context-source is corrected by a later node; exemption-stale then rejects this entry automatically.\"\n    }\n  ]"
     }
   ]
 }

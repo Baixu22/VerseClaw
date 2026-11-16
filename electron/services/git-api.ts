@@ -63,8 +63,9 @@ import {
   createPermissionApproval,
   recordPermissionAudit,
 } from './permissions-api';
-import { getActiveWorkspaceProfile } from './workspaces-api';
+import { createWorkspacesApi, getActiveWorkspaceProfile } from './workspaces-api';
 import { isPathInsideWorkspace, isPathInsideWorkspaceResolved, requireWorkspace } from './workspace-permissions';
+import { assertGitNativeRoot } from '../../shared/git-native-root';
 
 type ExecResult = {
   exitCode: number | null;
@@ -195,7 +196,7 @@ function execBinary(command: 'git' | 'gh', args: string[], cwd: string): Promise
   });
 }
 
-async function git(args: string[], cwd: string): Promise<ExecResult> {
+export async function git(args: string[], cwd: string): Promise<ExecResult> {
   return execBinary('git', args, cwd);
 }
 
@@ -372,6 +373,7 @@ async function requireRepoContextForWorkspace(workspace: WorkspaceProfile): Prom
     throw new Error(repo.stderr.trim() || 'Active workspace is not a Git repository');
   }
   const repoRoot = resolve(repo.stdout.trim());
+  assertGitNativeRoot(workspaceRoot, repoRoot);
   return { workspace, workspaceRoot, repoRoot };
 }
 
@@ -622,25 +624,37 @@ async function enrichStatusWithDiffStats(ctx: RepoContext, status: GitRepository
   return { ...status, changes };
 }
 
-type GitStatusCacheEntry = { status: GitRepositoryStatus; repoRoot: string | null };
+type GitStatusCacheEntry = { status: GitRepositoryStatus; repoRoot: string | null; source: string };
 const GIT_STATUS_CACHE_TTL_MS = 5_000;
 const gitStatusCache = new BoundedCache<string, GitStatusCacheEntry>({
   maxEntries: 16,
   ttlMs: GIT_STATUS_CACHE_TTL_MS,
 });
 const gitStatusFlight = new Singleflight<string, GitStatusCacheEntry>();
+let gitStatusGeneration = 0;
 
 function gitStatusCacheKey(workspace: WorkspaceProfile): string {
-  return `git-workspace:${workspace.id}:${resolve(workspace.rootPath)}`;
+  const root = resolve(workspace.rootPath);
+  return `git-workspace:${process.platform === 'win32' ? root.toLowerCase() : root}`;
+}
+
+async function gitStatusSource(workspace: WorkspaceProfile): Promise<string> {
+  const paths = [resolve(workspace.rootPath), join(resolve(workspace.rootPath), '.git')];
+  return JSON.stringify(await Promise.all(paths.map(async path => {
+    try { const value = await stat(path); return [value.dev, value.ino, value.birthtimeMs, value.mtimeMs, value.size]; }
+    catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null; throw error; }
+  })));
 }
 
 /** Read-through cache for the read-only status surface; mutations invalidate its repo prefix. */
 export function invalidateGitStatusCache(repoRoot: string): number {
+  gitStatusGeneration++;
   const target = resolve(repoRoot);
   return gitStatusCache.invalidate((_key, entry) => entry.repoRoot === target);
 }
 
 export function clearGitStatusCacheForTest(): void {
+  gitStatusGeneration++;
   gitStatusCache.clear();
 }
 
@@ -678,26 +692,37 @@ export async function resolveGitCommitAtOrBefore(isoTimestamp: string): Promise<
   const commit = result.stdout.trim();
   return commit || null;
 }
-export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
-  const workspace = requireWorkspace(await getActiveWorkspaceProfile());
+export async function readCurrentGitStatus(ownerWorkspace?: WorkspaceProfile): Promise<GitRepositoryStatus> {
+  const workspace = ownerWorkspace ?? requireWorkspace(await getActiveWorkspaceProfile());
   const key = gitStatusCacheKey(workspace);
+  const source = await gitStatusSource(workspace);
   const cached = gitStatusCache.get(key);
-  if (cached) return cached.status;
-  const entry = await gitStatusFlight.run(key, async () => {
+  if (cached?.source === source) return cached.status;
+  if (cached) gitStatusCache.delete(key);
+  const generation = gitStatusGeneration;
+  const entry = await gitStatusFlight.run(`${generation}:${key}:${source}`, async () => {
     const ctx = await getRepoContextOrNull(workspace);
-    return {
+    const loaded = {
       status: await readUncachedGitStatus(workspace, ctx),
       repoRoot: ctx ? resolve(ctx.repoRoot) : null,
+      source,
     };
+    if (loaded.repoRoot && generation === gitStatusGeneration && source === await gitStatusSource(workspace)) gitStatusCache.set(key, loaded);
+    return loaded;
   });
   // Non-repository workspaces are cheap to re-check and must not hide a later
   // `git init`; only real repositories enter the bounded cache.
   if (!entry.repoRoot) return entry.status;
-  gitStatusCache.set(key, entry);
   return entry.status;
 }
 
-async function enforcePermission(input: {
+export async function readWorkspaceGitWorktrees(ownerWorkspace?: WorkspaceProfile) {
+  const ctx = ownerWorkspace ? await requireRepoContextForWorkspace(ownerWorkspace) : await requireRepoContext();
+  const result = await git(['worktree', 'list', '--porcelain', '-z'], ctx.workspaceRoot);
+  return { success: result.exitCode === 0, worktrees: parseWorktrees(result.stdout), error: result.exitCode === 0 ? undefined : result.stderr };
+}
+
+export async function enforcePermission(input: {
   workspace: WorkspaceProfile;
   action: string;
   risk: GitRisk;
@@ -707,11 +732,13 @@ async function enforcePermission(input: {
   /** Extra grading facts appended to the approval reason so the dialog explains
    * why this specific operation is dangerous, not just that it is. */
   grading?: string[];
+  targetIdentity?: string;
 }): Promise<GitOperationResult | null> {
   if (input.risk === 'none') return null;
   const requestHash = createRequestHash(input.action, input.workspace, {
     command: input.command,
     paths: input.paths ?? [],
+    ...(input.targetIdentity ? { targetIdentity: input.targetIdentity } : {}),
   });
 
   if (input.risk === 'dangerous') {
@@ -785,9 +812,19 @@ async function withGitOperation(
   action: string,
   risk: GitRisk,
   args: string[],
-  payload: { approvalId?: string; paths?: string[]; grading?: string[] } = {},
+  payload: { approvalId?: string; paths?: string[]; grading?: string[]; context?: RepoContext; removalTarget?: string } = {},
 ): Promise<GitOperationResult> {
-  const ctx = await requireRepoContext();
+  const ctx = payload.context ?? await requireRepoContext();
+  const inspectRemoval = async () => {
+    try {
+      const { inspectUiWorktreeRemoval, removeUiWorktree } = await import('./task-system-service');
+      const profiles = (await createWorkspacesApi().list()).profiles;
+      return { ...inspectUiWorktreeRemoval(ctx.repoRoot, payload.removalTarget!, profiles), profiles, removeUiWorktree };
+    } catch (error) { return { blocked: true as const,
+      reason: `UI_CLEANUP_OWNER_UNAVAILABLE: ${String(error)}; owner=Workspace/session lifecycle; entry=/settings/storage` }; }
+  };
+  const before = payload.removalTarget ? await inspectRemoval() : null;
+  if (before?.blocked) return { success: false, blocked: true, reason: before.reason };
   const blocked = await enforcePermission({
     workspace: ctx.workspace,
     action,
@@ -796,8 +833,18 @@ async function withGitOperation(
     command: `git ${args.join(' ')}`,
     paths: payload.paths,
     grading: payload.grading,
+    targetIdentity: before && !before.blocked ? before.identity : undefined,
   });
   if (blocked) return blocked;
+  if (payload.removalTarget) {
+    const current = await inspectRemoval();
+    if (current.blocked) return { success: false, blocked: true, reason: current.reason };
+    if (before && !before.blocked && current.identity !== before.identity)
+      return { success: false, blocked: true, reason: 'UI_CLEANUP_TARGET_CHANGED; entry=/settings/storage; refresh the owning session' };
+    const removal = current.removeUiWorktree(ctx.repoRoot, payload.removalTarget, current.profiles, current.identity);
+    if (removal.success) invalidateGitStatusCache(ctx.repoRoot);
+    return { ...removal, status: removal.success ? await readCurrentGitStatus().catch(() => undefined) : undefined };
+  }
   const result = await git(args, ctx.workspaceRoot);
   if (result.exitCode === 0) invalidateGitStatusCache(ctx.repoRoot);
   return {
@@ -1121,7 +1168,7 @@ function parseStashes(output: string): GitStashEntry[] {
   });
 }
 
-function parseWorktrees(output: string): GitWorktree[] {
+export function parseWorktrees(output: string): GitWorktree[] {
   const entries: GitWorktree[] = [];
   let current: GitWorktree | null = null;
   for (const record of output.split('\0').filter(Boolean)) {
@@ -1359,6 +1406,16 @@ async function applyGitPatch(payload: GitApplyPatchPayload, journaled = false): 
 
 export function createGitApi(): CompleteHostServiceRegistry['git'] {
   return {
+    init: async () => {
+      const workspace = requireWorkspace(await getActiveWorkspaceProfile());
+      const blocked = await enforcePermission({ workspace, action: 'init', risk: 'write', command: 'git init', paths: [workspace.rootPath] });
+      if (blocked) return blocked;
+      const existing = await git(['rev-parse', '--show-toplevel'], workspace.rootPath);
+      if (existing.exitCode === 0) return { success: true, status: await readCurrentGitStatus() };
+      const result = await git(['init'], workspace.rootPath);
+      invalidateGitStatusCache(workspace.rootPath);
+      return { success: result.exitCode === 0, ...result, status: result.exitCode === 0 ? await readCurrentGitStatus() : undefined };
+    },
     capabilities: async () => {
       const workspace = requireWorkspace(await getActiveWorkspaceProfile());
       const gitVersion = await git(['--version'], workspace.rootPath);
@@ -1741,11 +1798,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       if (!selector) throw new Error('selector is required');
       return withGitOperation('stashPop', 'dangerous', ['stash', 'pop', selector], { approvalId: payload.approvalId });
     },
-    worktrees: async () => {
-      const ctx = await requireRepoContext();
-      const result = await git(['worktree', 'list', '--porcelain', '-z'], ctx.workspaceRoot);
-      return { success: result.exitCode === 0, worktrees: parseWorktrees(result.stdout), error: result.exitCode === 0 ? undefined : result.stderr };
-    },
+    worktrees: () => readWorkspaceGitWorktrees(),
     worktreeAdd: async (payload: GitWorktreeAddPayload) => {
       const ctx = await requireRepoContext();
       const branch = normalizeString(payload.branch);
@@ -1791,10 +1844,12 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       } else {
         args.push(target, branch);
       }
-      return withGitOperation('worktreeAdd', customOutsideSafeArea ? 'dangerous' : 'write', args, {
+      const result = await withGitOperation('worktreeAdd', customOutsideSafeArea ? 'dangerous' : 'write', args, {
         approvalId: payload.approvalId,
         paths: [target],
+        context: ctx,
       });
+      return { ...result, ...(result.success ? { worktree: { path: target, branch } } : {}) };
     },
     worktreeRemove: async (payload: GitPathPayload) => {
       const ctx = await requireRepoContext();
@@ -1806,9 +1861,10 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         ? parseWorktrees(listed.stdout).some((worktree) => resolve(worktree.path) === target)
         : false;
       if (!knownWorktree) throw new Error('worktree path is not registered with this repository');
-      return withGitOperation('worktreeRemove', 'dangerous', ['worktree', 'remove', target], {
+      return withGitOperation('worktreeRemove', 'dangerous', ['worktree', 'remove', '--', target], {
         approvalId: payload.approvalId,
         paths: [target],
+        context: ctx, removalTarget: target,
       });
     },
     worktreePrune: async (payload) => withGitOperation(

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-05T17:00:18.387668+00:00",
+  "driven_by": "agent",
+  "actor": "codex-session-environment-relay",
+  "realHumanEvidence": false,
+  "verdict": "pass-development-scope",
+  "candidate": {
+    "commit": "2bfa639a31d20b5a3ce3d184271bb2c818f54e5a",
+    "tree": "ab81194e87ae234743ea1ef6e43fe09778a06236",
+    "dirty": false,
+    "root": "D:\\tmp\\chat-environment-r9-20261105\\validation",
+    "scope": "Local validation snapshot of previously frozen shared checkout; contains explicitly retained concurrent source context, not a mainline integration commit."
+  },
+  "releaseReady": false,
+  "scope": "Session environment disclosure/source hierarchy and retained workspace panels; independent local validation snapshot, not mainline integration or whole-project acceptance.",
+  "unit": {
+    "files": 17,
+    "passed": 259,
+    "failed": 0,
+    "skipped": 0,
+    "allExitsZero": true,
+    "runs": "unit-runs.json"
+  },
+  "electron": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "exitCode": 0,
+    "sourceGuard": true,
+    "report": "electron.json"
+  },
+  "checks": {
+    "build": 0,
+    "electron": 0,
+    "unit": 0,
+    "web-types": 0,
+    "i18n": 0,
+    "lint": 0
+  },
+  "lintWarnings": 5,
+  "screenshots": [
+    "environment-inline-light.png",
+    "environment-overlay-light.png",
+    "environment-overlay-dark.png",
+    "environment-narrow.png",
+    "workspace-expanded.png",
+    "workspace-hidden.png"
+  ],
+  "sourceMatch": {
+    "exact": 25,
+    "total": 29,
+    "different": [
+      "README.ja-JP.md",
+      "README.md",
+      "README.ru-RU.md",
+      "README.zh-CN.md"
+    ]
+  },
+  "limitations": [
+    "Host/runtime data are agent-driven fixtures; no live-provider quality or real-human claim.",
+    "The shared checkout still has unrelated full-test-type and changed-path Harness residuals, recorded in ../report.json. TF-0783 remains review_needed.",
+    "The local snapshot retains concurrent source context from the earlier checkout. Only the 29 source paths in sources.json are attributed to the environment relay; four root READMEs have later unrelated additions.",
+    "Skill attribution uses structured SKILL.md reads only."
+  ]
+}

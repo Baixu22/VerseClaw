@@ -1,0 +1,250 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\results.json",
+  "sourceSha256": "187e67f3023d644ba62203d998b8143402283784b3ba61885029364707700cbd",
+  "result": {
+    "config": {
+      "configFile": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\playwright.config.ts",
+      "rootDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+      "forbidOnly": false,
+      "fullyParallel": false,
+      "globalSetup": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+      "globalTeardown": null,
+      "globalTimeout": 0,
+      "grep": {},
+      "grepInvert": null,
+      "maxFailures": 0,
+      "metadata": {
+        "actualWorkers": 2
+      },
+      "preserveOutput": "always",
+      "projects": [
+        {
+          "outputDir": "D:/tmp/g8-ui-r3-20261113-01a1d351/electron/final/agent-dev-quality/output",
+          "repeatEach": 1,
+          "retries": 0,
+          "metadata": {
+            "actualWorkers": 2
+          },
+          "id": "",
+          "name": "",
+          "testDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+          "testIgnore": [
+            "**/resource-lifecycle-soak.spec.ts",
+            "**/product-acceptance-space-bunny.spec.ts",
+            "**/product-acceptance-moyu.spec.ts"
+          ],
+          "testMatch": [
+            "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+          ],
+          "timeout": 90000
+        }
+      ],
+      "quiet": false,
+      "reporter": [
+        [
+          "line"
+        ],
+        [
+          "json"
+        ]
+      ],
+      "reportSlowTests": {
+        "max": 5,
+        "threshold": 300000
+      },
+      "shard": null,
+      "tags": [],
+      "updateSnapshots": "missing",
+      "updateSourceMethod": "patch",
+      "version": "1.59.0",
+      "workers": 2,
+      "webServer": null
+    },
+    "suites": [
+      {
+        "title": "agent-dev-quality.spec.ts",
+        "file": "agent-dev-quality.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "agent dev quality gates",
+            "file": "agent-dev-quality.spec.ts",
+            "line": 5,
+            "column": 6,
+            "specs": [
+              {
+                "title": "produces an accessibility report for a seeded scenario",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 7872,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:11:16.639Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "agent-dev-a11y-report",
+                            "contentType": "application/json",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output\\agent-dev-quality-agent-de-b3a30-eport-for-a-seeded-scenario\\attachments\\agent-dev-a11y-report-fe9d75bc57410ab9a7d3fcc54eb3a3ed71d5f445.json"
+                          }
+                        ]
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "25c625a4fc6c4b09b841-fb9c6f5baee55d3f71a4",
+                "file": "agent-dev-quality.spec.ts",
+                "line": 8,
+                "column": 7
+              },
+              {
+                "title": "renders assistant-ui welcome suggestions with aligned card styling",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 1,
+                        "parallelIndex": 1,
+                        "status": "passed",
+                        "duration": 7865,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:11:16.644Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "chat-welcome-suggestions",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output\\agent-dev-quality-agent-de-bd8d6-s-with-aligned-card-styling\\attachments\\chat-welcome-suggestions-0a9b17442a46f66f160b258b0a30801efe378323.png"
+                          }
+                        ]
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "25c625a4fc6c4b09b841-f54796a6dce64b13ac6a",
+                "file": "agent-dev-quality.spec.ts",
+                "line": 24,
+                "column": 7
+              },
+              {
+                "title": "captures a stable visual artifact for a seeded scenario",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 1,
+                        "parallelIndex": 1,
+                        "status": "passed",
+                        "duration": 8135,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:11:24.531Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "agent-dev-visual-doctor-failed",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output\\agent-dev-quality-agent-de-3bbb0-ifact-for-a-seeded-scenario\\attachments\\agent-dev-visual-doctor-failed-6c2ac7ee20d9ca8672b781530f16b084d8dbb050.png"
+                          }
+                        ]
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "25c625a4fc6c4b09b841-80a55f994e600ae38666",
+                "file": "agent-dev-quality.spec.ts",
+                "line": 60,
+                "column": 7
+              },
+              {
+                "title": "loads the in-app Agent Dev Workbench through host-api and records a scenario",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8887,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:11:24.531Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "25c625a4fc6c4b09b841-ddd89b2a90385a5a5b85",
+                "file": "agent-dev-quality.spec.ts",
+                "line": 74,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "stats": {
+      "startTime": "2026-11-13T10:11:15.629Z",
+      "duration": 18833.128,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+}

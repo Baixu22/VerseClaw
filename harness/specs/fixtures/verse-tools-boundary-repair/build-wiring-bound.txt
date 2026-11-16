@@ -1,0 +1,10 @@
+✔ normal install, dev and build compile the embedded package before consuming dist (0.6689ms)
+✔ credential-bearing runtime probes stay outside addable source paths (0.8142ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 97.4224

@@ -688,6 +688,14 @@
         "task"
       ]
     },
+    "task_control": {
+      "title": "Persistent Task",
+      "detailKeys": [
+        "action",
+        "taskNodeId",
+        "candidate"
+      ]
+    },
     "mission_loop": {
       "emoji": "Mission",
       "title": "Mission Loop",

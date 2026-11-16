@@ -4,7 +4,26 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { HOST_ACTION_LONG_TIMEOUT_MS } from '../../shared/host-api/host-action-timeouts';
+import type { SessionHandoffOperation } from '@shared/types/session-handoff';
+
+const handoffOperationsMock = vi.hoisted(() => new Map<string, SessionHandoffOperation>());
+
+function runtimeHandoffGateway() {
+  const entries = new Map<string, { key: string; sessionId: string; parentSessionKey?: string }>([
+    ['agent:main:root', { key: 'agent:main:root', sessionId: 'source-generation' }],
+  ]);
+  return { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+    if (method === 'sessions.describe') return { session: entries.get(String(params.key)) ?? null };
+    if (method === 'sessions.create') {
+      const key = String(params.key);
+      entries.set(key, { key, sessionId: `child-generation-${entries.size}`, parentSessionKey: String(params.parentSessionKey) });
+      return { key, sessionId: entries.get(key)!.sessionId };
+    }
+    if (method === 'chat.history') return { messages: [] };
+    if (method === 'taskScope.runState') return { quiescent: true };
+    return {};
+  }) };
+}
 
 const {
   handoffWorkspaceUpdateMock,
@@ -220,8 +239,18 @@ vi.mock('@electron/utils/agent-config', () => ({
 }));
 
 vi.mock('@electron/services/workspaces-api', () => ({
-  createWorkspacesApi: () => ({ update: handoffWorkspaceUpdateMock }),
+  createWorkspacesApi: () => ({ update: handoffWorkspaceUpdateMock, saveState: handoffWorkspaceUpdateMock }),
   getActiveWorkspaceProfile: vi.fn().mockResolvedValue(null),
+  getWorkspaceRootPathById: vi.fn(async () => undefined),
+  getPersistedCoordinatorBinding: vi.fn(async () => null),
+  readWorkspaceHandoffOperation: async (input: { workspaceId: string; sessionKey: string; operationId?: string }) =>
+    [...handoffOperationsMock.values()].find((operation) => operation.workspaceId === input.workspaceId
+      && (operation.sourceSessionKey === input.sessionKey || operation.sessionKey === input.sessionKey)
+      && (!input.operationId || operation.id === input.operationId)) ?? null,
+  updateWorkspaceHandoffOperation: async (_workspaceId: string, id: string, update: (current: SessionHandoffOperation | null) => SessionHandoffOperation) => {
+    const next = update(handoffOperationsMock.get(id) ?? null); handoffOperationsMock.set(id, next); return next;
+  },
+  materializeCoordinatorSessionGeneration: vi.fn(async () => null),
 }));
 
 vi.mock('@electron/services/sandbox-api', () => ({
@@ -339,6 +368,7 @@ const baseSettings = {
 describe('host services', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    handoffOperationsMock.clear();
     getAllSettingsMock.mockResolvedValue(baseSettings);
     getSettingMock.mockResolvedValue(undefined);
     readOpenClawConfigMock.mockResolvedValue({ channels: {} });
@@ -1018,7 +1048,7 @@ describe('host services', () => {
           fileName: 'image.png',
         }],
       },
-      HOST_ACTION_LONG_TIMEOUT_MS,
+      15 * 60_000,
     );
   });
 
@@ -1141,6 +1171,7 @@ describe('host services', () => {
     const checkpoint = {
       id: 'ltcp-1',
       sessionKey: 'agent:main:main',
+      taskLedgerRootId: 'ledger-root-1',
       trigger: 'queue_drain',
       status: 'active',
       checkpoint: {
@@ -1189,7 +1220,8 @@ describe('host services', () => {
         success: true,
         available: true,
         queueCount: 1,
-        latestCheckpoint: { id: 'ltcp-1' },
+        // Chat offers explicit long-task modes only when this root survives mapping.
+        latestCheckpoint: { id: 'ltcp-1', taskLedgerRootId: 'ledger-root-1' },
         latestIntervention: { id: 'ltie-1' },
       });
     await expect(sessionsApi.longTaskControlHistory({ sessionKey: 'agent:main:main', limit: 3 }))
@@ -1236,7 +1268,17 @@ describe('host services', () => {
       key: 'agent:main:main',
       force: true,
       customInstructions: expect.stringContaining('Preserve decision D1.'),
-    }), 15 * 60_000);
+    }), 120_000);
+  });
+
+  it.each(['compact', 'compactRange'] as const)('preserves an asynchronous %s acceptance as pending', async (method) => {
+    const rpc = vi.fn().mockResolvedValue({ ok: true, key: 'agent:main:main', compacted: false,
+      result: { details: { backend: 'codex-app-server', signal: 'thread/compact/start', pending: true } } });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
+    await expect(sessionsApi[method]({ sessionKey: 'agent:main:main', expectedSessionId: 'generation-1', fromLeafId: 'entry-1' }))
+      .resolves.toMatchObject({ success: true, status: 'pending', compacted: false });
+    expect(rpc).toHaveBeenCalledTimes(1);
   });
 
   it('proxies located (range) compaction with the chosen boundary (#178)', async () => {
@@ -1269,8 +1311,28 @@ describe('host services', () => {
       key: 'agent:main:main',
       fromLeafId: 'entry-5',
       customInstructions: expect.stringContaining('Preserve decision D1.'),
-    }), 15 * 60_000);
+    }), 120_000);
   });
+
+  it.each(['compact', 'compactRange', 'restoreCheckpoint'] as const)(
+    'forwards %s generation unchanged and preserves omission for legacy callers',
+    async (method) => {
+      // Transport fixture: only verifies forwarding; Runtime owner tests verify effects.
+      const rpc = vi.fn().mockResolvedValue({ ok: false, reason: 'fixture' });
+      const { createSessionsApi } = await import('@electron/services/sessions-api');
+      const api = createSessionsApi({ gatewayManager: { rpc } as never });
+      const input = { sessionKey: 'agent:reviewer:main', agentId: 'reviewer', checkpointId: 'cp-generation', fromLeafId: 'e1' };
+      await api[method]({ ...input, expectedSessionId: 'generation-old' });
+      expect(rpc.mock.calls[0]?.[1]).toMatchObject({
+        key: 'agent:reviewer:main', agentId: 'reviewer', expectedSessionId: 'generation-old',
+      });
+      await api[method](input);
+      expect(rpc.mock.calls[1]?.[1]).not.toHaveProperty('expectedSessionId');
+      rpc.mockRejectedValueOnce(new Error('Session generation changed'));
+      await expect(api[method]({ ...input, expectedSessionId: 'generation-old' }))
+        .rejects.toThrow('Session generation changed');
+    },
+  );
 
   it('proxies read-only context recall through Gateway without local archive reads', async () => {
     const archiveHandle = {
@@ -1348,11 +1410,12 @@ describe('host services', () => {
   });
 
   it('forwards an explicit fromLeafId fork point and omits it otherwise (#180)', async () => {
-    const rpc = vi.fn().mockResolvedValue({
-      key: 'agent:main:dashboard:fork',
+    let fork = 0;
+    const rpc = vi.fn().mockImplementation(async () => ({
+      key: `agent:main:dashboard:fork-${++fork}`,
       sourceKey: 'agent:main:main',
       forkedFromParent: true,
-    });
+    }));
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
 
@@ -1418,6 +1481,48 @@ describe('host services', () => {
     rpc.mockResolvedValue({ messages: [] });
     expect(await api.history({ sessionKey: 'agent:main:runtime-handoff', limit: 80 })).toMatchObject({ messages: [] });
     expect((await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' })).draft).not.toContain('STALE_LOCAL_RESULT');
+  });
+
+  it.each(['before', 'history', 'after'])('reads a worker within the Gateway budget when %s is slow', async (slowPhase) => {
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const messages = [{ role: 'assistant', content: 'Current worker result' }];
+    let descriptions = 0;
+    vi.useFakeTimers();
+    try {
+      const rpc = vi.fn((method: string, _params?: unknown, timeoutMs = 30_000) => {
+        const phase = method === 'chat.history' ? 'history' : ++descriptions === 1 ? 'before' : 'after';
+        return new Promise((resolve, reject) => {
+          const deadline = setTimeout(() => reject(new Error(`RPC timeout: ${method}`)), timeoutMs);
+          setTimeout(() => {
+            clearTimeout(deadline);
+            resolve(method === 'chat.history' ? { messages }
+              : { session: { sessionId: 'worker-generation', spawnedBy: 'agent:main:parent' } });
+          }, phase === slowPhase ? 16_000 : 1);
+        });
+      });
+      const api = createSessionsApi({ gatewayManager: { rpc } as never });
+      const reading = Promise.resolve(api.history({ sessionKey: 'agent:main:worker', expectedParentSessionKey: 'agent:main:parent',
+        expectedSessionGeneration: 'worker-generation' })).then(value => ({ value }), error => ({ error: String(error) }));
+      await vi.advanceTimersByTimeAsync(16_010);
+      expect(await reading).toMatchObject({ value: { success: true, sessionGeneration: 'worker-generation', messages } });
+      expect(descriptions).toBe(2);
+    } finally { vi.clearAllTimers(); vi.useRealTimers(); }
+  });
+
+  it('reports recorded transcript cost only when each relevant usage record has a cost', async () => {
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const messages: Array<{ role: string; content: string; usage?: { cost: { total: number | null } } }> = [
+      { role: 'assistant', content: 'First result', usage: { cost: { total: 0 } } },
+    ];
+    const rpc = vi.fn(async () => ({ messages }));
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).toMatchObject({ costUsd: 0 });
+    messages.push({ role: 'assistant', content: 'Second result', usage: { cost: { total: 0.25 } } });
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).toMatchObject({ costUsd: 0.25 });
+    messages[1].usage!.cost.total = null;
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).not.toHaveProperty('costUsd');
+    delete messages[1].usage;
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).not.toHaveProperty('costUsd');
   });
 
   it('prepares deterministic session handoff without requiring Gateway', async () => {
@@ -1682,36 +1787,46 @@ describe('host services', () => {
     writeFileSync(join(testOpenClawConfigDir, 'openclaw.json'), JSON.stringify({ runtime: { handoff: { enabled: true, maxDepth: 2 } } }));
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const { loadTaskLedgerSnapshot } = await import('@electron/services/task-ledger-service');
-    const api = createSessionsApi();
+    const gateway = runtimeHandoffGateway();
+    const coordinatorLifecycle = vi.fn(async () => undefined);
+    const api = createSessionsApi({ gatewayManager: gateway as never, coordinatorLifecycle });
     const first = await api.createHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a', draftInput: 'goal and evidence' });
     expect(first).toMatchObject({ success: true, handoffDepth: 1, handoffRootSessionKey: 'agent:main:root', rootHandoffId: expect.any(String) });
-    expect(handoffWorkspaceUpdateMock).toHaveBeenCalledWith(expect.objectContaining({ activeSessionKey: first.sessionKey, state: { activeTopicId: null, draftInput: 'goal and evidence' } }));
-    const second = await createSessionsApi().createHandoff({ sessionKey: first.sessionKey!, workspaceId: 'a', draftInput: 'continue' });
+    expect(handoffWorkspaceUpdateMock).toHaveBeenCalledWith(expect.objectContaining({ sessionKey: first.sessionKey, state: { activeTopicId: null, draftInput: 'goal and evidence' } }));
+    const second = await createSessionsApi({ gatewayManager: gateway as never, coordinatorLifecycle }).createHandoff({ sessionKey: first.sessionKey!, workspaceId: 'a', draftInput: 'continue' });
     expect(second).toMatchObject({ success: true, handoffDepth: 2, parentHandoffId: first.rootHandoffId, rootHandoffId: first.rootHandoffId });
     expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toHaveLength(2);
     const denied = await api.createHandoff({ sessionKey: second.sessionKey!, workspaceId: 'a', draftInput: 'continue' });
     expect(denied).toMatchObject({ success: false, error: expect.stringContaining('Handoff depth 3 exceeds') });
     expect(handoffWorkspaceUpdateMock).toHaveBeenCalledTimes(2);
+    expect(coordinatorLifecycle).toHaveBeenCalledTimes(2);
+    expect(coordinatorLifecycle).toHaveBeenLastCalledWith(expect.objectContaining({
+      type: 'handoff', sessionKey: second.sessionKey, sessionGeneration: second.operation!.sessionGeneration,
+    }));
     expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toHaveLength(2);
   });
 
-  it('records workspace-less handoffs and keeps the depth bound opt-in', async () => {
+  it('keeps the four-hop depth bound opt-in with explicit workspace ownership', async () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const { loadTaskLedgerSnapshot } = await import('@electron/services/task-ledger-service');
     let key = 'agent:main:root';
+    const gateway = runtimeHandoffGateway();
+    const coordinatorLifecycle = vi.fn(async () => undefined);
     for (let depth = 1; depth <= 4; depth++) {
-      const next = await createSessionsApi().createHandoff({ sessionKey: key, draftInput: 'continue' });
+      const next = await createSessionsApi({ gatewayManager: gateway as never, coordinatorLifecycle }).createHandoff({ sessionKey: key, workspaceId: 'depth-default', draftInput: 'continue' });
       expect(next).toMatchObject({ success: true, handoffDepth: depth });
       key = next.sessionKey!;
     }
-    expect((await loadTaskLedgerSnapshot()).sessionLinks).toHaveLength(4);
-    expect(handoffWorkspaceUpdateMock).not.toHaveBeenCalled();
+    expect((await loadTaskLedgerSnapshot('depth-default')).sessionLinks).toHaveLength(4);
+    expect(handoffWorkspaceUpdateMock).toHaveBeenCalledTimes(4);
+    expect(coordinatorLifecycle).toHaveBeenCalledTimes(4);
+    await expect(createSessionsApi({ gatewayManager: gateway as never }).createHandoff({ sessionKey: key, draftInput: 'continue' })).rejects.toThrow('HANDOFF_OWNER_UNAVAILABLE');
   });
 
   it('rejects corrupt lineage before activation and re-reads it at creation time', async () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const { getTaskLedgerEventsPath } = await import('@electron/services/task-ledger-service');
-    const api = createSessionsApi();
+    const api = createSessionsApi({ gatewayManager: runtimeHandoffGateway() as never });
     const preview = await api.prepareHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a' });
     expect(preview.success).toBe(true);
     writeFileSync(getTaskLedgerEventsPath('a'), 'invalid json\n');
@@ -1724,14 +1839,123 @@ describe('host services', () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const spy = vi.spyOn(ledger, 'appendTaskLedgerEvents').mockRejectedValueOnce(new Error('ledger write failed'));
     try {
-      await expect(createSessionsApi().createHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a', draftInput: 'continue' })).rejects.toThrow('ledger write failed');
+      await expect(createSessionsApi({ gatewayManager: runtimeHandoffGateway() as never }).createHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a', draftInput: 'continue' })).rejects.toThrow('ledger write failed');
       expect(handoffWorkspaceUpdateMock).not.toHaveBeenCalled();
     } finally { spy.mockRestore(); }
   });
 
 
 
-  it('leaves sessions.fork on its existing Gateway contract, without handoff lineage', async () => {
+  it.each(['fork', 'handoff'] as const)('preserves current explicit business-task links during %s in Main', async (derivation) => {
+    const ledger = await import('@electron/services/task-ledger-service');
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sourceSessionKey = 'agent:main:task-source';
+    const now = '2026-11-07T00:00:00.000Z';
+    const nodes = [
+      { id: 'active-task', kind: 'task' as const, status: 'doing' as const },
+      { id: 'done-task', kind: 'task' as const, status: 'done' as const },
+      { id: 'stale-task', kind: 'task' as const, status: 'todo' as const },
+      { id: 'foreign-task', kind: 'task' as const, status: 'todo' as const },
+      { id: 'turn-check', kind: 'check' as const, status: 'done' as const },
+    ];
+    await ledger.appendTaskLedgerEvents('task-workspace', nodes.map((node) => ({
+      type: 'node_created' as const, actor: 'assistant' as const,
+      payload: { node: { ...node, title: node.id, createdAt: now, updatedAt: now } },
+    })));
+    const links = [
+      { id: 'active', nodeId: 'active-task', sessionGeneration: 'source-generation' },
+      { id: 'duplicate', nodeId: 'active-task', sessionGeneration: 'source-generation' },
+      { id: 'done', nodeId: 'done-task' },
+      { id: 'stale', nodeId: 'stale-task', sessionGeneration: 'old-generation' },
+      { id: 'foreign', nodeId: 'foreign-task', sessionKey: 'agent:main:someone-else' },
+      { id: 'check', nodeId: 'turn-check' },
+      { id: 'missing', nodeId: 'missing-task' },
+    ];
+    await ledger.appendTaskLedgerEvents('task-workspace', links.map((link) => ({
+      type: 'session_linked' as const, actor: 'assistant' as const,
+      payload: { sessionLink: { sessionKey: sourceSessionKey, createdAt: now, ...link } },
+    })));
+    const before = await ledger.loadTaskLedgerSnapshot('task-workspace');
+    const children = new Map<string, { sessionId: string; parentSessionKey: string }>();
+    const rpc = vi.fn(async (method: string, params?: Record<string, unknown>) => {
+      if (method === 'taskScope.runState') return { quiescent: true };
+      if (method === 'sessions.describe') return { session: params?.key === sourceSessionKey ? { sessionId: 'source-generation' } : children.get(String(params?.key)) ?? null };
+      if (method === 'sessions.create') { children.set(String(params?.key), { sessionId: 'handoff-generation', parentSessionKey: sourceSessionKey }); return { key: params?.key }; }
+      if (method === 'sessions.fork') return {
+        key: 'agent:main:task-fork', sourceKey: sourceSessionKey,
+        sessionId: 'fork-generation', forkedFromParent: true,
+      };
+      throw new Error(`Unexpected RPC ${method}`);
+    });
+    const coordinatorLifecycle = vi.fn(async () => undefined);
+    const api = createSessionsApi({ gatewayManager: { rpc } as never, coordinatorLifecycle });
+    const result = derivation === 'fork'
+      ? await api.fork({ sessionKey: sourceSessionKey, workspaceId: 'task-workspace' })
+      : await api.createHandoff({ sessionKey: sourceSessionKey, workspaceId: 'task-workspace', draftInput: 'Continue the linked task.' });
+    expect(result.success).toBe(true);
+    const after = await ledger.loadTaskLedgerSnapshot('task-workspace');
+    const derivedLinks = after.sessionLinks.filter((link) => link.sessionKey === result.sessionKey);
+    expect(derivedLinks.filter((link) => link.nodeId).map((link) => link.nodeId).sort()).toEqual(['active-task', 'done-task']);
+    expect(derivedLinks).toHaveLength(3);
+    expect(derivedLinks.every((link) => link.sourceSessionKey === sourceSessionKey && link.relation === `${derivation === 'fork' ? 'forked' : 'handoff'}_from`)).toBe(true);
+    expect(derivedLinks.every((link) => link.sessionGeneration === (derivation === 'fork' ? 'fork-generation' : 'handoff-generation'))).toBe(true);
+    expect(after.nodes).toEqual(before.nodes);
+    if (derivation === 'fork') expect(coordinatorLifecycle).not.toHaveBeenCalled();
+    else expect(coordinatorLifecycle).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ type: 'handoff', sourceSessionKey }));
+  });
+
+  it.each(['source', 'fork'] as const)('rejects task inheritance when the %s generation is missing', async (missing) => {
+    const ledger = await import('@electron/services/task-ledger-service');
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const now = '2026-11-07T00:00:00.000Z';
+    await ledger.appendTaskLedgerEvents('generation-workspace', [{
+      type: 'node_created', actor: 'assistant',
+      payload: { node: { id: 'task', title: 'Explicit task', kind: 'task', status: 'doing', createdAt: now, updatedAt: now } },
+    }, {
+      type: 'session_linked', actor: 'assistant',
+      payload: { sessionLink: { id: 'source-link', nodeId: 'task', sessionKey: 'agent:main:source', sessionGeneration: 'source-generation', createdAt: now } },
+    }]);
+    const rpc = vi.fn(async (method: string) => method === 'sessions.describe'
+      ? { session: missing === 'source' ? {} : { sessionId: 'source-generation' } }
+      : { key: 'agent:main:fork', sourceKey: 'agent:main:source', forkedFromParent: true });
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    const result = api.fork({ sessionKey: 'agent:main:source', workspaceId: 'generation-workspace' });
+    if (missing === 'source') {
+      await expect(result).rejects.toThrow('source session generation is missing');
+      expect(rpc).not.toHaveBeenCalledWith('sessions.fork', expect.anything(), expect.anything());
+    } else {
+      await expect(result).resolves.toMatchObject({ success: false, error: 'Task scope unavailable: fork session generation is missing' });
+    }
+    expect((await ledger.loadTaskLedgerSnapshot('generation-workspace')).sessionLinks).toHaveLength(1);
+  });
+
+  it('drops generation-fenced task references when the source resets during fork', async () => {
+    const ledger = await import('@electron/services/task-ledger-service');
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const now = '2026-11-07T00:00:00.000Z';
+    await ledger.appendTaskLedgerEvents('reset-workspace', [{
+      type: 'node_created', actor: 'assistant',
+      payload: { node: { id: 'old-task', title: 'Old generation task', kind: 'task', status: 'doing', createdAt: now, updatedAt: now } },
+    }, {
+      type: 'session_linked', actor: 'assistant',
+      payload: { sessionLink: { id: 'old-link', nodeId: 'old-task', sessionKey: 'agent:main:source', sessionGeneration: 'before-reset', createdAt: now } },
+    }]);
+    let generation = 'before-reset';
+    const rpc = vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: generation } };
+      generation = 'after-reset';
+      return { key: 'agent:main:fork', sourceKey: 'agent:main:source', sessionId: 'child-generation', forkedFromParent: true };
+    });
+    const result = await createSessionsApi({ gatewayManager: { rpc } as never }).fork({ sessionKey: 'agent:main:source', workspaceId: 'reset-workspace' });
+    expect(result.success).toBe(true);
+    const snapshot = await ledger.loadTaskLedgerSnapshot('reset-workspace');
+    const childLinks = snapshot.sessionLinks.filter((link) => link.sessionKey === result.sessionKey);
+    expect(childLinks).toHaveLength(1);
+    expect(childLinks[0].nodeId).toBeUndefined();
+    expect(snapshot.nodes[0].status).toBe('doing');
+  });
+
+  it('records canonical fork lineage in Main without creating a handoff', async () => {
     const rpc = vi.fn().mockResolvedValue({
       key: 'agent:main:fork',
       // The Gateway answers with the canonical source key, which may differ in
@@ -1750,6 +1974,10 @@ describe('host services', () => {
       sessionKey: 'agent:main:fork',
     });
     expect(rpc).toHaveBeenCalledWith('sessions.fork', expect.objectContaining({ key: 'agent:main:main' }), 30_000);
-    expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toEqual([]);
+    expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toEqual([
+      expect.objectContaining({
+        sessionKey: 'agent:main:fork', sourceSessionKey: 'agent:main:canonical-primary', relation: 'forked_from',
+      }),
+    ]);
   });
 });

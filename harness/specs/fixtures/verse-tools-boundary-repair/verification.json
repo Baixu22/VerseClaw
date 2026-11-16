@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 2,
+  "driven_by": "agent",
+  "actor": "codex",
+  "recordedAt": "2026-11-05T00:17:37.911Z",
+  "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+  "productBuildCommit": "9f5970e12a07be6be547a5b5273064fc6325a6e7",
+  "tests": {
+    "hostUnits": {
+      "files": 21,
+      "passed": 166,
+      "failed": 0,
+      "skipped": 0,
+      "startTime": 1793837738231,
+      "artifact": "focused-unit-current.json",
+      "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+      "executionCommit": "0143905e9f83e8a9c423d5aef72285d5c3390bba"
+    },
+    "runtimeProvenance": {
+      "files": 1,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "startTime": 1793837314289,
+      "artifact": "runtime-provenance-current.json",
+      "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+      "executionCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+    },
+    "browserUnits": {
+      "files": 3,
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0,
+      "startTime": 1793837936330,
+      "artifact": "browser-unit-current.json",
+      "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+      "executionCommit": "edc4f79b778e325c42d43b4fe9d87eddda903515"
+    },
+    "electronE2E": {
+      "startTime": "2026-11-05T00:10:15.374Z",
+      "duration": 9574.315,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "artifact": "vb-e2e.json",
+      "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+    }
+  },
+  "typecheck": {
+    "success": true,
+    "cache": false,
+    "totalDurationMs": 36743
+  },
+  "probeRegressions": {
+    "passed": 13,
+    "artifact": "deepseek-fixes-node-tests.txt"
+  },
+  "packaged": {
+    "n8Checks": 10,
+    "n9Rounds": 46,
+    "evidenceDirectory": "../versebrowser-invocation-maturity/current-20261105",
+    "buildIdentitySchema": 2,
+    "provenanceScope": "versebrowser-desktop-build-v1"
+  },
+  "limitations": [
+    "Full repository harness:ci retains the unrelated stale Agent Dev failure; not a full-repository green claim.",
+    "Windows x64 only; external model quality and non-Windows execution were not measured.",
+    "VG M4 remains unauthorized and VS remains default-off.",
+    "Evidence is for the isolated repair candidate, not concurrent unrelated main-workspace edits."
+  ]
+}

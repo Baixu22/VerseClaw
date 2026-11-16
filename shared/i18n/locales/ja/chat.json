@@ -1,4 +1,5 @@
 {
+  "operationGenerationUnavailable": "セッションの識別情報を取得できません。更新してから続行してください。",
   "gatewayNotRunning": "ゲートウェイが停止中",
   "retry": "再試行",
   "gatewayRequired": "チャットを利用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
@@ -12,6 +13,9 @@
     "retry": "再読み込み"
   },
   "welcome": {
+    "quickStart": "クイックスタート",
+    "branchLoading": "ブランチを読み込み中…",
+    "branchLoadFailed": "ブランチを読み込めませんでした",
     "projectSearch": "プロジェクトを検索",
     "projectEmpty": "プロジェクトが見つかりません",
     "changeProject": "プロジェクトを変更: {{projectName}}",
@@ -29,7 +33,7 @@
     "brainstormingDesc": "複数のエージェントで作業を分担します"
   },
   "sessionActivity": {
-    "title": "セッション状態",
+    "title": "セッション環境",
     "description": "この会話のランタイム、タスク、Git、ゴール、プロセス、系統、サブエージェント、ターミナルのリアルタイム状態。",
     "openRecovery": "セッション復旧を開く",
     "createMemoryDraft": "メモリ草案として保存",
@@ -49,9 +53,10 @@
       "lineage": "系統",
       "terminals": "ターミナル",
       "continuity": "継続性",
-      "environment": "環境",
+      "environment": "変更",
       "plan": "開発タスク",
-      "policy": "実行ポリシー"
+      "policy": "実行ポリシー",
+      "sources": "ソース"
     },
     "status": {
       "idle": "待機中",
@@ -162,7 +167,14 @@
     },
     "runningCount": "実行中 {{count}} 件",
     "processes": {
-      "openOutput": "{{command}} の出力を開く"
+      "recent": "完了 · {{count}}",
+      "openOutput": "{{command}} の出力を開く",
+      "openInWorkspace": "ワークスペースで開く",
+      "noOutput": "まだ出力がありません",
+      "showOutput": "出力を表示",
+      "hideOutput": "出力を隠す",
+      "duration": "{{seconds}} 秒",
+      "inWorkspace": "ワークスペースで表示中"
     },
     "policy": {
       "backend": "設定済みバックエンド",
@@ -266,6 +278,25 @@
         }
       },
       "unverifiedFacts": "未検証の項目"
+    },
+    "sourceKinds": {
+      "mcp": "MCP",
+      "skill": "スキル"
+    },
+    "moreRows": "残り {{count}} 件を表示",
+    "close": "環境を閉じる",
+    "overview": {
+      "context": "コンテキスト",
+      "contextUsed": "使用量 / 上限",
+      "cacheRead": "キャッシュ読み取り",
+      "cacheHitRate": "キャッシュヒット率",
+      "pressure": "負荷",
+      "connectors": "コネクタ",
+      "connectorsValue": "{{count}} 件使用中",
+      "skillsValue": "スキル {{count}} 件",
+      "review": "レビュー",
+      "background": "バックグラウンドタスク",
+      "backgroundIdle": "実行中なし"
     }
   },
   "noLogs": "（ログはまだありません）",
@@ -334,9 +365,11 @@
     "copiedCode": "コピー済み"
   },
   "messageActions": {
+    "forkMissingBoundary": "このメッセージの会話記録の境界がありません。会話を更新してから分岐してください。",
+    "forkUnavailable": "セッションが接続され、現在の実行が完了すると分岐できます。",
     "summarizeUpToHere": "ここまでを要約",
     "summarizeFromHere": "ここから要約",
-    "forkFromHere": "ここから分岐",
+    "forkFromHere": "新しいセッションで質問",
     "copy": "メッセージをコピー",
     "copied": "コピーしました",
     "edit": "編集",
@@ -746,7 +779,8 @@
       "expand": "パネルを展開",
       "collapse": "パネルを折りたたむ",
       "moveTerminalSide": "ターミナルを右側へ移動",
-      "moveTerminalBottom": "ターミナルを下部へ移動"
+      "moveTerminalBottom": "ターミナルを下部へ移動",
+      "close": "ワークスペースを閉じる"
     },
     "changes": {
       "heading": "ファイルの変更（{{count}} 件）",
@@ -1253,6 +1287,8 @@
     }
   },
   "executionGraph": {
+    "arguments": "引数",
+    "result": "実行結果",
     "title": "実行グラフ",
     "branchLabel": "branch",
     "thinkingLabel": "考え中",
@@ -1334,6 +1370,13 @@
     "previewUnavailable": "画像プレビューを一時的に表示できません"
   },
   "session": {
+    "navigation": {
+      "title": "このワークスペースの会話",
+      "search": "会話を検索",
+      "source": "元の会話",
+      "from": "{{session}} から",
+      "children": "関連する会話 {{count}} 件を表示"
+    },
     "derived": {
       "title": "派生セッション（{{count}}）"
     },
@@ -1343,7 +1386,8 @@
     "lineage": {
       "forkedFrom": "{{session}} から Fork",
       "forkedFromAt": "{{session}} から Fork · {{time}}"
-    }
+    },
+    "manage": "チャット設定"
   },
   "composer": {
     "attachFiles": "ファイルを添付",
@@ -1359,7 +1403,7 @@
     "skillEmpty": "一致する Skill がありません",
     "pickAgent": "Agent を選択",
     "pickModel": "モデルを選択",
-    "abortFailed": "停止に失敗しました。実行は継続中です。",
+    "abortFailed": "停止結果を確認できませんでした。会話を更新して現在の状態を確認してください。",
     "actions": {
       "add": "追加",
       "context": "コンテキストを追加",
@@ -1635,6 +1679,11 @@
           "label": "最後の応答をコピー",
           "description": "最後のアシスタント応答を markdown としてコピーします。",
           "argumentHint": ""
+        },
+        "storage": {
+          "label": "ストレージ",
+          "description": "会話ファイル、実行中のプロセス、Git ワークツリーを管理します。",
+          "argumentHint": ""
         }
       },
       "prompts": {
@@ -1707,7 +1756,7 @@
     "resumeTooltip": "一時停止したセッションを再開します。",
     "resumeDisabled": "このセッションはここでは再開できません。",
     "startingTooltip": "起動中…クリックで送信をキャンセルするか、現在の実行を一時停止します。",
-    "queueTooltip": "この下書きをキューに入れ、現在の実行後に送信します。ダブルクリックで一時停止に切り替えます。",
+    "queueTooltip": "キュー：現在の実行が終わったら送信",
     "gatewayConnected": "接続済み",
     "gatewayStatus": "ゲートウェイ {{state}} | ポート: {{port}} {{pid}}",
     "contextMenu": {
@@ -1729,6 +1778,7 @@
     "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
     "contextHidden": "{{count}} 件を非表示",
     "compaction": {
+      "toastPending": "圧縮リクエストを受け付けました。会話を更新して結果を確認してください。",
       "compress": "現在のセッションを圧縮",
       "compressTooltip": "現在のセッション履歴を圧縮",
       "viewEvidence": "圧縮エビデンスを表示",
@@ -1966,9 +2016,9 @@
       "tooltip": "新しいセッションに引き継ぎ草稿を準備します",
       "disabledActiveRun": "現在の実行が完了すると利用できます",
       "dialogTitle": "新しい会話へ Handoff",
-      "dialogDescription": "新しいセッションを作成する前に、この引き継ぎ草稿を確認・編集できます。草稿はコンポーザーに入り、自動送信されません。",
+      "dialogDescription": "引き継ぎ草稿を確認・編集してください。「作成して送信」で新しいセッションを開き、草稿を最初のメッセージとして送信します。送信結果が未確認の場合は、照合と復旧のために草稿を保持します。",
       "draftLabel": "Handoff 草稿",
-      "create": "Handoff セッションを作成",
+      "create": "作成して送信",
       "cancel": "キャンセル",
       "toastPrepareFailed": "Handoff の準備に失敗しました",
       "toastCreateFailed": "Handoff セッションの作成に失敗しました",
@@ -2064,16 +2114,17 @@
     },
     "workModeRecommendedPermission": "推奨: {{mode}}",
     "intervention": {
+      "menu": "送信方法",
       "guide": "誘導",
-      "guideTooltip": "実行中のランに非中断のガイダンスを注入します。",
+      "guideTooltip": "実行を止めずに、次のステップで現在の実行に追加",
       "longTaskRequired": "中断/ガイド/キュー/目標修正には、このセッションでアクティブな /loop 長タスクコンテキストが必要です。",
       "reviseGoal": "目標を修正",
-      "reviseGoalTooltip": "実行中ランをチェックポイントし、修正後のユーザー目標から再開します。",
+      "reviseGoalTooltip": "チェックポイントを保存し、このメッセージを新しい目標として再開",
       "queueDefault": "実行中: Enter でキュー",
       "queue": "キュー",
-      "queueTooltip": "現在のランを保ち、この追加入力を後で再生します。",
-      "interrupt": "中断",
-      "interruptTooltip": "リスクのある復旧操作の前に現在のランを止めるか誘導します。"
+      "queueTooltip": "現在の実行が終わってから送信",
+      "interrupt": "中断して送信",
+      "interruptTooltip": "チェックポイントを保存して実行を止め、このメッセージから再開"
     },
     "rollbackPlan": {
       "title": "復旧支援",
@@ -2206,7 +2257,14 @@
       "newBranch": "新しいブランチ",
       "existingBranch": "既存のブランチ",
       "defaultPath": "既定のパス",
-      "defaultPathUnavailable": "ブランチ名を入力してパスを確認"
+      "defaultPathUnavailable": "ブランチ名を入力してパスを確認",
+      "kindBranch": "ブランチ",
+      "kindWorktree": "ワークツリー",
+      "kindDetached": "分離",
+      "mainCheckout": "メインのチェックアウト",
+      "linkedWorktree": "リンクされたワークツリー",
+      "filesChanged": "{{count}} ファイルを変更",
+      "filesChanged_one": "{{count}} ファイルを変更"
     },
     "modelSwitchSessionResetFailed": "既定のモデルは保存されましたが、このセッションをリセットできませんでした: {{error}}",
     "knowledgeRuntimeLessons": {
@@ -2318,6 +2376,11 @@
     "dropHint": "別の会話にドラッグしてグループ化"
   },
   "archive": {
+    "mutationUnconfirmed": "操作結果を確認できませんでした。一覧を更新して現在の状態を確認してください。",
+    "pendingTitle": "確認待ちの操作",
+    "pendingDescription": "記録された操作を確認し、保存された状態から続行します。",
+    "resumeMutation": "確認して続行",
+    "pendingKinds": {"archive": "アーカイブ", "restore": "復元", "delete": "削除"},
     "searchPlaceholder": "アーカイブ済みの会話を検索",
     "ungrouped": "未分類",
     "noMatches": "一致する会話がありません",
@@ -2337,7 +2400,8 @@
     "archiveAction": "アーカイブ",
     "emptyAll": "アーカイブを空にする",
     "emptyAllConfirm": "もう一度クリックしてアーカイブされたすべての会話を完全に削除",
-    "viewLabel": "アーカイブ表示"
+    "viewLabel": "アーカイブ表示",
+    "permanentDeleteMessage": "「{{label}}」と会話履歴を完全に削除しますか？"
   },
   "questionDirectory": {
     "title": "質問目次",
@@ -2516,7 +2580,7 @@
   },
   "turnSummary": {
     "codingRun": {
-      "title": "CodingRun 証跡",
+      "title": "実行の診断",
       "jsonl": "読み取り専用 JSONL 投影",
       "copy": "コピー",
       "copied": "コピー済み"
@@ -2536,6 +2600,7 @@
       "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
     },
     "badge": {
+      "tools": "ツール呼び出し {{count}} 件",
       "thoughts": "思考 {{count}} 件",
       "approvals": "承認待ち {{count}} 件",
       "plan": "計画 {{count}} ステップ",
@@ -2776,6 +2841,145 @@
       "typeLabel": "種類",
       "hint": "このリソースはここでは表示できません。",
       "copy": "詳細をコピー"
+    }
+  },
+  "task": {
+    "steps": "実行手順"
+  },
+  "sessionFamily": {
+    "toggle": "{{count}} 件の派生セッションを開閉",
+    "navigation": "セッションの関係",
+    "kind": {
+      "fork": "分岐",
+      "handoff": "引き継ぎ",
+      "spawn": "ワーカー",
+      "unknown": "参照元を利用できません"
+    },
+    "children": "派生セッション（{{count}}）",
+    "missing": "参照元を利用できません",
+    "unloaded": "参照元を読み込む",
+    "conflict": "参照元の情報が競合しています",
+    "cycle": "参照元に循環があります",
+    "bound-exceeded": "参照元の連鎖を省略しました",
+    "relations": "関係の詳細"
+  },
+  "projectEntry": {
+    "toggle": "{{name}} を開閉",
+    "loading": "プロジェクト担当を開いています…",
+    "unbound": "このプロジェクトに担当セッションが紐付けられていません。",
+    "unavailable": "プロジェクト担当の関連付けを利用できません。",
+    "coordinator": "{{name}} · プロジェクト担当"
+  },
+  "questionFork": {
+    "title": "新しいセッションで質問",
+    "description": "この質問より前のコンテキストを保持します。新しい質問は編集可能な下書きになります。",
+    "question": "新しい質問",
+    "create": "下書き付きで作成",
+    "noAncestor": "分岐に必要な直前のアシスタント応答がありません。",
+    "sourceChanged": "参照元が変更されました。プレビューを開き直してください。"
+  },
+  "handoffRecovery": {
+    "resume": "保存済みの下書きで再開",
+    "check": "送信状況を確認",
+    "openChild": "子セッションを開く",
+    "phase": {
+      "creating": "引き継ぎの作成を確認してください",
+      "ready": "子セッション作成済み · 初回送信前",
+      "sending": "初回メッセージを送信中",
+      "accepted": "初回送信を受付済み · 記録は未確認",
+      "sent": "初回メッセージ記録済み",
+      "failed": "初回送信は拒否されました · 下書き保持済み",
+      "unknown": "初回送信の結果が不明です · 再試行前に確認してください"
+    }
+  },
+  "delegationStages": {
+    "verification": {
+      "unavailable": "利用不可",
+      "pending": "検証記録を待機中",
+      "recorded": "検証記録：{{count}} / {{total}}"
+    },
+    "capacity": {
+      "planTitle": "派遣時の計画と理由",
+      "planDescription": "派遣時の受領記録です。現在のキューではありません。",
+      "recordedAt": "受領時刻：{{at}}",
+      "wave": "第 {{wave}} 波 · {{roles}}",
+      "reasonUnavailable": "スケジュール理由は記録されていません。",
+      "otherReason": "スケジュール理由：{{reason}}",
+      "reason": {
+        "concurrencyCap": "同時実行数の上限",
+        "writeSetConflict": "書き込み範囲の重複",
+        "writeSetProof": "書き込みの分離を未確認",
+        "toolContention": "共有ツールの競合"
+      },
+      "currentTitle": "現在の所有元の状態",
+      "currentQueue": "現在のセッションのキュー数：{{count}}",
+      "workerWaiting": "ワーカーの所有元が待機中と報告しています。",
+      "openResources": "セッションとリソース使用量を確認"
+    },
+    "label": {
+      "admission": "実行受付",
+      "verification": "検証記録",
+      "execution": "実行状態",
+      "report": "結果の送達",
+      "acceptance": "タスク検証",
+      "continuation": "親セッションの継続"
+    },
+    "taskRequired": "既存の業務タスクを選び、担当セッションを関連付けてください。",
+    "model": "実行モデル：{{model}}",
+    "cost": "読込記録の費用：{{cost}}",
+    "costUnknown": "不明",
+    "taskAcceptance": {
+      "pending": "検証待ち",
+      "accepted": "検証完了",
+      "cancelled": "取消済み"
+    },
+    "status": {
+      "unavailable": "利用不可",
+      "in-flight": "受付処理中",
+      "approval-pending": "権限待ち",
+      "accepted": "受付済み",
+      "partial": "一部受付済み",
+      "rejected": "拒否",
+      "outcome-unknown": "結果不明",
+      "started": "開始イベント記録済み",
+      "yielded": "待機中",
+      "completed": "実行完了",
+      "error": "実行失敗",
+      "aborted": "実行停止",
+      "verified": "検証結果記録済み",
+      "not_required": "不要",
+      "pending": "送達待ち",
+      "in_progress": "送達中",
+      "delivered": "送達済み",
+      "failed": "失敗",
+      "suspended": "一時停止",
+      "discarded": "破棄",
+      "fenced": "実行世代が変更されました",
+      "waiting": "親の次のターン待ち",
+      "unknown": "送達結果不明",
+      "queued": "キューに追加済み",
+      "steered": "指示を受信済み"
+    }
+  },
+  "migration": {
+    "open": "別のチェックアウトへ作業を移動",
+    "resume": "移行を再開",
+    "title": "別のチェックアウトで続ける",
+    "description": "会話とタスクを保持します。元の環境で新しい変更を止め、未完了の処理を確認し、引き継ぎの確認後に移行先を開きます。",
+    "target": "移行先ワークスペース",
+    "start": "移行して続行",
+    "cancel": "閉じる",
+    "retained": "進行状況は保存されています。表示された条件を解消して再開してください。",
+    "artifactChanged": "記録済みの成果物が変更されています。チェックポイントの版に戻してから移行を再開してください。",
+    "phase": {
+      "intent": "移行を記録しました",
+      "fenced": "元の実行入口を閉じました",
+      "drained": "元の処理を確認しました",
+      "reserved": "移行先を予約しました",
+      "session-committed": "セッション移行済み・タスク確認中",
+      "task-committed": "タスク所有権を移譲しました",
+      "binding-committed": "移行先を確認中",
+      "confirmed": "移行先の準備完了"
     }
   }
 }

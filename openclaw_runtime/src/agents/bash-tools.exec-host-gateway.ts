@@ -95,6 +95,8 @@ export type ProcessGatewayAllowlistParams = {
   sessionKey?: string;
   /** Session UUID active when the approval was requested; pins the followup. */
   sessionId?: string;
+  /** Exact agent run owning any managed process started after approval. */
+  runId?: string;
   /** Session-store template, so the direct/denied followup can detect a rebind. */
   sessionStore?: string;
   bashElevated?: ExecElevatedDefaults;
@@ -801,6 +803,7 @@ export async function processGatewayAllowlist(
           sessionKey: params.notifySessionKey ?? params.sessionKey,
           agentId: params.agentId,
           expectedSessionId: params.sessionId,
+          runId: params.runId,
           timeoutSec: effectiveTimeout,
         });
       } catch {

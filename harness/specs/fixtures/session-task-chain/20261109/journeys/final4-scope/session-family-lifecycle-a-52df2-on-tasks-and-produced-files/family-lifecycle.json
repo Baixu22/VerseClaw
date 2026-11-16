@@ -1,0 +1,158 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-family-lifecycle",
+  "provider": "local-scripted",
+  "status": "passed",
+  "project": {
+    "workspaceId": "lifecycle-project",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-family-lifecycle-a-52df2-on-tasks-and-produced-files\\workspace",
+    "sessionKey": "agent:main:session-1794169536968-lifecycleproject",
+    "generation": "e7f07625-ba5e-4f4b-ad4d-fa66208635be"
+  },
+  "child": "agent:main:dashboard:75022ca5-ab4c-4a85-b196-5369d7850fc4",
+  "archived": {
+    "success": true,
+    "entries": [
+      {
+        "sessionKey": "agent:main:session-1794169536968-lifecycleproject",
+        "agentId": "main",
+        "transcriptPath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-qzB38E\\verse-claw-e2e-user-data-EXOhIE\\openclaw-source-state\\agents\\main\\sessions\\e7f07625-ba5e-4f4b-ad4d-fa66208635be.archived.jsonl",
+        "label": "Lifecycle project coordinator",
+        "archivedAt": 1794169556041,
+        "originalWorkspaceId": null,
+        "originalFolderId": null,
+        "sessionsJsonSnapshot": {
+          "sessionId": "e7f07625-ba5e-4f4b-ad4d-fa66208635be",
+          "updatedAt": 1794169550029,
+          "label": "Lifecycle project coordinator",
+          "sessionFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-qzB38E\\verse-claw-e2e-user-data-EXOhIE\\openclaw-source-state\\agents\\main\\sessions\\e7f07625-ba5e-4f4b-ad4d-fa66208635be.jsonl"
+        }
+      }
+    ]
+  },
+  "restored": {
+    "session": {
+      "key": "agent:main:session-1794169536968-lifecycleproject",
+      "kind": "direct",
+      "label": "Lifecycle project coordinator",
+      "displayName": "Lifecycle project coordinator",
+      "updatedAt": 1794169557498,
+      "sessionId": "6026ba7e-7ff7-4fc9-bbcb-83f7c8568fe0",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 11,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "childSessions": [
+        "agent:main:dashboard:75022ca5-ab4c-4a85-b196-5369d7850fc4"
+      ],
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "childAfterDelete": {
+    "session": {
+      "key": "agent:main:dashboard:75022ca5-ab4c-4a85-b196-5369d7850fc4",
+      "kind": "direct",
+      "label": "Child 1 · A long session title A long session title A long session title A long session title A long session title A long session title A long session title  · cleproject",
+      "displayName": "Child 1 · A long session title A long session title A long session title A long session title A long session title A long session title A long session title  · cleproject",
+      "updatedAt": 1794169550054,
+      "sessionId": "580b879a-2c94-4368-8cbf-9335b4014e77",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 11,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "parentSessionKey": "agent:main:session-1794169536968-lifecycleproject",
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "task": {
+    "id": "c84387bf-3776-44a6-9d25-a32adbf88270",
+    "title": "Retain lifecycle evidence",
+    "kind": "task",
+    "parentId": null,
+    "status": "todo",
+    "owner": "user",
+    "priority": "normal",
+    "tags": [],
+    "evidenceRefs": [
+      {
+        "type": "file",
+        "ref": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-family-lifecycle-a-52df2-on-tasks-and-produced-files\\workspace\\result.txt"
+      }
+    ],
+    "createdAt": "2026-11-08T20:25:50.085Z",
+    "updatedAt": "2026-11-08T20:25:50.085Z",
+    "completedAt": null
+  }
+}

@@ -19,6 +19,7 @@ import {
   test,
 } from './fixtures/electron';
 import { evidencePath } from './fixtures/evidence-root';
+import type { GitRepositoryStatus } from '../../shared/types/git';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -49,20 +50,21 @@ const WORKSPACES = [
   makeWorkspace('ws-verse', 'verseshell', 'D:\\work\\verseshell', 100),
 ];
 
-// The context row only renders a branch chip when git reports a repository.
-// Long enough on purpose: the row's 24-char truncation is part of what the
-// screenshot is meant to show.
-const GIT_STATUS = {
+// A complete empty repository snapshot keeps the welcome surface quiet.
+const GIT_STATUS: { success: boolean; status: GitRepositoryStatus } = {
   success: true,
   status: {
     isRepository: true,
     branch: 'codex/ui-polish-verse-hero',
     detached: false,
-    clean: false,
+    clean: true,
     hasConflicts: false,
-    stagedCount: 2,
-    unstagedCount: 3,
-    untrackedCount: 1,
+    ahead: 0,
+    behind: 0,
+    changes: [],
+    stagedCount: 0,
+    unstagedCount: 0,
+    untrackedCount: 0,
     conflictedCount: 0,
     repoRoot: 'D:\\work\\ClawX',
     workspaceRoot: 'D:\\work\\ClawX',
@@ -207,7 +209,7 @@ test('chips retract while the composer holds a draft and return when it is clear
 
     // Stagger is 110ms + a 260ms fade; settle past both before reading.
     await page.waitForTimeout(700);
-    const firstChip = page.getByTestId('chat-welcome-suggestions').locator('button').first();
+    const firstChip = page.getByTestId('welcome-quick-start-trigger');
     await expect(firstChip).toBeHidden();
 
     // The row keeps its box, so the composer above it must not have moved.
@@ -221,10 +223,15 @@ test('chips retract while the composer holds a draft and return when it is clear
     expect(Math.abs((await composerTop()) - restingTop)).toBeLessThanOrEqual(1);
 
     await page.setViewportSize({ width: 600, height: 820 });
-    await expect(chips.locator('button:visible')).toHaveCount(2);
+    await expect(firstChip).toBeVisible();
+    await firstChip.click();
+    await expect(chips.locator('button:visible')).toHaveCount(3);
+    await page.keyboard.press('Escape');
 
     await page.setViewportSize({ width: 400, height: 820 });
-    await expect(chips.locator('button:visible')).toHaveCount(1);
+    await expect(firstChip).toBeVisible();
+    await firstChip.click();
+    await expect(chips.locator('button:visible')).toHaveCount(3);
   } finally {
     await closeElectronApp(app);
   }

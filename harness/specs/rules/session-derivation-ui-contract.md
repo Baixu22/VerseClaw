@@ -39,7 +39,8 @@ requiredTests:
 - 会话来源只从现有 session store 字段和只读 `SessionDerivation` 投影读取，包括 `parentSessionKey`、`spawnedBy`、fork 来源字段及逐跳状态。
 - Renderer 可建立用于渲染的索引，但不得增加 lineage store、关系表、第二个 writer，也不得用 Task Ledger 的 `sessionLinks` 推断会话父子关系。
 - 共享分类按有效 fork 事实、`spawnedBy`、仅有 `parentSessionKey` 的顺序区分 Fork/Spawn/Handoff；worker 同时有 parent/spawnedBy 不得误标 Handoff。矛盾字段保留诊断，修正共享 classifier 和相关 stage 消费者，禁止页面私有修补。
-- Handoff 当前缺少 runtime parent 的路径必须由既有 runtime owner 接齐，确认 child 持久来源后才激活/发送。Task Ledger 继续负责任务/深度记录；旧 Ledger-only 来源显示未接齐，不直接写成 root，不增加 UI 旁路树或隐式批量迁移。
+- Handoff 由既有 runtime owner 写入 parent，确认 child 持久来源后才激活/发送。Task Ledger 继续负责任务/深度记录；旧 Ledger-only 来源显示未接齐，不直接写成 root，不增加 UI 旁路树或隐式批量迁移。
+  Runtime 确认 child 后即保存其 generation；Workspace 的激活回执决定 `ready` 状态，激活异常保留 `creating`，供同一 operationId 恢复。
 - `parent-missing`、`cycle` 和 `bound-exceeded` 必须如实显示为来源缺失、循环或已截断；不得把异常链伪装成根会话。
 - 运行状态继续来自现有 session activity/status 投影。父会话的聚合计数不得覆盖父会话自己的状态。
 
@@ -47,6 +48,7 @@ requiredTests:
 
 - **Fork**：从完整 transcript 或指定消息建立独立分支；消息级边界使用现有 `fromLeafId` 能力。
 - **Handoff**：准备可编辑的交接包，确认按钮明确写出“创建并发送”，沿用 `ad77bf57c` 后的首轮发送行为。不得把自动发送藏在“创建会话”标签下；发送失败须保留新会话、来源和可重试草稿，效果未知时先核实结果，不能盲目重发。
+- Handoff 准备入口等待当前会话 generation 就绪，并显示本地化原因；侧栏已登记的意图在同一目标身份加载后消费。真实 generation 重置、会话或项目切换后的迟到结果继续按原 scope 丢弃，A→B→A 不恢复旧请求。
 - 创建与首发由现有持久层保存稳定操作标识、源 key/generation、草稿一致性、child key、首发 idempotency key 和 pending/sent/failed/unknown 阶段。重复点击、创建响应丢失、切换/重启恢复均先对账并复用同一 child；同一发送重试复用 key。更改 payload 必须形成新的明确意图；没有可证明的跨重启发送结果则保持 unknown，不能宣称 exactly-once。
 - **Spawn**：显示为父会话委派的 worker/subagent，保留角色和活动状态；打开 worker transcript 的入口与普通 Chat 子会话有明确区别。
 - **从消息带问题开新会话**：仍然是 Fork，不新增第五种持久关系。用户消息的分叉点取最近 assistant 祖先，界面明确提示“使用此提问之前的上下文”；原问题可预填供修改。无有效 ancestor 时拒绝，不退化到 transcript tip。新问题在新会话 composer 中作为未发送草稿出现。
@@ -65,7 +67,9 @@ requiredTests:
 
 - 复用 `globals.css`、`codex-sidebar.css` 与现有会话行、状态 orb、activity 组件。侧栏会话行维持现有 30px 高度、标题截断/tooltip、选中和 hover 规范。
 - 使用 `bg-surface-modal`、`bg-surface-input` 与 `bg-black/5 dark:bg-white/10` 等现有 token；关系类型使用中性色，状态颜色只表达运行状态。不复制 Codex 或 Claude 的品牌视觉。
+- 对话内的谱系入口放在 Chat 标题栏同一行，以轻量标签呈现，不在 transcript 上方另起常驻横条：派生会话显示来源标签（类型 + 来源名，可点击返回），有后代时才显示派生会话选择器，“关系详情”只在多代链或来源异常时出现；无来源也无后代的根会话不渲染任何谱系控件。窄标题栏优先收起类型文字，保留来源入口。
 - 新增文本完整覆盖 `en`、`zh`、`ja`、`ru`；展开按钮、来源链接、子会话状态和菜单支持键盘与屏幕阅读器，动效遵循 reduced-motion。
+- 家族展开按钮与标题剪裁区保持分离；三位数后代计数完整显示，悬停滚动标题不覆盖计数。
 - 后台衍生、等待、失败和完成不得自动切换或删除当前会话。只有当前用户确认创建的 Fork/Handoff 可以切换；Handoff 的显式“创建并发送”与 Fork 的“创建并预填”必须可辨。
 - 文本声称“已创建会话”不是创建事实。模型建议在新会话继续时使用已有确认/预览入口；没有结构化请求能力时仅提供可操作建议，不解析普通回复文字来偷偷执行。
 

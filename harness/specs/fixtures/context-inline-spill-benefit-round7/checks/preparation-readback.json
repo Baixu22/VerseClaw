@@ -1,0 +1,52 @@
+{
+  "schema": "G7Round7PreparationReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "source": "observed tool executions; gate decisions are read from verifier artifacts",
+  "commands": [
+    {
+      "command": [
+        "python",
+        "task_forest.py",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10",
+        "show",
+        "TF-0749"
+      ],
+      "exitCode": 2,
+      "reason": "CLI requires the subcommand before its shared options"
+    },
+    {
+      "command": [
+        "python",
+        "task_forest.py",
+        "show",
+        "TF-0749",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/collect-round7.py"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "node",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/verify-round7-preservation.mjs"
+      ],
+      "exitCode": 0
+    }
+  ]
+}

@@ -102,3 +102,68 @@ failures, open fail-fast without a provider request, half-open single probe,
 successful recovery, account/endpoint isolation, export hygiene, and
 non-double-counting against the concurrency budget. No paid provider request is
 made and no live-provider conformance is claimed.
+
+## Validation probe states (TF-0733)
+
+The provider **validation** probe (Settings / Setup) is separate from runtime
+endpoint health above. Since TF-0733 it reports a structured
+`ProviderValidationResult`, not a single boolean:
+
+| dimension | values | meaning |
+|---|---|---|
+| `reachable` | `reachable` / `unreachable` / `unknown` | did the endpoint answer at all |
+| `auth` | `valid` / `invalid` / `unknown` | did it accept the credential |
+| `protocol` | `compatible` / `incompatible` / `unknown` | did it accept the request shape |
+| `model` | `available` / `unavailable` / `unknown` | is the probed/selected model usable |
+| `rateLimited` (+ `retryAfterMs`) | boolean / number | HTTP 429 and its `Retry-After` |
+| `ready` | boolean | the only surface the UI may render as verified |
+
+Rules:
+
+- HTTP 429 is **not** a pass. It sets `rateLimited=true`, `ready=false`, and is
+  never treated as a credential success. `Retry-After` is parsed from seconds
+  or an HTTP date into `retryAfterMs`.
+- A non-auth 400 on the fallback chat/responses probe means the endpoint
+  understood the credential but rejected the request shape: `protocol-error`.
+  A model-shaped 400/404 is `model-unavailable`.
+- `valid` remains for one release as a compatibility field with fixed
+  semantics (`auth === 'valid' && protocol !== 'incompatible'`). It must not
+  gate "Credentials verified"; that copy requires `ready === true`.
+- Setup writes `metadata.validation.status='valid'` only after a model is
+  confirmed, so leaving the wizard mid-way cannot leave a false-ready record.
+
+## Shared validation/inference network policy (TF-0734)
+
+Both sides now resolve their outbound allow/deny with one module:
+`openclaw_runtime/src/agents/provider-network-policy.ts`.
+
+- Inference: `buildGuardedModelFetch` -> `resolveModelTransportSsrFPolicy` -> `resolveProviderNetworkPolicy`.
+- Validation: `electron/services/providers/provider-validation.ts` -> `resolveProviderNetworkPolicy` + `evaluateProviderNetworkTarget` before every probe.
+
+The policy is normalized into a stable SHA-256 fingerprint. Equivalent policies
+produce the same `policyFingerprint` regardless of host-list ordering.
+
+### Fail-closed rules (same in both paths)
+
+- metadata hosts / well-known instance-metadata IPs (for example
+  `169.254.169.254`) are denied even when the operator configured the base URL;
+- link-local addresses are denied;
+- malformed URLs and non-HTTP(S) protocols are denied;
+- a hostname outside an explicit allowlist is denied;
+- private/loopback targets are denied **unless** the request origin exactly
+  matches an operator-configured custom/local base URL (the runtime's
+  exact-origin trust rule). This is what keeps local Ollama / LM Studio /
+  self-hosted gateways usable without opening SSRF generally.
+
+### Deadline
+
+Validation has one total budget (`PROVIDER_VALIDATION_DEADLINE_MS = 15_000`)
+shared by the model-listing request and any fallback probe. All four probe
+families (models GET, responses POST, chat-completions POST, anthropic messages
+POST) receive the same `AbortSignal`, so a model listing that consumes the
+budget cannot give the fallback probe a fresh window.
+
+Limitation: validation performs the pre-flight host/IP decision and then uses
+the Electron-owned transport (net.fetch / NetworkPool). The runtime's
+`fetchWithSsrFGuard` additionally pins DNS; validation does not re-pin the
+socket, but it applies the same policy inputs and fingerprint.

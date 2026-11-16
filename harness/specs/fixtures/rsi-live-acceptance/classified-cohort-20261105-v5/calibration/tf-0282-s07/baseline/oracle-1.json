@@ -1,0 +1,128 @@
+{
+  "numTotalTestSuites": 3,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 1,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 5,
+  "numPassedTests": 5,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793867795866,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating keeps shadow and pilot flags off by default (no production injection)",
+          "status": "passed",
+          "title": "keeps shadow and pilot flags off by default (no production injection)",
+          "duration": 154.17009999999937,
+          "failureMessages": [],
+          "location": {
+            "line": 20,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating completes a task with the canonical fixture (all evidence kinds present)",
+          "status": "passed",
+          "title": "completes a task with the canonical fixture (all evidence kinds present)",
+          "duration": 1.9453000000012253,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating reports insufficient evidence when required kinds are missing",
+          "status": "passed",
+          "title": "reports insufficient evidence when required kinds are missing",
+          "duration": 0.5907999999999447,
+          "failureMessages": [],
+          "location": {
+            "line": 37,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating respects policy overrides for required evidence kinds",
+          "status": "passed",
+          "title": "respects policy overrides for required evidence kinds",
+          "duration": 0.4213000000017928,
+          "failureMessages": [],
+          "location": {
+            "line": 50,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating collects evidence through the task-loop bridge without changing legacy decisions",
+          "status": "passed",
+          "title": "collects evidence through the task-loop bridge without changing legacy decisions",
+          "duration": 0.9726000000009662,
+          "failureMessages": [],
+          "location": {
+            "line": 68,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793867796865,
+      "endTime": 1793867797022.9727,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+    },
+    {
+      "assertionResults": [],
+      "startTime": 1793867795866,
+      "endTime": 1793867795866,
+      "status": "failed",
+      "message": "Cannot find module './verifier-completion-verdict.js' imported from D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts"
+    }
+  ]
+}

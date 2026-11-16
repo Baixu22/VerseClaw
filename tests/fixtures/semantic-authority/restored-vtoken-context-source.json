@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "restored-vtoken-context-source",
+  "class": "conflicting-default",
+  "rule": "default-retirement",
+  "expect": "[semantic-authority/default-retirement] component 'vtoken-context-source'",
+  "expectIssueCount": 3,
+  "description": "Reintroduce the exact pre-TF-0790 declaration; resolved exceptions must no longer suppress it.",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "anchor": "id: 'vtoken-context-source'",
+      "find": "    id: 'vtoken-context-source',\n    label: 'VToken context source',\n    domains: ['context'],\n    purpose: 'Produces VToken-derived candidate fragments for DCS; it does not own prompt ordering or provider serialization.',\n    ownedDataTypes: [],\n    scopes: ['turn'],\n    allowedReads: ['context.source-reference', 'provider.model-identity'],\n    allowedWrites: [],\n    effects: ['propose'],\n    forbiddenActions: ['accept-context-candidates', 'own-prompt-plan', 'serialize-provider-request'],\n    runtimeAvailabilitySource: 'docs/dev/default-config-matrix.md#VToken-assembly',\n    defaultMode: 'retired',",
+      "replace": "    id: 'vtoken-context-source',\n    label: 'VToken context source',\n    domains: ['context'],\n    purpose: 'Produces VToken-derived candidate fragments for DCS; it does not own prompt ordering or provider serialization.',\n    ownedDataTypes: [],\n    scopes: ['turn'],\n    allowedReads: ['context.source-reference', 'provider.model-identity'],\n    allowedWrites: [],\n    effects: ['propose'],\n    forbiddenActions: ['accept-context-candidates', 'own-prompt-plan', 'serialize-provider-request'],\n    runtimeAvailabilitySource: 'docs/dev/default-config-matrix.md#VToken-assembly',\n    defaultMode: 'opt-in',"
+    }
+  ]
+}

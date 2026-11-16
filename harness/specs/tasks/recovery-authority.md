@@ -30,6 +30,7 @@ acceptance:
   - shared/recovery-authority/contract.ts exports RecoveryAuthorityRequest, RecoveryDecision, RecoveryOwner, AdmissionBoundary, ReplayClass, EffectCertainty, RecoveryBudget, and RecoveryAuthority with no runtime imports.
   - A receipt, event-log record, or transcript cannot be promoted to effect truth; replay requires a domain journal and replayClass=safe.
   - EffectCertainty=unknown always resolves to reconcile, before resume, replay, or deliver.
+  - A valid admitted request with EffectCertainty=applied or reconciled returns settle before delivery, visible-output recovery, or budget/wedge handling; its attempt counters remain unchanged.
   - Every admitted recovery request has an owner and a finite, non-zero retry ceiling; malformed input fails closed with kind=reject and basis=invalid-request.
   - One request produces exactly one RecoveryDecision; the RecoveryAuthority interface does not expose a fan-out list.
   - `pnpm exec vitest run tests/unit/recovery-authority-contract.test.ts --maxWorkers=1` passes.
@@ -130,6 +131,10 @@ the idempotency key is stable. Interruption after the commit: return the saved d
 new random UUID per attempt is explicitly outside this contract.
 
 ## 5. What happens when the effect is uncertain?
+
+An admitted, validated request whose owner already confirms `applied` or `reconciled`
+returns `settle` before evaluating another attempt, delivery, or visible-output recovery.
+Its existing attempt counters stay unchanged. The budget governs new recovery work.
 
 `EffectCertainty=unknown` always resolves to `reconcile`. It must not fall through to `resume`,
 `replay`, or `deliver`. Reconciliation reads the domain journal first; effect receipts may

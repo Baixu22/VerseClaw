@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const collectSessionActivityReadProjection = vi.hoisted(() => vi.fn());
 const getLatestMissionForSession = vi.hoisted(() => vi.fn());
 const listSubagentRunsForRequester = vi.hoisted(() => vi.fn());
+const listOrchestrationCompletionBatchesForRequester = vi.hoisted(() => vi.fn());
 const listTaskLoopRunsForSession = vi.hoisted(() => vi.fn());
 const listClawGraphRunSnapshots = vi.hoisted(() => vi.fn());
 const countLongTaskQueuedMessages = vi.hoisted(() => vi.fn());
@@ -19,6 +20,7 @@ vi.mock("../../agents/mission-control/store.js", () => ({
 }));
 vi.mock("../../agents/subagent-registry.js", () => ({
   listSubagentRunsForRequester,
+  listOrchestrationCompletionBatchesForRequester,
 }));
 vi.mock("../../agents/task-loop-controller.js", () => ({
   listTaskLoopRunsForSession,
@@ -39,12 +41,17 @@ vi.mock("../../agents/runtime-effective-capability.js", () => ({
   resolveCurrentRuntimeGeneration,
 }));
 
+vi.mock("../session-resource-inventory.js", () => ({
+  readRuntimeSessionResourceInventory: async () => ({ scope: {}, owners: [] }),
+}));
+vi.mock("./session-derivation-projection.js", () => ({ readSessionDerivation: () => undefined }));
+
 import { sessionActivityHandlers } from "./session-activity.js";
 
-function callHandler(params: Record<string, unknown>, chatAbortControllers = new Map()) {
+async function callHandler(params: Record<string, unknown>, chatAbortControllers = new Map()) {
   const respond = vi.fn();
   const handler = sessionActivityHandlers["session.activitySnapshot"];
-  handler({
+  await handler({
     params,
     respond,
     context: {
@@ -59,6 +66,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   getLatestMissionForSession.mockReturnValue(undefined);
   listSubagentRunsForRequester.mockReturnValue([]);
+  listOrchestrationCompletionBatchesForRequester.mockReturnValue([]);
   listTaskLoopRunsForSession.mockReturnValue([]);
   listClawGraphRunSnapshots.mockReturnValue([]);
   countLongTaskQueuedMessages.mockReturnValue(0);
@@ -88,8 +96,60 @@ beforeEach(() => {
 });
 
 describe("session activity handler", () => {
-  it("rejects a missing session key without reading the projection", () => {
-    const respond = callHandler({});
+  it("reads a fresh generation before projecting completed worker batches", async () => {
+    loadSessionEntry.mockImplementation((_key, options) => ({
+      entry: { sessionId: options?.skipCache ? "after-reset" : "before-reset", updatedAt: 1 },
+      canonicalKey: "agent:main:main",
+    }));
+
+    const respond = await callHandler({ sessionKey: "agent:main:main" }, new Map([
+      ["old-run", {
+        sessionKey: "agent:main:main",
+        sessionId: "before-reset",
+        agentId: "main",
+        controlUiVisible: true,
+        projectSessionActive: true,
+        startedAtMs: 1,
+      }],
+    ]));
+    expect(respond.mock.calls[0][1].snapshot.session.sessionId).toBe("after-reset");
+    expect(respond.mock.calls[0][1].snapshot.session).toMatchObject({ runId: null, status: "idle" });
+    expect(readRuntimeEffectiveCapabilityObservation).toHaveBeenCalledWith(
+      expect.objectContaining({ sessionId: "after-reset", runId: null }),
+    );
+    expect(listOrchestrationCompletionBatchesForRequester).toHaveBeenCalledWith(
+      "agent:main:main", "after-reset",
+    );
+  });
+
+  it("retains a worker's own transcript key and reports errors separately", async () => {
+    listSubagentRunsForRequester.mockReturnValue([
+      {
+        runId: "worker-run",
+        childSessionKey: "agent:reviewer:child",
+        task: "Review task",
+        endedAt: 20,
+        createdAt: 10,
+        outcome: { status: "error", error: "Review failed" },
+        orchestration: { roleName: "reviewer" },
+      },
+      { runId: "pending-run", task: "Not created", createdAt: 10 },
+    ]);
+    const respond = await callHandler({ sessionKey: "agent:main:main" });
+    const result = respond.mock.calls[0][1];
+    expect(result.snapshot.subagents[0]).toMatchObject({
+      id: "worker-run",
+      childSessionKey: "agent:reviewer:child",
+      agentId: "reviewer",
+      error: "Review failed",
+      status: "error",
+    });
+    expect(result.snapshot.subagents[1].childSessionKey).toBeUndefined();
+    expect(result.snapshot.subagents[1].agentId).toBeUndefined();
+  });
+
+  it("rejects a missing session key without reading the projection", async () => {
+    const respond = await callHandler({});
 
     expect(respond).toHaveBeenCalledWith(
       false,
@@ -99,16 +159,41 @@ describe("session activity handler", () => {
     expect(collectSessionActivityReadProjection).not.toHaveBeenCalled();
   });
 
-  it("attaches goal, process, and lineage arrays to the activity snapshot", () => {
+  it("attaches goal, process, and lineage arrays to the activity snapshot", async () => {
     const now = Date.now();
     collectSessionActivityReadProjection.mockReturnValue({
-      goals: [{ id: "mission-1", kind: "mission", label: "Mission mission-1", status: "running", updatedAt: now }],
-      processes: [{ id: "task-1", kind: "goalOwned", label: "Process task-1", status: "running", updatedAt: now }],
-      lineage: [{ id: "sub-1", kind: "child", sessionKey: "agent:main:child", role: "explorer", status: "started", updatedAt: now }],
+      goals: [
+        {
+          id: "mission-1",
+          kind: "mission",
+          label: "Mission mission-1",
+          status: "running",
+          updatedAt: now,
+        },
+      ],
+      processes: [
+        {
+          id: "task-1",
+          kind: "goalOwned",
+          label: "Process task-1",
+          status: "running",
+          updatedAt: now,
+        },
+      ],
+      lineage: [
+        {
+          id: "sub-1",
+          kind: "child",
+          sessionKey: "agent:main:child",
+          role: "explorer",
+          status: "started",
+          updatedAt: now,
+        },
+      ],
       ownerRead: "known",
     });
 
-    const respond = callHandler({ sessionKey: "agent:main:main" });
+    const respond = await callHandler({ sessionKey: "agent:main:main" });
     const [ok, result] = respond.mock.calls[0];
 
     expect(ok).toBe(true);
@@ -121,7 +206,7 @@ describe("session activity handler", () => {
     expect(collectSessionActivityReadProjection).toHaveBeenCalledWith("agent:main:main", undefined);
   });
 
-  it("forwards a failed goal-wake owner read as ownerRead: unknown", () => {
+  it("forwards a failed goal-wake owner read as ownerRead: unknown", async () => {
     collectSessionActivityReadProjection.mockReturnValue({
       goals: [],
       processes: [],
@@ -129,7 +214,7 @@ describe("session activity handler", () => {
       ownerRead: "unknown",
     });
 
-    const respond = callHandler({ sessionKey: "agent:main:main" });
+    const respond = await callHandler({ sessionKey: "agent:main:main" });
     const [ok, result] = respond.mock.calls[0];
 
     expect(ok).toBe(true);
@@ -137,7 +222,7 @@ describe("session activity handler", () => {
     expect(result.snapshot.ownerRead).toBe("unknown");
   });
 
-  it("keeps the existing mission/task/subagent projection shape and idle session default", () => {
+  it("keeps the existing mission/task/subagent projection shape and idle session default", async () => {
     const mission = {
       missionId: "mission-1",
       sessionKey: "agent:main:main",
@@ -150,38 +235,52 @@ describe("session activity handler", () => {
       lastReason: undefined,
     };
     getLatestMissionForSession.mockReturnValue(mission);
-    listTaskLoopRunsForSession.mockReturnValue([{
-      loopRunId: "loop-1",
-      task: "loop task",
-      status: "running",
-      iteration: 2,
-      maxIterations: 4,
-      phase: "verify",
-      updatedAt: 20,
-    }]);
-    listSubagentRunsForRequester.mockReturnValue([{
-      runId: "sub-1",
-      taskNodeId: "node-1",
-      roleName: "explorer",
-      label: "explorer",
-      task: "scout",
-      endedAt: undefined,
-      outcome: { status: "ok" },
-      startedAt: 10,
-      createdAt: 9,
-      orchestration: { taskNodeId: "node-1", roleName: "explorer" },
-    }]);
-
-    const chatAbortControllers = new Map([[
-      "run-1",
+    listTaskLoopRunsForSession.mockReturnValue([
       {
+        loopRunId: "loop-1",
+        task: "loop task",
+        status: "running",
+        iteration: 2,
+        maxIterations: 4,
+        phase: "verify",
+        updatedAt: 20,
+      },
+    ]);
+    listSubagentRunsForRequester.mockReturnValue([
+      {
+        runId: "sub-1",
+        taskNodeId: "node-1",
+        roleName: "explorer",
+        label: "explorer",
+        task: "scout",
+        endedAt: undefined,
+        outcome: { status: "ok" },
+        startedAt: 10,
+        createdAt: 9,
+        orchestration: { taskNodeId: "node-1", roleName: "explorer" },
+      },
+    ]);
+
+    const chatAbortControllers = new Map([
+      [
+        "run-1",
+        {
+          sessionKey: "agent:main:main",
+          sessionId: "session-1",
+          controlUiVisible: true,
+          projectSessionActive: true,
+          startedAtMs: 15,
+        },
+      ],
+      ["late-stale-run", {
         sessionKey: "agent:main:main",
+        sessionId: "previous-generation",
         controlUiVisible: true,
         projectSessionActive: true,
-        startedAtMs: 15,
-      },
-    ]]);
-    const respond = callHandler({ sessionKey: "agent:main:main" }, chatAbortControllers);
+        startedAtMs: 16,
+      }],
+    ]);
+    const respond = await callHandler({ sessionKey: "agent:main:main" }, chatAbortControllers);
     const [ok, result] = respond.mock.calls[0];
 
     expect(ok).toBe(true);
@@ -192,7 +291,12 @@ describe("session activity handler", () => {
       startedAt: 15,
     });
     expect(result.snapshot.tasks).toEqual([
-      expect.objectContaining({ id: "mission-1", kind: "mission", status: "running", progress: 0.5 }),
+      expect.objectContaining({
+        id: "mission-1",
+        kind: "mission",
+        status: "running",
+        progress: 0.5,
+      }),
       expect.objectContaining({ id: "loop-1", kind: "taskLoop", status: "running", progress: 0.5 }),
     ]);
     expect(result.snapshot.subagents).toEqual([
@@ -200,7 +304,7 @@ describe("session activity handler", () => {
     ]);
   });
 
-  it("keeps blocked continuity fields from the existing read model", () => {
+  it("keeps blocked continuity fields from the existing read model", async () => {
     getLatestMissionForSession.mockReturnValue({
       missionId: "mission-blocked",
       sessionKey: "agent:main:main",
@@ -215,7 +319,7 @@ describe("session activity handler", () => {
     countLongTaskQueuedMessages.mockReturnValue(2);
     getLatestLongTaskCheckpoint.mockReturnValue({ id: "checkpoint-1" });
 
-    const respond = callHandler({ sessionKey: "agent:main:main" });
+    const respond = await callHandler({ sessionKey: "agent:main:main" });
     const [ok, result] = respond.mock.calls[0];
 
     expect(ok).toBe(true);
@@ -224,6 +328,10 @@ describe("session activity handler", () => {
       checkpoint: true,
       blockedReason: "needs review",
     });
-    expect(result.snapshot.availability).toEqual({ tasks: true, subagents: true, continuity: true });
+    expect(result.snapshot.availability).toEqual({
+      tasks: true,
+      subagents: true,
+      continuity: true,
+    });
   });
 });

@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+  "startedAt": "2026-11-10T10:14:49.953Z",
+  "cases": [
+    {
+      "name": "u4-final-derivation-retry",
+      "status": "finished",
+      "queuedAt": "2026-11-10T10:14:50.005Z",
+      "freeMemoryMiB": 6133,
+      "observedAt": "2026-11-10T10:18:09.393Z",
+      "windows": [],
+      "largeJobs": [],
+      "startedAt": "2026-11-10T10:18:10.484Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T10:27:13.188Z"
+    }
+  ],
+  "status": "finished"
+}

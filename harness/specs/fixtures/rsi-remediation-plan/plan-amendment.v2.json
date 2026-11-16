@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "RsiRemediationAmendment/v2",
+  "date": "2026-11-08",
+  "driven_by": "agent",
+  "actor": "codex/rsi-bounded-coding-loop",
+  "basePlanSha256": "36af346dce6af823957bd00df2a66384492d86691b513d4e78562c4ce374c477",
+  "reason": "G02 updates twenty documents; batching exact replacements avoids both the twelve-tool limit and redundant full-file JSON output.",
+  "collector": "RsiCodingCollector/v4",
+  "tools": [
+    "read_file",
+    "apply_edits",
+    "check_public_contract"
+  ],
+  "finalAcknowledgement": {
+    "finish": true
+  },
+  "unchangedLimits": {
+    "providerCallsPerSlot": 4,
+    "executedToolCallsPerSlot": 12,
+    "toolOutputCharsPerCall": 12000,
+    "editedFiles": 32,
+    "editBytes": 256000,
+    "requestTimeoutMs": 240000,
+    "oracleTimeoutMs": 300000,
+    "slotProviderTimeoutMs": 900000
+  },
+  "providerCallsAuthorized": 0
+}

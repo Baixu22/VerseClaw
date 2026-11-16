@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "context" "--spec" "harness/specs/tasks/architecture-skeleton-admission-ast-hardening.md"
+$ node src/cli.mjs "--" "context" "--spec" "harness/specs/tasks/architecture-skeleton-admission-ast-hardening.md"

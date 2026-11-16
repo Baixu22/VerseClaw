@@ -1,0 +1,691 @@
+{
+  "numTotalTestSuites": 13,
+  "numPassedTestSuites": 13,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 52,
+  "numPassedTests": 52,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793939243225,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A03 A3 resilience pilot gate coverage"
+          ],
+          "fullName": "A03 A3 resilience pilot gate coverage points every requiredTests entry at a real file and wires the classifier + counter tests",
+          "status": "passed",
+          "title": "points every requiredTests entry at a real file and wires the classifier + counter tests",
+          "duration": 3.1842000000000326,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A03 A3 resilience pilot gate coverage"
+          ],
+          "fullName": "A03 A3 resilience pilot gate coverage keeps each A3 criterion mapped to an assertion at the original thresholds",
+          "status": "passed",
+          "title": "keeps each A3 criterion mapped to an assertion at the original thresholds",
+          "duration": 0.9703999999999837,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A03 A3 resilience pilot gate coverage"
+          ],
+          "fullName": "A03 A3 resilience pilot gate coverage keeps A3 augmentation-only (never changes the terminal Mission decision)",
+          "status": "passed",
+          "title": "keeps A3 augmentation-only (never changes the terminal Mission decision)",
+          "duration": 0.4626999999999839,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793939243802,
+      "endTime": 1793939243807.4626,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0295-a03/reference/workspace/tests/unit/a03-a3-gate-coverage.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) same input produces same output (purity: determinism)",
+          "status": "passed",
+          "title": "same input produces same output (purity: determinism)",
+          "duration": 3.3325999999999567,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) does not mutate the input object (purity: no side effects)",
+          "status": "passed",
+          "title": "does not mutate the input object (purity: no side effects)",
+          "duration": 0.5836000000001604,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) returns null when no anomaly is detected (healthy session)",
+          "status": "passed",
+          "title": "returns null when no anomaly is detected (healthy session)",
+          "duration": 0.29980000000000473,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) returns null when tick is early (no_progress guard)",
+          "status": "passed",
+          "title": "returns null when tick is early (no_progress guard)",
+          "duration": 0.2657000000001517,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) detects tool_failure_burst when recentToolFailureCount >= threshold (3)",
+          "status": "passed",
+          "title": "detects tool_failure_burst when recentToolFailureCount >= threshold (3)",
+          "duration": 0.4835000000000491,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) escalates tool_failure_burst severity to high at 2x threshold (6)",
+          "status": "passed",
+          "title": "escalates tool_failure_burst severity to high at 2x threshold (6)",
+          "duration": 0.37740000000007967,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) detects tool_failure_burst via failures array length when recentToolFailureCount is undefined",
+          "status": "passed",
+          "title": "detects tool_failure_burst via failures array length when recentToolFailureCount is undefined",
+          "duration": 0.21460000000001855,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) detects stuck_loop when noProgressHash is unchanged across ticks",
+          "status": "passed",
+          "title": "detects stuck_loop when noProgressHash is unchanged across ticks",
+          "duration": 0.537499999999909,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) does not detect stuck_loop when hashes differ",
+          "status": "passed",
+          "title": "does not detect stuck_loop when hashes differ",
+          "duration": 0.2636999999999716,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) does not detect stuck_loop when hash is empty",
+          "status": "passed",
+          "title": "does not detect stuck_loop when hash is empty",
+          "duration": 0.2825000000000273,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) detects repair_storm when repairTicksUsed >= 60% of maxRepairTicks",
+          "status": "passed",
+          "title": "detects repair_storm when repairTicksUsed >= 60% of maxRepairTicks",
+          "duration": 0.252100000000155,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) escalates repair_storm severity to high when budget exhausted",
+          "status": "passed",
+          "title": "escalates repair_storm severity to high when budget exhausted",
+          "duration": 0.23550000000000182,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) does not detect repair_storm when ratio is below 60%",
+          "status": "passed",
+          "title": "does not detect repair_storm when ratio is below 60%",
+          "duration": 0.16450000000008913,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) detects token_blowup when usage >= 1.5x budget",
+          "status": "passed",
+          "title": "detects token_blowup when usage >= 1.5x budget",
+          "duration": 0.2261999999998352,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) escalates token_blowup severity to high at 2x budget",
+          "status": "passed",
+          "title": "escalates token_blowup severity to high at 2x budget",
+          "duration": 0.23059999999986758,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) detects no_progress when past 50% of maxTicks with no failures",
+          "status": "passed",
+          "title": "detects no_progress when past 50% of maxTicks with no failures",
+          "duration": 0.21509999999989304,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) priority: tool_failure_burst wins over repair_storm when both match",
+          "status": "passed",
+          "title": "priority: tool_failure_burst wins over repair_storm when both match",
+          "duration": 0.17679999999995744,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) AnomalyPatternKind is a closed union of 5 kinds",
+          "status": "passed",
+          "title": "AnomalyPatternKind is a closed union of 5 kinds",
+          "duration": 1.080199999999877,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) AnomalySeverity has 3 levels",
+          "status": "passed",
+          "title": "AnomalySeverity has 3 levels",
+          "duration": 0.3164000000001579,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 classifyAnomalyPattern (pure function)"
+          ],
+          "fullName": "A3 classifyAnomalyPattern (pure function) every detected pattern includes evidenceSummary and detectedAtTick",
+          "status": "passed",
+          "title": "every detected pattern includes evidenceSummary and detectedAtTick",
+          "duration": 0.5990999999999076,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 resolveAnomalyPatternForReviewer (wiring seam)"
+          ],
+          "fullName": "A3 resolveAnomalyPatternForReviewer (wiring seam) acceptance 1.8: returns undefined when featureFlags is undefined (flag-off parity)",
+          "status": "passed",
+          "title": "acceptance 1.8: returns undefined when featureFlags is undefined (flag-off parity)",
+          "duration": 0.23040000000014516,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 resolveAnomalyPatternForReviewer (wiring seam)"
+          ],
+          "fullName": "A3 resolveAnomalyPatternForReviewer (wiring seam) acceptance 1.8: returns undefined when resilience.anomalyClassifierPilot is undefined",
+          "status": "passed",
+          "title": "acceptance 1.8: returns undefined when resilience.anomalyClassifierPilot is undefined",
+          "duration": 0.16840000000001965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 resolveAnomalyPatternForReviewer (wiring seam)"
+          ],
+          "fullName": "A3 resolveAnomalyPatternForReviewer (wiring seam) acceptance 1.8: returns undefined when anomalyClassifierPilot is \"off\"",
+          "status": "passed",
+          "title": "acceptance 1.8: returns undefined when anomalyClassifierPilot is \"off\"",
+          "duration": 0.20329999999989923,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 resolveAnomalyPatternForReviewer (wiring seam)"
+          ],
+          "fullName": "A3 resolveAnomalyPatternForReviewer (wiring seam) acceptance 1.8: flag-off parity is byte-identical regardless of input anomaly signals",
+          "status": "passed",
+          "title": "acceptance 1.8: flag-off parity is byte-identical regardless of input anomaly signals",
+          "duration": 0.2140999999999167,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 resolveAnomalyPatternForReviewer (wiring seam)"
+          ],
+          "fullName": "A3 resolveAnomalyPatternForReviewer (wiring seam) returns AnomalyPattern (non-null) when pilot is \"shadow\" and anomaly detected",
+          "status": "passed",
+          "title": "returns AnomalyPattern (non-null) when pilot is \"shadow\" and anomaly detected",
+          "duration": 0.20830000000000837,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 resolveAnomalyPatternForReviewer (wiring seam)"
+          ],
+          "fullName": "A3 resolveAnomalyPatternForReviewer (wiring seam) returns null when pilot is \"shadow\" but no anomaly detected",
+          "status": "passed",
+          "title": "returns null when pilot is \"shadow\" but no anomaly detected",
+          "duration": 0.1630999999999858,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 resolveAnomalyPatternForReviewer (wiring seam)"
+          ],
+          "fullName": "A3 resolveAnomalyPatternForReviewer (wiring seam) shadow mode produces the same result as direct classifyAnomalyPattern call",
+          "status": "passed",
+          "title": "shadow mode produces the same result as direct classifyAnomalyPattern call",
+          "duration": 0.22520000000008622,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A3 resolveAnomalyPatternForReviewer (wiring seam)"
+          ],
+          "fullName": "A3 resolveAnomalyPatternForReviewer (wiring seam) anomaly-classifier module does not export executeReplayRollback",
+          "status": "passed",
+          "title": "anomaly-classifier module does not export executeReplayRollback",
+          "duration": 0.8206000000000131,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793939247625,
+      "endTime": 1793939247638.8206,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0295-a03/reference/workspace/tests/unit/anomaly-classifier.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas snapshot() returns all 6 areas with zero counters initially",
+          "status": "passed",
+          "title": "snapshot() returns all 6 areas with zero counters initially",
+          "duration": 1.7769000000000688,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas getArea() returns the correct area shape for each of the 6 areas",
+          "status": "passed",
+          "title": "getArea() returns the correct area shape for each of the 6 areas",
+          "duration": 0.3832000000001017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count incrementA1LegacyFallback increments the counter",
+          "status": "passed",
+          "title": "incrementA1LegacyFallback increments the counter",
+          "duration": 0.2498000000000502,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count shadow success increments independently of legacy fallback",
+          "status": "passed",
+          "title": "shadow success increments independently of legacy fallback",
+          "duration": 0.16419999999993706,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count declared-path violations are tracked separately",
+          "status": "passed",
+          "title": "declared-path violations are tracked separately",
+          "duration": 0.15279999999995653,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records agreement and disagreement separately",
+          "status": "passed",
+          "title": "records agreement and disagreement separately",
+          "duration": 0.19680000000005293,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records deferred wave count",
+          "status": "passed",
+          "title": "records deferred wave count",
+          "duration": 0.13609999999994216,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) incrementA6VolatileMislabel increments the critical counter",
+          "status": "passed",
+          "title": "incrementA6VolatileMislabel increments the critical counter",
+          "duration": 0.15670000000000073,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "status": "passed",
+          "title": "volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "duration": 0.2559999999999718,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) verifier pass/fail are tracked",
+          "status": "passed",
+          "title": "verifier pass/fail are tracked",
+          "duration": 0.2138999999999669,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "status": "passed",
+          "title": "A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "duration": 0.18899999999996453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate ≤ 5% → not violated",
+          "status": "passed",
+          "title": "A1: legacy fallback rate ≤ 5% → not violated",
+          "duration": 0.12819999999999254,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A2: disagreement rate > 10% → violated",
+          "status": "passed",
+          "title": "A2: disagreement rate > 10% → violated",
+          "duration": 0.13819999999998345,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A3: anomaly rate > 20% → violated",
+          "status": "passed",
+          "title": "A3: anomaly rate > 20% → violated",
+          "duration": 0.12779999999997926,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A4: low-quality rate > 10% → violated",
+          "status": "passed",
+          "title": "A4: low-quality rate > 10% → violated",
+          "duration": 0.11170000000004165,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A5: plan ignored rate > 20% → violated",
+          "status": "passed",
+          "title": "A5: plan ignored rate > 20% → violated",
+          "duration": 0.11250000000006821,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A6: verifier fail rate > 5% → violated",
+          "status": "passed",
+          "title": "A6: verifier fail rate > 5% → violated",
+          "duration": 0.11009999999998854,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response no violation when all counters are within budget",
+          "status": "passed",
+          "title": "no violation when all counters are within budget",
+          "duration": 0.19870000000003074,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response reset() clears all counters",
+          "status": "passed",
+          "title": "reset() clears all counters",
+          "duration": 0.13530000000002929,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793939248726,
+      "endTime": 1793939248731.1987,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0295-a03/reference/workspace/tests/unit/deprecation-counters.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A5 performance budgets"
+          ],
+          "fullName": "A5 performance budgets planner 100-call p99 stays <= 30ms",
+          "status": "passed",
+          "title": "planner 100-call p99 stays <= 30ms",
+          "duration": 3.114799999999832,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A5 performance budgets"
+          ],
+          "fullName": "A5 performance budgets A5+A1+A3 cumulative per-turn smoke p99 stays <= 300ms and writes bounded evidence",
+          "status": "passed",
+          "title": "A5+A1+A3 cumulative per-turn smoke p99 stays <= 300ms and writes bounded evidence",
+          "duration": 3.050799999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793939246480,
+      "endTime": 1793939246486.0508,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0295-a03/reference/workspace/tests/unit/performance-budgets.test.ts"
+    }
+  ]
+}

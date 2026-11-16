@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "RsiRawArchive/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-relay-sealer",
+  "archivePath": "D:/tmp/rsi-relay-20261106/raw-attempts-20261106.zip",
+  "sha256": "b792e3580446a314431250f8e06a524a01710871b8f2942f99f07f02c515bef6",
+  "bytes": 1083780,
+  "contents": "attempts/: dispatch markers, provider responses, oracle logs and reports, terminal receipts, digest files; last dispatch has unknown completion. Dead collector.lock is evidence, not authority to retry.",
+  "retention": "local private archive; no publication",
+  "recovery": "Extract to a new D:/tmp directory. Never resume or overwrite any existing attempt marker."
+}

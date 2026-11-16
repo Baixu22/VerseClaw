@@ -1298,6 +1298,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
       title: t('navigation.archived.title'),
       description: t('navigation.archived.description'),
     },
+    storage: { title: t('navigation.storage.title'), description: t('navigation.storage.description') },
     recovery: {
       title: t('navigation.recovery.title'),
       description: t('navigation.recovery.description'),

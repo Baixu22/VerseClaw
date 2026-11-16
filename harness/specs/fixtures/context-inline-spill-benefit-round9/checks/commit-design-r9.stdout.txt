@@ -1,0 +1,5 @@
+[codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c 69884a18a] eval(context): freeze bounded visible exec bookmark recovery
+ 4 files changed, 513 insertions(+)
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round9/DESIGN.md
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round9/design.freeze.json
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round9/mechanism-readback.json

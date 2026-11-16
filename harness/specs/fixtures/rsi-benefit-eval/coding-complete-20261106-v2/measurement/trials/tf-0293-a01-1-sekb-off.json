@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0293-a01-1-sekb-off",
+    "caseId": "tf-0293-a01",
+    "repeat": 1,
+    "arm": "sekb-off",
+    "caseDigest": "367f128ef27c846f54dfc8074c25cccf3c834c1f83a645129de560eb2ed19501",
+    "pairSeed": 55,
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "position": 162
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"A01 按原 spec 门限复验 A1 Layered Execution Isolation 的受控 pilot 门：逐条把 4 个毕业判据映射到当前候选的可执行证据；不重定义门限；记录 spec requiredTests 缺口修正（计数器测试原缺）与残余。\",\n  \"acceptanceCriteria\": [\n    \"判据1 legacy fallback rate < 5%：deprecation-counters 单测断言 >5% → violated、<=5% → not violated（数值门限未改）。\",\n    \"判据2 p99 ≤ 200ms：performance-budgets 断言 p99 预算。\",\n    \"判据3 declaredPathViolationCount 单独计数并被跟踪。\",\n    \"判据4 checkBudgetViolation('a1') 在 rate>5% 时返回 action=degrade_to_legacy。\",\n    \"工具 writeRiskProfile 声明与命名空间拒绝（claw.a4.tool.choice on a1）由 tool-registration / trace-namespace-enforcement 覆盖。\",\n    \"发现并修正 spec drift：a1 spec 的 requiredTests 原缺计数器测试；已补入并加 coverage 守卫，原门限字节不变。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a1-layered-isolation-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a01-a1-isolation-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a1-layered-isolation-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a1-layered-isolation-pilot\\ntitle: A1 Layered Execution Isolation — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A1 shadow isolation path from shadow to active pilot, gated by graduation metrics and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\n  - openclaw_runtime/src/agents/sessions/extensions/policy-light-snapshotter.ts\\n  - openclaw_runtime/src/agents/sessions/extensions/shadow-write-event-recorder.ts\\n  - openclaw_runtime/src/shared/tool-registration.ts\\n  - openclaw_runtime/src/observability/trace-recorder.ts\\n  - openclaw_runtime/src/observability/namespace-governance.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - renderer-main-boundary\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - With the A1 pilot gate enabled, tool calls are served by the layered isolation path and the legacy fallback counter stays under the 5% graduation budget.\\n  - Every built-in write-capable tool (write/edit/bash/apply_patch/exec/process) declares its `writeRiskProfile` and `risk`, so the registry rejects an undeclared write instead of running it.\\n  - A trace written under the wrong namespace (for example `claw.a4.tool.choice` on an A1 recorder) is rejected rather than silently recorded.\\n  - The shadow write-event recorder flags tools that write outside their `declared_paths`/`no_writes` contract.\\n  - When the fallback rate exceeds 5%, the pilot responds with `degrade_to_legacy` instead of continuing to serve the isolated path.\\n  - With the pilot flag off, tool execution, tracing, and write behaviour are unchanged.\\nrequiredTests:\\n  - tests/unit/tool-registration.test.ts\\n  - tests/unit/policy-light-snapshotter.test.ts\\n  - tests/unit/shadow-write-event-recorder.test.ts\\n  - tests/unit/trace-namespace-enforcement.test.ts\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A1 deprecation counter `legacyFallbackCount` rate < 5% over 100-turn session\\n  - A1 p99 ≤ 200ms (criterion 4.5)\\n  - All 6 built-in tools (write/edit/bash/apply_patch/exec/process) declare `writeRiskProfile` + `risk`\\n  - Plugin registry enforces `assertWriteRiskProfileForTool` on `registerTool`\\n  - Trace namespace enforced: `claw.a4.tool.choice` on an a1 recorder is rejected\\n  - Shadow write event recorder detects undeclared writes for `declared_paths`/`no_writes` tools\\n  - Budget violation response `degrade_to_legacy` triggers when fallback rate > 5%\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA1 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Legacy fallback rate** < 5%: `legacyFallbackCount / (legacyFallbackCount + shadowSuccessCount) < 0.05` over a 100-turn session.\\n2. **Performance**: p99 ≤ 200ms for the isolation hot path (criterion 4.5).\\n3. **No critical violations**: `declaredPathViolationCount` is decreasing trend over 3 sessions.\\n4. **Budget violation response works**: `checkBudgetViolation('a1')` returns `degrade_to_legacy` when rate > 5% (criterion 4.14).\\n\\n## Out of scope\\n\\n- Replacing `IsolationFailureRecovery` legacy path — only deprecation, not removal.\\n- `dynamic_writes` heuristic detection (OQ-008).\\n- Per-tool path-prefix allow-lists (future enhancement).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a01-a1-isolation-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "6573c0fca12e756ec7b97b119cc93398c6a82f031252ae16ade7667665e7c880",
+  "runtime": {
+    "flags": {
+      "enabled": false,
+      "shadowEvaluation": false,
+      "injection": false
+    },
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0293-a01-1-sekb-off",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "crash",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 13,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 162,
+    "startedAt": "2026-11-06T16:56:33.511Z",
+    "endedAt": "2026-11-06T16:56:33.524Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses transport failed (network error)"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"A01 按原 spec 门限复验 A1 Layered Execution Isolation 的受控 pilot 门：逐条把 4 个毕业判据映射到当前候选的可执行证据；不重定义门限；记录 spec requiredTests 缺口修正（计数器测试原缺）与残余。\",\n  \"acceptanceCriteria\": [\n    \"判据1 legacy fallback rate < 5%：deprecation-counters 单测断言 >5% → violated、<=5% → not violated（数值门限未改）。\",\n    \"判据2 p99 ≤ 200ms：performance-budgets 断言 p99 预算。\",\n    \"判据3 declaredPathViolationCount 单独计数并被跟踪。\",\n    \"判据4 checkBudgetViolation('a1') 在 rate>5% 时返回 action=degrade_to_legacy。\",\n    \"工具 writeRiskProfile 声明与命名空间拒绝（claw.a4.tool.choice on a1）由 tool-registration / trace-namespace-enforcement 覆盖。\",\n    \"发现并修正 spec drift：a1 spec 的 requiredTests 原缺计数器测试；已补入并加 coverage 守卫，原门限字节不变。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a1-layered-isolation-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a01-a1-isolation-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a1-layered-isolation-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a1-layered-isolation-pilot\\ntitle: A1 Layered Execution Isolation — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A1 shadow isolation path from shadow to active pilot, gated by graduation metrics and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\n  - openclaw_runtime/src/agents/sessions/extensions/policy-light-snapshotter.ts\\n  - openclaw_runtime/src/agents/sessions/extensions/shadow-write-event-recorder.ts\\n  - openclaw_runtime/src/shared/tool-registration.ts\\n  - openclaw_runtime/src/observability/trace-recorder.ts\\n  - openclaw_runtime/src/observability/namespace-governance.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - renderer-main-boundary\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - With the A1 pilot gate enabled, tool calls are served by the layered isolation path and the legacy fallback counter stays under the 5% graduation budget.\\n  - Every built-in write-capable tool (write/edit/bash/apply_patch/exec/process) declares its `writeRiskProfile` and `risk`, so the registry rejects an undeclared write instead of running it.\\n  - A trace written under the wrong namespace (for example `claw.a4.tool.choice` on an A1 recorder) is rejected rather than silently recorded.\\n  - The shadow write-event recorder flags tools that write outside their `declared_paths`/`no_writes` contract.\\n  - When the fallback rate exceeds 5%, the pilot responds with `degrade_to_legacy` instead of continuing to serve the isolated path.\\n  - With the pilot flag off, tool execution, tracing, and write behaviour are unchanged.\\nrequiredTests:\\n  - tests/unit/tool-registration.test.ts\\n  - tests/unit/policy-light-snapshotter.test.ts\\n  - tests/unit/shadow-write-event-recorder.test.ts\\n  - tests/unit/trace-namespace-enforcement.test.ts\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A1 deprecation counter `legacyFallbackCount` rate < 5% over 100-turn session\\n  - A1 p99 ≤ 200ms (criterion 4.5)\\n  - All 6 built-in tools (write/edit/bash/apply_patch/exec/process) declare `writeRiskProfile` + `risk`\\n  - Plugin registry enforces `assertWriteRiskProfileForTool` on `registerTool`\\n  - Trace namespace enforced: `claw.a4.tool.choice` on an a1 recorder is rejected\\n  - Shadow write event recorder detects undeclared writes for `declared_paths`/`no_writes` tools\\n  - Budget violation response `degrade_to_legacy` triggers when fallback rate > 5%\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA1 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Legacy fallback rate** < 5%: `legacyFallbackCount / (legacyFallbackCount + shadowSuccessCount) < 0.05` over a 100-turn session.\\n2. **Performance**: p99 ≤ 200ms for the isolation hot path (criterion 4.5).\\n3. **No critical violations**: `declaredPathViolationCount` is decreasing trend over 3 sessions.\\n4. **Budget violation response works**: `checkBudgetViolation('a1')` returns `degrade_to_legacy` when rate > 5% (criterion 4.14).\\n\\n## Out of scope\\n\\n- Replacing `IsolationFailureRecovery` legacy path — only deprecation, not removal.\\n- `dynamic_writes` heuristic detection (OQ-008).\\n- Per-tool path-prefix allow-lists (future enhancement).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a01-a1-isolation-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

@@ -1,0 +1,29 @@
+{
+  "ref": "ec7e017873378a97fd5f3420b5536185c6c4001f",
+  "mappedPaths": [
+    "openclaw_runtime/src/agents/btw.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/compact.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
+    "openclaw_runtime/src/agents/sessions/extensions/runner.ts",
+    "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+    "openclaw_runtime/src/context-engine/rc03-producers.ts",
+    "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+    "openclaw_runtime/src/context-engine/seal-registry.ts"
+  ],
+  "loaded": {
+    "openclaw_runtime/src/agents/embedded-agent-runner/run.ts": "cb79e60d756e50efed98934fea2100c50960099c7e340f3fd6ee0265a573a8ab",
+    "openclaw_runtime/src/context-engine/rc03-seal-hook.ts": "3d3df91ff25e694ae2e2af1f3378fde6df3a55fd6867ae05373a5464f8824e14",
+    "openclaw_runtime/src/context-engine/seal-registry.ts": "a66a41b9fa83cf32b9abc2a6fc322d84574a44a4730f35fd78d338bd440b9953",
+    "openclaw_runtime/src/context-engine/rc03-producers.ts": "ae1de3e61391b01df43b9cfed652cd6c904e2a0cf86cee67cfe0e8ea8090fe67",
+    "openclaw_runtime/src/agents/sessions/extensions/runner.ts": "970aefc5c89fd4f43c9ddde402414341180706bd4ae82f99b78e4a576b5ef824",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "f68d658a1221582707ea9ae920fe650c26286b29f7b92fa218fa65d5b83d8d47",
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts": "cf6b6e04eebd71e8ed77aea893274ea1e9bb93299653c06b0a6b1ffe07cabd4b",
+    "openclaw_runtime/src/context-engine/context-final-snapshot.ts": "4413438bae87910f3d4ccbf97f55f6fe7db081da8825bd8bc7795ae209141277",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts": "06cd934cff70bb46b9246fb9476251cebbcb7da267d40cb34dfe8768fd489f1d",
+    "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts": "b0774082ea6060fe7fe40ece21ecfbebeae4287815a9ba04f808e5f9df8a797d"
+  }
+}

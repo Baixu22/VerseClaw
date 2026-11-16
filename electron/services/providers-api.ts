@@ -1,5 +1,5 @@
 import type { BrowserWindow } from 'electron';
-import type { HostApiContract } from '@shared/host-api/contract';
+import type { HostApiContract, ProviderValidationResult } from '@shared/host-api/contract';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
 import type { ProviderConfig } from '../utils/secure-storage';
@@ -196,21 +196,37 @@ async function resolveProviderAuthContext(
   };
 }
 
-async function validateKey(payload: ProviderPayload<'validateKey'>): Promise<{ valid: boolean; error?: string; durationMs?: number }> {
+/**
+ * TF-0733: the payload-failure paths must still satisfy the structured
+ * ProviderValidationResult contract, so they carry an explicit unknown state
+ * instead of a bare `{ valid: false }`.
+ */
+const UNKNOWN_VALIDATION_RESULT = {
+  reachable: 'unknown' as const,
+  auth: 'unknown' as const,
+  protocol: 'unknown' as const,
+  model: 'unknown' as const,
+  rateLimited: false,
+  ready: false,
+  reason: 'unknown' as const,
+  valid: false,
+};
+
+async function validateKey(payload: ProviderPayload<'validateKey'>): Promise<ProviderValidationResult> {
   const startedAt = Date.now();
   try {
     const context = await resolveProviderAuthContext(payload, 'validateKey');
     if ('error' in context) {
-      return { valid: false, error: context.error, durationMs: Date.now() - startedAt };
+      return { ...UNKNOWN_VALIDATION_RESULT, error: context.error, durationMs: Date.now() - startedAt };
     }
     if (!context.apiKey) {
-      return { valid: false, error: 'Invalid providers.validateKey payload', durationMs: Date.now() - startedAt };
+      return { ...UNKNOWN_VALIDATION_RESULT, error: 'Invalid providers.validateKey payload', durationMs: Date.now() - startedAt };
     }
 
     const result = await validateApiKeyWithProvider(context.providerType, context.apiKey, context.options);
     return { ...result, durationMs: Date.now() - startedAt };
   } catch (error) {
-    return { valid: false, error: String(error), durationMs: Date.now() - startedAt };
+    return { ...UNKNOWN_VALIDATION_RESULT, error: String(error), durationMs: Date.now() - startedAt };
   }
 }
 

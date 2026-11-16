@@ -1,0 +1,22 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/context-inline-spill-benefit-input.test.ts > benefit eval projected input > records missing and oversized pages as invalid_arguments before validating an archive
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/context-inline-spill-benefit-input.test.ts:100:150
+     98|     }
+     99|     expect(records.some((record: { toolCalls: Array<{ arguments: { max…
+    100|     expect(records.some((record: { toolCalls: Array<{ arguments: { max…
+       |                                                                                                                                                      ^
+    101|     rmSync(root, { recursive: true, force: true });
+    102|   }, 75_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

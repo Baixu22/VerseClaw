@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ego",
+  "headerHeight": 40,
+  "nativeHeaderSelects": 0,
+  "theme": "dark",
+  "overflow": false,
+  "familyExpanded": true
+}

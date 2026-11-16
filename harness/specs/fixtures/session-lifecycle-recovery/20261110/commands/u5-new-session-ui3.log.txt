@@ -1,0 +1,61 @@
+
+Running 2 tests using 1 worker
+
+[app:out] [2026-11-09T19:02:52.973Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T19:02:52.973Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [32524:1110/030253.096:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[32524:1110/030253.096:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-09T19:02:53.350Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-09T19:02:53.352Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-09T19:02:53.356Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T19:02:53.356Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T19:02:53.356Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T19:02:53.357Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T19:02:56.408Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T19:02:56.408Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T19:02:56.409Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T19:02:56.409Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T19:02:57.178Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T19:02:57.178Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T19:02:57.178Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T19:02:57.178Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T19:02:59.630Z] [INFO] Gateway stop requested
+[2026-11-09T19:02:59.631Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:64505/0df2c8b8-07fb-43e6-9925-21b8cca0ea2f
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-09T19:03:02.188Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden"],"transitionCount":3}
+[app:out] [2026-11-09T19:03:02.189Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-09T19:03:02.189Z] [INFO] [ResourceTracker] Shutdown complete
+[app:out] [2026-11-09T19:03:02.189Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-09T19:03:02.190Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  ok 1 tests\e2e\chat-workspace-header.spec.ts:226:58 › Verse Claw chat workspace header › keeps sidebar new chat scoped to the active workspace and preserves drafts after owner refusal (34.5s)
+[app:out] [2026-11-09T19:03:31.261Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-09T19:03:31.262Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-09T19:03:31.262Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=37608, ppid=47616
+[2026-11-09T19:03:31.262Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-09T19:03:31.560Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-09T19:03:31.561Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-09T19:03:31.561Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-09T19:03:31.561Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-09T19:03:31.616Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T19:03:31.616Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [37608:1110/030331.699:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:err] [37608:1110/030331.699:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:err] [2026-11-09T19:03:31.872Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T19:03:31.872Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T19:03:31.872Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T19:03:31.872Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T19:03:32.001Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-09T19:03:32.004Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:out] [2026-11-09T19:03:34.161Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T19:03:34.162Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:51022/93237d02-befd-49d7-855a-d12a369bac3c
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-09T19:03:34.209Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden"],"transitionCount":3}
+[app:out] [2026-11-09T19:03:34.210Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-09T19:03:34.210Z] [INFO] [ResourceTracker] Shutdown complete
+[2026-11-09T19:03:34.210Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-09T19:03:34.210Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  ok 2 tests\e2e\chat-workspace-header.spec.ts:226:58 › Verse Claw chat workspace header › keeps slash new chat scoped to the active workspace and preserves drafts after owner refusal (29.6s)
+
+  2 passed (1.1m)

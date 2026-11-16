@@ -1,4 +1,4 @@
-import { AlertTriangle, BellDot, Check, ShieldAlert } from 'lucide-react';
+import { BellDot } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import {
   type CompletionActivity,
   type LiveSessionActivity,
 } from './completion-activity';
-import { OrbStatus } from '@/components/assistant-ui/orb-status';
+import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { useChatStore } from '@/stores/chat';
 import { useSettingsStore } from '@/stores/settings';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -34,10 +34,19 @@ function relativeTime(t: TFunction<'chat'>, at: number, now: number): string {
   return t('sidebar.searchRelativeDays', { count: Math.floor(hours / 24) });
 }
 
-function NudgeIcon({ kind }: { kind: CompletionActivityNudge['kind'] }) {
-  if (kind === 'action-required') return <ShieldAlert className="rare-activity-entry__icon text-amber-700 dark:text-amber-400" />;
-  if (kind === 'error') return <AlertTriangle className="rare-activity-entry__icon text-red-700 dark:text-red-400" />;
-  return <Check className="rare-activity-entry__icon text-green-700 dark:text-green-400" />;
+/**
+ * Entry glyphs are the session rows' own status glyphs: a finished turn shows
+ * the same settled check / cross the row shows, and a request that still needs
+ * you breathes like a waiting row. One status vocabulary across the app.
+ */
+const NUDGE_STATE: Record<CompletionActivityNudge['kind'], OrbStatusState> = {
+  completed: 'success',
+  error: 'error',
+  'action-required': 'waiting',
+};
+
+function NudgeIcon({ kind, label }: { kind: CompletionActivityNudge['kind']; label: string }) {
+  return <OrbStatus state={NUDGE_STATE[kind]} label={label} className="rare-activity-entry__icon size-3.5" />;
 }
 
 /**
@@ -217,6 +226,7 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
             count={unreadCount}
             tone={tone}
             live={live}
+            liveLabel={t(`completionActivity.live.${live === 'waiting' ? 'waiting' : 'running'}`)}
             data-testid="chat-completion-bell"
             aria-label={runningCount > 0
               ? t('completionActivity.labelLive', { count: unreadCount, running: runningCount })
@@ -269,7 +279,7 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
                       <OrbStatus
                         state={session.state === 'waiting' ? 'waiting' : 'streaming'}
                         label={stateLabel}
-                        className="size-4 shrink-0"
+                        className="size-3.5 shrink-0"
                       />
                       <span className="rare-activity-live__title">{session.label}</span>
                       <span className="rare-activity-live__meta">
@@ -307,7 +317,7 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
                           className="rare-completion-menu__item rare-activity-entry"
                           onClick={() => openNudge(entry)}
                         >
-                          <NudgeIcon kind={entry.kind} />
+                          <NudgeIcon kind={entry.kind} label={t(`completionActivity.kind.${entry.kind}`)} />
                           <span className="rare-activity-entry__body">
                             <span className="rare-completion-menu__preview rare-activity-entry__preview">{preview}</span>
                             <span className="rare-activity-entry__meta">
@@ -326,9 +336,9 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
                               )}
                             </span>
                           </span>
-                          {fresh && (
-                            <span className="rare-activity-entry__fresh" role="img" aria-label={t('completionActivity.fresh')} />
-                          )}
+                          {/* Fresh entries read in full ink, like an unread row title;
+                              no trailing dot competes with the status glyph. */}
+                          {fresh && <span className="sr-only">{t('completionActivity.fresh')}</span>}
                         </button>
                       );
                     })}
@@ -343,12 +353,9 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
               </div>
             )}
           </div>
-          <div className="rare-activity-panel__foot">
-            <span className="rare-activity-panel__foot-text">
-              <span className="rare-activity-panel__foot-state" data-testid="chat-completion-desktop-state">
-                {desktopNotificationsEnabled ? t('completionActivity.desktopOn') : t('completionActivity.desktopOff')}
-              </span>
-              <span className="rare-activity-panel__foot-desc">{t('completionActivity.desktopDescription')}</span>
+          <div className="rare-activity-panel__foot" title={t('completionActivity.desktopDescription')}>
+            <span className="rare-activity-panel__foot-state" data-testid="chat-completion-desktop-state">
+              {desktopNotificationsEnabled ? t('completionActivity.desktopOn') : t('completionActivity.desktopOff')}
             </span>
             <Switch
               data-testid="chat-completion-desktop-toggle"

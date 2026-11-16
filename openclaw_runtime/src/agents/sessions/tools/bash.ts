@@ -54,6 +54,7 @@ export function createLocalBashOperations(options?: { shellPath?: string }): Bas
   const localOperations: BashOperations = {
     exec: (command, cwd, { onData, signal, timeout, env }) => {
       return new Promise((resolve, reject) => {
+        if (signal?.aborted) { reject(new Error("aborted")); return; }
         const { shell, args } = getBashShellConfig(options?.shellPath);
         if (!existsSync(cwd)) {
           reject(
@@ -133,10 +134,23 @@ export function createLocalBashOperations(options?: { shellPath?: string }): Bas
   // released when the promise settles; a saturated workspace surfaces a typed
   // ResourceLeaseTimeoutError instead of silently queueing forever.
   return {
-    exec: (command, cwd, execOptions) =>
-      withWorkspaceResourceLease("workspaceExec", normalizeWorkspaceLeaseKey(cwd), () =>
-        localOperations.exec(command, cwd, execOptions),
-      ),
+    exec: (command, cwd, execOptions) => {
+      const timeoutMs = resolveBashTimeoutMs(execOptions.timeout);
+      const deadline = timeoutMs === undefined ? undefined : Date.now() + timeoutMs;
+      return withWorkspaceResourceLease("workspaceExec", normalizeWorkspaceLeaseKey(cwd), () => {
+        const remaining = deadline === undefined ? undefined : deadline - Date.now();
+        if (remaining !== undefined && remaining <= 0) throw new Error(`timeout:${execOptions.timeout}`);
+        return localOperations.exec(command, cwd, {
+          ...execOptions,
+          timeout: remaining === undefined ? undefined : remaining / 1000,
+        });
+      },
+        { signal: execOptions.signal, deadline },
+      ).catch((error: unknown) => {
+        if (execOptions.signal?.aborted) throw new Error("aborted", { cause: error });
+        throw error;
+      });
+    },
   };
 }
 

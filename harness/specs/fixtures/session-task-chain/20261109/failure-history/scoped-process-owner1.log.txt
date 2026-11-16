@@ -1,0 +1,117 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-unified-relay-20261109
+
+ ✓ tests/unit/session-task-scope-completion.test.ts (33 tests) 6840ms
+     ✓ selects an existing completed task and preserves its status and historical links  358ms
+     ✓ keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary  354ms
+     ✓ does not release a live canonical claim because a new API instance or response settled  355ms
+     ✓ preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface  408ms
+     ✓ requires explicit canonical selection for multiple links and rejects an external reference as a task  554ms
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > binds the task selected in the existing composer before dispatching chat effects
+[2026-11-08T19:20:50.115Z] [INFO] [chat:sendWithMedia] Sending: message="Continuity context (owner-derived, bounded metadata; verify work with tools):
+schema=ContinuityConte", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > binds the task selected in the existing composer before dispatching chat effects
+[2026-11-08T19:20:50.116Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"selected-task-send"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-08T19:20:51.032Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-08T19:20:51.035Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"handoff-first:operation-unique-1"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-08T19:20:51.039Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > reconciles a lost send reply from the exact runtime transcript after restart
+[2026-11-08T19:20:51.279Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > reconciles a lost send reply from the exact runtime transcript after restart
+[2026-11-08T19:20:51.282Z] [ERROR] [chat:sendWithMedia] Error: Error: send response lost
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-08T19:20:51.466Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-08T19:20:51.468Z] [ERROR] [chat:sendWithMedia] Error: Error: request outcome unknown
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-08T19:20:51.472Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-08T19:20:51.473Z] [ERROR] [chat:sendWithMedia] Error: Error: HANDOFF_DELIVERY_REQUIRES_RECONCILIATION
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-08T19:20:51.609Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-08T19:20:51.611Z] [ERROR] [chat:sendWithMedia] Error: GatewayRpcError: rejected before effects
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-08T19:20:51.614Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-08T19:20:51.616Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"handoff-first:operation-unique-1"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-08T19:20:51.827Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-08T19:20:51.829Z] [ERROR] [chat:sendWithMedia] Error: GatewayRpcError: rejected before effects
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-08T19:20:51.830Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-08T19:20:51.831Z] [ERROR] [chat:sendWithMedia] Error: Error: HANDOFF_SEND_PAYLOAD_CHANGED
+
+ ✓ tests/unit/session-handoff-recovery.test.ts (20 tests) 2284ms
+ ✓ tests/unit/durable-task-session-scope.test.ts (13 tests) 1177ms
+     ✓ retains task identity and writer exclusivity when runtime bootstrap initializes Git  449ms
+ ✓ tests/unit/session-task-scope-bridge.test.ts (17 tests) 323ms
+ ✓ tests/unit/long-session-coordinator-binding.test.ts (11 tests) 51ms
+ ❯ tests/unit/sidebar-session-buckets.test.ts (12 tests | 1 failed) 11ms
+     ✓ selects the latest activity for each session in one index 2ms
+     ✓ preserves the previous tie behavior by selecting the later iterated run 0ms
+     ✓ uses the timestamp embedded in a locally-created session key as activity fallback 0ms
+     ✓ prefers real message activity over backend metadata or key creation time 0ms
+     ✓ returns 0 for unparseable session keys without updatedAt 0ms
+     ✓ keeps sessions scoped to the current workspace and agent 0ms
+     ✓ groups sessions by workspace recency and sorts each project by activity 0ms
+     ✓ keeps explicitly associated coordinators visible through a agent binding 1ms
+     × keeps explicitly associated coordinators visible through a coordinator binding 5ms
+     ✓ builds the time view as one activity-sorted list across projects 0ms
+     ✓ renders a duplicated legacy session in only one project 0ms
+     ✓ keeps pinned sessions first and supports active and priority sorting 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/sidebar-session-buckets.test.ts > sidebar session activity resolution > keeps explicitly associated coordinators visible through a coordinator binding
+AssertionError: expected [ 'agent:reviewer:project', …(1) ] to deeply equal [ 'agent:main:project', …(1) ]
+
+- Expected
++ Received
+
+  [
+-   "agent:main:project",
+    "agent:reviewer:project",
++   "agent:main:project",
+  ]
+
+ ❯ tests/unit/sidebar-session-buckets.test.ts:216:66
+    214|     });
+    215|     expect(groups).toHaveLength(1);
+    216|     expect(groups[0].sessions.map((entry) => entry.session.key)).toEqu…
+       |                                                                  ^
+    217|   });
+    218|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  1 failed | 105 passed (106)
+   Start at  03:20:41
+   Duration  22.08s (transform 5.38s, setup 514ms, import 7.84s, tests 10.69s, environment 1.75s)
+
+JSON report written to D:/tmp/unified-management-20261109/session-task-validation/scoped-process-owner1.tests.json

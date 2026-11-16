@@ -1,0 +1,2377 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\final-maintenance-units.json",
+  "sourceSha256": "408abec93f8ed10f2e034ce68df36153d9f9fb58b69ff8cfd6bbd1bfece751f6",
+  "result": {
+    "numTotalTestSuites": 18,
+    "numPassedTestSuites": 18,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 189,
+    "numPassedTests": 189,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563403962,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "agent dev api"
+            ],
+            "fullName": "agent dev api exposes read-only status when agent dev mode is not enabled",
+            "status": "passed",
+            "title": "exposes read-only status when agent dev mode is not enabled",
+            "duration": 483.13960000000003,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev api"
+            ],
+            "fullName": "agent dev api seeds scenarios and feature flags in E2E mode",
+            "status": "passed",
+            "title": "seeds scenarios and feature flags in E2E mode",
+            "duration": 2.058899999999994,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev api"
+            ],
+            "fullName": "agent dev api creates in-memory conversations and provider seeds",
+            "status": "passed",
+            "title": "creates in-memory conversations and provider seeds",
+            "duration": 1.1644999999999754,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev api"
+            ],
+            "fullName": "agent dev api returns diagnostics, transport trace, and selector contracts",
+            "status": "passed",
+            "title": "returns diagnostics, transport trace, and selector contracts",
+            "duration": 5.104799999999955,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev api"
+            ],
+            "fullName": "agent dev api collects real dispatcher channels and deduplicates message usage against final run totals",
+            "status": "passed",
+            "title": "collects real dispatcher channels and deduplicates message usage against final run totals",
+            "duration": 2.1978000000000293,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev api"
+            ],
+            "fullName": "agent dev api retains distinct model messages and failed tool observations",
+            "status": "passed",
+            "title": "retains distinct model messages and failed tool observations",
+            "duration": 0.9756999999999607,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev api"
+            ],
+            "fullName": "agent dev api records redacted scenario artifacts with a human promotion checklist",
+            "status": "passed",
+            "title": "records redacted scenario artifacts with a human promotion checklist",
+            "duration": 7.823000000000093,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563417046,
+        "endTime": 1794563417547.823,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/agent-dev-api.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts defines the required channel conformance matrix",
+            "status": "passed",
+            "title": "defines the required channel conformance matrix",
+            "duration": 1.4827999999999975,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts writes fail-closed channel conformance reports for a scaffold-shaped channel",
+            "status": "passed",
+            "title": "writes fail-closed channel conformance reports for a scaffold-shaped channel",
+            "duration": 7.854900000000015,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts scaffolds scenarios into the shared registry and snapshot-backed E2E",
+            "status": "passed",
+            "title": "scaffolds scenarios into the shared registry and snapshot-backed E2E",
+            "duration": 210.11720000000003,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts refuses standalone E2E scaffolds for unregistered scenarios",
+            "status": "passed",
+            "title": "refuses standalone E2E scaffolds for unregistered scenarios",
+            "duration": 190.76709999999997,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts scaffolds pages with four-locale namespace stubs",
+            "status": "passed",
+            "title": "scaffolds pages with four-locale namespace stubs",
+            "duration": 118.82060000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts scaffolds host routes through contract, renderer facade, and Main registry",
+            "status": "passed",
+            "title": "scaffolds host routes through contract, renderer facade, and Main registry",
+            "duration": 136.92730000000006,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts promotes reviewed scenario recordings into registry, fixture, harness, and E2E",
+            "status": "passed",
+            "title": "promotes reviewed scenario recordings into registry, fixture, harness, and E2E",
+            "duration": 127.5225999999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts rejects unredacted scenario recordings before promotion",
+            "status": "passed",
+            "title": "rejects unredacted scenario recordings before promotion",
+            "duration": 0.8913000000000011,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts escapes scenario metadata in the static workbench",
+            "status": "passed",
+            "title": "escapes scenario metadata in the static workbench",
+            "duration": 0.5013999999999896,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts renders optimized Agent Dev gate commands and quality evidence in the static workbench",
+            "status": "passed",
+            "title": "renders optimized Agent Dev gate commands and quality evidence in the static workbench",
+            "duration": 0.39220000000000255,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts keeps trace and sandbox reports typed for P2/P3 workbench surfaces",
+            "status": "passed",
+            "title": "keeps trace and sandbox reports typed for P2/P3 workbench surfaces",
+            "duration": 0.22860000000002856,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts classifies Agent Dev gate performance limits with actionable loops",
+            "status": "passed",
+            "title": "classifies Agent Dev gate performance limits with actionable loops",
+            "duration": 0.6218999999999824,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts does not reuse a build when a required artifact is missing",
+            "status": "passed",
+            "title": "does not reuse a build when a required artifact is missing",
+            "duration": 5.1684999999999945,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts does not reuse a build when relevant source is newer than dist",
+            "status": "passed",
+            "title": "does not reuse a build when relevant source is newer than dist",
+            "duration": 10.456999999999994,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts reuses a build when dist artifacts are newer than relevant source",
+            "status": "passed",
+            "title": "reuses a build when dist artifacts are newer than relevant source",
+            "duration": 8.876800000000003,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts classifies skipped build reuse steps without treating them as missing evidence",
+            "status": "passed",
+            "title": "classifies skipped build reuse steps without treating them as missing evidence",
+            "duration": 0.1974999999999909,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts extracts structured deep-test diagnostics from command output",
+            "status": "passed",
+            "title": "extracts structured deep-test diagnostics from command output",
+            "duration": 1.2001000000000204,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts keeps full deep-test commands by default and switches only requested fast paths",
+            "status": "passed",
+            "title": "keeps full deep-test commands by default and switches only requested fast paths",
+            "duration": 0.49279999999998836,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts represents a reusable build as a skipped e2e-build step in the deep-test plan",
+            "status": "passed",
+            "title": "represents a reusable build as a skipped e2e-build step in the deep-test plan",
+            "duration": 0.11829999999986285,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts summarizes deep-test decisions for full gates, fast paths, and blocked runs",
+            "status": "passed",
+            "title": "summarizes deep-test decisions for full gates, fast paths, and blocked runs",
+            "duration": 0.3399000000001706,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts creates compact history entries and same-mode trend summaries",
+            "status": "passed",
+            "title": "creates compact history entries and same-mode trend summaries",
+            "duration": 0.33760000000006585,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts scores Agent Dev audit fixtures and flags blocked performance evidence as disqualifying",
+            "status": "passed",
+            "title": "scores Agent Dev audit fixtures and flags blocked performance evidence as disqualifying",
+            "duration": 8.200600000000122,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts resolves agent-dev source change times through git for clean checkouts",
+            "status": "passed",
+            "title": "resolves agent-dev source change times through git for clean checkouts",
+            "duration": 586.8812,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev regularization contracts"
+            ],
+            "fullName": "agent dev regularization contracts parses audit CLI reporting mode and classifies maturity levels",
+            "status": "passed",
+            "title": "parses audit CLI reporting mode and classifies maturity levels",
+            "duration": 0.5437999999999192,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563415392,
+        "endTime": 1794563416811.5437,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/agent-dev-regularization.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "agent dev scenario composer"
+            ],
+            "fullName": "agent dev scenario composer parses known scenario ids and ignores invalid ids safely",
+            "status": "passed",
+            "title": "parses known scenario ids and ignores invalid ids safely",
+            "duration": 1.4961999999999875,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev scenario composer"
+            ],
+            "fullName": "agent dev scenario composer composes later scenario seeds and query overrides",
+            "status": "passed",
+            "title": "composes later scenario seeds and query overrides",
+            "duration": 0.7938000000000045,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev scenario composer"
+            ],
+            "fullName": "agent dev scenario composer keeps the required scenario registry ids available",
+            "status": "passed",
+            "title": "keeps the required scenario registry ids available",
+            "duration": 0.15620000000001255,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev scenario composer"
+            ],
+            "fullName": "agent dev scenario composer composes P0/P1 diagnostic scenarios from the shared registry",
+            "status": "passed",
+            "title": "composes P0/P1 diagnostic scenarios from the shared registry",
+            "duration": 0.22270000000000323,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563417777,
+        "endTime": 1794563417779.2227,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/agent-dev-scenario-composer.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "agent dev host-api schemas"
+            ],
+            "fullName": "agent dev host-api schemas accepts representative seed, replay, and flag payloads",
+            "status": "passed",
+            "title": "accepts representative seed, replay, and flag payloads",
+            "duration": 2.514099999999985,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "agent dev host-api schemas"
+            ],
+            "fullName": "agent dev host-api schemas rejects unknown scenario ids, malformed replay modes, and non-string flags",
+            "status": "passed",
+            "title": "rejects unknown scenario ids, malformed replay modes, and non-string flags",
+            "duration": 1.4502999999999702,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563417691,
+        "endTime": 1794563417695.4502,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/agent-dev-schemas.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "contract check"
+            ],
+            "fullName": "contract check parses contract, facade, and scenario registry entries",
+            "status": "passed",
+            "title": "parses contract, facade, and scenario registry entries",
+            "duration": 3.081600000000037,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check"
+            ],
+            "fullName": "contract check inlines aliased module facades for contract parsing",
+            "status": "passed",
+            "title": "inlines aliased module facades for contract parsing",
+            "duration": 0.4877999999999929,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check"
+            ],
+            "fullName": "contract check passes representative aligned P0 inputs",
+            "status": "passed",
+            "title": "passes representative aligned P0 inputs",
+            "duration": 1.3795999999999822,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check"
+            ],
+            "fullName": "contract check reports readable drift for missing facade actions and registry ids",
+            "status": "passed",
+            "title": "reports readable drift for missing facade actions and registry ids",
+            "duration": 0.51400000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: alias contract members"
+            ],
+            "fullName": "contract check: alias contract members lists alias members and resolves their relative type imports",
+            "status": "passed",
+            "title": "lists alias members and resolves their relative type imports",
+            "duration": 0.45179999999999154,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: alias contract members"
+            ],
+            "fullName": "contract check: alias contract members resolves alias members to their actions when the defining type text is supplied",
+            "status": "passed",
+            "title": "resolves alias members to their actions when the defining type text is supplied",
+            "duration": 0.19490000000001828,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: alias contract members"
+            ],
+            "fullName": "contract check: alias contract members fails closed when an alias member cannot be resolved",
+            "status": "passed",
+            "title": "fails closed when an alias member cannot be resolved",
+            "duration": 0.3188000000000102,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: alias contract members"
+            ],
+            "fullName": "contract check: alias contract members reconciles alias member actions against the facade and invokeHost",
+            "status": "passed",
+            "title": "reconciles alias member actions against the facade and invokeHost",
+            "duration": 0.31110000000001037,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface finds a namespace registration after an interpolated template",
+            "status": "passed",
+            "title": "finds a namespace registration after an interpolated template",
+            "duration": 53.299800000000005,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface ignores comments, strings, unrelated handles and shadowed IPC objects",
+            "status": "passed",
+            "title": "ignores comments, strings, unrelated handles and shadowed IPC objects",
+            "duration": 14.470399999999984,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface resolves scoped aliases and parenthesized/type-wrapped IPC receivers",
+            "status": "passed",
+            "title": "resolves scoped aliases and parenthesized/type-wrapped IPC receivers",
+            "duration": 11.817299999999989,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface keeps the original bound channel for register('payload');",
+            "status": "passed",
+            "title": "keeps the original bound channel for register('payload');",
+            "duration": 9.369599999999991,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface keeps the original bound channel for register.call(ipcMain, 'payload');",
+            "status": "passed",
+            "title": "keeps the original bound channel for register.call(ipcMain, 'payload');",
+            "duration": 9.255600000000015,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface keeps the original bound channel for register.apply(ipcMain, ['payload']);",
+            "status": "passed",
+            "title": "keeps the original bound channel for register.apply(ipcMain, ['payload']);",
+            "duration": 9.449000000000012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface keeps the original bound channel for const alias = register; alias.bind(null, 'payload')();",
+            "status": "passed",
+            "title": "keeps the original bound channel for const alias = register; alias.bind(null, 'payload')();",
+            "duration": 8.974300000000028,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface retains nonliteral bound channels and handleOnce identity",
+            "status": "passed",
+            "title": "retains nonliteral bound channels and handleOnce identity",
+            "duration": 9.525100000000009,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface does not treat dynamic or default bindings from ordinary objects as IPC",
+            "status": "passed",
+            "title": "does not treat dynamic or default bindings from ordinary objects as IPC",
+            "duration": 10.941000000000031,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface enumerates ipcMain.handle sites including multi-line and non-literal forms",
+            "status": "passed",
+            "title": "enumerates ipcMain.handle sites including multi-line and non-literal forms",
+            "duration": 10.936800000000062,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface parses the preload allowlist and fails closed when it is missing",
+            "status": "passed",
+            "title": "parses the preload allowlist and fails closed when it is missing",
+            "duration": 0.40059999999994034,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface enforces the final zero-handler, host-invoke-only preload invariant",
+            "status": "passed",
+            "title": "enforces the final zero-handler, host-invoke-only preload invariant",
+            "duration": 25.534700000000043,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface fails closed when the registry or the site enumeration is absent",
+            "status": "passed",
+            "title": "fails closed when the registry or the site enumeration is absent",
+            "duration": 0.3029000000000224,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface rejects an unregistered flat channel with its file and line",
+            "status": "passed",
+            "title": "rejects an unregistered flat channel with its file and line",
+            "duration": 1.2521000000000413,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface rejects a stale registry entry whose handler is gone",
+            "status": "passed",
+            "title": "rejects a stale registry entry whose handler is gone",
+            "duration": 0.18689999999992324,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface rejects channels that bypass HostApiRegistry or use non-literal names",
+            "status": "passed",
+            "title": "rejects channels that bypass HostApiRegistry or use non-literal names",
+            "duration": 0.21259999999995216,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface requires the single typed host:invoke entry to exist",
+            "status": "passed",
+            "title": "requires the single typed host:invoke entry to exist",
+            "duration": 0.16070000000001983,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface requires every dual-entry channel to be acknowledged with a typed module and a reason",
+            "status": "passed",
+            "title": "requires every dual-entry channel to be acknowledged with a typed module and a reason",
+            "duration": 0.23959999999999582,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface rejects flat channels outside any typed domain and unknown typed actions",
+            "status": "passed",
+            "title": "rejects flat channels outside any typed domain and unknown typed actions",
+            "duration": 0.23550000000000182,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface requires migrate and freeze dispositions to carry a removal plan and rejects unknown dispositions",
+            "status": "passed",
+            "title": "requires migrate and freeze dispositions to carry a removal plan and rejects unknown dispositions",
+            "duration": 0.20859999999993306,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: flat IPC admission surface"
+            ],
+            "fullName": "contract check: flat IPC admission surface reconciles the preload allowlist in both directions",
+            "status": "passed",
+            "title": "reconciles the preload allowlist in both directions",
+            "duration": 0.23490000000003874,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) passes on the current repository without fixtures",
+            "status": "passed",
+            "title": "passes on the current repository without fixtures",
+            "duration": 2013.0729000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) ships every negative class as a checked-in fixture",
+            "status": "passed",
+            "title": "ships every negative class as a checked-in fixture",
+            "duration": 7.119499999999789,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-allowlist-dangling.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-allowlist-dangling.json through the real entry with a single locatable diagnostic",
+            "duration": 1.278400000000147,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-channel.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-bound-channel.json through the real entry with a single locatable diagnostic",
+            "duration": 0.4192000000002736,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+            "duration": 0.38110000000051514,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-spread-channel.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-bound-spread-channel.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3940999999995256,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bypass-registry.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-bypass-registry.json through the real entry with a single locatable diagnostic",
+            "duration": 0.32479999999941356,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-commented-handle.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-commented-handle.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3308999999999287,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-computed-handle.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-computed-handle.json through the real entry with a single locatable diagnostic",
+            "duration": 0.411300000000665,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-default-method.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-default-method.json through the real entry with a single locatable diagnostic",
+            "duration": 0.35829999999987194,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-default-receiver.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-default-receiver.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3657999999995809,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-destructured-method.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-destructured-method.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3432999999995445,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dual-entry-unacknowledged.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-dual-entry-unacknowledged.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3517999999994572,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-duplicate-typed-entry.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-duplicate-typed-entry.json through the real entry with a single locatable diagnostic",
+            "duration": 0.31859999999960564,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+            "duration": 0.37669999999980064,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dynamic-method.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-dynamic-method.json through the real entry with a single locatable diagnostic",
+            "duration": 0.36709999999948195,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-escaped-identifier.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-escaped-identifier.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3480999999992491,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-handle-once.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-handle-once.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3117000000002008,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-import-alias.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-import-alias.json through the real entry with a single locatable diagnostic",
+            "duration": 0.23849999999947613,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-alias.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-method-alias.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3202000000001135,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-apply.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-method-apply.json through the real entry with a single locatable diagnostic",
+            "duration": 0.31409999999959837,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-call.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-method-call.json through the real entry with a single locatable diagnostic",
+            "duration": 0.255500000000211,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-named-default-import.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-named-default-import.json through the real entry with a single locatable diagnostic",
+            "duration": 0.23869999999988067,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-namespace-alias.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-namespace-alias.json through the real entry with a single locatable diagnostic",
+            "duration": 0.23700000000008004,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-nested-default-binding.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-nested-default-binding.json through the real entry with a single locatable diagnostic",
+            "duration": 0.28319999999985157,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+            "duration": 0.28980000000046857,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-object-alias.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-object-alias.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3242000000000189,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-aliased.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-aliased.json through the real entry with a single locatable diagnostic",
+            "duration": 0.31420000000071013,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-bound-channel.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-bound-channel.json through the real entry with a single locatable diagnostic",
+            "duration": 0.40679999999974825,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+            "duration": 0.31230000000050495,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-computed.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-computed.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3113000000003012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-default-method.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-default-method.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3894000000000233,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-default-receiver.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-default-receiver.json through the real entry with a single locatable diagnostic",
+            "duration": 0.30680000000029395,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-direct-invoke.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-direct-invoke.json through the real entry with a single locatable diagnostic",
+            "duration": 0.358499999999367,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3231999999998152,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-dynamic.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-dynamic.json through the real entry with a single locatable diagnostic",
+            "duration": 0.2910999999994601,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-mismatch.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-mismatch.json through the real entry with a single locatable diagnostic",
+            "duration": 0.37510000000020227,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-named-default-import.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-named-default-import.json through the real entry with a single locatable diagnostic",
+            "duration": 1.8443999999999505,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-nested-default-binding.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-nested-default-binding.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3573999999998705,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+            "duration": 0.34320000000025175,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-spaced.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-preload-spaced.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3170000000000073,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-cjs.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-production-cjs.json through the real entry with a single locatable diagnostic",
+            "duration": 0.30370000000039,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-cts.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-production-cts.json through the real entry with a single locatable diagnostic",
+            "duration": 0.31450000000040745,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-js.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-production-js.json through the real entry with a single locatable diagnostic",
+            "duration": 0.2991999999994732,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-jsx.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-production-jsx.json through the real entry with a single locatable diagnostic",
+            "duration": 0.31860000000051514,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-mjs.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-production-mjs.json through the real entry with a single locatable diagnostic",
+            "duration": 0.29690000000027794,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-mts.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-production-mts.json through the real entry with a single locatable diagnostic",
+            "duration": 0.2907999999997628,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-ts.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-production-ts.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3186999999998079,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-tsx.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-production-tsx.json through the real entry with a single locatable diagnostic",
+            "duration": 0.32989999999972497,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-removal-plan-missing.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-removal-plan-missing.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3316999999997279,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-retired-channel-live.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-retired-channel-live.json through the real entry with a single locatable diagnostic",
+            "duration": 0.30010000000038417,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-spaced-handle.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-spaced-handle.json through the real entry with a single locatable diagnostic",
+            "duration": 0.2966000000005806,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-static-method-name.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-static-method-name.json through the real entry with a single locatable diagnostic",
+            "duration": 0.2915000000002692,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-template-before-namespace.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-template-before-namespace.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3452000000006592,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-unregistered-channel.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture flat-ipc-unregistered-channel.json through the real entry with a single locatable diagnostic",
+            "duration": 0.35129999999935535,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture host-api-alias-member-unreconciled.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture host-api-alias-member-unreconciled.json through the real entry with a single locatable diagnostic",
+            "duration": 0.3110999999998967,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture host-api-unresolved-alias-member.json through the real entry with a single locatable diagnostic",
+            "status": "passed",
+            "title": "rejects fixture host-api-unresolved-alias-member.json through the real entry with a single locatable diagnostic",
+            "duration": 0.31819999999970605,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-bound-typed-entry.json through the real entry without diagnostics",
+            "status": "passed",
+            "title": "accepts fixture flat-ipc-bound-typed-entry.json through the real entry without diagnostics",
+            "duration": 0.3602000000000771,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-ordinary-bindings.json through the real entry without diagnostics",
+            "status": "passed",
+            "title": "accepts fixture flat-ipc-ordinary-bindings.json through the real entry without diagnostics",
+            "duration": 0.23719999999957508,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-preload-bound-host-invoke.json through the real entry without diagnostics",
+            "status": "passed",
+            "title": "accepts fixture flat-ipc-preload-bound-host-invoke.json through the real entry without diagnostics",
+            "duration": 0.283900000000358,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual ts production probes off disk",
+            "status": "passed",
+            "title": "keeps virtual ts production probes off disk",
+            "duration": 0.8105999999997948,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual tsx production probes off disk",
+            "status": "passed",
+            "title": "keeps virtual tsx production probes off disk",
+            "duration": 0.9960000000000946,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual mts production probes off disk",
+            "status": "passed",
+            "title": "keeps virtual mts production probes off disk",
+            "duration": 0.20570000000043365,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual cts production probes off disk",
+            "status": "passed",
+            "title": "keeps virtual cts production probes off disk",
+            "duration": 0.18389999999999418,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual js production probes off disk",
+            "status": "passed",
+            "title": "keeps virtual js production probes off disk",
+            "duration": 0.1875,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual jsx production probes off disk",
+            "status": "passed",
+            "title": "keeps virtual jsx production probes off disk",
+            "duration": 0.17190000000027794,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual mjs production probes off disk",
+            "status": "passed",
+            "title": "keeps virtual mjs production probes off disk",
+            "duration": 0.17330000000038126,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual cjs production probes off disk",
+            "status": "passed",
+            "title": "keeps virtual cjs production probes off disk",
+            "duration": 0.18479999999999563,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) matches standalone and batch results for flat-ipc-allowlist-dangling.json",
+            "status": "passed",
+            "title": "matches standalone and batch results for flat-ipc-allowlist-dangling.json",
+            "duration": 2596.913199999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) matches standalone and batch results for flat-ipc-bound-typed-entry.json",
+            "status": "passed",
+            "title": "matches standalone and batch results for flat-ipc-bound-typed-entry.json",
+            "duration": 2420.645599999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps a broken batch fixture separate from the next valid case",
+            "status": "passed",
+            "title": "keeps a broken batch fixture separate from the next valid case",
+            "duration": 1925.7102000000014,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "contract check: real gate entry (node scripts/contract-check.mjs)"
+            ],
+            "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) distinguishes a broken fixture (exit 2) from a gate failure (exit 1)",
+            "status": "passed",
+            "title": "distinguishes a broken fixture (exit 2) from a gate failure (exit 1)",
+            "duration": 288.26690000000053,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563404441,
+        "endTime": 1794563415952.2668,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/contract-check.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+            "status": "passed",
+            "title": "routes handoff creation through Main with the source session and edited draft",
+            "duration": 128.8994,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes the typed session stop surface through the sessions module",
+            "status": "passed",
+            "title": "routes the typed session stop surface through the sessions module",
+            "duration": 2.5090999999999894,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls settings.getAll through hostInvoke",
+            "status": "passed",
+            "title": "calls settings.getAll through hostInvoke",
+            "duration": 1.7941999999999325,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+            "status": "passed",
+            "title": "routes diagnostics.exportSupportBundle through hostInvoke",
+            "duration": 1.7904999999999518,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade throws response errors",
+            "status": "passed",
+            "title": "throws response errors",
+            "duration": 2.5256999999999152,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls settings.setMany and reset through hostInvoke",
+            "status": "passed",
+            "title": "calls settings.setMany and reset through hostInvoke",
+            "duration": 1.8471999999999298,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes project rules methods through hostInvoke",
+            "status": "passed",
+            "title": "routes project rules methods through hostInvoke",
+            "duration": 2.260099999999966,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes agent browser methods through hostInvoke",
+            "status": "passed",
+            "title": "routes agent browser methods through hostInvoke",
+            "duration": 2.5190000000000055,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes code review methods through hostInvoke",
+            "status": "passed",
+            "title": "routes code review methods through hostInvoke",
+            "duration": 1.7924999999999045,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes Remote Forge reads through the typed host facade",
+            "status": "passed",
+            "title": "routes Remote Forge reads through the typed host facade",
+            "duration": 2.2018000000000484,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+            "status": "passed",
+            "title": "routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+            "duration": 1.6890999999999394,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes uv installer setup through hostInvoke",
+            "status": "passed",
+            "title": "routes uv installer setup through hostInvoke",
+            "duration": 1.653699999999958,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+            "status": "passed",
+            "title": "routes dcsProdFlags methods through hostInvoke",
+            "duration": 1.7945999999999458,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes vtoken methods through hostInvoke",
+            "status": "passed",
+            "title": "routes vtoken methods through hostInvoke",
+            "duration": 2.215599999999995,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade routes git methods through hostInvoke",
+            "status": "passed",
+            "title": "routes git methods through hostInvoke",
+            "duration": 1.7234999999999445,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade passes log file path and tail lines through hostInvoke",
+            "status": "passed",
+            "title": "passes log file path and tail lines through hostInvoke",
+            "duration": 1.584799999999973,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls channels.accounts through hostInvoke with options",
+            "status": "passed",
+            "title": "calls channels.accounts through hostInvoke with options",
+            "duration": 1.6649999999999636,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade passes channel credential validation payload through hostInvoke",
+            "status": "passed",
+            "title": "passes channel credential validation payload through hostInvoke",
+            "duration": 6.73090000000002,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade passes channel target lookup payload through hostInvoke",
+            "status": "passed",
+            "title": "passes channel target lookup payload through hostInvoke",
+            "duration": 1.7819999999999254,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls agents.list through hostInvoke",
+            "status": "passed",
+            "title": "calls agents.list through hostInvoke",
+            "duration": 1.478800000000092,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls providers.list through hostInvoke",
+            "status": "passed",
+            "title": "calls providers.list through hostInvoke",
+            "duration": 1.3351999999999862,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade passes provider validation payload through hostInvoke",
+            "status": "passed",
+            "title": "passes provider validation payload through hostInvoke",
+            "duration": 1.2455999999999676,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade passes provider OAuth requests through hostInvoke",
+            "status": "passed",
+            "title": "passes provider OAuth requests through hostInvoke",
+            "duration": 1.310799999999972,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+            "status": "passed",
+            "title": "calls chat.sendWithMedia through hostInvoke",
+            "duration": 1.1730999999999767,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls work provider APIs through hostInvoke",
+            "status": "passed",
+            "title": "calls work provider APIs through hostInvoke",
+            "duration": 1.3070999999999913,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls knowledge APIs through hostInvoke",
+            "status": "passed",
+            "title": "calls knowledge APIs through hostInvoke",
+            "duration": 1.964100000000144,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls sessions.summaries through hostInvoke",
+            "status": "passed",
+            "title": "calls sessions.summaries through hostInvoke",
+            "duration": 1.304300000000012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls session compaction methods through hostInvoke",
+            "status": "passed",
+            "title": "calls session compaction methods through hostInvoke",
+            "duration": 1.7403999999999087,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls clawGraph methods through hostInvoke",
+            "status": "passed",
+            "title": "calls clawGraph methods through hostInvoke",
+            "duration": 1.6688000000001466,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls cron.list through hostInvoke",
+            "status": "passed",
+            "title": "calls cron.list through hostInvoke",
+            "duration": 1.4375,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls skills.clawhubList through hostInvoke",
+            "status": "passed",
+            "title": "calls skills.clawhubList through hostInvoke",
+            "duration": 1.1502000000000407,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+            "status": "passed",
+            "title": "calls usage.recentTokenHistory through hostInvoke",
+            "duration": 1.135300000000143,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls observability queryTraces through hostInvoke",
+            "status": "passed",
+            "title": "calls observability queryTraces through hostInvoke",
+            "duration": 1.1450999999999567,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+            "status": "passed",
+            "title": "calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+            "duration": 1.2786000000000968,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade calls observability reportTrace through hostInvoke",
+            "status": "passed",
+            "title": "calls observability reportTrace through hostInvoke",
+            "duration": 1.2509999999999764,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+            "status": "passed",
+            "title": "keeps hostApi response types on facade methods instead of call-site generics",
+            "duration": 93.9878000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade uses a function-shaped host API contract to type host invocations",
+            "status": "passed",
+            "title": "uses a function-shaped host API contract to type host invocations",
+            "duration": 1.7094999999999345,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+            "status": "passed",
+            "title": "keeps async handler flexibility out of the renderer-facing host API contract",
+            "duration": 0.7765000000001692,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+            "status": "passed",
+            "title": "keeps production main, preload, renderer, and shared imports on their side of the boundary",
+            "duration": 139.29700000000003,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade lets service handlers inherit payload types from the host API contract",
+            "status": "passed",
+            "title": "lets service handlers inherit payload types from the host API contract",
+            "duration": 7.991800000000012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+            "status": "passed",
+            "title": "does not keep hostApi-covered legacy direct IPC channels registered",
+            "duration": 1.1313000000000102,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade does not keep uninvoked direct IPC channels registered",
+            "status": "passed",
+            "title": "does not keep uninvoked direct IPC channels registered",
+            "duration": 0.643500000000131,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade does not keep the legacy unified app:request client path",
+            "status": "passed",
+            "title": "does not keep the legacy unified app:request client path",
+            "duration": 0.2481999999999971,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+            "status": "passed",
+            "title": "does not keep legacy IPC helper exports or production call sites",
+            "duration": 39.64869999999996,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+            "status": "passed",
+            "title": "keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+            "duration": 1.6161999999999352,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "hostApi facade"
+            ],
+            "fullName": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+            "status": "passed",
+            "title": "keeps diagnostics on the extension-contributed host API path",
+            "duration": 0.44659999999998945,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563416887,
+        "endTime": 1794563417365.4465,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/host-api-facade.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "i18n lint"
+            ],
+            "fullName": "i18n lint flattens nested locale keys",
+            "status": "passed",
+            "title": "flattens nested locale keys",
+            "duration": 1.3456000000000188,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "i18n lint"
+            ],
+            "fullName": "i18n lint reports missing and extra locale keys",
+            "status": "passed",
+            "title": "reports missing and extra locale keys",
+            "duration": 0.4072999999999922,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "i18n lint"
+            ],
+            "fullName": "i18n lint extracts useTranslation namespaces",
+            "status": "passed",
+            "title": "extracts useTranslation namespaces",
+            "duration": 0.2259999999999991,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "i18n lint"
+            ],
+            "fullName": "i18n lint detects obvious hardcoded TSX text in new files",
+            "status": "passed",
+            "title": "detects obvious hardcoded TSX text in new files",
+            "duration": 0.3323000000000036,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563417914,
+        "endTime": 1794563417916.4072,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/i18n-lint.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [],
+            "fullName": "fails on test type errors and invalidates cached checks when tests or runtime inputs change",
+            "status": "passed",
+            "title": "fails on test type errors and invalidates cached checks when tests or runtime inputs change",
+            "duration": 10837.8276,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563404275,
+        "endTime": 1794563415112.8276,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/typecheck-gate.test.ts"
+      }
+    ]
+  }
+}

@@ -13,6 +13,7 @@ import { ActionBarPrimitive, MessageProvider, type ThreadMessage } from '@assist
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { getTranscriptEntryId } from '@/lib/session-read-model';
 import { useTickingNow } from '@/hooks/use-ticking-now';
 import { statFile } from '@/lib/file-preview-client';
 import { hostApi } from '@/lib/host-api';
@@ -27,7 +28,6 @@ import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { Shimmer } from '@/components/ai-elements/shimmer';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
-import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { ConversationImage } from '@/components/assistant-render/resources/ConversationImage';
 import { ConversationMediaCard } from '@/components/assistant-render/resources/ConversationMediaCard';
 import { ConversationResourceList } from '@/components/assistant-render/resources/ResourceCards';
@@ -49,6 +49,7 @@ interface ChatMessageProps {
   agent?: Pick<AgentSummary, 'id' | 'name' | 'avatar'> | null;
   textOverride?: string;
   suppressToolCards?: boolean;
+  showActions?: boolean;
   suppressProcessAttachments?: boolean;
   /**
    * When true, hides the assistant text bubble (and any thinking block that
@@ -93,8 +94,8 @@ interface ChatMessageProps {
   onResendUserMessage?: (text: string) => void;
   canResendUserMessage?: boolean;
   /**
-   * #180: fork a new session from this message's transcript entry. Only offered
-   * when the message carries an entry id (the `fromLeafId` the fork RPC needs).
+   * #180: fork from this message's owner transcript entry. Missing identity keeps
+   * the action visible but disabled; it never falls back to a provider id or tip.
    */
   onForkFromMessage?: (messageId: string) => void;
   /**
@@ -104,6 +105,7 @@ interface ChatMessageProps {
    * and keeps the newer entries verbatim. Only offered when an entry id exists.
    */
   onCompactRange?: (messageId: string, boundary: 'from' | 'to') => void;
+  compactDisabledReason?: string;
   streamStatus?: {
     active: boolean;
     startedAt?: number | null;
@@ -214,9 +216,9 @@ const EMPTY_REASONING: AssistantReasoning[] = [];
 
 export const ChatMessage = memo(function ChatMessage({
   message,
-  agent,
   textOverride,
   suppressToolCards = false,
+  showActions = true,
   suppressProcessAttachments = false,
   suppressAssistantText = false,
   suppressReasoning = false,
@@ -232,10 +234,12 @@ export const ChatMessage = memo(function ChatMessage({
   canResendUserMessage = true,
   onForkFromMessage,
   onCompactRange,
+  compactDisabledReason,
   streamStatus,
   liveUsage,
 }: ChatMessageProps) {
   const { t } = useTranslation('chat');
+  const transcriptEntryId = getTranscriptEntryId(message);
   const isUser = message.role === 'user';
   const role = typeof message.role === 'string' ? message.role.toLowerCase() : '';
   const isToolResult = role === 'toolresult' || role === 'tool_result';
@@ -377,7 +381,7 @@ export const ChatMessage = memo(function ChatMessage({
     }
     void hostApi.shell.openPath(filePath);
   }, [onOpenFile]);
-  const showAssistantHoverBar = !isUser && (hasText || imageCopyTarget != null);
+  const showAssistantHoverBar = showActions && !isUser && (hasText || imageCopyTarget != null);
   const showUserHoverBar = isUser && hasText;
   const [isEditingUserMessage, setIsEditingUserMessage] = useState(false);
   const [userEditDraft, setUserEditDraft] = useState(text);
@@ -438,27 +442,10 @@ export const ChatMessage = memo(function ChatMessage({
   return (
     <div
       className={cn(
-        'flex gap-3 group',
+        'flex min-w-0 group',
         isUser ? 'flex-row-reverse' : 'flex-row',
       )}
     >
-      {/* Avatar — vertical center aligned with the first line of the reply.
-          The outer slot is sized to one prose-sm line (h-6 = 24px) so its
-          midpoint coincides with the first text line's midpoint; the 32px
-          avatar inside is centered within that slot and intentionally
-          overflows ±4px above/below the line, which mirrors how chat avatars
-          sit alongside a single line of text. */}
-      {!isUser && (
-        <div className="mt-0.5 h-8 w-8 shrink-0 overflow-hidden rounded-full" data-testid="chat-assistant-avatar">
-          <AgentAvatar
-            agentId={agent?.id ?? 'main'}
-            name={agent?.name ?? 'Verse'}
-            avatar={agent?.avatar ?? { kind: 'brand', source: 'default', revision: 'verse-brand-v1' }}
-            size={32}
-          />
-        </div>
-      )}
-
       {/* Content */}
       <div
         className={cn(
@@ -568,6 +555,7 @@ export const ChatMessage = memo(function ChatMessage({
         {!isUser && toolUiInteractions.length > 0 && (
           <AgentInteractionRenderer
             interactions={toolUiInteractions}
+            compactProcess
             canSubmit={canSubmitInteractionResponse}
             onSubmitResponse={onSubmitInteractionResponse}
             onDraftResponse={onDraftInteractionResponse}
@@ -644,16 +632,20 @@ export const ChatMessage = memo(function ChatMessage({
             timestamp={message.timestamp}
             canEdit={Boolean(onResendUserMessage) && canResendUserMessage}
             onEdit={handleStartUserMessageEdit}
-            canFork={Boolean(message.id) && Boolean(onForkFromMessage)}
+            showFork={Boolean(onForkFromMessage)}
+            canFork={Boolean(transcriptEntryId) && Boolean(onForkFromMessage) && canResendUserMessage && !isStreaming}
+            forkDisabledReason={!transcriptEntryId ? t('messageActions.forkMissingBoundary')
+              : !canResendUserMessage || isStreaming ? t('messageActions.forkUnavailable') : undefined}
             onFork={() => {
-              if (message.id) onForkFromMessage?.(message.id);
+              if (transcriptEntryId && canResendUserMessage && !isStreaming) onForkFromMessage?.(transcriptEntryId);
             }}
-            canCompact={Boolean(message.id) && Boolean(onCompactRange)}
+            canCompact={Boolean(transcriptEntryId) && Boolean(onCompactRange)}
+            compactDisabledReason={compactDisabledReason}
             onCompactFrom={() => {
-              if (message.id) onCompactRange?.(message.id, 'from');
+              if (transcriptEntryId) onCompactRange?.(transcriptEntryId, 'from');
             }}
             onCompactTo={() => {
-              if (message.id) onCompactRange?.(message.id, 'to');
+              if (transcriptEntryId) onCompactRange?.(transcriptEntryId, 'to');
             }}
           />
         )}
@@ -962,9 +954,12 @@ function UserMessageActions({
   timestamp,
   canEdit,
   onEdit,
+  showFork,
   canFork,
+  forkDisabledReason,
   onFork,
   canCompact,
+  compactDisabledReason,
   onCompactFrom,
   onCompactTo,
 }: {
@@ -972,9 +967,12 @@ function UserMessageActions({
   timestamp?: number;
   canEdit: boolean;
   onEdit: () => void;
+  showFork: boolean;
   canFork: boolean;
+  forkDisabledReason?: string;
   onFork: () => void;
   canCompact: boolean;
+  compactDisabledReason?: string;
   onCompactFrom: () => void;
   onCompactTo: () => void;
 }) {
@@ -1039,15 +1037,17 @@ function UserMessageActions({
           <TooltipContent side="top">{t('messageActions.edit')}</TooltipContent>
         </Tooltip>
       )}
-      {canFork && (
+      {showFork && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="inline-flex">
+            <span className="inline-flex" tabIndex={!canFork ? 0 : undefined}>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
+                disabled={!canFork}
+                aria-description={forkDisabledReason}
                 onClick={onFork}
                 aria-label={t('messageActions.forkFromHere')}
                 data-testid="chat-user-message-fork"
@@ -1056,7 +1056,7 @@ function UserMessageActions({
               </Button>
             </span>
           </TooltipTrigger>
-          <TooltipContent side="top">{t('messageActions.forkFromHere')}</TooltipContent>
+          <TooltipContent side="top">{forkDisabledReason ?? t('messageActions.forkFromHere')}</TooltipContent>
         </Tooltip>
       )}
       {canCompact && (
@@ -1070,6 +1070,8 @@ function UserMessageActions({
                   size="icon"
                   className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
                   onClick={onCompactTo}
+                  disabled={Boolean(compactDisabledReason)}
+                  title={compactDisabledReason}
                   aria-label={t('messageActions.summarizeUpToHere')}
                   data-testid="chat-user-message-summarize-to"
                 >
@@ -1077,7 +1079,7 @@ function UserMessageActions({
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent side="top">{t('messageActions.summarizeUpToHere')}</TooltipContent>
+            <TooltipContent side="top">{compactDisabledReason ?? t('messageActions.summarizeUpToHere')}</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -1088,6 +1090,8 @@ function UserMessageActions({
                   size="icon"
                   className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
                   onClick={onCompactFrom}
+                  disabled={Boolean(compactDisabledReason)}
+                  title={compactDisabledReason}
                   aria-label={t('messageActions.summarizeFromHere')}
                   data-testid="chat-user-message-summarize-from"
                 >
@@ -1095,7 +1099,7 @@ function UserMessageActions({
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent side="top">{t('messageActions.summarizeFromHere')}</TooltipContent>
+            <TooltipContent side="top">{compactDisabledReason ?? t('messageActions.summarizeFromHere')}</TooltipContent>
           </Tooltip>
         </>
       )}

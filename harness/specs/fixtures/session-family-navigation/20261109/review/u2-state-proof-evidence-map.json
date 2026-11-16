@@ -1,0 +1,525 @@
+{
+  "driven_by": "agent",
+  "actor": "u2-state-proof",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "readAt": "2026-11-09T00:54:38.091Z",
+  "source": {
+    "root": "D:/ClawX-work/session-task-unified-relay-20261109",
+    "requestedBase": "5ffcdfe89",
+    "head": "68d9603ce42f378406df19971a573ebc8106de8f",
+    "branch": "codex/session-interaction-acceptance-20261109",
+    "status": "",
+    "files": [
+      {
+        "path": "src/pages/Projects/index.tsx",
+        "sha256": "3ab5cdd083054d00b8082880f77c9d8281f06aedf53466d7a63d4817e45fadb9"
+      },
+      {
+        "path": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "bfcb7b0897510f5442fc5934a921bcaf271655fd744b81572f1279d2bd9b0e07"
+      },
+      {
+        "path": "src/pages/TaskLedger/ManagedTasks.tsx",
+        "sha256": "509aeb3a244b872cc224123398ca1f6012f3b1ed6ddc939cc1bcfd16a92104b1"
+      },
+      {
+        "path": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa"
+      },
+      {
+        "path": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "3ac4ebb8874ecf430d7384903081a96babac98e90fc2da14ea79c176deea00b8"
+      },
+      {
+        "path": "src/components/chat/ResourceChip.tsx",
+        "sha256": "35589f29758e456e2a442e84f7c792311a2460dc8cc499ab4389c1aeccd9255d"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+        "sha256": "9761a249c506e7481a8eb59c1cdd445d06d3be325224bae0a33e2ef2b8f8efe5"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts",
+        "sha256": "42092785352056b4cdea850077475a375f2d151f3b4aa1ae36a360905e2c6b1e"
+      },
+      {
+        "path": "shared/task-system/store.ts",
+        "sha256": "844655594e69a6600b2df6b6c5bfac341e5b4f7439c66788afbb666b4d2b9412"
+      }
+    ]
+  },
+  "readback": "historical-passed-results; not a rerun of current candidate",
+  "items": [
+    {
+      "ac": "TF-0658/AC8",
+      "state": "empty + narrow 960px + keyboard",
+      "meaning": "Project B empty; real task drawer Enter opens and Escape restores focus. One executed case supports these assertions.",
+      "kind": "real-electron-real-owner-local-scripted-provider",
+      "result": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-scope.tests.json",
+        "sha256": "a6924e83bde49da55c946481f7e81057fb82520fe30921bd3600e2d02b45e918",
+        "manifestSha256": "a6924e83bde49da55c946481f7e81057fb82520fe30921bd3600e2d02b45e918",
+        "manifestMatch": true
+      },
+      "command": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-scope.result.json",
+        "sha256": "4e6e0241a22abcb0a4c52f8b4ec77caa1e2a140051d427b8a0e93b6ffdae0a84",
+        "manifestSha256": "4e6e0241a22abcb0a4c52f8b4ec77caa1e2a140051d427b8a0e93b6ffdae0a84",
+        "manifestMatch": true
+      },
+      "historicalCandidate": "69dedf6e069be149dcc6d8f39e98cc70f3fe7676",
+      "exitCode": 1,
+      "assertions": [
+        {
+          "name": "project entry keeps its coordinator, task scope and session drafts while disclosure only folds the list",
+          "ok": true,
+          "testSource": "project-agent-entry.spec.ts",
+          "attempts": [
+            {
+              "status": "passed"
+            }
+          ]
+        }
+      ],
+      "sourceComparisons": [
+        {
+          "path": "tests/e2e/project-agent-entry.spec.ts",
+          "currentSha256": "b540a16b7d9e11a71c34100c5b812cbe502378650f54564c5938f8e2439648aa",
+          "historicalSha256": "b540a16b7d9e11a71c34100c5b812cbe502378650f54564c5938f8e2439648aa",
+          "match": true
+        },
+        {
+          "path": "src/pages/Projects/index.tsx",
+          "currentSha256": "3ab5cdd083054d00b8082880f77c9d8281f06aedf53466d7a63d4817e45fadb9",
+          "historicalSha256": "3ab5cdd083054d00b8082880f77c9d8281f06aedf53466d7a63d4817e45fadb9",
+          "match": true
+        },
+        {
+          "path": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+          "currentSha256": "bfcb7b0897510f5442fc5934a921bcaf271655fd744b81572f1279d2bd9b0e07",
+          "historicalSha256": "bfcb7b0897510f5442fc5934a921bcaf271655fd744b81572f1279d2bd9b0e07",
+          "match": true
+        }
+      ],
+      "artifact": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/journeys/final4-scope/project-agent-entry-projec-9a4df-closure-only-folds-the-list/project-entry.json",
+        "sha256": "b81b28726ab30c98bbb0456d66d0cbc09773c37cfc3ed3054bff70dad86d4d22",
+        "manifestSha256": "b81b28726ab30c98bbb0456d66d0cbc09773c37cfc3ed3054bff70dad86d4d22",
+        "manifestMatch": true
+      },
+      "screenshots": [
+        {
+          "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/journeys/final4-scope/project-agent-entry-projec-9a4df-closure-only-folds-the-list/task-drawer-keyboard.png",
+          "sha256": "7f2e4d01d77a8e400b3cf9ac5c8d7bbf862a5a77485c3c3f54dd6fc96dbbedd6",
+          "manifestSha256": "7f2e4d01d77a8e400b3cf9ac5c8d7bbf862a5a77485c3c3f54dd6fc96dbbedd6",
+          "manifestMatch": true
+        }
+      ]
+    },
+    {
+      "ac": "TF-0658/AC8",
+      "state": "unavailable (Ledger warning)",
+      "meaning": "Real Electron renderer with synthetic Host fixture warnings; not a permission denial.",
+      "kind": "electron-host-fixture",
+      "result": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-warnings-rerun.tests.json",
+        "sha256": "8bcf104706d206b619d9b4fb497a29ed9642638b46a6e2ed335aac9a6e9fe6f9",
+        "manifestSha256": "8bcf104706d206b619d9b4fb497a29ed9642638b46a6e2ed335aac9a6e9fe6f9",
+        "manifestMatch": true
+      },
+      "command": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-warnings-rerun.result.json",
+        "sha256": "456253bf700cece8e4a62dd0b4269929f407b9993adda7d392a0ecfd5ac54476",
+        "manifestSha256": "456253bf700cece8e4a62dd0b4269929f407b9993adda7d392a0ecfd5ac54476",
+        "manifestMatch": true
+      },
+      "historicalCandidate": "69dedf6e069be149dcc6d8f39e98cc70f3fe7676",
+      "exitCode": 0,
+      "assertions": [
+        {
+          "name": "project Ledger warnings stay unavailable in the task drawer and preserve the current draft",
+          "ok": true,
+          "testSource": "session-chain-scope-faults.spec.ts",
+          "attempts": [
+            {
+              "status": "passed"
+            }
+          ]
+        }
+      ],
+      "sourceComparisons": [
+        {
+          "path": "tests/e2e/session-chain-scope-faults.spec.ts",
+          "currentSha256": "e9973857cf40666caf5a54aa312309924262e50ce7841171800a14fa4ccb4454",
+          "historicalSha256": "e9973857cf40666caf5a54aa312309924262e50ce7841171800a14fa4ccb4454",
+          "match": true
+        },
+        {
+          "path": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+          "currentSha256": "bfcb7b0897510f5442fc5934a921bcaf271655fd744b81572f1279d2bd9b0e07",
+          "historicalSha256": "bfcb7b0897510f5442fc5934a921bcaf271655fd744b81572f1279d2bd9b0e07",
+          "match": true
+        }
+      ],
+      "priorFailure": {
+        "kind": "retained-launch-timeout",
+        "result": {
+          "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-scope.tests.json",
+          "sha256": "a6924e83bde49da55c946481f7e81057fb82520fe30921bd3600e2d02b45e918",
+          "manifestSha256": "a6924e83bde49da55c946481f7e81057fb82520fe30921bd3600e2d02b45e918",
+          "manifestMatch": true
+        },
+        "command": {
+          "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-scope.result.json",
+          "sha256": "4e6e0241a22abcb0a4c52f8b4ec77caa1e2a140051d427b8a0e93b6ffdae0a84",
+          "manifestSha256": "4e6e0241a22abcb0a4c52f8b4ec77caa1e2a140051d427b8a0e93b6ffdae0a84",
+          "manifestMatch": true
+        },
+        "historicalCandidate": "69dedf6e069be149dcc6d8f39e98cc70f3fe7676",
+        "exitCode": 1,
+        "assertions": [
+          {
+            "name": "project Ledger warnings stay unavailable in the task drawer and preserve the current draft",
+            "ok": false,
+            "testSource": "session-chain-scope-faults.spec.ts",
+            "attempts": [
+              {
+                "status": "timedOut",
+                "error": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+              }
+            ]
+          }
+        ],
+        "sourceComparisons": []
+      },
+      "attachment": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/attachments/final4-warnings-rerun/2e9b6a69044c-session-chain-scope-faults-f94a847fa8f4018b0c5ad98df038c347b2fbf1c9.json",
+        "sha256": "cb9a64922704e41f9e556a6e7ce8459ab4f57cbf0fa2a7d3e1c87969a2c621c1",
+        "manifestSha256": "cb9a64922704e41f9e556a6e7ce8459ab4f57cbf0fa2a7d3e1c87969a2c621c1",
+        "manifestMatch": true
+      }
+    },
+    {
+      "ac": "TF-0658/AC8",
+      "state": "stale",
+      "meaning": "Fixture changes session generation; UI shows refresh reason and refuses navigation.",
+      "kind": "electron-host-fixture",
+      "result": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-scope.tests.json",
+        "sha256": "a6924e83bde49da55c946481f7e81057fb82520fe30921bd3600e2d02b45e918",
+        "manifestSha256": "a6924e83bde49da55c946481f7e81057fb82520fe30921bd3600e2d02b45e918",
+        "manifestMatch": true
+      },
+      "command": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-scope.result.json",
+        "sha256": "4e6e0241a22abcb0a4c52f8b4ec77caa1e2a140051d427b8a0e93b6ffdae0a84",
+        "manifestSha256": "4e6e0241a22abcb0a4c52f8b4ec77caa1e2a140051d427b8a0e93b6ffdae0a84",
+        "manifestMatch": true
+      },
+      "historicalCandidate": "69dedf6e069be149dcc6d8f39e98cc70f3fe7676",
+      "exitCode": 1,
+      "assertions": [
+        {
+          "name": "Ledger transcript navigation rejects a replaced session generation",
+          "ok": true,
+          "testSource": "session-chain-scope-faults.spec.ts",
+          "attempts": [
+            {
+              "status": "passed"
+            }
+          ]
+        }
+      ],
+      "sourceComparisons": [
+        {
+          "path": "tests/e2e/session-chain-scope-faults.spec.ts",
+          "currentSha256": "e9973857cf40666caf5a54aa312309924262e50ce7841171800a14fa4ccb4454",
+          "historicalSha256": "e9973857cf40666caf5a54aa312309924262e50ce7841171800a14fa4ccb4454",
+          "match": true
+        },
+        {
+          "path": "src/pages/TaskLedger/index.tsx",
+          "currentSha256": "0cb03d3640400549a1074e183da7a14a1f04bdadf5906e873591cf19bf724210",
+          "historicalSha256": "0cb03d3640400549a1074e183da7a14a1f04bdadf5906e873591cf19bf724210",
+          "match": true
+        }
+      ],
+      "attachment": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/attachments/final4-scope/6ae647ecf8b2-session-chain-scope-faults-6ef2e23b7062a042b0f9540d0c674b24647623e7.json",
+        "sha256": "75e2698c9f7faf9129c1850f177dc36d493385b55941ad862ebf5e96a96e2542",
+        "manifestSha256": "75e2698c9f7faf9129c1850f177dc36d493385b55941ad862ebf5e96a96e2542",
+        "manifestMatch": true
+      }
+    },
+    {
+      "ac": "TF-0658/AC8",
+      "state": "failed + retry",
+      "meaning": "WorkspaceAgentsPanel component with rejected history. This is unit evidence; no dedicated real Electron history-failure result was located in the selected package.",
+      "kind": "unit-mocked-host",
+      "result": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final-session-unit.tests.json",
+        "sha256": "5b6347a586c9f0ecc7a4860dc127f08b99a44d0fc8ab281aa9387c61a336f758",
+        "manifestSha256": "5b6347a586c9f0ecc7a4860dc127f08b99a44d0fc8ab281aa9387c61a336f758",
+        "manifestMatch": true
+      },
+      "command": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final-session-unit.result.json",
+        "sha256": "b95d823a9fbc2ddfbfbc665b14b559451dfd6630adf30bcf99c41c11ac5af4fe",
+        "manifestSha256": "b95d823a9fbc2ddfbfbc665b14b559451dfd6630adf30bcf99c41c11ac5af4fe",
+        "manifestMatch": true
+      },
+      "historicalCandidate": "81b84911a05da40d8bd9c0dc9f5c63cbbd071217",
+      "exitCode": 0,
+      "assertions": [
+        {
+          "name": "WorkspaceAgentsPanel transcript failure (R2) renders failed+retry instead of an empty transcript when history fails",
+          "status": "passed",
+          "testSource": "D:/ClawX-work/session-task-unified-relay-20261109/tests/unit/workspace-agents-panel-failure.test.tsx"
+        }
+      ],
+      "sourceComparisons": [
+        {
+          "path": "tests/unit/workspace-agents-panel-failure.test.tsx",
+          "currentSha256": "0d14d8c9c3a6d52d87cf1b09734c4a97b6eebca221951f520445085aa9bccf66",
+          "historicalSha256": "0d14d8c9c3a6d52d87cf1b09734c4a97b6eebca221951f520445085aa9bccf66",
+          "match": true
+        },
+        {
+          "path": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+          "currentSha256": "3ac4ebb8874ecf430d7384903081a96babac98e90fc2da14ea79c176deea00b8",
+          "historicalSha256": "3ac4ebb8874ecf430d7384903081a96babac98e90fc2da14ea79c176deea00b8",
+          "match": true
+        }
+      ]
+    },
+    {
+      "ac": "TF-0658/AC8",
+      "state": "empty versus owner failure",
+      "kind": "unit-read-model",
+      "result": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final-session-unit.tests.json",
+        "sha256": "5b6347a586c9f0ecc7a4860dc127f08b99a44d0fc8ab281aa9387c61a336f758",
+        "manifestSha256": "5b6347a586c9f0ecc7a4860dc127f08b99a44d0fc8ab281aa9387c61a336f758",
+        "manifestMatch": true
+      },
+      "command": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final-session-unit.result.json",
+        "sha256": "b95d823a9fbc2ddfbfbc665b14b559451dfd6630adf30bcf99c41c11ac5af4fe",
+        "manifestSha256": "b95d823a9fbc2ddfbfbc665b14b559451dfd6630adf30bcf99c41c11ac5af4fe",
+        "manifestMatch": true
+      },
+      "historicalCandidate": "81b84911a05da40d8bd9c0dc9f5c63cbbd071217",
+      "exitCode": 0,
+      "assertions": [
+        {
+          "name": "scoped task container distinguishes a discussion container from owner failure",
+          "status": "passed",
+          "testSource": "D:/ClawX-work/session-task-unified-relay-20261109/tests/unit/session-family-read-model.test.ts"
+        }
+      ],
+      "sourceComparisons": [
+        {
+          "path": "src/lib/session-read-model.ts",
+          "currentSha256": "b0030d796f44714ac46995869f07b7b83c1f98160d9665b7f7a5a9ba467c8623",
+          "historicalSha256": "b0030d796f44714ac46995869f07b7b83c1f98160d9665b7f7a5a9ba467c8623",
+          "match": true
+        },
+        {
+          "path": "tests/unit/session-family-read-model.test.ts",
+          "currentSha256": "0384bf6f7d04d67e71938aa06c4533bf1f366e60615daaa57f6ac82270e91d47",
+          "historicalSha256": "0384bf6f7d04d67e71938aa06c4533bf1f366e60615daaa57f6ac82270e91d47",
+          "match": true
+        }
+      ]
+    },
+    {
+      "ac": "TF-0658/AC9",
+      "state": "dependency guard",
+      "meaning": "TaskSystemStore rejects unmet dependencies and cycles. UI reason/navigation remains a candidate assertion.",
+      "kind": "unit-real-task-store",
+      "result": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final-durable-task.tests.json",
+        "sha256": "2b028a8ec4d368682085d7c654e7ff9521a597729214d6e53457ce9b87f2a969",
+        "manifestSha256": "2b028a8ec4d368682085d7c654e7ff9521a597729214d6e53457ce9b87f2a969",
+        "manifestMatch": true
+      },
+      "command": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final-durable-task.result.json",
+        "sha256": "60ce3441f5de04f331a8f6b77e5e97c3da0ad6f3ffbec168114501b984a2c61a",
+        "manifestSha256": "60ce3441f5de04f331a8f6b77e5e97c3da0ad6f3ffbec168114501b984a2c61a",
+        "manifestMatch": true
+      },
+      "historicalCandidate": "81b84911a05da40d8bd9c0dc9f5c63cbbd071217",
+      "exitCode": 0,
+      "assertions": [
+        {
+          "name": "durable product task ownership enforces dependencies and rejects cycles",
+          "status": "passed",
+          "testSource": "D:/ClawX-work/session-task-unified-relay-20261109/tests/unit/durable-task-system.test.ts"
+        }
+      ],
+      "sourceComparisons": [
+        {
+          "path": "shared/task-system/store.ts",
+          "currentSha256": "844655594e69a6600b2df6b6c5bfac341e5b4f7439c66788afbb666b4d2b9412",
+          "historicalSha256": "c9a70949e8780b11ca126086150c2c89764e5d225c9b74178dc9c55bac5fb6a0",
+          "match": false
+        },
+        {
+          "path": "tests/unit/durable-task-system.test.ts",
+          "currentSha256": "0e5d49a8b64ef39919279327a5b0f47127563070bc5b1ff13ebb08afd31af28c",
+          "historicalSha256": null,
+          "match": null
+        }
+      ]
+    },
+    {
+      "ac": "TF-0658/AC9",
+      "state": "queued intervention + owner readback",
+      "meaning": "Real runtime worker queue, lost-ack injection, receipt refresh and steer are proved. Not evidence for scheduler capacity waiting.",
+      "kind": "real-electron-real-owners-local-scripted-provider",
+      "result": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-worker.tests.json",
+        "sha256": "2762644ed4e5db9ea39f2ca517cca039d0c8300d0a3f0f79980aae359535237d",
+        "manifestSha256": "2762644ed4e5db9ea39f2ca517cca039d0c8300d0a3f0f79980aae359535237d",
+        "manifestMatch": true
+      },
+      "command": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final4-worker.result.json",
+        "sha256": "133c61300a4b524adfd3a010a9148baf91a457d3b738d7cd7b49d511a8b82fb0",
+        "manifestSha256": "133c61300a4b524adfd3a010a9148baf91a457d3b738d7cd7b49d511a8b82fb0",
+        "manifestMatch": true
+      },
+      "historicalCandidate": "69dedf6e069be149dcc6d8f39e98cc70f3fe7676",
+      "exitCode": 0,
+      "assertions": [
+        {
+          "name": "a real delegated worker receives its own task, reports separately and accepts a scoped follow-up",
+          "ok": true,
+          "testSource": "session-worker-task-journey.spec.ts",
+          "attempts": [
+            {
+              "status": "passed"
+            }
+          ]
+        }
+      ],
+      "sourceComparisons": [
+        {
+          "path": "tests/e2e/session-worker-task-journey.spec.ts",
+          "currentSha256": "670b3dc6153ca9c2687119dfa9904efafc8092ace39bad7d10d12b15eb3bfe0b",
+          "historicalSha256": "670b3dc6153ca9c2687119dfa9904efafc8092ace39bad7d10d12b15eb3bfe0b",
+          "match": true
+        },
+        {
+          "path": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+          "currentSha256": "147f171974ae99d91eca9daf74dee549605d53109110b1c901fcb940bd7dd20c",
+          "historicalSha256": "147f171974ae99d91eca9daf74dee549605d53109110b1c901fcb940bd7dd20c",
+          "match": true
+        },
+        {
+          "path": "src/components/chat/SessionDelegationStatus.tsx",
+          "currentSha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa",
+          "historicalSha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa",
+          "match": true
+        }
+      ],
+      "artifact": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/journeys/final4-worker/session-worker-task-journe-a19f1--accepts-a-scoped-follow-up/worker-task-journey.json",
+        "sha256": "9ac1ccb70358da2029ebe946f1845ef38efe058f897d8c94f5561b241756ed63",
+        "manifestSha256": "9ac1ccb70358da2029ebe946f1845ef38efe058f897d8c94f5561b241756ed63",
+        "manifestMatch": true
+      }
+    },
+    {
+      "ac": "TF-0658/AC9",
+      "state": "admission / execution / report / acceptance separate",
+      "kind": "unit-owner-shaped-fixture",
+      "result": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final-session-unit.tests.json",
+        "sha256": "5b6347a586c9f0ecc7a4860dc127f08b99a44d0fc8ab281aa9387c61a336f758",
+        "manifestSha256": "5b6347a586c9f0ecc7a4860dc127f08b99a44d0fc8ab281aa9387c61a336f758",
+        "manifestMatch": true
+      },
+      "command": {
+        "path": "D:/ClawX-work/session-task-unified-relay-20261109/harness/specs/fixtures/session-task-chain/20261109/commands/final-session-unit.result.json",
+        "sha256": "b95d823a9fbc2ddfbfbc665b14b559451dfd6630adf30bcf99c41c11ac5af4fe",
+        "manifestSha256": "b95d823a9fbc2ddfbfbc665b14b559451dfd6630adf30bcf99c41c11ac5af4fe",
+        "manifestMatch": true
+      },
+      "historicalCandidate": "81b84911a05da40d8bd9c0dc9f5c63cbbd071217",
+      "exitCode": 0,
+      "assertions": [
+        {
+          "name": "delegation stage facts keeps accepted, run completion and report delivery separate from task acceptance",
+          "status": "passed",
+          "testSource": "D:/ClawX-work/session-task-unified-relay-20261109/tests/unit/session-delegation-status.test.tsx"
+        }
+      ],
+      "sourceComparisons": [
+        {
+          "path": "src/components/chat/SessionDelegationStatus.tsx",
+          "currentSha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa",
+          "historicalSha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa",
+          "match": true
+        },
+        {
+          "path": "tests/unit/session-delegation-status.test.tsx",
+          "currentSha256": "15a6a4ac04cfae2ebe57bf6c682bc188f84cf26a3b1e979fef8f3b32fe277233",
+          "historicalSha256": "15a6a4ac04cfae2ebe57bf6c682bc188f84cf26a3b1e979fef8f3b32fe277233",
+          "match": true
+        }
+      ]
+    }
+  ],
+  "workerFacts": {
+    "status": "passed",
+    "admissionStatus": "accepted",
+    "scheduler": {
+      "executionWaves": [
+        {
+          "wave": 1,
+          "taskNodeIds": [
+            "implementer-1"
+          ],
+          "roles": [
+            "implementer"
+          ],
+          "reason": "scheduled"
+        }
+      ],
+      "metrics": {
+        "queued": 0,
+        "running": 0,
+        "scheduled": 1,
+        "skipped": 0,
+        "concurrencyCap": 5,
+        "budgetEstimate": 2
+      }
+    },
+    "sendReceipt": {
+      "phase": "queued",
+      "idempotencyKey": "98cd0cec-5446-4317-9e08-1b0b54a76119",
+      "source": "runtime-intervention",
+      "queueItemId": "qmsg_0d6852c8-5144-4630-a784-fabd18037e62"
+    },
+    "fault": "simulated-ack-loss-after-real-queue"
+  },
+  "candidate": {
+    "file": "D:/tmp/unified-management-20261109/u2-state-proof/tests/e2e/session-task-state-guidance.spec.ts",
+    "cases": 3,
+    "execution": "not_run",
+    "syntax": "D:/tmp/unified-management-20261109/u2-state-proof/syntax-check.json",
+    "knownUiGaps": [
+      "coordinator-unbound-specific-message",
+      "permission-cause-lost",
+      "dependency-reason-and-title-action"
+    ]
+  },
+  "capacity": {
+    "status": "gap_confirmed_in_source",
+    "receiptMapping": "long-session-delegation-receipt.ts maps every execution wave reason to scheduled and drops deferredReasons",
+    "ui": "SessionDelegationStatus shows statuses only; existing resource-chip is reachable but no cause-to-action link is established",
+    "newCase": "not_added"
+  }
+}

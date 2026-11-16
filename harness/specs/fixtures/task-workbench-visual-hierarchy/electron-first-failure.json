@@ -1,0 +1,194 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\durable-task-system-20261107\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/durable-task-system-20261107/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\durable-task-system-20261107\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/ClawX-work/durable-task-system-20261107/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/durable-task-system-20261107/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "durable-task-conversation.spec.ts",
+      "file": "durable-task-conversation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "normal conversation shows one task header and reveals file changes below the input",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 58212,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('composer-git-strip')\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('composer-git-strip')\u001b[22m\n\u001b[2m    18 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('composer-git-strip')\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('composer-git-strip')\u001b[22m\n\u001b[2m    18 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at D:\\ClawX-work\\durable-task-system-20261107\\tests\\e2e\\durable-task-conversation.spec.ts:116:58",
+                    "location": {
+                      "file": "D:\\ClawX-work\\durable-task-system-20261107\\tests\\e2e\\durable-task-conversation.spec.ts",
+                      "column": 58,
+                      "line": 116
+                    },
+                    "snippet": "  114 |     await page.getByTestId(`sidebar-session-${session.key}`).click();\n  115 |     await expect(page.getByTestId(\"session-task-dock\")).toHaveCount(0);\n> 116 |     await expect(page.getByTestId('composer-git-strip')).toHaveCount(0);\n      |                                                          ^\n  117 |     await expect(page.getByTestId('chat-header-session-name')).toHaveText('Chat options');\n  118 |     await expect(page.getByTestId('chat-header-branch')).toHaveCount(0);\n  119 |     const require = createRequire(join(process.cwd(), \"package.json\"));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\durable-task-system-20261107\\tests\\e2e\\durable-task-conversation.spec.ts",
+                        "column": 58,
+                        "line": 116
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('composer-git-strip')\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('composer-git-strip')\u001b[22m\n\u001b[2m    18 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  114 |     await page.getByTestId(`sidebar-session-${session.key}`).click();\n  115 |     await expect(page.getByTestId(\"session-task-dock\")).toHaveCount(0);\n> 116 |     await expect(page.getByTestId('composer-git-strip')).toHaveCount(0);\n      |                                                          ^\n  117 |     await expect(page.getByTestId('chat-header-session-name')).toHaveText('Chat options');\n  118 |     await expect(page.getByTestId('chat-header-branch')).toHaveCount(0);\n  119 |     const require = createRequire(join(process.cwd(), \"package.json\"));\n    at D:\\ClawX-work\\durable-task-system-20261107\\tests\\e2e\\durable-task-conversation.spec.ts:116:58"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T15:25:18.503Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\ClawX-work\\durable-task-system-20261107\\test-results\\durable-task-conversation--10968-ile-changes-below-the-input\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\ClawX-work\\durable-task-system-20261107\\test-results\\durable-task-conversation--10968-ile-changes-below-the-input\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\ClawX-work\\durable-task-system-20261107\\test-results\\durable-task-conversation--10968-ile-changes-below-the-input\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\durable-task-system-20261107\\tests\\e2e\\durable-task-conversation.spec.ts",
+                    "column": 58,
+                    "line": 116
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "14f8b4d914ec7029397d-87a9da8653c0b51ea85f",
+          "file": "durable-task-conversation.spec.ts",
+          "line": 31,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "durable-task-system.spec.ts",
+      "file": "durable-task-system.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "persists a product goal through actual Main storage and page reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10428,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T15:26:17.367Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "845ae037d74f93538150-79a6ff35747ccb5d928d",
+          "file": "durable-task-system.spec.ts",
+          "line": 7,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T15:25:17.016Z",
+    "duration": 72677.689,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schema": "G7IntegrationGates/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "measuredCandidate": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+  "integrationHead": "46d2e27df3cc9b9bbe82ab5a1038735261a9daf7",
+  "checks": [
+    {
+      "name": "integration-unit",
+      "exitCode": 0
+    },
+    {
+      "name": "integration-contract-correct",
+      "exitCode": 0
+    },
+    {
+      "name": "integration-duplicates",
+      "exitCode": 0
+    },
+    {
+      "name": "integration-typecheck-prerequisites",
+      "exitCode": 0
+    },
+    {
+      "name": "integration-harness-ci",
+      "exitCode": 0
+    },
+    {
+      "name": "integration-harness-closeout",
+      "exitCode": 0
+    },
+    {
+      "name": "integration-harness-dry-run",
+      "exitCode": 0
+    },
+    {
+      "name": "verify-round9-retained",
+      "exitCode": 0
+    }
+  ],
+  "unitCount": 68,
+  "harnessCICount": 59,
+  "tokenBenefitRetained": true,
+  "remainingRepositoryArtifactIssues": 110,
+  "remainingIssuePaths": "existing G8/UI evidence only",
+  "fullHarnessCI": {
+    "exitCode": 0,
+    "unitCount": 59,
+    "agentDevGrade": "B",
+    "disqualifiers": [],
+    "evidenceRefs": 188,
+    "testCoverage": {
+      "gateway": 30,
+      "services": 125
+    }
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "node": 0,
+    "web": 0,
+    "test": 0,
+    "cacheEnabled": false,
+    "dependencyPrerequisite": "Local VerseBrowser declarations built after verifying upstream patch; installed dependencies reused."
+  }
+}

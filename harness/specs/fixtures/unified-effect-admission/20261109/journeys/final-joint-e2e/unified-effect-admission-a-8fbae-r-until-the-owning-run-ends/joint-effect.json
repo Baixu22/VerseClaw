@@ -1,0 +1,178 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-joint-admission",
+  "provider": "local-scripted",
+  "status": "passed",
+  "project": {
+    "workspaceId": "joint-writers",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\joint-validation\\final-joint-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace",
+    "sessionKey": "agent:main:session-1794178532274-jointwriters",
+    "generation": "9df0ca8f-3450-441d-bd1b-c31e0d5298d8"
+  },
+  "tasks": {
+    "a": "7e30e9da-47ac-413c-924a-eb0aba897afd",
+    "b": "bfeee91e-7fd4-49c7-ad86-cb4aae702175"
+  },
+  "during": [
+    {
+      "schema": 1,
+      "root": "d:\\tmp\\unified-management-20261109\\joint-validation\\final-joint-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace",
+      "incarnation": "3325120695:68679894323941689:1794178532034039300",
+      "generation": "base:3325120695:68679894323941689:1794178532034039300",
+      "epoch": 1,
+      "token": "3564faf7-3a07-4d64-b938-0e7baea04e3d",
+      "owner": {
+        "kind": "run",
+        "run": {
+          "runId": "WRITER-A",
+          "scope": {
+            "workspaceId": "joint-writers",
+            "projectId": "joint-writers",
+            "sessionKey": "agent:main:session-1794178532274-jointwriters"
+          }
+        },
+        "agentId": "main",
+        "sessionGeneration": "9df0ca8f-3450-441d-bd1b-c31e0d5298d8",
+        "bindingRevision": 2,
+        "task": {
+          "authorityId": "cda5a429ab843064ad602e7a550be299d9df2bcfeb2114f2bacb90bb40283400",
+          "taskNodeId": "7e30e9da-47ac-413c-924a-eb0aba897afd",
+          "epoch": 1,
+          "contractRevision": 1
+        }
+      },
+      "requestId": "execution:688269a5d08f4cd6b9107fc11090e68827fe1890d2f6beacec51323a5d80529a",
+      "requestDigest": "7f8865c1076a75bbf290cf0ce2a34450f85ab11c270eb471095463a3fa42b5d2",
+      "state": "active",
+      "acquiredAt": 1794178552403,
+      "expiresAt": null,
+      "operations": [
+        {
+          "id": "WRITER-A:writer-a",
+          "digest": "002f86d670ab215ec99b6d3995026cbfdadd5a4b50336ff133aa37f9d96e1a00",
+          "state": "settled",
+          "receipt": {
+            "outcome": "completed",
+            "ownerReceipt": "runtime-tool:WRITER-A:writer-a"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "id": "execution:688269a5d08f4cd6b9107fc11090e68827fe1890d2f6beacec51323a5d80529a",
+          "digest": "7f8865c1076a75bbf290cf0ce2a34450f85ab11c270eb471095463a3fa42b5d2",
+          "epoch": 1
+        }
+      ],
+      "holderPid": 16288,
+      "holderIncarnation": "134386521272976283"
+    }
+  ],
+  "after": [
+    {
+      "schema": 1,
+      "root": "d:\\tmp\\unified-management-20261109\\joint-validation\\final-joint-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace",
+      "incarnation": "3325120695:68679894323941689:1794178532034039300",
+      "generation": "base:3325120695:68679894323941689:1794178532034039300",
+      "epoch": 2,
+      "token": "17040a8a-c3bf-4f28-9145-a3effeada7c9",
+      "owner": {
+        "kind": "run",
+        "run": {
+          "runId": "WRITER-CONTINUE",
+          "scope": {
+            "workspaceId": "joint-writers",
+            "projectId": "joint-writers",
+            "sessionKey": "agent:main:dashboard:b605596b-4c82-4027-92ee-1831af2e43f5"
+          }
+        },
+        "agentId": "main",
+        "sessionGeneration": "3e3973b3-9e56-4b18-b7e8-c022c1c02687",
+        "bindingRevision": 3,
+        "task": {
+          "authorityId": "cda5a429ab843064ad602e7a550be299d9df2bcfeb2114f2bacb90bb40283400",
+          "taskNodeId": "bfeee91e-7fd4-49c7-ad86-cb4aae702175",
+          "epoch": 1,
+          "contractRevision": 1
+        }
+      },
+      "requestId": "execution:fdf1d3a3c275be7b4a7175e45ff387a8febccf8599f49a91433eb432de560c0c",
+      "requestDigest": "8553867946e064a315e9fd24f7101c0bfa6f6fc255a3a80b9ef1bcb6461356fb",
+      "state": "released",
+      "acquiredAt": 1794178567701,
+      "expiresAt": null,
+      "operations": [
+        {
+          "id": "WRITER-CONTINUE:writer-b-next",
+          "digest": "15d0ce956fc573548d3fd51c4831620b88fd491b771a588a01a6fd3234a2405d",
+          "state": "settled",
+          "receipt": {
+            "outcome": "completed",
+            "ownerReceipt": "runtime-tool:WRITER-CONTINUE:writer-b-next"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "id": "execution:688269a5d08f4cd6b9107fc11090e68827fe1890d2f6beacec51323a5d80529a",
+          "digest": "7f8865c1076a75bbf290cf0ce2a34450f85ab11c270eb471095463a3fa42b5d2",
+          "epoch": 1
+        },
+        {
+          "id": "execution:fdf1d3a3c275be7b4a7175e45ff387a8febccf8599f49a91433eb432de560c0c",
+          "digest": "8553867946e064a315e9fd24f7101c0bfa6f6fc255a3a80b9ef1bcb6461356fb",
+          "epoch": 2
+        }
+      ],
+      "holderPid": 16288,
+      "holderIncarnation": "134386521272976283",
+      "terminalReceipt": {
+        "runId": "WRITER-CONTINUE",
+        "sessionGeneration": "3e3973b3-9e56-4b18-b7e8-c022c1c02687",
+        "endedAt": 1794178568442,
+        "ownerReceipt": "runtime-run-terminal:WRITER-CONTINUE"
+      }
+    }
+  ],
+  "providerLog": [
+    {
+      "turn": "[Mon 2026-11-09 06:55 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "writer-a"
+    },
+    {
+      "turn": "[Mon 2026-11-09 06:55 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "writer-b-blocked"
+    },
+    {
+      "turn": "[Mon 2026-11-09 06:55 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "writerbblocked": "{\n  \"status\": \"error\",\n  \"tool\": \"write\",\n  \"error\": \"checkout_writer_busy\"\n}"
+      },
+      "issued": "text:WRITER-B-OBSERVED"
+    },
+    {
+      "turn": "[Mon 2026-11-09 06:55 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "writera": "Successfully wrote 9 bytes to D:\\tmp\\unified-management-20261109\\joint-validation\\final-joint-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace\\result.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:WRITER-A-ENDED"
+    },
+    {
+      "turn": "[Mon 2026-11-09 06:55 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {
+        "writerbblocked": "{\n  \"status\": \"error\",\n  \"tool\": \"write\",\n  \"error\": \"checkout_writer_busy\"\n}"
+      },
+      "issued": "writer-b-next"
+    },
+    {
+      "turn": "[Mon 2026-11-09 06:55 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {
+        "writerbblocked": "{\n  \"status\": \"error\",\n  \"tool\": \"write\",\n  \"error\": \"checkout_writer_busy\"\n}",
+        "writerbnext": "Successfully wrote 9 bytes to D:\\tmp\\unified-management-20261109\\joint-validation\\final-joint-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace\\result.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:WRITER-FINISHED"
+    }
+  ]
+}

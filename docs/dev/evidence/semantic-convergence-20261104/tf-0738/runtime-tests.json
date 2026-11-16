@@ -1,0 +1,1623 @@
+{
+  "numTotalTestSuites": 15,
+  "numPassedTestSuites": 15,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 97,
+  "numPassedTests": 97,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793788926021,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 exempts exact historical copies once, but charges rewritten or duplicated messages",
+          "status": "passed",
+          "title": "exempts exact historical copies once, but charges rewritten or duplicated messages",
+          "duration": 2.4174000000002707,
+          "failureMessages": [],
+          "location": {
+            "line": 43,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 accepts structured replacements atomically after higher precedence (exhausted=false)",
+          "status": "passed",
+          "title": "accepts structured replacements atomically after higher precedence (exhausted=false)",
+          "duration": 2.207700000000841,
+          "failureMessages": [],
+          "location": {
+            "line": 54,
+            "column": 24
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 accepts structured replacements atomically after higher precedence (exhausted=true)",
+          "status": "passed",
+          "title": "accepts structured replacements atomically after higher precedence (exhausted=true)",
+          "duration": 1.745600000000195,
+          "failureMessages": [],
+          "location": {
+            "line": 54,
+            "column": 24
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 does not charge a replacement after the original history was repaired",
+          "status": "passed",
+          "title": "does not charge a replacement after the original history was repaired",
+          "duration": 0.31309999999939464,
+          "failureMessages": [],
+          "location": {
+            "line": 108,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 uses authority identity for dedup and projection identity for candidate lineage",
+          "status": "passed",
+          "title": "uses authority identity for dedup and projection identity for candidate lineage",
+          "duration": 0.3716000000003987,
+          "failureMessages": [],
+          "location": {
+            "line": 134,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 sorts every source by declared precedence independent of collection order",
+          "status": "passed",
+          "title": "sorts every source by declared precedence independent of collection order",
+          "duration": 3.254000000000815,
+          "failureMessages": [],
+          "location": {
+            "line": 164,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 deduplicates only the same authority identity, revision, and target",
+          "status": "passed",
+          "title": "deduplicates only the same authority identity, revision, and target",
+          "duration": 1.2559000000001106,
+          "failureMessages": [],
+          "location": {
+            "line": 201,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 drops duplicate authority objects before charging the one turn ledger",
+          "status": "passed",
+          "title": "drops duplicate authority objects before charging the one turn ledger",
+          "duration": 1.9588999999996304,
+          "failureMessages": [],
+          "location": {
+            "line": 224,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ContextCandidate/v1"
+          ],
+          "fullName": "ContextCandidate/v1 records truncate, drop, empty, flag-off, and kill-switch decisions explicitly",
+          "status": "passed",
+          "title": "records truncate, drop, empty, flag-off, and kill-switch decisions explicitly",
+          "duration": 2.4135999999998603,
+          "failureMessages": [],
+          "location": {
+            "line": 263,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788937198,
+      "endTime": 1793788937214.4136,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/context-candidate.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "keeps the retired COMPASS pre-reply injection from producing prompt candidates",
+          "status": "passed",
+          "title": "keeps the retired COMPASS pre-reply injection from producing prompt candidates",
+          "duration": 8.095500000001266,
+          "failureMessages": [],
+          "location": {
+            "line": 58,
+            "column": 1
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "kill prevents preparation queries and projection of queued candidates",
+          "status": "passed",
+          "title": "kill prevents preparation queries and projection of queued candidates",
+          "duration": 1.6512999999995372,
+          "failureMessages": [],
+          "location": {
+            "line": 101,
+            "column": 24
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "off prevents preparation queries and projection of queued candidates",
+          "status": "passed",
+          "title": "off prevents preparation queries and projection of queued candidates",
+          "duration": 1.9190999999991618,
+          "failureMessages": [],
+          "location": {
+            "line": 101,
+            "column": 24
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "does not claim complete facts when the retired retrieval path cannot produce text",
+          "status": "passed",
+          "title": "does not claim complete facts when the retired retrieval path cannot produce text",
+          "duration": 1.619700000001103,
+          "failureMessages": [],
+          "location": {
+            "line": 136,
+            "column": 1
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "CLI projection produces no prompt and releases its collection after retirement",
+          "status": "passed",
+          "title": "CLI projection produces no prompt and releases its collection after retirement",
+          "duration": 1.5541999999986729,
+          "failureMessages": [],
+          "location": {
+            "line": 154,
+            "column": 1
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "seal attribution counts projected bytes once and retains them after a collection reopens",
+          "status": "passed",
+          "title": "seal attribution counts projected bytes once and retains them after a collection reopens",
+          "duration": 0.3297000000002299,
+          "failureMessages": [],
+          "location": {
+            "line": 163,
+            "column": 1
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "#182 keeps a COMPASS-injected fact out of the memory pilot block",
+          "status": "passed",
+          "title": "#182 keeps a COMPASS-injected fact out of the memory pilot block",
+          "duration": 1.7374999999992724,
+          "failureMessages": [],
+          "location": {
+            "line": 178,
+            "column": 1
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788937369,
+      "endTime": 1793788937385.7375,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt flag-off matrix: zero injection, preserves base prompt bytes",
+          "status": "passed",
+          "title": "flag-off matrix: zero injection, preserves base prompt bytes",
+          "duration": 1.2814999999991414,
+          "failureMessages": [],
+          "location": {
+            "line": 107,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt memory-only canary injects Memory Context",
+          "status": "passed",
+          "title": "memory-only canary injects Memory Context",
+          "duration": 1.2122999999992317,
+          "failureMessages": [],
+          "location": {
+            "line": 125,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt keeps the selected runtime-memory provider in deferred lineage",
+          "status": "passed",
+          "title": "keeps the selected runtime-memory provider in deferred lineage",
+          "duration": 3.2854999999999563,
+          "failureMessages": [],
+          "location": {
+            "line": 143,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt does not scope memory to an ephemeral runId, but preserves an explicit stable taskId",
+          "status": "passed",
+          "title": "does not scope memory to an ephemeral runId, but preserves an explicit stable taskId",
+          "duration": 0.8212000000003172,
+          "failureMessages": [],
+          "location": {
+            "line": 181,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt vtoken-only stage no longer injects because VToken is retired",
+          "status": "passed",
+          "title": "vtoken-only stage no longer injects because VToken is retired",
+          "duration": 0.34180000000014843,
+          "failureMessages": [],
+          "location": {
+            "line": 238,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt memory still composes while the retired vtoken stage stays silent",
+          "status": "passed",
+          "title": "memory still composes while the retired vtoken stage stays silent",
+          "duration": 0.45759999999972933,
+          "failureMessages": [],
+          "location": {
+            "line": 255,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt kill switch cuts both stages fail-closed",
+          "status": "passed",
+          "title": "kill switch cuts both stages fail-closed",
+          "duration": 0.500899999999092,
+          "failureMessages": [],
+          "location": {
+            "line": 281,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt records lineage for diagnostics (session/run/sources/budget)",
+          "status": "passed",
+          "title": "records lineage for diagnostics (session/run/sources/budget)",
+          "duration": 0.855199999999968,
+          "failureMessages": [],
+          "location": {
+            "line": 307,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt defers the remaining memory stage and projects it after finalize",
+          "status": "passed",
+          "title": "defers the remaining memory stage and projects it after finalize",
+          "duration": 3.473100000001068,
+          "failureMessages": [],
+          "location": {
+            "line": 333,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt does not query lazy VToken memory inputs while its flag is off",
+          "status": "passed",
+          "title": "does not query lazy VToken memory inputs while its flag is off",
+          "duration": 0.8523000000004686,
+          "failureMessages": [],
+          "location": {
+            "line": 376,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt nativeMemory=true negotiates memory and vtoken flag-off before provider queries",
+          "status": "passed",
+          "title": "nativeMemory=true negotiates memory and vtoken flag-off before provider queries",
+          "duration": 1.4937000000008993,
+          "failureMessages": [],
+          "location": {
+            "line": 403,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt nativeContextGating=true closes both channels and keeps the provenance receipt",
+          "status": "passed",
+          "title": "nativeContextGating=true closes both channels and keeps the provenance receipt",
+          "duration": 1.4187999999994645,
+          "failureMessages": [],
+          "location": {
+            "line": 444,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt reads native capability declarations from cfg.capabilities when input omits them",
+          "status": "passed",
+          "title": "reads native capability declarations from cfg.capabilities when input omits them",
+          "duration": 1.3598999999994703,
+          "failureMessages": [],
+          "location": {
+            "line": 476,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt nativeContextGating=true gates BlockStore candidates at finalize and keeps the receipt",
+          "status": "passed",
+          "title": "nativeContextGating=true gates BlockStore candidates at finalize and keeps the receipt",
+          "duration": 2.474400000000969,
+          "failureMessages": [],
+          "location": {
+            "line": 501,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt absent native capability declarations keep the retired VToken stage silent",
+          "status": "passed",
+          "title": "absent native capability declarations keep the retired VToken stage silent",
+          "duration": 0.27549999999973807,
+          "failureMessages": [],
+          "location": {
+            "line": 547,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt does not construct Memory providers or query VToken when the kill switch is on",
+          "status": "passed",
+          "title": "does not construct Memory providers or query VToken when the kill switch is on",
+          "duration": 0.3621999999995751,
+          "failureMessages": [],
+          "location": {
+            "line": 565,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788937155,
+      "endTime": 1793788937176.3623,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/context-orchestrator.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority declares an authority for all five mutation fields",
+          "status": "passed",
+          "title": "declares an authority for all five mutation fields",
+          "duration": 0.3779000000013184,
+          "failureMessages": [],
+          "location": {
+            "line": 47,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority rejects an undeclared systemPrompt replacement in enforce mode",
+          "status": "passed",
+          "title": "rejects an undeclared systemPrompt replacement in enforce mode",
+          "duration": 0.310299999999188,
+          "failureMessages": [],
+          "location": {
+            "line": 66,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority rejects an undeclared message replacement in enforce mode",
+          "status": "passed",
+          "title": "rejects an undeclared message replacement in enforce mode",
+          "duration": 0.1265000000003056,
+          "failureMessages": [],
+          "location": {
+            "line": 81,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority still allows append_data by default for undeclared producers",
+          "status": "passed",
+          "title": "still allows append_data by default for undeclared producers",
+          "duration": 0.08729999999923166,
+          "failureMessages": [],
+          "location": {
+            "line": 89,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority allows a matching declaration and rejects mismatches explicitly",
+          "status": "passed",
+          "title": "allows a matching declaration and rejects mismatches explicitly",
+          "duration": 0.38370000000031723,
+          "failureMessages": [],
+          "location": {
+            "line": 95,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority warns instead of throwing outside enforce mode, and never downgrades silently",
+          "status": "passed",
+          "title": "warns instead of throwing outside enforce mode, and never downgrades silently",
+          "duration": 0.34939999999915017,
+          "failureMessages": [],
+          "location": {
+            "line": 121,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority enforces the same rule at the context-candidate collection boundary",
+          "status": "passed",
+          "title": "enforces the same rule at the context-candidate collection boundary",
+          "duration": 0.30389999999897555,
+          "failureMessages": [],
+          "location": {
+            "line": 133,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority declares built-in context producers so enforce mode keeps the product path",
+          "status": "passed",
+          "title": "declares built-in context producers so enforce mode keeps the product path",
+          "duration": 0.4796999999998661,
+          "failureMessages": [],
+          "location": {
+            "line": 147,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority keeps message append as default-data in enforce mode",
+          "status": "passed",
+          "title": "keeps message append as default-data in enforce mode",
+          "duration": 0.18810000000121363,
+          "failureMessages": [],
+          "location": {
+            "line": 174,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority parses the host enforce switch, defaulting to warn",
+          "status": "passed",
+          "title": "parses the host enforce switch, defaulting to warn",
+          "duration": 0.6409000000003289,
+          "failureMessages": [],
+          "location": {
+            "line": 187,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (dcs-knowledge)",
+          "status": "passed",
+          "title": "does not derive replacement permission from a built-in source name (dcs-knowledge)",
+          "duration": 0.2305000000014843,
+          "failureMessages": [],
+          "location": {
+            "line": 201,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (context-block:knowledge)",
+          "status": "passed",
+          "title": "does not derive replacement permission from a built-in source name (context-block:knowledge)",
+          "duration": 0.11790000000110012,
+          "failureMessages": [],
+          "location": {
+            "line": 201,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (compass-ssp)",
+          "status": "passed",
+          "title": "does not derive replacement permission from a built-in source name (compass-ssp)",
+          "duration": 0.0944999999992433,
+          "failureMessages": [],
+          "location": {
+            "line": 201,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (session-start:summary)",
+          "status": "passed",
+          "title": "does not derive replacement permission from a built-in source name (session-start:summary)",
+          "duration": 0.0874999999996362,
+          "failureMessages": [],
+          "location": {
+            "line": 201,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (memory-inject-pilot:runtime-memory)",
+          "status": "passed",
+          "title": "does not derive replacement permission from a built-in source name (memory-inject-pilot:runtime-memory)",
+          "duration": 0.08849999999983993,
+          "failureMessages": [],
+          "location": {
+            "line": 201,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority does not register synthetic names or broaden exact core IDs by prefix",
+          "status": "passed",
+          "title": "does not register synthetic names or broaden exact core IDs by prefix",
+          "duration": 0.138200000001234,
+          "failureMessages": [],
+          "location": {
+            "line": 216,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority enforces the host environment mode at the candidate boundary",
+          "status": "passed",
+          "title": "enforces the host environment mode at the candidate boundary",
+          "duration": 0.3011999999998807,
+          "failureMessages": [],
+          "location": {
+            "line": 228,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0737 prompt contribution authority"
+          ],
+          "fullName": "TF-0737 prompt contribution authority enforces the host mode through the default hook-runner construction",
+          "status": "passed",
+          "title": "enforces the host mode through the default hook-runner construction",
+          "duration": 2.6911999999992986,
+          "failureMessages": [],
+          "location": {
+            "line": 247,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788936885,
+      "endTime": 1793788936891.6912,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) is a no-op when the RC-03 flag is off (legacy path byte-identical)",
+          "status": "passed",
+          "title": "is a no-op when the RC-03 flag is off (legacy path byte-identical)",
+          "duration": 108.90800000000127,
+          "failureMessages": [],
+          "location": {
+            "line": 68,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) runs through finalizeContextOrchestratorTurn and persists a ContextReceipt/v1 when enabled",
+          "status": "passed",
+          "title": "runs through finalizeContextOrchestratorTurn and persists a ContextReceipt/v1 when enabled",
+          "duration": 101.3796999999995,
+          "failureMessages": [],
+          "location": {
+            "line": 81,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) is killed (no seal, no receipt) when the enhancement kill switch is engaged",
+          "status": "passed",
+          "title": "is killed (no seal, no receipt) when the enhancement kill switch is engaged",
+          "duration": 77.45809999999983,
+          "failureMessages": [],
+          "location": {
+            "line": 118,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) enforces zero-bypass: all registered pre-seal producers are present",
+          "status": "passed",
+          "title": "enforces zero-bypass: all registered pre-seal producers are present",
+          "duration": 74.83720000000176,
+          "failureMessages": [],
+          "location": {
+            "line": 130,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: a normal agent turn seals from real source-runtime config without test parameters",
+          "status": "passed",
+          "title": "RC-03R: a normal agent turn seals from real source-runtime config without test parameters",
+          "duration": 64.91120000000046,
+          "failureMessages": [],
+          "location": {
+            "line": 142,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: the seal stays off when the config says off and no env override exists",
+          "status": "passed",
+          "title": "RC-03R: the seal stays off when the config says off and no env override exists",
+          "duration": 70.30529999999999,
+          "failureMessages": [],
+          "location": {
+            "line": 179,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: the enhancement kill switch restores the legacy path byte-for-byte",
+          "status": "passed",
+          "title": "RC-03R: the enhancement kill switch restores the legacy path byte-for-byte",
+          "duration": 109.09490000000005,
+          "failureMessages": [],
+          "location": {
+            "line": 190,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: records real producer execution, not blanket applied",
+          "status": "passed",
+          "title": "RC-03R: records real producer execution, not blanket applied",
+          "duration": 72.12329999999929,
+          "failureMessages": [],
+          "location": {
+            "line": 209,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R/F-02: appliedProducerIdsFromLineage resolves real assembler source ids, not only shorthands",
+          "status": "passed",
+          "title": "RC-03R/F-02: appliedProducerIdsFromLineage resolves real assembler source ids, not only shorthands",
+          "duration": 2.3665000000000873,
+          "failureMessages": [],
+          "location": {
+            "line": 252,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) R3-1: runtime-memory provider id survives ContextReceipt selection refs",
+          "status": "passed",
+          "title": "R3-1: runtime-memory provider id survives ContextReceipt selection refs",
+          "duration": 81.70290000000023,
+          "failureMessages": [],
+          "location": {
+            "line": 280,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R/F-02: the persisted ContextReceipt budget is the real char summary, not silently omitted",
+          "status": "passed",
+          "title": "RC-03R/F-02: the persisted ContextReceipt budget is the real char summary, not silently omitted",
+          "duration": 78.66350000000057,
+          "failureMessages": [],
+          "location": {
+            "line": 318,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: receipt write failure lands in the census diagnostics and fails acceptance",
+          "status": "passed",
+          "title": "RC-03R: receipt write failure lands in the census diagnostics and fails acceptance",
+          "duration": 3.9151999999994587,
+          "failureMessages": [],
+          "location": {
+            "line": 352,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: resolveRc03SealState honors env, config, and the kill switch",
+          "status": "passed",
+          "title": "RC-03R: resolveRc03SealState honors env, config, and the kill switch",
+          "duration": 1.8557000000000698,
+          "failureMessages": [],
+          "location": {
+            "line": 373,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: guarded wire boundary persists WireReceipt/v1 bound to the sealed plan and final body digest",
+          "status": "passed",
+          "title": "RC-03R: guarded wire boundary persists WireReceipt/v1 bound to the sealed plan and final body digest",
+          "duration": 1228.7765,
+          "failureMessages": [],
+          "location": {
+            "line": 385,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: a system prompt changed after the seal is an unknown semantic mutation in the census",
+          "status": "passed",
+          "title": "RC-03R: a system prompt changed after the seal is an unknown semantic mutation in the census",
+          "duration": 76.67150000000038,
+          "failureMessages": [],
+          "location": {
+            "line": 522,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: ContextEngine message replacement is applied only on the attempt that replaced",
+          "status": "passed",
+          "title": "RC-03R: ContextEngine message replacement is applied only on the attempt that replaced",
+          "duration": 71.54920000000129,
+          "failureMessages": [],
+          "location": {
+            "line": 581,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RC-03 production wiring (seal hook at the pre-seal convergence point)"
+          ],
+          "fullName": "RC-03 production wiring (seal hook at the pre-seal convergence point) RC-03R: system-prompt contributions are attributed only while the seal is on",
+          "status": "passed",
+          "title": "RC-03R: system-prompt contributions are attributed only while the seal is on",
+          "duration": 95.23140000000058,
+          "failureMessages": [],
+          "location": {
+            "line": 597,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788934532,
+      "endTime": 1793788936853.2314,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "FP-P0-05 precedence"
+          ],
+          "fullName": "FP-P0-05 precedence orders correctness-bearing context before enrichment",
+          "status": "passed",
+          "title": "orders correctness-bearing context before enrichment",
+          "duration": 0.46010000000023865,
+          "failureMessages": [],
+          "location": {
+            "line": 34,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 precedence"
+          ],
+          "fullName": "FP-P0-05 precedence declares a total order with no duplicates",
+          "status": "passed",
+          "title": "declares a total order with no duplicates",
+          "duration": 0.1856999999999971,
+          "failureMessages": [],
+          "location": {
+            "line": 42,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget all sources in one turn share a single budget instance",
+          "status": "passed",
+          "title": "all sources in one turn share a single budget instance",
+          "duration": 0.890400000000227,
+          "failureMessages": [],
+          "location": {
+            "line": 48,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget keeps separate turns on separate accounts",
+          "status": "passed",
+          "title": "keeps separate turns on separate accounts",
+          "duration": 0.8271999999997206,
+          "failureMessages": [],
+          "location": {
+            "line": 57,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget accounting sums: applied + dropped + truncated-loss == requested",
+          "status": "passed",
+          "title": "accounting sums: applied + dropped + truncated-loss == requested",
+          "duration": 3.422099999999773,
+          "failureMessages": [],
+          "location": {
+            "line": 64,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget degrades later-precedence sources first and the order is reproducible",
+          "status": "passed",
+          "title": "degrades later-precedence sources first and the order is reproducible",
+          "duration": 4.845799999999144,
+          "failureMessages": [],
+          "location": {
+            "line": 75,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget protects later-charging DCS capacity from an earlier CVK charge without fake entries",
+          "status": "passed",
+          "title": "protects later-charging DCS capacity from an earlier CVK charge without fake entries",
+          "duration": 3.3747000000003027,
+          "failureMessages": [],
+          "location": {
+            "line": 94,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget distinguishes drop / truncate / skip in observation",
+          "status": "passed",
+          "title": "distinguishes drop / truncate / skip in observation",
+          "duration": 2.9737999999997555,
+          "failureMessages": [],
+          "location": {
+            "line": 116,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget treats an empty/absent injection as skip, not as a drop",
+          "status": "passed",
+          "title": "treats an empty/absent injection as skip, not as a drop",
+          "duration": 2.1152000000001863,
+          "failureMessages": [],
+          "location": {
+            "line": 129,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget kill switch zeroes the books: total 0, nothing applied, every entry skip",
+          "status": "passed",
+          "title": "kill switch zeroes the books: total 0, nothing applied, every entry skip",
+          "duration": 1.2159999999985303,
+          "failureMessages": [],
+          "location": {
+            "line": 139,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget raises the drop alert only past the declared ratio",
+          "status": "passed",
+          "title": "raises the drop alert only past the declared ratio",
+          "duration": 2.999100000000908,
+          "failureMessages": [],
+          "location": {
+            "line": 153,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget does not eliminate degradation by enlarging the total (accounting stays honest)",
+          "status": "passed",
+          "title": "does not eliminate degradation by enlarging the total (accounting stays honest)",
+          "duration": 1.4883000000008906,
+          "failureMessages": [],
+          "location": {
+            "line": 167,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P0-05 shared budget"
+          ],
+          "fullName": "FP-P0-05 shared budget end frees the ledger so turns cannot leak into each other",
+          "status": "passed",
+          "title": "end frees the ledger so turns cannot leak into each other",
+          "duration": 1.0570999999999913,
+          "failureMessages": [],
+          "location": {
+            "line": 177,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P2-04 config overrides"
+          ],
+          "fullName": "FP-P2-04 config overrides defaults to the FP-P0-05 starting-line values",
+          "status": "passed",
+          "title": "defaults to the FP-P0-05 starting-line values",
+          "duration": 1.0072000000000116,
+          "failureMessages": [],
+          "location": {
+            "line": 188,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P2-04 config overrides"
+          ],
+          "fullName": "FP-P2-04 config overrides setTurnInjectionBudgetConfig overrides the effective total",
+          "status": "passed",
+          "title": "setTurnInjectionBudgetConfig overrides the effective total",
+          "duration": 0.14830000000074506,
+          "failureMessages": [],
+          "location": {
+            "line": 193,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P2-04 config overrides"
+          ],
+          "fullName": "FP-P2-04 config overrides setTurnInjectionBudgetConfig overrides the effective drop alert ratio",
+          "status": "passed",
+          "title": "setTurnInjectionBudgetConfig overrides the effective drop alert ratio",
+          "duration": 1.3135000000002037,
+          "failureMessages": [],
+          "location": {
+            "line": 201,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P2-04 config overrides"
+          ],
+          "fullName": "FP-P2-04 config overrides resetTurnInjectionBudgetsForTests restores the FP-P0-05 defaults",
+          "status": "passed",
+          "title": "resetTurnInjectionBudgetsForTests restores the FP-P0-05 defaults",
+          "duration": 1.1810999999997875,
+          "failureMessages": [],
+          "location": {
+            "line": 211,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P2-04 config overrides"
+          ],
+          "fullName": "FP-P2-04 config overrides reads runtime.contextBlock.injectionBudget.* from the on-disk config",
+          "status": "passed",
+          "title": "reads runtime.contextBlock.injectionBudget.* from the on-disk config",
+          "duration": 2.9905999999991764,
+          "failureMessages": [],
+          "location": {
+            "line": 218,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P2-04 config overrides"
+          ],
+          "fullName": "FP-P2-04 config overrides an explicit setTurnInjectionBudgetConfig wins over the file override",
+          "status": "passed",
+          "title": "an explicit setTurnInjectionBudgetConfig wins over the file override",
+          "duration": 1.1444999999985157,
+          "failureMessages": [],
+          "location": {
+            "line": 247,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "FP-P2-04 config overrides"
+          ],
+          "fullName": "FP-P2-04 config overrides a missing or corrupt config falls back to the FP-P0-05 defaults",
+          "status": "passed",
+          "title": "a missing or corrupt config falls back to the FP-P0-05 defaults",
+          "duration": 1.3685999999997875,
+          "failureMessages": [],
+          "location": {
+            "line": 269,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "B-1 channel policy"
+          ],
+          "fullName": "B-1 channel policy declares a policy for every precedence channel",
+          "status": "passed",
+          "title": "declares a policy for every precedence channel",
+          "duration": 0.6081000000012864,
+          "failureMessages": [],
+          "location": {
+            "line": 287,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "B-1 channel policy"
+          ],
+          "fullName": "B-1 channel policy keeps policy priority ordered the same way as precedence",
+          "status": "passed",
+          "title": "keeps policy priority ordered the same way as precedence",
+          "duration": 0.3960000000006403,
+          "failureMessages": [],
+          "location": {
+            "line": 295,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "B-1 channel policy"
+          ],
+          "fullName": "B-1 channel policy decays only when a finite half-life is configured",
+          "status": "passed",
+          "title": "decays only when a finite half-life is configured",
+          "duration": 1.601699999999255,
+          "failureMessages": [],
+          "location": {
+            "line": 305,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "B-1 channel policy"
+          ],
+          "fullName": "B-1 channel policy decayFactorFor follows the exponential half-life curve",
+          "status": "passed",
+          "title": "decayFactorFor follows the exponential half-life curve",
+          "duration": 1.663300000000163,
+          "failureMessages": [],
+          "location": {
+            "line": 311,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "B-1 channel policy"
+          ],
+          "fullName": "B-1 channel policy a decaying channel gives budget back to fresher context as turns advance",
+          "status": "passed",
+          "title": "a decaying channel gives budget back to fresher context as turns advance",
+          "duration": 1.7474999999994907,
+          "failureMessages": [],
+          "location": {
+            "line": 342,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "B-1 channel policy"
+          ],
+          "fullName": "B-1 channel policy records priority and decayFactor on charged entries for audit",
+          "status": "passed",
+          "title": "records priority and decayFactor on charged entries for audit",
+          "duration": 1.5097999999998137,
+          "failureMessages": [],
+          "location": {
+            "line": 381,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "#184 cross-injection duplication metric"
+          ],
+          "fullName": "#184 cross-injection duplication metric charges duplication when two channels apply the same bytes",
+          "status": "passed",
+          "title": "charges duplication when two channels apply the same bytes",
+          "duration": 2.0451999999986583,
+          "failureMessages": [],
+          "location": {
+            "line": 395,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "#184 cross-injection duplication metric"
+          ],
+          "fullName": "#184 cross-injection duplication metric does not count a channel repeating itself as cross-injection",
+          "status": "passed",
+          "title": "does not count a channel repeating itself as cross-injection",
+          "duration": 1.6080000000001746,
+          "failureMessages": [],
+          "location": {
+            "line": 407,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "#184 cross-injection duplication metric"
+          ],
+          "fullName": "#184 cross-injection duplication metric uses a shared contentKey for the same fact serialized differently",
+          "status": "passed",
+          "title": "uses a shared contentKey for the same fact serialized differently",
+          "duration": 1.5455999999994674,
+          "failureMessages": [],
+          "location": {
+            "line": 417,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "#184 cross-injection duplication metric"
+          ],
+          "fullName": "#184 cross-injection duplication metric reports zero duplication when every channel brings new bytes",
+          "status": "passed",
+          "title": "reports zero duplication when every channel brings new bytes",
+          "duration": 1.7686000000012427,
+          "failureMessages": [],
+          "location": {
+            "line": 427,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793788936921,
+      "endTime": 1793788936971.7686,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/context-engine/turn-injection-budget.test.ts"
+    }
+  ]
+}

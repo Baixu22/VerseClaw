@@ -121,8 +121,23 @@
       "service": {
         "title": "Provider returned an unexpected response",
         "action": "The endpoint answered but not the way we expected. Verify the Base URL points at a compatible API, then retry."
+      },
+      "rate-limited": {
+        "title": "プロバイダーがレート制限中",
+        "action": "認証情報は拒否されていませんが、現在リクエストが拒否されています。検証済みにはならず、時間をおいて再試行してください。",
+        "retryAfter": "約 {{seconds}} 秒後に再試行してください。",
+        "noRetryAfter": "プロバイダーは再試行時間を返していません。"
+      },
+      "protocol": {
+        "title": "プロトコルまたはパラメータエラー",
+        "action": "エンドポイントは応答しましたが、リクエスト形式を拒否しました。Base URL と選択した API プロトコルを確認してください。"
+      },
+      "model": {
+        "title": "モデルが利用できません",
+        "action": "キーは有効ですが、プローブしたモデルは提供されていません。モデルステップに進み、一覧のモデルを選択してください。"
       }
-    }
+    },
+    "credentialsAccepted": "認証情報は受理されました — モデルを確認すると検証が完了します"
   },
   "channel": {
     "title": "メッセージングチャンネルを接続",

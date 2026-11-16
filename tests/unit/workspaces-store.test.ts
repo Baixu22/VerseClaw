@@ -52,6 +52,47 @@ function profile(overrides: Partial<WorkspaceProfile> = {}): WorkspaceProfile {
 }
 
 describe('workspaces store session state', () => {
+  it('saves a newer draft after an in-flight save even when it returns to the original text', async () => {
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    const initial = profile();
+    useWorkspacesStore.setState({ profiles: [initial], activeWorkspaceId: initial.id, activeWorkspace: initial });
+    let finish!: () => void;
+    hostApiMocks.saveState.mockImplementationOnce(() => new Promise<void>((resolve) => { finish = resolve; }));
+    const first = useWorkspacesStore.getState().saveWorkspaceState({ id: initial.id, sessionKey: initial.activeSessionKey, state: { draftInput: 'first edit' } });
+    await vi.waitFor(() => expect(hostApiMocks.saveState).toHaveBeenCalledTimes(1));
+    const latest = useWorkspacesStore.getState().saveWorkspaceState({ id: initial.id, sessionKey: initial.activeSessionKey, state: { draftInput: 'main draft' } });
+    finish();
+    await Promise.all([first, latest]);
+    expect(hostApiMocks.saveState).toHaveBeenCalledTimes(2);
+    expect(hostApiMocks.saveState).toHaveBeenLastCalledWith(expect.objectContaining({ state: { draftInput: 'main draft' } }));
+    expect(useWorkspacesStore.getState().activeWorkspace?.state?.draftInput).toBe('main draft');
+  });
+  it('selects the destination agent without replacing another agent session binding', async () => {
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    const initial = profile({ selectedAgentId: 'reviewer', activeSessionKey: 'agent:reviewer:review',
+      agentBindings: { main: { workspaceId: 'workspace-1', agentId: 'main', sessionKey: 'agent:main:main' },
+        reviewer: { workspaceId: 'workspace-1', agentId: 'reviewer', sessionKey: 'agent:reviewer:review' } } });
+    useWorkspacesStore.setState({ profiles: [initial], activeWorkspaceId: initial.id, activeWorkspace: initial });
+    await useWorkspacesStore.getState().saveWorkspaceState({ id: initial.id, activeSessionKey: 'agent:main:main' });
+    const updated = useWorkspacesStore.getState().activeWorkspace!;
+    expect(updated.selectedAgentId).toBe('main');
+    expect(updated.agentBindings?.reviewer.sessionKey).toBe('agent:reviewer:review');
+    expect(updated.agentBindings?.main.sessionKey).toBe('agent:main:main');
+  });
+  it('does not resubmit identical presentation state or replace the active profile reference', async () => {
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    const initial = profile();
+    useWorkspacesStore.setState({ profiles: [initial], activeWorkspaceId: initial.id, activeWorkspace: initial });
+    await useWorkspacesStore.getState().saveWorkspaceState({ id: initial.id, sessionKey: initial.activeSessionKey, state: { draftInput: 'main draft' } });
+    await useWorkspacesStore.getState().saveWorkspaceState({ id: initial.id, activeSessionKey: initial.activeSessionKey });
+    expect(hostApiMocks.saveState).not.toHaveBeenCalled();
+    expect(useWorkspacesStore.getState().activeWorkspace).toBe(initial);
+    await useWorkspacesStore.getState().saveWorkspaceState({ id: initial.id, sessionKey: initial.activeSessionKey, state: { draftInput: 'changed' } });
+    const saved = useWorkspacesStore.getState().activeWorkspace;
+    await useWorkspacesStore.getState().saveWorkspaceState({ id: initial.id, sessionKey: initial.activeSessionKey, state: { draftInput: 'changed' } });
+    expect(hostApiMocks.saveState).toHaveBeenCalledTimes(1);
+    expect(useWorkspacesStore.getState().activeWorkspace).toBe(saved);
+  });
   beforeEach(async () => {
     vi.resetModules();
     hostApiMocks.saveState.mockReset();
@@ -78,6 +119,7 @@ describe('workspaces store session state', () => {
 
     const active = useWorkspacesStore.getState().activeWorkspace;
     expect(active?.activeSessionKey).toBe('agent:main:empty');
+    expect(active?.agentBindings?.main.sessionKey).toBe('agent:main:empty');
     expect(active?.state).toEqual({});
     expect(active?.sessionStates?.['agent:main:main']).toEqual({ draftInput: 'main draft' });
     expect(active?.sessionStates?.['agent:main:empty']).toBeUndefined();

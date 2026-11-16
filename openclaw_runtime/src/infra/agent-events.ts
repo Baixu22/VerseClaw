@@ -1,5 +1,7 @@
 // Stores and broadcasts agent lifecycle and streaming events.
 import type { VerboseLevel } from "../auto-reply/thinking.js";
+import type { ReplyOperation } from "../auto-reply/reply/reply-run-registry.js";
+import { clearSessionTaskScopeRun } from "../agents/session-task-scope.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 import { notifyListeners, registerListener } from "../shared/listeners.js";
 
@@ -140,6 +142,19 @@ export type AgentEventPayload = {
 
 /** Per-run metadata used to stamp events and gate Control UI visibility. */
 export type AgentRunContext = {
+  /** Isolated scheduled execution owned by the registered embedded handle. */
+  cronTaskScope?: {
+    jobId: string;
+    workspaceDir: string;
+    coordinator?: {
+      workspaceId: string;
+      sessionKey: string;
+      generation: string;
+      taskNodeId?: string;
+    };
+  };
+  /** Internal flush execution is owned by this exact active reply operation. */
+  memoryFlushOwner?: ReplyOperation;
   sessionKey?: string;
   /** Owning run's sessionId; stamped onto lifecycle events (see AgentEventPayload.sessionId). */
   sessionId?: string;
@@ -189,6 +204,8 @@ export function registerAgentRunContext(runId: string, context: AgentRunContext)
   if (context.sessionId && existing.sessionId !== context.sessionId) {
     existing.sessionId = context.sessionId;
   }
+  if (context.memoryFlushOwner) existing.memoryFlushOwner = context.memoryFlushOwner;
+  if (context.cronTaskScope) existing.cronTaskScope = context.cronTaskScope;
   if (context.verboseLevel && existing.verboseLevel !== context.verboseLevel) {
     existing.verboseLevel = context.verboseLevel;
   }
@@ -214,8 +231,11 @@ export function getAgentRunContext(runId: string) {
 /** Clears context and sequence state for a run that has ended or been discarded. */
 export function clearAgentRunContext(runId: string) {
   const state = getAgentEventState();
+  const context = state.runContextById.get(runId);
   state.runContextById.delete(runId);
   state.seqByRun.delete(runId);
+  clearSessionTaskScopeRun(runId, context?.sessionKey && context.sessionId
+    ? { sessionKey: context.sessionKey, sessionGeneration: context.sessionId } : undefined);
 }
 
 /**

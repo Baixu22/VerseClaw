@@ -1,0 +1,112 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 6,
+  "numPassedTests": 6,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793899277288,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)",
+          "status": "passed",
+          "title": "computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)",
+          "duration": 1.8629999999999427,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability preserves missing/timeout/crash/skip as incomplete and excludes them from denominators",
+          "status": "passed",
+          "title": "preserves missing/timeout/crash/skip as incomplete and excludes them from denominators",
+          "duration": 0.4496000000000322,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability flags a flake only when the first scheduled trial failed and a later re-run passed",
+          "status": "passed",
+          "title": "flags a flake only when the first scheduled trial failed and a later re-run passed",
+          "duration": 0.2539999999999054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability fails the gate when a safety-required case is skipped",
+          "status": "passed",
+          "title": "fails the gate when a safety-required case is skipped",
+          "duration": 0.21029999999996107,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability enforces positive (must pass) and negative (must reject) anchors",
+          "status": "passed",
+          "title": "enforces positive (must pass) and negative (must reject) anchors",
+          "duration": 0.28779999999994743,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability reports insufficient-sample instead of passing when complete cases are below the gate",
+          "status": "passed",
+          "title": "reports insufficient-sample instead of passing when complete cases are below the gate",
+          "duration": 0.2119000000000142,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793899277907,
+      "endTime": 1793899277910.2878,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0274-e01/reference/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts"
+    }
+  ]
+}

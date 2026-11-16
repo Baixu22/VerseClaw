@@ -530,6 +530,13 @@ export interface ExecApprovalsConfig {
   updated_at_ms: number;
 }
 
+export interface ExecutionDomainRegistrations {
+  domain_id: string;
+  registration_json: string;
+  revision: number;
+  updated_at: number;
+}
+
 export interface FlowRuns {
   blocked_summary: string | null;
   blocked_task_id: string | null;
@@ -771,6 +778,13 @@ export interface ManagedOutgoingImageRecords {
   updated_at: string | null;
 }
 
+export interface ManagedWorktreeScopes {
+  revision: number;
+  scope_key: string;
+  state_json: string;
+  updated_at: number;
+}
+
 export interface MediaBlobs {
   blob: Uint8Array;
   content_type: string | null;
@@ -964,6 +978,37 @@ export interface PluginStateEntries {
   value_json: string;
 }
 
+export interface ProviderSpendAllocations {
+  call_id: string;
+  scope_key: string;
+}
+
+export interface ProviderSpendCalls {
+  actual_cost_micros: number | null;
+  actual_tokens: number | null;
+  call_id: string;
+  created_at: number;
+  model: string;
+  owner_token: string;
+  provider: string;
+  reconciliation_ref: string | null;
+  request_digest: string;
+  reserved_cost_micros: number | null;
+  reserved_tokens: number;
+  run_id: string;
+  scope_json: string;
+  settled_at: number | null;
+  state: string;
+}
+
+export interface ProviderSpendReconciliations {
+  call_id: string;
+  cost_micros: number | null;
+  evidence_ref: string;
+  recorded_at: number;
+  tokens: number | null;
+}
+
 export interface RuntimeReceipts {
   adapter_id: string | null;
   attempt_index: number;
@@ -1034,6 +1079,26 @@ export interface SchemaMeta {
   role: string;
   schema_version: number;
   updated_at: number;
+}
+
+export interface SekbAttributionEvents {
+  conflict_count: Generated<number>;
+  duplicate_count: Generated<number>;
+  event_id: string;
+  first_rejection: string | null;
+  last_conflict_json: string | null;
+  payload_digest: string;
+  payload_json: string;
+  principle_id: string;
+  principle_version: string;
+  reason: string | null;
+  recorded_at: string;
+  rejection_count: Generated<number>;
+  run_id: string | null;
+  run_key: string;
+  status: string;
+  trajectory_id: string | null;
+  trigger: string;
 }
 
 export interface SekbBatchDistillationEvents {
@@ -1335,6 +1400,7 @@ export interface DB {
   diagnostic_stability_bundles: DiagnosticStabilityBundles;
   effect_receipts: EffectReceipts;
   exec_approvals_config: ExecApprovalsConfig;
+  execution_domain_registrations: ExecutionDomainRegistrations;
   flow_runs: FlowRuns;
   gateway_restart_handoff: GatewayRestartHandoff;
   gateway_restart_intent: GatewayRestartIntent;
@@ -1349,6 +1415,7 @@ export interface DB {
   long_task_user_queue: LongTaskUserQueue;
   macos_port_guardian_records: MacosPortGuardianRecords;
   managed_outgoing_image_records: ManagedOutgoingImageRecords;
+  managed_worktree_scopes: ManagedWorktreeScopes;
   media_blobs: MediaBlobs;
   migration_runs: MigrationRuns;
   migration_sources: MigrationSources;
@@ -1362,10 +1429,14 @@ export interface DB {
   plugin_binding_approvals: PluginBindingApprovals;
   plugin_blob_entries: PluginBlobEntries;
   plugin_state_entries: PluginStateEntries;
+  provider_spend_allocations: ProviderSpendAllocations;
+  provider_spend_calls: ProviderSpendCalls;
+  provider_spend_reconciliations: ProviderSpendReconciliations;
   runtime_receipts: RuntimeReceipts;
   runtime_task_event_log_records: RuntimeTaskEventLogRecords;
   sandbox_registry_entries: SandboxRegistryEntries;
   schema_meta: SchemaMeta;
+  sekb_attribution_events: SekbAttributionEvents;
   sekb_batch_distillation_events: SekbBatchDistillationEvents;
   sekb_distillation_rejections: SekbDistillationRejections;
   sekb_error_signature_cache: SekbErrorSignatureCache;

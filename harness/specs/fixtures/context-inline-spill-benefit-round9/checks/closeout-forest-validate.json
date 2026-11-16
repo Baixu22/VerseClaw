@@ -1,0 +1,48 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "closeout-forest-validate",
+  "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+  "command": [
+    "python",
+    "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+    "validate",
+    "--workspace",
+    "D:/ClawX",
+    "--lock-timeout",
+    "10"
+  ],
+  "startedAt": "2026-11-13T13:53:22.660Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T13:53:23.405Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-validate.stdout.txt",
+      "bytes": 17,
+      "sha256": "6d3b78682a468bfcc32a2749eae728991711175290e7dc55198c91eaf8f334f0"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-validate.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

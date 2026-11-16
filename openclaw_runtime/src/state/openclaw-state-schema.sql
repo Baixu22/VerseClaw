@@ -1,3 +1,19 @@
+-- WorktreeService owns registration and merge intent; filesystem effects remain owner operations.
+CREATE TABLE IF NOT EXISTS managed_worktree_scopes (
+  scope_key TEXT NOT NULL PRIMARY KEY,
+  revision INTEGER NOT NULL,
+  state_json TEXT NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+-- Explicit local clone routing metadata; task facts remain in the selected TaskSystemStore.
+CREATE TABLE IF NOT EXISTS execution_domain_registrations (
+  domain_id TEXT NOT NULL PRIMARY KEY,
+  revision INTEGER NOT NULL,
+  registration_json TEXT NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS auth_profile_stores (
   store_key TEXT NOT NULL PRIMARY KEY,
   store_json TEXT NOT NULL,
@@ -31,6 +47,39 @@ CREATE TABLE IF NOT EXISTS diagnostic_stability_bundles (
 
 CREATE INDEX IF NOT EXISTS idx_diagnostic_stability_bundles_created
   ON diagnostic_stability_bundles(created_at DESC, bundle_key);
+
+-- ProviderOutboundBudget owns this admission journal. No transcript payload or credential is stored.
+CREATE TABLE IF NOT EXISTS provider_spend_calls (
+  call_id TEXT NOT NULL PRIMARY KEY,
+  owner_token TEXT NOT NULL,
+  request_digest TEXT NOT NULL,
+  run_id TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  model TEXT NOT NULL,
+  scope_json TEXT NOT NULL,
+  state TEXT NOT NULL CHECK(state IN ('reserved', 'sent', 'settled', 'unknown', 'cancelled')),
+  reserved_tokens INTEGER NOT NULL CHECK(reserved_tokens >= 0),
+  reserved_cost_micros INTEGER CHECK(reserved_cost_micros >= 0),
+  actual_tokens INTEGER CHECK(actual_tokens >= 0),
+  actual_cost_micros INTEGER CHECK(actual_cost_micros >= 0),
+  created_at INTEGER NOT NULL,
+  settled_at INTEGER,
+  reconciliation_ref TEXT
+);
+CREATE TABLE IF NOT EXISTS provider_spend_allocations (
+  scope_key TEXT NOT NULL,
+  call_id TEXT NOT NULL REFERENCES provider_spend_calls(call_id),
+  PRIMARY KEY(scope_key, call_id)
+);
+CREATE INDEX IF NOT EXISTS idx_provider_spend_run ON provider_spend_calls(run_id, created_at);
+CREATE TABLE IF NOT EXISTS provider_spend_reconciliations (
+  call_id TEXT NOT NULL REFERENCES provider_spend_calls(call_id),
+  evidence_ref TEXT NOT NULL,
+  tokens INTEGER,
+  cost_micros INTEGER,
+  recorded_at INTEGER NOT NULL,
+  PRIMARY KEY(call_id, evidence_ref)
+);
 
 CREATE TABLE IF NOT EXISTS state_leases (
   scope TEXT NOT NULL,
@@ -1184,6 +1233,31 @@ CREATE TABLE IF NOT EXISTS sekb_principles (
 
 CREATE INDEX IF NOT EXISTS idx_sekb_principles_status
   ON sekb_principles(status, updated_at DESC, principle_id);
+
+CREATE TABLE IF NOT EXISTS sekb_attribution_events (
+  event_id TEXT NOT NULL PRIMARY KEY,
+  run_key TEXT NOT NULL,
+  run_id TEXT,
+  trajectory_id TEXT,
+  principle_id TEXT NOT NULL,
+  principle_version TEXT NOT NULL,
+  trigger TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  payload_digest TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('accepted', 'rejected')),
+  reason TEXT,
+  recorded_at TEXT NOT NULL,
+  duplicate_count INTEGER NOT NULL DEFAULT 0,
+  conflict_count INTEGER NOT NULL DEFAULT 0,
+  rejection_count INTEGER NOT NULL DEFAULT 0,
+  first_rejection TEXT,
+  last_conflict_json TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_sekb_attribution_run
+  ON sekb_attribution_events(run_key, principle_id, principle_version);
+CREATE INDEX IF NOT EXISTS idx_sekb_attribution_run_id
+  ON sekb_attribution_events(run_id, recorded_at, event_id);
 
 CREATE TABLE IF NOT EXISTS sekb_error_signature_cache (
   raw_error_hash TEXT NOT NULL PRIMARY KEY,

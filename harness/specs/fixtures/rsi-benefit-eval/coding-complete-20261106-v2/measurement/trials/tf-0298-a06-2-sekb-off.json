@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0298-a06-2-sekb-off",
+    "caseId": "tf-0298-a06",
+    "repeat": 2,
+    "arm": "sekb-off",
+    "caseDigest": "6bc785c59f27728d675039949093d5e832dc34ffdc90b26c616d206dbe9efb20",
+    "pairSeed": 71,
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "position": 210
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"A06 按原 spec 门限复验 A6 Long-Running Persistence 受控 pilot 门；逐条映射可执行证据，不重定义门限；恢复 `area-composition-spec.md` 指定的 `ResumeContractVerifier`、`FingerprintLeaseCoordinator` 组合 facade，并补齐 A6 pause/resume p99 测试与 coverage 守卫。\",\n  \"acceptanceCriteria\": [\n    \"判据1 volatileMislabelCount MUST 0：deprecation-counters critical gate 与 count/reset 单测 PASS；但生产 ResumeContractVerifier 不存在，真实 resume 检测 caller 未接通，Active Pilot 生产门 NO-GO。\",\n    \"判据2 verifier fail rate ≤5%：counter/gate 断言 PASS；生产 verifier 调用点缺失，生产门 NO-GO。\",\n    \"判据3 A6 p99 ≤300ms（10 pause/resume cycles）：`tests/unit/performance-budgets.test.ts`（A6 performance budgets）断言 PASS。\",\n    \"判据4 rollback 后 requiresReverification=true：`cross-area-facades.ts` `ResumeContractVerifier`；`cross-area-composition.test.ts`（3.3）；`deep/a6-deep.test.ts`，PASS。\",\n    \"判据5 FingerprintLeaseCoordinator 先 commit lease 再 checkpoint：`cross-area-facades.ts` `FingerprintLeaseCoordinator`；`cross-area-composition.test.ts`（3.8）；`deep/a6-deep.test.ts`，PASS。\",\n    \"判据6 volatile 或 fail rate>5% → degrade_to_full_reverification：deprecation-counters 当前断言 PASS。\",\n    \"移除树中不存在的 cross-area legacy 路径；requiredTests 补入计数器、fingerprint、resume shadow、checkpoint 与 long-task 现有测试，并加 A06 coverage 守卫。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a6-long-running-persistence-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a6-long-running-persistence-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a6-long-running-persistence-pilot\\ntitle: A6 Long-Running Persistence — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A6 resume contract verifier from shadow to active pilot, gated by verifier pass rate and zero volatile mislabels.\\ntouchedAreas:\\n  - openclaw_runtime/src/agents/long-task-control/file-fingerprint.ts\\n  - openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts\\n  - openclaw_runtime/src/runtime-core/resume-shadow.ts\\n  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - With the A6 pilot gate enabled, resume cycles verify their contract and any volatile mislabel blocks graduation instead of being averaged away.\\n  - A resume that followed a rollback is marked `requiresReverification=true` rather than trusted as a clean continuation.\\n  - The fingerprint lease is committed before the checkpoint, so a resumed run cannot adopt a stale fingerprint.\\n  - When a volatile mislabel appears or the verifier failure rate exceeds 5%, the pilot responds with `degrade_to_full_reverification`.\\n  - With the pilot flag off, pause/resume behaviour is unchanged.\\nrequiredTests:\\n  - tests/unit/cross-area-composition.test.ts\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A6 deprecation counter `volatileMislabelCount` MUST be 0 (CRITICAL gate)\\n  - A6 deprecation counter `verifierFailCount` rate ≤ 5% over resume cycles\\n  - A6 p99 ≤ 300ms (criterion 4.9)\\n  - `ResumeContractVerifier` marks `requiresReverification=true` when rollback occurred (criterion 3.3)\\n  - `FingerprintLeaseCoordinator` commits lease before checkpoint (criterion 3.8, Blocker 4)\\n  - Budget violation response `degrade_to_full_reverification` triggers on any volatile mislabel OR fail rate > 5%\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA6 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Zero volatile mislabels**: `volatileMislabelCount === 0` (CRITICAL — any non-zero value blocks graduation permanently until resolved).\\n2. **Verifier pass rate** ≥ 95%: `verifierPassCount / (pass + fail) ≥ 0.95`.\\n3. **Performance**: p99 ≤ 300ms for 10 pause/resume cycles (criterion 4.9).\\n4. **Rollback detection**: `ResumeContractVerifier` marks `requiresReverification=true` when rollback occurred (criterion 3.3).\\n5. **Blocker 4 (lease/checkpoint ordering)**: `FingerprintLeaseCoordinator` commits lease before checkpoint, no I/O race (criterion 3.8).\\n6. **Budget violation response**: `degrade_to_full_reverification` triggers on mislabel or high fail rate (criterion 4.14).\\n\\n## Out of scope\\n\\n- Targeted re-verification (OQ-006, Stage 5 — full re-verification ships in Stage 4).\\n- Checkpoint migration / compact (Stage 5).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "4059d092141884bf2965b9f168887df6dd0e6c73a11cf75eb50422b188e6e430",
+  "runtime": {
+    "flags": {
+      "enabled": false,
+      "shadowEvaluation": false,
+      "injection": false
+    },
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0298-a06-2-sekb-off",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "crash",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 6,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 210,
+    "startedAt": "2026-11-06T16:57:47.954Z",
+    "endedAt": "2026-11-06T16:57:47.960Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses transport failed (network error)"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"A06 按原 spec 门限复验 A6 Long-Running Persistence 受控 pilot 门；逐条映射可执行证据，不重定义门限；恢复 `area-composition-spec.md` 指定的 `ResumeContractVerifier`、`FingerprintLeaseCoordinator` 组合 facade，并补齐 A6 pause/resume p99 测试与 coverage 守卫。\",\n  \"acceptanceCriteria\": [\n    \"判据1 volatileMislabelCount MUST 0：deprecation-counters critical gate 与 count/reset 单测 PASS；但生产 ResumeContractVerifier 不存在，真实 resume 检测 caller 未接通，Active Pilot 生产门 NO-GO。\",\n    \"判据2 verifier fail rate ≤5%：counter/gate 断言 PASS；生产 verifier 调用点缺失，生产门 NO-GO。\",\n    \"判据3 A6 p99 ≤300ms（10 pause/resume cycles）：`tests/unit/performance-budgets.test.ts`（A6 performance budgets）断言 PASS。\",\n    \"判据4 rollback 后 requiresReverification=true：`cross-area-facades.ts` `ResumeContractVerifier`；`cross-area-composition.test.ts`（3.3）；`deep/a6-deep.test.ts`，PASS。\",\n    \"判据5 FingerprintLeaseCoordinator 先 commit lease 再 checkpoint：`cross-area-facades.ts` `FingerprintLeaseCoordinator`；`cross-area-composition.test.ts`（3.8）；`deep/a6-deep.test.ts`，PASS。\",\n    \"判据6 volatile 或 fail rate>5% → degrade_to_full_reverification：deprecation-counters 当前断言 PASS。\",\n    \"移除树中不存在的 cross-area legacy 路径；requiredTests 补入计数器、fingerprint、resume shadow、checkpoint 与 long-task 现有测试，并加 A06 coverage 守卫。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a6-long-running-persistence-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a6-long-running-persistence-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a6-long-running-persistence-pilot\\ntitle: A6 Long-Running Persistence — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A6 resume contract verifier from shadow to active pilot, gated by verifier pass rate and zero volatile mislabels.\\ntouchedAreas:\\n  - openclaw_runtime/src/agents/long-task-control/file-fingerprint.ts\\n  - openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts\\n  - openclaw_runtime/src/runtime-core/resume-shadow.ts\\n  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - With the A6 pilot gate enabled, resume cycles verify their contract and any volatile mislabel blocks graduation instead of being averaged away.\\n  - A resume that followed a rollback is marked `requiresReverification=true` rather than trusted as a clean continuation.\\n  - The fingerprint lease is committed before the checkpoint, so a resumed run cannot adopt a stale fingerprint.\\n  - When a volatile mislabel appears or the verifier failure rate exceeds 5%, the pilot responds with `degrade_to_full_reverification`.\\n  - With the pilot flag off, pause/resume behaviour is unchanged.\\nrequiredTests:\\n  - tests/unit/cross-area-composition.test.ts\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A6 deprecation counter `volatileMislabelCount` MUST be 0 (CRITICAL gate)\\n  - A6 deprecation counter `verifierFailCount` rate ≤ 5% over resume cycles\\n  - A6 p99 ≤ 300ms (criterion 4.9)\\n  - `ResumeContractVerifier` marks `requiresReverification=true` when rollback occurred (criterion 3.3)\\n  - `FingerprintLeaseCoordinator` commits lease before checkpoint (criterion 3.8, Blocker 4)\\n  - Budget violation response `degrade_to_full_reverification` triggers on any volatile mislabel OR fail rate > 5%\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA6 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Zero volatile mislabels**: `volatileMislabelCount === 0` (CRITICAL — any non-zero value blocks graduation permanently until resolved).\\n2. **Verifier pass rate** ≥ 95%: `verifierPassCount / (pass + fail) ≥ 0.95`.\\n3. **Performance**: p99 ≤ 300ms for 10 pause/resume cycles (criterion 4.9).\\n4. **Rollback detection**: `ResumeContractVerifier` marks `requiresReverification=true` when rollback occurred (criterion 3.3).\\n5. **Blocker 4 (lease/checkpoint ordering)**: `FingerprintLeaseCoordinator` commits lease before checkpoint, no I/O race (criterion 3.8).\\n6. **Budget violation response**: `degrade_to_full_reverification` triggers on mislabel or high fail rate (criterion 4.14).\\n\\n## Out of scope\\n\\n- Targeted re-verification (OQ-006, Stage 5 — full re-verification ships in Stage 4).\\n- Checkpoint migration / compact (Stage 5).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

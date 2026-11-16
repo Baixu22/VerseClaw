@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Chat } from '@/pages/Chat';
 
@@ -73,8 +73,10 @@ vi.mock('@/stores/providers', () => ({
   }),
 }));
 
-vi.mock('@/stores/workspaces', () => ({
-  useWorkspacesStore: (selector: (state: Record<string, unknown>) => unknown) => selector({
+// Chat also reads this store imperatively (`useWorkspacesStore.getState()`
+// refreshes workspaces after a reply settles), so expose both shapes.
+vi.mock('@/stores/workspaces', () => {
+  const workspacesState: Record<string, unknown> = {
     profiles: [],
     activeWorkspace: {
       id: 'workspace-1',
@@ -88,8 +90,14 @@ vi.mock('@/stores/workspaces', () => ({
     createWorkspace: vi.fn(),
     saveWorkspaceState: hostApiMock.saveWorkspaceState,
     setPermissionMode: vi.fn(),
-  }),
-}));
+  };
+  return {
+    useWorkspacesStore: Object.assign(
+      (selector: (state: Record<string, unknown>) => unknown) => selector(workspacesState),
+      { getState: () => workspacesState },
+    ),
+  };
+});
 
 // Chat reads this store both as a hook and imperatively via `.getState()`
 // (index.tsx:972, 1529, 1550). A selector-only mock made the component throw
@@ -170,6 +178,8 @@ vi.mock('@/lib/host-api', () => ({
         warnings: [],
       })),
       prepareHandoff: vi.fn(async () => ({ success: true, draft: '', sources: [], warnings: [] })),
+      // The page reconciles any interrupted session handoff on mount.
+      handoffOperation: vi.fn(async () => ({ success: true, operation: null })),
       queueDrain: vi.fn(async () => ({ success: true, drained: false })),
     },
     taskLedger: {
@@ -243,6 +253,7 @@ vi.mock('@/pages/Chat/ChatMessage', () => ({
 
 describe('Chat toolbar slash entry', () => {
   beforeEach(() => {
+    Object.defineProperty(Element.prototype, 'scrollTo', { configurable: true, value: vi.fn() });
     hostApiMock.applyDraft.mockReset();
     hostApiMock.applyDraft.mockResolvedValue({ success: true });
     hostApiMock.createDraft.mockReset();
@@ -256,14 +267,20 @@ describe('Chat toolbar slash entry', () => {
       proposal: { id: 'proposal-1' },
     });
     hostApiMock.saveWorkspaceState.mockReset();
+    // The reading-position hook chains `.catch` on the store's save promise.
+    hostApiMock.saveWorkspaceState.mockResolvedValue({ success: true });
     window.electron.platform = 'win32';
   });
 
-  it('keeps the toolbar free of the obsolete more-actions menu', async () => {
+  it('groups secondary session tools behind More actions', async () => {
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
-    await screen.findByTestId('chat-toolbar-refresh');
-    expect(screen.queryByTestId('chat-toolbar-more')).not.toBeInTheDocument();
+    const more = await screen.findByTestId('chat-toolbar-more');
+    expect(screen.queryByTestId('chat-toolbar-more-menu')).toBeNull();
+    fireEvent.click(more);
+    await waitFor(() => expect(screen.getByTestId('chat-toolbar-more-menu')).toBeVisible());
+    expect(screen.getByTestId('chat-toolbar-refresh')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-session-settings')).toBeInTheDocument();
     expect(screen.queryByTestId('chat-toolbar-slash')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-save-knowledge')).not.toBeInTheDocument();
   });

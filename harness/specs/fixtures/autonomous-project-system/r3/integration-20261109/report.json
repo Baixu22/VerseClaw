@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "mainCommit": "a7d6bb5263d50d9b25b864825b67e8d0252ceab2",
+  "sourceCommit": "e75b882fa79b098209747b17c89448de7afe73ed",
+  "baseMain": "dee28c8a2ea24e1c4abf1260bbd5dee156bec4a4",
+  "treeEquivalent": true,
+  "concurrentReadmeEditsPreserved": true,
+  "validationSource": "harness/specs/fixtures/autonomous-project-system/r3/20261109/report.json",
+  "tests": {
+    "focusedAndNativeOwner": 133,
+    "electronTypedMock": 2
+  },
+  "receiptPath": "D:/tmp/unified-management-20261108/r3-main-integration/receipt.json",
+  "receiptSha256": "491dc504bb5ccc9fb657170b6346956dd808cd89819e01b287b6a7ed4babeb0d"
+}

@@ -1,0 +1,18 @@
+{
+  "extends": "../../../../tsconfig.node.json",
+  "compilerOptions": {
+    "rootDir": "../../../..",
+    "composite": false,
+    "noEmit": true,
+    "typeRoots": ["../../../../node_modules/@types"]
+  },
+  "files": [
+    "../../../../openclaw_runtime/src/agents/verseshell/process-manager.ts",
+    "../../../../openclaw_runtime/src/agents/verseshell/governed-process.ts",
+    "../../../../openclaw_runtime/src/agents/verseshell/process-manager.test.ts",
+    "../../../../openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+    "../../../../openclaw_runtime/src/agents/verseshell/concurrent-acquisition.integration.test.ts"
+  ],
+  "include": [],
+  "exclude": []
+}

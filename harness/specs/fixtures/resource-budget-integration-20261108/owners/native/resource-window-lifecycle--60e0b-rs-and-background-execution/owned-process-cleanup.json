@@ -1,0 +1,24 @@
+{
+  "mainExited": true,
+  "launcherExited": true,
+  "graceful": true,
+  "closeSettled": true,
+  "processes": [
+    {
+      "pid": 12904,
+      "creationTime": 1794072527300,
+      "status": "exited"
+    },
+    {
+      "pid": 45704,
+      "creationTime": 1794072555154,
+      "status": "exited"
+    },
+    {
+      "pid": 14724,
+      "creationTime": 1794072555772,
+      "status": "exited"
+    }
+  ],
+  "errors": []
+}

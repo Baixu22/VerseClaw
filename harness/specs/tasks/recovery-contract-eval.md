@@ -39,6 +39,8 @@ acceptance:
   - MIN_LONG_SESSION_PAIRS=30；manifest 至少 30 对长会话样例，compression/handoff/fork/restart/revocation 每个 family 至少 6 对。
   - evaluateRecoveryContractEval 在任一窗口完整重复少于 3 次或 live-provider 长会话对少于 30 时返回 EVIDENCE_INSUFFICIENT；不完整域的指标为 null，绝不补 0。
   - 冻结 manifest hash 在重复生成时稳定；任何窗口标注、门槛或样本改动都会被 hash 校验或阈值校验拒绝。
+  - 同一冻结 epoch 的窗口矩阵和长会话 workload 必须匹配 canonical manifest；重新计算输入 hash 和 manifest hash 后的变更仍被拒绝。
+  - 每条已提交观测都进入完整性检查；达到完整样本配额后追加的不完整观测仍返回 EVIDENCE_INSUFFICIENT，所在证据域与共同延迟指标保持 null。
   - metrics 始终包含 duplicateEffects、lostTasks、terminalCorrectness、unknownClassifiableRate、mustPreserveFidelity、falseCompletionClaims、nextActionAccuracy、recoveryLatencyP50、recoveryLatencyP95 九个字段。
   - 只有九个指标门槛与磁盘证据/禁止重跑完整性全部通过时 status 才为 PASS 且 qualityClaimAllowed=true；否则为 FAIL 或 EVIDENCE_INSUFFICIENT。
   - scripted-provider 与 agent-derived 长会话行只记录、不计入 live-provider 质量证据。

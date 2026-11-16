@@ -1,0 +1,46 @@
+{
+  "success": false,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 2,
+    "durationMs": 42641,
+    "observationMode": false,
+    "errorCount": 2,
+    "errorLog": "D:\\ClawX-work\\semantic-convergence-20261104\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": true,
+    "status": "force",
+    "key": "55caea13739434c8b7c91cd072b56588d3ed1bee8dc3b48f31be15de79d7cf4f",
+    "inputCount": 13033,
+    "report": "D:\\ClawX-work\\semantic-convergence-20261104\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 50555,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 82
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 32653
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 23919
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 2,
+      "durationMs": 42641,
+      "observationMode": false,
+      "errorCount": 2,
+      "errorLog": "D:\\ClawX-work\\semantic-convergence-20261104\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}

@@ -458,7 +458,7 @@ export function createWriteToolDefinition(
           }
           throw error;
         }
-      });
+      }, { signal });
     },
     renderCall(args, theme, context) {
       const renderArgs = args as

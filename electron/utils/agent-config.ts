@@ -258,12 +258,11 @@ function getDefaultAgentDirPath(agentId: string): string {
   return `~/.openclaw/agents/${agentId}/agent`;
 }
 
-function createImplicitMainEntry(config: AgentConfigDocument): AgentListEntry {
+function createImplicitMainEntry(): AgentListEntry {
   return {
     id: MAIN_AGENT_ID,
     name: MAIN_AGENT_NAME,
     default: true,
-    workspace: getDefaultWorkspacePath(config),
     agentDir: getDefaultAgentDirPath(MAIN_AGENT_ID),
   };
 }
@@ -284,7 +283,7 @@ function normalizeAgentsConfig(config: AgentConfigDocument): {
     : [];
 
   if (rawEntries.length === 0) {
-    const main = createImplicitMainEntry(config);
+    const main = createImplicitMainEntry();
     return {
       agentsConfig,
       entries: [main],
@@ -494,7 +493,7 @@ async function provisionAgentFilesystem(
   options?: { inheritWorkspace?: boolean },
 ): Promise<void> {
   const { entries } = normalizeAgentsConfig(config);
-  const mainEntry = entries.find((entry) => entry.id === MAIN_AGENT_ID) ?? createImplicitMainEntry(config);
+  const mainEntry = entries.find((entry) => entry.id === MAIN_AGENT_ID) ?? createImplicitMainEntry();
   const sourceWorkspace = expandPath(mainEntry.workspace || getDefaultWorkspacePath(config));
   const targetWorkspace = expandPath(agent.workspace || `~/.openclaw/workspace-${agent.id}`);
   const sourceAgentDir = expandPath(mainEntry.agentDir || getDefaultAgentDirPath(MAIN_AGENT_ID));
@@ -661,7 +660,9 @@ async function findAgentEntry(agentId: string): Promise<AgentListEntry> {
   const { entries } = normalizeAgentsConfig(config);
   const entry = entries.find((candidate) => candidate.id === agentId);
   if (!entry) throw new Error(`Agent "${agentId}" not found`);
-  return entry;
+  return agentId === MAIN_AGENT_ID && !entry.workspace
+    ? { ...entry, workspace: getDefaultWorkspacePath(config) }
+    : entry;
 }
 
 export async function readAgentSoul(agentId: string): Promise<{ soulMd: string; path: string }> {
@@ -1026,7 +1027,7 @@ export async function createAgent(
       suffix += 1;
     }
 
-    const nextEntries = syntheticMain ? [createImplicitMainEntry(config), ...entries.filter((_, index) => index > 0)] : [...entries];
+    const nextEntries = syntheticMain ? [createImplicitMainEntry(), ...entries.filter((_, index) => index > 0)] : [...entries];
     const newAgent: AgentListEntry = {
       id: nextId,
       name: normalizedName,
@@ -1035,7 +1036,7 @@ export async function createAgent(
     };
 
     if (!nextEntries.some((entry) => entry.id === MAIN_AGENT_ID) && syntheticMain) {
-      nextEntries.unshift(createImplicitMainEntry(config));
+      nextEntries.unshift(createImplicitMainEntry());
     }
     nextEntries.push(newAgent);
 

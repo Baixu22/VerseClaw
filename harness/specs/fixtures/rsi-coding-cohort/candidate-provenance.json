@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "RsiIndependentCandidate/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-training",
+  "createdAt": "2026-11-06T04:46:45.019Z",
+  "evidenceKind": "agent-authored-training-fixture",
+  "realHumanEvidence": false,
+  "boundary": "Two independently authored exercises executed by Node; no provider training or evaluation-task outcomes. Production SEKB capture, distillation, explicit agent confirmation, persistence and recall used in an isolated database.",
+  "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+  "records": [
+    {
+      "id": "rsi-training-json-roundtrip-v1",
+      "intent": "Serialize an object without losing null, false, zero or empty strings",
+      "initial": "const serialize=x=>Object.fromEntries(Object.entries(x).filter(([,v])=>v));",
+      "repaired": "const serialize=x=>JSON.parse(JSON.stringify(x));",
+      "oracle": "assert.deepEqual(serialize({zero:0,no:false,empty:'',nothing:null,nested:{a:[1]}}),{zero:0,no:false,empty:'',nothing:null,nested:{a:[1]}});",
+      "trajectoryId": "909fee6d-cd4a-4ebd-ba00-827fdba21ec0",
+      "results": [
+        {
+          "stage": "initial",
+          "source": "import assert from 'node:assert/strict';\nconst serialize=x=>Object.fromEntries(Object.entries(x).filter(([,v])=>v));\nassert.deepEqual(serialize({zero:0,no:false,empty:'',nothing:null,nested:{a:[1]}}),{zero:0,no:false,empty:'',nothing:null,nested:{a:[1]}});",
+          "sourceDigest": "6890199dd938c4560c8dd2b4e99918b0e68ce407ffb708aa268d3c84907a7c2c",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "node:internal/modules/run_main:107\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\r\n+ actual - expected\r\n\r\n  {\r\n-   empty: '',\r\n    nested: {\r\n      a: [\r\n        1\r\n      ]\r\n    },\r\n-   no: false,\r\n-   nothing: null,\r\n-   zero: 0\r\n  }\r\n\r\n    at file:///D:/tmp/rsi-relay-20261106/independent-candidate/[eval1]:3:8\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\r\n    at async node:internal/modules/esm/loader:223:26\r\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:220:20)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: { nested: { a: [ 1 ] } },\r\n  expected: {\r\n    zero: 0,\r\n    no: false,\r\n    empty: '',\r\n    nothing: null,\r\n    nested: { a: [ 1 ] }\r\n  },\r\n  operator: 'deepStrictEqual',\r\n  diff: 'simple'\r\n}\r\n\r\nNode.js v24.22.1\r\n",
+          "error": null
+        },
+        {
+          "stage": "repaired",
+          "source": "import assert from 'node:assert/strict';\nconst serialize=x=>JSON.parse(JSON.stringify(x));\nassert.deepEqual(serialize({zero:0,no:false,empty:'',nothing:null,nested:{a:[1]}}),{zero:0,no:false,empty:'',nothing:null,nested:{a:[1]}});",
+          "sourceDigest": "424779b156e2c3df32fa31c9e4ef69aa9b34437e9c405ed1ebe10efda8aafcdc",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "rsi-training-array-copy-v1",
+      "intent": "Sort a numeric array without mutating the caller input and preserve duplicates",
+      "initial": "const sorted=x=>x.sort((a,b)=>a-b);",
+      "repaired": "const sorted=x=>x.toSorted((a,b)=>a-b);",
+      "oracle": "const input=[9,1,1]; assert.deepEqual(sorted(input),[1,1,9]); assert.deepEqual(input,[9,1,1]); assert.deepEqual(sorted([]),[]);",
+      "trajectoryId": "03b59e81-f193-4d4f-a0e3-de8f3157b1ed",
+      "results": [
+        {
+          "stage": "initial",
+          "source": "import assert from 'node:assert/strict';\nconst sorted=x=>x.sort((a,b)=>a-b);\nconst input=[9,1,1]; assert.deepEqual(sorted(input),[1,1,9]); assert.deepEqual(input,[9,1,1]); assert.deepEqual(sorted([]),[]);",
+          "sourceDigest": "676861d30e1c0a9b156782a989331d384af6cb2610512f8c826d314d316577d6",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "node:internal/modules/run_main:107\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\r\n+ actual - expected\r\n\r\n  [\r\n-   9,\r\n    1,\r\n    1,\r\n+   9\r\n  ]\r\n\r\n    at file:///D:/tmp/rsi-relay-20261106/independent-candidate/[eval1]:3:70\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\r\n    at async node:internal/modules/esm/loader:223:26\r\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:220:20)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: [ 1, 1, 9 ],\r\n  expected: [ 9, 1, 1 ],\r\n  operator: 'deepStrictEqual',\r\n  diff: 'simple'\r\n}\r\n\r\nNode.js v24.22.1\r\n",
+          "error": null
+        },
+        {
+          "stage": "repaired",
+          "source": "import assert from 'node:assert/strict';\nconst sorted=x=>x.toSorted((a,b)=>a-b);\nconst input=[9,1,1]; assert.deepEqual(sorted(input),[1,1,9]); assert.deepEqual(input,[9,1,1]); assert.deepEqual(sorted([]),[]);",
+          "sourceDigest": "b2a505a32ab5bcf0ff68bc93437baff8a68e475c4c814618d9d30cdce982a48a",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "error": null
+        }
+      ]
+    }
+  ],
+  "suggestion": {
+    "cluster_summary": "Similar coding/implementation trajectories (2)",
+    "source_trajectory_ids": [
+      "03b59e81-f193-4d4f-a0e3-de8f3157b1ed",
+      "909fee6d-cd4a-4ebd-ba00-827fdba21ec0"
+    ],
+    "suggested_principle": {
+      "title": "Review repeated path",
+      "condition": "When handling coding/implementation tasks",
+      "action": "Compare the current task against prior captured trajectories before acting",
+      "reason": "Repeated task shapes often expose reusable setup and failure patterns",
+      "task_types": [
+        "coding/implementation"
+      ],
+      "context_tags": [
+        "contracts",
+        "javascript"
+      ],
+      "criticality": "medium"
+    },
+    "confidence": 0.5
+  },
+  "principle": {
+    "principle_id": "principle-6a070a8e50248d9fbd7e8ec1",
+    "created_at": "2026-11-06T04:46:45.007Z",
+    "updated_at": "2026-11-06T04:46:45.016Z",
+    "title": "Preserve the caller contract when implementing a small change",
+    "condition": "When implementing an API from a behavior contract and existing callers",
+    "action": "Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.",
+    "reason": "Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.",
+    "full_content": "When implementing an API from a behavior contract and existing callers, Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files. because Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions..",
+    "task_types": [
+      "coding/implementation"
+    ],
+    "context_tags": [
+      "contracts",
+      "javascript"
+    ],
+    "embedding": null,
+    "source_trajectories": [
+      "03b59e81-f193-4d4f-a0e3-de8f3157b1ed",
+      "909fee6d-cd4a-4ebd-ba00-827fdba21ec0"
+    ],
+    "created_by": "agent",
+    "status": "active",
+    "retrieval_count": 1,
+    "adoption_count": 0,
+    "post_adoption_success": 0,
+    "criticality": "medium",
+    "pinned": true,
+    "metadata": {
+      "distillation_confidence": 0.5,
+      "drivenBy": "agent",
+      "actor": "codex/rsi-independent-training",
+      "cluster_summary": "Similar coding/implementation trajectories (2)",
+      "confirmProvenance": {
+        "schema": "sekb-confirm-provenance.v1",
+        "sessionId": "rsi-independent-training-20261106",
+        "sourceSystem": "sekb",
+        "sourceTrajectoryIds": [
+          "03b59e81-f193-4d4f-a0e3-de8f3157b1ed",
+          "909fee6d-cd4a-4ebd-ba00-827fdba21ec0"
+        ],
+        "integrity": "confirmed",
+        "confirmedAt": "2026-11-06T04:46:45.007Z",
+        "revokeKey": "revoke:sekb-principle:principle-6a070a8e50248d9fbd7e8ec1",
+        "taskId": "P3-002",
+        "findingIds": [
+          "F-DATA-002",
+          "F-DATA-004"
+        ],
+        "summaryOnlyClaimDowngraded": false,
+        "highTrustEligible": true
+      },
+      "confirmIntegrity": "confirmed",
+      "confirmIntegrityReasons": []
+    }
+  },
+  "checks": {
+    "trainingCases": 2,
+    "expectedInitialFailures": 2,
+    "repairedPasses": 2,
+    "evaluationOverlap": 0,
+    "explicitAgentConfirmation": true
+  }
+}

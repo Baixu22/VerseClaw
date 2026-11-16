@@ -1,0 +1,1308 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-curated-evidence-reader",
+  "candidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "databases": [
+    {
+      "owner": "owners/unit/inconsistent-r1-spend-aAkSXQ/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-aAkSXQ\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "181f0c897ba3466ea57ba91a7d30cfd6d30cf20648d4dfcf91391177ac375401"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-aAkSXQ\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-15\",0,0]",
+            "owner_token": "e5151409-f41c-4b19-89f0-e9a35b1ebd86",
+            "request_digest": "6023aad58c12a073ef2d153d7b6e94ff693605db87e5d21495af37e32f18553e",
+            "run_id": "inconsistent-usage-15",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project-a\",\"projectId\":\"project-a\",\"sessionKey\":\"session-a\",\"sessionGeneration\":\"generation-one\"}",
+            "state": "unknown",
+            "reserved_tokens": 100,
+            "reserved_cost_micros": 200,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060225374,
+            "settled_at": 1794060225376,
+            "reconciliation_ref": "065516f168bb30defe8ddcbadda7f1cffde8a28b697f33cef91c994066d19d65"
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-15\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"project-a\",\"project-a\"]",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-15\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"session-a\",\"generation-one\"]",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-15\",0,0]"
+          }
+        ],
+        "provider_spend_reconciliations": [
+          {
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-15\",0,0]",
+            "evidence_ref": "065516f168bb30defe8ddcbadda7f1cffde8a28b697f33cef91c994066d19d65",
+            "tokens": null,
+            "cost_micros": null,
+            "recorded_at": 1794060225376
+          }
+        ],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/unit/inconsistent-r1-spend-OBALjJ/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-OBALjJ\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "0442ff16666b1eff7898f024788b9e31664f5931882df8d503bd73dc37434720"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-OBALjJ\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-5\",0,0]",
+            "owner_token": "f2b27bd0-4128-47ae-87ce-192c3656ed65",
+            "request_digest": "6023aad58c12a073ef2d153d7b6e94ff693605db87e5d21495af37e32f18553e",
+            "run_id": "inconsistent-usage-5",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project-a\",\"projectId\":\"project-a\",\"sessionKey\":\"session-a\",\"sessionGeneration\":\"generation-one\"}",
+            "state": "unknown",
+            "reserved_tokens": 100,
+            "reserved_cost_micros": 200,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060225282,
+            "settled_at": 1794060225284,
+            "reconciliation_ref": "789b1b0947af730310f893c42498ed0fa7aadb106ad6bc26e6dd832e6624a95d"
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-5\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"project-a\",\"project-a\"]",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-5\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"session-a\",\"generation-one\"]",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-5\",0,0]"
+          }
+        ],
+        "provider_spend_reconciliations": [
+          {
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-5\",0,0]",
+            "evidence_ref": "789b1b0947af730310f893c42498ed0fa7aadb106ad6bc26e6dd832e6624a95d",
+            "tokens": null,
+            "cost_micros": null,
+            "recorded_at": 1794060225284
+          }
+        ],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/unit/registry-r1-registry-vrSD8O/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-registry-vrSD8O\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "222db66e41185879082e7ee277c6c9372e132d4184d7dc06076a9e1b1b941886"
+        },
+        {
+          "source": "D:\\tmp\\r1-registry-vrSD8O\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [],
+        "provider_spend_allocations": [],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": [
+          {
+            "run_id": "native-a",
+            "child_session_key": "agent:main:subagent:native-a",
+            "controller_session_key": "agent:main:controller",
+            "requester_session_key": "agent:main:controller",
+            "requester_display_key": "agent:main:controller",
+            "requester_origin_json": null,
+            "task": "controlled reservation",
+            "task_name": null,
+            "cleanup": "keep",
+            "label": null,
+            "model": null,
+            "agent_dir": null,
+            "workspace_dir": null,
+            "run_timeout_seconds": 0,
+            "spawn_mode": "run",
+            "created_at": 1794060187094,
+            "started_at": null,
+            "session_started_at": null,
+            "accumulated_runtime_ms": 0,
+            "ended_at": null,
+            "outcome_json": null,
+            "archive_at_ms": null,
+            "cleanup_completed_at": null,
+            "cleanup_handled": 0,
+            "suppress_announce_reason": null,
+            "expects_completion_message": 0,
+            "announce_retry_count": null,
+            "last_announce_retry_at": null,
+            "last_announce_delivery_error": null,
+            "ended_reason": null,
+            "pause_reason": null,
+            "wake_on_descendant_settle": null,
+            "frozen_result_text": null,
+            "frozen_result_captured_at": null,
+            "fallback_frozen_result_text": null,
+            "fallback_frozen_result_captured_at": null,
+            "ended_hook_emitted_at": null,
+            "pending_final_delivery": 0,
+            "pending_final_delivery_created_at": null,
+            "pending_final_delivery_last_attempt_at": null,
+            "pending_final_delivery_attempt_count": null,
+            "pending_final_delivery_last_error": null,
+            "pending_final_delivery_payload_json": null,
+            "completion_announced_at": null,
+            "payload_json": "{\"runId\":\"native-a\",\"childSessionKey\":\"agent:main:subagent:native-a\",\"controllerSessionKey\":\"agent:main:controller\",\"requesterSessionKey\":\"agent:main:controller\",\"requesterSessionId\":\"controller-generation\",\"requesterDisplayKey\":\"agent:main:controller\",\"task\":\"controlled reservation\",\"cleanup\":\"keep\",\"expectsCompletionMessage\":false,\"spawnMode\":\"run\",\"runTimeoutSeconds\":0,\"createdAt\":1794060187094,\"execution\":{\"status\":\"pending\"},\"dispatchPending\":true,\"completion\":{\"required\":false},\"delivery\":{\"status\":\"not_required\"},\"accumulatedRuntimeMs\":0,\"cleanupHandled\":false}"
+          }
+        ]
+      }
+    },
+    {
+      "owner": "owners/unit/registry-r1-registry-x9zwEw/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-registry-x9zwEw\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "a62441ef4ddca725e452fb889e22ba08f07ee4466a4312325c5e54fdea9abd1e"
+        },
+        {
+          "source": "D:\\tmp\\r1-registry-x9zwEw\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [],
+        "provider_spend_allocations": [],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": [
+          {
+            "run_id": "queued-shared",
+            "child_session_key": "agent:main:subagent:queued-shared",
+            "controller_session_key": "agent:main:controller",
+            "requester_session_key": "agent:main:controller",
+            "requester_display_key": "agent:main:controller",
+            "requester_origin_json": null,
+            "task": "controlled owner entry",
+            "task_name": null,
+            "cleanup": "keep",
+            "label": null,
+            "model": null,
+            "agent_dir": null,
+            "workspace_dir": null,
+            "run_timeout_seconds": null,
+            "spawn_mode": null,
+            "created_at": 1794060187242,
+            "started_at": null,
+            "session_started_at": null,
+            "accumulated_runtime_ms": null,
+            "ended_at": null,
+            "outcome_json": null,
+            "archive_at_ms": null,
+            "cleanup_completed_at": null,
+            "cleanup_handled": null,
+            "suppress_announce_reason": null,
+            "expects_completion_message": null,
+            "announce_retry_count": null,
+            "last_announce_retry_at": null,
+            "last_announce_delivery_error": null,
+            "ended_reason": null,
+            "pause_reason": null,
+            "wake_on_descendant_settle": null,
+            "frozen_result_text": null,
+            "frozen_result_captured_at": null,
+            "fallback_frozen_result_text": null,
+            "fallback_frozen_result_captured_at": null,
+            "ended_hook_emitted_at": null,
+            "pending_final_delivery": 0,
+            "pending_final_delivery_created_at": null,
+            "pending_final_delivery_last_attempt_at": null,
+            "pending_final_delivery_attempt_count": null,
+            "pending_final_delivery_last_error": null,
+            "pending_final_delivery_payload_json": null,
+            "completion_announced_at": null,
+            "payload_json": "{\"runId\":\"queued-shared\",\"childSessionKey\":\"agent:main:subagent:queued-shared\",\"requesterSessionKey\":\"agent:main:controller\",\"controllerSessionKey\":\"agent:main:controller\",\"requesterDisplayKey\":\"agent:main:controller\",\"requesterSessionId\":\"controller-generation\",\"task\":\"controlled owner entry\",\"cleanup\":\"keep\",\"createdAt\":1794060187242,\"execution\":{\"status\":\"interrupted\",\"interruptedAt\":1794060195299,\"interruptionReason\":\"lost-execution-context\"},\"queuedDispatch\":{\"params\":{\"message\":\"controlled queue\",\"sessionKey\":\"agent:main:subagent:queued-shared\",\"idempotencyKey\":\"queued-shared\"},\"maxChildren\":1,\"controllerSessionId\":\"controller-generation\",\"timeoutMs\":1000},\"orchestration\":{\"orchestrationRunId\":\"shared-orchestration\",\"taskNodeId\":\"one\",\"executionWave\":1,\"roleName\":\"implementer\",\"isVerifier\":false,\"phase\":\"worker\",\"leadRole\":\"implementer\",\"originalTask\":\"controlled queue\",\"executionWaves\":[{\"wave\":1,\"taskNodeIds\":[\"one\"],\"roles\":[\"implementer\"]}],\"taskGraph\":{\"graphRunId\":\"shared-graph\",\"mode\":\"auto\",\"status\":\"planned\",\"edges\":[],\"nodes\":[{\"taskNodeId\":\"one\",\"roleName\":\"implementer\",\"task\":\"controlled queue\",\"phase\":\"implementation\",\"dependsOn\":[],\"scope\":\"controlled queue\",\"requiredCapabilities\":[],\"status\":\"ready\",\"attemptPolicy\":{\"maxRepairAttempts\":0,\"maxRedoAttempts\":0}}]}},\"completion\":{\"required\":false},\"delivery\":{\"status\":\"not_required\",\"lastError\":null},\"dispatchPending\":true}"
+          }
+        ]
+      }
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-4OuSv4/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-4OuSv4\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "2bd834912291aa3434147251b83f361f4806a085e8041c66845021300a6311c8"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-4OuSv4\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "native-b",
+            "owner_token": "9e731160-1d5c-41d2-974d-f4f85c92321b",
+            "request_digest": "native-b",
+            "run_id": "native-b",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060231110,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "native-b"
+          },
+          {
+            "scope_key": "[\"project\",\"project\",\"project\"]",
+            "call_id": "native-b"
+          },
+          {
+            "scope_key": "[\"session\",\"native-shared-session\",\"g\"]",
+            "call_id": "native-b"
+          }
+        ],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-6Wuuj7/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-6Wuuj7\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "47eaed25e44ddee55c6149191f19bf3a608641dc157cde120eb7996a3d09bd14"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-6Wuuj7\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "native-a",
+            "owner_token": "10a58b5d-a9c4-4de0-8487-d8a012fd0973",
+            "request_digest": "native-a",
+            "run_id": "native-a",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060227433,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "native-a"
+          },
+          {
+            "scope_key": "[\"project\",\"project\",\"project\"]",
+            "call_id": "native-a"
+          },
+          {
+            "scope_key": "[\"session\",\"native-shared-session\",\"g\"]",
+            "call_id": "native-a"
+          }
+        ],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-Allkqs/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-Allkqs\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "bd596885beb23e28c0c36e3f6b054b340ad80d33cd590d6ab17137d090557ac0"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-Allkqs\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "native-a",
+            "owner_token": "ce4e3147-5d5b-404b-a9d8-03acb662b634",
+            "request_digest": "native-a",
+            "run_id": "native-a",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060232140,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "native-a"
+          },
+          {
+            "scope_key": "[\"project\",\"project\",\"project\"]",
+            "call_id": "native-a"
+          },
+          {
+            "scope_key": "[\"session\",\"native-shared-session\",\"g\"]",
+            "call_id": "native-a"
+          }
+        ],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-pwPVUy/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-pwPVUy\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "3253bee7ad5b1e4c34afdedce14e21f430e9a4a4f2c7e04833b95400cbe9fb68"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-pwPVUy\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "native-b",
+            "owner_token": "5a2ff1f2-edc1-484b-ab11-45412373efbb",
+            "request_digest": "native-b",
+            "run_id": "native-b",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060233172,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "native-b"
+          },
+          {
+            "scope_key": "[\"project\",\"project\",\"project\"]",
+            "call_id": "native-b"
+          },
+          {
+            "scope_key": "[\"session\",\"native-shared-session\",\"g\"]",
+            "call_id": "native-b"
+          }
+        ],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-VFFQie/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-VFFQie\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "d5ce22a784bef2659ed4f02acaf29a180d3d383e0f4238542631a6683001de37"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-VFFQie\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "native-a",
+            "owner_token": "2095fc52-479f-4933-9edf-1651fe0e5225",
+            "request_digest": "native-a",
+            "run_id": "native-a",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060229688,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "native-a"
+          },
+          {
+            "scope_key": "[\"project\",\"project\",\"project\"]",
+            "call_id": "native-a"
+          },
+          {
+            "scope_key": "[\"session\",\"native-shared-session\",\"g\"]",
+            "call_id": "native-a"
+          }
+        ],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-VMuOzI/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-VMuOzI\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "8e4efc9e4dc87f19185ee5acae1de77c1664867fc8d24885076f076aed142a5c"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-VMuOzI\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "native-a",
+            "owner_token": "98994adf-c007-43ad-abc6-54dd0e644e18",
+            "request_digest": "native-a",
+            "run_id": "native-a",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060228530,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "native-a"
+          },
+          {
+            "scope_key": "[\"project\",\"project\",\"project\"]",
+            "call_id": "native-a"
+          },
+          {
+            "scope_key": "[\"session\",\"native-shared-session\",\"g\"]",
+            "call_id": "native-a"
+          }
+        ],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/unit/spend-r1-spend-n8esat/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-n8esat\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "e800e8c14e479bbc76c3257f8808e556adad1d574f8c311585640c9804baaf92"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-n8esat\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"one\",0,0]",
+            "owner_token": "ef4e79c2-e547-4ac6-bd27-68c742a9eda3",
+            "request_digest": "6023aad58c12a073ef2d153d7b6e94ff693605db87e5d21495af37e32f18553e",
+            "run_id": "one",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project-a\",\"projectId\":\"project-a\",\"sessionKey\":\"session-a\",\"sessionGeneration\":\"generation-one\"}",
+            "state": "settled",
+            "reserved_tokens": 100,
+            "reserved_cost_micros": 200,
+            "actual_tokens": 10,
+            "actual_cost_micros": 10,
+            "created_at": 1794060223907,
+            "settled_at": 1794060223911,
+            "reconciliation_ref": "56237820f8ce4008e5d69343d1afd952ebc6b0d9704ad8863ac3d6908ab1c838"
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"one\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"project-a\",\"project-a\"]",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"one\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"session-a\",\"generation-one\"]",
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"one\",0,0]"
+          }
+        ],
+        "provider_spend_reconciliations": [
+          {
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"one\",0,0]",
+            "evidence_ref": "56237820f8ce4008e5d69343d1afd952ebc6b0d9704ad8863ac3d6908ab1c838",
+            "tokens": 10,
+            "cost_micros": 10,
+            "recorded_at": 1794060223911
+          }
+        ],
+        "subagent_runs": []
+      }
+    },
+    {
+      "owner": "owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-waves-owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-off-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\owner.sqlite",
+          "bytes": 1376256,
+          "sha256": "34c06e89a1b52bc5663216bb8d2557f5649194cc7008d25c9961ec01e496ea92"
+        },
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-off-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\owner.sqlite-wal",
+          "bytes": 4136512,
+          "sha256": "551cd31d197ed04a6f0b718d19f1f6e5b654fff3f0a3a23bc0f35664cad78e0e"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [],
+        "provider_spend_allocations": [],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": [
+          {
+            "run_id": "0b21dde4-0ae9-4230-adfc-45cb20b4b70d",
+            "child_session_key": "agent:main:subagent:ab149077-f3e7-443b-b8ee-4f0b7a9ac26b",
+            "controller_session_key": "agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df",
+            "requester_session_key": "agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df",
+            "requester_display_key": "agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df",
+            "requester_origin_json": null,
+            "task": "R1-FIRST-WORKER: report the controlled receipt",
+            "task_name": null,
+            "cleanup": "keep",
+            "label": "Implementer",
+            "model": "openai/mock-coder",
+            "agent_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-8bSk0B\\verse-claw-e2e-user-data-RpuASe\\openclaw-source-state\\agents\\main\\agent",
+            "workspace_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-8bSk0B\\verse-claw-e2e-home-jk7oH7\\r1-workspace",
+            "run_timeout_seconds": 120,
+            "spawn_mode": "run",
+            "created_at": 1794061078107,
+            "started_at": 1794061083869,
+            "session_started_at": 1794061078359,
+            "accumulated_runtime_ms": 0,
+            "ended_at": 1794061084735,
+            "outcome_json": "{\"status\":\"ok\",\"startedAt\":1794061083869,\"endedAt\":1794061084735,\"elapsedMs\":866}",
+            "archive_at_ms": null,
+            "cleanup_completed_at": null,
+            "cleanup_handled": 0,
+            "suppress_announce_reason": null,
+            "expects_completion_message": 1,
+            "announce_retry_count": null,
+            "last_announce_retry_at": null,
+            "last_announce_delivery_error": null,
+            "ended_reason": "subagent-complete",
+            "pause_reason": null,
+            "wake_on_descendant_settle": null,
+            "frozen_result_text": "## Summary\nOWNER-FROZEN-R1-SIGNAL\n## Verification\nAgent-driven controlled provider receipt.",
+            "frozen_result_captured_at": 1794061086981,
+            "fallback_frozen_result_text": null,
+            "fallback_frozen_result_captured_at": null,
+            "ended_hook_emitted_at": null,
+            "pending_final_delivery": 1,
+            "pending_final_delivery_created_at": null,
+            "pending_final_delivery_last_attempt_at": null,
+            "pending_final_delivery_attempt_count": null,
+            "pending_final_delivery_last_error": null,
+            "pending_final_delivery_payload_json": null,
+            "completion_announced_at": null,
+            "payload_json": "{\"runId\":\"0b21dde4-0ae9-4230-adfc-45cb20b4b70d\",\"childSessionKey\":\"agent:main:subagent:ab149077-f3e7-443b-b8ee-4f0b7a9ac26b\",\"controllerSessionKey\":\"agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df\",\"requesterSessionKey\":\"agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df\",\"requesterSessionId\":\"751b68d1-fefd-45f5-89f8-60c023888b35\",\"requesterDisplayKey\":\"agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df\",\"task\":\"R1-FIRST-WORKER: report the controlled receipt\",\"cleanup\":\"keep\",\"expectsCompletionMessage\":true,\"spawnMode\":\"run\",\"label\":\"Implementer\",\"model\":\"openai/mock-coder\",\"agentDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-8bSk0B\\\\verse-claw-e2e-user-data-RpuASe\\\\openclaw-source-state\\\\agents\\\\main\\\\agent\",\"workspaceDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-8bSk0B\\\\verse-claw-e2e-home-jk7oH7\\\\r1-workspace\",\"runTimeoutSeconds\":120,\"createdAt\":1794061078107,\"startedAt\":1794061083869,\"execution\":{\"status\":\"terminal\",\"startedAt\":1794061083869,\"endedAt\":1794061084735,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061083869,\"endedAt\":1794061084735,\"elapsedMs\":866}},\"completion\":{\"required\":true,\"resultText\":\"## Summary\\nOWNER-FROZEN-R1-SIGNAL\\n## Verification\\nAgent-driven controlled provider receipt.\",\"capturedAt\":1794061086981},\"delivery\":{\"status\":\"pending\",\"lastError\":null},\"sessionStartedAt\":1794061078359,\"accumulatedRuntimeMs\":0,\"cleanupHandled\":false,\"orchestration\":{\"orchestrationRunId\":\"orch_f86fcfb5-6da5-4a02-b146-0d34cc1946e1\",\"roleName\":\"implementer\",\"isVerifier\":false,\"phase\":\"worker\",\"expectedWorkerRunIds\":[\"0b21dde4-0ae9-4230-adfc-45cb20b4b70d\",\"89ffb094-ba56-47ec-85c3-41065385494b\"],\"leadRole\":\"implementer\",\"originalTask\":\"R1 controlled overlapping work\",\"taskId\":\"implementer-1\",\"roleInstanceId\":\"orch_f86fcfb5-6da5-4a02-b146-0d34cc1946e1:implementer-1:implementer:attempt-1\",\"attempt\":1,\"scope\":\"R1-FIRST-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"ledger\":{\"taskId\":\"implementer-1\",\"taskNodeId\":\"implementer-1\",\"graphRunId\":\"explicit-workers\",\"roleName\":\"implementer\",\"roleInstanceId\":\"orch_f86fcfb5-6da5-4a02-b146-0d34cc1946e1:implementer-1:implementer:attempt-1\",\"attempt\":1,\"phase\":\"worker\",\"scope\":\"R1-FIRST-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"status\":\"planned\",\"executionWave\":1,\"startedAt\":1794061077762},\"taskNodeId\":\"implementer-1\",\"graphRunId\":\"explicit-workers\",\"executionWave\":1,\"taskGraph\":{\"graphRunId\":\"explicit-workers\",\"mode\":\"auto\",\"status\":\"planned\",\"nodes\":[{\"taskNodeId\":\"implementer-1\",\"roleName\":\"implementer\",\"task\":\"R1-FIRST-WORKER: report the controlled receipt\",\"phase\":\"implementation\",\"dependsOn\":[],\"scope\":\"R1-FIRST-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"ready\",\"modelRef\":null,\"writeSet\":[\"shared.txt\"]},{\"taskNodeId\":\"docs-writer-1\",\"roleName\":\"docs-writer\",\"task\":\"R1-SECOND-WORKER: report the controlled receipt\",\"phase\":\"docs\",\"dependsOn\":[],\"scope\":\"R1-SECOND-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"ready\",\"modelRef\":null,\"writeSet\":[\"shared.txt\"]}],\"edges\":[]},\"executionWaves\":[{\"wave\":1,\"taskNodeIds\":[\"implementer-1\"],\"roles\":[\"implementer\"],\"reason\":\"scheduled 1 ready node(s); deferred 1 for write-set conflict\",\"deferredReasons\":[\"write-set-conflict\"]},{\"wave\":2,\"taskNodeIds\":[\"docs-writer-1\"],\"roles\":[\"docs-writer\"],\"reason\":\"scheduled 1 node(s) previously deferred for tool contention or write-set proof\"}],\"routeDiagnostics\":{\"difficulty\":\"complex\",\"confidence\":0.68,\"reasons\":[\"explicit-workers\",\"lead:implementer\",\"max-workers:2\",\"difficulty:complex\",\"confidence:0.68\"],\"selectedRoles\":[\"implementer\",\"docs-writer\"],\"rejectedRoles\":[{\"roleName\":\"planner\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"architect\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"tester\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"security-reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"knowledge-librarian\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"skeptic\",\"reason\":\"not-selected-by-route\"}],\"requiredCapabilities\":[\"task-analysis\"],\"capabilityGaps\":[],\"isolationAdvisory\":{\"boundary\":\"advisory-only\",\"applied\":false,\"recommendedMode\":\"worktree\",\"reason\":\"multi_worker_write_density\",\"score\":{\"duration\":0,\"workers\":2,\"writeDensity\":1,\"writeSetOverlapRisk\":1}}},\"qualityPolicy\":\"standard\",\"repairPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1,\"maxFollowupRuns\":2},\"workerCommunication\":\"none\",\"handoffArtifactsMode\":\"off\",\"allowFollowupPlanning\":false,\"verifierSkippedReason\":\"no-verifier-role\",\"verifierSkippedAt\":1794061091225},\"endedAt\":1794061084735,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061083869,\"endedAt\":1794061084735,\"elapsedMs\":866},\"endedReason\":\"subagent-complete\",\"browserCleanupDispatchedAt\":1794061085373}"
+          },
+          {
+            "run_id": "89ffb094-ba56-47ec-85c3-41065385494b",
+            "child_session_key": "agent:main:subagent:61a2a1cd-dc35-4c0a-82ea-ad04ce08df92",
+            "controller_session_key": "agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df",
+            "requester_session_key": "agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df",
+            "requester_display_key": "agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df",
+            "requester_origin_json": null,
+            "task": "R1-SECOND-WORKER: report the controlled receipt",
+            "task_name": null,
+            "cleanup": "keep",
+            "label": "Docs Writer",
+            "model": "openai/mock-coder",
+            "agent_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-8bSk0B\\verse-claw-e2e-user-data-RpuASe\\openclaw-source-state\\agents\\main\\agent",
+            "workspace_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-8bSk0B\\verse-claw-e2e-home-jk7oH7\\r1-workspace",
+            "run_timeout_seconds": 120,
+            "spawn_mode": "run",
+            "created_at": 1794061079709,
+            "started_at": 1794061089897,
+            "session_started_at": 1794061086464,
+            "accumulated_runtime_ms": 0,
+            "ended_at": 1794061090206,
+            "outcome_json": "{\"status\":\"ok\",\"startedAt\":1794061089897,\"endedAt\":1794061090206,\"elapsedMs\":309}",
+            "archive_at_ms": null,
+            "cleanup_completed_at": null,
+            "cleanup_handled": 0,
+            "suppress_announce_reason": null,
+            "expects_completion_message": 1,
+            "announce_retry_count": null,
+            "last_announce_retry_at": null,
+            "last_announce_delivery_error": null,
+            "ended_reason": "subagent-complete",
+            "pause_reason": null,
+            "wake_on_descendant_settle": null,
+            "frozen_result_text": "## Summary\nOWNER-FROZEN-R1-SIGNAL\n## Verification\nAgent-driven controlled provider receipt.",
+            "frozen_result_captured_at": 1794061091229,
+            "fallback_frozen_result_text": null,
+            "fallback_frozen_result_captured_at": null,
+            "ended_hook_emitted_at": null,
+            "pending_final_delivery": 1,
+            "pending_final_delivery_created_at": null,
+            "pending_final_delivery_last_attempt_at": null,
+            "pending_final_delivery_attempt_count": null,
+            "pending_final_delivery_last_error": null,
+            "pending_final_delivery_payload_json": null,
+            "completion_announced_at": null,
+            "payload_json": "{\"runId\":\"89ffb094-ba56-47ec-85c3-41065385494b\",\"childSessionKey\":\"agent:main:subagent:61a2a1cd-dc35-4c0a-82ea-ad04ce08df92\",\"controllerSessionKey\":\"agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df\",\"requesterSessionKey\":\"agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df\",\"requesterSessionId\":\"751b68d1-fefd-45f5-89f8-60c023888b35\",\"requesterDisplayKey\":\"agent:main:dashboard:0e2807ba-f8bf-4d0a-8936-e4efe9cea4df\",\"task\":\"R1-SECOND-WORKER: report the controlled receipt\",\"cleanup\":\"keep\",\"expectsCompletionMessage\":true,\"spawnMode\":\"run\",\"label\":\"Docs Writer\",\"model\":\"openai/mock-coder\",\"agentDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-8bSk0B\\\\verse-claw-e2e-user-data-RpuASe\\\\openclaw-source-state\\\\agents\\\\main\\\\agent\",\"workspaceDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-8bSk0B\\\\verse-claw-e2e-home-jk7oH7\\\\r1-workspace\",\"runTimeoutSeconds\":120,\"createdAt\":1794061079709,\"startedAt\":1794061089897,\"execution\":{\"status\":\"terminal\",\"startedAt\":1794061089897,\"endedAt\":1794061090206,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061089897,\"endedAt\":1794061090206,\"elapsedMs\":309}},\"completion\":{\"required\":true,\"resultText\":\"## Summary\\nOWNER-FROZEN-R1-SIGNAL\\n## Verification\\nAgent-driven controlled provider receipt.\",\"capturedAt\":1794061091229},\"delivery\":{\"status\":\"pending\",\"lastError\":null},\"sessionStartedAt\":1794061086464,\"accumulatedRuntimeMs\":0,\"cleanupHandled\":false,\"orchestration\":{\"orchestrationRunId\":\"orch_f86fcfb5-6da5-4a02-b146-0d34cc1946e1\",\"roleName\":\"docs-writer\",\"isVerifier\":false,\"phase\":\"worker\",\"expectedWorkerRunIds\":[\"0b21dde4-0ae9-4230-adfc-45cb20b4b70d\",\"89ffb094-ba56-47ec-85c3-41065385494b\"],\"leadRole\":\"implementer\",\"originalTask\":\"R1 controlled overlapping work\",\"taskId\":\"docs-writer-1\",\"roleInstanceId\":\"orch_f86fcfb5-6da5-4a02-b146-0d34cc1946e1:docs-writer-1:docs-writer:attempt-1\",\"attempt\":1,\"scope\":\"R1-SECOND-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"ledger\":{\"taskId\":\"docs-writer-1\",\"taskNodeId\":\"docs-writer-1\",\"graphRunId\":\"explicit-workers\",\"roleName\":\"docs-writer\",\"roleInstanceId\":\"orch_f86fcfb5-6da5-4a02-b146-0d34cc1946e1:docs-writer-1:docs-writer:attempt-1\",\"attempt\":1,\"phase\":\"worker\",\"scope\":\"R1-SECOND-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"status\":\"planned\",\"executionWave\":2,\"startedAt\":1794061078129},\"taskNodeId\":\"docs-writer-1\",\"graphRunId\":\"explicit-workers\",\"executionWave\":2,\"taskGraph\":{\"graphRunId\":\"explicit-workers\",\"mode\":\"auto\",\"status\":\"planned\",\"nodes\":[{\"taskNodeId\":\"implementer-1\",\"roleName\":\"implementer\",\"task\":\"R1-FIRST-WORKER: report the controlled receipt\",\"phase\":\"implementation\",\"dependsOn\":[],\"scope\":\"R1-FIRST-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"ready\",\"modelRef\":null,\"writeSet\":[\"shared.txt\"]},{\"taskNodeId\":\"docs-writer-1\",\"roleName\":\"docs-writer\",\"task\":\"R1-SECOND-WORKER: report the controlled receipt\",\"phase\":\"docs\",\"dependsOn\":[],\"scope\":\"R1-SECOND-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"ready\",\"modelRef\":null,\"writeSet\":[\"shared.txt\"]}],\"edges\":[]},\"executionWaves\":[{\"wave\":1,\"taskNodeIds\":[\"implementer-1\"],\"roles\":[\"implementer\"],\"reason\":\"scheduled 1 ready node(s); deferred 1 for write-set conflict\",\"deferredReasons\":[\"write-set-conflict\"]},{\"wave\":2,\"taskNodeIds\":[\"docs-writer-1\"],\"roles\":[\"docs-writer\"],\"reason\":\"scheduled 1 node(s) previously deferred for tool contention or write-set proof\"}],\"routeDiagnostics\":{\"difficulty\":\"complex\",\"confidence\":0.68,\"reasons\":[\"explicit-workers\",\"lead:implementer\",\"max-workers:2\",\"difficulty:complex\",\"confidence:0.68\"],\"selectedRoles\":[\"implementer\",\"docs-writer\"],\"rejectedRoles\":[{\"roleName\":\"planner\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"architect\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"tester\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"security-reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"knowledge-librarian\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"skeptic\",\"reason\":\"not-selected-by-route\"}],\"requiredCapabilities\":[\"task-analysis\"],\"capabilityGaps\":[],\"isolationAdvisory\":{\"boundary\":\"advisory-only\",\"applied\":false,\"recommendedMode\":\"worktree\",\"reason\":\"multi_worker_write_density\",\"score\":{\"duration\":0,\"workers\":2,\"writeDensity\":1,\"writeSetOverlapRisk\":1}}},\"qualityPolicy\":\"standard\",\"repairPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1,\"maxFollowupRuns\":2},\"workerCommunication\":\"none\",\"handoffArtifactsMode\":\"off\",\"allowFollowupPlanning\":false,\"verifierSkippedReason\":\"no-verifier-role\",\"verifierSkippedAt\":1794061091225},\"endedAt\":1794061090206,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061089897,\"endedAt\":1794061090206,\"elapsedMs\":309},\"endedReason\":\"subagent-complete\",\"browserCleanupDispatchedAt\":1794061090776}"
+          }
+        ]
+      }
+    },
+    {
+      "owner": "owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-waves-owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-on-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\owner.sqlite",
+          "bytes": 1376256,
+          "sha256": "e1d4a8564730b776335f51c1112aab2b809ba8b4bc637c88ed5d4bc6cc8ee5c6"
+        },
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-on-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\owner.sqlite-wal",
+          "bytes": 4140632,
+          "sha256": "fe5591a4009df10d2fb4f3b752d9ca3ccc90b9aba27f5552899964aa809a54f2"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [],
+        "provider_spend_allocations": [],
+        "provider_spend_reconciliations": [],
+        "subagent_runs": [
+          {
+            "run_id": "0856d375-482a-4d1a-b54e-22e39aaceb9b",
+            "child_session_key": "agent:main:subagent:21ed59bd-5747-4d1f-ad68-344cae66667b",
+            "controller_session_key": "agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467",
+            "requester_session_key": "agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467",
+            "requester_display_key": "agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467",
+            "requester_origin_json": null,
+            "task": "R1-FIRST-WORKER: report the controlled receipt",
+            "task_name": null,
+            "cleanup": "keep",
+            "label": "Planner",
+            "model": "openai/mock-coder",
+            "agent_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-CvHiUl\\verse-claw-e2e-user-data-HUCKBe\\openclaw-source-state\\agents\\main\\agent",
+            "workspace_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-CvHiUl\\verse-claw-e2e-home-Pyuc1u\\r1-workspace",
+            "run_timeout_seconds": 120,
+            "spawn_mode": "run",
+            "created_at": 1794061119867,
+            "started_at": 1794061125407,
+            "session_started_at": 1794061119996,
+            "accumulated_runtime_ms": 0,
+            "ended_at": 1794061125805,
+            "outcome_json": "{\"status\":\"ok\",\"startedAt\":1794061125407,\"endedAt\":1794061125805,\"elapsedMs\":398}",
+            "archive_at_ms": null,
+            "cleanup_completed_at": null,
+            "cleanup_handled": 0,
+            "suppress_announce_reason": null,
+            "expects_completion_message": 1,
+            "announce_retry_count": null,
+            "last_announce_retry_at": null,
+            "last_announce_delivery_error": null,
+            "ended_reason": "subagent-complete",
+            "pause_reason": null,
+            "wake_on_descendant_settle": null,
+            "frozen_result_text": "## Summary\nOWNER-FROZEN-R1-SIGNAL\n## Verification\nAgent-driven controlled provider receipt.",
+            "frozen_result_captured_at": 1794061127424,
+            "fallback_frozen_result_text": null,
+            "fallback_frozen_result_captured_at": null,
+            "ended_hook_emitted_at": null,
+            "pending_final_delivery": 1,
+            "pending_final_delivery_created_at": null,
+            "pending_final_delivery_last_attempt_at": null,
+            "pending_final_delivery_attempt_count": null,
+            "pending_final_delivery_last_error": null,
+            "pending_final_delivery_payload_json": null,
+            "completion_announced_at": null,
+            "payload_json": "{\"runId\":\"0856d375-482a-4d1a-b54e-22e39aaceb9b\",\"childSessionKey\":\"agent:main:subagent:21ed59bd-5747-4d1f-ad68-344cae66667b\",\"controllerSessionKey\":\"agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467\",\"requesterSessionKey\":\"agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467\",\"requesterSessionId\":\"8dc7f345-ebfb-4851-80f1-c4eea4053ac9\",\"requesterDisplayKey\":\"agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467\",\"task\":\"R1-FIRST-WORKER: report the controlled receipt\",\"cleanup\":\"keep\",\"expectsCompletionMessage\":true,\"spawnMode\":\"run\",\"label\":\"Planner\",\"model\":\"openai/mock-coder\",\"agentDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-CvHiUl\\\\verse-claw-e2e-user-data-HUCKBe\\\\openclaw-source-state\\\\agents\\\\main\\\\agent\",\"workspaceDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-CvHiUl\\\\verse-claw-e2e-home-Pyuc1u\\\\r1-workspace\",\"runTimeoutSeconds\":120,\"createdAt\":1794061119867,\"startedAt\":1794061125407,\"execution\":{\"status\":\"terminal\",\"startedAt\":1794061125407,\"endedAt\":1794061125805,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061125407,\"endedAt\":1794061125805,\"elapsedMs\":398}},\"completion\":{\"required\":true,\"resultText\":\"## Summary\\nOWNER-FROZEN-R1-SIGNAL\\n## Verification\\nAgent-driven controlled provider receipt.\",\"capturedAt\":1794061127424},\"delivery\":{\"status\":\"pending\",\"lastError\":null},\"sessionStartedAt\":1794061119996,\"accumulatedRuntimeMs\":0,\"cleanupHandled\":false,\"orchestration\":{\"orchestrationRunId\":\"orch_b2cc118c-5d90-4679-a83e-ee77ca53d603\",\"roleName\":\"planner\",\"isVerifier\":false,\"phase\":\"worker\",\"expectedWorkerRunIds\":[\"0856d375-482a-4d1a-b54e-22e39aaceb9b\",\"83f2f6a1-9875-4c9e-9f81-f4686dc301ed\"],\"leadRole\":\"planner\",\"originalTask\":\"R1 controlled overlapping work\",\"taskId\":\"planner-1\",\"roleInstanceId\":\"orch_b2cc118c-5d90-4679-a83e-ee77ca53d603:planner-1:planner:attempt-1\",\"attempt\":1,\"scope\":\"R1-FIRST-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"ledger\":{\"taskId\":\"planner-1\",\"taskNodeId\":\"planner-1\",\"graphRunId\":\"explicit-workers\",\"roleName\":\"planner\",\"roleInstanceId\":\"orch_b2cc118c-5d90-4679-a83e-ee77ca53d603:planner-1:planner:attempt-1\",\"attempt\":1,\"phase\":\"worker\",\"scope\":\"R1-FIRST-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"status\":\"planned\",\"executionWave\":1,\"startedAt\":1794061119523},\"taskNodeId\":\"planner-1\",\"graphRunId\":\"explicit-workers\",\"executionWave\":1,\"taskGraph\":{\"graphRunId\":\"explicit-workers\",\"mode\":\"staged\",\"status\":\"planned\",\"nodes\":[{\"taskNodeId\":\"planner-1\",\"roleName\":\"planner\",\"task\":\"R1-FIRST-WORKER: report the controlled receipt\",\"phase\":\"plan\",\"dependsOn\":[],\"scope\":\"R1-FIRST-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"ready\",\"modelRef\":null,\"writeSet\":[\"shared.txt\"]},{\"taskNodeId\":\"implementer-1\",\"roleName\":\"implementer\",\"task\":\"R1-SECOND-WORKER: report the controlled receipt\",\"phase\":\"implementation\",\"dependsOn\":[\"planner-1\"],\"scope\":\"R1-SECOND-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"planned\",\"modelRef\":null,\"writeSet\":[\"shared.txt\"]}],\"edges\":[{\"from\":\"planner-1\",\"to\":\"implementer-1\",\"type\":\"dependency\"},{\"from\":\"planner-1\",\"to\":\"implementer-1\",\"type\":\"handoff\"}]},\"executionWaves\":[{\"wave\":1,\"taskNodeIds\":[\"planner-1\"],\"roles\":[\"planner\"],\"reason\":\"scheduled 1 ready node(s) within concurrency cap 2\"},{\"wave\":2,\"taskNodeIds\":[\"implementer-1\"],\"roles\":[\"implementer\"],\"reason\":\"scheduled 1 ready node(s) within concurrency cap 2\"}],\"routeDiagnostics\":{\"difficulty\":\"complex\",\"confidence\":0.68,\"reasons\":[\"explicit-workers\",\"lead:planner\",\"max-workers:2\",\"difficulty:complex\",\"confidence:0.68\"],\"selectedRoles\":[\"planner\",\"implementer\"],\"rejectedRoles\":[{\"roleName\":\"architect\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"tester\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"security-reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"docs-writer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"knowledge-librarian\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"skeptic\",\"reason\":\"not-selected-by-route\"}],\"requiredCapabilities\":[\"task-analysis\"],\"capabilityGaps\":[],\"isolationAdvisory\":{\"boundary\":\"advisory-only\",\"applied\":false,\"recommendedMode\":\"worktree\",\"reason\":\"multi_worker_write_density\",\"score\":{\"duration\":0,\"workers\":2,\"writeDensity\":1,\"writeSetOverlapRisk\":1}}},\"qualityPolicy\":\"standard\",\"repairPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1,\"maxFollowupRuns\":2},\"workerCommunication\":\"none\",\"handoffArtifactsMode\":\"on\",\"allowFollowupPlanning\":false},\"endedAt\":1794061125805,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061125407,\"endedAt\":1794061125805,\"elapsedMs\":398},\"endedReason\":\"subagent-complete\",\"browserCleanupDispatchedAt\":1794061126348}"
+          },
+          {
+            "run_id": "83f2f6a1-9875-4c9e-9f81-f4686dc301ed",
+            "child_session_key": "agent:main:subagent:4480240d-4d42-49df-89d2-0f21586f37ef",
+            "controller_session_key": "agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467",
+            "requester_session_key": "agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467",
+            "requester_display_key": "agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467",
+            "requester_origin_json": null,
+            "task": "R1-SECOND-WORKER: report the controlled receipt",
+            "task_name": null,
+            "cleanup": "keep",
+            "label": "Implementer",
+            "model": "openai/mock-coder",
+            "agent_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-CvHiUl\\verse-claw-e2e-user-data-HUCKBe\\openclaw-source-state\\agents\\main\\agent",
+            "workspace_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-CvHiUl\\verse-claw-e2e-home-Pyuc1u\\r1-workspace",
+            "run_timeout_seconds": 120,
+            "spawn_mode": "run",
+            "created_at": 1794061120778,
+            "started_at": 1794061131059,
+            "session_started_at": 1794061127462,
+            "accumulated_runtime_ms": 0,
+            "ended_at": 1794061131220,
+            "outcome_json": "{\"status\":\"ok\",\"startedAt\":1794061131059,\"endedAt\":1794061131220,\"elapsedMs\":161}",
+            "archive_at_ms": null,
+            "cleanup_completed_at": null,
+            "cleanup_handled": 0,
+            "suppress_announce_reason": null,
+            "expects_completion_message": 1,
+            "announce_retry_count": null,
+            "last_announce_retry_at": null,
+            "last_announce_delivery_error": null,
+            "ended_reason": "subagent-complete",
+            "pause_reason": null,
+            "wake_on_descendant_settle": null,
+            "frozen_result_text": "## Summary\nOWNER-FROZEN-R1-SIGNAL\n## Verification\nAgent-driven controlled provider receipt.",
+            "frozen_result_captured_at": 1794061132038,
+            "fallback_frozen_result_text": null,
+            "fallback_frozen_result_captured_at": null,
+            "ended_hook_emitted_at": null,
+            "pending_final_delivery": 1,
+            "pending_final_delivery_created_at": null,
+            "pending_final_delivery_last_attempt_at": null,
+            "pending_final_delivery_attempt_count": null,
+            "pending_final_delivery_last_error": null,
+            "pending_final_delivery_payload_json": null,
+            "completion_announced_at": null,
+            "payload_json": "{\"runId\":\"83f2f6a1-9875-4c9e-9f81-f4686dc301ed\",\"childSessionKey\":\"agent:main:subagent:4480240d-4d42-49df-89d2-0f21586f37ef\",\"controllerSessionKey\":\"agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467\",\"requesterSessionKey\":\"agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467\",\"requesterSessionId\":\"8dc7f345-ebfb-4851-80f1-c4eea4053ac9\",\"requesterDisplayKey\":\"agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467\",\"task\":\"R1-SECOND-WORKER: report the controlled receipt\",\"cleanup\":\"keep\",\"expectsCompletionMessage\":true,\"spawnMode\":\"run\",\"label\":\"Implementer\",\"model\":\"openai/mock-coder\",\"agentDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-CvHiUl\\\\verse-claw-e2e-user-data-HUCKBe\\\\openclaw-source-state\\\\agents\\\\main\\\\agent\",\"workspaceDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-CvHiUl\\\\verse-claw-e2e-home-Pyuc1u\\\\r1-workspace\",\"runTimeoutSeconds\":120,\"createdAt\":1794061120778,\"startedAt\":1794061131059,\"execution\":{\"status\":\"terminal\",\"startedAt\":1794061131059,\"endedAt\":1794061131220,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061131059,\"endedAt\":1794061131220,\"elapsedMs\":161}},\"completion\":{\"required\":true,\"resultText\":\"## Summary\\nOWNER-FROZEN-R1-SIGNAL\\n## Verification\\nAgent-driven controlled provider receipt.\",\"capturedAt\":1794061132038},\"delivery\":{\"status\":\"pending\",\"lastError\":null},\"sessionStartedAt\":1794061127462,\"accumulatedRuntimeMs\":0,\"cleanupHandled\":false,\"orchestration\":{\"orchestrationRunId\":\"orch_b2cc118c-5d90-4679-a83e-ee77ca53d603\",\"roleName\":\"implementer\",\"isVerifier\":false,\"phase\":\"worker\",\"expectedWorkerRunIds\":[\"0856d375-482a-4d1a-b54e-22e39aaceb9b\",\"83f2f6a1-9875-4c9e-9f81-f4686dc301ed\"],\"leadRole\":\"planner\",\"originalTask\":\"R1 controlled overlapping work\",\"taskId\":\"implementer-1\",\"roleInstanceId\":\"orch_b2cc118c-5d90-4679-a83e-ee77ca53d603:implementer-1:implementer:attempt-1\",\"attempt\":1,\"scope\":\"R1-SECOND-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"ledger\":{\"taskId\":\"implementer-1\",\"taskNodeId\":\"implementer-1\",\"graphRunId\":\"explicit-workers\",\"roleName\":\"implementer\",\"roleInstanceId\":\"orch_b2cc118c-5d90-4679-a83e-ee77ca53d603:implementer-1:implementer:attempt-1\",\"attempt\":1,\"phase\":\"worker\",\"scope\":\"R1-SECOND-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"status\":\"planned\",\"dependsOn\":[\"planner-1\"],\"executionWave\":2,\"startedAt\":1794061119886},\"taskNodeId\":\"implementer-1\",\"graphRunId\":\"explicit-workers\",\"dependsOn\":[\"planner-1\"],\"executionWave\":2,\"taskGraph\":{\"graphRunId\":\"explicit-workers\",\"mode\":\"staged\",\"status\":\"planned\",\"nodes\":[{\"taskNodeId\":\"planner-1\",\"roleName\":\"planner\",\"task\":\"R1-FIRST-WORKER: report the controlled receipt\",\"phase\":\"plan\",\"dependsOn\":[],\"scope\":\"R1-FIRST-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"ready\",\"modelRef\":null,\"writeSet\":[\"shared.txt\"]},{\"taskNodeId\":\"implementer-1\",\"roleName\":\"implementer\",\"task\":\"R1-SECOND-WORKER: report the controlled receipt\",\"phase\":\"implementation\",\"dependsOn\":[\"planner-1\"],\"scope\":\"R1-SECOND-WORKER: report the controlled receipt\",\"requiredCapabilities\":[\"task-analysis\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"planned\",\"modelRef\":null,\"writeSet\":[\"shared.txt\"]}],\"edges\":[{\"from\":\"planner-1\",\"to\":\"implementer-1\",\"type\":\"dependency\"},{\"from\":\"planner-1\",\"to\":\"implementer-1\",\"type\":\"handoff\"}]},\"executionWaves\":[{\"wave\":1,\"taskNodeIds\":[\"planner-1\"],\"roles\":[\"planner\"],\"reason\":\"scheduled 1 ready node(s) within concurrency cap 2\"},{\"wave\":2,\"taskNodeIds\":[\"implementer-1\"],\"roles\":[\"implementer\"],\"reason\":\"scheduled 1 ready node(s) within concurrency cap 2\"}],\"routeDiagnostics\":{\"difficulty\":\"complex\",\"confidence\":0.68,\"reasons\":[\"explicit-workers\",\"lead:planner\",\"max-workers:2\",\"difficulty:complex\",\"confidence:0.68\"],\"selectedRoles\":[\"planner\",\"implementer\"],\"rejectedRoles\":[{\"roleName\":\"architect\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"tester\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"security-reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"docs-writer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"knowledge-librarian\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"skeptic\",\"reason\":\"not-selected-by-route\"}],\"requiredCapabilities\":[\"task-analysis\"],\"capabilityGaps\":[],\"isolationAdvisory\":{\"boundary\":\"advisory-only\",\"applied\":false,\"recommendedMode\":\"worktree\",\"reason\":\"multi_worker_write_density\",\"score\":{\"duration\":0,\"workers\":2,\"writeDensity\":1,\"writeSetOverlapRisk\":1}}},\"qualityPolicy\":\"standard\",\"repairPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1,\"maxFollowupRuns\":2},\"workerCommunication\":\"none\",\"handoffArtifactsMode\":\"on\",\"allowFollowupPlanning\":false,\"handoffArtifacts\":[{\"schemaVersion\":1,\"artifactId\":\"handoff_554e36cddede4648e53516e5\",\"state\":\"ready\",\"orchestrationRunId\":\"orch_b2cc118c-5d90-4679-a83e-ee77ca53d603\",\"taskGraphId\":\"explicit-workers\",\"ownerSessionKey\":\"agent:main:dashboard:96ce6ff0-0417-4156-92c0-9f85f74d4467\",\"fromTaskId\":\"planner-1\",\"fromRole\":\"planner\",\"fromRoleInstanceId\":\"orch_b2cc118c-5d90-4679-a83e-ee77ca53d603:planner-1:planner:attempt-1\",\"toTaskId\":\"implementer-1\",\"toRole\":\"implementer\",\"attempt\":1,\"childRunId\":\"0856d375-482a-4d1a-b54e-22e39aaceb9b\",\"childSessionKey\":\"agent:main:subagent:21ed59bd-5747-4d1f-ad68-344cae66667b\",\"outputText\":\"## Summary\\nOWNER-FROZEN-R1-SIGNAL\\n## Verification\\nAgent-driven controlled provider receipt.\",\"outputSha256\":\"7149d5d3ff339687b50116ad3a9377d1be6819c2e16f154ced0c30490bcc9bc1\",\"originalChars\":91,\"deliveredChars\":91,\"redacted\":false,\"truncated\":false,\"capturedAt\":1794061126323,\"source\":\"subagent_registry_completion\",\"provenance\":{\"schema\":\"content-provenance.v1\",\"sourceKind\":\"agent-handoff\",\"trustLevel\":\"derived-untrusted\",\"sourceId\":\"handoff_554e36cddede4648e53516e5\",\"receivedAt\":\"2026-11-07T14:18:46.323Z\",\"parentSourceIds\":[],\"containsExternalUntrustedContent\":true,\"sessionId\":\"agent:main:subagent:21ed59bd-5747-4d1f-ad68-344cae66667b\"}}]},\"endedAt\":1794061131220,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061131059,\"endedAt\":1794061131220,\"elapsedMs\":161},\"endedReason\":\"subagent-complete\"}"
+          }
+        ]
+      }
+    },
+    {
+      "owner": "owners/native/token-results/autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-/r1-spend-owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\token-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\spend.sqlite",
+          "bytes": 1478656,
+          "sha256": "c9fdddf7a1dbac9e2158469ac7dee36b694c113e2c8c57bbe3602520ecafec07"
+        },
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\token-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\spend.sqlite-wal",
+          "bytes": 4124152,
+          "sha256": "36faedcfea21d32b8f83af84d7daa98de0b8152c3319bd5b351ea493357d1ba0"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"d9f922a6-2626-45e6-b699-c43425e4a461\",\"SPEND-FIRST\",0,0]",
+            "owner_token": "167d5fcc-d6b4-40e5-87b1-80a549cb96b2",
+            "request_digest": "77a6bdc31d07824bf7d2a5fe587d8b186446b599ab46ff691313b750ac286ce7",
+            "run_id": "SPEND-FIRST",
+            "provider": "openai",
+            "model": "mock-coder",
+            "scope_json": "{\"workspaceId\":\"default\",\"projectId\":\"default\",\"sessionKey\":\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"sessionGeneration\":\"d9f922a6-2626-45e6-b699-c43425e4a461\"}",
+            "state": "unknown",
+            "reserved_tokens": 132096,
+            "reserved_cost_micros": null,
+            "actual_tokens": 150,
+            "actual_cost_micros": null,
+            "created_at": 1794061182113,
+            "settled_at": 1794061186671,
+            "reconciliation_ref": "7fd08190f60b746078eee1aaca693ce5539ec87cb43e77e00a606613ad40f312"
+          },
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:8f7efe29-4271-410e-b6e5-b85b8b74225c\",\"25dee392-3975-401d-a738-e2e7392648a4\",\"SPEND-AFTER\",0,0]",
+            "owner_token": "4ff8bd16-bb59-4262-adb2-49831afa17c9",
+            "request_digest": "21a24eaeeeb54baa1459067d7cfd118da72cfab5f75c18eadb15206019d72816",
+            "run_id": "SPEND-AFTER",
+            "provider": "openai",
+            "model": "mock-coder",
+            "scope_json": "{\"workspaceId\":\"default\",\"projectId\":\"default\",\"sessionKey\":\"agent:main:dashboard:8f7efe29-4271-410e-b6e5-b85b8b74225c\",\"sessionGeneration\":\"25dee392-3975-401d-a738-e2e7392648a4\"}",
+            "state": "unknown",
+            "reserved_tokens": 132096,
+            "reserved_cost_micros": null,
+            "actual_tokens": 150,
+            "actual_cost_micros": null,
+            "created_at": 1794061188993,
+            "settled_at": 1794061189009,
+            "reconciliation_ref": "5628bce368a1c24abd08447399fdc2bd7946ce427c7054b96d08d7216aa69c92"
+          },
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce\",\"d9371e79-d104-4d0c-81f3-e29dd8225f36\",\"e74a167d-2393-494a-b7d6-b7f5164bed9b\",0,0]",
+            "owner_token": "9dcd8da5-46b5-4d6f-beb4-d176ba79f3ab",
+            "request_digest": "4b4acaa359a6d314709c98494698257401471bd0b097469f34f7af8b46358bc4",
+            "run_id": "e74a167d-2393-494a-b7d6-b7f5164bed9b",
+            "provider": "openai",
+            "model": "mock-coder",
+            "scope_json": "{\"workspaceId\":\"default\",\"projectId\":\"default\",\"sessionKey\":\"agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce\",\"sessionGeneration\":\"d9371e79-d104-4d0c-81f3-e29dd8225f36\"}",
+            "state": "unknown",
+            "reserved_tokens": 132096,
+            "reserved_cost_micros": null,
+            "actual_tokens": 150,
+            "actual_cost_micros": null,
+            "created_at": 1794061193387,
+            "settled_at": 1794061193396,
+            "reconciliation_ref": "7a7dc2f64fc7daf9806915ec75b94d9e723b8021d8c4cda9443d7b48e51414eb"
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"d9f922a6-2626-45e6-b699-c43425e4a461\",\"SPEND-FIRST\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"default\",\"default\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"d9f922a6-2626-45e6-b699-c43425e4a461\",\"SPEND-FIRST\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"d9f922a6-2626-45e6-b699-c43425e4a461\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"d9f922a6-2626-45e6-b699-c43425e4a461\",\"SPEND-FIRST\",0,0]"
+          },
+          {
+            "scope_key": "host",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:8f7efe29-4271-410e-b6e5-b85b8b74225c\",\"25dee392-3975-401d-a738-e2e7392648a4\",\"SPEND-AFTER\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"default\",\"default\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:8f7efe29-4271-410e-b6e5-b85b8b74225c\",\"25dee392-3975-401d-a738-e2e7392648a4\",\"SPEND-AFTER\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"agent:main:dashboard:8f7efe29-4271-410e-b6e5-b85b8b74225c\",\"25dee392-3975-401d-a738-e2e7392648a4\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:8f7efe29-4271-410e-b6e5-b85b8b74225c\",\"25dee392-3975-401d-a738-e2e7392648a4\",\"SPEND-AFTER\",0,0]"
+          },
+          {
+            "scope_key": "host",
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce\",\"d9371e79-d104-4d0c-81f3-e29dd8225f36\",\"e74a167d-2393-494a-b7d6-b7f5164bed9b\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"default\",\"default\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce\",\"d9371e79-d104-4d0c-81f3-e29dd8225f36\",\"e74a167d-2393-494a-b7d6-b7f5164bed9b\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce\",\"d9371e79-d104-4d0c-81f3-e29dd8225f36\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce\",\"d9371e79-d104-4d0c-81f3-e29dd8225f36\",\"e74a167d-2393-494a-b7d6-b7f5164bed9b\",0,0]"
+          }
+        ],
+        "provider_spend_reconciliations": [
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"d9f922a6-2626-45e6-b699-c43425e4a461\",\"SPEND-FIRST\",0,0]",
+            "evidence_ref": "7fd08190f60b746078eee1aaca693ce5539ec87cb43e77e00a606613ad40f312",
+            "tokens": 150,
+            "cost_micros": null,
+            "recorded_at": 1794061186671
+          },
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:8f7efe29-4271-410e-b6e5-b85b8b74225c\",\"25dee392-3975-401d-a738-e2e7392648a4\",\"SPEND-AFTER\",0,0]",
+            "evidence_ref": "5628bce368a1c24abd08447399fdc2bd7946ce427c7054b96d08d7216aa69c92",
+            "tokens": 150,
+            "cost_micros": null,
+            "recorded_at": 1794061189009
+          },
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce\",\"d9371e79-d104-4d0c-81f3-e29dd8225f36\",\"e74a167d-2393-494a-b7d6-b7f5164bed9b\",0,0]",
+            "evidence_ref": "7a7dc2f64fc7daf9806915ec75b94d9e723b8021d8c4cda9443d7b48e51414eb",
+            "tokens": 150,
+            "cost_micros": null,
+            "recorded_at": 1794061193396
+          }
+        ],
+        "subagent_runs": [
+          {
+            "run_id": "e74a167d-2393-494a-b7d6-b7f5164bed9b",
+            "child_session_key": "agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce",
+            "controller_session_key": "agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b",
+            "requester_session_key": "agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b",
+            "requester_display_key": "agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b",
+            "requester_origin_json": null,
+            "task": "SPEND-CHILD: report the controlled scope receipt",
+            "task_name": null,
+            "cleanup": "keep",
+            "label": "Implementer",
+            "model": "openai/mock-coder",
+            "agent_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-Q4MQqG\\verse-claw-e2e-user-data-SZES0S\\openclaw-source-state\\agents\\main\\agent",
+            "workspace_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-Q4MQqG\\verse-claw-e2e-home-0VQkPf\\r1-budget-workspace",
+            "run_timeout_seconds": 0,
+            "spawn_mode": "run",
+            "created_at": 1794061190245,
+            "started_at": 1794061193331,
+            "session_started_at": 1794061190317,
+            "accumulated_runtime_ms": 0,
+            "ended_at": 1794061193405,
+            "outcome_json": "{\"status\":\"ok\",\"startedAt\":1794061193331,\"endedAt\":1794061193405,\"elapsedMs\":74}",
+            "archive_at_ms": null,
+            "cleanup_completed_at": null,
+            "cleanup_handled": 0,
+            "suppress_announce_reason": null,
+            "expects_completion_message": 1,
+            "announce_retry_count": null,
+            "last_announce_retry_at": null,
+            "last_announce_delivery_error": null,
+            "ended_reason": "subagent-complete",
+            "pause_reason": null,
+            "wake_on_descendant_settle": null,
+            "frozen_result_text": "## Summary\nSPEND-child-RECEIPT\n## Verification\nAgent-driven scope receipt; no source edits requested.",
+            "frozen_result_captured_at": 1794061193946,
+            "fallback_frozen_result_text": null,
+            "fallback_frozen_result_captured_at": null,
+            "ended_hook_emitted_at": null,
+            "pending_final_delivery": 1,
+            "pending_final_delivery_created_at": null,
+            "pending_final_delivery_last_attempt_at": null,
+            "pending_final_delivery_attempt_count": null,
+            "pending_final_delivery_last_error": null,
+            "pending_final_delivery_payload_json": null,
+            "completion_announced_at": null,
+            "payload_json": "{\"runId\":\"e74a167d-2393-494a-b7d6-b7f5164bed9b\",\"childSessionKey\":\"agent:main:subagent:81b7544d-bb66-4b04-93c6-901b359a72ce\",\"controllerSessionKey\":\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"requesterSessionKey\":\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"requesterSessionId\":\"d9f922a6-2626-45e6-b699-c43425e4a461\",\"requesterDisplayKey\":\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"task\":\"SPEND-CHILD: report the controlled scope receipt\",\"cleanup\":\"keep\",\"expectsCompletionMessage\":true,\"spawnMode\":\"run\",\"label\":\"Implementer\",\"model\":\"openai/mock-coder\",\"agentDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-Q4MQqG\\\\verse-claw-e2e-user-data-SZES0S\\\\openclaw-source-state\\\\agents\\\\main\\\\agent\",\"workspaceDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-Q4MQqG\\\\verse-claw-e2e-home-0VQkPf\\\\r1-budget-workspace\",\"runTimeoutSeconds\":0,\"createdAt\":1794061190245,\"startedAt\":1794061193331,\"execution\":{\"status\":\"terminal\",\"startedAt\":1794061193331,\"endedAt\":1794061193405,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061193331,\"endedAt\":1794061193405,\"elapsedMs\":74}},\"completion\":{\"required\":true,\"resultText\":\"## Summary\\nSPEND-child-RECEIPT\\n## Verification\\nAgent-driven scope receipt; no source edits requested.\",\"capturedAt\":1794061193946},\"delivery\":{\"status\":\"pending\",\"lastError\":null},\"sessionStartedAt\":1794061190317,\"accumulatedRuntimeMs\":0,\"cleanupHandled\":false,\"orchestration\":{\"orchestrationRunId\":\"orch_8effee34-790c-4bb3-b454-5619646bc4ac\",\"roleName\":\"implementer\",\"isVerifier\":false,\"phase\":\"worker\",\"expectedWorkerRunIds\":[\"e74a167d-2393-494a-b7d6-b7f5164bed9b\"],\"leadRole\":\"implementer\",\"originalTask\":\"Verify inherited project budget\",\"taskId\":\"implementer-1\",\"roleInstanceId\":\"orch_8effee34-790c-4bb3-b454-5619646bc4ac:implementer-1:implementer:attempt-1\",\"attempt\":1,\"scope\":\"SPEND-CHILD: report the controlled scope receipt\",\"requiredCapabilities\":[\"task-analysis\",\"verification\"],\"ledger\":{\"taskId\":\"implementer-1\",\"taskNodeId\":\"implementer-1\",\"graphRunId\":\"explicit-workers\",\"roleName\":\"implementer\",\"roleInstanceId\":\"orch_8effee34-790c-4bb3-b454-5619646bc4ac:implementer-1:implementer:attempt-1\",\"attempt\":1,\"phase\":\"worker\",\"scope\":\"SPEND-CHILD: report the controlled scope receipt\",\"requiredCapabilities\":[\"task-analysis\",\"verification\"],\"status\":\"planned\",\"executionWave\":1,\"startedAt\":1794061189762},\"taskNodeId\":\"implementer-1\",\"graphRunId\":\"explicit-workers\",\"executionWave\":1,\"taskGraph\":{\"graphRunId\":\"explicit-workers\",\"mode\":\"auto\",\"status\":\"planned\",\"nodes\":[{\"taskNodeId\":\"implementer-1\",\"roleName\":\"implementer\",\"task\":\"SPEND-CHILD: report the controlled scope receipt\",\"phase\":\"implementation\",\"dependsOn\":[],\"scope\":\"SPEND-CHILD: report the controlled scope receipt\",\"requiredCapabilities\":[\"task-analysis\",\"verification\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"ready\",\"modelRef\":null,\"writeSet\":[\"scope-receipt.txt\"]}],\"edges\":[]},\"executionWaves\":[{\"wave\":1,\"taskNodeIds\":[\"implementer-1\"],\"roles\":[\"implementer\"],\"reason\":\"scheduled 1 ready node(s) within concurrency cap 1\"}],\"routeDiagnostics\":{\"difficulty\":\"complex\",\"confidence\":0.6000000000000001,\"reasons\":[\"explicit-workers\",\"lead:implementer\",\"max-workers:1\",\"difficulty:complex\",\"confidence:0.60\",\"capability-gaps\"],\"selectedRoles\":[\"implementer\"],\"rejectedRoles\":[{\"roleName\":\"planner\",\"reason\":\"capability-gap\"},{\"roleName\":\"architect\",\"reason\":\"capability-gap\"},{\"roleName\":\"tester\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"security-reviewer\",\"reason\":\"capability-gap\"},{\"roleName\":\"docs-writer\",\"reason\":\"capability-gap\"},{\"roleName\":\"knowledge-librarian\",\"reason\":\"capability-gap\"},{\"roleName\":\"skeptic\",\"reason\":\"not-selected-by-route\"}],\"requiredCapabilities\":[\"task-analysis\",\"verification\"],\"capabilityGaps\":[{\"roleName\":\"implementer\",\"missing\":[\"verification\"]}],\"isolationAdvisory\":{\"boundary\":\"advisory-only\",\"applied\":false,\"recommendedMode\":\"shared\",\"reason\":\"shared_l0_default\",\"score\":{\"duration\":0,\"workers\":1,\"writeDensity\":1,\"writeSetOverlapRisk\":0}}},\"qualityPolicy\":\"standard\",\"repairPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1,\"maxFollowupRuns\":2},\"workerCommunication\":\"none\",\"handoffArtifactsMode\":\"off\",\"allowFollowupPlanning\":false},\"endedAt\":1794061193405,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061193331,\"endedAt\":1794061193405,\"elapsedMs\":74},\"endedReason\":\"subagent-complete\"}"
+          }
+        ]
+      }
+    },
+    {
+      "owner": "owners/native/usd-results/autonomy-resource-admissio-532e3-econciles-actual-usage-USD-/r1-spend-owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\usd-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\spend.sqlite",
+          "bytes": 1474560,
+          "sha256": "2e24b226291c4c077822be5ac23dadeca115edad2c4a6301ab93b70fddae8b97"
+        },
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\usd-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\spend.sqlite-wal",
+          "bytes": 4124152,
+          "sha256": "98f10eaecd67cc60e11eff21165f1e13759502b53743b45121567dd145e98fe2"
+        }
+      ],
+      "integrity": [
+        {
+          "integrity_check": "ok"
+        }
+      ],
+      "tables": {
+        "provider_spend_calls": [
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\",\"SPEND-FIRST\",0,0]",
+            "owner_token": "6150aec5-1d03-4153-a108-5b7e1b4d9e88",
+            "request_digest": "229f8b415d9d68abe0fd2aa58f8f37659f1de1a4febf271b419583f4c7b3624a",
+            "run_id": "SPEND-FIRST",
+            "provider": "openai",
+            "model": "mock-coder",
+            "scope_json": "{\"workspaceId\":\"default\",\"projectId\":\"default\",\"sessionKey\":\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"sessionGeneration\":\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\"}",
+            "state": "settled",
+            "reserved_tokens": 132096,
+            "reserved_cost_micros": 264192,
+            "actual_tokens": 150,
+            "actual_cost_micros": 180,
+            "created_at": 1794061249274,
+            "settled_at": 1794061252273,
+            "reconciliation_ref": "a15254dcbed2de36862592a428d8066d5d8baa9f508d2a2ef7da81b0cbefb6e0"
+          },
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:953479e8-1ad4-44b8-8b21-ee32435b2450\",\"46eb2b1c-d6f3-4664-ae66-c8352dabf34c\",\"SPEND-AFTER\",0,0]",
+            "owner_token": "dfebb742-01b0-4163-875f-5162f36d85aa",
+            "request_digest": "a4e0466b96f36d7ff06182cf80c3cd15a5ff95caa42e21fdb084c6558b5127fa",
+            "run_id": "SPEND-AFTER",
+            "provider": "openai",
+            "model": "mock-coder",
+            "scope_json": "{\"workspaceId\":\"default\",\"projectId\":\"default\",\"sessionKey\":\"agent:main:dashboard:953479e8-1ad4-44b8-8b21-ee32435b2450\",\"sessionGeneration\":\"46eb2b1c-d6f3-4664-ae66-c8352dabf34c\"}",
+            "state": "settled",
+            "reserved_tokens": 132096,
+            "reserved_cost_micros": 264192,
+            "actual_tokens": 150,
+            "actual_cost_micros": 180,
+            "created_at": 1794061254287,
+            "settled_at": 1794061254321,
+            "reconciliation_ref": "ce07817cdabcdbab002613d773fef3451dbca8acf494f6dfc3b4f0275d79bebc"
+          },
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7\",\"8d240c24-60e6-49b2-80fe-f3926d34d172\",\"c71edb16-a73b-49e8-ae06-ca9cadb11f35\",0,0]",
+            "owner_token": "c9cd3e6f-c3d6-4d0a-9398-bef7f14e03ba",
+            "request_digest": "e7dd4bc6d0c7020c4a66d1e6bad5ec7c0436ef3d99ff18dbe447dfab5cd88384",
+            "run_id": "c71edb16-a73b-49e8-ae06-ca9cadb11f35",
+            "provider": "openai",
+            "model": "mock-coder",
+            "scope_json": "{\"workspaceId\":\"default\",\"projectId\":\"default\",\"sessionKey\":\"agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7\",\"sessionGeneration\":\"8d240c24-60e6-49b2-80fe-f3926d34d172\"}",
+            "state": "settled",
+            "reserved_tokens": 132096,
+            "reserved_cost_micros": 264192,
+            "actual_tokens": 150,
+            "actual_cost_micros": 180,
+            "created_at": 1794061259495,
+            "settled_at": 1794061259505,
+            "reconciliation_ref": "a3f5fb4988b32c1e2835a953273c9d8a149e3f1de80bc24d3eb032be07aa27b7"
+          }
+        ],
+        "provider_spend_allocations": [
+          {
+            "scope_key": "host",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\",\"SPEND-FIRST\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"default\",\"default\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\",\"SPEND-FIRST\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\",\"SPEND-FIRST\",0,0]"
+          },
+          {
+            "scope_key": "host",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:953479e8-1ad4-44b8-8b21-ee32435b2450\",\"46eb2b1c-d6f3-4664-ae66-c8352dabf34c\",\"SPEND-AFTER\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"default\",\"default\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:953479e8-1ad4-44b8-8b21-ee32435b2450\",\"46eb2b1c-d6f3-4664-ae66-c8352dabf34c\",\"SPEND-AFTER\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"agent:main:dashboard:953479e8-1ad4-44b8-8b21-ee32435b2450\",\"46eb2b1c-d6f3-4664-ae66-c8352dabf34c\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:953479e8-1ad4-44b8-8b21-ee32435b2450\",\"46eb2b1c-d6f3-4664-ae66-c8352dabf34c\",\"SPEND-AFTER\",0,0]"
+          },
+          {
+            "scope_key": "host",
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7\",\"8d240c24-60e6-49b2-80fe-f3926d34d172\",\"c71edb16-a73b-49e8-ae06-ca9cadb11f35\",0,0]"
+          },
+          {
+            "scope_key": "[\"project\",\"default\",\"default\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7\",\"8d240c24-60e6-49b2-80fe-f3926d34d172\",\"c71edb16-a73b-49e8-ae06-ca9cadb11f35\",0,0]"
+          },
+          {
+            "scope_key": "[\"session\",\"agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7\",\"8d240c24-60e6-49b2-80fe-f3926d34d172\"]",
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7\",\"8d240c24-60e6-49b2-80fe-f3926d34d172\",\"c71edb16-a73b-49e8-ae06-ca9cadb11f35\",0,0]"
+          }
+        ],
+        "provider_spend_reconciliations": [
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\",\"SPEND-FIRST\",0,0]",
+            "evidence_ref": "a15254dcbed2de36862592a428d8066d5d8baa9f508d2a2ef7da81b0cbefb6e0",
+            "tokens": 150,
+            "cost_micros": 180,
+            "recorded_at": 1794061252273
+          },
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:dashboard:953479e8-1ad4-44b8-8b21-ee32435b2450\",\"46eb2b1c-d6f3-4664-ae66-c8352dabf34c\",\"SPEND-AFTER\",0,0]",
+            "evidence_ref": "ce07817cdabcdbab002613d773fef3451dbca8acf494f6dfc3b4f0275d79bebc",
+            "tokens": 150,
+            "cost_micros": 180,
+            "recorded_at": 1794061254321
+          },
+          {
+            "call_id": "[\"default\",\"default\",\"agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7\",\"8d240c24-60e6-49b2-80fe-f3926d34d172\",\"c71edb16-a73b-49e8-ae06-ca9cadb11f35\",0,0]",
+            "evidence_ref": "a3f5fb4988b32c1e2835a953273c9d8a149e3f1de80bc24d3eb032be07aa27b7",
+            "tokens": 150,
+            "cost_micros": 180,
+            "recorded_at": 1794061259505
+          }
+        ],
+        "subagent_runs": [
+          {
+            "run_id": "c71edb16-a73b-49e8-ae06-ca9cadb11f35",
+            "child_session_key": "agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7",
+            "controller_session_key": "agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c",
+            "requester_session_key": "agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c",
+            "requester_display_key": "agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c",
+            "requester_origin_json": null,
+            "task": "SPEND-CHILD: report the controlled scope receipt",
+            "task_name": null,
+            "cleanup": "keep",
+            "label": "Implementer",
+            "model": "openai/mock-coder",
+            "agent_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-RJAhUY\\verse-claw-e2e-user-data-YXUtf2\\openclaw-source-state\\agents\\main\\agent",
+            "workspace_dir": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-RJAhUY\\verse-claw-e2e-home-qpm6IJ\\r1-budget-workspace",
+            "run_timeout_seconds": 0,
+            "spawn_mode": "run",
+            "created_at": 1794061255937,
+            "started_at": 1794061259445,
+            "session_started_at": 1794061256064,
+            "accumulated_runtime_ms": 0,
+            "ended_at": 1794061259516,
+            "outcome_json": "{\"status\":\"ok\",\"startedAt\":1794061259445,\"endedAt\":1794061259516,\"elapsedMs\":71}",
+            "archive_at_ms": null,
+            "cleanup_completed_at": null,
+            "cleanup_handled": 0,
+            "suppress_announce_reason": null,
+            "expects_completion_message": 1,
+            "announce_retry_count": null,
+            "last_announce_retry_at": null,
+            "last_announce_delivery_error": null,
+            "ended_reason": "subagent-complete",
+            "pause_reason": null,
+            "wake_on_descendant_settle": null,
+            "frozen_result_text": "## Summary\nSPEND-child-RECEIPT\n## Verification\nAgent-driven scope receipt; no source edits requested.",
+            "frozen_result_captured_at": 1794061259956,
+            "fallback_frozen_result_text": null,
+            "fallback_frozen_result_captured_at": null,
+            "ended_hook_emitted_at": null,
+            "pending_final_delivery": 1,
+            "pending_final_delivery_created_at": null,
+            "pending_final_delivery_last_attempt_at": null,
+            "pending_final_delivery_attempt_count": null,
+            "pending_final_delivery_last_error": null,
+            "pending_final_delivery_payload_json": null,
+            "completion_announced_at": null,
+            "payload_json": "{\"runId\":\"c71edb16-a73b-49e8-ae06-ca9cadb11f35\",\"childSessionKey\":\"agent:main:subagent:c3377725-d651-4691-a340-7dee81121ab7\",\"controllerSessionKey\":\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"requesterSessionKey\":\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"requesterSessionId\":\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\",\"requesterDisplayKey\":\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"task\":\"SPEND-CHILD: report the controlled scope receipt\",\"cleanup\":\"keep\",\"expectsCompletionMessage\":true,\"spawnMode\":\"run\",\"label\":\"Implementer\",\"model\":\"openai/mock-coder\",\"agentDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-RJAhUY\\\\verse-claw-e2e-user-data-YXUtf2\\\\openclaw-source-state\\\\agents\\\\main\\\\agent\",\"workspaceDir\":\"D:\\\\tmp\\\\autonomy-r1-handoff-20261106-01a1b018\\\\clean-verify\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-RJAhUY\\\\verse-claw-e2e-home-qpm6IJ\\\\r1-budget-workspace\",\"runTimeoutSeconds\":0,\"createdAt\":1794061255937,\"startedAt\":1794061259445,\"execution\":{\"status\":\"terminal\",\"startedAt\":1794061259445,\"endedAt\":1794061259516,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061259445,\"endedAt\":1794061259516,\"elapsedMs\":71}},\"completion\":{\"required\":true,\"resultText\":\"## Summary\\nSPEND-child-RECEIPT\\n## Verification\\nAgent-driven scope receipt; no source edits requested.\",\"capturedAt\":1794061259956},\"delivery\":{\"status\":\"pending\",\"lastError\":null},\"sessionStartedAt\":1794061256064,\"accumulatedRuntimeMs\":0,\"cleanupHandled\":false,\"orchestration\":{\"orchestrationRunId\":\"orch_1d187082-ff74-4d19-8118-f7a2ad895e98\",\"roleName\":\"implementer\",\"isVerifier\":false,\"phase\":\"worker\",\"expectedWorkerRunIds\":[\"c71edb16-a73b-49e8-ae06-ca9cadb11f35\"],\"leadRole\":\"implementer\",\"originalTask\":\"Verify inherited project budget\",\"taskId\":\"implementer-1\",\"roleInstanceId\":\"orch_1d187082-ff74-4d19-8118-f7a2ad895e98:implementer-1:implementer:attempt-1\",\"attempt\":1,\"scope\":\"SPEND-CHILD: report the controlled scope receipt\",\"requiredCapabilities\":[\"task-analysis\",\"verification\"],\"ledger\":{\"taskId\":\"implementer-1\",\"taskNodeId\":\"implementer-1\",\"graphRunId\":\"explicit-workers\",\"roleName\":\"implementer\",\"roleInstanceId\":\"orch_1d187082-ff74-4d19-8118-f7a2ad895e98:implementer-1:implementer:attempt-1\",\"attempt\":1,\"phase\":\"worker\",\"scope\":\"SPEND-CHILD: report the controlled scope receipt\",\"requiredCapabilities\":[\"task-analysis\",\"verification\"],\"status\":\"planned\",\"executionWave\":1,\"startedAt\":1794061255351},\"taskNodeId\":\"implementer-1\",\"graphRunId\":\"explicit-workers\",\"executionWave\":1,\"taskGraph\":{\"graphRunId\":\"explicit-workers\",\"mode\":\"auto\",\"status\":\"planned\",\"nodes\":[{\"taskNodeId\":\"implementer-1\",\"roleName\":\"implementer\",\"task\":\"SPEND-CHILD: report the controlled scope receipt\",\"phase\":\"implementation\",\"dependsOn\":[],\"scope\":\"SPEND-CHILD: report the controlled scope receipt\",\"requiredCapabilities\":[\"task-analysis\",\"verification\"],\"attemptPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1},\"status\":\"ready\",\"modelRef\":null,\"writeSet\":[\"scope-receipt.txt\"]}],\"edges\":[]},\"executionWaves\":[{\"wave\":1,\"taskNodeIds\":[\"implementer-1\"],\"roles\":[\"implementer\"],\"reason\":\"scheduled 1 ready node(s) within concurrency cap 1\"}],\"routeDiagnostics\":{\"difficulty\":\"complex\",\"confidence\":0.6000000000000001,\"reasons\":[\"explicit-workers\",\"lead:implementer\",\"max-workers:1\",\"difficulty:complex\",\"confidence:0.60\",\"capability-gaps\"],\"selectedRoles\":[\"implementer\"],\"rejectedRoles\":[{\"roleName\":\"planner\",\"reason\":\"capability-gap\"},{\"roleName\":\"architect\",\"reason\":\"capability-gap\"},{\"roleName\":\"tester\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"reviewer\",\"reason\":\"not-selected-by-route\"},{\"roleName\":\"security-reviewer\",\"reason\":\"capability-gap\"},{\"roleName\":\"docs-writer\",\"reason\":\"capability-gap\"},{\"roleName\":\"knowledge-librarian\",\"reason\":\"capability-gap\"},{\"roleName\":\"skeptic\",\"reason\":\"not-selected-by-route\"}],\"requiredCapabilities\":[\"task-analysis\",\"verification\"],\"capabilityGaps\":[{\"roleName\":\"implementer\",\"missing\":[\"verification\"]}],\"isolationAdvisory\":{\"boundary\":\"advisory-only\",\"applied\":false,\"recommendedMode\":\"shared\",\"reason\":\"shared_l0_default\",\"score\":{\"duration\":0,\"workers\":1,\"writeDensity\":1,\"writeSetOverlapRisk\":0}}},\"qualityPolicy\":\"standard\",\"repairPolicy\":{\"maxRepairAttempts\":1,\"maxRedoAttempts\":1,\"maxFollowupRuns\":2},\"workerCommunication\":\"none\",\"handoffArtifactsMode\":\"off\",\"allowFollowupPlanning\":false},\"endedAt\":1794061259516,\"outcome\":{\"status\":\"ok\",\"startedAt\":1794061259445,\"endedAt\":1794061259516,\"elapsedMs\":71},\"endedReason\":\"subagent-complete\"}"
+          }
+        ]
+      }
+    }
+  ]
+}

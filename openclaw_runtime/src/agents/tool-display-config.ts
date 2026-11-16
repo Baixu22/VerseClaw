@@ -473,6 +473,10 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       title: "Task Loop",
       detailKeys: ["action", "loopRunId", "templateId", "teamTemplateId", "leadRole", "task"],
     },
+    task_control: {
+      title: "Persistent Task",
+      detailKeys: ["action", "taskNodeId", "candidate"],
+    },
     mission_loop: {
       emoji: "Mission",
       title: "Mission Loop",

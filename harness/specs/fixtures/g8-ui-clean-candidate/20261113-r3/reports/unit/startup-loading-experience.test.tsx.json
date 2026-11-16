@@ -1,0 +1,120 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\startup-loading-experience-tsx.json",
+  "sourceSha256": "58360d8176f5c330ca92efac05b3acaa99f87f3162dcb93d05cb4c4ec05a064a",
+  "result": {
+    "numTotalTestSuites": 4,
+    "numPassedTestSuites": 4,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 6,
+    "numPassedTests": 6,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563388833,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "route loading shells"
+            ],
+            "fullName": "route loading shells keeps MainLayout mounted for the / fallback",
+            "status": "passed",
+            "title": "keeps MainLayout mounted for the / fallback",
+            "duration": 143.15159999999992,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "route loading shells"
+            ],
+            "fullName": "route loading shells keeps MainLayout mounted for the /settings/models fallback",
+            "status": "passed",
+            "title": "keeps MainLayout mounted for the /settings/models fallback",
+            "duration": 48.4224999999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "route loading shells"
+            ],
+            "fullName": "route loading shells keeps MainLayout mounted for the /knowledge fallback",
+            "status": "passed",
+            "title": "keeps MainLayout mounted for the /knowledge fallback",
+            "duration": 25.198100000000068,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Settings section loading feedback"
+            ],
+            "fullName": "Settings section loading feedback delays the quiet section skeleton and never mounts a structural surface",
+            "status": "passed",
+            "title": "delays the quiet section skeleton and never mounts a structural surface",
+            "duration": 17.607600000000048,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "boot shell handoff"
+            ],
+            "fullName": "boot shell handoff honors the E2E hold before the 160ms visual handoff",
+            "status": "passed",
+            "title": "honors the E2E hold before the 160ms visual handoff",
+            "duration": 7.0797000000000025,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "boot shell handoff"
+            ],
+            "fullName": "boot shell handoff removes the shell immediately after the hold under reduced motion",
+            "status": "passed",
+            "title": "removes the shell immediately after the hold under reduced motion",
+            "duration": 1.7608000000000175,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563390427,
+        "endTime": 1794563390670.7607,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/startup-loading-experience.test.tsx"
+      }
+    ]
+  }
+}

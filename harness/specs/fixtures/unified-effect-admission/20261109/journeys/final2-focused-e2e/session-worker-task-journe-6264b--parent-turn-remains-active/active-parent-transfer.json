@@ -1,0 +1,176 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-active-parent-transfer",
+  "provider": "local-scripted",
+  "status": "passed",
+  "project": {
+    "workspaceId": "active-parent",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\joint-validation\\final2-focused-e2e-results\\session-worker-task-journe-6264b--parent-turn-remains-active\\active-parent-workspace",
+    "sessionKey": "agent:main:session-1794178777734-activeparent",
+    "generation": "8c7bcd45-282d-41cf-a0fa-3915471b1a93"
+  },
+  "receipt": {
+    "success": true,
+    "result": {
+      "runId": "active-parent-turn"
+    }
+  },
+  "parent": {
+    "session": {
+      "key": "agent:main:session-1794178777734-activeparent",
+      "kind": "direct",
+      "label": "Active parent coordinator",
+      "displayName": "Active parent coordinator",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1794178794834,
+      "sessionId": "8c7bcd45-282d-41cf-a0fa-3915471b1a93",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "running",
+      "startedAt": 1794178794824,
+      "childSessions": [
+        "agent:main:subagent:4ca52ad9-ab37-4b9e-8b73-5a1efba83409"
+      ],
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": true
+    }
+  },
+  "child": {
+    "childKey": "agent:main:subagent:4ca52ad9-ab37-4b9e-8b73-5a1efba83409",
+    "childOwner": {
+      "success": true,
+      "task": {
+        "contract": {
+          "objective": "Produce the delegated child artifact",
+          "constraints": [
+            "Preserve the parent turn"
+          ],
+          "acceptance": [
+            {
+              "id": "child-artifact",
+              "description": "Exact child output",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "child.txt",
+                "sha256": "97bc8743613c61561d5629c5acc6d938dbb745df147fdf01de085b6bf7da5814"
+              }
+            }
+          ],
+          "target": "child.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "runtime-task-tool",
+            "sessionKey": "agent:main:session-1794178777734-activeparent",
+            "requestId": "active-parent-task:create"
+          },
+          "taskNodeId": "1b82a22f-07d4-4934-a711-9f89d5769f36",
+          "domain": "40f5463907051d1ba05e3e9088e1ad6556dc2bbd3b5101f8922d869e9a486fb4",
+          "revision": 1,
+          "digest": "67a691e90debe958589e610ab22aeb0481fb17306a0e571ef9b8a303de82bfb8",
+          "state": "doing",
+          "createdAt": 1794178795443,
+          "updatedAt": 1794178795446
+        },
+        "claim": {
+          "taskNodeId": "1b82a22f-07d4-4934-a711-9f89d5769f36",
+          "sessionKey": "agent:main:subagent:4ca52ad9-ab37-4b9e-8b73-5a1efba83409",
+          "generation": "ac271c16-ce48-451e-9fc6-e517cc60a4d4",
+          "epoch": 2,
+          "attemptId": "b44227a9-cf19-4d05-a843-8ff7ce3667d9",
+          "worktree": "d:/tmp/unified-management-20261109/joint-validation/final2-focused-e2e-results/session-worker-task-journe-6264b--parent-turn-remains-active/active-parent-workspace",
+          "contractRevision": 1,
+          "expiresAt": 1794178925099,
+          "state": "active"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      },
+      "children": []
+    }
+  },
+  "providerLog": [
+    {
+      "turn": "[Mon 2026-11-09 06:59 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "active-parent-task"
+    },
+    {
+      "turn": "[Mon 2026-11-09 06:59 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "activeparenttask": "{\"contract\":{\"objective\":\"Produce the delegated child artifact\",\"constraints\":[\"Preserve the parent turn\"],\"acceptance\":[{\"id\":\"child-artifact\",\"description\":\"Exact child output\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"child.txt\",\"sha256\":\"97bc8743613c61561d5629c5acc6d938dbb745df147fdf01de085b6bf7da5814\"}}],\"target\":\"child.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794178777734-activeparent\",\"requestId\":\"active-parent-task:create\"},\"taskNodeId\":\"1b82a22f-07d4-4934-a711-9f89d5769f36\",\"domain\":\"40f5463907051d1ba05e3e9088e1ad6556dc2bbd3b5101f8922d869e9a486fb4\",\"revision\":1,\"digest\":\"67a691e90debe958589e610ab22aeb0481fb17306a0e571ef9b8a303de82bfb8\",\"state\":\"doing\",\"createdAt\":1794178795443,\"updatedAt\":1794178795446},\"claim\":{\"taskNodeId\":\"1b82a22f-07d4-4934-a711-9f89d5769f36\",\"sessionKey\":\"agent:main:session-1794178777734-activeparent\",\"generation\":\"8c7bcd45-282d-41cf-a0fa-3915471b1a93\",\"epoch\":1,\"attemptId\":\"89fae4f8-09a7-45af-ab02-318d63da4a20\",\"worktree\":\"d:/tmp/unified-management-20261109/joint-validation/final2-focused-e2e-results/session-worker-task-journe-6264b--parent-turn-remains-active/active-parent-workspace\",\"contractRevision\":1,\"expiresAt\":1794178915446,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+      },
+      "issued": "active-parent-spawn"
+    },
+    {
+      "turn": "[Mon 2026-11-09 07:00 GMT+8] [Subagent Context] You are runn",
+      "toolResults": {},
+      "issued": "active-child-write"
+    },
+    {
+      "turn": "[Mon 2026-11-09 07:00 GMT+8] [Subagent Context] You are runn",
+      "toolResults": {
+        "activechildwrite": "Successfully wrote 27 bytes to D:\\tmp\\unified-management-20261109\\joint-validation\\final2-focused-e2e-results\\session-worker-task-journe-6264b--parent-turn-remains-active\\active-parent-workspace\\child.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:ACTIVE-CHILD-FINISHED"
+    },
+    {
+      "turn": "[Mon 2026-11-09 06:59 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "activeparenttask": "{\"contract\":{\"objective\":\"Produce the delegated child artifact\",\"constraints\":[\"Preserve the parent turn\"],\"acceptance\":[{\"id\":\"child-artifact\",\"description\":\"Exact child output\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"child.txt\",\"sha256\":\"97bc8743613c61561d5629c5acc6d938dbb745df147fdf01de085b6bf7da5814\"}}],\"target\":\"child.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1794178777734-activeparent\",\"requestId\":\"active-parent-task:create\"},\"taskNodeId\":\"1b82a22f-07d4-4934-a711-9f89d5769f36\",\"domain\":\"40f5463907051d1ba05e3e9088e1ad6556dc2bbd3b5101f8922d869e9a486fb4\",\"revision\":1,\"digest\":\"67a691e90debe958589e610ab22aeb0481fb17306a0e571ef9b8a303de82bfb8\",\"state\":\"doing\",\"createdAt\":1794178795443,\"updatedAt\":1794178795446},\"claim\":{\"taskNodeId\":\"1b82a22f-07d4-4934-a711-9f89d5769f36\",\"sessionKey\":\"agent:main:session-1794178777734-activeparent\",\"generation\":\"8c7bcd45-282d-41cf-a0fa-3915471b1a93\",\"epoch\":1,\"attemptId\":\"89fae4f8-09a7-45af-ab02-318d63da4a20\",\"worktree\":\"d:/tmp/unified-management-20261109/joint-validation/final2-focused-e2e-results/session-worker-task-journe-6264b--parent-turn-remains-active/active-parent-workspace\",\"contractRevision\":1,\"expiresAt\":1794178915446,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "activeparentspawn": "{\n  \"status\": \"accepted\",\n  \"childSessionKey\": \"agent:main:subagent:4ca52ad9-ab37-4b9e-8b73-5a1efba83409\",\n  \"runId\": \"c2396d58-2f3d-4fb1-96b4-e03ad898454f\",\n  \"mode\": \"run\",\n  \"note\": \"Auto-announce is push-based. After spawning children, do NOT call sessions_list, sessions_history, exec sleep, or any polling tool. Track expected child session keys. Continue any independent work. If your final answer depends on child output, wait for runtime completion events to arrive as user messages and only answer after completion events for ALL required children arrive. If a child completion event arrives AFTER your final answer, reply ONLY with NO_REPLY.\",\n  \"resolvedModel\": \"custom-sessionc/mock-coder\",\n  \"resolvedProvider\": \"custom-sessionc\",\n  \"modelApplied\": true\n}"
+      },
+      "issued": "text:ACTIVE-PARENT-FINISHED"
+    }
+  ]
+}

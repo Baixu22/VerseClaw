@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-06",
+  "driven_by": "agent",
+  "actor": "codex-composer-ui",
+  "status": "passed-development-checks",
+  "workspace": "D:/ClawX",
+  "head": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+  "candidate": {
+    "dirty": true
+  },
+  "behavior": [
+    "Model choices appear directly; no scope tabs.",
+    "New chats inherit the last explicitly selected available model. Existing chats restore their own selection.",
+    "Choice is saved before the first send and retained in queued messages. Failed saves keep the old selection.",
+    "Plus center matches the circular outline; neighboring menus share material and blur transitions."
+  ],
+  "checks": "checks.json",
+  "screenshots": [
+    "dark-1280-chat-composer-permission-menu.png",
+    "dark-1280-chat-knowledge-scope-menu.png",
+    "dark-1280-chat-model-picker-menu.png",
+    "dark-1280-knowledge-search.png",
+    "dark-1280-model-options.png",
+    "dark-760-chat-composer-permission-menu.png",
+    "dark-760-chat-knowledge-scope-menu.png",
+    "dark-760-chat-model-picker-menu.png",
+    "dark-760-knowledge-search.png",
+    "dark-760-model-options.png",
+    "dark-add.png",
+    "dark-reasoning-reduced-motion.png",
+    "light-1280-chat-composer-permission-menu.png",
+    "light-1280-chat-knowledge-scope-menu.png",
+    "light-1280-chat-model-picker-menu.png",
+    "light-1280-knowledge-search.png",
+    "light-1280-model-options.png",
+    "light-760-chat-composer-permission-menu.png",
+    "light-760-chat-knowledge-scope-menu.png",
+    "light-760-chat-model-picker-menu.png",
+    "light-760-knowledge-search.png",
+    "light-760-model-options.png",
+    "light-add.png",
+    "light-reasoning-reduced-motion.png"
+  ],
+  "visualReview": {
+    "actor": "codex",
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        760,
+        560
+      ]
+    ],
+    "findings": "Toolbar clipping and light-theme bleed-through corrected. Model list, knowledge search scrolling, reasoning panel, selection marks and centered plus visually checked.",
+    "motion": "Opening blur and inert closing verified from real frame samples."
+  },
+  "research": {
+    "provider": "VerseSearch / AnySearch",
+    "source": "https://code.visualstudio.com/docs/agent-customization/language-models",
+    "design": "docs/dev/chat-model-selection.md"
+  },
+  "acceptanceMethod": "Electron. The user requested Electron instead of Ego after browser control was interrupted.",
+  "pending": [
+    "Task Forest formal closure requires a clean candidate under the repository rule. Current changes are in the shared dirty checkout."
+  ]
+}

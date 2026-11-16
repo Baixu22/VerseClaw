@@ -1,4 +1,4 @@
-import { link, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { link, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -33,6 +33,8 @@ function createTools(params: {
   fsWorkspaceOnly?: boolean;
   applyPatchWorkspaceOnly?: boolean;
   contentProvenance?: unknown;
+  journal?: boolean;
+  sessionId?: string;
 }) {
   const fs =
     params.fsWorkspaceOnly === undefined ? undefined : { workspaceOnly: params.fsWorkspaceOnly };
@@ -44,13 +46,14 @@ function createTools(params: {
     cwd: params.cwd ?? params.workspaceDir,
     workspaceDir: params.workspaceDir,
     contentProvenance: params.contentProvenance,
+    sessionId: params.sessionId,
     config:
       fs || applyPatch
         ? ({
             tools: { ...(fs ? { fs } : {}), ...(applyPatch ? { exec: { applyPatch } } : {}) },
           } as never)
         : undefined,
-    writeJournalEnabled: false,
+    writeJournalEnabled: params.journal ?? false,
     toolConstructionPlan: {
       includeBaseCodingTools: true,
       includeShellTools: true,
@@ -81,6 +84,81 @@ function updatePatch(filePath: string, before: string, after: string): string {
 }
 
 describe("coding mutation workspace boundary", () => {
+  it.each(["write", "edit"] as const)("does not journal rejected %s pre-images through paths or aliases", async (name) => {
+    const provenances = [
+      createTrustedProvenance({ sourceKind: "user-direct", sourceId: "journal-operator", receivedAt: "2026-11-04T00:00:00Z" }),
+      createExternalProvenance({ sourceKind: "web", sourceId: "journal-web", receivedAt: "2026-11-04T00:00:00Z" }),
+      undefined,
+    ];
+    for (const contentProvenance of provenances) {
+      for (const form of ["absolute", "junction", "hardlink"]) {
+        const { workspaceDir, outsideFile } = await makeWorkspace();
+        const marker = "private-generated-preimage\n";
+        await writeFile(outsideFile, marker);
+        let target = outsideFile;
+        if (form === "junction") {
+          const alias = path.join(workspaceDir, "alias");
+          await symlink(path.dirname(outsideFile), alias, process.platform === "win32" ? "junction" : "dir");
+          target = path.join(alias, path.basename(outsideFile));
+        } else if (form === "hardlink") {
+          target = path.join(workspaceDir, "alias.txt");
+          await link(outsideFile, target);
+        }
+        const tools = createTools({ workspaceDir, fsWorkspaceOnly: true, contentProvenance, journal: true, sessionId: "journal-boundary" });
+        const args = name === "write" ? { path: target, content: "denied" } : { path: target, edits: [{ oldText: marker, newText: "denied" }] };
+        await expect(requireTool(tools, name).execute("denied", args)).rejects.toThrow();
+        expect(await readFile(outsideFile, "utf8")).toBe(marker);
+        const snapshots = await readdir(path.join(workspaceDir, ".openclaw", "journal", "journal-boundary")).catch((error) => {
+          if (error.code === "ENOENT") return [];
+          throw error;
+        });
+        expect(snapshots).toEqual([]);
+      }
+    }
+  });
+
+  it("journals allowed writes and edits and restores their pre-images", async () => {
+    const { workspaceDir } = await makeWorkspace();
+    const target = path.join(workspaceDir, "inside.txt");
+    await writeFile(target, "before\n");
+    const tools = createTools({ workspaceDir, fsWorkspaceOnly: true, journal: true, sessionId: "allowed-journal" });
+    await requireTool(tools, "write").execute("write", { path: "inside.txt", content: "written\n" });
+    await requireTool(tools, "edit").execute("edit", { path: target, edits: [{ oldText: "written", newText: "edited" }] });
+    expect(await readFile(target, "utf8")).toBe("edited\n");
+    const result = await requireTool(tools, "undo_write").execute("undo", { steps: 2 });
+    expect(result.details).toMatchObject({ ok: true });
+    expect(await readFile(target, "utf8")).toBe("before\n");
+  });
+
+  it.each(["create", "modify"] as const)("refuses %s undo after a parent is replaced by an external junction", async (operation) => {
+    const { workspaceDir, outsideFile } = await makeWorkspace();
+    const folder = path.join(workspaceDir, "sub");
+    const local = path.join(folder, path.basename(outsideFile));
+    await mkdir(folder);
+    if (operation === "modify") await writeFile(local, "local-before\n");
+    const tools = createTools({ workspaceDir, fsWorkspaceOnly: true, journal: true, sessionId: "undo-junction" });
+    await requireTool(tools, "write").execute("local", { path: local, content: "local-after\n" });
+    await rename(folder, path.join(workspaceDir, "original-sub"));
+    await symlink(path.dirname(outsideFile), folder, process.platform === "win32" ? "junction" : "dir");
+    const result = await requireTool(tools, "undo_write").execute("undo", { steps: 1 });
+    expect(result.details).toMatchObject({ ok: false, restored: [], remainingEntries: 1 });
+    expect(await readFile(outsideFile, "utf8")).toBe("original\n");
+    expect((await readdir(path.join(workspaceDir, ".openclaw/journal/undo-junction"))).some((p) => p.endsWith(".pre"))).toBe(true);
+  });
+
+  it("refuses undo through a hardlinked target and retains its snapshot", async () => {
+    const { workspaceDir, outsideFile } = await makeWorkspace();
+    const local = path.join(workspaceDir, "local.txt");
+    await writeFile(local, "before\n");
+    const tools = createTools({ workspaceDir, fsWorkspaceOnly: true, journal: true, sessionId: "undo-hardlink" });
+    await requireTool(tools, "write").execute("local", { path: local, content: "after\n" });
+    await rm(local);
+    await link(outsideFile, local);
+    const result = await requireTool(tools, "undo_write").execute("undo", { steps: 1 });
+    expect(result.details).toMatchObject({ ok: false, restored: [], remainingEntries: 1 });
+    expect(await readFile(outsideFile, "utf8")).toBe("original\n");
+  });
+
   it("allows trusted operator write, edit, and apply_patch outside the workspace", async () => {
     const { workspaceDir, outsideFile } = await makeWorkspace();
     const tools = createTools({

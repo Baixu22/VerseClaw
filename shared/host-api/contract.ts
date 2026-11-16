@@ -1,4 +1,8 @@
 import type { RawMessage } from '../chat/types';
+import type { SessionHandoffOperation } from '../types/session-handoff';
+import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
+export type { WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
+import type { ScopedRunId } from '../types/identity-scope';
 import type { InstructionLayerKind, InstructionResolution, InstructionTrust } from '../instruction-precedence';
 import type { BackgroundWorkGateState, ResourceEnvelopeSnapshot } from '../types/resources';
 import type {
@@ -149,6 +153,7 @@ import type {
   WorkspaceContextRange,
   KnowledgeInvocationMode,
   SessionArchiveEntry,
+  SessionPendingMutation,
   SessionFolder,
   WorkspaceCoordinatorArchiveRestorePolicy,
   WorkspaceCoordinatorBinding,
@@ -733,6 +738,8 @@ export type WorkspaceTerminalRunResult = HostSuccess & {
   risk?: 'read' | 'write' | 'network' | 'destructive' | 'external-write' | 'none' | 'dangerous';
 };
 export type WorkspaceTerminalOpenPayload = {
+  /** Known managed server ports; reserved before launch. */
+  reservedPorts?: number[];
   workspaceId?: string;
   sessionKey?: string;
   /** Optional caller-provided physical generation; Main verifies it with Gateway when supplied. */
@@ -748,6 +755,9 @@ export type WorkspaceTerminalOpenPayload = {
 };
 export type WorkspaceTerminalSessionPayload = {
   sessionId: string;
+  workspaceId?: string;
+  sessionKey?: string;
+  expectedSessionId?: string;
 };
 export type WorkspaceTerminalWritePayload = WorkspaceTerminalSessionPayload & {
   data: string;
@@ -784,6 +794,10 @@ export type WorkspaceTerminalSessionResult = HostSuccess & {
   scrollback?: string;
 };
 export type WorkspaceTerminalListResult = HostSuccess & {
+  processReservations?: Array<{
+    reservationId: string; owner: string; phase: 'reserved' | 'dispatched' | 'observed' | 'terminal' | 'unknown';
+    ports: number[]; rootPids: number[]; limit: number | null; reason?: string;
+  }>;
   sessions: Array<Omit<WorkspaceTerminalSessionResult, 'success'>>;
 };
 export type SessionActivitySnapshotPayload = {
@@ -1096,6 +1110,7 @@ export type GatewayRpcPayload = {
   params?: unknown;
   timeoutMs?: number;
   approvalId?: string;
+  expectedWorkspaceId?: string;
 };
 
 export type LocalControlPlaneReportKind =
@@ -1943,15 +1958,20 @@ export type McpServerDeletePayload = { id: string };
 export type McpServerTestPayload = { id?: string; server?: McpServerCreatePayload };
 export type McpServerResolvePayload = { workspaceId?: string | null; agentId?: string | null };
 export type McpServerResolveResult = HostSuccess & McpResolvedConfig;
-export type McpListToolsPayload = { serverId: string };
-export type McpHeartbeatPayload = { serverId: string };
-export type McpCallToolPayload = {
+export type McpManagementContext = {
+  sessionKey?: string;
+  expectedSessionGeneration?: string;
+  catalogRevision?: string;
+  workspaceId?: string | null;
+  agentId?: string | null;
+};
+export type McpListToolsPayload = McpManagementContext & { serverId: string };
+export type McpHeartbeatPayload = McpManagementContext & { serverId: string };
+export type McpCallToolPayload = McpManagementContext & {
   serverId: string;
   toolName: string;
   args?: Record<string, unknown>;
   approvalId?: string;
-  workspaceId?: string | null;
-  agentId?: string | null;
 };
 export type McpReloadRuntimePayload = { workspaceId?: string | null; agentId?: string | null };
 
@@ -2586,6 +2606,7 @@ export type ProviderConfig = {
   baseUrl?: string;
   apiProtocol?: ProviderProtocol;
   headers?: Record<string, string>;
+  modelProfile?: { contextWindow?: number; maxTokens?: number; supportsVision?: boolean; supportsReasoning?: boolean };
   model?: string;
   fallbackModels?: string[];
   fallbackProviderIds?: string[];
@@ -2646,9 +2667,11 @@ export type ProviderAccount = {
     customModels?: string[];
     /** FP-P1-01: sanitized validation record (never contains key material). */
     validation?: {
-      status: 'valid' | 'invalid' | 'network-error' | 'unchecked';
+      status: 'valid' | 'invalid' | 'network-error' | 'rate-limited' | 'protocol-error' | 'unchecked';
       checkedAt: string;
       model?: string;
+      reason?: string;
+      retryAfterMs?: number;
       source: 'setup' | 'settings';
     };
   };
@@ -2679,7 +2702,80 @@ export type ProviderValidationPayload = {
   apiKey?: string;
   options?: ProviderValidationOptions;
 };
-export type ProviderValidationResult = { valid: boolean; error?: string; durationMs?: number };
+/**
+ * TF-0733: structured provider validation state.
+ *
+ * Validation used to collapse every non-auth 4xx and even 429 into
+ * `valid: true`, so the Settings/Setup UI could say "Credentials verified"
+ * for a rate-limited or protocol-mismatched endpoint. The six dimensions
+ * below keep those facts separate:
+ *  - reachable: did the endpoint answer at all
+ *  - auth: did it accept the credential
+ *  - protocol: did it accept the request shape
+ *  - model: is the probed/selected model usable
+ *  - rateLimited (+ retryAfterMs): HTTP 429 and its Retry-After
+ *  - ready: the single surface the UI may render as verified/connected
+ *
+ * `valid` is kept for one release as a compatibility field with fixed
+ * semantics: `auth === 'valid' && protocol !== 'incompatible'`. It is NOT the
+ * readiness signal; UI must gate "verified" on `ready`.
+ */
+export type ProviderValidationReachability = 'reachable' | 'unreachable' | 'unknown';
+export type ProviderValidationAuth = 'valid' | 'invalid' | 'unknown';
+export type ProviderValidationProtocol = 'compatible' | 'incompatible' | 'unknown';
+export type ProviderValidationModel = 'available' | 'unavailable' | 'unknown';
+export type ProviderValidationReason =
+  | 'ok'
+  | 'unauthorized'
+  | 'rate-limited'
+  | 'protocol-error'
+  | 'model-unavailable'
+  | 'server-error'
+  | 'network-error'
+  | 'timeout'
+  | 'dns-error'
+  | 'blocked'
+  | 'unknown';
+/** Stage that produced a validation outcome (TF-0734). */
+export type ProviderValidationStage =
+  | 'preflight'
+  | 'models'
+  | 'probe'
+  | 'transport'
+  | 'unknown';
+export type ProviderValidationBlockedReason =
+  | 'invalid-url'
+  | 'unsupported-protocol'
+  | 'blocked-hostname'
+  | 'metadata-address'
+  | 'link-local-address'
+  | 'private-network'
+  | 'hostname-not-allowlisted';
+
+export type ProviderValidationState = {
+  reachable: ProviderValidationReachability;
+  auth: ProviderValidationAuth;
+  protocol: ProviderValidationProtocol;
+  model: ProviderValidationModel;
+  rateLimited: boolean;
+  retryAfterMs?: number;
+  ready: boolean;
+  reason: ProviderValidationReason;
+};
+export type ProviderValidationResult = ProviderValidationState & {
+  valid: boolean;
+  error?: string;
+  status?: number;
+  durationMs?: number;
+  /** Stable hash of the SSRF/private-network/proxy policy used for the probe. */
+  policyFingerprint?: string;
+  /** Where the outcome was decided (preflight, model listing, probe, transport). */
+  stage?: ProviderValidationStage;
+  /** Set only when the pre-flight policy denied the target. */
+  blockedReason?: ProviderValidationBlockedReason;
+  /** Total validation deadline, not a per-request timeout. */
+  deadlineMs?: number;
+};
 export type ProviderModelListPayload = {
   accountId?: string;
   vendorId?: string;
@@ -2690,6 +2786,8 @@ export type ProviderModelListPayload = {
 export type ProviderModelListResult = HostSuccess & {
   models: string[];
   durationMs?: number;
+  /** TF-0733: structured outcome when listing failed (429 / protocol / model). */
+  state?: ProviderValidationState;
 };
 export type ProviderIdPayload = { providerId: string };
 export type ProviderApiKeyPayload = ProviderIdPayload & { apiKey: string };
@@ -2895,10 +2993,28 @@ export type SessionHistoryPayload = {
   agentId?: string;
   sessionId?: string;
   limit?: number;
+  expectedSessionGeneration?: string;
+  expectedParentSessionKey?: string;
+  workerSendIdempotencyKey?: string;
 };
 export type SessionHistoryResult = OptionalHostSuccess & {
   messages?: RawMessage[];
+  sessionGeneration?: string;
+  model?: string;
+  costUsd?: number | null;
+  workerSendReceipt?: { phase: 'queued' | 'steered'; idempotencyKey: string; source: 'runtime-intervention'; queueItemId?: string };
 };
+export type SessionSendWorkerPayload = {
+  workspaceId: string;
+  parentSessionKey: string;
+  expectedParentGeneration: string;
+  childSessionKey: string;
+  expectedChildGeneration: string;
+  message: string;
+  idempotencyKey: string;
+  mode: 'send' | 'steer';
+};
+export type SessionSendWorkerResult = HostSuccess & { phase: 'accepted' | 'queued' | 'steered' | 'rejected' | 'unknown'; run?: ScopedRunId; receipt?: { idempotencyKey: string; source: 'runtime-ack' | 'runtime-intervention'; queueItemId?: string } };
 export type SessionSummariesPayload = { sessionKeys?: string[]; limit?: number };
 export type SessionLabelSummary = {
   sessionKey: string;
@@ -2910,19 +3026,21 @@ export type SessionLabelSummary = {
 export type SessionSummariesResult = HostSuccess & {
   summaries?: SessionLabelSummary[];
 };
-export type SessionDeletePayload = { id: string };
+export type SessionDeletePayload = { id: string; resumeOperationId?: string };
 export type SessionRenamePayload = { id: string; title: string };
 export type SessionArchivePayload = {
   id: string;
+  resumeOperationId?: string;
   label?: string;
   originalWorkspaceId?: string | null;
   originalFolderId?: string | null;
 };
-export type SessionRestorePayload = { id: string };
+export type SessionRestorePayload = { id: string; resumeOperationId?: string };
 export type SessionPermanentDeletePayload = { id: string };
 export type SessionListArchivedPayload = { agentId?: string };
 export type SessionListArchivedResult = HostSuccess & {
   entries: SessionArchiveEntry[];
+  pendingMutations?: SessionPendingMutation[];
 };
 export type SessionEmptyArchivePayload = { agentId?: string };
 /** context-folding-rlm: read-only flag/limits/rollback descriptor (no session required). */
@@ -3098,6 +3216,7 @@ export type SessionResumeCheckpointsResult = HostSuccess & {
   checkpoints: LongTaskCheckpointRecord[];
 };
 export type SessionRestoreCheckpointPayload = SessionLongTaskControlHistoryPayload & {
+  expectedSessionId?: string;
   checkpointId: string;
 };
 export type SessionCheckpointDiffFile = {
@@ -3126,6 +3245,7 @@ export type SessionQueueDrainResult = HostSuccess & {
   reason?: string;
 };
 export type SessionManualCompactPayload = SessionCompactionPayload & {
+  expectedSessionId?: string;
   customInstructions?: string;
   force?: boolean;
 };
@@ -3134,6 +3254,7 @@ export type SessionManualCompactPayload = SessionCompactionPayload & {
  * untouched side verbatim. Exactly one of fromLeafId / toLeafId is required.
  */
 export type SessionCompactRangePayload = SessionCompactionPayload & {
+  expectedSessionId?: string;
   customInstructions?: string;
   fromLeafId?: string;
   toLeafId?: string;
@@ -3171,7 +3292,7 @@ export type SessionCompactionHistoryResult = HostSuccess & {
   entries: SessionCompactionHistoryEntry[];
 };
 export type SessionCompactionResult = HostSuccess & {
-  status?: 'compacted' | 'skipped' | 'failed';
+  status?: 'compacted' | 'skipped' | 'pending' | 'failed';
   compacted?: boolean;
   summary?: string;
   reason?: string;
@@ -3216,8 +3337,18 @@ export type SessionHandoffSource = {
   summary?: string;
   warning?: string;
 };
-export type SessionCreateHandoffPayload = SessionHandoffPayload & { draftInput: string };
+export type SessionCreateHandoffPayload = SessionHandoffPayload & { draftInput: string; operationId?: string };
+export type SessionHandoffOperationPayload = SessionHandoffPayload & { operationId?: string; reconcile?: boolean };
+export type SessionHandoffOperationResult = HostSuccess & { operation: SessionHandoffOperation | null };
+export type WorkspaceSessionTaskSelectPayload = {
+  workspaceId: string;
+  sessionKey: string;
+  taskNodeId: string;
+  expectedSessionGeneration?: string;
+  expectedRevision?: number;
+};
 export type SessionCreateHandoffResult = HostSuccess & {
+  operation?: SessionHandoffOperation;
   sessionKey?: string;
   handoffDepth?: number;
   handoffParentSessionKey?: string;
@@ -3242,6 +3373,8 @@ export type SessionHandoffResult = HostSuccess & {
 export type SessionStopPayload = {
   sessionKey: string;
   agentId?: string;
+  workspaceId?: string;
+  expectedSessionId?: string;
 };
 export type SessionStopResult = HostSuccess & {
   key?: string;
@@ -3474,6 +3607,8 @@ export type ChatSendWithMediaPayload = {
   message?: string;
   deliver?: boolean;
   idempotencyKey: string;
+  handoffOperationId?: string;
+  expectedSessionGeneration?: string;
   media?: ChatMediaItem[];
   inputMode?: ChatInputMode;
   knowledgeScope?: WorkspaceKnowledgeScope;
@@ -4094,6 +4229,9 @@ export type KnowledgeSourceRef = {
   kind?: 'chat' | 'file' | 'wiki' | 'task_ledger' | 'trace' | 'task_loop' | 'manual' | 'search_result' | 'other';
   path?: string;
   url?: string;
+  /** Optional owner version and digest pins; selection never overrides these. */
+  revision?: string;
+  contentDigest?: string;
 };
 export type KnowledgeInteractionMvpMetadata = {
   mvpVersion: 'knowledge-interaction-mvp-1';
@@ -4471,6 +4609,14 @@ export type KnowledgeSaveSourceSetPayload = {
 export type KnowledgeSourceSetResult = HostSuccess & { sourceSet?: KnowledgeSourceSet };
 export type KnowledgeListSourceSetsResult = HostSuccess & { sourceSets: KnowledgeSourceSet[] };
 export type KnowledgeDeleteSourceSetPayload = { id: string };
+export type KnowledgeSourceSetCitation = {
+  refId: string;
+  owner: string;
+  subjectId: string;
+  revision: string;
+  contentDigest: string;
+  sourceRefs: string[];
+};
 export type KnowledgeSourceSetAnswerSource = {
   id: string;
   lookup: string;
@@ -4478,6 +4624,9 @@ export type KnowledgeSourceSetAnswerSource = {
   excerpt: string;
   path?: string;
   content?: string;
+  citation?: KnowledgeSourceSetCitation;
+  updatedAt?: string;
+  readRange?: { fromLine: number; toLine: number; totalLines?: number; truncated: boolean };
 };
 export type KnowledgeAnswerFromSourceSetPayload = {
   question: string;
@@ -4485,6 +4634,10 @@ export type KnowledgeAnswerFromSourceSetPayload = {
   artifactType?: KnowledgeArtifactType;
   sourceSetId?: string;
   semantic?: boolean;
+  /** Retrieval context filter, not an ACL grant. */
+  workspaceId?: string;
+  synthesis?: boolean;
+  history?: Array<{ role: 'user' | 'assistant'; content: string }>;
 };
 export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   question: string;
@@ -4493,7 +4646,13 @@ export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   unknowns: string[];
   suggestedNextActions: string[];
   groundingStatus: 'grounded' | 'partial' | 'missing_sources';
-  confidence: number;
+  /** Populated only by a measured answer path; template excerpts omit it. */
+  confidence?: number;
+  synthesisMode?: 'source-excerpts' | 'model';
+  model?: { status: 'completed' | 'unavailable' | 'error'; runId?: string; reason?: string };
+  claims?: Array<{ text: string; citations: Array<{ sourceId: string; quote: string }> }>;
+  rejections?: Array<{ refId: string; owner: string; subjectId: string; reason: string; visibleReason: string }>;
+  conflictSet?: Array<{ kind: 'claim' | 'source'; key: string; description: string; stances?: string[]; citations: KnowledgeSourceSetCitation[] }>;
   retrievalDiagnostics: KnowledgeRetrievalDiagnostics;
   semanticRequested?: boolean;
   semanticLane?: {
@@ -4510,6 +4669,7 @@ export type KnowledgeCreateArtifactDraftPayload = {
   sourceRefs: KnowledgeSourceRef[];
   sourceSetId?: string;
   semantic?: boolean;
+  workspaceId?: string;
   metadata?: Record<string, unknown>;
 };
 export type KnowledgeListDraftsPayload = {
@@ -4618,6 +4778,25 @@ export type KnowledgeStewardReviewResult = HostSuccess & {
   tags: string[];
   warnings: string[];
   notes: string;
+  findings?: KnowledgeStewardFinding[];
+  reviewEvidence?: {
+    draftRevision?: number;
+    draftDigest: string;
+    reviewFocus: string[];
+    sources: Array<{ sourceId: string; revision: string; contentDigest: string }>;
+    unverified: string[];
+    modelStatus: 'heuristic' | 'completed' | 'unavailable';
+    driven_by: 'agent';
+    actor: 'knowledge-steward';
+  };
+};
+export type KnowledgeStewardFinding = {
+  kind: 'duplicate' | 'conflict' | 'stale' | 'quality';
+  severity: 'info' | 'warning' | 'error';
+  message: string;
+  citations: Array<{ sourceId: string; quote: string; revision?: string; contentDigest?: string }>;
+  verified?: boolean;
+  unverifiedReason?: string;
 };
 /**
  * Area 5 §3.2 — structured output from the optional semantic steward pass.
@@ -4632,6 +4811,7 @@ export type StewardSemanticReview = {
   tags: string[];
   warnings: Array<{ kind: 'duplicate' | 'conflict' | 'stale' | 'quality'; message: string; relatedPageId?: string }>;
   confidence: number;
+  findings?: KnowledgeStewardFinding[];
 };
 export type KnowledgeProvenanceTargetKind = 'wiki-page' | 'draft' | 'inbox' | 'okf-concept' | 'manual';
 export type KnowledgeReferenceKind = 'chat' | 'search' | 'draft' | 'task-ledger' | 'clawgraph' | 'manual';
@@ -4754,6 +4934,32 @@ export type KnowledgeListWatchedDirectoryEventsPayload = {
   limit?: number;
 };
 
+export type KnowledgeGithubConnectorConfig = {
+  id: string;
+  kind: 'github-public-directory';
+  owner: string;
+  repo: string;
+  ref: string;
+  /** One file or one directory; directory traversal is deliberately nonrecursive. */
+  path: string;
+  enabled: boolean;
+  intervalSeconds: number;
+};
+export type KnowledgeConnectorReceipt = {
+  connectorId: string;
+  observedAt: string;
+  lastSuccessAt?: string;
+  retryAt?: string;
+  status: 'ok' | 'access-lost' | 'error';
+  created: number;
+  updated: number;
+  withdrawn: number;
+  unchanged: number;
+  error?: string;
+  driven_by: 'agent';
+  actor: 'knowledge-github-connector';
+};
+
 export type CronUpdatePayload = { id: string; input: CronJobUpdateInput };
 export type CronIdPayload = { id: string };
 export type CronTogglePayload = CronIdPayload & { enabled: boolean };
@@ -4813,6 +5019,13 @@ export type GithubPrViewResult = HostSuccess & { pullRequest: GithubPrSummary | 
 export type GithubPrCreateResult = GitOperationResult & { pullRequest?: GithubPrSummary; reused?: boolean };
 
 export type TaskLedgerWorkspacePayload = { workspaceId?: string | null };
+export type TaskSystemCommandPayload = { workspaceId: string; command: import('../task-system/types').TaskSystemCommand };
+export type TaskSystemCommandResult = HostSuccess & { result?: unknown; error?: string };
+export type TaskSystemListResult = HostSuccess & { tasks: import('../task-system/types').TaskView[] };
+export type TaskSystemQueryPayload = TaskLedgerWorkspacePayload & import('../task-system/types').TaskQuery;
+export type TaskSystemQueryResult = HostSuccess & import('../task-system/types').TaskPage;
+export type TaskSessionPayload = { workspaceId: string; sessionKey: string; expectedSessionGeneration?: string };
+export type TaskSessionResult = HostSuccess & import('../task-system/types').TaskSessionSnapshot;
 export type TaskLedgerSnapshotResult = HostSuccess & { snapshot: TaskLedgerSnapshot };
 export type TaskLedgerAppendEventsPayload = TaskLedgerWorkspacePayload & {
   events: TaskLedgerEventInput[];
@@ -5525,6 +5738,7 @@ export type VerseGitDiagnosticStatus = {
 };
 
 export type HostApiContract = {
+  sessionStorage: import('../types/session-storage').SessionStorageContract;
   app: {
     version: () => string;
     openClawDoctor: (payload: OpenClawDoctorPayload) => Omit<OpenClawDoctorResult, 'mode'>;
@@ -5556,6 +5770,7 @@ export type HostApiContract = {
     maximize: () => void;
     close: () => void;
     isMaximized: () => boolean;
+    isVisible: () => boolean;
   };
   updates: {
     check: () => AppUpdateStatusResult;
@@ -5619,8 +5834,11 @@ export type HostApiContract = {
     deleteFolder: (payload: WorkspaceFolderDeletePayload) => WorkspaceSnapshotResult;
     moveSessionToFolder: (payload: WorkspaceFolderMoveSessionPayload) => WorkspaceSnapshotResult;
     bindCoordinator: (payload: WorkspaceCoordinatorBindPayload) => WorkspaceCoordinatorBindingResult;
+    selectSessionTask: (payload: WorkspaceSessionTaskSelectPayload) => WorkspaceCoordinatorBindingResult;
     resolveCoordinator: (payload: WorkspaceCoordinatorResolvePayload) => WorkspaceCoordinatorBindingResult;
     pauseCoordinator: (payload: WorkspaceCoordinatorPausePayload) => WorkspaceCoordinatorBindingResult;
+    migrateExecution: (payload: WorkspaceExecutionMigrationPayload) => HostSuccess & { operation: ExecutionMigrationOperation };
+    executionMigration: (payload: WorkspaceExecutionMigrationReadPayload) => HostSuccess & { operation: ExecutionMigrationOperation | null };
   };
   projectRules: {
     snapshot: () => ProjectRulesSnapshotResult;
@@ -5653,6 +5871,7 @@ export type HostApiContract = {
     snapshot: (payload: SessionActivitySnapshotPayload) => SessionActivitySnapshotResult;
   };
   git: {
+    init: () => GitOperationResult;
     capabilities: () => GitCapabilitiesResult;
     status: () => GitStatusResult;
     diff: (payload?: { mode?: GitDiffMode }) => GitDiffListResult;
@@ -5979,6 +6198,7 @@ export type HostApiContract = {
     rename: (payload: SessionRenamePayload) => HostSuccess;
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;
     history: (payload: SessionHistoryPayload) => SessionHistoryResult;
+    sendWorker: (payload: SessionSendWorkerPayload) => SessionSendWorkerResult;
     patchThinking: (payload: SessionPatchThinkingPayload) => HostSuccess & { result?: unknown };
     patchRuntimeModel: (payload: SessionPatchRuntimeModelPayload) => HostSuccess & { result?: unknown };
     compactionStatus: (payload: SessionCompactionPayload) => SessionCompactionStatusResult;
@@ -5998,6 +6218,7 @@ export type HostApiContract = {
     compactRange: (payload: SessionCompactRangePayload) => SessionCompactionResult;
     prepareHandoff: (payload: SessionHandoffPayload) => SessionHandoffResult;
     createHandoff: (payload: SessionCreateHandoffPayload) => SessionCreateHandoffResult;
+    handoffOperation: (payload: SessionHandoffOperationPayload) => SessionHandoffOperationResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
     archive: (payload: SessionArchivePayload) => SessionArchiveResult;
@@ -6072,6 +6293,10 @@ export type HostApiContract = {
     governanceAudit: () => KnowledgeGovernanceResult;
     listGovernanceReceipts: () => KnowledgeListGovernanceReceiptsResult;
     listWatchedDirectories: () => KnowledgeWatchedDirectoryConfig[];
+    listSourceConnectors: () => HostSuccess & { connectors: Array<KnowledgeGithubConnectorConfig & { receipt?: KnowledgeConnectorReceipt }> };
+    upsertSourceConnector: (config: KnowledgeGithubConnectorConfig) => HostSuccess;
+    syncSourceConnector: (payload: { id: string }) => HostSuccess & { receipt?: KnowledgeConnectorReceipt };
+    removeSourceConnector: (payload: { id: string }) => HostSuccess;
     addWatchedDirectory: (config: KnowledgeWatchedDirectoryConfig) => HostSuccess;
     updateWatchedDirectory: (payload: { id: string; config: Partial<KnowledgeWatchedDirectoryConfig> }) => HostSuccess;
     removeWatchedDirectory: (payload: { id: string }) => HostSuccess;
@@ -6089,6 +6314,10 @@ export type HostApiContract = {
     deliveryTargets: () => DeliveryTargetsResult;
   };
   taskLedger: {
+    managedTasks: (payload?: TaskLedgerWorkspacePayload) => TaskSystemListResult;
+    queryTasks: (payload?: TaskSystemQueryPayload) => TaskSystemQueryResult;
+    sessionTask: (payload: TaskSessionPayload) => TaskSessionResult;
+    command: (payload: TaskSystemCommandPayload) => TaskSystemCommandResult;
     snapshot: (payload?: TaskLedgerWorkspacePayload) => TaskLedgerSnapshotResult;
     appendEvents: (payload: TaskLedgerAppendEventsPayload) => TaskLedgerSnapshotResult;
     createNode: (payload: TaskLedgerCreateNodePayload) => TaskLedgerSnapshotResult;

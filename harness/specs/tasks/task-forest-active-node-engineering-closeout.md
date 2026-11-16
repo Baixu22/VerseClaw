@@ -129,7 +129,7 @@ touchedAreas:
   - tests/unit/automation-playbook-selector-tool.test.ts
   - tests/unit/chat-api-workspace-fingerprint.test.ts
   - tests/unit/chat-capability-actions.test.ts
-  - tests/unit/chat-history-actions.test.ts
+  - tests/unit/chat-store-history-retry.test.ts
   - tests/unit/chat-startup-hydration.test.ts
   - tests/unit/chat-store-history-retry.test.ts
   - tests/unit/clawx-openai-image-plugin.test.ts

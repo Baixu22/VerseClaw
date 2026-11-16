@@ -1,0 +1,12 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-preload-bound-host-invoke",
+  "expectCode": 0,
+  "description": "Bound host:invoke remains valid through aliases, call/apply and subsequent binds.",
+  "mutations": [
+    {
+      "file": "electron/preload/index.ts",
+      "append": "\n{\nconst request = ipcRenderer.invoke.bind(ipcRenderer, 'host:invoke');\nconst payload = { module: 'settings', action: 'get', payload: {} };\nrequest(payload);\nrequest.call(null, payload);\nrequest.apply(null, [payload]);\nconst alias = request;\nalias.bind(null, payload)();\n}\n"
+    }
+  ]
+}

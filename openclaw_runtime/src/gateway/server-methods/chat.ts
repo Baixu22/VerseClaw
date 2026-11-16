@@ -1251,6 +1251,20 @@ function canUseBackendWorkspaceDir(client: GatewayRequestHandlerOptions["client"
   return client?.connect?.client?.mode === GATEWAY_CLIENT_MODES.BACKEND;
 }
 
+function requesterGenerationMatches(
+  request: { requesterSessionKey?: string; expectedRequesterSessionId?: string },
+  child: { spawnedBy?: string; parentSessionKey?: string } | undefined,
+): boolean {
+  if (!request.requesterSessionKey && !request.expectedRequesterSessionId) return true;
+  return Boolean(
+    request.requesterSessionKey &&
+    request.expectedRequesterSessionId &&
+    loadSessionEntry(request.requesterSessionKey).entry?.sessionId ===
+      request.expectedRequesterSessionId &&
+    (child?.spawnedBy ?? child?.parentSessionKey) === request.requesterSessionKey,
+  );
+}
+
 async function persistChatSendImages(params: {
   images: ChatImageContent[];
   imageOrder: PromptImageOrderEntry[];
@@ -2545,6 +2559,7 @@ async function handleChatHistoryRequest({
     agentId?: string;
     limit?: number;
     maxChars?: number;
+    includeModelMetadata?: boolean;
   };
   const agentIdOverride = normalizeOptionalText((params as { agentId?: string }).agentId);
   const requestedAgentId = resolveRequestedChatAgentId({
@@ -2577,7 +2592,7 @@ async function handleChatHistoryRequest({
             startedLoad: startupModelCatalogLoad,
             timeoutMs: CHAT_STARTUP_OPTIONAL_MODEL_CATALOG_TIMEOUT_MS,
           })
-        : loadOptionalServerMethodModelCatalog(context, method),
+        : loadOptionalServerMethodModelCatalog(context, method, { enabled: params.includeModelMetadata !== false }),
     {
       config: cfg,
       phase: method,
@@ -2758,11 +2773,11 @@ export async function drainQueuedUserMessagesForSession(
     };
   }
 
-  const combinedText = messages.map((message) => message.text).join("\n\n"); 
-  const firstAgentId = messages[0]?.agentId; 
+  const combinedText = messages.map((message) => message.text).join("\n\n");
+  const firstAgentId = messages[0]?.agentId;
   const firstWorkspaceId = messages[0]?.workspaceId;
   const firstTaskLedgerRootId = messages[0]?.taskLedgerRootId;
-  const queueItemIds = messages.map((message) => message.id); 
+  const queueItemIds = messages.map((message) => message.id);
   const syntheticIdempotencyKey = `queue_drain_${sessionKey}_${Date.now()}`;
 
   try {
@@ -2780,9 +2795,8 @@ export async function drainQueuedUserMessagesForSession(
     // Queue status is best-effort; persisted queue state remains authoritative.
   }
 
-  const { resolveActiveEmbeddedRunSessionId } = await import(
-    "../../agents/embedded-agent-runner/runs.js"
-  );
+  const { resolveActiveEmbeddedRunSessionId } =
+    await import("../../agents/embedded-agent-runner/runs.js");
   await new Promise((resolve) => setImmediate(resolve));
   if (resolveActiveEmbeddedRunSessionId(sessionKey)) {
     restoreDrainingUserMessages(messages, "active_run_started_before_queue_drain");
@@ -2796,11 +2810,11 @@ export async function drainQueuedUserMessagesForSession(
 
   const checkpoint = recordLongTaskCheckpoint({
     idempotencyKey: `${syntheticIdempotencyKey}:checkpoint`,
-    sessionKey, 
-    agentId: firstAgentId, 
+    sessionKey,
+    agentId: firstAgentId,
     workspaceId: firstWorkspaceId,
     taskLedgerRootId: firstTaskLedgerRootId,
-    trigger: "queue_drain", 
+    trigger: "queue_drain",
     activeTask: "Draining queued user follow-up after the active run became idle.",
     nextAction: "Deliver queued follow-up as a fresh chat run.",
     evidenceRefs: [{ type: "session", ref: sessionKey }],
@@ -2808,11 +2822,11 @@ export async function drainQueuedUserMessagesForSession(
   });
   recordLongTaskInterventionEvent({
     idempotencyKey: `${syntheticIdempotencyKey}:event`,
-    sessionKey, 
-    agentId: firstAgentId, 
+    sessionKey,
+    agentId: firstAgentId,
     workspaceId: firstWorkspaceId,
     taskLedgerRootId: firstTaskLedgerRootId,
-    checkpointId: checkpoint.id, 
+    checkpointId: checkpoint.id,
     mode: "queue",
     trigger: "queue_drain",
     status: "draining",
@@ -2820,30 +2834,34 @@ export async function drainQueuedUserMessagesForSession(
   });
 
   try {
+    let accepted = false;
+    let rejection: string | undefined;
     await chatHandlers["chat.send"]({
       params: {
         sessionKey,
         message: combinedText,
         deliver: false,
-        idempotencyKey: syntheticIdempotencyKey, 
-        ...(firstAgentId ? { agentId: firstAgentId } : {}), 
+        idempotencyKey: syntheticIdempotencyKey,
+        ...(firstAgentId ? { agentId: firstAgentId } : {}),
         ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
-      }, 
-      respond: () => {
-        // Background drain responses are observable through events/status.
+      },
+      respond: (ok: boolean, _payload: unknown, error?: { message: string }) => {
+        accepted = ok;
+        if (!ok) rejection = error?.message ?? "Queued follow-up was rejected";
       },
       context,
       client: null,
       isWebchatConnect: () => false,
     } as never);
+    if (!accepted) throw new Error(rejection ?? "Queued follow-up has no acceptance receipt");
     completeDrainedUserMessages(messages);
     recordLongTaskInterventionEvent({
       idempotencyKey: `${syntheticIdempotencyKey}:drained`,
-      sessionKey, 
-      agentId: firstAgentId, 
+      sessionKey,
+      agentId: firstAgentId,
       workspaceId: firstWorkspaceId,
       taskLedgerRootId: firstTaskLedgerRootId,
-      checkpointId: checkpoint.id, 
+      checkpointId: checkpoint.id,
       mode: "queue",
       trigger: "queue_drain",
       status: "drained",
@@ -2859,11 +2877,11 @@ export async function drainQueuedUserMessagesForSession(
     restoreDrainingUserMessages(messages, message);
     recordLongTaskInterventionEvent({
       idempotencyKey: `${syntheticIdempotencyKey}:failed`,
-      sessionKey, 
-      agentId: firstAgentId, 
+      sessionKey,
+      agentId: firstAgentId,
       workspaceId: firstWorkspaceId,
       taskLedgerRootId: firstTaskLedgerRootId,
-      checkpointId: checkpoint.id, 
+      checkpointId: checkpoint.id,
       mode: "queue",
       trigger: "queue_drain",
       status: "failed",
@@ -3202,6 +3220,9 @@ export const chatHandlers: GatewayRequestHandlers = {
       deadlineAtMs?: number;
       workspaceId?: string;
       workspaceDir?: string;
+      expectedSessionGeneration?: string;
+      requesterSessionKey?: string;
+      expectedRequesterSessionId?: string;
       /**
        * Trusted workspace authority fingerprint (D3 closeout consumer side).
        * Produced by Main (`electron/services/chat-api.ts`) from the workspace's
@@ -3230,6 +3251,11 @@ export const chatHandlers: GatewayRequestHandlers = {
         undefined,
         errorShape(ErrorCodes.INVALID_REQUEST, "workspaceDir is reserved for backend callers."),
       );
+      return;
+    }
+    if (p.workspaceId !== undefined && !canUseBackendWorkspaceDir(client)
+      && context.getRuntimeConfig().runtime?.providerBudget?.project) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Project budget workspaceId is reserved for backend callers.'));
       return;
     }
     const suppressCommandInterpretation = p.suppressCommandInterpretation === true;
@@ -3316,11 +3342,7 @@ export const chatHandlers: GatewayRequestHandlers = {
           requestedReasoningEffort,
         ))
     ) {
-      respond(
-        false,
-        undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, "invalid reasoning effort"),
-      );
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "invalid reasoning effort"));
       return;
     }
     const requestedRuntimeIntensity = normalizeRuntimeIntensityPreference(p.runtimeIntensity);
@@ -3353,6 +3375,17 @@ export const chatHandlers: GatewayRequestHandlers = {
     );
     const sessionLoadMs = roundedChatSendTimingMs(performance.now() - sessionLoadStartedAtMs);
     const { cfg, entry, canonicalKey: sessionKey } = sessionLoadResult;
+    if (
+      (p.expectedSessionGeneration && entry?.sessionId !== p.expectedSessionGeneration) ||
+      !requesterGenerationMatches(p, entry)
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "CHAT_SESSION_GENERATION_CHANGED"),
+      );
+      return;
+    }
     const workspaceDir = resolveSessionWorkspaceDir({
       spawnedWorkspaceDir: entry?.spawnedWorkspaceDir,
       requestWorkspaceDir: requestedWorkspaceDir,
@@ -3372,9 +3405,7 @@ export const chatHandlers: GatewayRequestHandlers = {
         adapters: createProductionChatKnowledgeSourceAdapters(cfg),
       });
     } catch (error) {
-      context.logGateway.warn(
-        `chat.send knowledge ref resolution failed: ${String(error)}`,
-      );
+      context.logGateway.warn(`chat.send knowledge ref resolution failed: ${String(error)}`);
     }
     const chatKnowledgeDenials: ChatKnowledgeDenial[] = chatKnowledgeResolution.denied;
     context.logGateway.info(
@@ -3452,9 +3483,7 @@ export const chatHandlers: GatewayRequestHandlers = {
       overrideMs: p.timeoutMs,
     });
     const remainingDeadlineMs =
-      requestDeadlineAtMs === undefined
-        ? undefined
-        : Math.max(0, requestDeadlineAtMs - Date.now());
+      requestDeadlineAtMs === undefined ? undefined : Math.max(0, requestDeadlineAtMs - Date.now());
     const timeoutMs =
       remainingDeadlineMs === undefined
         ? configuredTurnTimeoutMs
@@ -3489,7 +3518,9 @@ export const chatHandlers: GatewayRequestHandlers = {
       try {
         const defaultAgentId = resolveDefaultAgentId(cfg);
         const stopAgentId =
-          sessionKey === "global" ? (selectedAgent.agentId ?? defaultAgentId) : selectedAgent.agentId;
+          sessionKey === "global"
+            ? (selectedAgent.agentId ?? defaultAgentId)
+            : selectedAgent.agentId;
         const res = await abortChatRunsForSessionKeyWithPartials({
           context,
           ops: createChatAbortOps(context),
@@ -3528,10 +3559,11 @@ export const chatHandlers: GatewayRequestHandlers = {
       // Honor an explicit inputMode from the caller (UI) when it is a valid mode.
       // Without this the classifier regex alone decides, silently dropping the
       // user's explicit "guide"/"queue"/"interrupt" choice.
-      const explicitInputMode = typeof p.inputMode === "string"
-        && (LONG_TASK_INPUT_MODES as readonly string[]).includes(p.inputMode)
-        ? (p.inputMode as "interrupt" | "guide" | "queue" | "revise-goal")
-        : undefined;
+      const explicitInputMode =
+        typeof p.inputMode === "string" &&
+        (LONG_TASK_INPUT_MODES as readonly string[]).includes(p.inputMode)
+          ? (p.inputMode as "interrupt" | "guide" | "queue" | "revise-goal")
+          : undefined;
       const action = createInputModeAction(inboundMessage, explicitInputMode);
       const taskLedgerRootId = getLatestLongTaskLedgerRootId(sessionKey);
       // Runtime intervention policy (P0-2): resumeTrigger / checkpointRequired /
@@ -3558,46 +3590,56 @@ export const chatHandlers: GatewayRequestHandlers = {
         );
         return;
       }
-      if (taskLedgerRootId && (action.mode === "interrupt" || action.mode === "revise-goal")) { 
+      if (taskLedgerRootId && (action.mode === "interrupt" || action.mode === "revise-goal")) {
         // Recovery invariant: persist before aborting so partial work can be
         // resumed even if the fresh run fails to start.
         const checkpoint = recordLongTaskCheckpoint({
           idempotencyKey: `chat:${clientRunId}:${action.mode}:checkpoint`,
           sessionKey,
-          agentId: selectedAgent.agentId, 
+          agentId: selectedAgent.agentId,
           workspaceId,
           taskLedgerRootId,
-          runId: activeEntryForSession.runId, 
-          trigger: interventionPolicy.resumeTrigger ??
-            (action.mode === "revise-goal" ? "revise_goal" : "interrupt"), 
-          activeTask: action.mode === "revise-goal"
-            ? "Active chat run checkpointed because the user revised the goal."
-            : "Active chat run interrupted by user input.", 
+          runId: activeEntryForSession.runId,
+          trigger:
+            interventionPolicy.resumeTrigger ??
+            (action.mode === "revise-goal" ? "revise_goal" : "interrupt"),
+          activeTask:
+            action.mode === "revise-goal"
+              ? "Active chat run checkpointed because the user revised the goal."
+              : "Active chat run interrupted by user input.",
           deviations: interventionPolicy.recordsDeviation
-            ? [action.mode === "revise-goal" ? "User revised the active goal." : "User interrupted the active run."]
-            : [], 
-          ...(action.mode === "revise-goal" ? { decisions: ["Restart from the revised user goal."] } : {}),
+            ? [
+                action.mode === "revise-goal"
+                  ? "User revised the active goal."
+                  : "User interrupted the active run.",
+              ]
+            : [],
+          ...(action.mode === "revise-goal"
+            ? { decisions: ["Restart from the revised user goal."] }
+            : {}),
           ...(interventionPolicy.reviewRequired
             ? { reviewNeededItems: ["Review required before continuing after the intervention."] }
             : {}),
-          nextAction: action.mode === "revise-goal"
-            ? "Start a fresh run from the revised user goal."
-            : "Start a fresh run from the interrupting user message.", 
-          evidenceRefs: [{ type: "session", ref: sessionKey }], 
-          metadata: { inputMode: action.mode }, 
-        }); 
-        recordLongTaskInterventionEvent({ 
-          idempotencyKey: `chat:${clientRunId}:${action.mode}:event`, 
-          sessionKey, 
-          agentId: selectedAgent.agentId, 
+          nextAction:
+            action.mode === "revise-goal"
+              ? "Start a fresh run from the revised user goal."
+              : "Start a fresh run from the interrupting user message.",
+          evidenceRefs: [{ type: "session", ref: sessionKey }],
+          metadata: { inputMode: action.mode },
+        });
+        recordLongTaskInterventionEvent({
+          idempotencyKey: `chat:${clientRunId}:${action.mode}:event`,
+          sessionKey,
+          agentId: selectedAgent.agentId,
           workspaceId,
           taskLedgerRootId,
-          runId: activeEntryForSession.runId, 
-          checkpointId: checkpoint.id, 
-          mode: action.mode, 
-          trigger: interventionPolicy.resumeTrigger ??
-            (action.mode === "revise-goal" ? "revise_goal" : "interrupt"), 
-          status: "checkpointed", 
+          runId: activeEntryForSession.runId,
+          checkpointId: checkpoint.id,
+          mode: action.mode,
+          trigger:
+            interventionPolicy.resumeTrigger ??
+            (action.mode === "revise-goal" ? "revise_goal" : "interrupt"),
+          status: "checkpointed",
           payload: {
             message: inboundMessage,
             policy: {
@@ -3605,8 +3647,8 @@ export const chatHandlers: GatewayRequestHandlers = {
               confirmationRequired: interventionPolicy.confirmationRequired,
               reviewRequired: interventionPolicy.reviewRequired,
             },
-          }, 
-        }); 
+          },
+        });
         // Abort the active run via the existing session-scoped abort path, then
         // fall through so the inbound message starts a fresh run.
         await abortChatRunsForSessionKeyWithPartials({
@@ -3679,100 +3721,21 @@ export const chatHandlers: GatewayRequestHandlers = {
         const queuePos = peekUserMessageCount(sessionKey);
         // Broadcast queue status so the UI shows a "queued" indicator.
         try {
-          context.broadcast("chat.queue-status", {
-            sessionKey,
-            action: "enqueue",
-            queueCount: queuePos,
-            queuedMessageId: queuedMsg.id,
-          }, { dropIfSlow: true });
-        } catch { /* broadcast is best-effort */ }
+          context.broadcast(
+            "chat.queue-status",
+            {
+              sessionKey,
+              action: "enqueue",
+              queueCount: queuePos,
+              queuedMessageId: queuedMsg.id,
+            },
+            { dropIfSlow: true },
+          );
+        } catch {
+          /* broadcast is best-effort */
+        }
         // Register the drain callback (idempotent — only needs to be set once
         // per process; subsequent registrations are harmless no-ops).
-        setQueueDrainCallback(async (drainSessionKey: string) => {
-          const messages = drainUserMessages(drainSessionKey);
-          if (messages.length === 0) return;
-          // Combine multiple queued messages into one follow-up turn. 
-          const combinedText = messages.map((m) => m.text).join("\n\n"); 
-          const firstAgentId = messages[0]?.agentId; 
-          const firstWorkspaceId = messages[0]?.workspaceId;
-          const firstTaskLedgerRootId = messages[0]?.taskLedgerRootId;
-          try {
-            context.broadcast("chat.queue-status", {
-              sessionKey: drainSessionKey,
-              action: "drain",
-              queueCount: 0,
-              messageCount: messages.length,
-            }, { dropIfSlow: true });
-          } catch { /* best-effort */ }
-          // Re-dispatch as a new chat.send. The prior run is already cleared
-          // from ACTIVE_EMBEDDED_RUNS, so this starts cleanly.
-          // We use a synthetic internal call to the chat handler.
-          const syntheticParams = {
-            sessionKey: drainSessionKey,
-            message: combinedText,
-            deliver: false,
-            idempotencyKey: `queue_drain_${drainSessionKey}_${Date.now()}`, 
-            ...(firstAgentId ? { agentId: firstAgentId } : {}), 
-            ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
-          }; 
-          const { resolveActiveEmbeddedRunSessionId } = await import("../../agents/embedded-agent-runner/runs.js");
-          // Wait a tick to ensure the run-clear is fully committed.
-          await new Promise((resolve) => setImmediate(resolve));
-          // If a new run already started (user sent another message), don't
-          // interfere; restore claimed rows for the next idle drain.
-          const newActiveSession = resolveActiveEmbeddedRunSessionId(drainSessionKey);
-          if (newActiveSession) {
-            restoreDrainingUserMessages(messages, "active_run_started_before_queue_drain");
-            return;
-          }
-          recordLongTaskInterventionEvent({
-            idempotencyKey: `${syntheticParams.idempotencyKey}:event`,
-            sessionKey: drainSessionKey, 
-            agentId: firstAgentId, 
-            workspaceId: firstWorkspaceId,
-            taskLedgerRootId: firstTaskLedgerRootId,
-            mode: "queue", 
-            trigger: "queue_drain",
-            status: "draining",
-            payload: { messageCount: messages.length, queueItemIds: messages.map((m) => m.id) },
-          });
-          // Re-invoke the chat.send handler with synthetic params.
-          try {
-            await chatHandlers["chat.send"]({
-              params: syntheticParams,
-              respond: () => { /* swallow response: this is a background drain */ },
-              context,
-              client: null,
-              isWebchatConnect: () => false,
-            } as never);
-            completeDrainedUserMessages(messages);
-            recordLongTaskInterventionEvent({
-              idempotencyKey: `${syntheticParams.idempotencyKey}:drained`,
-              sessionKey: drainSessionKey, 
-              agentId: firstAgentId, 
-              workspaceId: firstWorkspaceId,
-              taskLedgerRootId: firstTaskLedgerRootId,
-              mode: "queue", 
-              trigger: "queue_drain",
-              status: "drained",
-              payload: { messageCount: messages.length, queueItemIds: messages.map((m) => m.id) },
-            });
-          } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            restoreDrainingUserMessages(messages, message);
-            recordLongTaskInterventionEvent({
-              idempotencyKey: `${syntheticParams.idempotencyKey}:failed`,
-              sessionKey: drainSessionKey, 
-              agentId: firstAgentId, 
-              workspaceId: firstWorkspaceId,
-              taskLedgerRootId: firstTaskLedgerRootId,
-              mode: "queue", 
-              trigger: "queue_drain",
-              status: "failed",
-              payload: { message, queueItemIds: messages.map((m) => m.id) },
-            });
-          }
-        });
         installQueueDrainCallback(context);
         respond(
           true,
@@ -3830,11 +3793,7 @@ export const chatHandlers: GatewayRequestHandlers = {
                 status: "steered",
                 payload: { message: inboundMessage },
               });
-              respond(
-                true,
-                { ok: true, steered: true, mode: "guide", queued: true },
-                undefined,
-              );
+              respond(true, { ok: true, steered: true, mode: "guide", queued: true }, undefined);
               return;
             }
             // Steering rejected (e.g. run ended between detection and injection):
@@ -3940,11 +3899,25 @@ export const chatHandlers: GatewayRequestHandlers = {
         return;
       }
     }
+    if (
+      (p.expectedSessionGeneration &&
+        loadSessionEntry(rawSessionKey, sessionLoadOptions).entry?.sessionId !==
+          p.expectedSessionGeneration) ||
+      !requesterGenerationMatches(p, loadSessionEntry(rawSessionKey, sessionLoadOptions).entry)
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "CHAT_SESSION_GENERATION_CHANGED"),
+      );
+      return;
+    }
     const releaseChatAdmission = acquireSessionAdmissionPermit(
       {
         agentId,
         canonicalSessionKey: sessionKey,
-        expectedSessionId: backingSessionId ?? requestedSessionId ?? clientRunId,
+        expectedSessionId:
+          p.expectedSessionGeneration ?? backingSessionId ?? requestedSessionId ?? clientRunId,
       },
       "chat-send",
     );
@@ -4074,6 +4047,22 @@ export const chatHandlers: GatewayRequestHandlers = {
         return;
       }
     }
+    if (
+      (p.expectedSessionGeneration &&
+        loadSessionEntry(rawSessionKey, sessionLoadOptions).entry?.sessionId !==
+          p.expectedSessionGeneration) ||
+      !requesterGenerationMatches(p, loadSessionEntry(rawSessionKey, sessionLoadOptions).entry)
+    ) {
+      activeRunAbort.cleanup();
+      clearActiveChatSendDedupeRun(context.dedupe, activeChatSendDedupeKey, clientRunId);
+      releaseChatAdmission();
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "CHAT_SESSION_GENERATION_CHANGED"),
+      );
+      return;
+    }
     if (activeRunAbort.controller.signal.aborted) {
       const stopReason = activeRunAbort.entry?.abortStopReason ?? "rpc";
       const endedAt = Date.now();
@@ -4122,12 +4111,14 @@ export const chatHandlers: GatewayRequestHandlers = {
         runId: clientRunId,
         status: "started" as const,
         ...(serverTiming ? { serverTiming } : {}),
-        ...(chatKnowledgeDenials.length > 0
-          ? { knowledgeDenials: chatKnowledgeDenials }
-          : {}),
+        ...(chatKnowledgeDenials.length > 0 ? { knowledgeDenials: chatKnowledgeDenials } : {}),
       };
-      context.logGateway.info(`chat.send ack responding runId=${clientRunId} sessionKey=${sessionKey}`);
-      console.error(`[chat.send.trace] ack responding runId=${clientRunId} sessionKey=${sessionKey}`);
+      context.logGateway.info(
+        `chat.send ack responding runId=${clientRunId} sessionKey=${sessionKey}`,
+      );
+      console.error(
+        `[chat.send.trace] ack responding runId=${clientRunId} sessionKey=${sessionKey}`,
+      );
       emitDiagnosticsTimelineEvent(
         {
           type: "mark",
@@ -4499,105 +4490,114 @@ export const chatHandlers: GatewayRequestHandlers = {
           runWithRequestDeadline(
             requestDeadlineAtMs,
             async () => {
-          applyChatSendManagedMediaFields(ctx, await pluginBoundMediaFieldsPromise);
-          const dispatchResult = await dispatchInboundMessage({
-            ctx,
-            cfg,
-            dispatcher,
-            onSessionMetadataChanges: (changes) => {
-              for (const change of changes) {
-                emitSessionsChanged(context, change);
-              }
-            },
-            replyOptions: {
-              runId: clientRunId,
-              ...(isOperatorUiClient(clientInfo)
-                ? {
-                    promptCacheKey: resolveWebchatPromptCacheKey({
-                      agentId,
-                      provider: resolvedSessionModel.provider,
-                      model: resolvedSessionModel.model,
-                      sessionKey: activeRunScopeKey,
-                    }),
+              applyChatSendManagedMediaFields(ctx, await pluginBoundMediaFieldsPromise);
+              const dispatchEntry = loadSessionEntry(rawSessionKey, sessionLoadOptions).entry;
+              if (
+                (p.expectedSessionGeneration &&
+                  dispatchEntry?.sessionId !== p.expectedSessionGeneration) ||
+                !requesterGenerationMatches(p, dispatchEntry)
+              )
+                throw new Error("CHAT_SESSION_GENERATION_CHANGED");
+              const dispatchResult = await dispatchInboundMessage({
+                ctx,
+                cfg,
+                dispatcher,
+                onSessionMetadataChanges: (changes) => {
+                  for (const change of changes) {
+                    emitSessionsChanged(context, change);
                   }
-                : {}),
-              abortSignal: activeRunAbort.controller.signal,
-              images: replyOptionImages,
-              imageOrder: imageOrder.length > 0 ? imageOrder : undefined,
-              thinkingLevelOverride: p.thinking,
-              ...(requestedReasoningEffort
-                ? { reasoningEffortOverride: requestedReasoningEffort }
-                : {}),
-              ...(requestedRuntimeIntensity
-                ? { runtimeIntensityOverride: requestedRuntimeIntensity }
-                : {}),
-              fastModeOverride: p.fastMode,
-              /** Turn-scoped model override (Area 2 §3.2); resolves above session/agent defaults. */
-              modelRefOverride: p.model,
-              promptModeOverride: p.promptMode,
-              userTurnTranscriptRecorder: userTurnRecorder,
-              onAgentRunStart: (runId) => {
-                agentRunStarted = true;
-                emitServerTiming(
-                  "agent-run-started",
-                  runId !== clientRunId ? { agentRunId: runId } : undefined,
-                  dispatchStartedAtMs,
-                );
-                const connId = typeof client?.connId === "string" ? client.connId : undefined;
-                const wantsToolEvents = hasGatewayClientCap(
-                  client?.connect?.caps,
-                  GATEWAY_CLIENT_CAPS.TOOL_EVENTS,
-                );
-                if (connId && wantsToolEvents) {
-                  context.registerToolEventRecipient(runId, connId);
-                  // Register for any other active runs *in the same session* so
-                  // late-joining clients (e.g. page refresh mid-response) receive
-                  // in-progress tool events without leaking cross-session data.
-                  const defaultAgentId = resolveDefaultAgentId(cfg);
-                  const selectedGlobalAgentId =
-                    sessionKey === "global" ? (selectedAgent.agentId ?? defaultAgentId) : undefined;
-                  for (const [activeRunId, active] of context.chatAbortControllers) {
-                    const activeGlobalAgentId =
-                      active.sessionKey === "global"
-                        ? (active.agentId ?? defaultAgentId)
-                        : undefined;
-                    const sameSelectedGlobalAgent =
-                      sessionKey === "global" &&
-                      selectedGlobalAgentId !== undefined &&
-                      activeGlobalAgentId === selectedGlobalAgentId;
-                    const sameSession =
-                      active.sessionKey === sessionKey &&
-                      (sessionKey !== "global" || sameSelectedGlobalAgent);
-                    if (activeRunId !== runId && sameSession) {
-                      context.registerToolEventRecipient(activeRunId, connId);
-                    }
-                  }
-                }
-              },
-              onModelSelected: (modelSelection) => {
-                updateChatRunProvider(context.chatAbortControllers, {
+                },
+                replyOptions: {
                   runId: clientRunId,
-                  providerId: modelSelection.provider,
-                  authProviderId: resolveProviderIdForAuth(modelSelection.provider, {
-                    config: cfg,
-                  }),
-                });
-                onModelSelected(modelSelection);
-                emitServerTiming(
-                  "model-selected",
-                  {
-                    provider: modelSelection.provider,
-                    model: modelSelection.model,
+                  ...(isOperatorUiClient(clientInfo)
+                    ? {
+                        promptCacheKey: resolveWebchatPromptCacheKey({
+                          agentId,
+                          provider: resolvedSessionModel.provider,
+                          model: resolvedSessionModel.model,
+                          sessionKey: activeRunScopeKey,
+                        }),
+                      }
+                    : {}),
+                  abortSignal: activeRunAbort.controller.signal,
+                  images: replyOptionImages,
+                  imageOrder: imageOrder.length > 0 ? imageOrder : undefined,
+                  thinkingLevelOverride: p.thinking,
+                  ...(requestedReasoningEffort
+                    ? { reasoningEffortOverride: requestedReasoningEffort }
+                    : {}),
+                  ...(requestedRuntimeIntensity
+                    ? { runtimeIntensityOverride: requestedRuntimeIntensity }
+                    : {}),
+                  fastModeOverride: p.fastMode,
+                  /** Turn-scoped model override (Area 2 §3.2); resolves above session/agent defaults. */
+                  modelRefOverride: p.model,
+                  promptModeOverride: p.promptMode,
+                  userTurnTranscriptRecorder: userTurnRecorder,
+                  onAgentRunStart: (runId) => {
+                    agentRunStarted = true;
+                    emitServerTiming(
+                      "agent-run-started",
+                      runId !== clientRunId ? { agentRunId: runId } : undefined,
+                      dispatchStartedAtMs,
+                    );
+                    const connId = typeof client?.connId === "string" ? client.connId : undefined;
+                    const wantsToolEvents = hasGatewayClientCap(
+                      client?.connect?.caps,
+                      GATEWAY_CLIENT_CAPS.TOOL_EVENTS,
+                    );
+                    if (connId && wantsToolEvents) {
+                      context.registerToolEventRecipient(runId, connId);
+                      // Register for any other active runs *in the same session* so
+                      // late-joining clients (e.g. page refresh mid-response) receive
+                      // in-progress tool events without leaking cross-session data.
+                      const defaultAgentId = resolveDefaultAgentId(cfg);
+                      const selectedGlobalAgentId =
+                        sessionKey === "global"
+                          ? (selectedAgent.agentId ?? defaultAgentId)
+                          : undefined;
+                      for (const [activeRunId, active] of context.chatAbortControllers) {
+                        const activeGlobalAgentId =
+                          active.sessionKey === "global"
+                            ? (active.agentId ?? defaultAgentId)
+                            : undefined;
+                        const sameSelectedGlobalAgent =
+                          sessionKey === "global" &&
+                          selectedGlobalAgentId !== undefined &&
+                          activeGlobalAgentId === selectedGlobalAgentId;
+                        const sameSession =
+                          active.sessionKey === sessionKey &&
+                          (sessionKey !== "global" || sameSelectedGlobalAgent);
+                        if (activeRunId !== runId && sameSession) {
+                          context.registerToolEventRecipient(activeRunId, connId);
+                        }
+                      }
+                    }
                   },
-                  dispatchStartedAtMs,
-                );
-              },
-            },
-          });
-          if (dispatchResult.beforeAgentRunBlocked === true) {
-            userTurnRecorder.markBlocked();
-          }
-          return dispatchResult;
+                  onModelSelected: (modelSelection) => {
+                    updateChatRunProvider(context.chatAbortControllers, {
+                      runId: clientRunId,
+                      providerId: modelSelection.provider,
+                      authProviderId: resolveProviderIdForAuth(modelSelection.provider, {
+                        config: cfg,
+                      }),
+                    });
+                    onModelSelected(modelSelection);
+                    emitServerTiming(
+                      "model-selected",
+                      {
+                        provider: modelSelection.provider,
+                        model: modelSelection.model,
+                      },
+                      dispatchStartedAtMs,
+                    );
+                  },
+                },
+              });
+              if (dispatchResult.beforeAgentRunBlocked === true) {
+                userTurnRecorder.markBlocked();
+              }
+              return dispatchResult;
             },
             { stage: "gateway", requestId: clientRunId },
           ),

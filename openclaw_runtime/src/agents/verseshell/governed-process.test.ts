@@ -1,8 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { configureManagedProcessCapacity, managedProcessCapacityStats, resetManagedProcessCapacity } from "./managed-process-capacity.js";
+import { managedProcessReservations } from "./managed-process-reservation.js";
 import type { JsonObject, Observation } from "../../../../shared/verseshell/types.js";
 import { AciTransportError, type AciExecuteOptions } from "./aci-client.js";
 import {
   startGovernedVerseShellProcess,
+  executeGovernedVerseShellProcessObserved,
   type GovernedVerseShellProcessOptions,
 } from "./governed-process.js";
 import type { VerseShellProcessConfig, VerseShellProcessManager } from "./process-manager.js";
@@ -93,6 +96,7 @@ function baseOptions(
     usePty: false,
     agentId: OWNER.agent_id,
     sessionId: OWNER.session_id,
+    identity: { sessionKey: "agent:main:managed-process", sessionGeneration: "generation-1", runId: "run-1" },
     hostPolicyApproved: true,
     runtimeEnv: CONTRACT_ENV,
     manager,
@@ -107,7 +111,15 @@ function fakeManager(
   }>,
 ) {
   const configs: VerseShellProcessConfig[] = [];
-  const shutdownProcess = vi.fn(async () => true);
+  const shutdownProcess = vi.fn(async (_key: string) => true);
+  const references = new Map<string, number>();
+  const retainProcess = (key: string) => {
+    references.set(key, (references.get(key) ?? 0) + 1); let released = false;
+    return async () => { if (released) return; released = true;
+      const remaining = references.get(key)! - 1; references.set(key, remaining);
+      if (remaining === 0) await shutdownProcess(key);
+    };
+  };
   let index = 0;
   const getClient = vi.fn(async (config: VerseShellProcessConfig) => {
     configs.push(config);
@@ -118,11 +130,148 @@ function fakeManager(
   const manager = {
     getClient,
     shutdownProcess,
+    retainProcess,
   } as unknown as VerseShellProcessManager;
   return { manager, configs, getClient, shutdownProcess };
 }
 
+afterEach(() => resetManagedProcessCapacity());
+
+describe("VerseShell startup capacity rollback", () => {
+  it("returns a confirmed terminal reservation even when executor cleanup fails", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const client = {
+      processKey: "terminal-before-cleanup-failure",
+      execute: vi.fn(async (op: string) => observation(op, snapshot({ state: "exited" }))),
+    };
+    const fake = fakeManager([client]);
+    fake.shutdownProcess.mockRejectedValueOnce(new Error("cleanup failed"));
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    expect(managedProcessReservations()).toContainEqual(expect.objectContaining({
+      sessionKey: "agent:main:managed-process", sessionGeneration: "generation-1", runId: "run-1",
+    }));
+    await expect(handle.wait()).rejects.toThrow("cleanup failed");
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+  });
+
+  it("returns capacity when executor acquisition fails before dispatch and permits retry", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const client = {
+      processKey: "retry-after-resolution-failure",
+      execute: vi.fn(async (op: string) => observation(op, snapshot({ state: "exited" }))),
+    };
+    const fake = fakeManager([client]);
+    fake.getClient.mockRejectedValueOnce(new Error("injected resolution failure"));
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager))).rejects.toThrow("injected resolution failure");
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    await handle.wait();
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, admitted: 2, completed: 2, doubleRelease: 0 });
+  });
+
+  it("returns capacity when approval transport acquisition fails after a confirmed denial", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const client = {
+      processKey: "denied-first-start",
+      execute: vi.fn(async (op: string) => observation(op, { approval_token: "apv_0123456789abcdef" }, {
+        ok: false, error: { code: "E_NEEDS_APPROVAL", message: "approval required", recoverable: true },
+      })),
+    };
+    const fake = fakeManager([client]);
+    fake.getClient.mockImplementationOnce(async () => client).mockRejectedValueOnce(new Error("approval executor unavailable"));
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager))).rejects.toThrow("approval executor unavailable");
+    expect(client.execute).toHaveBeenCalledOnce();
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+  });
+
+  it("returns a rejected start reservation even if approval transport cleanup fails", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const denied = {
+      processKey: "denied",
+      execute: vi.fn(async (op: string) => observation(op, { approval_token: "apv_0123456789abcdef" }, {
+        ok: false, error: { code: "E_NEEDS_APPROVAL", message: "approval required", recoverable: true },
+      })),
+    };
+    const refused = {
+      processKey: "refused",
+      execute: vi.fn(async (op: string) => observation(op, {}, {
+        ok: false, error: { code: "E_INVALID_ARGS", message: "start refused", recoverable: false },
+      })),
+    };
+    const fake = fakeManager([denied, refused]);
+    fake.shutdownProcess.mockRejectedValueOnce(new Error("cleanup failed"));
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager))).rejects.toThrow("cleanup failed");
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+  });
+
+  it.each(["start", "poll", "malformed-start"] as const)(
+    "keeps the managed reservation when %s delivery or terminal state is unknown",
+    async (phase) => {
+      configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+      const client = {
+        processKey: "unknown-delivery",
+        execute: vi.fn(async (op: string) => {
+          if (phase === "start" || op === "process.poll") throw new Error("unknown delivery");
+          return observation(op, phase === "malformed-start" ? {} : snapshot());
+        }),
+      };
+      const fake = fakeManager([client]);
+      if (phase === "poll") {
+        const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+        await expect(handle.wait()).rejects.toThrow("unknown delivery");
+      } else {
+        await expect(startGovernedVerseShellProcess(baseOptions(fake.manager))).rejects.toThrow();
+      }
+      expect(managedProcessCapacityStats()).toMatchObject({ live: 1, completed: 0 });
+      expect(client.execute.mock.calls.filter(([op]) => op === "process.start")).toHaveLength(1);
+    },
+  );
+});
+
 describe("VerseShell governed process lifecycle", () => {
+  it("drains terminal output through the final cursor before releasing its executor", async () => {
+    let polls = 0; const client = { processKey: "terminal-pages", execute: vi.fn(async (op: string) => {
+      if (op === "process.start") return observation(op, snapshot());
+      polls++;
+      const data = snapshot({ state: "exited", text: polls === 1 ? "first" : "last", cursor: polls === 1 ? 5 : 9 });
+      (data.output as JsonObject).next_cursor = 9;
+      return observation(op, data);
+    }) };
+    const fake = fakeManager([client]); const chunks: string[] = [];
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager, { onStdout: text => chunks.push(text) }));
+    await handle.wait(); expect(chunks).toEqual(["first", "last"]); expect(polls).toBe(2);
+    expect(client.execute.mock.calls.filter(([op]) => op === "process.poll")).toHaveLength(2);
+    expect(fake.shutdownProcess).toHaveBeenCalledOnce();
+  });
+  it("keeps a shared executor alive until both lifecycle references settle", async () => {
+    let starts = 0; const ends = new Map<string, (value: Observation) => void>();
+    const client = { processKey: "shared-lifecycle", execute: vi.fn(async (op: string, args: JsonObject) => {
+      if (op === "process.start") return observation(op, snapshot({ owner: { process_id: `proc-${++starts}` } }));
+      if (op === "process.poll") return new Promise<Observation>(resolve => { ends.set(String(args.process_id), resolve); });
+      return observation(op, {});
+    }) };
+    const fake = fakeManager([client, client]);
+    const first = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    const second = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    ends.get("proc-1")!(observation("process.poll", snapshot({ state: "exited", owner: { process_id: "proc-1" } })));
+    await first.wait();
+    const closedEarly = fake.shutdownProcess.mock.calls.length;
+    ends.get("proc-2")!(observation("process.poll", snapshot({ state: "exited", owner: { process_id: "proc-2" } })));
+    await second.wait();
+    expect(closedEarly).toBe(0); expect(fake.shutdownProcess).toHaveBeenCalledOnce();
+  });
+  it("bounds accumulated UTF-8 output while keeping terminal artifact references", async () => {
+    let polls = 0; const text = "汉".repeat(400);
+    const client = { processKey: "bounded-output", execute: vi.fn(async (op: string) => {
+      if (op === "process.start") return observation(op, snapshot());
+      polls++;
+      return observation(op, snapshot({ text, cursor: polls * 1200, state: polls === 4 ? "exited" : "running" }));
+    }) };
+    const fake = fakeManager([client]); Object.assign(fake.manager, { list: () => [{ pid: 4321, key: client.processKey }] });
+    const result = await executeGovernedVerseShellProcessObserved(baseOptions(fake.manager, { maxOutputBytes: 1024 }));
+    expect(Buffer.byteLength(result.stdout) + Buffer.byteLength(result.stderr)).toBeLessThanOrEqual(1024);
+    expect(result.observation.data?.artifacts).toEqual([`result://sha256/${"b".repeat(64)}`]);
+  });
   it("uses the pre-approval argv plan without reparsing the display command", async () => {
     const calls: ExecuteCall[] = [];
     const client = {
@@ -196,8 +345,8 @@ describe("VerseShell governed process lifecycle", () => {
       undefined,
       "apv_0123456789abcdef",
     ]);
-    expect(fake.shutdownProcess).toHaveBeenCalledOnce();
-    expect(fake.shutdownProcess).toHaveBeenCalledWith("approved");
+    expect(fake.shutdownProcess).toHaveBeenCalledTimes(2);
+    expect(fake.shutdownProcess).toHaveBeenLastCalledWith("approved");
   });
 
   it("maps start, poll, stdin, EOF, and kill and cleans up after terminal state", async () => {
@@ -296,7 +445,7 @@ describe("VerseShell governed process lifecycle", () => {
     const fake = fakeManager([client]);
     const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
     await expect(handle.wait()).rejects.toMatchObject({ code });
-    expect(fake.shutdownProcess).toHaveBeenCalledWith("drift");
+    expect(fake.shutdownProcess).not.toHaveBeenCalled();
   });
 
   it("retries only read-only poll after a transport restart and never replays start", async () => {
@@ -541,7 +690,7 @@ describe("VerseShell governed process lifecycle", () => {
         calls.push({ op, args });
         return observation(op, {}, {
           ok: false,
-          error: { code: 'E_INVALID_ARGS', message: 'max_processes is not supported' },
+          error: { code: 'E_INVALID_ARGS', message: 'max_processes is not supported', recoverable: false },
         });
       }),
     };

@@ -63,7 +63,84 @@ After each turn orchestration:
 
 VToken remains a stateless internal packing strategy behind the Context Orchestrator. The host bridge is an internal diagnostics/test boundary only; Settings has no VToken bridge toggle or independent VToken product panel. C6 remains an explicit internal assembler request API for bounded lifecycle/pressure selection rather than a permanent user opt-in. Context/request receipts remain per actual model call and are paired through the existing RC-03 seal owner.
 
-## Non-goals
+## Prompt contribution authority (TF-0737)
+
+The admitting host passes a `PromptContributionAdmission` as the third argument of
+`collectContextCandidate` or `collectContextOrchestratorCandidate`. Its declaration names
+`source` (equal to candidate.sourceId), `authority`, exact `scope` and a nonempty `reason`.
+Content authority object IDs and digests continue to identify content; they grant no rights.
+Core sources have an explicit registry matching real projection operations. Registered
+authorities/scopes are fixed before seeing a requested target; data producers cannot
+upgrade themselves to history replacement. Dynamic Memory/session-start source families
+retain system-append scope only. This is declaration governance, not source authentication
+against a malicious in-process plugin.
+
+| Candidate target | Required authority |
+|---|---|
+| message | append_data |
+| system_prompt (appends to the existing prompt) | append_instruction |
+| message_replacement | replace_messages |
+
+With `mode: "enforce"`, an undeclared source may append data only. Source/scope/authority
+mismatches reject before collection and budget charging with
+`PromptContributionAuthorityError` (`PROMPT_CONTRIBUTION_AUTHORITY_DENIED`). Rejection
+does not append the replacement as data or alter the original history. A host must supply
+the declaration separately from untrusted candidate content.
+
+The host can select enforce with `OPENCLAW_PROMPT_AUTHORITY_MODE=enforce`; an explicit
+admission mode wins. An unknown environment mode rejects. Existing callers retain warn
+mode by default. High-authority violations emit warnings and surviving
+candidate lineage records `promptAuthority: "warned"`; declared and default-data admissions
+are also distinguished. This is not global production enforcement. These checks govern
+declared mutation surfaces and do not classify the semantics of appended data. Native
+assembly, budget accounting after orchestration and RC-03 coverage remain separate tasks.
+
+## Prompt accounting (TF-0738)
+
+Optional RC-03 admission and the flag-independent final snapshot report their
+coverage separately through `sealCoverage`; see [RC-03 seal coverage](rc03-seal-coverage.md).
+
+The 6000-character limit governs **managed injection**, including its existing
+precedence, drops and truncation. It does not limit the base system prompt, separate
+post-orchestrator instructions or the provider's total token window. Those token limits
+and the provider's structured usage records remain separate; no character-to-token
+conversion is used for billing or provider-usage claims.
+
+`composePostOrchestratorPrompt` preserves the existing filtered join and records
+Runtime Intensity/degradation additions and their separators in a separate bucket on
+the same turn ledger. The embedded runner uses `createTrackedSystemPromptSetter` for
+its actual system-prompt writes. It records successful changes, including provider,
+hook, media, model-identity, runtime-context and capability updates. Whole replacements
+retire prior base/post system attribution. Hook data appends use the corresponding
+message observation. Repeated composition/cached projection replaces an observation,
+rather than billing it again.
+
+`ContextFinalSnapshot.budgetCoverage` exposes:
+
+| Field | Meaning |
+|---|---|
+| managedChars | Cumulative characters applied by the existing turn injection budget |
+| postOrchestratorChars | Separately attributed system/message changes and joining characters |
+| totalPromptChars | Observed full system-prompt length plus turn message-injection charges |
+| basePromptChars | Base component observed before later managed/post contributions |
+| unaccountedChars | Positive observed injection footprint not covered by managed/post accounting |
+| overaccountedChars | Attributed footprint exceeding the observation; exposes double counting |
+| unbudgeted | A turn/baseline observation is unavailable |
+
+`accounted_char_ratio = (managedChars + postOrchestratorChars) /
+(totalPromptChars - basePromptChars)` for a nonempty observed injection footprint.
+Complete coverage requires zero unaccounted and zero overaccounted characters. The
+empty-footprint convention is 1.0. Ordinary history, user input and tool outputs are
+not part of this character footprint; the field is not the complete provider request
+or wire-serialization size. Managed/message counts remain the turn's applied charges,
+not a fresh token estimate for each model call.
+
+No-turnId composition reports `unbudgeted` in returned and retained orchestrator
+diagnostics. Normal embedded attempts initialize the observed baseline and snapshots
+are readable through the existing snapshot getters. Ledger observations are copied
+when summarized, so later model calls cannot rewrite earlier snapshots.
+
+## Product boundaries
 
 - Does not enable default-on memory/VToken (see `docs/dev/default-config-matrix.md`)
 - Does not replace BlockStore / SEKB writeback / TF-0004 E2E

@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-relay-verifier",
+  "checkedAt": "2026-11-06T06:13:26.244Z",
+  "hashReadbacks": {
+    "reconstructed-cohort-20261106-v7": {
+      "entries": 91,
+      "mismatches": 0
+    },
+    "measurement": {
+      "entries": 60,
+      "mismatches": 0
+    }
+  },
+  "credentialScan": {
+    "files": 178,
+    "hits": 0
+  },
+  "retainedWorkspaceDirectories": 0
+}

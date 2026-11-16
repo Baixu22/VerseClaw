@@ -88,6 +88,12 @@ export type SurfaceConfigEntry = {
 };
 
 export type RuntimeFeatureConfig = {
+  /** Opt-in provider spend ceilings. Counts begin at first admission; omission preserves defaults. */
+  providerBudget?: {
+    host?: { maxTokens?: number; maxCostUsd?: number };
+    project?: { maxTokens?: number; maxCostUsd?: number };
+    session?: { maxTokens?: number; maxCostUsd?: number };
+  };
   /** Desktop session relay depth policy. Disabled unless explicitly enabled. */
   handoff?: { enabled?: boolean; maxDepth?: number };
   /** VerseShell typed ACI rollout. Every leaf is default-off and independently gated. */
@@ -247,6 +253,10 @@ export type RuntimeFeatureConfig = {
   };
   /** Context Family rollout flags. Defaults off unless a promotion spec changes the default. */
   contextFamily?: {
+    /** Opt-in bounded retention of verified archive recall tool-result projections. Defaults off. */
+    archiveRecallRetention?: {
+      enabled?: boolean;
+    };
     /** Projection-only observation masking. Transcript files remain unchanged. */
     observationMasking?: {
       /** Enable archive-backed prompt projection masking for old large observations. */

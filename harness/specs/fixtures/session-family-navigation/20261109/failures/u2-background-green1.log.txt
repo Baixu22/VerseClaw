@@ -1,0 +1,166 @@
+
+Running 1 test using 1 worker
+
+(node:46732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-09T00:48:26.115Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-09T00:48:26.115Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-09T00:48:26.115Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=45300, ppid=31388
+[2026-11-09T00:48:26.115Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-09T00:48:26.145Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-09T00:48:26.145Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-09T00:48:26.146Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-09T00:48:26.146Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-09T00:48:26.224Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T00:48:26.224Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [45300:1109/084826.263:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[45300:1109/084826.263:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-09T00:48:26.337Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T00:48:26.337Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-09T00:48:26.421Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-09T00:48:26.426Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-09T00:48:26.436Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T00:48:26.436Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T00:48:26.436Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T00:48:26.437Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T00:48:26.523Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-09T00:48:26.523Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-09T00:48:26.957Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\interaction-validation\u2-background-green1-results\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\workspace\.verse-claw\harness
+[app:out] [2026-11-09T00:48:27.325Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T00:48:27.326Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[app:out] [2026-11-09T00:48:27.355Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[app:out] [2026-11-09T00:48:27.357Z] [INFO] Gateway start requested (port=57736)
+[app:out] [2026-11-09T00:48:27.368Z] [DEBUG] Device identity loaded (deviceId=a3f4056edc36065d72ed886154e53fd1eae899a6e1ffd3fb2de79405e779ac93)
+[app:out] [2026-11-09T00:48:27.369Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-09T00:48:27.555Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:45300) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-09T00:48:27.771Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T00:48:27.965Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-09T00:48:27.996Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-09T00:48:28.000Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":172,"providerEnvMs":7,"channelStartupPolicyMs":2,"uvEnvMs":3,"mcpEnvMs":18,"runtimeConfigReadMs":0,"verseShellBundleMs":1,"totalMs":221,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-09T00:48:28.001Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=57736, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 57736 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-09T00:48:28.105Z] [INFO] Gateway process started (pid=36824)
+[app:out] [2026-11-09T00:48:28.106Z] [DEBUG] Gateway manager now owns process pid=36824
+[app:err] [2026-11-09T00:48:28.231Z] [WARN] [Gateway stderr] (node:36824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-09T00:48:28.232Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-09T00:48:30.212Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-09T00:48:31.742Z] [DEBUG] [Gateway stderr] (node:36824) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:err] [2026-11-09T00:48:31.742Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-09T00:48:31.742Z] [DEBUG] [Gateway stderr] (node:36824) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:out] [2026-11-09T00:48:33.957Z] [DEBUG] Gateway ready after 21 attempt(s)
+[app:out] [2026-11-09T00:48:33.957Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:57736/ws)
+[app:err] [2026-11-09T00:48:33.991Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=5b1c90d7-60e5-463d-b1c1-772e761eb137 peer=127.0.0.1:55274->127.0.0.1:57736 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:57736 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-09T00:48:33.994Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-09T00:48:33.995Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-09T00:48:33.995Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-09T00:48:33.998Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=157cc12b-b1bc-431f-a303-6b17e5bd0a18 peer=127.0.0.1:55276->127.0.0.1:57736 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:57736 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-09T00:48:34.054Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:57736/ws)
+[app:err] [2026-11-09T00:48:34.055Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-09T00:48:34.996Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-09T00:48:35.433Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-09T00:48:35.433Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-09T00:48:35.433Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-09T00:48:36.004Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-09T00:48:36.005Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-09T00:48:36.005Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-11-09T00:48:36.006Z] [INFO] [metric] gateway.startup {"configSyncMs":551,"spawnToReadyMs":5851,"readyToConnectMs":2049,"totalMs":8451}
+[app:err] [2026-11-09T00:48:38.230Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T00:48:38.230Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T00:48:38.230Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T00:48:38.230Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T00:48:38.424Z] [INFO] [chat:sendWithMedia] Sending: message="U2_PARENT_BASELINE", attachments=0, fileRefs=0
+[app:out] [2026-11-09T00:48:38.425Z] [INFO] [gateway-rpc] chat.send serialized id=2ff7c4a2-ad81-4eb9-ba98-3abc9c0c8fe0 timeoutMs=900000 bytes=488
+[2026-11-09T00:48:38.425Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=2ff7c4a2-ad81-4eb9-ba98-3abc9c0c8fe0
+[app:err] [2026-11-09T00:48:38.426Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=0d3eaf8e-306b-47dd-b10f-1cdd4ce47215 id=2ff7c4a2-ad81-4eb9-ba98-3abc9c0c8fe0
+[app:err] [2026-11-09T00:48:38.426Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=0d3eaf8e-306b-47dd-b10f-1cdd4ce47215 id=2ff7c4a2-ad81-4eb9-ba98-3abc9c0c8fe0
+[app:err] [2026-11-09T00:48:38.428Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[app:err] [2026-11-09T00:48:38.438Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=U2_PARENT_BASELINE sessionKey=agent:main:session-1794185306763-ubackground loadSessionMs=0.853
+[app:err] [2026-11-09T00:48:38.523Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=U2_PARENT_BASELINE sessionKey=agent:main:session-1794185306763-ubackground attachments=0
+[app:err] [2026-11-09T00:48:38.526Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=U2_PARENT_BASELINE sessionKey=agent:main:session-1794185306763-ubackground
+[app:out] [2026-11-09T00:48:38.526Z] [INFO] [gateway-rpc] chat.send response id received durationMs=101
+[app:out] [2026-11-09T00:48:38.527Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"U2_PARENT_BASELINE","status":"started"}
+[app:err] [2026-11-09T00:48:38.541Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=0d3eaf8e-306b-47dd-b10f-1cdd4ce47215 id=2ff7c4a2-ad81-4eb9-ba98-3abc9c0c8fe0
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[fp-p1-harness] connection #1
+[app:out] [2026-11-09T00:49:04.803Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T00:49:04.803Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[app:out] [2026-11-09T00:49:04.804Z] [INFO] Sending kill to Gateway process (pid=36824)
+[app:err] [2026-11-09T00:49:04.822Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-09T00:49:04.822Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-09T00:49:05.255Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-09T00:49:05.256Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-09T00:49:05.364Z] [INFO] Gateway stop requested
+[2026-11-09T00:49:05.365Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:60780/f2d21441-f2d6-482e-bef8-0e82ae55af83
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-09T00:49:05.381Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-09T00:49:05.381Z] [INFO] [ResourceTracker] Stopped
+[2026-11-09T00:49:05.381Z] [INFO] [ResourceTracker] Shutdown complete
+[app:out] [2026-11-09T00:49:05.381Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-09T00:49:05.382Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  x  1 tests\e2e\session-task-reading-navigation.spec.ts:195:5 › U2 background child creation, failure and completion preserve parent selection, own state and hovered rows (45.6s)
+
+
+  1) tests\e2e\session-task-reading-navigation.spec.ts:195:5 › U2 background child creation, failure and completion preserve parent selection, own state and hovered rows 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveAttribute[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('sidebar-session-status-agent:main:session-1794185306763-ubackground')
+    Expected: [32m"completed"[39m
+    Received: [31m"running"[39m
+    Timeout:  15000ms
+
+    Call log:
+    [2m  - Expect "toHaveAttribute" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('sidebar-session-status-agent:main:session-1794185306763-ubackground')[22m
+    [2m    18 × locator resolved to <span role="status" title="Running" data-state="running" aria-label="Running" class="task-status-slot" data-testid="sidebar-session-status-agent:main:session-1794185306763-ubackground">…</span>[22m
+    [2m       - unexpected value "running"[22m
+
+
+      241 |     if (await disclosure.getAttribute('aria-expanded') !== 'true') await disclosure.click();
+      242 |     const parentStatus = page.getByTestId('sidebar-session-status-' + project.sessionKey);
+    > 243 |     await expect(parentStatus).toHaveAttribute('data-state', 'completed');
+          |                                ^
+      244 |     const hoveredRow = page.getByTestId('sidebar-session-' + hoveredChild);
+      245 |     await expect(hoveredRow).toBeVisible();
+      246 |     await hoveredRow.hover();
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-task-reading-navigation.spec.ts:243:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\interaction-validation\u2-background-green1-results\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\interaction-validation\u2-background-green1-results\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\interaction-validation\u2-background-green1-results\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\interaction-validation\u2-background-green1-results\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\session-task-reading-navigation.spec.ts:195:5 › U2 background child creation, failure and completion preserve parent selection, own state and hovered rows 

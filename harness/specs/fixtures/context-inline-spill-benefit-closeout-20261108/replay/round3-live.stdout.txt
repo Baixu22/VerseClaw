@@ -1,0 +1,2 @@
+{"mode":"live","records":96,"allSummaryNumbersRecomputed":true,"decisions":{"b1_mechanism_and_autonomy":true,"b2_task_benefit":false,"b3_retention_benefit":true,"b4_non_inferiority":false,"b5_no_fabrication":false,"b6_budget":false,"contextGrowthChars":2492.1666666666715,"tokenGrowthPct":0.5961377767947111}}
+{"mode":"live","records":96,"providerCalls":360,"initialPairs":24,"baselineLeaks":0,"historyFallbacks":0,"incomplete":53,"passed":true}

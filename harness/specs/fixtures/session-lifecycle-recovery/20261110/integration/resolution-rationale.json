@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "u5-scratch-integration-review",
+  "status": "resolved",
+  "created_at": "2026-11-10T02:32:32.314Z",
+  "plan": "D:/tmp/unified-management-20261109/lifecycle-main-integration/plan.json",
+  "plan_base": "5e9e865dc911e32615338c593694fa74d7bf8400",
+  "plan_source": "3333e5a78dd91293e016bd0182a7cb189b3fc1d6",
+  "snapshot_rule": "All decisions use the immutable merge/<file>/{ours,base,theirs}/conflict snapshots and their LF SHA-256 values.",
+  "verification_scope": "static source inspection only; no tests, build, Electron, source merge, Task Forest, or lock mutation",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/README.ja-JP.md/conflict",
+      "conflict_ranges": [
+        "11-19"
+      ],
+      "decision": "Keep both source U5 paragraphs and the main migration paragraph. Preserve the complete main document additions outside the conflict.",
+      "preserved": [
+        "U5 project/worktree entry",
+        "U5 lifecycle and checkpoint wording",
+        "main migration wording",
+        "main documentation additions"
+      ],
+      "basis": "The conflict contains independent additions; keeping all three paragraphs avoids dropping either branch behavior documentation."
+    },
+    {
+      "path": "README.ru-RU.md",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/README.ru-RU.md/conflict",
+      "conflict_ranges": [
+        "9-18"
+      ],
+      "decision": "Keep source U5 project and session-lifecycle additions, then retain the main document flow and its storage paragraph.",
+      "preserved": [
+        "source-added Russian project entry",
+        "source-added Russian session-generation and checkpoint text",
+        "main storage entry"
+      ],
+      "basis": "The source-only additions are localized Russian text absent from main; main already carries the overlapping managed-tool and migration paragraphs."
+    },
+    {
+      "path": "README.zh-CN.md",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/README.zh-CN.md/conflict",
+      "conflict_ranges": [
+        "11-19"
+      ],
+      "decision": "Keep both source U5 paragraphs and the main migration paragraph while preserving main documentation additions outside the conflict.",
+      "preserved": [
+        "U5 project/worktree entry",
+        "U5 lifecycle and checkpoint wording",
+        "main migration wording",
+        "main documentation additions"
+      ],
+      "basis": "The sides add complementary product-entry and navigation text; neither branch should overwrite the other."
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/docs/modules/multi-agent-and-tasks.md/conflict",
+      "conflict_ranges": [
+        "482-488"
+      ],
+      "decision": "Keep the source U5 lifecycle paragraph and the main task-dock/composer-restraint paragraph as separate paragraphs.",
+      "preserved": [
+        "U5 lifecycle and checkout retention text",
+        "main task dock and session-status layout text"
+      ],
+      "basis": "The paragraphs describe separate product behavior and do not conflict semantically."
+    },
+    {
+      "path": "src/components/chat/CheckpointsDialog.tsx",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/src/components/chat/CheckpointsDialog.tsx/conflict",
+      "conflict_ranges": [
+        "25-34"
+      ],
+      "decision": "Use the source U5 implementation including scope guards and generation-aware restore, with one chat/filePreview translation prefix.",
+      "preserved": [
+        "U5 isCurrent scope guard",
+        "generation-scoped restore",
+        "full filePreview translation namespace",
+        "main synchronized UI additions"
+      ],
+      "basis": "The main keyPrefix change is satisfied by one keyPrefix with checkpoints.* keys; retaining full filePreview.* keys would create filePreview.filePreview."
+    },
+    {
+      "path": "src/components/chat/SessionWorkspacePicker.tsx",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/src/components/chat/SessionWorkspacePicker.tsx/conflict",
+      "conflict_ranges": [
+        "15-20",
+        "78-86"
+      ],
+      "decision": "Combine the main refreshSignal, cn, data-git-kind, and worktree visuals with source embedded layout and stale-owner guards.",
+      "preserved": [
+        "refreshSignal",
+        "cn classes",
+        "data-git-kind",
+        "embedded inline popover",
+        "workspace/path stale guards",
+        "origin-workspace guard after worktree creation"
+      ],
+      "basis": "The sides alter different parts of the same component. The merged signature carries both call contracts and the existing popover remains single-instance."
+    },
+    {
+      "path": "src/components/chat/WelcomeProjectPicker.tsx",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/src/components/chat/WelcomeProjectPicker.tsx/conflict",
+      "conflict_ranges": [
+        "31-43"
+      ],
+      "decision": "Keep main onSelect handling, refocus/error behavior, and the existing picker as the sole project entry; add source onSelectWorktree as SessionWorkspacePicker extraActions.",
+      "preserved": [
+        "onSelect",
+        "onSelectWorktree",
+        "single WelcomeProjectPicker mount",
+        "single embedded child worktree entry",
+        "main keyboard/error behavior"
+      ],
+      "basis": "Main has no second top-level worktree picker in the final WelcomeScreen path. One picker with an extra action preserves both flows without duplicate mounting."
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/src/pages/Chat/index.tsx/conflict",
+      "conflict_ranges": [
+        "4026-4033"
+      ],
+      "decision": "Use main as the product-flow baseline; restore source new-session scope guards, manual/range generation and pending handling, and forward both project and worktree callbacks through the single WelcomeScreen/WelcomeProjectPicker path.",
+      "preserved": [
+        "main inputRunActive",
+        "main onSelectProject",
+        "source onSelectWorktree",
+        "source viewRevision/new-session guard",
+        "manual compact expectedSessionId and pending",
+        "range compact expectedSessionId and pending",
+        "main 2026-11 product flow"
+      ],
+      "basis": "The literal conflict is the WelcomeScreen call block, but the source product guard changes are independent non-conflicting deltas. The final WelcomeScreen destructures both callbacks and passes both into the same existing picker; no second picker is mounted."
+    },
+    {
+      "path": "tests/unit/workspace-session.test.ts",
+      "conflict_file": "D:/tmp/unified-management-20261109/lifecycle-main-integration/merge/tests/unit/workspace-session.test.ts/conflict",
+      "conflict_ranges": [
+        "174-313"
+      ],
+      "decision": "Keep the complete source late-revisit/rejected-create test block and the complete main workspace navigation/ownership test block.",
+      "preserved": [
+        "source 45-line test block",
+        "main 144-line test block",
+        "shared beforeEach and fixture extensions from main"
+      ],
+      "basis": "Both sides add independent tests above the common new-session test; the merge is a union with no duplicated common test body."
+    }
+  ],
+  "input_hash_records": "Each resolved file has an adjacent <file>.inputs.json containing ours/base/theirs SHA-256 over LF-normalized snapshots.",
+  "unresolved": [],
+  "static_checks": {
+    "resolved_file_count": 9,
+    "input_record_count": 9,
+    "conflict_marker_count": 0,
+    "single_welcome_picker_mount": true,
+    "chat_welcome_callbacks_wired_end_to_end": true,
+    "checkpoint_single_filepreview_prefix": true,
+    "workspace_test_blocks_complete": true,
+    "main_product_flow_preserved": true
+  }
+}

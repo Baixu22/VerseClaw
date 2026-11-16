@@ -4,7 +4,7 @@ import logo from '@/assets/logo.png';
 type BrandLogoSize = 'sidebar' | 'setup';
 
 const sizeClasses: Record<BrandLogoSize, string> = {
-  sidebar: 'h-7 w-7 rounded-lg',
+  sidebar: 'h-6 w-6 rounded-md',
   setup: 'h-16 w-16 rounded-[18px]',
 };
 

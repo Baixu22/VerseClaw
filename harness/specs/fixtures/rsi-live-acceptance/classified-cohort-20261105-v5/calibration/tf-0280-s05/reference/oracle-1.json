@@ -1,0 +1,88 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 4,
+  "numPassedTests": 4,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793867410083,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "S05 provider credential-use boundary ledger"
+          ],
+          "fullName": "S05 provider credential-use boundary ledger allows trusted provenance and no-override paths unchanged",
+          "status": "passed",
+          "title": "allows trusted provenance and no-override paths unchanged",
+          "duration": 1.8543999999999414,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S05 provider credential-use boundary ledger"
+          ],
+          "fullName": "S05 provider credential-use boundary ledger keeps external/unknown provenance inside the bound provider scope",
+          "status": "passed",
+          "title": "keeps external/unknown provenance inside the bound provider scope",
+          "duration": 0.6511000000000422,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S05 provider credential-use boundary ledger"
+          ],
+          "fullName": "S05 provider credential-use boundary ledger never takes credential values as policy input",
+          "status": "passed",
+          "title": "never takes credential values as policy input",
+          "duration": 0.6449999999999818,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S05 provider credential-use boundary ledger"
+          ],
+          "fullName": "S05 provider credential-use boundary ledger pins the single call site and records the residual credential users",
+          "status": "passed",
+          "title": "pins the single call site and records the residual credential users",
+          "duration": 0.599399999999946,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793867410744,
+      "endTime": 1793867410747.5994,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0280-s05/reference/workspace/tests/unit/provider-credential-use-boundary-ledger.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-local-http",
+  "arrivals": 2,
+  "peakActiveResponses": 1,
+  "events": [
+    {
+      "event": "arrived",
+      "request": 1,
+      "active": 1
+    },
+    {
+      "event": "finished",
+      "request": 1,
+      "active": 0
+    },
+    {
+      "event": "arrived",
+      "request": 2,
+      "active": 1
+    },
+    {
+      "event": "finished",
+      "request": 2,
+      "active": 0
+    }
+  ],
+  "owner": [
+    {
+      "active": 0,
+      "queued": 0,
+      "maxConcurrent": 1,
+      "admitted": 2,
+      "completed": 2
+    }
+  ],
+  "cancelledRequestWasNotSent": true,
+  "limits": [
+    "actual local HTTP through production guarded provider fetch",
+    "no live-provider quality or cost measurement",
+    "quota identifiers and account discriminators are intentionally omitted"
+  ]
+}

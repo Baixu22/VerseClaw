@@ -1,0 +1,46 @@
+{
+  "driven_by": "agent",
+  "actor": "mcp-sdk-runner",
+  "realHumanEvidence": false,
+  "evidence": {
+    "response": [
+      {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Fixture cancelled"
+            }
+          ],
+          "_meta": {
+            "openclaw/resultStatus": "cancelled"
+          },
+          "isError": true
+        }
+      },
+      {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "MCP session terminated"
+            }
+          ],
+          "_meta": {
+            "openclaw/resultStatus": "cancelled"
+          },
+          "isError": true
+        }
+      }
+    ],
+    "events": [
+      "start:slow:batch-1",
+      "aborted:batch-1"
+    ],
+    "queuedEffectExecuted": false
+  }
+}

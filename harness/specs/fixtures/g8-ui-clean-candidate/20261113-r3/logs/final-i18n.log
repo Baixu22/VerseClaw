@@ -1,0 +1,2 @@
+$ node scripts/i18n-lint.mjs
+i18n lint passed.

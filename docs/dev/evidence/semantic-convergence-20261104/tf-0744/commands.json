@@ -1,0 +1,332 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0744",
+  "candidate": {
+    "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+    "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+    "dirty": false
+  },
+  "gates": [
+    {
+      "id": "tf0744-clean-tests",
+      "driven_by": "agent",
+      "actor": "codex/semantic-goal",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "base": "960c48553",
+      "candidate": {
+        "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+        "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+        "dirty": false
+      },
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceStable": true,
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/memory-facade-disposition.test.ts",
+        "tests/unit/context-control-plane-stage5-contracts.test.ts",
+        "tests/unit/memory-query-tool.test.ts",
+        "tests/unit/memory-self-edit-adapter.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/tf0744-clean-tests.json"
+      ],
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      },
+      "startedAt": "2026-11-05T14:28:21.777Z",
+      "completedAt": "2026-11-05T14:28:34.757Z",
+      "durationMs": 12977,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0744-clean-tests.log"
+    },
+    {
+      "id": "tf0744-clean-lint",
+      "driven_by": "agent",
+      "actor": "codex/semantic-goal",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "base": "960c48553",
+      "candidate": {
+        "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+        "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+        "dirty": false
+      },
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceStable": true,
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts",
+        "tests/unit/memory-facade-disposition.test.ts",
+        "--max-warnings=0"
+      ],
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      },
+      "startedAt": "2026-11-05T14:28:21.780Z",
+      "completedAt": "2026-11-05T14:28:27.764Z",
+      "durationMs": 5982,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0744-clean-lint.log"
+    },
+    {
+      "id": "tf0744-clean-harness",
+      "driven_by": "agent",
+      "actor": "codex/semantic-goal",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "base": "960c48553",
+      "candidate": {
+        "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+        "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+        "dirty": false
+      },
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceStable": true,
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/memory-facade-disposition.md",
+        "--since",
+        "960c48553"
+      ],
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      },
+      "startedAt": "2026-11-05T14:28:21.777Z",
+      "completedAt": "2026-11-05T14:28:23.137Z",
+      "durationMs": 1357,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0744-clean-harness.log"
+    },
+    {
+      "id": "tf0744-clean-plan",
+      "driven_by": "agent",
+      "actor": "codex/semantic-goal",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "base": "960c48553",
+      "candidate": {
+        "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+        "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+        "dirty": false
+      },
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceStable": true,
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/memory-facade-disposition.md",
+        "--since",
+        "960c48553",
+        "--dry-run"
+      ],
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      },
+      "startedAt": "2026-11-05T14:28:21.777Z",
+      "completedAt": "2026-11-05T14:28:23.136Z",
+      "durationMs": 1356,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0744-clean-plan.log"
+    },
+    {
+      "id": "tf0744-clean-comms-replay",
+      "driven_by": "agent",
+      "actor": "codex/semantic-goal",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "base": "960c48553",
+      "candidate": {
+        "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+        "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+        "dirty": false
+      },
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceStable": true,
+      "command": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "COMMS_OUTPUT_DIR": "D:\\tmp\\tf0744-clean-comms"
+      },
+      "startedAt": "2026-11-05T14:28:21.803Z",
+      "completedAt": "2026-11-05T14:28:22.684Z",
+      "durationMs": 879,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0744-clean-comms-replay.log"
+    },
+    {
+      "id": "tf0744-clean-comms-compare",
+      "driven_by": "agent",
+      "actor": "codex/semantic-goal",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "base": "960c48553",
+      "candidate": {
+        "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+        "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+        "dirty": false
+      },
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "4e27a21b812bdaca79f7f3e4cdbc518b0a6e5ab04f9fc8f1543d96e42aa558e3",
+        "harness/specs/tasks/context-control-plane-stage5.md": "bd58ccf9622de19dd543397af4c2206f4eaa58da5f889cbd0acc26204a88dd39",
+        "harness/specs/tasks/memory-facade-disposition.md": "662024af963fa09e6dd3e9a2c0f027427d00bd7a4139daaad0d872173c8d1e80",
+        "openclaw_runtime/src/agents/stage5-golden-run.ts": "af0020c54493db32e7ba4f3ebfb3e9aa624d1bcbe6a70cec9267d1de7b05b268",
+        "openclaw_runtime/src/context-engine/stage5-memory-facade.ts": "e81640b2f0b53df09b97b30b63ecf41d700398cf4cc9ddc454a91a043b3de813",
+        "tests/unit/memory-facade-disposition.test.ts": "e4394b126d49e0fd34590a95f2fc27cd866b0000868efaa646f7a9bfbfa3e638"
+      },
+      "sourceStable": true,
+      "command": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "COMMS_OUTPUT_DIR": "D:\\tmp\\tf0744-clean-comms"
+      },
+      "startedAt": "2026-11-05T14:28:23.439Z",
+      "completedAt": "2026-11-05T14:28:23.969Z",
+      "durationMs": 529,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0744-clean-comms-compare.log"
+    }
+  ],
+  "baselineGate": {
+    "id": "tf0744-baseline",
+    "driven_by": "agent",
+    "actor": "codex/semantic-goal",
+    "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+    "base": "960c48553",
+    "candidate": {
+      "commit": "960c485535979f55b00728cc9e242c12fbd85a1b",
+      "tree": "0dcfc7e87ccf5858d29056a502597c063b2a70e3",
+      "dirty": true
+    },
+    "sourceHashes": {
+      "harness/specs/tasks/memory-facade-disposition.md": "b197546e2f12b3db6844f67db6baa46a556582ca81c7cafc1badf265bf8e1915",
+      "tests/unit/memory-facade-disposition.test.ts": "32575759e44b9f163e04452be334ddf8d56084d6d0d4b101efc57bb850fe3c7d"
+    },
+    "sourceHashesAfter": {
+      "harness/specs/tasks/memory-facade-disposition.md": "b197546e2f12b3db6844f67db6baa46a556582ca81c7cafc1badf265bf8e1915",
+      "tests/unit/memory-facade-disposition.test.ts": "32575759e44b9f163e04452be334ddf8d56084d6d0d4b101efc57bb850fe3c7d"
+    },
+    "sourceStable": true,
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/memory-facade-disposition.test.ts",
+      "--maxWorkers=1",
+      "--reporter=verbose",
+      "--reporter=json",
+      "--outputFile",
+      "D:/tmp/tf0744-baseline.json"
+    ],
+    "environment": {
+      "TEMP": "D:\\tmp",
+      "TMP": "D:\\tmp",
+      "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:\\tmp\\tf0744-baseline-cache"
+    },
+    "startedAt": "2026-11-05T13:57:43.390Z",
+    "completedAt": "2026-11-05T13:58:15.586Z",
+    "durationMs": 32107,
+    "exitCode": 1,
+    "log": "D:/tmp/tf0744-baseline.log"
+  }
+}

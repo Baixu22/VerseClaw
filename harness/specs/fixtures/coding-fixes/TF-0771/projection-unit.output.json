@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/unit/coding-run.test.ts",
+    "tests/unit/identity-scope.test.ts",
+    "tests/unit/product-semantics.test.ts",
+    "--maxWorkers=1",
+    "--reporter=json",
+    "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\projection-unit.json"
+  ],
+  "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\projection-8b42b1351",
+  "exitCode": 0,
+  "seconds": 13.192226886749268,
+  "driven_by": "agent",
+  "actor": "codex-coding-p1",
+  "output": "JSON report written to D:/ClawX-work/coding-vg-sts-jj-20261104/.audit/TF-0771/final/projection-unit.json\n"
+}

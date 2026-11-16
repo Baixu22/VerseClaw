@@ -3,6 +3,7 @@ import {
   expect,
   getStableWindow,
   installIpcMocks,
+  publishGatewayStatus,
   test,
 } from './fixtures/electron';
 
@@ -41,7 +42,7 @@ const WORKSPACES = [
  * overridden by later blocks, so the source and the screen disagree. See the
  * header of src/styles/codex-welcome-hero.css. */
 test.describe('FakeCoding chat welcome hero alignment', () => {
-  test('names the workspace as a context-row token and opens the shared picker upward', async ({ launchElectronApp }) => {
+  test('names the workspace as a context-row token and opens the shared picker upward', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'dark' });
 
     try {
@@ -98,6 +99,7 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
               branch: 'main',
               detached: false,
               workspaceRoot: 'D:\\work\\ClawX',
+              repoRoot: 'D:\\work\\ClawX',
               ahead: 0,
               behind: 0,
               clean: true,
@@ -114,6 +116,13 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
             branches: [
               { name: 'main', current: true },
               { name: 'feature/ui-polish', current: false },
+            ],
+          },
+          [stableStringify(['git', 'worktrees', null])]: {
+            success: true,
+            worktrees: [
+              { path: 'D:/work/ClawX', branch: 'main', head: '1111111' },
+              { path: 'D:/work/ClawX-feature', branch: 'feature/ui-polish', head: '2222222' },
             ],
           },
         },
@@ -148,7 +157,7 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       await expect(trigger).toHaveCSS('cursor', 'pointer');
       await expect(trigger).toHaveCSS('border-radius', '10px');
 
-      // The project and branch controls share a compact 32px environment group.
+      // The project token keeps its compact context-row geometry.
       const triggerBox = await trigger.evaluate((element) => {
         const style = getComputedStyle(element);
         return {
@@ -158,10 +167,13 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
           display: style.display,
         };
       });
-      expect(Math.abs(triggerBox.height - 26)).toBeLessThanOrEqual(1);
+      expect(Math.abs(triggerBox.height - 32)).toBeLessThanOrEqual(1);
       expect(triggerBox.paddingLeft).toBe('8px');
       expect(triggerBox.paddingRight).toBe('8px');
       expect(triggerBox.display).toBe('flex');
+      await expect(page.getByTestId('chat-welcome-context')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(page.getByTestId('composer-git-strip')).toHaveCount(0);
+      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(0);
 
       await trigger.click();
 
@@ -172,7 +184,7 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       // The welcome and header selectors share this same opaque menu shell.
       await page.waitForTimeout(180);
       await expect(menu).toHaveCSS('width', '288px');
-      await expect(menu).toHaveCSS('border-radius', '15px');
+      await expect(menu).toHaveCSS('border-radius', '20px');
 
       const row = page.getByTestId('welcome-project-item').first();
       await expect(row).toBeVisible();
@@ -207,16 +219,54 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       expect(Math.abs(placement.gap - 8)).toBeLessThanOrEqual(1);
       expect(Math.abs(placement.centreDelta)).toBeLessThanOrEqual(1);
 
-      const branchTrigger = page.getByTestId('welcome-branch-trigger');
-      await expect(branchTrigger).toBeVisible();
-      await branchTrigger.click();
-      await expect(page.getByTestId('welcome-branch-menu')).toBeVisible();
-      await expect(page.getByTestId('welcome-branch-item-feature-ui-polish')).toBeVisible();
-
-      // Escape closes without changing the workspace.
+      await expect(page.getByTestId('welcome-branch-trigger')).toHaveCount(0);
+      const worktreeTrigger = menu.getByTestId('session-worktree-trigger');
+      await expect(worktreeTrigger).toHaveAttribute('data-git-kind', 'local');
+      await worktreeTrigger.press('Enter');
+      const worktreeMenu = menu.getByTestId('session-worktree-menu');
+      await expect(worktreeMenu).toBeVisible();
+      await expect(worktreeMenu.getByRole('button').filter({ hasText: 'feature/ui-polish' })).toBeEnabled();
+      await expect(worktreeMenu.getByRole('button').filter({ hasText: 'main' })).toBeDisabled();
       await page.keyboard.press('Escape');
       await expect(menu).toHaveCount(0);
-      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+      const shortcuts = page.getByTestId('welcome-quick-start-trigger');
+      await shortcuts.press('Enter');
+      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(3);
+      await page.keyboard.press('Escape');
+      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(0);
+      await expect(shortcuts).toBeFocused();
+      await page.getByTestId('chat-welcome-context').click({ position: { x: 1, y: 1 } });
+      for (const theme of ['dark', 'light']) {
+        await page.evaluate(dark => {
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.classList.toggle('light', !dark);
+        }, theme === 'dark');
+        await page.screenshot({ path: testInfo.outputPath(`welcome-context-${theme}.png`), animations: 'disabled' });
+      }
+      await page.setViewportSize({ width: 600, height: 820 });
+      await expect(trigger).toBeVisible();
+      await trigger.click();
+      await worktreeTrigger.click();
+      await expect(worktreeMenu.getByRole('button').filter({ hasText: 'main' })).toBeDisabled();
+      const bounds = await worktreeMenu.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(600);
+      await page.screenshot({ path: testInfo.outputPath('welcome-worktrees-narrow.png'), animations: 'disabled' });
+      await page.keyboard.press('Escape');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      const input = page.locator('[data-testid="chat-composer-shell"] textarea').first();
+      await input.fill('Keep this draft');
+      await expect(shortcuts).toBeHidden();
+      await input.fill('');
+      await expect(shortcuts).toBeVisible();
+      await publishGatewayStatus(app, { state: 'stopped', gatewayReady: false, port: 18789 });
+      await expect(trigger).toBeEnabled();
+      await trigger.click();
+      await expect(worktreeTrigger).toBeEnabled();
+      await worktreeTrigger.click();
+      await expect(worktreeMenu).toBeVisible();
+      await page.keyboard.press('Escape');
     } finally {
       await closeElectronApp(app);
     }

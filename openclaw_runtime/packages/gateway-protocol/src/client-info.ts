@@ -75,6 +75,7 @@ export type GatewayClientInfo = {
 export const GATEWAY_CLIENT_CAPS = {
   TOOL_EVENTS: "tool-events",
   AGENT_BROWSER_BRIDGE: "agent-browser-bridge",
+  SESSION_TASK_SCOPE_BRIDGE: "session-task-scope-bridge",
 } as const;
 
 /** Optional capability advertised by clients during gateway handshake. */

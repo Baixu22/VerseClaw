@@ -1,3 +1,5 @@
+import type { PromptContributionAuthority } from "../context-engine/prompt-contribution-authority.js";
+
 // before_model_resolve hook
 export type PluginHookBeforeModelResolveAttachment = {
   kind: "image" | "video" | "audio" | "document" | "other";
@@ -48,6 +50,14 @@ export const PLUGIN_PROMPT_MUTATION_RESULT_FIELDS = [
   "prependSystemContext",
   "appendSystemContext",
 ] as const satisfies readonly (keyof PluginHookBeforePromptBuildResult)[];
+
+export const PLUGIN_PROMPT_MUTATION_AUTHORITIES = {
+  systemPrompt: "replace_system_prompt",
+  prependContext: "append_data",
+  appendContext: "append_data",
+  prependSystemContext: "append_instruction",
+  appendSystemContext: "append_instruction",
+} as const satisfies Record<(typeof PLUGIN_PROMPT_MUTATION_RESULT_FIELDS)[number], PromptContributionAuthority>;
 
 type MissingPluginPromptMutationResultFields = Exclude<
   keyof PluginHookBeforePromptBuildResult,

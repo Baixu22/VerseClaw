@@ -1,0 +1,178 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-canonical-task-selection",
+  "status": "passed",
+  "project": {
+    "workspaceId": "canonical-selection",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-task-scope-complet-38042-selected-canonical-contract\\selection-workspace",
+    "sessionKey": "agent:main:session-1794169762418-canonicalselection",
+    "generation": "cc9c8ee2-a86a-40fc-8ede-57b60609fa37"
+  },
+  "a": {
+    "contract": {
+      "objective": "Execute task Alpha",
+      "constraints": [
+        "Preserve the other task"
+      ],
+      "acceptance": [
+        {
+          "id": "artifact",
+          "description": "Exact selected output",
+          "verification": {
+            "kind": "file-sha256",
+            "path": "beta.txt",
+            "sha256": "3d2e4a72e5a037bf2b02abb60b561ac5228e92a290797a806eafde8ed1155ccd"
+          }
+        }
+      ],
+      "target": "beta.txt",
+      "dependencies": [],
+      "origin": {
+        "source": "host-task-api",
+        "requestId": "selection-a"
+      },
+      "taskNodeId": "50bf21e2-a13d-44d9-83b3-8712e2af9a63",
+      "domain": "33e34bcb10bdc9507915c44bbb933d0b62faa7c881734655239b931fe55ca1e7",
+      "revision": 1,
+      "digest": "b5f4c79e52bb90a8d5140081498ddb60f656dadbf8b3fd59483f3fdbf14c3a6b",
+      "state": "ready",
+      "createdAt": 1794169786857,
+      "updatedAt": 1794169786857
+    },
+    "claim": null,
+    "checkpoint": null,
+    "pendingOperations": 0,
+    "pendingOperationDetails": [],
+    "childTaskNodeIds": []
+  },
+  "b": {
+    "contract": {
+      "objective": "Execute task Beta",
+      "constraints": [
+        "Preserve the other task"
+      ],
+      "acceptance": [
+        {
+          "id": "artifact",
+          "description": "Exact selected output",
+          "verification": {
+            "kind": "file-sha256",
+            "path": "beta.txt",
+            "sha256": "3d2e4a72e5a037bf2b02abb60b561ac5228e92a290797a806eafde8ed1155ccd"
+          }
+        }
+      ],
+      "target": "beta.txt",
+      "dependencies": [],
+      "origin": {
+        "source": "host-task-api",
+        "requestId": "selection-b"
+      },
+      "taskNodeId": "198578de-da91-4398-9eec-90e22c2a798a",
+      "domain": "33e34bcb10bdc9507915c44bbb933d0b62faa7c881734655239b931fe55ca1e7",
+      "revision": 1,
+      "digest": "27a0f68bc06b122200953af87c92d7480248e7efe6ebd2b6ef0f9b5be1a90bba",
+      "state": "ready",
+      "createdAt": 1794169786876,
+      "updatedAt": 1794169786876
+    },
+    "claim": null,
+    "checkpoint": null,
+    "pendingOperations": 0,
+    "pendingOperationDetails": [],
+    "childTaskNodeIds": []
+  },
+  "selected": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Execute task Beta",
+        "constraints": [
+          "Preserve the other task"
+        ],
+        "acceptance": [
+          {
+            "id": "artifact",
+            "description": "Exact selected output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "beta.txt",
+              "sha256": "3d2e4a72e5a037bf2b02abb60b561ac5228e92a290797a806eafde8ed1155ccd"
+            }
+          }
+        ],
+        "target": "beta.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "selection-b"
+        },
+        "taskNodeId": "198578de-da91-4398-9eec-90e22c2a798a",
+        "domain": "33e34bcb10bdc9507915c44bbb933d0b62faa7c881734655239b931fe55ca1e7",
+        "revision": 1,
+        "digest": "27a0f68bc06b122200953af87c92d7480248e7efe6ebd2b6ef0f9b5be1a90bba",
+        "state": "ready",
+        "createdAt": 1794169786876,
+        "updatedAt": 1794169786876
+      },
+      "claim": null,
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": [],
+      "referenceOnly": true
+    },
+    "children": []
+  },
+  "after": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Execute task Beta",
+        "constraints": [
+          "Preserve the other task"
+        ],
+        "acceptance": [
+          {
+            "id": "artifact",
+            "description": "Exact selected output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "beta.txt",
+              "sha256": "3d2e4a72e5a037bf2b02abb60b561ac5228e92a290797a806eafde8ed1155ccd"
+            }
+          }
+        ],
+        "target": "beta.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "selection-b"
+        },
+        "taskNodeId": "198578de-da91-4398-9eec-90e22c2a798a",
+        "domain": "33e34bcb10bdc9507915c44bbb933d0b62faa7c881734655239b931fe55ca1e7",
+        "revision": 1,
+        "digest": "27a0f68bc06b122200953af87c92d7480248e7efe6ebd2b6ef0f9b5be1a90bba",
+        "state": "doing",
+        "createdAt": 1794169786876,
+        "updatedAt": 1794169800689
+      },
+      "claim": {
+        "taskNodeId": "198578de-da91-4398-9eec-90e22c2a798a",
+        "sessionKey": "agent:main:session-1794169762418-canonicalselection",
+        "generation": "cc9c8ee2-a86a-40fc-8ede-57b60609fa37",
+        "epoch": 1,
+        "attemptId": "08084619-3d59-44e0-8c04-4f51f9ffb59f",
+        "worktree": "d:/tmp/unified-management-20261109/session-task-validation/final4-scope-results/session-task-scope-complet-38042-selected-canonical-contract/selection-workspace",
+        "contractRevision": 1,
+        "expiresAt": 1794169920826,
+        "state": "active"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": []
+  }
+}

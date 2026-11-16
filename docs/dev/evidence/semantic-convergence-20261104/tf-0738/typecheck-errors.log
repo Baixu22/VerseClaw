@@ -1,0 +1,5 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+$ tsgo --noEmit -p tsconfig.test.json --composite false
+tests/unit/rsi-sekb-arms.test.ts(102,19): error TS2339: Property 'promotion' does not exist on type '{ schemaVersion: string; status: string; reasons: string[]; evidenceKind: string; arms: Record<string, { completeCaseCount: number; passK: number | null; passAtK: number | null; flakeRate: number | null; meanTokens: number | null; gate: string; }>; comparisons: { ...; }[]; cost: { ...; }; claims: { ...; }; }'.
+tests/unit/rsi-sekb-arms.test.ts(126,19): error TS2339: Property 'promotion' does not exist on type '{ schemaVersion: string; status: string; reasons: string[]; evidenceKind: string; arms: Record<string, { completeCaseCount: number; passK: number | null; passAtK: number | null; flakeRate: number | null; meanTokens: number | null; gate: string; }>; comparisons: { ...; }[]; cost: { ...; }; claims: { ...; }; }'.
+[ELIFECYCLE] Command failed with exit code 2.

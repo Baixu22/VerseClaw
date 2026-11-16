@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "body": "The new `promotedBy: \"agent\"` value is accepted globally, but this consistency check runs only when `source` is `agent_self_edit`. An otherwise valid fact with `source: \"tool_result\"`, `verificationStatus: \"human_approved\"`, and `promotion.promotedBy: \"agent\"` passes this guard, is stored by `RuntimeMemoryStore.appendFact`, and appears in ordinary recall as human-approved. This is a newly accepted contradiction, not preserved historical human lineage. Enforce approval consistency whenever the promoter identifies an agent action, and cover this combination in the regression test.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+        "line": 755
+      },
+      "confidence": 0.97,
+      "priority": "P2",
+      "title": "Reject human-approved facts whose promoter is the agent"
+    },
+    {
+      "body": "The candidate guard rejects human approval but still accepts `agent_self_edit` records claiming `verified` or `deterministic_rule`. Adding a finite `proposedAt` to such a contradictory accepted-fact record causes `isRuntimeMemoryTemporalFact` to reject it, then `sanitizeQueryableFactForStore` falls through to this candidate guard and stores it with the claimed status while stripping its promotion. It remains readable through `getFactById` and explicit status queries, defeating the required rejection before mutation. Apply the self-edit approval invariant to the candidate fallback, or reject malformed accepted-fact records before falling back, and add regression coverage beyond `human_approved`.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+        "line": 729
+      },
+      "confidence": 0.95,
+      "priority": "P2",
+      "title": "Prevent candidate fallback from bypassing self-edit approval checks"
+    }
+  ],
+  "overall_confidence": 0.96,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The handlers generate agent provenance, preserve historical human lineage, and leave persistence retired. However, two schema paths still accept contradictory approval records. This was a read-only source review; tests were not run, as requested."
+}

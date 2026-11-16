@@ -86,6 +86,7 @@ export function createSystemNotificationsApiWithDependencies(
     },
     close: () => { mainWindow.close(); },
     isMaximized: () => mainWindow.isMaximized(),
+    isVisible: () => !mainWindow.isDestroyed() && mainWindow.isVisible() && !mainWindow.isMinimized(),
   };
 }
 

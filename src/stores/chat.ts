@@ -4,6 +4,8 @@
  * Communicates with OpenClaw Gateway through the Main-owned host API.
  */
 import { create } from 'zustand';
+import { readSessionDerivationFacts } from '@shared/types/session-derivation';
+import { mergeSessionActivity, readSessionListPages } from '@/lib/session-read-model';
 import { hostApi, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
 import { useGatewayStore } from './gateway';
 import { useAgentsStore } from './agents';
@@ -61,6 +63,8 @@ import {
 import type { ChatGet, ChatSet } from './chat/store-api';
 import { useWorkspacesStore } from './workspaces';
 import { applyRuntimeEventToRuns, extractToolCompletedFiles } from './chat/runtime-graph';
+import { createFramePublication } from './chat/frame-publication';
+import { createChatContentCache } from './chat/content-cache';
 import {
   enrichWithTeamOrchestrationToolResults,
   enrichWithToolCallAttachments,
@@ -161,6 +165,7 @@ function armTurnTimeoutTimer(
   _turnTimeoutTimer.unref?.();
 }
 let _loadSessionsInFlight: Promise<void> | null = null;
+let _loadSessionsRefreshRequested = false;
 let _lastLoadSessionsAt = 0;
 let _startupHydrationInFlight: Promise<void> | null = null;
 let _startupHydrationRuntimeKey: string | null = null;
@@ -200,7 +205,7 @@ const _lastHistoryLoadAtBySession = new Map<string, number>();
 const _forceNextHistoryLoadBySession = new Set<string>();
 const _foregroundHistoryLoadSeen = new Set<string>();
 const _SESSION_CACHE_MAX = 20;
-const _sessionHistoryCache = new LruMap<string, { messages: RawMessage[]; thinkingLevel: string | null }>(_SESSION_CACHE_MAX);
+const _sessionHistoryCache = createChatContentCache<{ messages: RawMessage[]; thinkingLevel: string | null }>('history', _SESSION_CACHE_MAX);
 
 type SessionRunState = Pick<
   ChatState,
@@ -225,7 +230,21 @@ const DEFAULT_SESSION_RUN_STATE: SessionRunState = {
   pendingToolImages: [],
 };
 
-const _sessionRunStateCache = new LruMap<string, SessionRunState>(_SESSION_CACHE_MAX);
+type SessionRunIdentity = Pick<SessionRunState, 'sending' | 'activeRunId' | 'pendingFinal' | 'lastUserMessageAt'>;
+const _sessionRunIdentities = new LruMap<string, SessionRunIdentity>(_SESSION_CACHE_MAX);
+const _sessionRunContents = createChatContentCache<SessionRunState>('run', _SESSION_CACHE_MAX);
+const _sessionRunStateCache = {
+  get(key: string): SessionRunState | undefined {
+    const identity = _sessionRunIdentities.get(key);
+    return identity ? { ...DEFAULT_SESSION_RUN_STATE, ..._sessionRunContents.get(key), ...identity } : undefined;
+  },
+  set(key: string, state: SessionRunState): void {
+    const { sending, activeRunId, pendingFinal, lastUserMessageAt } = state;
+    _sessionRunIdentities.set(key, { sending, activeRunId, pendingFinal, lastUserMessageAt });
+    _sessionRunContents.set(key, state);
+  },
+  delete(key: string): void { _sessionRunIdentities.delete(key); _sessionRunContents.delete(key); },
+};
 let _sendGenerationCounter = 0;
 const _activeSendGenerationBySession = new Map<string, number>();
 const SESSION_LOAD_MIN_INTERVAL_MS = 1_200;
@@ -320,11 +339,9 @@ function applySessionLabelSummaries(
       }
 
       if (typeof summary.lastTimestamp === 'number' && Number.isFinite(summary.lastTimestamp)) {
-        if (nextActivity[summary.sessionKey] !== summary.lastTimestamp) {
-          if (nextActivity === state.sessionLastActivity) {
-            nextActivity = { ...state.sessionLastActivity };
-          }
-          nextActivity[summary.sessionKey] = summary.lastTimestamp;
+        const activity = mergeSessionActivity(nextActivity, { [summary.sessionKey]: summary.lastTimestamp });
+        if (activity !== nextActivity) {
+          nextActivity = activity;
           changed = true;
         }
       }
@@ -687,25 +704,26 @@ function isDuplicateChatEvent(eventState: string, event: Record<string, unknown>
 const IMAGE_CACHE_KEY = 'verse-claw:image-cache';
 const IMAGE_CACHE_MAX = 100; // max entries to prevent unbounded growth
 
-function loadImageCache(): Map<string, AttachedFileMeta> {
+function loadImageCache() {
+  const cache = createChatContentCache<AttachedFileMeta>('image', IMAGE_CACHE_MAX);
   try {
     const raw = localStorage.getItem(IMAGE_CACHE_KEY);
     if (raw) {
       const entries = JSON.parse(raw) as Array<[string, AttachedFileMeta]>;
-      return new Map(entries);
+      for (const [key, value] of entries) cache.set(key, value);
     }
   } catch { /* ignore parse errors */ }
-  return new Map();
+  return cache;
 }
 
-function saveImageCache(cache: Map<string, AttachedFileMeta>): void {
+function saveImageCache(cache: ReturnType<typeof loadImageCache>): void {
   try {
-    // Evict oldest entries if over limit
-    const entries = Array.from(cache.entries());
-    const trimmed = entries.length > IMAGE_CACHE_MAX
-      ? entries.slice(entries.length - IMAGE_CACHE_MAX)
-      : entries;
-    localStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify(trimmed));
+    // Durable paths remain useful after a preview is evicted; do not duplicate
+    // large data URLs in storage. Existing thumbnail owners reload them on demand.
+    const entries = cache.entries().map(([key, value]) => [key, {
+      ...value, preview: value.filePath || value.gatewayUrl ? null : value.preview,
+    }]);
+    localStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify(entries));
   } catch { /* ignore quota errors */ }
 }
 
@@ -1966,10 +1984,7 @@ async function loadCronFallbackMessages(sessionKey: string, limit = 200): Promis
 }
 
 async function fetchChatSessionsList(): Promise<Record<string, unknown>> {
-  return useGatewayStore.getState().rpc<Record<string, unknown>>('sessions.list', {
-    includeDerivedTitles: true,
-    includeLastMessage: true,
-  });
+  return readSessionListPages((params) => useGatewayStore.getState().rpc<Record<string, unknown>>('sessions.list', params));
 }
 
 async function fetchChatHistory(
@@ -1986,8 +2001,8 @@ async function fetchChatHistory(
   return useGatewayStore.getState().rpc<Record<string, unknown>>('chat.history', params, timeoutMs);
 }
 
-async function abortChatRunViaHostApi(sessionKey: string): Promise<void> {
-  await useGatewayStore.getState().rpc('chat.abort', { sessionKey });
+async function abortChatRunViaHostApi(sessionKey: string, runId?: string | null): Promise<{ aborted?: boolean; runIds?: string[] }> {
+  return useGatewayStore.getState().rpc('chat.abort', { sessionKey, ...(runId ? { runId } : {}) });
 }
 
 function normalizeAgentId(value: string | undefined | null): string {
@@ -2027,6 +2042,7 @@ function buildSessionSwitchPatch(
   state: Pick<
     ChatState,
     | 'currentSessionKey'
+    | 'viewRevision'
     | 'messages'
     | 'sessions'
     | 'sessionLabels'
@@ -2064,6 +2080,7 @@ function buildSessionSwitchPatch(
   // the current messages before loadHistory runs, creating a race condition that
   // could cause sessions with real history to be incorrectly removed from the sidebar.
   const leavingEmpty = !state.currentSessionKey.endsWith(':main')
+    && !state.sessions.find((session) => session.key === state.currentSessionKey)?.sessionId
     && state.messages.length === 0
     && !state.sessionLastActivity[state.currentSessionKey]
     && !state.sessionLabels[state.currentSessionKey];
@@ -2080,6 +2097,7 @@ function buildSessionSwitchPatch(
 
   return {
     currentSessionKey: nextSessionKey,
+    viewRevision: (state.viewRevision ?? 0) + 1,
     currentAgentId: getAgentIdFromSessionKey(nextSessionKey),
     sessions: options?.deferSessionEntry
       ? nextSessions
@@ -2803,7 +2821,13 @@ async function ensureSessionLinkedToLedger(sessionKey: string): Promise<void> {
 
 // ── Store ────────────────────────────────────────────────────────
 
-export const useChatStore = create<ChatState>((set, get) => ({
+const streamPublication = createFramePublication<ChatState>();
+
+let archivedReadRevision = 0;
+
+export const useChatStore = create<ChatState>((set, get, api) => {
+  streamPublication.attach(api);
+  return {
   messages: [],
   loading: false,
   historyRefreshing: false,
@@ -2831,6 +2855,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   sessionLabels: {},
   sessionLastActivity: {},
   archivedSessions: [],
+  pendingSessionMutations: [],
   archivedSessionsLoading: false,
 
   thinkingLevel: null,
@@ -2849,7 +2874,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
 
     if (!isGatewayReadyForChat()) {
-      if (!hasCachedMessages) {
+      if (!hasCachedMessages && get().startupPhase !== 'ready') {
         // A previous foreground history attempt may have raced the Gateway
         // lifecycle. While it is starting, that transport failure is not a
         // user-facing Chat error; wait for the ready transition instead.
@@ -2946,17 +2971,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  loadSessions: async () => {
+  loadSessions: async (options) => {
     const now = Date.now();
     if (_loadSessionsInFlight) {
+      if (options?.force) _loadSessionsRefreshRequested = true;
       await _loadSessionsInFlight;
       return;
     }
-    if (now - _lastLoadSessionsAt < SESSION_LOAD_MIN_INTERVAL_MS) {
+    if (!options?.force && now - _lastLoadSessionsAt < SESSION_LOAD_MIN_INTERVAL_MS) {
       return;
     }
 
     _loadSessionsInFlight = (async () => {
+      do {
+      _loadSessionsRefreshRequested = false;
       try {
         const data = await fetchChatSessionsList();
         if (data) {
@@ -2976,14 +3004,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             messageCount: typeof s.messageCount === 'number' && Number.isFinite(s.messageCount)
               ? Math.max(0, Math.floor(s.messageCount))
               : undefined,
-            // Fork/handoff lineage — the sidebar's workstream view threads
-            // descendants beneath their origin session from these two fields.
-            parentSessionKey: s.parentSessionKey ? String(s.parentSessionKey) : undefined,
-            forkedFromParent: typeof s.forkedFromParent === 'boolean' ? s.forkedFromParent : undefined,
-            forkedFromLeafId: s.forkedFromLeafId ? String(s.forkedFromLeafId) : undefined,
-            forkedFromTimestamp: typeof s.forkedFromTimestamp === 'number' && Number.isFinite(s.forkedFromTimestamp)
-              ? s.forkedFromTimestamp
-              : undefined,
+            ...readSessionDerivationFacts(s),
           })).filter((s: ChatSession) => s.key);
 
           const canonicalBySuffix = new Map<string, string>();
@@ -3056,20 +3077,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
             set((state) => ({
               ...buildSessionSwitchPatch(state, nextSessionKey),
               sessions: sessionsWithCurrent,
-              sessionLastActivity: {
-                ...state.sessionLastActivity,
-                ...discoveredActivity,
-              },
+              sessionLastActivity: mergeSessionActivity(state.sessionLastActivity, discoveredActivity),
             }));
           } else {
             set((state) => ({
               sessions: sessionsWithCurrent,
               currentSessionKey: nextSessionKey,
               currentAgentId: getAgentIdFromSessionKey(nextSessionKey),
-              sessionLastActivity: {
-                ...state.sessionLastActivity,
-                ...discoveredActivity,
-              },
+              sessionLastActivity: mergeSessionActivity(state.sessionLastActivity, discoveredActivity),
             }));
           }
           reconcileCurrentSessionIdleFromBackend(set, get, sessionsWithCurrent);
@@ -3151,6 +3166,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       } finally {
         _lastLoadSessionsAt = Date.now();
       }
+      } while (_loadSessionsRefreshRequested);
     })();
 
     try {
@@ -3170,7 +3186,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     clearHistoryPoll();
     clearBaselines();
     set((s) => buildSessionSwitchPatch(s, key));
-    void get().loadHistory();
+    void get().loadHistory().then(() => get().drainPendingMessages());
     void get().refreshTaskLedger();
     void ensureSessionLinkedToLedger(key);
   },
@@ -3212,10 +3228,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // sweep and only releases its gate after a committed runtime receipt.
 
   deleteSession: async (key: string) => {
-    clearCachedSessionHistory(key);
-    clearCachedSessionRunState(key);
-    clearSessionLabelHydrationTracking(key);
-    clearPendingOptimisticUserMessages(key);
+    const generation = get().sessions.find(session => session.key === key)?.sessionId;
+    const visit = get().viewRevision;
     // Main reconciles the local transcript/index mirror after runtime commit.
     try {
       const result = await hostApi.sessions.delete(key);
@@ -3228,9 +3242,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
 
     const { currentSessionKey, sessions } = get();
+    const current = sessions.find(session => session.key === key);
+    if ((current && current.sessionId !== generation) || (currentSessionKey === key && get().viewRevision !== visit)) {
+      void get().loadSessions();
+      return;
+    }
+    clearCachedSessionHistory(key);
+    clearCachedSessionRunState(key);
+    clearSessionLabelHydrationTracking(key);
+    clearPendingOptimisticUserMessages(key);
     const remaining = sessions.filter((s) => s.key !== key);
 
-    if (currentSessionKey === key) {
+    if (currentSessionKey === key && get().viewRevision === visit) {
       // Switched away from deleted session — pick the first remaining or create new
       const next = remaining[0];
       set((s) => ({
@@ -3332,10 +3355,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // ── Cleanup empty session on navigate away ──
 
   archiveSession: async (key, options) => {
-    clearCachedSessionHistory(key);
-    clearCachedSessionRunState(key);
-    clearSessionLabelHydrationTracking(key);
-    clearPendingOptimisticUserMessages(key);
+    const generation = get().sessions.find(session => session.key === key)?.sessionId;
+    const visit = get().viewRevision;
     try {
       const result = await hostApi.sessions.archive({
         id: key,
@@ -3351,6 +3372,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
 
     const { currentSessionKey, sessions } = get();
+    const current = sessions.find(session => session.key === key);
+    if (currentSessionKey === key && get().viewRevision !== visit) {
+      void get().loadSessions();
+      return;
+    }
+    let archivedRefreshed = false;
+    if (current && current.sessionId !== generation) {
+      archivedRefreshed = true;
+      await get().loadArchivedSessions();
+      if (!get().archivedSessions.some((entry) => entry.sessionKey === key)) {
+        void get().loadSessions();
+        return;
+      }
+    }
+    clearCachedSessionHistory(key);
+    clearCachedSessionRunState(key);
+    clearSessionLabelHydrationTracking(key);
+    clearPendingOptimisticUserMessages(key);
     const remaining = sessions.filter((s) => s.key !== key);
     const dropSessionState = (state: ChatState) => ({
       sessions: remaining,
@@ -3358,7 +3397,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       sessionLastActivity: Object.fromEntries(Object.entries(state.sessionLastActivity).filter(([k]) => k !== key)),
     });
 
-    if (currentSessionKey === key) {
+    if (currentSessionKey === key && get().viewRevision === visit) {
       const next = remaining[0];
       set((s) => ({
         ...dropSessionState(s),
@@ -3381,52 +3420,63 @@ export const useChatStore = create<ChatState>((set, get) => ({
     } else {
       set(dropSessionState);
     }
-    void get().loadArchivedSessions();
+    if (!archivedRefreshed) void get().loadArchivedSessions();
   },
 
   restoreSession: async (sessionKey) => {
+    const visit = get().viewRevision;
+    const archived = get().archivedSessions.find(entry => entry.sessionKey === sessionKey);
     try {
       const result = await hostApi.sessions.restore({ id: sessionKey });
       if (!result.success) {
-        console.warn(`[restoreSession] IPC reported failure for ${sessionKey}:`, result.error);
-        return;
+        throw new Error(result.error || 'Restore was not confirmed');
       }
     } catch (err) {
       console.warn(`[restoreSession] IPC call failed for ${sessionKey}:`, err);
+      if (get().viewRevision === visit) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
       return;
     }
     set((s) => ({
-      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey
+        || !archived || entry.archivedAt !== archived.archivedAt || entry.transcriptPath !== archived.transcriptPath),
     }));
     void get().loadSessions();
   },
 
   permanentDeleteSession: async (sessionKey) => {
+    const visit = get().viewRevision;
+    const archived = get().archivedSessions.find(entry => entry.sessionKey === sessionKey);
     try {
       const result = await hostApi.sessions.permanentDelete({ id: sessionKey });
       if (!result.success) {
-        console.warn(`[permanentDeleteSession] IPC reported failure for ${sessionKey}:`, result.error);
-        return;
+        throw new Error(result.error || 'Delete was not confirmed');
       }
     } catch (err) {
       console.warn(`[permanentDeleteSession] IPC call failed for ${sessionKey}:`, err);
+      if (get().viewRevision === visit) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
       return;
     }
     set((s) => ({
-      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey
+        || !archived || entry.archivedAt !== archived.archivedAt || entry.transcriptPath !== archived.transcriptPath),
     }));
   },
 
   loadArchivedSessions: async (agentId) => {
+    const scopeAgent = agentId || get().currentAgentId || 'main';
+    if (scopeAgent !== (get().currentAgentId || 'main')) return;
+    const revision = ++archivedReadRevision;
     set({ archivedSessionsLoading: true });
     try {
-      const result = await hostApi.sessions.listArchived(agentId ? { agentId } : undefined);
-      set({ archivedSessions: result.entries ?? [] });
+      const result = await hostApi.sessions.listArchived({ agentId: scopeAgent });
+      if (revision !== archivedReadRevision || scopeAgent !== (get().currentAgentId || 'main')) return;
+      if (!result.success) throw new Error(result.error || 'Archive state unavailable');
+      set({ archivedSessions: result.entries ?? [], pendingSessionMutations: result.pendingMutations ?? [] });
     } catch (err) {
       console.warn('[loadArchivedSessions] IPC call failed:', err);
-      set({ archivedSessions: [] });
+      if (revision === archivedReadRevision && scopeAgent === (get().currentAgentId || 'main')) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
     } finally {
-      set({ archivedSessionsLoading: false });
+      if (revision === archivedReadRevision && scopeAgent === (get().currentAgentId || 'main')) set({ archivedSessionsLoading: false });
     }
   },
 
@@ -3439,6 +3489,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // Also check sessionLastActivity and sessionLabels comprehensively to prevent
     // falsely treating sessions with history as empty due to switchSession clearing messages early.
     const isEmptyNonMain = !currentSessionKey.endsWith(':main')
+        && !get().sessions.find((session) => session.key === currentSessionKey)?.sessionId
       && messages.length === 0
       && !sessionLastActivity[currentSessionKey]
       && !sessionLabels[currentSessionKey];
@@ -3706,7 +3757,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       if (lastMsg?.timestamp) {
         const lastAt = toMs(lastMsg.timestamp);
         set((s) => ({
-          sessionLastActivity: { ...s.sessionLastActivity, [currentSessionKey]: lastAt },
+          sessionLastActivity: mergeSessionActivity(s.sessionLastActivity, { [currentSessionKey]: lastAt }),
         }));
       }
 
@@ -4211,13 +4262,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const trimmed = text.trim();
     if (!trimmed && (!opts?.attachments || opts.attachments.length === 0)) return;
     const targetSessionKey =
-      resolveMainSessionKeyForAgent(opts?.targetAgentId ?? null) ?? get().currentSessionKey;
+      opts?.targetSessionKey ?? resolveMainSessionKeyForAgent(opts?.targetAgentId ?? null) ?? get().currentSessionKey;
     const pending: PendingMessage = {
       id: crypto.randomUUID(),
       text: trimmed,
       targetAgentId: opts?.targetAgentId ?? null,
       targetSessionKey,
       opts: {
+        workspaceId: opts?.workspaceId ?? useWorkspacesStore.getState().activeWorkspaceId,
+        targetSessionKey,
+        expectedSessionGeneration: opts?.expectedSessionGeneration ?? get().sessions.find((session) => session.key === targetSessionKey)?.sessionId,
+        idempotencyKey: opts?.idempotencyKey ?? crypto.randomUUID(),
+        handoffOperationId: opts?.handoffOperationId,
         attachments: opts?.attachments,
         targetAgentId: opts?.targetAgentId,
         knowledgeScope: opts?.knowledgeScope,
@@ -4225,6 +4281,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         knowledgeReferences: opts?.knowledgeReferences,
         activeTaskNodeId: opts?.activeTaskNodeId,
         modelRefOverride: opts?.modelRefOverride,
+        persistModelSelection: opts?.persistModelSelection,
         reasoningEffort: opts?.reasoningEffort,
         runtimeIntensity: opts?.runtimeIntensity,
         // Queued sends are ordinary chat messages, never long-task interventions.
@@ -4234,14 +4291,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   drainPendingMessages: () => {
-    const queued = get().pendingMessages;
+    const eligible = (item: PendingMessage) => item.targetSessionKey === get().currentSessionKey
+      && (item.opts?.workspaceId ?? null) === useWorkspacesStore.getState().activeWorkspaceId;
+    const queued = get().pendingMessages.filter(eligible);
     if (queued.length === 0) return;
     if (get().sending) return; // a queued send just started another run; wait
-    set({ pendingMessages: [] });
+    const ids = new Set(queued.map((item) => item.id));
+    set((state) => ({ pendingMessages: state.pendingMessages.filter((item) => !ids.has(item.id)) }));
     // Dispatch sequentially so each send observes a settled run state. Keep
     // failures isolated: a rejected send must not block the rest of the queue.
     void (async () => {
-      for (const item of queued) {
+      for (let index = 0; index < queued.length; index++) {
+        const item = queued[index];
+        if (!eligible(item)) {
+          set((state) => ({ pendingMessages: [...queued.slice(index), ...state.pendingMessages] }));
+          break;
+        }
         try {
           await useChatStore.getState().sendMessage(item.text, item.opts);
         } catch {
@@ -4256,6 +4321,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     text: string,
     opts?: SendOptions,
   ) => {
+    const originWorkspaceId = opts?.workspaceId ?? useWorkspacesStore.getState().activeWorkspaceId;
     const attachments = opts?.attachments;
     const targetAgentId = opts?.targetAgentId;
     const knowledgeScope = opts?.knowledgeScope;
@@ -4269,7 +4335,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const trimmed = text.trim();
     if (!trimmed && (!attachments || attachments.length === 0)) return;
 
-    const targetSessionKey = resolveMainSessionKeyForAgent(targetAgentId) ?? get().currentSessionKey;
+    const targetSessionKey = opts?.targetSessionKey ?? resolveMainSessionKeyForAgent(targetAgentId) ?? get().currentSessionKey;
+    const expectedSessionGeneration = opts?.expectedSessionGeneration
+      ?? (targetSessionKey === get().currentSessionKey ? get().sessions.find((session) => session.key === targetSessionKey)?.sessionId : undefined);
 
     // Guard against double-submit before React re-renders with sending=true.
     // P0-2: instead of silently dropping the second message while a run is
@@ -4277,7 +4345,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // interventions (inputMode) are NOT queued — they have their own
     // guide/interrupt/queue path in the gateway.
     if (get().sending && targetSessionKey === get().currentSessionKey && !inputMode) {
-      get().queuePendingMessage(text, opts);
+      get().queuePendingMessage(text, { ...opts, workspaceId: originWorkspaceId, expectedSessionGeneration, targetSessionKey });
       return;
     }
 
@@ -4287,6 +4355,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
 
     const currentSessionKey = targetSessionKey;
+    const previousModelRef = get().sessions.find((session) => session.key === currentSessionKey)?.modelRefOverride;
+    const saveModelSelection = Boolean(opts?.persistModelSelection && modelRefOverride && modelRefOverride !== previousModelRef);
     const sendGeneration = ++_sendGenerationCounter;
     _activeSendGenerationBySession.set(currentSessionKey, sendGeneration);
 
@@ -4312,7 +4382,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
     _deferredSessionEntries.delete(currentSessionKey);
     set((s) => ({
       messages: applyHistoryMemoryCap([...s.messages, userMsg]),
-      sessions: ensureSessionEntry(s.sessions, currentSessionKey),
+      sessions: ensureSessionEntry(s.sessions, currentSessionKey).map((session) => (
+        saveModelSelection && session.key === currentSessionKey
+          ? { ...session, modelRefOverride: modelRefOverride! }
+          : session
+      )),
       sending: true,
       error: null,
       runError: null,
@@ -4448,9 +4522,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
     };
 
     try {
-      const idempotencyKey = crypto.randomUUID();
+      const idempotencyKey = opts?.idempotencyKey ?? crypto.randomUUID();
       const hasMedia = attachments && attachments.length > 0;
-      const workspaceId = useWorkspacesStore.getState().activeWorkspaceId;
+      const workspaceId = originWorkspaceId;
       if (hasMedia) {
         console.log('[sendMessage] Media paths:', attachments!.map(a => a.stagedPath));
       }
@@ -4472,6 +4546,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       let result: ChatSendWithMediaResult;
 
+      if (saveModelSelection) {
+        try {
+          const saved = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef: modelRefOverride! });
+          if (!saved.success) throw new Error(saved.error || 'Failed to save model selection');
+          if (_activeSendGenerationBySession.get(currentSessionKey) !== sendGeneration) return;
+        } catch (error) {
+          set((state) => ({ sessions: state.sessions.map((session) => (
+            session.key === currentSessionKey && session.modelRefOverride === modelRefOverride
+              ? { ...session, modelRefOverride: previousModelRef }
+              : session
+          )) }));
+          throw error;
+        }
+      }
+
       if (hasMedia) {
         result = await hostApi.chat.sendWithMedia({
           sessionKey: currentSessionKey,
@@ -4479,6 +4568,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
           message: trimmed || 'Process the attached file(s).',
           deliver: false,
           idempotencyKey,
+          ...(expectedSessionGeneration ? { expectedSessionGeneration } : {}),
+          ...(opts?.handoffOperationId ? { handoffOperationId: opts.handoffOperationId } : {}),
           knowledgeScope,
           knowledgeMode,
           ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
@@ -4500,6 +4591,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
           message: trimmed,
           deliver: false,
           idempotencyKey,
+          ...(expectedSessionGeneration ? { expectedSessionGeneration } : {}),
+          ...(opts?.handoffOperationId ? { handoffOperationId: opts.handoffOperationId } : {}),
           knowledgeScope,
           knowledgeMode,
           ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
@@ -4615,21 +4708,60 @@ export const useChatStore = create<ChatState>((set, get) => ({
     clearHistoryPoll();
     clearErrorRecoveryTimer();
     clearTurnTimeoutTimer();
-    const { currentSessionKey, sending } = get();
+    const { currentSessionKey, sending, activeRunId, sessions, viewRevision } = get();
+    const generation = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
+    const isCurrentAbortTarget = () => get().viewRevision === viewRevision && get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId
+      && get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
+    // A retry clears its previous request error before waiting, never a newer error on completion.
+    set({ error: null });
 
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
+    let receipt: { aborted?: boolean; runIds?: string[] } | undefined;
+    let stopConfirmed: boolean;
     try {
-      await abortChatRunViaHostApi(currentSessionKey);
+      receipt = await abortChatRunViaHostApi(currentSessionKey, activeRunId);
+      const acknowledged = receipt?.aborted === true && (!activeRunId || !receipt.runIds || receipt.runIds.includes(activeRunId));
+      stopConfirmed = acknowledged;
+      if (!acknowledged && isCurrentAbortTarget()) {
+        const read = await useGatewayStore.getState().rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean } }>(
+          'sessions.describe', { key: currentSessionKey });
+        if (read.session?.hasActiveRun !== false || (generation && read.session?.sessionId !== generation)) {
+          throw new Error(i18n.t('chat:composer.abortFailed'));
+        }
+        stopConfirmed = true;
+      }
     } catch (err) {
       console.warn(`[abortRun] chat.abort failed: ${String(err)}`);
-      set({ error: String(err), sending });
-      toast.warning(i18n.t('chat:composer.abortFailed'));
-      return;
+      if (isCurrentAbortTarget()) {
+        set({ error: String(err), sending });
+        toast.warning(i18n.t('chat:composer.abortFailed'));
+      }
+      return false;
     }
 
+    if (!stopConfirmed) return false;
+
+    // Use the Gateway's acknowledged run identity; retain a result that arrived
+    // while the abort request was pending.
+    const generationUnchanged = get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
+    const confirmed = generationUnchanged && activeRunId && receipt?.aborted === true
+      && (!receipt.runIds || receipt.runIds.includes(activeRunId))
+      && get().runtimeRuns[activeRunId]?.status === 'running';
+    const runtimeRuns = confirmed ? applyRuntimeEventToRuns(get().runtimeRuns, {
+      type: 'run.ended', runId: activeRunId, sessionKey: currentSessionKey, status: 'aborted', endedAt: Date.now(),
+    }) : get().runtimeRuns;
+    if (!isCurrentAbortTarget()) {
+      if (runtimeRuns !== get().runtimeRuns) set({ runtimeRuns });
+      if (generationUnchanged && get().currentSessionKey !== currentSessionKey && activeRunId
+        && getCachedSessionRunState(currentSessionKey).activeRunId === activeRunId) {
+        captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+      }
+      return true;
+    }
     // Release all in-flight UI/run resources (P5-004 A3).
     set({
+      runtimeRuns,
       sending: false,
       activeRunId: null,
       streamingText: '',
@@ -4640,6 +4772,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       streamingTools: [],
     });
     captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+    return true;
   },
 
   // ── Handle incoming chat events from Gateway ──
@@ -4689,6 +4822,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
     }
 
+    if (resolvedState === 'delta' && runId) {
+      const owner = get().runtimeRuns[runId];
+      if (owner && owner.status !== 'running') return;
+    }
+
     // Only pause the history poll when we receive actual streaming data.
     // The gateway sends "agent" events with { phase, startedAt } that carry
     // no message — these must NOT kill the poll, since the poll is our only
@@ -4728,7 +4866,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           event.message,
           getBaselineRunKeyForMessages(currentSessionKey, get().messages),
         );
-        set((s) => ({
+        const publish = () => set((s) => ({
           streamingMessage: (() => {
             if (event.message && typeof event.message === 'object') {
               const msgRole = (event.message as RawMessage).role;
@@ -4738,6 +4876,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
           })(),
           streamingTools: updates.length > 0 ? upsertToolStatuses(s.streamingTools, updates) : s.streamingTools,
         }));
+        const message = event.message as RawMessage | undefined;
+        const ordinaryText = message?.role === 'assistant' && (typeof message.content === 'string'
+          || (Array.isArray(message.content) && message.content.every(block => block && typeof block === 'object'
+            && (block.type === 'text' || block.type === 'thinking'))));
+        if (ordinaryText && updates.length === 0) streamPublication.defer(publish);
+        else publish();
         break;
       }
       case 'final': {
@@ -5096,6 +5240,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const matchesActiveRun = activeRunId != null && event.runId === activeRunId;
 
     const runtimeRuns = applyRuntimeEventToRuns(initialState.runtimeRuns, event);
+    if (runtimeRuns === initialState.runtimeRuns) return;
     const nextPatch: Partial<ChatState> = { runtimeRuns };
 
     // Always retain structured runtime events, even for inactive sessions.
@@ -5107,7 +5252,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // current composer/graph state.
     if (!matchesCurrentSession && !matchesActiveRun) {
       updateCachedSessionRunStateFromRuntimeEvent(event);
-      set(nextPatch);
+      if (event.type === 'assistant.delta' || event.type === 'thinking.delta') streamPublication.defer(() => set(nextPatch));
+      else set(nextPatch);
       return;
     }
 
@@ -5132,7 +5278,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         nextPatch.error = null;
         nextPatch.runError = null;
       }
-      set(nextPatch);
+      streamPublication.defer(() => set(nextPatch));
       return;
     }
 
@@ -5210,7 +5356,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       set({ taskLedgerSnapshot: null, taskLedgerLoaded: true });
     }
   },
-}));
+  };
+});
 
 export function syncCachedSessionRunIdle(sessionKey: string): void {
   captureSessionRunState(sessionKey, DEFAULT_SESSION_RUN_STATE);

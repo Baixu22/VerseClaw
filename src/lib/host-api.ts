@@ -1,4 +1,5 @@
 import { knowledgeHostApi } from './host-api/knowledge';
+import type { SessionStorageScope, StorageRemovePayload } from '@shared/types/session-storage';
 import type {
   AgentCreatePayload,
   AgentBrowserClickPayload,
@@ -340,6 +341,10 @@ import type {
   SessionStopResult,
   SessionCreateHandoffPayload,
   SessionCreateHandoffResult,
+  SessionHandoffOperationPayload,
+  SessionHandoffOperationResult,
+  SessionHistoryPayload,
+  SessionSendWorkerPayload,
   SessionDelegationPayload,
   SessionDelegationResult,
   SessionHandoffPayload,
@@ -386,6 +391,9 @@ import type {
   WorkProviderValidateArtifactPayload,
   WorkProviderValidateArtifactResult,
   WorkspaceCoordinatorBindPayload,
+  WorkspaceSessionTaskSelectPayload,
+  WorkspaceExecutionMigrationPayload,
+  WorkspaceExecutionMigrationReadPayload,
   WorkspaceCoordinatorBindingResult,
   WorkspaceCoordinatorPausePayload,
   WorkspaceCoordinatorResolvePayload,
@@ -701,6 +709,11 @@ export type {
 } from '@shared/host-api/contract';
 
 export const hostApi = {
+  sessionStorage: {
+    snapshot: () => invokeHost('sessionStorage', 'snapshot'),
+    release: (input: SessionStorageScope) => invokeHost('sessionStorage', 'release', input),
+    removeWorktree: (input: StorageRemovePayload) => invokeHost('sessionStorage', 'removeWorktree', input),
+  },
   versegit: {
     status: (binding: VerseGitDiagnosticBinding): Promise<VerseGitDiagnosticStatus> => (
       invokeHost('versegit', 'status', binding)
@@ -749,6 +762,7 @@ export const hostApi = {
     message: (input: DialogMessagePayload) => invokeHost('dialog', 'message', input),
   },
   window: {
+    isVisible: () => invokeHost('window', 'isVisible'),
     syncTrafficLightPosition: (sidebarCollapsed: boolean) => (
       invokeHost('window', 'syncTrafficLightPosition', { sidebarCollapsed })
     ),
@@ -839,12 +853,17 @@ export const hostApi = {
     bindCoordinator: (input: WorkspaceCoordinatorBindPayload): Promise<WorkspaceCoordinatorBindingResult> => (
       invokeHost('workspaces', 'bindCoordinator', input)
     ),
+    selectSessionTask: (input: WorkspaceSessionTaskSelectPayload): Promise<WorkspaceCoordinatorBindingResult> => (
+      invokeHost('workspaces', 'selectSessionTask', input)
+    ),
     resolveCoordinator: (input: WorkspaceCoordinatorResolvePayload): Promise<WorkspaceCoordinatorBindingResult> => (
       invokeHost('workspaces', 'resolveCoordinator', input)
     ),
     pauseCoordinator: (input: WorkspaceCoordinatorPausePayload): Promise<WorkspaceCoordinatorBindingResult> => (
       invokeHost('workspaces', 'pauseCoordinator', input)
     ),
+    migrateExecution: (input: WorkspaceExecutionMigrationPayload) => invokeHost('workspaces', 'migrateExecution', input),
+    executionMigration: (input: WorkspaceExecutionMigrationReadPayload) => invokeHost('workspaces', 'executionMigration', input),
   },
   projectRules: {
     snapshot: () => invokeHost('projectRules', 'snapshot'),
@@ -865,6 +884,7 @@ export const hostApi = {
     snapshot: (input: SessionActivitySnapshotPayload) => invokeHost('sessionActivity', 'snapshot', input),
   },
   git: {
+    init: (): Promise<GitOperationResult> => invokeHost('git', 'init'),
     capabilities: (): Promise<GitCapabilitiesResult> => invokeHost('git', 'capabilities'),
     status: (): Promise<GitStatusResult> => invokeHost('git', 'status'),
     diff: (input?: { mode?: 'unstaged' | 'staged' }): Promise<GitDiffListResult> => invokeHost('git', 'diff', input),
@@ -1477,14 +1497,15 @@ export const hostApi = {
     delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (
       invokeHost('sessions', 'delegate', input)
     ),
-    delete: (id: string) => invokeHost('sessions', 'delete', { id }),
+    delete: (id: string, resumeOperationId?: string) => invokeHost('sessions', 'delete', { id, ...(resumeOperationId ? { resumeOperationId } : {}) }),
     rename: (id: string, title: string) => (
       invokeHost('sessions', 'rename', { id, title })
     ),
     summaries: (input?: { sessionKeys?: string[]; limit?: number }) => invokeHost('sessions', 'summaries', input),
-    history: (input: { sessionKey?: string; agentId?: string; sessionId?: string; limit?: number }) => (
+    history: (input: SessionHistoryPayload) => (
       invokeHost('sessions', 'history', input)
     ),
+    sendWorker: (input: SessionSendWorkerPayload) => invokeHost('sessions', 'sendWorker', input),
     patchThinking: (input: SessionPatchThinkingPayload) => invokeHost('sessions', 'patchThinking', input),
     patchRuntimeModel: (input: SessionPatchRuntimeModelPayload) => invokeHost('sessions', 'patchRuntimeModel', input),
     compactionStatus: (input: SessionCompactionPayload): Promise<SessionCompactionStatusResult> => (
@@ -1548,6 +1569,9 @@ export const hostApi = {
     ),
     createHandoff: (input: SessionCreateHandoffPayload): Promise<SessionCreateHandoffResult> => (
       invokeHost('sessions', 'createHandoff', input)
+    ),
+    handoffOperation: (input: SessionHandoffOperationPayload): Promise<SessionHandoffOperationResult> => (
+      invokeHost('sessions', 'handoffOperation', input)
     ),
     prepareHandoff: (input: SessionHandoffPayload): Promise<SessionHandoffResult> => (
       invokeHost('sessions', 'prepareHandoff', input)
@@ -1759,6 +1783,10 @@ export const hostApi = {
     getContext: (input: { id: string; agentId?: string; workspacePath?: string }) => invokeHost('topics', 'getContext', input),
   },
   taskLedger: {
+    managedTasks: (input?: TaskLedgerWorkspacePayload): Promise<import('@shared/host-api/contract').TaskSystemListResult> => invokeHost('taskLedger', 'managedTasks', input),
+    queryTasks: (input?: import('@shared/host-api/contract').TaskSystemQueryPayload): Promise<import('@shared/host-api/contract').TaskSystemQueryResult> => invokeHost('taskLedger', 'queryTasks', input),
+    sessionTask: (input: import('@shared/host-api/contract').TaskSessionPayload): Promise<import('@shared/host-api/contract').TaskSessionResult> => invokeHost('taskLedger', 'sessionTask', input),
+    command: (input: import('@shared/host-api/contract').TaskSystemCommandPayload): Promise<import('@shared/host-api/contract').TaskSystemCommandResult> => invokeHost('taskLedger', 'command', input),
     snapshot: (input?: TaskLedgerWorkspacePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'snapshot', input),
     appendEvents: (input: TaskLedgerAppendEventsPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'appendEvents', input),
     createNode: (input: TaskLedgerCreateNodePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'createNode', input),

@@ -1,0 +1,37 @@
+{
+  "id": "acl-denied",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "The private deployment port is 3333.",
+    "taskComplete": false,
+    "lexicalHit": true
+  },
+  "admission": {
+    "sources": [],
+    "rejections": [
+      {
+        "refId": "memory-wiki:acl.md",
+        "owner": "memory-wiki",
+        "subjectId": "acl.md",
+        "reason": "acl_denied",
+        "visibleReason": "Source \"memory-wiki:acl.md\" is ACL-restricted and the current subjects are not allowed to read it."
+      }
+    ],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "acl.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": false,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": null,
+  "answer": "No admitted sources.",
+  "inferenceSkipped": "No admitted sources or structured conflict",
+  "durationMs": 0
+}

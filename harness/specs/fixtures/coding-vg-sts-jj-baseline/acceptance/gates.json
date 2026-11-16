@@ -1,0 +1,50 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-c0-builder",
+  "sourceCandidate": "27bd9df474236a52da03fd6b63613b66d0cc6af4",
+  "rows": [
+    {
+      "name": "evidence-reader",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-baseline/verify.mjs",
+        "harness/specs/fixtures/coding-vg-sts-jj-baseline/acceptance/report.json"
+      ],
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-vg-sts-jj-baseline.md"
+      ],
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "host-contract",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/coding-baseline",
+        "tests/unit/coding-baseline-evidence.test.ts"
+      ],
+      "exitCode": 0,
+      "timedOut": false
+    }
+  ],
+  "unitReport": "unit-results.json"
+}

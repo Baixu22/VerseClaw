@@ -1,0 +1,344 @@
+{
+  "candidate": {
+    "commit": "c8e10fb894406c4498e4cb99266fefe3d201e411",
+    "tree": "4b7a82acf70172517c12843728b4de076c90cc59",
+    "dirty": false
+  },
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0768-relay",
+  "realHumanEvidence": false,
+  "commands": [
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/orchestration-protocol-v3.test.ts",
+        "tests/unit/orchestration-task-graph.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T13:35:48.269719+00:00",
+      "seconds": 386.8811047077179,
+      "exitCode": 1
+    },
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/orchestration-protocol-v3.test.ts",
+        "tests/unit/orchestration-task-graph.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\projection-c8e10fb89",
+      "env": {},
+      "startedAt": "2026-11-05T13:46:17.518570+00:00",
+      "seconds": 30.904414653778076,
+      "exitCode": 1
+    },
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/orchestration-protocol-v3.test.ts",
+        "tests/unit/orchestration-task-graph.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\projection-c8e10fb89",
+      "env": {},
+      "startedAt": "2026-11-05T15:01:40.269336+00:00",
+      "seconds": 48.003785848617554,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-units",
+      "argv": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/agents/subagent-spawn.test.ts",
+        "src/agents/worktree-service.test.ts",
+        "src/agents/worktree-pnpm-install.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\runtime-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "env": {},
+      "startedAt": "2026-11-05T15:02:28.383863+00:00",
+      "seconds": 40.470189571380615,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "typecheck-direct",
+      "argv": [
+        "node",
+        ".audit/TF-0768/typecheck-direct.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:09.007035+00:00",
+      "seconds": 29.795355558395386,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-test-types",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        ".audit/TF-0768/runtime-test-types.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:39.054540+00:00",
+      "seconds": 6.278460502624512,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/coding-control-dispositions.ts",
+        "openclaw_runtime/src/agents/openclaw-tools.ts",
+        "openclaw_runtime/src/agents/orchestration-protocol.ts",
+        "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts",
+        "openclaw_runtime/src/agents/orchestration-workspace-context.ts",
+        "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "openclaw_runtime/src/agents/role-spawn.ts",
+        "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+        "openclaw_runtime/src/agents/subagent-spawn.ts",
+        "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
+        "openclaw_runtime/src/agents/worktree-service.test.ts",
+        "openclaw_runtime/src/agents/worktree-service.ts",
+        "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "tests/e2e/coding-orchestration-workspace-authority.spec.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/role-spawn.test.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:45.491702+00:00",
+      "seconds": 4.827089071273804,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:50.441221+00:00",
+      "seconds": 0.30298566818237305,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-orchestration-workspace-authority.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:50.868134+00:00",
+      "seconds": 0.6701581478118896,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-orchestration-workspace-authority.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:51.690166+00:00",
+      "seconds": 0.5439975261688232,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:52.336921+00:00",
+      "seconds": 0.24963021278381348,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:52.694132+00:00",
+      "seconds": 0.1974184513092041,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-build",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:52.999099+00:00",
+      "seconds": 43.55049157142639,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-build",
+      "argv": [
+        "node",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:04:36.682639+00:00",
+      "seconds": 41.37315917015076,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/coding-orchestration-workspace-authority.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e.json",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-runs",
+        "CLAWX_E2E_APP_LOGS": "1"
+      },
+      "startedAt": "2026-11-05T15:05:18.241980+00:00",
+      "seconds": 91.84024381637573,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/coding-orchestration-workspace-authority.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e.json",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_STARTUP_TRACE": "1"
+      },
+      "startedAt": "2026-11-05T15:14:07.781052+00:00",
+      "seconds": 103.30704808235168,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/coding-orchestration-workspace-authority.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e.json",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_STARTUP_TRACE": "1",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX\\.tmp\\coding-s4-01a1ab23-final",
+        "TEMP": "D:\\ClawX\\.tmp\\coding-s4-01a1ab23-final\\tmp",
+        "TMP": "D:\\ClawX\\.tmp\\coding-s4-01a1ab23-final\\tmp"
+      },
+      "startedAt": "2026-11-05T15:17:33.049192+00:00",
+      "seconds": 154.8396406173706,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "artifact-retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:20:08.006433+00:00",
+      "seconds": 4.592906713485718,
+      "exitCode": 0,
+      "timedOut": false
+    }
+  ]
+}

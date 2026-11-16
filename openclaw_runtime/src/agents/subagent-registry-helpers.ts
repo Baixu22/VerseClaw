@@ -169,6 +169,9 @@ export function resolveSubagentRunOrphanReason(params: {
   includeStaleUnended?: boolean;
   now?: number;
 }): SubagentRunOrphanReason | null {
+  // An unacknowledged dispatch may still be executing. Missing local context,
+  // age, or a restarted reader cannot establish that its capacity is free.
+  if ((params.entry.dispatchPending || params.entry.queuedDispatch) && typeof params.entry.endedAt !== 'number') return null;
   const childSessionKey = params.entry.childSessionKey?.trim();
   if (!childSessionKey) {
     return "missing-session-entry";
@@ -296,9 +299,16 @@ export function reconcileOrphanedRun(params: {
   const now = Date.now();
   let changed = false;
   if (typeof params.entry.endedAt !== "number") {
-    params.entry.endedAt = now;
-    changed = true;
+    if (params.entry.execution?.status === 'interrupted') return false;
+    params.entry.execution = { ...params.entry.execution, status: 'interrupted', interruptedAt: now,
+      interruptionReason: 'lost-execution-context' };
+    // Missing state is uncertainty, not proof that a writer has stopped. Keep
+    // the original owner row so quotas and explicit cancellation can find it.
+    return true;
   }
+  // Later waves need this terminal fact even if the child session was deleted.
+  // Orphan discovery must not erase or rewrite the original dependency outcome.
+  if (params.entry.orchestration?.taskGraph) return false;
   const orphanOutcome = withSubagentOutcomeTiming(
     {
       status: "error",

@@ -1,0 +1,42 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "candidate": {
+    "commit": "300631d8588062209a06236d552ddf1f8b08eb52",
+    "tree": "84ab86f182bc71bb62bd15596b21af054217ae29",
+    "dirty": false
+  },
+  "method": "latest completed result per exact title/file on the same candidate; original failed launch remains failed",
+  "initialRunExit": 1,
+  "rerunExit": 0,
+  "tests": [
+    {
+      "title": "Settings validates 429 and non-auth 400 through Main without claiming verified",
+      "file": "semantic-convergence-provider-readiness.spec.ts",
+      "status": "passed",
+      "errors": [],
+      "duration": 13689
+    },
+    {
+      "title": "closing an Electron wrapper reaps its actual main process and preserves a second app",
+      "file": "semantic-convergence-provider-readiness.spec.ts",
+      "status": "passed",
+      "errors": [],
+      "duration": 43814
+    },
+    {
+      "title": "verified path plus all three failure classes in the Provider step",
+      "file": "setup-first-run-fp-p1-01.spec.ts",
+      "status": "passed",
+      "errors": [],
+      "duration": 25087
+    },
+    {
+      "title": "skip path: limited-mode Complete state and chat first-send interception",
+      "file": "setup-first-run-fp-p1-01.spec.ts",
+      "status": "passed",
+      "errors": [],
+      "duration": 26677
+    }
+  ]
+}

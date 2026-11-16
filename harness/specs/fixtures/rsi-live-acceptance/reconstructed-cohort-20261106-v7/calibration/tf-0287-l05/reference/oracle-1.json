@@ -1,0 +1,641 @@
+{
+  "numTotalTestSuites": 4,
+  "numPassedTestSuites": 4,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 37,
+  "numPassedTests": 37,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793931071250,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0212 alias merge counts one call once with outcomes in both",
+          "status": "passed",
+          "title": "TF-0212 alias merge counts one call once with outcomes in both",
+          "duration": 121.93059999999969,
+          "failureMessages": [],
+          "location": {
+            "line": 59,
+            "column": 51
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0212 alias merge counts one call once with outcomes in id-only",
+          "status": "passed",
+          "title": "TF-0212 alias merge counts one call once with outcomes in id-only",
+          "duration": 1.1044000000001688,
+          "failureMessages": [],
+          "location": {
+            "line": 59,
+            "column": 51
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0212 alias merge counts one call once with outcomes in key-only",
+          "status": "passed",
+          "title": "TF-0212 alias merge counts one call once with outcomes in key-only",
+          "duration": 0.652299999999741,
+          "failureMessages": [],
+          "location": {
+            "line": 59,
+            "column": 51
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0212 preserves distinct run identities during alias merge",
+          "status": "passed",
+          "title": "TF-0212 preserves distinct run identities during alias merge",
+          "duration": 0.5046000000002095,
+          "failureMessages": [],
+          "location": {
+            "line": 104,
+            "column": 48
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0212 preserves distinct tool identities during alias merge",
+          "status": "passed",
+          "title": "TF-0212 preserves distinct tool identities during alias merge",
+          "duration": 0.3910999999989144,
+          "failureMessages": [],
+          "location": {
+            "line": 104,
+            "column": 48
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0212 preserves distinct anonymous identities during alias merge",
+          "status": "passed",
+          "title": "TF-0212 preserves distinct anonymous identities during alias merge",
+          "duration": 0.30940000000009604,
+          "failureMessages": [],
+          "location": {
+            "line": 104,
+            "column": 48
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0213 changing poll wait duration cannot reset a no-progress streak",
+          "status": "passed",
+          "title": "TF-0213 changing poll wait duration cannot reset a no-progress streak",
+          "duration": 2.5843999999997322,
+          "failureMessages": [],
+          "location": {
+            "line": 130,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0207 replay after history trimming stays ignored across alias merge=false",
+          "status": "passed",
+          "title": "TF-0207 replay after history trimming stays ignored across alias merge=false",
+          "duration": 1.3520000000007713,
+          "failureMessages": [],
+          "location": {
+            "line": 179,
+            "column": 24
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0207 replay after history trimming stays ignored across alias merge=true",
+          "status": "passed",
+          "title": "TF-0207 replay after history trimming stays ignored across alias merge=true",
+          "duration": 1.2940999999991618,
+          "failureMessages": [],
+          "location": {
+            "line": 179,
+            "column": 24
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0207 still observes the first result-only delivery when general loop detection is disabled",
+          "status": "passed",
+          "title": "TF-0207 still observes the first result-only delivery when general loop detection is disabled",
+          "duration": 0.5619999999998981,
+          "failureMessages": [],
+          "location": {
+            "line": 212,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0208 retains four completed calls even when every configured threshold fits three",
+          "status": "passed",
+          "title": "TF-0208 retains four completed calls even when every configured threshold fits three",
+          "duration": 0.6641999999992549,
+          "failureMessages": [],
+          "location": {
+            "line": 227,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0207 duplicate terminal delivery does not inflate one run's loop history",
+          "status": "passed",
+          "title": "TF-0207 duplicate terminal delivery does not inflate one run's loop history",
+          "duration": 0.5713999999989028,
+          "failureMessages": [],
+          "location": {
+            "line": 252,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0208 ping-pong requires repeated outcomes on both sides",
+          "status": "passed",
+          "title": "TF-0208 ping-pong requires repeated outcomes on both sides",
+          "duration": 0.48289999999906286,
+          "failureMessages": [],
+          "location": {
+            "line": 277,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0188 merges session aliases in chronological order so old outcomes cannot hide progress",
+          "status": "passed",
+          "title": "TF-0188 merges session aliases in chronological order so old outcomes cannot hide progress",
+          "duration": 0.4719999999997526,
+          "failureMessages": [],
+          "location": {
+            "line": 298,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence retains enough bounded history to reach generic_repeat",
+          "status": "passed",
+          "title": "retains enough bounded history to reach generic_repeat",
+          "duration": 0.5276000000012573,
+          "failureMessages": [],
+          "location": {
+            "line": 319,
+            "column": 87
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence retains enough bounded history to reach global_circuit_breaker",
+          "status": "passed",
+          "title": "retains enough bounded history to reach global_circuit_breaker",
+          "duration": 0.46780000000035216,
+          "failureMessages": [],
+          "location": {
+            "line": 319,
+            "column": 87
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence retains enough bounded history to reach unknown_tool_repeat",
+          "status": "passed",
+          "title": "retains enough bounded history to reach unknown_tool_repeat",
+          "duration": 0.7659999999996217,
+          "failureMessages": [],
+          "location": {
+            "line": 319,
+            "column": 87
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence keeps default termination thresholds unchanged",
+          "status": "passed",
+          "title": "keeps default termination thresholds unchanged",
+          "duration": 0.7559000000001106,
+          "failureMessages": [],
+          "location": {
+            "line": 356,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence does not let another run evict the current run's termination evidence",
+          "status": "passed",
+          "title": "does not let another run evict the current run's termination evidence",
+          "duration": 0.7134000000005472,
+          "failureMessages": [],
+          "location": {
+            "line": 372,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence ignores changing process poll idle duration when judging no progress",
+          "status": "passed",
+          "title": "ignores changing process poll idle duration when judging no progress",
+          "duration": 0.31199999999989814,
+          "failureMessages": [],
+          "location": {
+            "line": 400,
+            "column": 35
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence ignores changing process log idle duration when judging no progress",
+          "status": "passed",
+          "title": "ignores changing process log idle duration when judging no progress",
+          "duration": 0.24060000000099535,
+          "failureMessages": [],
+          "location": {
+            "line": 400,
+            "column": 35
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence distinguishes changing image content from a repeated outcome",
+          "status": "passed",
+          "title": "distinguishes changing image content from a repeated outcome",
+          "duration": 1.5547000000005937,
+          "failureMessages": [],
+          "location": {
+            "line": 446,
+            "column": 41
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence distinguishes changing audio content from a repeated outcome",
+          "status": "passed",
+          "title": "distinguishes changing audio content from a repeated outcome",
+          "duration": 1.3014000000002852,
+          "failureMessages": [],
+          "location": {
+            "line": 446,
+            "column": 41
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence distinguishes changing resource content from a repeated outcome",
+          "status": "passed",
+          "title": "distinguishes changing resource content from a repeated outcome",
+          "duration": 1.3374999999996362,
+          "failureMessages": [],
+          "location": {
+            "line": 446,
+            "column": 41
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0195 does not warn on ping-pong that is still making progress",
+          "status": "passed",
+          "title": "TF-0195 does not warn on ping-pong that is still making progress",
+          "duration": 0.4956999999994878,
+          "failureMessages": [],
+          "location": {
+            "line": 473,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0197 alias merge keeps existing stuck and long-running warn timestamps",
+          "status": "passed",
+          "title": "TF-0197 alias merge keeps existing stuck and long-running warn timestamps",
+          "duration": 0.2878000000000611,
+          "failureMessages": [],
+          "location": {
+            "line": 496,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0197 newer 'id' activity keeps its warning cycle (undefined)",
+          "status": "passed",
+          "title": "TF-0197 newer 'id' activity keeps its warning cycle (undefined)",
+          "duration": 0.2169000000012602,
+          "failureMessages": [],
+          "location": {
+            "line": 517,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0197 newer 'key' activity keeps its warning cycle (undefined)",
+          "status": "passed",
+          "title": "TF-0197 newer 'key' activity keeps its warning cycle (undefined)",
+          "duration": 0.10659999999916181,
+          "failureMessages": [],
+          "location": {
+            "line": 517,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0197 newer 'id' activity keeps its warning cycle (1000)",
+          "status": "passed",
+          "title": "TF-0197 newer 'id' activity keeps its warning cycle (1000)",
+          "duration": 0.10100000000056752,
+          "failureMessages": [],
+          "location": {
+            "line": 517,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0197 newer 'key' activity keeps its warning cycle (1000)",
+          "status": "passed",
+          "title": "TF-0197 newer 'key' activity keeps its warning cycle (1000)",
+          "duration": 0.0937999999987369,
+          "failureMessages": [],
+          "location": {
+            "line": 517,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "tool-loop progress evidence"
+          ],
+          "fullName": "tool-loop progress evidence TF-0197 the same activity cycle keeps the later warning backoff",
+          "status": "passed",
+          "title": "TF-0197 the same activity cycle keeps the later warning backoff",
+          "duration": 0.15680000000065775,
+          "failureMessages": [],
+          "location": {
+            "line": 543,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793931074143,
+      "endTime": 1793931074285.2168,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0287-l05/reference/workspace/openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "L05 rate circuit breaker"
+          ],
+          "fullName": "L05 rate circuit breaker never trips on a purely legal rate",
+          "status": "passed",
+          "title": "never trips on a purely legal rate",
+          "duration": 4.550500000001193,
+          "failureMessages": [],
+          "location": {
+            "line": 19,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "L05 rate circuit breaker"
+          ],
+          "fullName": "L05 rate circuit breaker opens after crossing the failure threshold and refuses requests during cooldown",
+          "status": "passed",
+          "title": "opens after crossing the failure threshold and refuses requests during cooldown",
+          "duration": 0.19939999999951397,
+          "failureMessages": [],
+          "location": {
+            "line": 29,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "L05 rate circuit breaker"
+          ],
+          "fullName": "L05 rate circuit breaker admits exactly ONE half-open probe after the cooldown",
+          "status": "passed",
+          "title": "admits exactly ONE half-open probe after the cooldown",
+          "duration": 0.18519999999989523,
+          "failureMessages": [],
+          "location": {
+            "line": 38,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "L05 rate circuit breaker"
+          ],
+          "fullName": "L05 rate circuit breaker closes on a clean probe and re-opens with a fresh cooldown on a failed probe",
+          "status": "passed",
+          "title": "closes on a clean probe and re-opens with a fresh cooldown on a failed probe",
+          "duration": 0.25450000000091677,
+          "failureMessages": [],
+          "location": {
+            "line": 48,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "L05 rate circuit breaker"
+          ],
+          "fullName": "L05 rate circuit breaker prunes old failures so a legal later window does not false-trip",
+          "status": "passed",
+          "title": "prunes old failures so a legal later window does not false-trip",
+          "duration": 0.20749999999861757,
+          "failureMessages": [],
+          "location": {
+            "line": 68,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "L05 rate circuit breaker"
+          ],
+          "fullName": "L05 rate circuit breaker is deterministic under the injected clock",
+          "status": "passed",
+          "title": "is deterministic under the injected clock",
+          "duration": 1.0196999999989202,
+          "failureMessages": [],
+          "location": {
+            "line": 78,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793931071571,
+      "endTime": 1793931071578.0198,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0287-l05/reference/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts"
+    }
+  ]
+}

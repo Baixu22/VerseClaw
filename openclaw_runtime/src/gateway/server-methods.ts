@@ -65,6 +65,10 @@ const loadAgentBrowserHandlers = lazyHandlerModule(
   () => import("./server-methods/agent-browser.js"),
   (module) => module.agentBrowserHandlers,
 );
+const loadSessionTaskScopeHandlers = lazyHandlerModule(
+  () => import("./server-methods/session-task-scope.js"),
+  (module) => module.sessionTaskScopeHandlers,
+);
 const loadAgentsHandlers = lazyHandlerModule(
   () => import("./server-methods/agents.js"),
   (module) => module.agentsHandlers,
@@ -205,6 +209,10 @@ const loadToolsInvokeHandlers = lazyHandlerModule(
   () => import("./server-methods/tools-invoke.js"),
   (module) => module.toolsInvokeHandlers,
 );
+const loadMcpManagementHandlers = lazyHandlerModule(
+  () => import("./server-methods/mcp-management.js"),
+  (module) => module.mcpManagementHandlers,
+);
 const loadSecurityVerificationShadowHandlers = lazyHandlerModule(
   () => import("./server-methods/security-verification-shadow.js"),
   (module) => module.securityVerificationShadowHandlers,
@@ -271,7 +279,11 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadLogsHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: ["localControlPlane.status", "localControlPlane.reports", "localControlPlane.correlations"],
+    methods: [
+      "localControlPlane.status",
+      "localControlPlane.reports",
+      "localControlPlane.correlations",
+    ],
     loadHandlers: loadLocalControlPlaneHandlers,
   }),
   ...createLazyCoreHandlers({
@@ -309,12 +321,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadCronHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: [
-      "channels.status",
-      "channels.start",
-      "channels.stop",
-      "channels.logout",
-    ],
+    methods: ["channels.status", "channels.start", "channels.stop", "channels.logout"],
     loadHandlers: loadChannelsHandlers,
   }),
   ...createLazyCoreHandlers({
@@ -395,7 +402,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadWizardHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: ["tasks.list", "tasks.get", "tasks.cancel"],
+    methods: ["tasks.list", "tasks.get", "tasks.cancel", "tasks.contract.accept", "tasks.contract.receipt", "tasks.contract.reconcile"],
     loadHandlers: loadTasksHandlers,
   }),
   ...createLazyCoreHandlers({
@@ -415,6 +422,10 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadToolsInvokeHandlers,
   }),
   ...createLazyCoreHandlers({
+    methods: ["mcp.listTools", "mcp.heartbeat", "mcp.callTool"],
+    loadHandlers: loadMcpManagementHandlers,
+  }),
+  ...createLazyCoreHandlers({
     methods: [
       "security.health",
       "security.policy.get",
@@ -431,6 +442,11 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["agentBrowser.invoke", "agentBrowser.invoke.result"],
     loadHandlers: loadAgentBrowserHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: ["taskScope.admit", "taskScope.admit.result", "taskScope.runState",
+      "taskScope.migration.prepare", "taskScope.migration.confirm", "taskScope.migration.read"],
+    loadHandlers: loadSessionTaskScopeHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: [

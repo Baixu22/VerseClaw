@@ -1,0 +1,556 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u2-background",
+  "provider": "local-scripted",
+  "fault": "provider HTTP 500 via scripted endpoint",
+  "acceptance": [
+    "TF-0658/AC4"
+  ],
+  "status": "passed",
+  "parentReceipt": {
+    "runId": "U2_PARENT_BASELINE",
+    "status": "ok",
+    "endedAt": 1794202774262
+  },
+  "parentBeforeChildren": {
+    "session": {
+      "key": "agent:main:session-1794202722370-ubackground",
+      "kind": "direct",
+      "label": "U2 Background coordinator",
+      "displayName": "U2 Background coordinator",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1794202774193,
+      "sessionId": "b49e47ec-b374-4842-903e-4526d0cf899e",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "inputTokens": 120,
+      "outputTokens": 30,
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "startedAt": 1794202762868,
+      "endedAt": 1794202768271,
+      "runtimeMs": 5403,
+      "childSessions": [
+        "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+        "agent:main:dashboard:f81b9c8b-0447-4d10-b5e6-c6c1ece4d29f"
+      ],
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": false
+    }
+  },
+  "windowDeactivation": {
+    "driven_by": "agent",
+    "action": "BrowserWindow.blur",
+    "retainsPointerAnchor": true
+  },
+  "project": {
+    "workspaceId": "u2-background",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-final-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\workspace",
+    "sessionKey": "agent:main:session-1794202722370-ubackground",
+    "generation": "b49e47ec-b374-4842-903e-4526d0cf899e"
+  },
+  "failureChild": "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+  "hoveredChild": "agent:main:dashboard:f81b9c8b-0447-4d10-b5e6-c6c1ece4d29f",
+  "successChild": "agent:main:dashboard:e35f6d7b-5b27-45c1-95e4-d6e6108a35be",
+  "newChildOwner": {
+    "session": {
+      "key": "agent:main:dashboard:e35f6d7b-5b27-45c1-95e4-d6e6108a35be",
+      "kind": "direct",
+      "label": "Child 3 · A long session title  · background",
+      "displayName": "Child 3 · A long session title  · background",
+      "updatedAt": 1794202776080,
+      "sessionId": "0c94cabd-6aad-484f-93d3-03c548d03ac3",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokensFresh": false,
+      "parentSessionKey": "agent:main:session-1794202722370-ubackground",
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "successReceipt": {
+    "runId": "U2_CHILD_SUCCESS",
+    "status": "ok",
+    "endedAt": 1794202793746
+  },
+  "failureReceipt": {
+    "runId": "U2_CHILD_FAILURE",
+    "status": "error",
+    "endedAt": 1794202816469,
+    "error": "⚠️ Agent failed before reply: HTTP 500: scripted-llm handler error: Error: U2 deterministic provider failure.\nLogs: openclaw logs --follow"
+  },
+  "parentOwner": {
+    "session": {
+      "key": "agent:main:session-1794202722370-ubackground",
+      "kind": "direct",
+      "label": "U2 Background coordinator",
+      "displayName": "U2 Background coordinator",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1794202774193,
+      "sessionId": "b49e47ec-b374-4842-903e-4526d0cf899e",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "inputTokens": 120,
+      "outputTokens": 30,
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "startedAt": 1794202762868,
+      "endedAt": 1794202768271,
+      "runtimeMs": 5403,
+      "childSessions": [
+        "agent:main:dashboard:e35f6d7b-5b27-45c1-95e4-d6e6108a35be",
+        "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+        "agent:main:dashboard:f81b9c8b-0447-4d10-b5e6-c6c1ece4d29f"
+      ],
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": false
+    }
+  },
+  "sidebarSamples": [
+    {
+      "held": "true",
+      "selected": [
+        "agent:main:session-1794202722370-ubackground"
+      ],
+      "parentState": "completed",
+      "order": [
+        "agent:main:session-1794202722370-ubackground",
+        "agent:main:dashboard:f81b9c8b-0447-4d10-b5e6-c6c1ece4d29f",
+        "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b"
+      ],
+      "hoverY": 328,
+      "underPointer": "agent:main:dashboard:f81b9c8b-0447-4d10-b5e6-c6c1ece4d29f"
+    }
+  ],
+  "runtimeEvents": [
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.started",
+          "runId": "U2_PARENT_BASELINE",
+          "sessionKey": "agent:main:session-1794202722370-ubackground",
+          "seq": 1,
+          "ts": 1794202762868,
+          "startedAt": 1794202762868
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "assistant.delta",
+          "runId": "U2_PARENT_BASELINE",
+          "sessionKey": "agent:main:session-1794202722370-ubackground",
+          "seq": 2,
+          "ts": 1794202767299,
+          "text": "U2_PARENT_READY",
+          "delta": "U2_PARENT_READY"
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "U2_PARENT_BASELINE",
+            "sessionKey": "agent:main:session-1794202722370-ubackground",
+            "seq": 2,
+            "state": "delta",
+            "deltaText": "U2_PARENT_READY",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "U2_PARENT_READY"
+                }
+              ],
+              "timestamp": 1794202767304
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "U2_PARENT_BASELINE",
+            "sessionKey": "agent:main:session-1794202722370-ubackground",
+            "seq": 3,
+            "state": "final",
+            "stopReason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "U2_PARENT_READY"
+                }
+              ],
+              "timestamp": 1794202768276
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.ended",
+          "runId": "U2_PARENT_BASELINE",
+          "sessionKey": "agent:main:session-1794202722370-ubackground",
+          "seq": 3,
+          "status": "completed",
+          "endedAt": 1794202768276,
+          "stopReason": "stop"
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.started",
+          "runId": "U2_CHILD_SUCCESS",
+          "sessionKey": "agent:main:dashboard:e35f6d7b-5b27-45c1-95e4-d6e6108a35be",
+          "seq": 1,
+          "ts": 1794202783886,
+          "startedAt": 1794202783886
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "assistant.delta",
+          "runId": "U2_CHILD_SUCCESS",
+          "sessionKey": "agent:main:dashboard:e35f6d7b-5b27-45c1-95e4-d6e6108a35be",
+          "seq": 2,
+          "ts": 1794202789931,
+          "text": "U2_CHILD_COMPLETED",
+          "delta": "U2_CHILD_COMPLETED"
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "U2_CHILD_SUCCESS",
+            "sessionKey": "agent:main:dashboard:e35f6d7b-5b27-45c1-95e4-d6e6108a35be",
+            "seq": 2,
+            "state": "delta",
+            "deltaText": "U2_CHILD_COMPLETED",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "U2_CHILD_COMPLETED"
+                }
+              ],
+              "timestamp": 1794202789935
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "U2_CHILD_SUCCESS",
+            "sessionKey": "agent:main:dashboard:e35f6d7b-5b27-45c1-95e4-d6e6108a35be",
+            "seq": 3,
+            "state": "final",
+            "stopReason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "U2_CHILD_COMPLETED"
+                }
+              ],
+              "timestamp": 1794202790540
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.ended",
+          "runId": "U2_CHILD_SUCCESS",
+          "sessionKey": "agent:main:dashboard:e35f6d7b-5b27-45c1-95e4-d6e6108a35be",
+          "seq": 3,
+          "status": "completed",
+          "endedAt": 1794202790540,
+          "stopReason": "stop"
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.started",
+          "runId": "U2_CHILD_FAILURE",
+          "sessionKey": "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+          "seq": 1,
+          "ts": 1794202796340,
+          "startedAt": 1794202796340
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.ended",
+          "runId": "U2_CHILD_FAILURE",
+          "sessionKey": "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+          "seq": 2,
+          "ts": 1794202803298,
+          "status": "error",
+          "endedAt": 1794202803298,
+          "error": "LLM request failed.",
+          "livenessState": "blocked"
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.started",
+          "runId": "U2_CHILD_FAILURE",
+          "sessionKey": "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+          "seq": 4,
+          "ts": 1794202808942,
+          "startedAt": 1794202808942
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.ended",
+          "runId": "U2_CHILD_FAILURE",
+          "sessionKey": "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+          "seq": 5,
+          "ts": 1794202815069,
+          "status": "error",
+          "endedAt": 1794202815069,
+          "error": "LLM request failed.",
+          "livenessState": "blocked"
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "U2_CHILD_FAILURE",
+            "sessionKey": "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+            "seq": 7,
+            "state": "error",
+            "errorMessage": "⚠️ Agent failed before reply: HTTP 500: scripted-llm handler error: Error: U2 deterministic provider failure.\nLogs: openclaw logs --follow",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "⚠️ Agent failed before reply: HTTP 500: scripted-llm handler error: Error: U2 deterministic provider failure.\nLogs: openclaw logs --follow"
+                }
+              ],
+              "timestamp": 1794202816469
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.ended",
+          "runId": "U2_CHILD_FAILURE",
+          "sessionKey": "agent:main:dashboard:f6d607e6-872d-49dd-a3e7-61beb46f4f8b",
+          "seq": 7,
+          "status": "error",
+          "endedAt": 1794202816469,
+          "error": "⚠️ Agent failed before reply: HTTP 500: scripted-llm handler error: Error: U2 deterministic provider failure.\nLogs: openclaw logs --follow"
+        }
+      ]
+    }
+  ],
+  "pointerEvents": [],
+  "providerLog": [
+    {
+      "turn": "[Mon 2026-11-09 13:39 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:U2_PARENT_READY"
+    },
+    {
+      "turn": "[Mon 2026-11-09 13:39 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:U2_CHILD_COMPLETED"
+    }
+  ],
+  "providerAnomalies": [
+    "completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure\nError: U2 deterministic provider failure\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-task-reading-navigation.spec.ts:222:13\n    at IncomingMessage.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:192:24)",
+    "completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure\nError: U2 deterministic provider failure\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-task-reading-navigation.spec.ts:222:13\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at IncomingMessage.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:192:24)",
+    "completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure\nError: U2 deterministic provider failure\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-task-reading-navigation.spec.ts:222:13\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at IncomingMessage.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:192:24)",
+    "completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure\nError: U2 deterministic provider failure\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-task-reading-navigation.spec.ts:222:13\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at IncomingMessage.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:192:24)",
+    "completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure\nError: U2 deterministic provider failure\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-task-reading-navigation.spec.ts:222:13\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at IncomingMessage.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:192:24)",
+    "completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure\nError: U2 deterministic provider failure\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-task-reading-navigation.spec.ts:222:13\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at IncomingMessage.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:192:24)"
+  ],
+  "providerRequests": {
+    "successRequested": 1,
+    "failureRequested": 6
+  }
+}

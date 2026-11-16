@@ -39,21 +39,21 @@ function reclaimOwnedWorktrees(params: {
   };
 }
 
-/** Close browser sessions that belong to one session key. */function reclaimOwnedBrowserSessions(params: {
+/** Close browser sessions that belong to one session key. */async function reclaimOwnedBrowserSessions(params: {
   sessionKey: string;
   workspaceId?: string;
   service: ReturnType<typeof getDefaultAgentBrowserService>;
-}): { attempted: number; reclaimed: number } {
+}): Promise<{ attempted: number; reclaimed: number }> {
   const service = params.service;
   const sessions = typeof service.list === 'function' ? service.list() : [];
   const owned = sessions.filter((session) => (
     session.sessionKey === params.sessionKey
-    && (!params.workspaceId || !session.workspaceId || session.workspaceId === params.workspaceId)
+    && (params.workspaceId ? session.workspaceId === params.workspaceId : !session.workspaceId)
   ));
   let reclaimed = 0;
   for (const session of owned) {
     try {
-      service.close(session.id);
+      await service.close(session.id);
       reclaimed += 1;
     } catch {
       // leave the failure visible through the attempted/reclaimed delta
@@ -284,17 +284,17 @@ export async function collectLongSessionResourceInventory(params: {
     ],
   };
 }
-export function reclaimBrowserSessionsForWorkspace(
+export async function reclaimBrowserSessionsForWorkspace(
   workspaceId: string,
   service: ReturnType<typeof getDefaultAgentBrowserService> = getDefaultAgentBrowserService(),
-): { attempted: number; reclaimed: number } {
+): Promise<{ attempted: number; reclaimed: number }> {
   let attempted = 0;
   let reclaimed = 0;
   for (const session of service.list()) {
     if (session.workspaceId !== workspaceId) continue;
     attempted += 1;
     try {
-      service.close(session.id);
+      await service.close(session.id);
       reclaimed += 1;
     } catch {
       // The attempted/reclaimed delta remains an explicit failure.
@@ -320,13 +320,13 @@ export async function reclaimManagedPortsForWorkspace(
   return { attempted: resources.length, reclaimed, failed };
 }
 
-export function closeAllOwnedBrowserSessions(
+export async function closeAllOwnedBrowserSessions(
   service: ReturnType<typeof getDefaultAgentBrowserService> = getDefaultAgentBrowserService(),
-): number {
+): Promise<number> {
   let closed = 0;
   for (const session of service.list()) {
     try {
-      service.close(session.id);
+      await service.close(session.id);
       closed += 1;
     } catch {
       // App quit remains best-effort; remaining process lifetime ends with Main.

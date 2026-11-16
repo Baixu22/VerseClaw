@@ -1,0 +1,54 @@
+{
+  "schema": "MemoryFacadeDispositionReport/v1",
+  "node": "TF-0744",
+  "driven_by": "agent",
+  "actor": "codex/tf0744",
+  "candidate": {
+    "commit": "34eead4c54c13e809f0a77e03df423da6ead6ba6",
+    "tree": "deccebd83b478e0c0dd5801298e42fe777b6e315",
+    "dirty": false
+  },
+  "decision": {
+    "status": "retire",
+    "productionConsumers": 0,
+    "persist": false,
+    "productLocksChanged": false
+  },
+  "tests": {
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0
+  },
+  "acceptance": [
+    {
+      "criterion": "explicit adopt/retire decision with rationale",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "source-manifest.json"
+      ]
+    },
+    {
+      "criterion": "zero production consumers and no barrel exports",
+      "verdict": "pass",
+      "evidence": [
+        "observations.json",
+        "unit-tests.json"
+      ],
+      "method": "static scan of runtime/app/shared/packages; negative direct/barrel/dynamic importer fixtures"
+    },
+    {
+      "criterion": "headers/defaults/current docs consistent",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json"
+      ]
+    }
+  ],
+  "limits": [
+    "Static disposition proof; no runtime performance or live-provider gain.",
+    "Direct exports remain for contract tests and historical explicit golden-run replay. Archived observations keep their original candidates.",
+    "No persistence restoration, default graduation, or GA. Full program typecheck and E2E belong to TF-0746."
+  ]
+}

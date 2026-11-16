@@ -1,0 +1,213 @@
+{
+  "candidate": "6117f2c093f864686246f325052624ccff48c933",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "af42601bb1d036b0222e0d69b88e83fbf2ee7c660cf1cbcda98d332e9cd1e91e"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "cccd665deeec96b68d78866c7476d9ad485ca39ecb21ea1b662c80de92ee2ece"
+    },
+    {
+      "path": "README.md",
+      "sha256": "779184bce70888b2b0cc002cc8345b822af531073cb0dd5b651a9e5f3f7aadb9"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "2c49c6234747c2ed2b8992e556f2811e664a60437b7605d989a0a981ae2ec4c9"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "13444fd3855549b142b1a47785e39ad86be493f2ae8df21114e5dbfdde4d3c01"
+    },
+    {
+      "path": "docs/dev/durable-task-system/DESIGN.md",
+      "sha256": "2ee76481483ee9c98920658ddce78a718eb08bf2682315b01b08c1b05f03cffb"
+    },
+    {
+      "path": "docs/dev/durable-task-system/PLAN.md",
+      "sha256": "41d6212af2493d1fa5e24b601d256b482c82c2e2228d67801d8af476b4e87c8a"
+    },
+    {
+      "path": "docs/dev/durable-task-system/STATUS.md",
+      "sha256": "0a13460f968f0e5d151929af39fa8bca0d067fc2ede8c8413523bf79f33a21f5"
+    },
+    {
+      "path": "docs/dev/durable-task-system/sources.json",
+      "sha256": "94d783c3568dc79250d34a016cf99421fc13463bf3572c4bc8b5b57f0a1b8c06"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "41d2f55dca00f51855ce79bfcc85d4072ab6e17c410149c64fb751244adb5195"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "5c389c6eeff5eba87ef337eb99bf248c74e73033310f0b4e70561a0082ebdc05"
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "13c5588382d4794d3f50f8b39a3a62209a4ec8fedb906d4dce419aec99879de5"
+    },
+    {
+      "path": "electron/services/session-delegation-admission.ts",
+      "sha256": "268b19b3f6de95ba0f6c98dd17e882fd5b03d42e41b032d82adb4d21569f62d4"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "2cf643b110d57017d9b43e9e04e2757f6cf414f144a3a98c44ddb14d5c7872f8"
+    },
+    {
+      "path": "electron/services/task-ledger-api.ts",
+      "sha256": "b3a809efc0de7fb2ad32e131698083d8eed3cc9183c7a481a7d7f19c446e88ee"
+    },
+    {
+      "path": "electron/services/task-ledger-service.ts",
+      "sha256": "ddabd9a0c94994e2e4f41d0d84ff0940365246bce65c189a2fb38bbd8a55a5db"
+    },
+    {
+      "path": "electron/services/task-system-service.ts",
+      "sha256": "6d433b2e47bcce0e17a38759f94cf4b415774a4382682f1e75ac5e20cd4b1002"
+    },
+    {
+      "path": "harness/specs/rules/durable-task-system-boundary.md",
+      "sha256": "5e2ac10631765afbb63950acf9262b0576c55094b907ddc8230dce673ffb171b"
+    },
+    {
+      "path": "harness/specs/scenarios/durable-task-system.md",
+      "sha256": "745fdc56e06d38e89baaabe7ee9502ce84b4dcfc9ebec9266217a3b57a113aa4"
+    },
+    {
+      "path": "harness/specs/tasks/durable-task-system.md",
+      "sha256": "5ae290d14f481714f245d2295e74219a8daeeabba85d618a8d2ef02c359c8ad3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+      "sha256": "9c2e7779cbd4bb06bcf1e5be7c918f88069eb4145cf968eef1b0852e4128c7fb"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "sha256": "e8b645ee7abe977e36b26a30b73e2d8cba02236a3271f9b068ff57f667210abd"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "38d4fcec04a79fa96683a649dde35a62b1ec747244598a8a692fc97844bcb440"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/stage3-working-context.test.ts",
+      "sha256": "4e84670f31da947aff636279498a1eb195c6dc0b429b5557677d709ca244c11f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+      "sha256": "c99f0d5a237be64b845280077e3f469362c271b166deff62566e1b3540aaa6af"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tool-catalog.ts",
+      "sha256": "f01801fe15817e6efe2cf2863a150ed70f3de914276504f7717bfc1752bfc7bb"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+      "sha256": "43f6b6a94e6d0ba9313ed1c57e8d6d9755cc6e854478c32a6d30f00d8e371d92"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "e2d025ac64774dc9d3450abc161255d859e63baa590ccfb99f1a1ca7bb1a6cec"
+    },
+    {
+      "path": "scripts/verify-durable-task-system.mjs",
+      "sha256": "207f341fc9e1cfe7184f2ee4b5bdff6fc4680686538abaa3f6dd3ca9c8ad5fad"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "601df803adc5626a76678ca731db8c2bda6b46662de07867ac2381c304d96451"
+    },
+    {
+      "path": "shared/i18n/locales/en/taskLedger.json",
+      "sha256": "70383923a2a53a107f2af69be0c24e52a12096f69898a1be64be2917d797582b"
+    },
+    {
+      "path": "shared/i18n/locales/ja/taskLedger.json",
+      "sha256": "a1172a2b241867847a84f1d977234dc9609a67fc23eaad4022ee36f243e5031a"
+    },
+    {
+      "path": "shared/i18n/locales/ru/taskLedger.json",
+      "sha256": "d739a88e0009cde8ab02f0c869b1b9d890e2984eb0ff238d0cea2e30da4ed5ae"
+    },
+    {
+      "path": "shared/i18n/locales/zh/taskLedger.json",
+      "sha256": "75680f31d1acdf4ec7f6966cee5952045c4492bc720e87b07d4dec9177815adb"
+    },
+    {
+      "path": "shared/task-system/event-store.ts",
+      "sha256": "5e35c0498de728d27557f512479d7363d401ae256796a2c40b14b9b16be1c0b5"
+    },
+    {
+      "path": "shared/task-system/identity.ts",
+      "sha256": "e6d16c51eb07c2155da850ffd43bda239eb71a20a94555095dffa52ab0ed58e4"
+    },
+    {
+      "path": "shared/task-system/runtime.ts",
+      "sha256": "5088d6ed7227502f25f36fa21475b441bd9b5a5acc89e4ee34cb1697ed3cc2ad"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "70344f71b4e2ee4a521ceb150863641eb0cdbed34c6abbb595361bd7448da53b"
+    },
+    {
+      "path": "shared/task-system/types.ts",
+      "sha256": "3ccf7cc16b089c8b5d6fcbcb38b860e29320937a5ffa233da5f9aefb17394c15"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "3840ac7a8048be777e12d617585680dba06238f02adc38479ecbee76e23df2ed"
+    },
+    {
+      "path": "src/lib/task-ledger-plan-projection.ts",
+      "sha256": "02c4f3de141e15563722fb2f151113fc7434ff87595d16120041f1350b9cb028"
+    },
+    {
+      "path": "src/pages/TaskLedger/ManagedTasks.tsx",
+      "sha256": "5bce7a675b4bd68deeee04ad6b89a8c517724c29e1f6c070bfcf249da7ce32db"
+    },
+    {
+      "path": "src/pages/TaskLedger/index.tsx",
+      "sha256": "d8e730f3ab6c6cbea142d694b41b459a9d307cab7c4ebf2c48a47cd807532b52"
+    },
+    {
+      "path": "tests/e2e/durable-task-system.spec.ts",
+      "sha256": "d0b7f28020dd748bc1da4e08b2b9b2e3b80f7be7be3a164b30948f8916c31d5e"
+    },
+    {
+      "path": "tests/unit/change-context-review-verdict.test.ts",
+      "sha256": "cc9dae9dfec6fec544f63db8690ff0e3dbf7ab4ae3e672abc8cb7e19b91c73ec"
+    },
+    {
+      "path": "tests/unit/durable-task-event-store.test.ts",
+      "sha256": "c42ae6df27908bb3d6ac260c48edc8247a61101caeece4a1f6986878d3440c44"
+    },
+    {
+      "path": "tests/unit/durable-task-runtime.test.ts",
+      "sha256": "7174a92f25f2d77ab33c1310d07dfdb8d0d3c39c24bfa7535d4f9df56f132810"
+    },
+    {
+      "path": "tests/unit/durable-task-system.test.ts",
+      "sha256": "360d494e5ec1438427ac0dc6b3d2aaa53280df1192b9d52aa1c0fa5f6cb8b8c3"
+    },
+    {
+      "path": "tests/unit/durable-task-tool.test.ts",
+      "sha256": "991c8ed562244aae70b05b0d848289f59fddbfd6d03ebb7a72d61a30fe77c3a1"
+    },
+    {
+      "path": "tests/unit/long-session-delegation-admission.test.ts",
+      "sha256": "7d82b20d8a6814b26af7de809b7c3d5de27b7c8012672c0b837ddb6f744e79c7"
+    },
+    {
+      "path": "tests/unit/task-ledger-working-context-single-source.test.ts",
+      "sha256": "ba84d439031ab1f4ef7d2dcdf96024f6480902506e74b396de5c85b58cb96251"
+    },
+    {
+      "path": "vitest.task-system.config.ts",
+      "sha256": "e752d4a48cebf150f78ed8c1bb843a82d167b14a296bc607af660b5f57ba4bdf"
+    }
+  ]
+}

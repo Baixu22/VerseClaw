@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output\\source-mutation-guard.json",
+  "sourceSha256": "971ea4943aa94d04eca65f8cab54bbc4e5df99da6fb78bfc3e355dd1ff4a2ecf",
+  "result": {
+    "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "2fa688a6a2aa1fabd4760129b987f96d0f574851611ffacf0d3e9c42a11ff691",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "2fa688a6a2aa1fabd4760129b987f96d0f574851611ffacf0d3e9c42a11ff691",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

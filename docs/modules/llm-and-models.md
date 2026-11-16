@@ -57,6 +57,8 @@
 - 连接验证和经脱敏的 validation 元数据；
 - 账户级 fallback models 与 fallback accounts。
 
+账户保存、默认模型选择及模型配置更新保留声明的推理、视觉和上下文能力。更新同一模型时，能力声明写入运行时配置和各 agent 的 models.json，已有价格记录继续保留。
+
 密钥通过 `electron/services/secrets/secret-store.ts` 和 Electron `safeStorage` 封装存储；Renderer 只应看到 masked 值。OS 加密不可用时，健康检查应报告不可用，而不是把“文件存在”当作可安全解密。
 
 支持的协议类型包括：

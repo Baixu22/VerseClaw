@@ -1,0 +1,80 @@
+{
+  "schema": "SemanticConvergenceNodeReport/v1",
+  "node": "TF-0735",
+  "title": "知识 embedding 总 deadline 与取消传播",
+  "generatedAt": "2026-11-04T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex/mainline",
+  "base": {
+    "parentCommit": "6b49a10a9"
+  },
+  "metrics": {
+    "EMB-1": {
+      "before": 390000,
+      "after": 120000,
+      "unit": "ms",
+      "method": "static"
+    },
+    "EMB-2": {
+      "before": 1,
+      "after": 0,
+      "unit": "batches after deadline",
+      "method": "static+behavioral"
+    },
+    "worst_case_operation_ms": {
+      "before": 390000,
+      "after": 120000,
+      "unit": "ms",
+      "method": "static"
+    },
+    "deadline_cancellation_coverage": {
+      "before": "0/3",
+      "after": "3/3",
+      "unit": "call points",
+      "method": "behavioral"
+    }
+  },
+  "tests": {
+    "embeddingSuites": {
+      "files": 2,
+      "total": 25,
+      "failed": 0
+    },
+    "deadlineScenarios": 5
+  },
+  "staticChecks": {
+    "typecheckNode": "passed",
+    "eslintTargeted": "passed",
+    "harnessValidate": "passed"
+  },
+  "evidence": {
+    "staticBefore": "docs/dev/evidence/semantic-convergence-20261104/tf-0735/embedding-before.json",
+    "staticAfter": "docs/dev/evidence/semantic-convergence-20261104/tf-0735/embedding-after.json",
+    "unitTests": "docs/dev/evidence/semantic-convergence-20261104/tf-0735/unit-tests.json",
+    "behavioral": "tests/unit/knowledge-embedding-deadline.test.ts",
+    "doc": "docs/dev/knowledge-embedding-deadline.md"
+  },
+  "changes": [
+    "Added DEFAULT_EMBEDDING_DEADLINE_MS (120s) as one total operation budget for query + document batches.",
+    "The per-batch 30s ceiling is clamped to the remaining total budget.",
+    "The batch loop checks the remaining budget before every batch and never starts a request after expiry.",
+    "Added KnowledgeEmbeddingDeadlineError with code, deadlineMs, completedBatches and totalBatches; partial vectors are never returned.",
+    "knowledge-api creates the provider with KNOWLEDGE_EMBEDDING_DEADLINE_MS (default 120s) for the semantic answer path; source-set reports semanticLane=error and keeps lexical ordering on failure.",
+    "EMB-1 worst case for 100 texts drops from 390000ms to 120000ms."
+  ],
+  "limitations": [
+    "Network timing is simulated with a fake clock; no live SiliconFlow request was made.",
+    "Deadline cancellation is implemented as one budget per provider instance; callers must create a fresh provider per operation.",
+    "No real-human evidence is claimed."
+  ],
+  "notChanged": [
+    "Per-batch 30s ceiling retained.",
+    "No product lock, default value or release status changed."
+  ],
+  "candidate": {
+    "branch": "codex/semantic-convergence-20261104",
+    "worktree": "D:\\ClawX-work\\semantic-convergence-20261104",
+    "dirtyAtTestTime": false,
+    "note": "Tests and static checks ran on the clean parent tree; this evidence file is part of the same branch commit."
+  }
+}

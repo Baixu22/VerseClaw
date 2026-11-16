@@ -1,0 +1,112 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-live-preflight",
+  "scope": "provider admission; not a task outcome",
+  "startedAt": "2026-11-05T03:25:10.831Z",
+  "durationMs": 3384,
+  "passed": true,
+  "request": {
+    "url": "http://127.0.0.1:3065/v1/responses",
+    "method": "POST",
+    "headers": {
+      "accept": "application/json",
+      "content-type": "application/json"
+    },
+    "redirect": "error",
+    "cache": "no-store",
+    "body": {
+      "model": "space-bunny",
+      "instructions": "Reply with the exact marker only.",
+      "input": "RSI_PROVIDER_READY",
+      "store": false,
+      "stream": false,
+      "truncation": "disabled",
+      "max_output_tokens": 64
+    }
+  },
+  "response": {
+    "id": "01a1a9bd318a776aa335821417f6de9b",
+    "model": "space-bunny",
+    "status": "completed",
+    "text": "RSI_PROVIDER_READY",
+    "usage": {
+      "inputTokens": 164,
+      "outputTokens": 31,
+      "totalTokens": 195
+    },
+    "functionCalls": [],
+    "incompleteReason": null
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793849114,
+    "created_at": 1793849112,
+    "error": null,
+    "id": "01a1a9bd318a776aa335821417f6de9b",
+    "incomplete_details": null,
+    "instructions": "Reply with the exact marker only.",
+    "max_output_tokens": 64,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_5cb47aa7f1827bc09fc7fe3679faf58f",
+        "summary": [
+          {
+            "text": "We need answer exact marker only. User says RSI_PROVIDER_READY. Need output exactlythat.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "RSI_PROVIDER_READY",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_6efb4ab26c6ec904e633854b95fdb723",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "RSI_PROVIDER_READY",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": null,
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "text"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 164,
+      "input_tokens_details": {
+        "cached_tokens": 140
+      },
+      "output_tokens": 31,
+      "output_tokens_details": {
+        "reasoning_tokens": 21
+      },
+      "total_tokens": 195
+    },
+    "user": null
+  }
+}

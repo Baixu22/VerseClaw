@@ -1,0 +1,639 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-session-journey",
+  "provider": "local-scripted",
+  "status": "passed",
+  "fork": {
+    "key": "agent:main:dashboard:3ca2d02b-e72f-49b1-8f68-d931670ae3a1",
+    "forkedFromParent": true,
+    "forkedFromLeafId": "a8d4eb5f",
+    "forkedFromTimestamp": 1794224024519,
+    "kind": "direct",
+    "updatedAt": 1794224055535,
+    "sessionId": "382d54f4-b1f5-4ce5-95b3-4ecfa4a257a8",
+    "systemSent": false,
+    "abortedLastRun": false,
+    "thinkingLevels": [
+      {
+        "id": "off",
+        "label": "off"
+      },
+      {
+        "id": "minimal",
+        "label": "minimal"
+      },
+      {
+        "id": "low",
+        "label": "low"
+      },
+      {
+        "id": "medium",
+        "label": "medium"
+      },
+      {
+        "id": "high",
+        "label": "high"
+      }
+    ],
+    "thinkingOptions": [
+      "off",
+      "minimal",
+      "low",
+      "medium",
+      "high"
+    ],
+    "thinkingDefault": "medium",
+    "totalTokensFresh": false,
+    "parentSessionKey": "agent:main:session-1794223969509-journeyproject",
+    "modelProvider": "custom-sessionc",
+    "model": "mock-coder",
+    "agentRuntime": {
+      "id": "auto",
+      "source": "implicit"
+    },
+    "contextTokens": 128000,
+    "hasActiveRun": false
+  },
+  "handoff": {
+    "id": "8d8c1166-0fbf-4289-8891-76d98885d9cd",
+    "workspaceId": "journey-project",
+    "agentId": "main",
+    "sourceSessionKey": "agent:main:session-1794223969509-journeyproject",
+    "sourceGeneration": "f1a8832e-3b81-466a-b867-5af167379354",
+    "sessionKey": "agent:main:session-1794224068046-8d8c1166-0fb",
+    "sessionGeneration": "f91be301-c3bc-478c-ba94-4c8b90fe624c",
+    "draftInput": "UI-HANDOFF",
+    "draftDigest": "c3d39e46f90cfb36ff44149e78ec1a23d01556e67989a0efd6a40f06c43cd3f0",
+    "firstSendIdempotencyKey": "handoff-first:8d8c1166-0fbf-4289-8891-76d98885d9cd",
+    "phase": "sent",
+    "handoffDepth": 1,
+    "handoffRootSessionKey": "agent:main:session-1794223969509-journeyproject",
+    "rootHandoffId": "8d8c1166-0fbf-4289-8891-76d98885d9cd",
+    "createdAt": "2026-11-09T11:34:28.046Z",
+    "updatedAt": "2026-11-09T11:34:48.660Z",
+    "firstSendRequestDigest": "3778cceb47fef7cd83e8c9bbf36470797db991b886260e22b269c7bf62bc3936",
+    "error": null,
+    "receipt": {
+      "source": "transcript",
+      "run": {
+        "runId": "handoff-first:8d8c1166-0fbf-4289-8891-76d98885d9cd",
+        "scope": {
+          "workspaceId": "journey-project",
+          "projectId": "journey-project",
+          "sessionKey": "agent:main:session-1794224068046-8d8c1166-0fb"
+        }
+      }
+    }
+  },
+  "calls": [
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "sessions",
+      "action": "fork"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "linkSession"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask"
+    },
+    {
+      "module": "git",
+      "action": "status"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "sessionActivity",
+      "action": "snapshot"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "taskLedger",
+      "action": "appendEvents"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "linkSession"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask"
+    },
+    {
+      "module": "git",
+      "action": "status"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "sessionActivity",
+      "action": "snapshot"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "sessions",
+      "action": "prepareHandoff"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "taskLedger",
+      "action": "appendEvents"
+    },
+    {
+      "module": "taskLedger",
+      "action": "appendEvents"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "createHandoff"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "files",
+      "action": "writeText"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "linkSession"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask"
+    },
+    {
+      "module": "git",
+      "action": "status"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "sessionActivity",
+      "action": "snapshot"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "chat",
+      "action": "sendWithMedia"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "remoteTasks",
+      "action": "list"
+    },
+    {
+      "module": "agentBrowser",
+      "action": "tasks"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "inbox.operator.list"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "gateway",
+      "action": "status"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "taskLedger",
+      "action": "appendEvents"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "window",
+      "action": "notify"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask"
+    },
+    {
+      "module": "git",
+      "action": "status"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "efficiency",
+      "action": "getState"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "taskLedger",
+      "action": "appendEvents"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    }
+  ]
+}

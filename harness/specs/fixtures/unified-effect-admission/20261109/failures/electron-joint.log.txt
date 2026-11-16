@@ -1,0 +1,47 @@
+
+Running 1 test using 1 worker
+
+(node:25164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+  x  1 tests\e2e\unified-effect-admission.spec.ts:8:5 › actual task effects keep one checkout writer until the owning run ends (1.5m)
+
+
+  1) tests\e2e\unified-effect-admission.spec.ts:8:5 › actual task effects keep one checkout writer until the owning run ends 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"writer-a[39m
+    [32m"[39m
+    Received: [31mnull[39m
+
+    Call Log:
+    - Timeout 60000ms exceeded while waiting on the predicate
+
+      44 |     });
+      45 |     await send(project.sessionKey,'WRITER-A');
+    > 46 |     await expect.poll(()=>readFile(target,'utf8').catch(()=>null),{timeout:60_000}).toBe('writer-a\n');
+         |     ^
+      47 |     await expect.poll(()=>held,{timeout:30_000}).toBe(true);
+      48 |     const during=await writer();expect(during).toHaveLength(1);
+      49 |     expect(during[0].owner.task.taskNodeId).toBe(a.contract.taskNodeId);
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\unified-effect-admission.spec.ts:46:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\joint-validation\electron-joint-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\joint-validation\electron-joint-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\joint-validation\electron-joint-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\joint-validation\electron-joint-results\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\unified-effect-admission.spec.ts:8:5 › actual task effects keep one checkout writer until the owning run ends 

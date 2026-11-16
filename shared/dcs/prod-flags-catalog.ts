@@ -161,7 +161,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/agents/orchestrator-run-observed.ts:435',
+        'openclaw_runtime/src/agents/orchestrator-run-observed.ts:480',
       ],
     },
   },
@@ -175,7 +175,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     risk: 'request-only',
     enable:
       'Pass isolation: "worktree" on orchestrator request/plan (or worker) when multi-worker writes need isolation.',
-    rollback: 'Omit isolation or set "shared". Unknown values normalize to shared.',
+    rollback: 'Omit isolation or set "shared". Unsupported isolation values are rejected.',
     riskNote:
       'normalizeIsolationMode defaults shared; C4-H landed but production default stays shared until product approval.',
     executor: {
@@ -188,15 +188,15 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
   {
     id: 'symbol-lease',
     wave: 'C5',
-    kind: 'config',
+    kind: 'info',
     key: 'runtime.coding.symbolLease.enabled',
-    defaultDisplay: 'false',
+    defaultDisplay: 'retired',
     defaultValue: false,
-    risk: 'opt-in',
-    enable: 'runtime.coding.symbolLease.enabled=true; optional mode=memory|wal (default memory).',
-    rollback: 'enabled=false. Shared write path is unperturbed when off.',
+    risk: 'read-only',
+    enable: 'Retired by TF-0510; configuration and overrides cannot enable Symbol Lease.',
+    rollback: 'Keep retirement in place; ordinary writes use the existing journal and explicit worktree isolation.',
     riskNote:
-      'C5-H multi-process WAL hardened (opt-in mode=wal). Prefer mode=memory default; keep enabled=false until product approval.',
+      'The retained WAL benchmark is historical evidence. Current coding execution has no Symbol Lease consumer.',
     executor: {
       status: 'wired',
       sites: [
@@ -207,14 +207,14 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
   {
     id: 'symbol-lease-mode',
     wave: 'C5',
-    kind: 'config',
+    kind: 'info',
     key: 'runtime.coding.symbolLease.mode',
-    defaultDisplay: 'memory',
+    defaultDisplay: 'retired',
     defaultValue: 'memory',
-    risk: 'opt-in',
-    enable: 'runtime.coding.symbolLease.mode=wal only after multi-process WAL acceptance.',
-    rollback: 'mode=memory.',
-    riskNote: 'wal multi-process hardened (C5-H); still opt-in; default mode remains memory.',
+    risk: 'read-only',
+    enable: 'Retired with Symbol Lease; selecting a mode does not enable execution.',
+    rollback: 'Keep the retired Symbol Lease boundary.',
+    riskNote: 'The stored memory/WAL mode is inactive while Symbol Lease is retired.',
     executor: {
       status: 'wired',
       sites: [
@@ -225,15 +225,15 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
   {
     id: 'patch-flow',
     wave: 'C5',
-    kind: 'api',
+    kind: 'info',
     key: 'applyPatchProposalsSerial() / recommendIsolationMode()',
-    defaultDisplay: 'advisory + explicit execution opt-in (patchFlow.default=false)',
+    defaultDisplay: 'retired',
     defaultValue: false,
-    risk: 'api-only',
+    risk: 'read-only',
     enable:
-      'Pass patchFlowExecution=true with durationMinutes and overlapping worker writeSets through orchestrator.run or team_orchestrate. Workers emit fenced apply_patch proposals; deferred orchestration completion calls applyPatchProposalsSerial. Do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.',
-    rollback: 'Omit patchFlowExecution or set it false. The advisory remains display-only, workers keep their ordinary tool surface, and patchFlow.default stays false.',
-    riskNote: 'TF-0459 wires advisory visibility in every production orchestrator plan; TF-0460 adds the explicit execution opt-in and proposal-only worker boundary. Neither switches isolation automatically, and serial-apply failure is recorded without blocking verifier startup.',
+      'Retired by TF-0510; old requests, configuration, overrides and restored execution markers cannot start Patch Flow.',
+    rollback: 'Keep ordinary worker tools and the existing write journal; choose worktree isolation explicitly for concurrent writes.',
+    riskNote: 'Recorded historical apply outcomes remain intact. New execution uses ordinary coding and worktree candidate handling.',
     executor: {
       status: 'wired',
       sites: [
@@ -443,11 +443,11 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     defaultValue: false,
     risk: 'opt-in',
     enable:
-      'Set env OPENCLAW_RC03_SEAL=1 (or runtime.rc03.seal = true) and restart gateway/runtime. Enabling turns on RC-03 message-replacement sealing plus the correlated runtime/wire receipts; it does not change returned summaries.',
+      'Set env OPENCLAW_RC03_SEAL=1 (or runtime.rc03.seal = true) and restart gateway/runtime. Enabling turns on RC-03 producer admission, message-replacement sealing and correlated runtime/wire receipts. Unknown applied producers and post-seal system-prompt changes reject before the embedded provider function runs.',
     rollback:
       'Unset OPENCLAW_RC03_SEAL or set runtime.rc03.seal = false and restart. With the flag off no seal, runtime receipt, or wire receipt is written.',
     riskNote:
-      'Opt-in observation only. Before this entry existed, the "RC-03 is opt-in" intent had no referencable record, so a reviewer could not cite it as proven design intent (deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Keep default-off; do not flip it inside an implementation task.',
+      'Opt-in semantic admission; receipt persistence remains observational. Before this entry existed, the "RC-03 is opt-in" intent had no referencable record, so a reviewer could not cite it as proven design intent (deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Keep default-off; do not flip it inside an implementation task.',
     executor: {
       status: 'wired',
       sites: [

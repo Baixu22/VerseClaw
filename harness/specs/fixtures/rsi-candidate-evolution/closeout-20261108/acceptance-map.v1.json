@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "RsiEvolutionAcceptanceMap/v1",
+  "taskId": "TF-0856",
+  "driven_by": "agent",
+  "actor": "codex/rsi-artifact-verifier",
+  "sourceCandidate": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "criteria": [
+    {
+      "id": "split-isolation",
+      "passed": true,
+      "artifacts": [
+        "export.v1.json",
+        "events.v1.json",
+        "tests.json"
+      ],
+      "observed": "2 training / 24 validation controls / 24 sealed final identities; generator projections contain only parent and training"
+    },
+    {
+      "id": "two-generations",
+      "passed": true,
+      "artifacts": [
+        "export.v1.json",
+        "training-execution.v1.json"
+      ],
+      "observed": "two parent-linked prompts; original Node failures and repairs, versioned adoption and reservations retained"
+    },
+    {
+      "id": "frozen-selection",
+      "passed": true,
+      "artifacts": [
+        "export.v1.json",
+        "plan-binding-control.v2.json"
+      ],
+      "observed": "first qualifying generation selected for final measurement; negative eliminated, product adoption hold"
+    },
+    {
+      "id": "rollback-and-authority",
+      "passed": true,
+      "artifacts": [
+        "events.v1.json",
+        "tests.json",
+        "source-scope.json"
+      ],
+      "observed": "off/on/off hashes return to prior bytes; default-off, no-auto-writeback and strict opt-in regressions pass"
+    },
+    {
+      "id": "storage-and-replay",
+      "passed": true,
+      "artifacts": [
+        "integration.v1.json",
+        "integration-readback.json",
+        "source-review.json"
+      ],
+      "observed": "seven records on production SQLite; reopen and read-only export agree; failure/unknown/reservation cases verified by source-bound tests"
+    }
+  ],
+  "paidProviderCalls": 0,
+  "independentBenefitMeasurement": false,
+  "next": "TF-0857"
+}

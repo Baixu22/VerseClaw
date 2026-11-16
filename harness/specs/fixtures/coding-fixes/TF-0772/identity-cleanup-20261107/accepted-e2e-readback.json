@@ -1,0 +1,119 @@
+{
+  "candidate": "d60e5821f8a95c4d15a6620b05d1f8fcd1d7d35e",
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "e2e": {
+    "passed": 2,
+    "exitCode": 0,
+    "delayedCallMs": 6282,
+    "configEffects": [
+      {
+        "surface": "management",
+        "result": {
+          "success": true,
+          "serverId": "fixture",
+          "toolName": "echo",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "after-effect-management"
+              }
+            ],
+            "isError": false
+          }
+        },
+        "applied": "after-effect-management",
+        "thinkingDefault": "medium"
+      },
+      {
+        "surface": "tools.invoke",
+        "result": {
+          "ok": true,
+          "toolName": "fixture__echo",
+          "output": {
+            "content": [
+              {
+                "type": "text",
+                "text": "after-effect-invoke"
+              }
+            ],
+            "details": {
+              "mcpServer": "fixture",
+              "mcpTool": "echo"
+            }
+          },
+          "source": "mcp"
+        },
+        "applied": "after-effect-invoke",
+        "thinkingDefault": "high"
+      }
+    ],
+    "processes": [
+      {
+        "pid": 25064,
+        "creationTime": 1794055000826,
+        "status": "exited"
+      },
+      {
+        "pid": 28196,
+        "creationTime": 1794055007606,
+        "status": "exited"
+      },
+      {
+        "pid": 36244,
+        "creationTime": 1794055007909,
+        "status": "exited"
+      },
+      {
+        "pid": 21028,
+        "creationTime": 1794055070339,
+        "status": "exited"
+      },
+      {
+        "pid": 49488,
+        "creationTime": 1794055078280,
+        "status": "exited"
+      },
+      {
+        "pid": 30620,
+        "creationTime": 1794055078618,
+        "status": "exited"
+      }
+    ],
+    "endpointCleanup": [
+      {
+        "listening": false,
+        "sessions": 0,
+        "connections": 0
+      },
+      {
+        "listening": false,
+        "sessions": 0,
+        "connections": 0
+      },
+      {
+        "listening": false,
+        "sessions": 0,
+        "connections": 0
+      },
+      {
+        "listening": false,
+        "sessions": 0,
+        "connections": 0
+      }
+    ],
+    "sourceMutationGuard": true
+  },
+  "screenshots": {
+    "mcp-connected.png": {
+      "sha256": "ea4c6bf00f909bd550f1504db3c128978fd15e0bbb1e7ff43fb06cae5e696854",
+      "visuallyInspected": true
+    },
+    "mcp-error.png": {
+      "sha256": "870c781be4e40d76bf342da705ab01ce9de095d2d7443ea4e652e6b67c516134",
+      "visuallyInspected": true
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "source": "existing local runtime package dist outputs",
+  "packages": [
+    {
+      "files": 18,
+      "name": "acp-core"
+    },
+    {
+      "files": 32,
+      "name": "agent-core"
+    },
+    {
+      "files": 4,
+      "name": "gateway-client"
+    },
+    {
+      "files": 7,
+      "name": "gateway-protocol"
+    },
+    {
+      "files": 5,
+      "name": "llm-core"
+    },
+    {
+      "files": 3,
+      "name": "llm-runtime"
+    },
+    {
+      "files": 10,
+      "name": "markdown-core"
+    },
+    {
+      "files": 13,
+      "name": "media-core"
+    },
+    {
+      "files": 6,
+      "name": "media-generation-core"
+    },
+    {
+      "files": 11,
+      "name": "media-understanding-common"
+    },
+    {
+      "files": 8,
+      "name": "model-catalog-core"
+    },
+    {
+      "files": 5,
+      "name": "net-policy"
+    },
+    {
+      "files": 5,
+      "name": "normalization-core"
+    },
+    {
+      "files": 4,
+      "name": "speech-core"
+    },
+    {
+      "files": 20,
+      "name": "terminal-core"
+    },
+    {
+      "files": 2,
+      "name": "web-content-core"
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r3"
+}

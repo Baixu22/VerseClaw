@@ -101,6 +101,7 @@ async function renderSidebar(overrides?: {
     activeWorkspaceId: workspace.id,
     loading: false,
     error: null,
+    saveWorkspaceState: vi.fn().mockResolvedValue({ success: true }),
     ...(overrides?.moveSessionToFolder ? { moveSessionToFolder: overrides.moveSessionToFolder } : {}),
   } as never);
 

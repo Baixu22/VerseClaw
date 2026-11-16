@@ -43,6 +43,7 @@ export function MainLayout() {
   const sidebarCollapsed = useSettingsStore((s) => s.sidebarCollapsed);
   const setSidebarCollapsed = useSettingsStore((s) => s.setSidebarCollapsed);
   const autoCollapsedSidebar = useRef(false);
+  const lastSidebarDensity = useRef<'narrow' | 'other' | null>(null);
 
   useEffect(() => {
     void fetchWorkspaces();
@@ -57,12 +58,16 @@ export function MainLayout() {
       const width = stage.clientWidth || window.innerWidth;
       const isNarrow = width < SIDEBAR_AUTO_COLLAPSE_WIDTH;
       if (isNarrow) {
-        if (!sidebarCollapsed) {
+        if (!sidebarCollapsed && lastSidebarDensity.current !== 'narrow') {
           autoCollapsedSidebar.current = true;
           setSidebarCollapsed(true);
+        } else if (!sidebarCollapsed) {
+          autoCollapsedSidebar.current = false;
         }
+        lastSidebarDensity.current = 'narrow';
         return;
       }
+      lastSidebarDensity.current = 'other';
       if (width >= SIDEBAR_AUTO_EXPAND_WIDTH && autoCollapsedSidebar.current) {
         autoCollapsedSidebar.current = false;
         setSidebarCollapsed(false);

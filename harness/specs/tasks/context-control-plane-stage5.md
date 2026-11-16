@@ -91,6 +91,16 @@ docs:
 
 # Context Control Plane Stage 5
 
+## Production disposition: retire (TF-0744)
+
+The facade was never adopted by a production memory tool or a public production
+barrel. Its direct exports remain only for contract tests and the explicit
+Stage5 golden-run observer. This archived stage describes those historical
+observations; its compatibility-name claims do not describe current production
+registration. Runtime Memory persist remains retired, and no tool/default or
+product lock changes as part of this disposition. Current acceptance lives in
+`harness/specs/tasks/memory-facade-disposition.md`.
+
 Stage 5 is an adapter and packing convergence slice. It does not migrate the
 existing memory store or turn the experimental path on. The stage contract is
 the frontmatter acceptance table above. Owner decision D6/D7 makes L7 an

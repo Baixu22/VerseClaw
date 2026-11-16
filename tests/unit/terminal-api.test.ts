@@ -213,6 +213,39 @@ describe('terminal api workspace exec lease', () => {
     expect(childProcessMocks.spawn).not.toHaveBeenCalled();
   });
 
+  it('subtracts queue and fallback time from the same terminal deadline', async () => {
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const { resourceFabric } = await import('@electron/services/resource-fabric');
+    let now = 100_000;
+    const clock = vi.spyOn(Date, 'now').mockImplementation(() => now);
+    try {
+      const key = process.platform === 'win32' ? process.cwd().replace(/\\/g, '/').toLowerCase() : process.cwd();
+      const held = [await resourceFabric.acquire('workspaceExec', key), await resourceFabric.acquire('workspaceExec', key)];
+      const rpc = vi.fn().mockImplementationOnce(async () => {
+        now += 100;
+        throw new Error('unknown method');
+      }).mockResolvedValue({ success: true, exitCode: 0 });
+      const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+      const result = api.run({ command: 'pwd', timeoutMs: 1000 });
+      await vi.waitFor(() => expect(resourceFabric.getDiagnostics().accounts[`workspaceExec:${key}`].queued).toBe(1));
+      now += 400; held.forEach(lease => lease.release());
+      await expect(result).resolves.toMatchObject({ success: true });
+      expect(rpc.mock.calls.map(call => call[2])).toEqual([600, 500]);
+      expect(resourceFabric.getDiagnostics().accounts[`workspaceExec:${key}`]).toMatchObject({ active: 0, queued: 0 });
+    } finally { clock.mockRestore(); }
+  });
+
+  it('maps full waiting capacity to a blocked terminal result', async () => {
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const { resourceFabric } = await import('@electron/services/resource-fabric');
+    const key = process.platform === 'win32' ? process.cwd().replace(/\\/g, '/').toLowerCase() : process.cwd();
+    const held = [await resourceFabric.acquire('workspaceExec', key), await resourceFabric.acquire('workspaceExec', key)];
+    const queued = Array.from({ length: 64 }, () => resourceFabric.acquire('workspaceExec', key).then(lease => lease.release()));
+    const rpc = vi.fn(); const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+    await expect(api.run({ command: 'pwd' })).resolves.toMatchObject({ success: false, blocked: true, reason: 'Resource waiting queue is full' });
+    expect(rpc).not.toHaveBeenCalled(); held.forEach(lease => lease.release()); await Promise.all(queued);
+  });
+
   it('queues approved work too and records admission timeout without executing it later', async () => {
     const { createTerminalApi } = await import('@electron/services/terminal-api');
     const { createPermissionsApi } = await import('@electron/services/permissions-api');
@@ -269,6 +302,7 @@ describe('terminal api workspace exec lease', () => {
 });
 
 describe('terminal api OpenClaw exec integration', () => {
+  afterEach(() => vi.restoreAllMocks());
   beforeEach(async () => {
     setSandboxHighRiskPolicyLoader(async () => ({
       degraded: false,
@@ -286,6 +320,7 @@ describe('terminal api OpenClaw exec integration', () => {
   });
 
   it('delegates allowed terminal commands to OpenClaw/Gateway instead of spawning a local shell', async () => {
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(1000);
     const rpc = vi.fn().mockResolvedValue({ success: true, exitCode: 0, stdout: 'ok' });
     const { createTerminalApi } = await import('@electron/services/terminal-api');
     const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
@@ -302,9 +337,11 @@ describe('terminal api OpenClaw exec integration', () => {
       workdir: process.cwd(),
     }, 30_000);
     expect(childProcessMocks.spawn).not.toHaveBeenCalled();
+    clock.mockRestore();
   });
 
   it('tries compatible OpenClaw exec RPC names and never falls back to PowerShell', async () => {
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(1000);
     const rpc = vi.fn()
       .mockRejectedValueOnce(new Error('unknown method: terminal.run'))
       .mockRejectedValueOnce(new Error('unknown method: shell.run'))
@@ -321,6 +358,7 @@ describe('terminal api OpenClaw exec integration', () => {
     expect(rpc).toHaveBeenNthCalledWith(2, 'shell.run', expect.any(Object), 30_000);
     expect(rpc).toHaveBeenNthCalledWith(3, 'exec.run', expect.any(Object), 30_000);
     expect(childProcessMocks.spawn).not.toHaveBeenCalled();
+    clock.mockRestore();
   });
 
   it('returns an explicit unavailable result when OpenClaw exposes no direct terminal RPC', async () => {

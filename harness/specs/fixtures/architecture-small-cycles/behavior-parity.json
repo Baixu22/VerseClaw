@@ -1,0 +1,137 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "baseline": "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f",
+  "candidate": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+  "sandboxState": [
+    {
+      "function": "getSandboxStore",
+      "source": "electron/services/sandbox-api.ts",
+      "target": "electron/services/sandbox-state.ts",
+      "bodyTokensIdentical": true,
+      "sha256": "f3e91f0b7f8269d4c7aa1c11f90ba14dc8214b8d766a812d69fabfda124db11c"
+    },
+    {
+      "function": "readSandboxProfiles",
+      "source": "electron/services/sandbox-api.ts",
+      "target": "electron/services/sandbox-state.ts",
+      "bodyTokensIdentical": true,
+      "sha256": "c85345aa872e8995ba77acfd960e787dab9b3d35fc386712a13f2db3151e2efd"
+    },
+    {
+      "function": "readActiveSandboxProfile",
+      "source": "electron/services/sandbox-api.ts",
+      "target": "electron/services/sandbox-state.ts",
+      "bodyTokensIdentical": true,
+      "sha256": "0b36c6a7b76c2c6fb9ebd38006bb90e2bf76488023cb3a03e1d75fe6e51aa202"
+    },
+    {
+      "function": "resolveActiveSandboxPolicyForMode",
+      "source": "electron/services/sandbox-api.ts",
+      "target": "electron/services/sandbox-state.ts",
+      "bodyTokensIdentical": true,
+      "sha256": "4ce531eeffd40ea288c937b6b210130d0b09552b9dca2c36498be12d9e16b618"
+    }
+  ],
+  "syncFunctions": [
+    {
+      "function": "syncActiveWorkspacePermissionToRuntime",
+      "bodyTokensIdenticalAfterReaderRename": true,
+      "sha256": "48ebf4e2583c733b6c37bc210fc81d39b8b30723fbddd1c6790f08c72732ff8b"
+    },
+    {
+      "function": "syncActiveWorkspaceRootToRuntime",
+      "bodyTokensIdenticalAfterReaderRename": true,
+      "sha256": "5bbf1c20ad5db211e7595471ba7e3495e9c93398ec4aa63657e3434ba06f2296"
+    }
+  ],
+  "protectedFiles": [
+    {
+      "file": "shared/host-api/contract.ts",
+      "sha256": "8d5efcb61dac6b3cafd3003fe5148aa9b32839379382acfa8a43b5e696c962b1",
+      "unchanged": true
+    },
+    {
+      "file": "shared/types/workspace.ts",
+      "sha256": "f024191a56bc91f84a6434f0d99cd4dfcb0a3496a0d66ec44416bc05e26058f2",
+      "unchanged": true
+    },
+    {
+      "file": "shared/types/sandbox.ts",
+      "sha256": "84cfc7617aafac34ad12929a15a51f82bbcd0165b42f6741375c973d2989bedf",
+      "unchanged": true
+    },
+    {
+      "file": "docs/dev/default-config-matrix.md",
+      "sha256": "531f6b76d12cfa8681ba6fb2e2445a1947d487b70b5cc0af3f0f69c6c5df24ed",
+      "unchanged": true
+    },
+    {
+      "file": "electron/utils/workspace-runtime-permissions.ts",
+      "sha256": "d90351e8a0d62fe6568b25236dd46d0015cc48d3e0beeff1d7d90ed149a411a9",
+      "unchanged": true
+    },
+    {
+      "file": "electron/utils/sandbox-policy-resolver.ts",
+      "sha256": "3c6f35c6bc7da6bebbdc5e68922553586b5937d57da5bc5743fac2dfed9113e5",
+      "unchanged": true
+    },
+    {
+      "file": "electron/utils/sandbox-provider-detection.ts",
+      "sha256": "6ac983b6743e970f56934362f8351f3510c732c9dd549b55075d64096f76c774",
+      "unchanged": true
+    },
+    {
+      "file": "electron/services/permissions-api.ts",
+      "sha256": "df34ff23990dd5ccf6ee4c6920a8ce9f6074f549f409d83bdf31c92c1960869e",
+      "unchanged": true
+    },
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "sha256": "90c89d12b92cea3d6b9e67df94be4b7ec6e3403bed9a19504889866b6b8697f7",
+      "unchanged": true
+    },
+    {
+      "file": "README.md",
+      "sha256": "6166df7491aa770a1dca16780bc8be54bc6e6903d5d373f9b6a9965db4e6ebaa",
+      "unchanged": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "f8c79830c4b757528dae078a3eca01c551cafd9df8a37736967140cdcf5e8e6e",
+      "unchanged": true
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "3ca869db5193f9e214837d184aab01a966822ed121099010ea22af9cd9688262",
+      "unchanged": true
+    }
+  ],
+  "sourceHashes": [
+    {
+      "file": "electron/services/sandbox-api.ts",
+      "sha256": "602d7c962389ccd46ed9609fc453e6a1fcae851d3c1971250c6f5caffca6aea7"
+    },
+    {
+      "file": "electron/services/sandbox-state.ts",
+      "sha256": "b596d0225c93441854594450259083e25fb4184cc01467b3323818913a7ddac7"
+    },
+    {
+      "file": "electron/services/workspace-runtime-sync.ts",
+      "sha256": "3bc0a5088a387b4f64bbd82aec218d5ab9b1f442038841dbcef215e1ac8a7066"
+    },
+    {
+      "file": "electron/services/workspaces-api.ts",
+      "sha256": "c5507ec05332a9999c090189b14aec451c7b40749e483131b4625d4892570029"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+      "sha256": "09821bd49b52b8b0ad497db00483e5baced4bdb24fdb1e24d7ad3963eac0c9cd"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/tools/context-view-tool-surface.ts",
+      "sha256": "de4cc128d8b94094ce50df2b3dd4d6aa37a9ee6430331981071217456dd27fda"
+    }
+  ],
+  "limits": "Token equality checks preserve these function bodies and frozen inputs; behavior execution is separately proved by owner tests. No full-program equivalence claim."
+}

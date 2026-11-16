@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "RsiTf0592NegativeControls/v1",
+  "taskId": "TF-0592",
+  "driven_by": "agent",
+  "actor": "codex/rsi-tf0592-executor",
+  "controls": [
+    {
+      "id": "complete-floor-bypass",
+      "mutation": "complete-floor-bypass",
+      "expectedCode": "insufficient-evidence-bypass"
+    },
+    {
+      "id": "pass-metric-on-thin-sample",
+      "mutation": "pass-metric-on-thin-sample",
+      "expectedCode": "thin-sample-metric"
+    },
+    {
+      "id": "unknown-failure-class",
+      "mutation": "unknown-failure-class",
+      "expectedCode": "unknown-failure-class"
+    },
+    {
+      "id": "resource-fingerprint-missing",
+      "mutation": "resource-fingerprint-missing",
+      "expectedCode": "resource-fingerprint-missing"
+    },
+    {
+      "id": "dirty-candidate",
+      "mutation": "dirty-candidate",
+      "expectedCode": "dirty-candidate"
+    },
+    {
+      "id": "dropped-incomplete-trial",
+      "mutation": "dropped-incomplete-trial",
+      "expectedCode": "incomplete-trial-dropped"
+    },
+    {
+      "id": "paired-diff-without-pairs",
+      "mutation": "paired-diff-without-pairs",
+      "expectedCode": "paired-diff-without-pairs"
+    },
+    {
+      "id": "input-digest-tamper",
+      "mutation": "input-digest-tamper",
+      "expectedCode": "input-digest-mismatch"
+    },
+    {
+      "id": "source-digest-tamper",
+      "mutation": "source-digest-tamper",
+      "expectedCode": "source-digest-mismatch"
+    },
+    {
+      "id": "fabricated-trial-count",
+      "mutation": "fabricated-trial-count",
+      "expectedCode": "statistical-recomputation"
+    },
+    {
+      "id": "resource-envelope-tamper",
+      "mutation": "resource-envelope-tamper",
+      "expectedCode": "resource-envelope"
+    },
+    {
+      "id": "real-human-claim",
+      "mutation": "real-human-claim",
+      "expectedCode": "claim-boundary"
+    }
+  ]
+}

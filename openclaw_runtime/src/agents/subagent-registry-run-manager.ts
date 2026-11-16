@@ -144,6 +144,9 @@ export function markSubagentRunPausedAfterYield(params: {
 
 export type RegisterSubagentRunParams = {
   runId: string;
+  queuedDispatch?: SubagentRunRecord['queuedDispatch'];
+  /** Owner-created pre-dispatch row to replace after the gateway acknowledges. */
+  reservationRunId?: string;
   childSessionKey: string;
   controllerSessionKey?: string;
   requesterSessionKey: string;
@@ -230,6 +233,11 @@ export function createSubagentRunManager(params: {
   ) => {
     let completionForRetry: Parameters<typeof params.completeSubagentRun>[0] | undefined;
     const scheduleWaitRetry = (entry: SubagentRunRecord, reason: string, error?: string) => {
+      if (entry.execution?.status !== 'interrupted') {
+        entry.execution = { ...entry.execution, status: 'interrupted', interruptedAt: Date.now(),
+          interruptionReason: 'lost-execution-context' };
+        params.persist();
+      }
       params.scheduleOrphanRecovery({ delayMs: 1_000 });
       const scheduledEntry = entry;
       setTimeout(() => {
@@ -333,10 +341,7 @@ export function createSubagentRunManager(params: {
         await params.completeSubagentRun(completionForRetry);
       };
       if (waitStatus === "timeout") {
-        const isTerminalWaitTimeout =
-          typeof wait.endedAt === "number" ||
-          typeof wait.stopReason === "string" ||
-          typeof wait.livenessState === "string";
+        const isTerminalWaitTimeout = typeof wait.endedAt === "number" && Number.isFinite(wait.endedAt);
         const now = Date.now();
         if (observedStartedAt !== undefined && entry.startedAt !== observedStartedAt) {
           entry.startedAt = observedStartedAt;
@@ -345,9 +350,8 @@ export function createSubagentRunManager(params: {
           }
           params.persist();
         }
-        // A plain agent.wait timeout has no terminal snapshot. For explicit
-        // subagent run timeouts, the stored run deadline is the completion
-        // contract so parent sessions are woken instead of retrying forever.
+        // A deadline governs cancellation policy, not proof of execution exit.
+        // Plain wait timeouts keep capacity until a terminal owner receipt arrives.
         const hardRunTimeoutEndedAt = resolveHardRunTimeoutEndedAt(entry, now, observedStartedAt);
         const completion = params.resolveSubagentSessionCompletion({
           childSessionKey: entry.childSessionKey,
@@ -380,7 +384,7 @@ export function createSubagentRunManager(params: {
           await params.completeSubagentRun(completionForRetry);
           return;
         }
-        if (isTerminalWaitTimeout || hardRunTimeoutEndedAt !== undefined) {
+        if (isTerminalWaitTimeout) {
           let timeoutEndedAt =
             typeof wait.endedAt === "number" ? wait.endedAt : hardRunTimeoutEndedAt;
           const timeoutAfterDeadline = resolveCompletionAfterHardRunDeadline({
@@ -399,6 +403,10 @@ export function createSubagentRunManager(params: {
           entry,
           "subagent wait timed out; deferring terminal state until session reconciliation",
         );
+        return;
+      }
+      if (typeof wait.endedAt !== 'number' || !Number.isFinite(wait.endedAt)) {
+        scheduleWaitRetry(entry, 'subagent wait returned no terminal owner receipt', wait.error);
         return;
       }
       const completionAfterDeadline = resolveCompletionAfterHardRunDeadline({
@@ -652,14 +660,21 @@ export function createSubagentRunManager(params: {
     return true;
   };
 
-  const registerSubagentRun = (registerParams: RegisterSubagentRunParams) => {
+  const registerSubagentRun = (registerParams: RegisterSubagentRunParams, reserveOnly = false) => {
     const runId = registerParams.runId.trim();
     const childSessionKey = registerParams.childSessionKey.trim();
     const requesterSessionKey = registerParams.requesterSessionKey.trim();
     const controllerSessionKey = registerParams.controllerSessionKey?.trim() || requesterSessionKey;
     if (!runId || !childSessionKey || !requesterSessionKey) {
-      return;
+      throw new Error('subagent run identity is required');
     }
+    const reservationId = registerParams.reservationRunId ?? runId;
+    const previous = params.runs.get(reservationId);
+    if (reservationId !== runId && params.runs.has(runId)) throw new Error('subagent run identity conflict');
+    if (previous && (reserveOnly || previous.childSessionKey !== childSessionKey)) {
+      throw new Error('subagent reservation identity conflict');
+    }
+    if (registerParams.reservationRunId && !previous) throw new Error('subagent reservation missing');
     const now = Date.now();
     const cfg = params.getRuntimeConfig();
     const archiveAfterMs = resolveArchiveAfterMs(cfg);
@@ -673,12 +688,28 @@ export function createSubagentRunManager(params: {
     const runTimeoutSeconds = registerParams.runTimeoutSeconds ?? 0;
     const waitTimeoutMs = params.resolveSubagentWaitTimeoutMs(cfg, runTimeoutSeconds);
     const requesterOrigin = normalizeDeliveryContext(registerParams.requesterOrigin);
+    const taskOrigin = currentSessionTaskRequesterReference();
+    const matchingTaskOrigin =
+      taskOrigin?.coordinator.sessionKey === requesterSessionKey &&
+      (!registerParams.requesterSessionId ||
+        taskOrigin.coordinator.sessionGeneration === registerParams.requesterSessionId)
+        ? taskOrigin
+        : undefined;
     const entry: SubagentRunRecord = normalizeSubagentRunState({
       runId,
       childSessionKey,
       controllerSessionKey,
       requesterSessionKey,
-      requesterSessionId: registerParams.requesterSessionId,
+      requesterSessionId:
+        registerParams.requesterSessionId ?? matchingTaskOrigin?.coordinator.sessionGeneration,
+      ...(matchingTaskOrigin
+        ? {
+            requesterTaskReference: {
+              taskRef: matchingTaskOrigin.taskRef,
+              coordinator: { ...matchingTaskOrigin.coordinator },
+            },
+          }
+        : {}),
       requesterOrigin,
       requesterDisplayKey: registerParams.requesterDisplayKey,
       task: registerParams.task,
@@ -691,19 +722,28 @@ export function createSubagentRunManager(params: {
       agentDir: registerParams.agentDir,
       workspaceDir: registerParams.workspaceDir,
       runTimeoutSeconds,
-      createdAt: now,
-      startedAt: now,
+      createdAt: previous?.createdAt ?? now,
+      startedAt: reserveOnly ? undefined : previous?.startedAt ?? now,
       execution: {
-        status: "running",
-        startedAt: now,
+        status: reserveOnly ? registerParams.queuedDispatch ? "queued" : "pending" : "running",
+        ...(reserveOnly ? {} : { startedAt: previous?.startedAt ?? now }),
       },
+      ...(reserveOnly && !registerParams.queuedDispatch ? { dispatchPending: true as const } : {}),
+      ...(registerParams.queuedDispatch ? { queuedDispatch: structuredClone(registerParams.queuedDispatch) } : {}),
+      // A fast child can finish before the acceptance reply. Confirming its
+      // reservation must never resurrect an already-terminal execution.
+      ...(previous && typeof previous.endedAt === 'number' ? {
+        endedAt: previous.endedAt, endedReason: previous.endedReason,
+        outcome: previous.outcome, execution: { ...previous.execution, status: 'terminal' as const,
+          endedAt: previous.endedAt, outcome: previous.outcome },
+      } : {}),
       completion: {
         required: registerParams.expectsCompletionMessage === true,
       },
       delivery: {
         status: registerParams.expectsCompletionMessage === false ? "not_required" : "pending",
       },
-      sessionStartedAt: now,
+      sessionStartedAt: reserveOnly ? undefined : previous?.sessionStartedAt ?? now,
       accumulatedRuntimeMs: 0,
       archiveAtMs,
       cleanupHandled: false,
@@ -714,12 +754,19 @@ export function createSubagentRunManager(params: {
       attachmentsRootDir: registerParams.attachmentsRootDir,
       retainAttachmentsOnKeep: registerParams.retainAttachmentsOnKeep,
     });
+    if (reservationId !== runId) params.runs.delete(reservationId);
     params.runs.set(runId, entry);
     try {
       params.persistOrThrow();
     } catch (error) {
       params.runs.delete(runId);
+      if (previous) params.runs.set(reservationId, previous);
       throw error;
+    }
+    if (reserveOnly) {
+      params.ensureListener();
+      params.startSweeper();
+      return;
     }
     try {
       const task = createRunningTaskRun({
@@ -822,6 +869,9 @@ export function createSubagentRunManager(params: {
         },
       );
       entry.endedReason = SUBAGENT_ENDED_REASON_KILLED;
+      entry.execution = { ...entry.execution, status: 'terminal', endedAt: now, outcome: entry.outcome };
+      delete entry.dispatchPending;
+      delete entry.queuedDispatch;
       entry.cleanupHandled = true;
       entry.cleanupCompletedAt = now;
       entry.suppressAnnounceReason = "killed";
@@ -884,6 +934,7 @@ export function createSubagentRunManager(params: {
   };
 
   return {
+    reserveSubagentRun: (registerParams: RegisterSubagentRunParams) => registerSubagentRun(registerParams, true),
     clearSubagentRunSteerRestart,
     markSubagentRunForSteerRestart,
     markSubagentRunTerminated,
@@ -893,3 +944,4 @@ export function createSubagentRunManager(params: {
     waitForSubagentCompletion,
   };
 }
+import { currentSessionTaskRequesterReference } from "./session-task-scope.js";

@@ -1,0 +1,102 @@
+{
+  "schema": "GatewayStartupCleanup/v1",
+  "driven_by": "agent",
+  "actor": "codex-gateway-startup-cleanup",
+  "recordedAt": "2026-11-06T01:56:42.774Z",
+  "scope": "Gateway startup task only, as explicitly confirmed by the owner on 2026-11-06.",
+  "sourceCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a",
+  "nodeGate": {
+    "checkedBeforeDeletion": true,
+    "task": "TF-0805",
+    "status": "done",
+    "progress": 100,
+    "unfinishedChildrenOrDependencies": [],
+    "graphHash": "a4f9dbe72999eb67374b8c3bf4354a9664f1ce04a345b58fb373d04d9f45ea3c",
+    "origin": "TF-0416 is a derived_from reference, not a blocking prerequisite; its status was separately read as done."
+  },
+  "cleanup": {
+    "removedTargets": 56,
+    "alreadyAbsentTargets": 1,
+    "remainingTargets": [],
+    "removedRegularFiles": 200793,
+    "removedDirectoryLinks": 6265,
+    "logicalBytesRemoved": 3411621240,
+    "logicalSizeNote": "Logical file sizes are not exclusive physical allocation; dependency hardlinks share data with the package store. No exact reclaimed-space claim is made.",
+    "verificationRepositoriesRemoved": 1,
+    "verificationRepository": "D:/ClawX/.tmp/gateway-startup-verify-20261105",
+    "registeredGatewayWorktrees": 0,
+    "processesFoundBefore": 0,
+    "processesRemainingAfter": 0,
+    "processesTerminated": 0
+  },
+  "preservation": {
+    "unrelatedDirtyFilesChecked": 55,
+    "unrelatedDirtyFilesChanged": [],
+    "sharedTargets": [
+      {
+        "path": "electron/gateway/ws-client.ts",
+        "matched": true
+      },
+      {
+        "path": "openclaw_runtime/src/plugins/doctor-contract-registry.ts",
+        "matched": true
+      },
+      {
+        "path": "node_modules/electron/dist/electron.exe",
+        "matched": true
+      },
+      {
+        "path": "openclaw_runtime/dist/entry.js",
+        "matched": true
+      }
+    ],
+    "registeredWorktreesPreserved": 16,
+    "missingRegisteredWorktrees": [],
+    "candidateRef": "codex/gateway-startup-candidate-20261105",
+    "candidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+    "duplicateStagedEvidenceFiles": 17,
+    "stagedEvidenceMatchesMain": true,
+    "trackedAcceptanceFilesVerified": 16,
+    "gatewaySourceFilesVerified": 10,
+    "originalArchive": {
+      "path": ".audit/gateway-startup-performance/20261105/raw-5c91a6f2.zip",
+      "sha256": "34d647bfd566087dfb3e5fb928470363244627fcaac87360531771bd1d9a4787",
+      "files": 317,
+      "unchanged": true
+    },
+    "supplementaryArchive": {
+      "path": ".audit/gateway-startup-performance/20261106/cleanup/supplementary-logs.zip",
+      "sha256": "286b8c30d1849f68b3acd475de509a318b8598b1be1f0a9eef4ab4ddc8757663",
+      "files": 548,
+      "bytes": 2193128,
+      "verified": true
+    }
+  },
+  "recovery": {
+    "source": "Recreate an isolated checkout from codex/gateway-startup-candidate-20261105, install pinned dependencies, and rebuild. The removed verification directory was a disposable independent clone, not a registered Git worktree.",
+    "evidence": "Tracked 20261105 evidence remains at its original paths; verify SHA256SUMS. Private archives have per-file manifests. Their recorded run paths are historical and are no longer live workspaces.",
+    "localAudit": ".audit/gateway-startup-performance/20261106/cleanup/"
+  },
+  "verification": {
+    "completion": "Read current canonical graph through the CLI lock before cleanup.",
+    "cleanup": "Every approved absolute path was checked; links were unlinked without recursion before removing their parent directories. All 57 targets are absent.",
+    "source": "55 unrelated tracked dirty files match their pre-cleanup SHA-256 values; shared executable/runtime hashes and the index were unchanged before staging this record.",
+    "performance": "No new startup benchmarks or product tests were run; product code and accepted evidence are unchanged.",
+    "repositoryArtifactsCheck": {
+      "command": "node scripts/check-repository-artifacts.mjs",
+      "exitCode": 1,
+      "existingIssueCount": 8,
+      "issues": [
+        "Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stderr-1.log",
+        "Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stdout-1.log",
+        "Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stderr-1.log",
+        "Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stdout-1.log",
+        "Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stderr-1.log",
+        "Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stdout-1.log",
+        "Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stderr-1.log",
+        "Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stdout-1.log"
+      ],
+      "attribution": "These eight RSI log paths already exist in HEAD; .gitignore matches HEAD. This cleanup did not touch them."
+    }
+  }
+}

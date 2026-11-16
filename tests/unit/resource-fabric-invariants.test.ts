@@ -72,6 +72,8 @@ describe('ResourceFabric invariants', () => {
     resetResourceEnvelopeLedgerForTest();
     const fabric = new ResourceFabric();
     fabric.observeLatency('workspaceExec', 'ledger-ws', 200, 0);
+    fabric.observeLatency('workspaceExec', 'ledger-ws', 5, 1);
+    fabric.observeLatency('workspaceExec', 'ledger-ws', 5, 1);
     const event = fabric.observeLatency('workspaceExec', 'ledger-ws', 5, 1);
     expect(event).toMatchObject({ from: 2, to: 3 });
     const entry = getResourceEnvelopeLedger().get('main:terminal-exec:ledger-ws');

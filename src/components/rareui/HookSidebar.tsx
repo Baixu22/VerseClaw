@@ -36,6 +36,8 @@ function hookPath(hook: HookGeometry | null, stub: number): string {
  * of that header: the line drops from under the header's leading icon and turns
  * into the row, so the current session reads as a branch of its project. Rows
  * without a scope keep the original rail down the list's left edge.
+ * Groups with their own relationship connectors opt out with `data-hook-static`;
+ * their enclosing project also avoids a rail crossing those controls.
  */
 export function HookSidebar({ children, activeKey, className }: {
   children: ReactNode;
@@ -56,10 +58,11 @@ export function HookSidebar({ children, activeKey, className }: {
       ?? visibleRows.find((row) => row.dataset.hookSelected === 'true');
     const hovered = visibleRows.find((row) => row.dataset.hookKey === hoverKey.current);
     const geometry = (row?: HTMLElement): HookGeometry | null => {
-      if (!row) return null;
+      if (!row || row.closest('[data-hook-static]')) return null;
       const rect = row.getBoundingClientRect();
       const y = rect.top - box.top + row.offsetHeight / 2;
       const scope = row.closest<HTMLElement>('[data-hook-scope]');
+      if (scope?.querySelector('[data-hook-static]')) return null;
       const origin = scope && container.contains(scope)
         ? scope.querySelector<HTMLElement>('[data-hook-origin]')
         : null;
@@ -84,7 +87,7 @@ export function HookSidebar({ children, activeKey, className }: {
     const resize = new ResizeObserver(measure);
     resize.observe(container);
     const mutation = new MutationObserver(measure);
-    mutation.observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-hook-key', 'data-hook-selected', 'aria-hidden'] });
+    mutation.observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-hook-key', 'data-hook-selected', 'data-hook-static', 'aria-hidden'] });
     return () => { resize.disconnect(); mutation.disconnect(); };
   }, [measure]);
 

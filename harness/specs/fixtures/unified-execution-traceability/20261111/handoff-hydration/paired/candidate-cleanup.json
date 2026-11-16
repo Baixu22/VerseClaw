@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "driven_by": "agent",
+  "actor": "u6-paired-runner",
+  "run_id": "u6-paired-hydration-20261110",
+  "side": "candidate",
+  "checked_at": "2026-11-10T15:47:21.703Z",
+  "run_dir": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run",
+  "actual_run_root": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\verse-claw-e2e-run-ezSra0",
+  "passed": true,
+  "error": null,
+  "owner_receipt": {
+    "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\electron-process-cleanup.json",
+    "sha256": "5d1dae2d7db7277ea71dbaf59e58f5013bd8680d81b62aa0f243109f49f6d2db",
+    "status": "passed"
+  },
+  "launch_markers": [],
+  "retained_profile_dirs": [],
+  "process_query": {
+    "status": "ok",
+    "processes": [],
+    "checks": [
+      {
+        "pid": 34896,
+        "creationTime": 1794325217528,
+        "status": "exited"
+      },
+      {
+        "pid": 21208,
+        "creationTime": 1794325234224,
+        "status": "exited"
+      },
+      {
+        "pid": 31040,
+        "creationTime": 1794325234876,
+        "status": "exited"
+      },
+      {
+        "pid": 20260,
+        "creationTime": 1794325286659,
+        "status": "exited"
+      },
+      {
+        "pid": 47116,
+        "creationTime": 1794325300009,
+        "status": "exited"
+      },
+      {
+        "pid": 23248,
+        "creationTime": 1794325300359,
+        "status": "exited"
+      },
+      {
+        "pid": 50328,
+        "creationTime": 1794325369647,
+        "status": "exited"
+      },
+      {
+        "pid": 33280,
+        "creationTime": 1794325382570,
+        "status": "exited"
+      },
+      {
+        "pid": 9476,
+        "creationTime": 1794325382885,
+        "status": "exited"
+      },
+      {
+        "pid": 47656,
+        "creationTime": 1794325456763,
+        "status": "exited"
+      },
+      {
+        "pid": 4768,
+        "creationTime": 1794325461308,
+        "status": "exited"
+      },
+      {
+        "pid": 33740,
+        "creationTime": 1794325471009,
+        "status": "exited"
+      },
+      {
+        "pid": 21512,
+        "creationTime": 1794325473534,
+        "status": "exited"
+      },
+      {
+        "pid": 29140,
+        "creationTime": 1794325496755,
+        "status": "exited"
+      },
+      {
+        "pid": 14480,
+        "creationTime": 1794325501006,
+        "status": "exited"
+      },
+      {
+        "pid": 35636,
+        "creationTime": 1794325501259,
+        "status": "exited"
+      },
+      {
+        "pid": 29640,
+        "creationTime": 1794325548399,
+        "status": "exited"
+      },
+      {
+        "pid": 49444,
+        "creationTime": 1794325552537,
+        "status": "exited"
+      },
+      {
+        "pid": 1960,
+        "creationTime": 1794325552790,
+        "status": "exited"
+      },
+      {
+        "pid": 19484,
+        "creationTime": 1794325580947,
+        "status": "exited"
+      },
+      {
+        "pid": 29804,
+        "creationTime": 1794325584830,
+        "status": "exited"
+      },
+      {
+        "pid": 28436,
+        "creationTime": 1794325585095,
+        "status": "exited"
+      }
+    ],
+    "error": null
+  }
+}

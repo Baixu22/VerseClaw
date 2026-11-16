@@ -3,7 +3,7 @@ import type { ChatKnowledgeReference } from '../host-api/contract';
 import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '../types/workspace';
 import type { AgentReasoningEffort, RuntimeIntensityPreference } from '../types/agent';
 import type { TaskLedgerSnapshot } from '../types/task-ledger';
-import type { SessionArchiveEntry } from '../types/workspace';
+import type { SessionArchiveEntry, SessionPendingMutation } from '../types/workspace';
 
 /** Metadata for locally-attached files (not from Gateway) */
 export interface AttachedFileMeta {
@@ -46,6 +46,8 @@ export interface RawMessage {
   content: unknown; // string | ContentBlock[]
   timestamp?: number;
   id?: string;
+  /** Transcript-owner entry identity, distinct from provider or optimistic IDs. */
+  __openclaw?: { id?: string; seq?: number; [key: string]: unknown };
   toolCallId?: string;
   toolName?: string;
   details?: unknown;
@@ -139,6 +141,8 @@ export interface ContentBlock {
 /** Session from sessions.list */
 export interface ChatSession {
   key: string;
+  /** Physical generation returned by the runtime session owner. */
+  sessionId?: string;
   label?: string;
   displayName?: string;
   derivedTitle?: string;
@@ -152,6 +156,7 @@ export interface ChatSession {
   status?: string;
   hasActiveRun?: boolean;
   parentSessionKey?: string;
+  spawnedBy?: string;
   forkedFromParent?: boolean;
   /** #180: parent transcript entry id the child was branched at. */
   forkedFromLeafId?: string;
@@ -192,6 +197,11 @@ export type ChatResendUserMessageInput = {
  * the prior 8-positional-arg signature; callers pass only the fields they need.
  */
 export type SendOptions = {
+  workspaceId?: string | null;
+  targetSessionKey?: string;
+  expectedSessionGeneration?: string;
+  idempotencyKey?: string;
+  handoffOperationId?: string;
   attachments?: Array<{
     fileName: string;
     mimeType: string;
@@ -206,11 +216,13 @@ export type SendOptions = {
   knowledgeReferences?: ChatKnowledgeReference[];
   activeTaskNodeId?: string | null;
   /**
-   * Turn-scoped model override (Area 2 §3.2). When set, this single send runs
-   * on the named model. Cleared after send (composer-local state). Never
-   * persisted to Agent.modelRef.
+   * Model used by this send. The composer also saves it to the conversation
+   * when persistModelSelection is set; other callers can override one send.
+   * Never persisted to Agent.modelRef.
    */
   modelRefOverride?: string | null;
+  /** Save the composer's visible choice before sending, including an inherited new-chat choice. */
+  persistModelSelection?: boolean;
   /** Per-send reasoning effort; overrides the agent default for this turn only. */
   reasoningEffort?: AgentReasoningEffort;
   /** Per-send linked runtime intensity; when omitted the runtime derives it from reasoning effort. */
@@ -271,6 +283,8 @@ export interface ChatState {
   // Sessions
   sessions: ChatSession[];
   currentSessionKey: string;
+  /** Renderer visit identity, including same-key view resets. */
+  viewRevision?: number;
   currentAgentId: string;
   /** First user message text per session key, used as display label */
   sessionLabels: Record<string, string>;
@@ -278,6 +292,7 @@ export interface ChatState {
   sessionLastActivity: Record<string, number>;
   /** Archived sessions (recycle bin) loaded from Main-process archive index */
   archivedSessions: SessionArchiveEntry[];
+  pendingSessionMutations: SessionPendingMutation[];
   /** True while `loadArchivedSessions` is in flight */
   archivedSessionsLoading: boolean;
 
@@ -291,7 +306,7 @@ export interface ChatState {
 
   // Actions
   hydrateStartup: () => Promise<void>;
-  loadSessions: () => Promise<void>;
+  loadSessions: (options?: { force?: boolean }) => Promise<void>;
   switchSession: (key: string) => void;
   resetSessionView: (key?: string, options?: { deferSessionEntry?: boolean }) => void;
   clearSessionView: () => void;
@@ -318,7 +333,7 @@ export interface ChatState {
    * run-finalization paths that clear `sending`.
    */
   drainPendingMessages: () => void;
-  abortRun: () => Promise<void>;
+  abortRun: () => Promise<boolean>;
   handleChatEvent: (event: Record<string, unknown>) => void;
   handleRuntimeEvent: (event: ChatRuntimeEvent) => void;
   refresh: () => Promise<void>;

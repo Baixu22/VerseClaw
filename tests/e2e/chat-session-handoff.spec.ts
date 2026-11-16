@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getAgentDevHostCalls, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
+const SESSION_GENERATION_UNAVAILABLE_REASON = 'The session identity is unavailable. Refresh before continuing.';
 const HANDOFF_DRAFT = [
   '# Handoff: continue this Verse Claw conversation',
   '',
@@ -89,7 +90,7 @@ function baseHostApiMocks() {
         ok: true,
         json: {
           success: true,
-          result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+          result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
         },
       },
     },
@@ -224,11 +225,75 @@ function baseHostApiMocks() {
 }
 
 test.describe('Verse Claw chat session handoff', () => {
+  test('keeps a sidebar handoff intent until a cold session generation hydrates', async ({ launchElectronApp }, testInfo) => {
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpcByMethod: {
+          'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+        },
+        gatewayRpc: {
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: { success: true, result: { messages: handoffHistory } },
+        },
+        hostApi: {
+          ...baseHostApiMocks(),
+          [stableStringify(['sessions', 'history', null])]: { messages: handoffHistory, hasMore: false },
+        },
+      });
+
+      const page = await getStableWindow(app);
+      await page.reload();
+      await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
+
+      await page.getByTestId('chat-toolbar-more').click();
+      const headerHandoff = page.getByTestId('chat-session-handoff');
+      await expect(headerHandoff).toBeDisabled();
+      await expect(headerHandoff).toHaveAttribute('title', SESSION_GENERATION_UNAVAILABLE_REASON);
+      await page.keyboard.press('Escape');
+
+      await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-more').click();
+      const composerHandoff = page.getByTestId('chat-composer-action-handoff');
+      await composerHandoff.scrollIntoViewIfNeeded();
+      await expect(composerHandoff).toBeVisible();
+      await expect(composerHandoff).toBeDisabled();
+      await expect(composerHandoff).toHaveAttribute('title', SESSION_GENERATION_UNAVAILABLE_REASON);
+      await expect(composerHandoff).toContainText(SESSION_GENERATION_UNAVAILABLE_REASON);
+      await page.screenshot({ path: testInfo.outputPath('handoff-generation-pending.png') });
+      await page.getByTestId('chat-composer-actions').click();
+
+      await page.getByTestId(`sidebar-session-${MAIN_SESSION_KEY}`).click({ button: 'right' });
+      await page.getByTestId('sidebar-session-context-handoff').click();
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCount(0);
+      expect((await getAgentDevHostCalls(page)).filter((value) => {
+        const call = value as { module?: string; action?: string };
+        return call.module === 'sessions' && call.action === 'prepareHandoff';
+      })).toHaveLength(0);
+
+      await page.waitForTimeout(1_300);
+      await installIpcMocks(app, { gatewayRpcByMethod: {
+        'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
+      } });
+      await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('chat-toolbar-refresh').click();
+      await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-draft')).toHaveValue(HANDOFF_DRAFT);
+      await page.screenshot({ path: testInfo.outputPath('handoff-generation-ready.png') });
+      await expect.poll(async () => (await getAgentDevHostCalls(page)).filter((value) => {
+        const call = value as { module?: string; action?: string; payload?: { sessionKey?: string } };
+        return call.module === 'sessions' && call.action === 'prepareHandoff' && call.payload?.sessionKey === MAIN_SESSION_KEY;
+      }).length).toBe(1);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
   test('keeps the current handoff draft when an old conversation responds late', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
     const otherKey = 'agent:main:session-isolation-b';
     const isolationWorkspace = { ...activeWorkspace, sessionStates: { [MAIN_SESSION_KEY]: {}, [otherKey]: {} } };
-    const sessions = [{ key: MAIN_SESSION_KEY, displayName: 'Conversation A', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }, { key: otherKey, displayName: 'Conversation B', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }];
+    const sessions = [{ key: MAIN_SESSION_KEY, sessionId: 'conversation-a-generation', displayName: 'Conversation A', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }, { key: otherKey, sessionId: 'conversation-b-generation', displayName: 'Conversation B', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }];
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
@@ -246,12 +311,24 @@ test.describe('Verse Claw chat session handoff', () => {
           [stableStringify(['/api/chat/sessions', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, result: { sessions } } } },
         },
       });
-      await app.evaluate(({ ipcMain }, sourceKey) => {
+      await app.evaluate(({ ipcMain }, { sourceKey, workspace }) => {
         const original = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers.get('host:invoke');
         const state = { requested: false, release: () => {} };
         (globalThis as typeof globalThis & { __handoffIsolation?: typeof state }).__handoffIsolation = state;
         ipcMain.removeHandler('host:invoke');
-        ipcMain.handle('host:invoke', async (event, request: { id?: string; module?: string; action?: string; payload?: { sessionKey?: string } }) => {
+        ipcMain.handle('host:invoke', async (event, request: { id?: string; module?: string; action?: string;
+          payload?: { sessionKey?: string; activeSessionKey?: string; state?: Record<string, unknown> } }) => {
+          if (request.module === 'workspaces' && request.action === 'saveState') {
+            const key = request.payload?.sessionKey ?? request.payload?.activeSessionKey ?? workspace.activeSessionKey;
+            const sessionStates = workspace.sessionStates as Record<string, Record<string, unknown>>;
+            sessionStates[key] = { ...sessionStates[key], ...request.payload?.state };
+            if (request.payload?.activeSessionKey) workspace.activeSessionKey = request.payload.activeSessionKey;
+            return { id: request.id, ok: true, data: { success: true } };
+          }
+          if (request.module === 'workspaces' && ['list', 'getActive'].includes(request.action ?? '')) {
+            return { id: request.id, ok: true, data: { success: true, profiles: [workspace],
+              activeWorkspaceId: workspace.id, activeWorkspace: workspace } };
+          }
           if (request.module === 'sessions' && request.action === 'prepareHandoff') {
             const old = request.payload?.sessionKey === sourceKey;
             if (old) {
@@ -262,17 +339,17 @@ test.describe('Verse Claw chat session handoff', () => {
           }
           return original?.(event, request);
         });
-      }, MAIN_SESSION_KEY);
+      }, { sourceKey: MAIN_SESSION_KEY, workspace: isolationWorkspace });
       const page = await getStableWindow(app);
       await page.reload();
       await expect(page.getByTestId('chat-composer-input')).toBeVisible();
       await page.screenshot({ path: testInfo.outputPath('handoff-isolation-ready.png') });
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await page.getByTestId('chat-session-handoff').click();
       await expect.poll(() => app.evaluate(() => (globalThis as typeof globalThis & { __handoffIsolation?: { requested: boolean } }).__handoffIsolation?.requested)).toBe(true);
       await page.getByTestId(`sidebar-session-${otherKey}`).click();
       await expect(page.getByTestId(`sidebar-session-${otherKey}`).locator('xpath=ancestor::div[contains(@class, "sidebar-row")][1]')).toHaveClass(/\bselected\b/);
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await expect(page.getByTestId('chat-session-handoff')).toBeEnabled();
       await page.getByTestId('chat-session-handoff').click();
       await expect(page.getByTestId('chat-handoff-draft')).toHaveValue('Current draft from B');
@@ -288,7 +365,7 @@ test.describe('Verse Claw chat session handoff', () => {
     }
   });
 
-  test('previews, edits, and creates a new session with the draft prefilled without auto-send', async ({ launchElectronApp }) => {
+  test('previews, edits, creates and sends the reviewed handoff with a recoverable child draft', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -297,7 +374,7 @@ test.describe('Verse Claw chat session handoff', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -311,7 +388,7 @@ test.describe('Verse Claw chat session handoff', () => {
         const originalHostInvoke = (ipcMain as unknown as {
           _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
         })._invokeHandlers?.get('host:invoke');
-        const calls = { chatSend: 0, createHandoff: [] as unknown[], taskLedgerLink: [] as unknown[], workspaceUpdate: [] as unknown[], draftInput: '' };
+        const calls = { chatSend: 0, createHandoff: [] as unknown[], taskLedgerLink: [] as unknown[], workspaceUpdate: [] as unknown[], draftInput: '', operationId: '', activated: false };
         const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
         const buildWorkspace = (draftInput: string) => {
           const sessionKey = 'agent:main:session-1711111111111-4fzyo8';
@@ -321,8 +398,8 @@ test.describe('Verse Claw chat session handoff', () => {
             rootPath: 'C:/workspace-a',
             agentId: 'main',
             selectedAgentId: 'main',
-            activeSessionKey: sessionKey,
-            agentBindings: { main: { workspaceId: 'workspace-a', agentId: 'main', sessionKey } },
+            activeSessionKey: calls.activated ? sessionKey : 'agent:main:main',
+            agentBindings: { main: { workspaceId: 'workspace-a', agentId: 'main', sessionKey: calls.activated ? sessionKey : 'agent:main:main' } },
             permissionMode: 'acceptEdits',
             createdAt: 1,
             updatedAt: 1,
@@ -344,9 +421,22 @@ test.describe('Verse Claw chat session handoff', () => {
           if (request.module === 'sessions' && request.action === 'createHandoff') {
             calls.createHandoff.push(request.payload);
             calls.draftInput = String(request.payload?.draftInput ?? '');
+            calls.operationId = String(request.payload?.operationId ?? '');
             const sessionKey = 'agent:main:session-1711111111111-4fzyo8';
             calls.workspaceUpdate.push({ id: 'workspace-a', activeSessionKey: sessionKey, sessionKey, state: { activeTopicId: null, draftInput: calls.draftInput } });
             return respond(request.id, { success: true, sessionKey, handoffDepth: 1 });
+          }
+          if (request.module === 'workspaces' && request.action === 'saveState') {
+            if (request.payload?.activeSessionKey === 'agent:main:session-1711111111111-4fzyo8') calls.activated = true;
+            return respond(request.id, { success: true });
+          }
+          if (request.module === 'sessions' && request.action === 'handoffOperation' && calls.operationId) {
+            return respond(request.id, { success: true, operation: { id: calls.operationId,
+              sessionKey: 'agent:main:session-1711111111111-4fzyo8', phase: calls.chatSend ? 'accepted' : 'created' } });
+          }
+          if (request.module === 'gateway' && request.action === 'rpc' && request.payload?.method === 'sessions.list' && calls.draftInput) {
+            return respond(request.id, { sessions: [{ key: 'agent:main:main', sessionId: 'source-generation', displayName: 'main' },
+              { key: 'agent:main:session-1711111111111-4fzyo8', sessionId: 'child-generation', parentSessionKey: 'agent:main:main' }] });
           }
           if (request.module === 'workspaces' && request.action === 'update') {
             calls.workspaceUpdate.push(request.payload);
@@ -399,7 +489,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
 
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await expect(page.getByTestId('chat-session-fork')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff-recommended')).toBeVisible();
@@ -456,7 +546,7 @@ test.describe('Verse Claw chat session handoff', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -508,7 +598,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await expect(page.getByTestId('chat-composer-fork')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-handoff')).toHaveCount(0);
 
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await expect(page.getByTestId('chat-session-fork')).toBeDisabled();
       await expect(page.getByTestId('chat-session-handoff')).toBeDisabled();
     } finally {
@@ -525,7 +615,7 @@ test.describe('Verse Claw chat session handoff', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -551,7 +641,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.waitForLoadState('domcontentloaded');
 
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await page.getByTestId('chat-session-handoff').click();
 
       // The refusal is surfaced with an actionable, localized message, and no draft dialog opens.
@@ -564,7 +654,23 @@ test.describe('Verse Claw chat session handoff', () => {
   test('keeps the editable draft and session when creation rejects changed ancestry', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     try {
-      await installIpcMocks(app, { hostApi: baseHostApiMocks(), gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true } });
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: handoffHistory },
+          },
+        },
+        hostApi: {
+          ...baseHostApiMocks(),
+          [stableStringify(['sessions', 'history', null])]: { messages: handoffHistory, hasMore: false },
+        },
+      });
       await app.evaluate(() => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
         const original = (ipcMain as unknown as { _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers?.get('host:invoke');
@@ -573,12 +679,15 @@ test.describe('Verse Claw chat session handoff', () => {
           if (request.module === 'sessions' && request.action === 'createHandoff') {
             return { id: request.id, ok: true, data: { success: false, error: 'Handoff ancestry unavailable or inconsistent.' } };
           }
+          if (request.module === 'workspaces' && request.action === 'saveState') return { id: request.id, ok: true, data: { success: true } };
           return original?.(event, request);
         });
       });
       const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', 'main-generation', { timeout: 30_000 });
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await page.getByTestId('chat-session-handoff').click();
       await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
       await page.getByTestId('chat-handoff-create').click();

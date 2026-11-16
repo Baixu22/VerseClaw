@@ -1,0 +1,323 @@
+{
+  "candidate": {
+    "commit": "c99030bf90c8ff1911c4c00561b130ab01bb4725",
+    "tree": "6f0798920606c7b14435a34e02e3d5f3e1ba9c55",
+    "dirty": false,
+    "sourceRoot": "D:\\tmp\\clawx-audit-remainder-20261107\\candidate",
+    "dependencyReuse": "Explicit node_modules/VerseBrowser dist links to the implementation checkout."
+  },
+  "files": [
+    {
+      "file": "README.ja-JP.md",
+      "candidateSha256": "35c9a5d76240fe5eaf8630f953d8e30de124136a55b80596544f45183cf0c8eb",
+      "mainSha256": "25932991eac050cf0b42453992f466947275d0635c0c39bb1b5bb3f7951e7d0c",
+      "matchesMain": false
+    },
+    {
+      "file": "README.md",
+      "candidateSha256": "2d8286fab1d34c0c153673194dee491fdc067e39248055f0baab11b75154fbf2",
+      "mainSha256": "d31ab44273890d94f2601461dbc9e334603fe13fa8632cff94f4b6daae889ddc",
+      "matchesMain": false
+    },
+    {
+      "file": "README.zh-CN.md",
+      "candidateSha256": "6b8c0b308d41c442e73c149e0e400db1d1921b01cd49cad1f864bb76e20bcf66",
+      "mainSha256": "ba998dc7b3acfbb921e1068e88bdbd3179e63ddac2bb144da5009954b305305d",
+      "matchesMain": false
+    },
+    {
+      "file": "docs/modules/resources-and-observability.md",
+      "candidateSha256": "b05feb2b9c70a2f907a4dc1b859dab1297ae390d6f7c63c04c0890c2a47b7f2b",
+      "mainSha256": "b05feb2b9c70a2f907a4dc1b859dab1297ae390d6f7c63c04c0890c2a47b7f2b",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/guides/session-derivation-ui-design.md",
+      "candidateSha256": "6a39b8a5f08feb3f94be7553f1b2d9d9b5301ce8d5cfc380a54ad088e5f7108c",
+      "mainSha256": "6a39b8a5f08feb3f94be7553f1b2d9d9b5301ce8d5cfc380a54ad088e5f7108c",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/rules/lifecycle-projection-owner.md",
+      "candidateSha256": "7816178ce720af83d034af0956df7abfc3aa0550309736f3bd8c35c9dcef3062",
+      "mainSha256": "7816178ce720af83d034af0956df7abfc3aa0550309736f3bd8c35c9dcef3062",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/scenarios/gateway-startup-diagnostics.md",
+      "candidateSha256": "4afccf49500f49b1ec0cbaadaa3fd620c3461f6161eb97ee899add23472f5847",
+      "mainSha256": "4afccf49500f49b1ec0cbaadaa3fd620c3461f6161eb97ee899add23472f5847",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/agent-avatar-orchestration-visuals.md",
+      "candidateSha256": "c2f98bfa398e1cab9c5460f0770b83d6a28dc2189b0efa8b1f8c1846a8ff05d4",
+      "mainSha256": "c2f98bfa398e1cab9c5460f0770b83d6a28dc2189b0efa8b1f8c1846a8ff05d4",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/agent-browser-browserwindow-playwright-prototype.md",
+      "candidateSha256": "c68d3129f8e569114c664721fa62a60c3ce349495af2c20941d6c9ab6201b4cf",
+      "mainSha256": "c68d3129f8e569114c664721fa62a60c3ce349495af2c20941d6c9ab6201b4cf",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/audit-wiring-remainder.md",
+      "candidateSha256": "65851a7fcddc7dff596a86ebb038cd53426e7e378d5e2cd0ca8a5d17647338ae",
+      "mainSha256": "65851a7fcddc7dff596a86ebb038cd53426e7e378d5e2cd0ca8a5d17647338ae",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/browser-supervised-component-graduation.md",
+      "candidateSha256": "f223b4ebc363a864827e0678e13a8051aad95b8e8911feeebef7cc04f783c887",
+      "mainSha256": "f223b4ebc363a864827e0678e13a8051aad95b8e8911feeebef7cc04f783c887",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/chat-tool-events-runtime-pipeline.md",
+      "candidateSha256": "0aaf335a87c517c69e7cb865b3f98310af1033b345a45f90d715aac0ed12b772",
+      "mainSha256": "0aaf335a87c517c69e7cb865b3f98310af1033b345a45f90d715aac0ed12b772",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/codex-capability-parity-basic-chat.md",
+      "candidateSha256": "6e0b73bf7466bdd415afbefd77cb6d5cbf5fe04f4bfe0783e482fa5fd6461414",
+      "mainSha256": "6e0b73bf7466bdd415afbefd77cb6d5cbf5fe04f4bfe0783e482fa5fd6461414",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/component-controlled-rollout-readiness.md",
+      "candidateSha256": "b6d05c7b388a7292812ce9819412d2a324732b48e315262d3c5ba89cd1831209",
+      "mainSha256": "b6d05c7b388a7292812ce9819412d2a324732b48e315262d3c5ba89cd1831209",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/fix-chat-history-gateway-timeout.example.md",
+      "candidateSha256": "65f28829ed665adc0e6b78eb61579cb9cfa5e73b64b07edf5268d5acaa758cbf",
+      "mainSha256": "65f28829ed665adc0e6b78eb61579cb9cfa5e73b64b07edf5268d5acaa758cbf",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/fix-chat-history-gateway-timeout.md",
+      "candidateSha256": "15a940a4894ac574567c475cc8fea77241e34f5aad00dd61823d08c0029178ba",
+      "mainSha256": "15a940a4894ac574567c475cc8fea77241e34f5aad00dd61823d08c0029178ba",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/fix-chat-stuck-processing-tool-results.md",
+      "candidateSha256": "0ebd32b474448eb4ab6a6e337e194b8acaa04ee33b1a39891b2d85fafa72a50d",
+      "mainSha256": "0ebd32b474448eb4ab6a6e337e194b8acaa04ee33b1a39891b2d85fafa72a50d",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/fix-gateway-ready-chat-history-reload.md",
+      "candidateSha256": "4bfa76a18cb09a551dc2d676706629911f7e1dfe9a8641d91b2de2f887c1cdd7",
+      "mainSha256": "4bfa76a18cb09a551dc2d676706629911f7e1dfe9a8641d91b2de2f887c1cdd7",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/hard-delete-session-jsonl.md",
+      "candidateSha256": "b930a385d7443997e75d2e58207a51491c8458bdb322070010a6d81ec1ff2d09",
+      "mainSha256": "b930a385d7443997e75d2e58207a51491c8458bdb322070010a6d81ec1ff2d09",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/loop-context-pack-contract.md",
+      "candidateSha256": "f331c838f5cf8dae92514cfab92a2be279f980e8aee22c04262f67aedbf6ccb3",
+      "mainSha256": "f331c838f5cf8dae92514cfab92a2be279f980e8aee22c04262f67aedbf6ccb3",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/remote-task-inbox-mvp.md",
+      "candidateSha256": "144d0b5521a8c1d0bf02b01aa8a43c9e3f9d07565aa0542c6b25618d01409a9f",
+      "mainSha256": "144d0b5521a8c1d0bf02b01aa8a43c9e3f9d07565aa0542c6b25618d01409a9f",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/resource-p1-cache-poll-takeover.md",
+      "candidateSha256": "ca7a4cbc48ddef6594fbe157383f743a7affebf9b11015d6949dd692308569a9",
+      "mainSha256": "ca7a4cbc48ddef6594fbe157383f743a7affebf9b11015d6949dd692308569a9",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/session-derivation-ui.md",
+      "candidateSha256": "eed960c85569bb72ece30a27408520f20814be4543ea8234e29ead42d0de77a3",
+      "mainSha256": "eed960c85569bb72ece30a27408520f20814be4543ea8234e29ead42d0de77a3",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/session-ecosystem-safety-gate-consistency.md",
+      "candidateSha256": "147aa719f46d541bcff1179a8344203f7ffc37e6f5689ab571d528e8bc8e73da",
+      "mainSha256": "147aa719f46d541bcff1179a8344203f7ffc37e6f5689ab571d528e8bc8e73da",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/session-folders-and-archive.md",
+      "candidateSha256": "cb549bd058236e7ae220033d4f98fadbedf998448d7ca79bf05a5d80b5e563ed",
+      "mainSha256": "cb549bd058236e7ae220033d4f98fadbedf998448d7ca79bf05a5d80b5e563ed",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/task-forest-active-node-engineering-closeout.md",
+      "candidateSha256": "29739428e9f99f04c0263adcbb7bbf2a31325bdd04042353d78f3748c9859b8f",
+      "mainSha256": "29739428e9f99f04c0263adcbb7bbf2a31325bdd04042353d78f3748c9859b8f",
+      "matchesMain": true
+    },
+    {
+      "file": "harness/specs/tasks/versebrowser-upstream-reintegration.md",
+      "candidateSha256": "6a08ad0127c723c629240fc0cbe6cc1132e7b99c1bc9809072b8b3debf308738",
+      "mainSha256": "6a08ad0127c723c629240fc0cbe6cc1132e7b99c1bc9809072b8b3debf308738",
+      "matchesMain": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+      "candidateSha256": "783614fa60821f49d4b6359bb231e372bc5742cf8a87693bd32037cd7f36f465",
+      "mainSha256": "783614fa60821f49d4b6359bb231e372bc5742cf8a87693bd32037cd7f36f465",
+      "matchesMain": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "candidateSha256": "e13085a9113ccf10cbf735db826392496dcfa112cb8ee56f06ef11649f94a8b3",
+      "mainSha256": "e13085a9113ccf10cbf735db826392496dcfa112cb8ee56f06ef11649f94a8b3",
+      "matchesMain": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/orchestrator.ts",
+      "candidateSha256": "f33ea291548a5afbf27cdbce5ed990c062eec684ea21c6b510b84652c75cff19",
+      "mainSha256": "f33ea291548a5afbf27cdbce5ed990c062eec684ea21c6b510b84652c75cff19",
+      "matchesMain": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry.types.ts",
+      "candidateSha256": "6a00226d9a95bddb7c5ffea5cd3dc5d23b115fa12ac895c9dace41089486ab35",
+      "mainSha256": "6a00226d9a95bddb7c5ffea5cd3dc5d23b115fa12ac895c9dace41089486ab35",
+      "matchesMain": true
+    },
+    {
+      "file": "package.json",
+      "candidateSha256": "bd23a73b2498aeb8281e31f0e0ea868e458842d16d108012a65ba5d96ec641b2",
+      "mainSha256": "bd23a73b2498aeb8281e31f0e0ea868e458842d16d108012a65ba5d96ec641b2",
+      "matchesMain": true
+    },
+    {
+      "file": "pnpm-lock.yaml",
+      "candidateSha256": "784362e408c09aef1ce9504288753329dbc9eccd261fa6b1b037e96ed0443fae",
+      "mainSha256": "9da09f1f802a90525cae63dd92f3bb4746331d9dc27c47fa85ebaf4f0afffd94",
+      "matchesMain": false
+    },
+    {
+      "file": "scripts/check-feature-leaf-consumers.mjs",
+      "candidateSha256": "fed685657cec507accc840a7b8ce314bd34afbf28ec6a9c9e766151eaf4a08e3",
+      "mainSha256": "fed685657cec507accc840a7b8ce314bd34afbf28ec6a9c9e766151eaf4a08e3",
+      "matchesMain": true
+    },
+    {
+      "file": "scripts/repository-artifacts.json",
+      "candidateSha256": "197c9735102f8351ad85f5abfcdf2a574323702d6b1a37a36f8fc1bfb26c1821",
+      "mainSha256": "197c9735102f8351ad85f5abfcdf2a574323702d6b1a37a36f8fc1bfb26c1821",
+      "matchesMain": true
+    },
+    {
+      "file": "src/lib/trajectory-view/feed.ts",
+      "candidateSha256": "9269e2d53f384d18dc2f8202442ff500ee4a2b0c76902e7d01f684d0af1bb073",
+      "mainSha256": "9269e2d53f384d18dc2f8202442ff500ee4a2b0c76902e7d01f684d0af1bb073",
+      "matchesMain": true
+    },
+    {
+      "file": "src/lib/trajectory-view/index.ts",
+      "candidateSha256": "0b07cd89c559adad4f8dd2c6861531b3c300fec504df40641ab8c0d54eae77d7",
+      "mainSha256": "0b07cd89c559adad4f8dd2c6861531b3c300fec504df40641ab8c0d54eae77d7",
+      "matchesMain": true
+    },
+    {
+      "file": "src/lib/trajectory-view/lifecycle.ts",
+      "candidateSha256": "ff6974b544a873233723017afca46e190267c32834f3f482f520c42854fbc2bf",
+      "mainSha256": "ff6974b544a873233723017afca46e190267c32834f3f482f520c42854fbc2bf",
+      "matchesMain": true
+    },
+    {
+      "file": "src/stores/observability.ts",
+      "candidateSha256": "b06b3539ec398980d6aacc32c5ac19e30c9c0a07a63b127b41f403fb132100e4",
+      "mainSha256": "b06b3539ec398980d6aacc32c5ac19e30c9c0a07a63b127b41f403fb132100e4",
+      "matchesMain": true
+    },
+    {
+      "file": "src/stores/session-activity.ts",
+      "candidateSha256": "aae2bd12711e1d012f8054fb48dc2574f262e66142ed16defe64190984ef1ae6",
+      "mainSha256": "aae2bd12711e1d012f8054fb48dc2574f262e66142ed16defe64190984ef1ae6",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/e2e/fakecoding-inbox-navigation.spec.ts",
+      "candidateSha256": "b51b4a1df898de3d741f0e0d248a9d54ea126e403d4602400340e9dda249704c",
+      "mainSha256": "b51b4a1df898de3d741f0e0d248a9d54ea126e403d4602400340e9dda249704c",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/e2e/session-activity-trajectory.spec.ts",
+      "candidateSha256": "a85b0e30d4fe86d3ec6a405f6f8c32c086b77c6bda9818667809638249cb9281",
+      "mainSha256": "a85b0e30d4fe86d3ec6a405f6f8c32c086b77c6bda9818667809638249cb9281",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/agent-dev-api.test.ts",
+      "candidateSha256": "fc17189120bcb6321f17722e735da7d43e8d7fb55992993bc35500cb4a5e57a8",
+      "mainSha256": "fc17189120bcb6321f17722e735da7d43e8d7fb55992993bc35500cb4a5e57a8",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/agent-steering-team-bundle.test.ts",
+      "candidateSha256": "970e318a74cb8c37abff373ce499287c8c51c661a07731a2432869112172b2b6",
+      "mainSha256": "970e318a74cb8c37abff373ce499287c8c51c661a07731a2432869112172b2b6",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/chat-production-session-actions.test.ts",
+      "candidateSha256": "5c52ecb29885b6eeacc213963a70db5d364c54665667287b11fc126a2ed1b21c",
+      "mainSha256": "5c52ecb29885b6eeacc213963a70db5d364c54665667287b11fc126a2ed1b21c",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/observability-store-lifecycle.test.ts",
+      "candidateSha256": "a542e528301720da417dd18dceb98673e9f73a7ec47d4c1a0f59a84b2910e523",
+      "mainSha256": "a542e528301720da417dd18dceb98673e9f73a7ec47d4c1a0f59a84b2910e523",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/repository-artifact-retention.test.ts",
+      "candidateSha256": "4905dbdf545fb7fdace0efcf25f8fd33eca0c07de39dbaa383bf2611805d9e4f",
+      "mainSha256": "4905dbdf545fb7fdace0efcf25f8fd33eca0c07de39dbaa383bf2611805d9e4f",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/role-orchestration-methods.test.ts",
+      "candidateSha256": "00a82dc523fdf6237dc9f4b80c1727a9c2833ad11d86b35c983a3461352d6918",
+      "mainSha256": "00a82dc523fdf6237dc9f4b80c1727a9c2833ad11d86b35c983a3461352d6918",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "candidateSha256": "b1318c39b5f0d485cb2c34b9bfa0eaf6c92ee0a41d2016bdd096d2300408be8d",
+      "mainSha256": "b1318c39b5f0d485cb2c34b9bfa0eaf6c92ee0a41d2016bdd096d2300408be8d",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/session-activity.test.ts",
+      "candidateSha256": "e9fc82844ca594b908e6fb368720e44e91e8942b4b120852163704a28a7f7a46",
+      "mainSha256": "e9fc82844ca594b908e6fb368720e44e91e8942b4b120852163704a28a7f7a46",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/trajectory-view-feed.test.ts",
+      "candidateSha256": "7b6d788fdb927fb121010b076e77a4103b3e2a36e21fc4e388cdcdd87e80a4f6",
+      "mainSha256": "7b6d788fdb927fb121010b076e77a4103b3e2a36e21fc4e388cdcdd87e80a4f6",
+      "matchesMain": true
+    },
+    {
+      "file": "tests/unit/verifier-discipline-config.test.ts",
+      "candidateSha256": "60ba5345e79ecbfee95f26cfe2bf5042efbe212a89fa6af42b6a80615fc64bce",
+      "mainSha256": "60ba5345e79ecbfee95f26cfe2bf5042efbe212a89fa6af42b6a80615fc64bce",
+      "matchesMain": true
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+    "tree": "6da4b804e2edce227a43121e4376908d76303457",
+    "dirty": false
+  },
+  "deliveryCandidate": {
+    "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+    "tree": "6da4b804e2edce227a43121e4376908d76303457",
+    "dirty": false
+  },
+  "equivalence": "observation-equivalence.json",
+  "specs": [
+    {
+      "spec": "resource-window-lifecycle",
+      "stats": {
+        "startTime": "2026-11-09T17:27:04.995Z",
+        "duration": 54643.67,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "path": "D:\\tmp\\tf0839\\sealed-electron-final-probes\\resource-window-lifecycle\\playwright.json",
+      "sha256": "acbc9808c80e5c1d1d7de75ffb517e3c16ecfe735030f9a683afd46dbad1514e"
+    },
+    {
+      "spec": "shared-read-models",
+      "stats": {
+        "startTime": "2026-11-09T17:28:02.249Z",
+        "duration": 32852.016,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "path": "D:\\tmp\\tf0839\\sealed-electron-final-probes\\shared-read-models\\playwright.json",
+      "sha256": "32afadc0c5fc8572e2da6842a4f413c1dc966f3cc3d473ada25c066227986ad1"
+    },
+    {
+      "spec": "chat-stream-publication",
+      "stats": {
+        "startTime": "2026-11-09T17:28:36.652Z",
+        "duration": 147302.32499999998,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "path": "D:\\tmp\\tf0839\\sealed-electron-final-probes\\chat-stream-publication\\playwright.json",
+      "sha256": "461b6ee7355bdab53d5e91536e9089129719dce100ea714995ae3c25a58b7889"
+    },
+    {
+      "spec": "chat-viewport-budget",
+      "stats": {
+        "startTime": "2026-11-09T17:31:06.495Z",
+        "duration": 122438.855,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "path": "D:\\tmp\\tf0839\\sealed-electron-final-probes\\chat-viewport-budget\\playwright.json",
+      "sha256": "2699925b5e9313956c0561e94ad9aed60f705d480ffa9544f775bd2247649866"
+    }
+  ],
+  "passed": 11
+}

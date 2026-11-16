@@ -1,0 +1,20 @@
+
+Running 2 tests using 1 worker
+
+(node:33580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+  ok 1 tests\e2e\session-derivation-ui.spec.ts:9:5 › question fork keeps its source draft and handoff submits one reviewed first turn (2.0m)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+  ok 2 tests\e2e\session-derivation-ui.spec.ts:76:5 › family navigation preserves 2/20/100 runtime children and responsive keyboard layouts (6.8m)
+
+  Slow test file: tests\e2e\session-derivation-ui.spec.ts (8.8m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (9.0m)

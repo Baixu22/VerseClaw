@@ -73,6 +73,16 @@ Hard rules:
 - `CompressionArtifact v1` is a recovery carrier and ledger ContextItem. It is
   not proof of task completion and must not replace Task Ledger, ClawGraph, or
   Observability evidence.
+- Archive recall retention is opt-in through
+  `runtime.contextFamily.archiveRecallRetention.enabled` and is promoted only
+  at the bounded projection boundary in `context-inline-spill-default-path`.
+  It may protect verified current-session recall results for `ageTurns < 4`
+  and at most 16000 visible characters in total, within existing truncation
+  budgets. It must not protect ordinary tools, user text, assistant reasoning,
+  un-recalled archives, or already-trimmed projections; reset age on projection;
+  inject duplicate messages; or create a new store, queue, or timer. Off and
+  expired behavior must replay the frozen legacy outputs. Full summarization
+  and hard-overflow decisions remain with their existing owners.
 
 Validation mapping:
 

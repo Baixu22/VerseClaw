@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "live-verify",
+  "cwd": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\candidate",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX\\harness\\specs\\fixtures\\context-inline-spill-benefit-round4\\verify-run.mjs",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\live-auth-fixed\\2026-11-08T05-34-10-994Z-live",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\live-verify.json"
+  ],
+  "started_at": "2026-11-08T06:03:35.545915+00:00",
+  "duration_seconds": 0.61,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\live-verify.stdout.txt",
+      "bytes": 448,
+      "sha256": "e3de2f968a8e1bdc154bc5e5cd5e50e7e3cda9a06d6dc20a3a05af68139a0dc9"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\live-verify.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -2,6 +2,7 @@
 import type { GatewayRequestHandlers } from "./types.js";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
+import { inheritExecutionTaskReference } from "../../agents/execution-task-authority.js";
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
@@ -602,6 +603,7 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       respond(false, undefined, created.error);
       return;
     }
+    inheritExecutionTaskReference(source.entry.workspaceDir ?? source.entry.spawnedWorkspaceDir ?? resolveAgentWorkspaceDir(cfg,sourceAgentId),source.canonicalKey,source.entry.sessionId,target.canonicalKey,created.entry.sessionId);
     respond(
       true,
       {

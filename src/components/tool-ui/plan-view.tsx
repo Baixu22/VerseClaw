@@ -37,6 +37,11 @@ export type ToolUiPlanTodo = {
   description?: string;
 };
 
+/** Exported so the conversation task dock draws the same tri-state step glyphs. */
+export function ToolUiPlanItemIcon({ status }: { status: ToolUiPlanTodoStatus }) {
+  return <ItemIcon status={status} />;
+}
+
 function ItemIcon({ status }: { status: ToolUiPlanTodoStatus }) {
   const common = 'absolute inset-0 h-4 w-4 transition-opacity duration-300';
   return (
@@ -90,6 +95,9 @@ export function ToolUiPlanView({
   compact = false,
   showTitle = true,
   testId = 'chat-tool-ui-plan',
+  collapsed: controlledCollapsed,
+  onCollapsedChange,
+  showProgress = true,
 }: {
   title: string;
   description?: string;
@@ -98,9 +106,13 @@ export function ToolUiPlanView({
   compact?: boolean;
   showTitle?: boolean;
   testId?: string;
+  collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
+  showProgress?: boolean;
 }) {
   const { t } = useTranslation('chat');
-  const [collapsed, setCollapsed] = useState(false);
+  const [localCollapsed, setLocalCollapsed] = useState(false);
+  const collapsed = controlledCollapsed ?? localCollapsed;
   const [expandedList, setExpandedList] = useState(false);
 
   const completed = todos.filter((todo) => todo.status === 'completed').length;
@@ -122,7 +134,8 @@ export function ToolUiPlanView({
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         )}
         aria-expanded={!collapsed}
-        onClick={() => setCollapsed((value) => !value)}
+        title={headerLabel}
+        onClick={() => { setLocalCollapsed(!collapsed); onCollapsedChange?.(!collapsed); }}
       >
         <span className="relative inline-flex h-4 w-4 shrink-0 items-center justify-center">
           <HeaderIcon allDone={allDone} running={running} progress={progress} />
@@ -130,11 +143,11 @@ export function ToolUiPlanView({
         <span className={cn('min-w-0 truncate font-medium text-foreground', compact ? 'text-xs' : 'text-sm')}>
           {headerLabel}
         </span>
-        <span className="ml-auto inline-flex shrink-0 items-baseline gap-0.5 font-mono text-xs tabular-nums text-muted-foreground/70">
+        {showProgress && <span className="ml-auto inline-flex shrink-0 items-baseline gap-0.5 font-mono text-xs tabular-nums text-muted-foreground/70">
           <NumberRoll value={completed} />
           <span>/</span>
           <span>{total}</span>
-        </span>
+        </span>}
         <svg
           viewBox="0 0 24 24"
           className={cn(
@@ -148,6 +161,8 @@ export function ToolUiPlanView({
       </button>
 
       <div
+        inert={collapsed ? true : undefined}
+        aria-hidden={collapsed}
         className={cn(
           'grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
           collapsed ? 'pointer-events-none grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100',

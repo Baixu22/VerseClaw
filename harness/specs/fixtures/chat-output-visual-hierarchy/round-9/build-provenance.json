@@ -1,0 +1,17 @@
+{
+  "sourceThread": "01a1ab11-fb98-7561-970d-16f4a769037e",
+  "driven_by": "agent",
+  "buildCommands": [
+    {
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -Command '$env:TEMP='\"'D:\\\\tmp'\n\"'$env:TMP='\"'D:\\\\tmp'\nnode scripts/generate-ext-bridge.mjs *> D:/tmp/chat-environment-r9-20261105/isolated-generate.log\nif (\"'$LASTEXITCODE -ne 0) { Get-Content -LiteralPath '\"'D:\\\\tmp\\\\chat-environment-r9-20261105\\\\isolated-generate.log' -Tail 12\nexit \"'$LASTEXITCODE }\nnode --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build *> D:/tmp/chat-environment-r9-20261105/isolated-build-final.log\n$relayExit=$LASTEXITCODE\nGet-Content -LiteralPath '\"'D:\\\\tmp\\\\chat-environment-r9-20261105\\\\isolated-build-final.log' -Tail 15\nexit \"'$relayExit'",
+      "cwd": "D:\\tmp\\chat-environment-r9-20261105\\validation",
+      "exitCode": 0
+    },
+    {
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -Command '$relayQaRoot=(Resolve-Path -LiteralPath '\"'.').Path\n\"'$relayDist=(Resolve-Path -LiteralPath '\"'openclaw_runtime\\\\dist').Path\nif (-not \"'$relayDist.StartsWith($relayQaRoot+'\"'\\\\', [System.StringComparison]::OrdinalIgnoreCase)) { throw 'Runtime output escapes validation checkout' }\nif ((Get-Item -LiteralPath \"'$relayDist).LinkType) { throw '\"'Runtime output must be a local directory' }\n\"'$env:TEMP='\"'D:\\\\tmp'\n\"'$env:TMP='\"'D:\\\\tmp'\n\"'$env:OPENCLAW_BUILD_ALL_NO_PNPM='\"'1'\nnode scripts/build-openclaw-runtime.mjs *> D:/tmp/chat-environment-r9-20261105/isolated-runtime-build.log\n\"'$relayExit=$LASTEXITCODE\nGet-Content -LiteralPath '\"'D:\\\\tmp\\\\chat-environment-r9-20261105\\\\isolated-runtime-build.log' -Tail 28\nexit \"'$relayExit'",
+      "cwd": "D:\\tmp\\chat-environment-r9-20261105\\validation",
+      "exitCode": 0
+    }
+  ],
+  "note": "Read back from the preceding chat in this relay. Product sources match the fixed validation copy; the only subsequent test edit reloads after installing IPC mocks. Dependencies were independently installed from the same validation lockfile."
+}

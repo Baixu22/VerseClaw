@@ -27,11 +27,7 @@ import {
 import { isInjectableMemoryCard, isMemoryCardInContextScope } from "../memory/memory-card.js";
 import { applyMemoryUseGateOverlay } from "../memory/memory-dual-gate.js";
 import { buildContextPack } from "../memory/context-pack.js";
-import type {
-  ContextPack,
-  ContextPackBucketName,
-  MemoryCard,
-} from "../memory/types.js";
+import type { ContextPack, ContextPackBucketName, MemoryCard } from "../memory/types.js";
 import type {
   ContextItem,
   ContextItemPriority,
@@ -111,11 +107,7 @@ export function createRoleMemoryContextProvider(
     },
     enabledByDefault: false,
     shadowOnly: false,
-    fallbackReasons: [
-      "flag_disabled" as const,
-      "no_result" as const,
-      "provider_error" as const,
-    ],
+    fallbackReasons: ["flag_disabled" as const, "no_result" as const, "provider_error" as const],
     evidenceRefs: [
       {
         type: "file" as const,
@@ -167,8 +159,7 @@ export function createRoleMemoryContextProvider(
       if (!roleName) {
         return fallbackResult({
           reason: "no_result",
-          message:
-            "No role identity resolved for this turn; role memory injection skipped.",
+          message: "No role identity resolved for this turn; role memory injection skipped.",
           metadata: {
             providerId: manifest.id,
             enabled: false,
@@ -205,9 +196,7 @@ export function createRoleMemoryContextProvider(
 
       // Filter injectable cards (mirror role-spawn.ts:124-127).
       const legacyInjectable = cards.filter(
-        (card) =>
-          isInjectableMemoryCard(card) ||
-          (card.status === "cold" && !card.supersededBy),
+        (card) => isInjectableMemoryCard(card) || (card.status === "cold" && !card.supersededBy),
       );
       // TF-0110 (T-P0-1, req-1): consult the memory use gate on the real
       // injection path. Gate enabled -> secret/secret_adjacent/poison/
@@ -239,20 +228,14 @@ export function createRoleMemoryContextProvider(
         );
         const totalBudget = Math.max(
           1,
-          Math.floor(
-            query.tokenBudget ??
-              opts.defaultTokenBudget ??
-              DEFAULT_TOKEN_BUDGET,
-          ),
+          Math.floor(query.tokenBudget ?? opts.defaultTokenBudget ?? DEFAULT_TOKEN_BUDGET),
         );
         pack = buildContextPack({
           memories: injectable,
           roleName,
-          taskState: query.goal,
+          queryText: query.goal,
           openConflicts,
-          openConflictCardIds: openConflictRecords.flatMap(
-            (conflict) => conflict.cardIds,
-          ),
+          openConflictCardIds: openConflictRecords.flatMap((conflict) => conflict.cardIds),
           budget: { total: totalBudget },
         });
       } catch {
@@ -346,10 +329,7 @@ export function createRoleMemoryContextProvider(
   };
 }
 
-function adaptPackToContextItems(
-  pack: ContextPack,
-  roleName: string,
-): ContextItem[] {
+function adaptPackToContextItems(pack: ContextPack, roleName: string): ContextItem[] {
   const items: ContextItem[] = [];
   const bucketNames = Object.keys(pack.buckets) as ContextPackBucketName[];
   for (const bucketName of bucketNames) {
@@ -358,8 +338,7 @@ function adaptPackToContextItems(
     const text = lines.join("\n").trim();
     if (!text) continue;
     const estimatedTokens =
-      pack.estimatedTokens[bucketName] ??
-      Math.ceil(text.length / TOKEN_CHAR_WIDTH);
+      pack.estimatedTokens[bucketName] ?? Math.ceil(text.length / TOKEN_CHAR_WIDTH);
     items.push({
       id: `${ROLE_MEMORY_CONTEXT_PROVIDER_ID}:${roleName}:${bucketName}`,
       kind: "memory",

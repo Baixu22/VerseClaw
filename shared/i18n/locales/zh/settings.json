@@ -55,20 +55,65 @@
     "archived": {
       "title": "已归档",
       "description": "恢复或永久删除已归档的会话。"
+    },
+    "storage": {
+      "title": "存储空间",
+      "description": "管理会话文件、运行进程与 Git 工作树。"
     }
   },
   "recovery": {
+    "presentationTitle": "会话展示",
+    "notificationsTitle": "活动通知与历史",
+    "quiet": {
+      "title": "安静展示",
+      "description": "仅在需要处理时展开活动，完成后收起执行详情，后台任务继续运行。",
+      "apply": "使用安静展示",
+      "active": "已启用"
+    },
     "activityTitle": "会话与恢复",
     "currentTitle": "当前会话恢复",
-    "enabled": { "title": "显示会话状态面板", "description": "存在真实活动时，在聊天旁显示结构化运行状态。" },
-    "autoExpand": { "title": "自动展开", "description": "选择桌面端打开状态面板的时机。", "active": "活跃时", "attention": "需要关注时", "never": "从不" },
-    "completedRunsExpanded": { "title": "完成后保持运行活动展开", "description": "默认显示已完成运行的详情；在当前会话中手动收起后仍保持收起。" },
-    "showGit": { "title": "显示工作区 Git", "description": "包含工作区范围的分支和变更状态。" },
-    "showCommands": { "title": "显示 Agent 命令", "description": "在交互终端旁显示结构化命令摘要。" },
-    "notifications": { "title": "恢复与阻塞通知", "description": "真实恢复或阻塞信号需要复核时发出通知。" },
-    "desktopNotifications": { "title": "桌面通知", "description": "运行完成、出错或需要审批时发送系统提醒。可在提醒菜单中关闭；应用内提醒不会因此隐藏。" },
-    "retention": { "title": "最近活动保留时间", "description": "限制已完成活动在面板中显示的时间；不会改变 transcript 或运行时资源的保留期限。", "none": "不保留", "five": "5 分钟", "fifteen": "15 分钟" },
-    "session": { "title": "会话", "description": "选择要查看的工作区会话。" },
+    "enabled": {
+      "title": "显示会话状态面板",
+      "description": "存在真实活动时，在聊天旁显示结构化运行状态。"
+    },
+    "autoExpand": {
+      "title": "自动展开",
+      "description": "选择桌面端打开状态面板的时机。",
+      "active": "活跃时",
+      "attention": "需要关注时",
+      "never": "从不"
+    },
+    "completedRunsExpanded": {
+      "title": "完成后保持运行活动展开",
+      "description": "默认显示已完成运行的详情；在当前会话中手动收起后仍保持收起。"
+    },
+    "showGit": {
+      "title": "显示工作区 Git",
+      "description": "包含工作区范围的分支和变更状态。"
+    },
+    "showCommands": {
+      "title": "显示 Agent 命令",
+      "description": "在交互终端旁显示结构化命令摘要。"
+    },
+    "notifications": {
+      "title": "恢复与阻塞通知",
+      "description": "真实恢复或阻塞信号需要复核时发出通知。"
+    },
+    "desktopNotifications": {
+      "title": "桌面通知",
+      "description": "运行完成、出错或需要审批时发送系统提醒。可在提醒菜单中关闭；应用内提醒不会因此隐藏。"
+    },
+    "retention": {
+      "title": "最近活动保留时间",
+      "description": "限制已完成活动在面板中显示的时间；不会改变 transcript 或运行时资源的保留期限。",
+      "none": "不保留",
+      "five": "5 分钟",
+      "fifteen": "15 分钟"
+    },
+    "session": {
+      "title": "会话",
+      "description": "选择要查看的工作区会话。"
+    },
     "runAction": "执行",
     "openConversation": "打开会话",
     "healthy": "此会话未检测到恢复压力。",
@@ -235,6 +280,14 @@
       "step2": "在浏览器中打开登录页面。",
       "step3": "粘贴授权码以批准访问。",
       "requestingCode": "正在获取安全登录码..."
+    },
+    "validation": {
+      "rateLimited": "Provider 限流",
+      "rateLimitedWithRetry": "Provider 正在限流，请约 {{seconds}} 秒后重试。",
+      "protocolError": "端点拒绝了请求格式。请检查 Base URL 与 API 协议。",
+      "modelUnavailable": "端点可达且密钥有效，但请求的模型不可用。",
+      "network": "无法访问 Provider 端点。请检查网络或代理设置。",
+      "service": "Provider 返回了异常响应。"
     }
   },
   "gateway": {
@@ -598,6 +651,11 @@
       "description": "DCS（BlockStore）的高级 opt-in 控制面，用于工作记忆、context 工具及相关 flag。默认保持 off/shared/shadow；本面板不代表发布审批。可写开关写入应用设置；config 类同时写入 openclaw.json，并在 Gateway 运行时尝试重启。",
       "modeOptIn": "status: opt-in",
       "defaultLabel": "默认",
+      "retired": {
+        "label": "已退役",
+        "description": "该功能已退役。配置、旧请求参数与恢复记录不会重新启用它。",
+        "alternative": "继续使用普通编码工具和写入日志；并发修改时显式选择工作树隔离。"
+      },
       "enableLabel": "启用方式",
       "rollbackLabel": "回滚",
       "riskLabel": "风险",
@@ -908,6 +966,66 @@
       "failed": "需要处理",
       "partial": "部分状态",
       "off": "已关闭"
+    }
+  },
+  "storage": {
+    "title": "存储空间",
+    "description": "管理会话文件、运行进程与 Git 工作树。",
+    "environment": "工作目录",
+    "environmentHint": "每个目录保留自己的会话、文件和终端。",
+    "local": "本地",
+    "worktree": "工作树",
+    "init": "建立 Git 仓库",
+    "initialized": "Git 仓库已建立",
+    "createWorktree": "新建工作树",
+    "branchName": "新分支名称",
+    "baseBranch": "起始分支",
+    "committedOnly": "工作树从已提交的版本创建；要包含当前修改，请先提交。",
+    "createAndOpen": "创建并进入",
+    "cancel": "取消",
+    "operationFailed": "操作未完成。",
+    "loadFailed": "无法读取工作目录。",
+    "search": "搜索会话或工作树",
+    "refresh": "刷新",
+    "loading": "正在统计存储和进程…",
+    "overview": "使用情况",
+    "memoryHint": "内存来自运行进程的实测值。会话进程可能已包含在应用内存中，两者不相加。",
+    "appMemory": "应用内存",
+    "sessionFiles": "会话文件",
+    "sessionFilesHint": "工作区会话的对话记录和同目录执行记录。",
+    "workingFiles": "工作目录文件",
+    "workingFilesHint": "包含生成的文件；共享 Git 对象和链接目录不重复计入。≥ 表示扫描尚未完成。",
+    "sessions": "会话",
+    "sessionsHint": "按需释放会话的终端、浏览器会话和托管服务。",
+    "empty": "没有匹配的项目",
+    "processMemory": "进程 {{value}}",
+    "resources": "{{terminals}} 个终端 · {{browsers}} 个浏览器 · {{servers}} 个服务",
+    "openSession": "打开会话",
+    "release": "释放",
+    "released": "已释放 {{count}} 项资源",
+    "releasePartial": "{{count}} 项资源释放失败，请刷新查看。",
+    "worktrees": "Git 工作树",
+    "worktreesHint": "工作树共享仓库历史，各自保留独立的工作文件。",
+    "idle": "可移除",
+    "remove": "移除",
+    "removed": "工作树已移除，分支已保留",
+    "archived": "已归档会话",
+    "archivedHint": "恢复会话或永久删除其已保存文件。",
+    "manage": "管理",
+    "measuredAt": "统计时间 {{time}}",
+    "releaseTitle": "释放会话资源？",
+    "releaseHint": "将停止所选会话的终端、浏览器和托管服务，保留对话记录和项目文件。",
+    "removeTitle": "移除此工作树？",
+    "removeHint": "从磁盘移除空闲检出目录，保留 Git 分支。仍在使用或有修改的工作树会被保留。",
+    "protected": {
+      "owner": "由会话或任务管理，请通过所属流程回收。",
+      "primary": "主检出目录",
+      "active": "当前工作区",
+      "locked": "已由 Git 锁定",
+      "sessions": "已关联工作区",
+      "resources": "仍有进程运行",
+      "dirty": "包含本地文件或修改",
+      "unavailable": "目录不可用"
     }
   }
 }

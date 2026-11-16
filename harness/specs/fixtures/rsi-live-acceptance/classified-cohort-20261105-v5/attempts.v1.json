@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "RsiLiveAdmissionAttempts/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-admission-classifier",
+  "initialTimeoutMs": 180000,
+  "retryTimeoutMs": 300000,
+  "providerPreflight": {
+    "reusedFrom": "harness/specs/fixtures/rsi-live-acceptance/dependency-fixed-cohort-20261105-v4/provider-preflight.json",
+    "reason": "The retained provider preflight was reused for the NO_GO readback; provider admission was not evaluated because all tasks were not admitted."
+  },
+  "freshExecutionTaskIds": [
+    "tf-0274-e01",
+    "tf-0275-e02",
+    "tf-0289-g01",
+    "tf-0290-g02",
+    "tf-0291-g03",
+    "tf-0283-l01",
+    "tf-0284-l02",
+    "tf-0285-l03",
+    "tf-0286-l04",
+    "tf-0287-l05",
+    "tf-0288-l06",
+    "tf-0276-s01",
+    "tf-0277-s02",
+    "tf-0278-s03",
+    "tf-0279-s04",
+    "tf-0280-s05",
+    "tf-0281-s06",
+    "tf-0282-s07",
+    "tf-0293-a01",
+    "tf-0294-a02",
+    "tf-0295-a03",
+    "tf-0296-a04",
+    "tf-0297-a05",
+    "tf-0298-a06"
+  ],
+  "postRunFreshExecutionTaskIds": [
+    "tf-0277-s02",
+    "tf-0280-s05",
+    "tf-0281-s06",
+    "tf-0282-s07",
+    "tf-0286-l04",
+    "tf-0287-l05",
+    "tf-0288-l06",
+    "tf-0290-g02",
+    "tf-0291-g03"
+  ],
+  "workspacesRetained": false,
+  "attempts": [
+    {
+      "taskId": "tf-0276-s01",
+      "attempt": 1,
+      "timeoutMs": 180000,
+      "outcome": "timeout",
+      "retry": true
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "attempt": 2,
+      "timeoutMs": 300000,
+      "outcome": "admitted",
+      "retry": false
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "attempt": 1,
+      "timeoutMs": 180000,
+      "outcome": "timeout",
+      "retry": true
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "attempt": 2,
+      "timeoutMs": 300000,
+      "outcome": "admitted",
+      "retry": false
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "attempt": 1,
+      "timeoutMs": 180000,
+      "outcome": "enospc-writing-admission",
+      "retry": true
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "attempt": 2,
+      "timeoutMs": 300000,
+      "outcome": "rejected-infrastructure",
+      "retry": false
+    }
+  ]
+}

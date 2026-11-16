@@ -1,0 +1,46 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "runs": [
+    {
+      "path": "D:\\tmp\\tf0835\\dev.json",
+      "sha256": "b557301940bb63acc330c473ac68791bba31b6dd7aac5bbec99457c7d304f03b",
+      "reason": "First Git sharing regression failed before source-stat/Singleflight publication ordering was repaired."
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\git-dev2.json",
+      "sha256": "2813ed234c1ddd277d48a9f36472708b71c045fdda4006fbff1bf24da0990cca",
+      "reason": "Interrupted host run reported dependency import resolution failures; the later full candidate validation completed."
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-dev.json",
+      "sha256": "e41477fc2486e73d6994e4fe91cd692d331d82487c43c507ad6b7fb985fec564",
+      "reason": "Second test window lacked explicit candidate preload; corrected fixture."
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-final.json",
+      "sha256": "baeba020081d4db0dc2802b23d8921c99564610d82ae0c48a3168494efc16e6d",
+      "reason": "Build removed test-only cache reset export; switched to production source mutation and efficiency routes."
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-final2.json",
+      "sha256": "cff6aa24350b9d6cf6c66dedb60185332b7eb46e656981449015b699c0b4f8ea",
+      "reason": "Unregistered second window was denied by the existing Host boundary; added a Main-owned read observer factory with exact-entry and action checks."
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-observer.json",
+      "sha256": "4509f867cca5989865270c1f6dbdd16ea3453671e2c2741ab63daea840fd1fd0",
+      "reason": "Stable primary window was not available within original startup timeout; independent startup probe succeeded and original failure retained."
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-observer2.json",
+      "sha256": "19c507dd19667dd702bae6c5530ea36b880da4af63b6a3d0ad94c7b1baa4e9a4",
+      "reason": "Electron preference snapshot omitted preload; replaced inspection-based registration with explicit Main-owned creation."
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-final\\report.json",
+      "sha256": "9be1d28cc8b63b8c3da909984207b2c82589dd41f3031d826d2d865414982e9c",
+      "reason": "All 107 tests passed but five new CRLF lines failed diff validation; normalized added lines before final integration."
+    }
+  ]
+}

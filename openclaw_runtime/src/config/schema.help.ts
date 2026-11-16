@@ -1970,6 +1970,16 @@ export const FIELD_HELP: Record<string, string> = {
     "Master Phase-3 registry pilot switch. Enabling it must only allow diagnostics until a later cutover explicitly changes provider/tool ordering.",
   "runtime.registryPilot.enabled":
     "Enable registry pilot diagnostics while keeping legacy context, tool, and task-loop behavior authoritative (default: false).",
+  "runtime.providerBudget": "Opt-in provider-owner spend reservations in the shared SQLite state database. No limits are enabled when omitted. Counts start with budget admission, not retroactive transcript history. Missing usage remains reserved; all-zero model pricing is unknown.",
+  "runtime.providerBudget.host": "Shared ceilings for all covered model calls using this runtime state database. Separate state directories do not share a host budget.",
+  "runtime.providerBudget.project": "Per-project ceilings, using the owner-supplied workspace/project identity. Requests without that identity are refused while project limits are configured.",
+  "runtime.providerBudget.session": "Per-session-generation ceilings. Session identity comes from the execution owner, not model request payloads.",
+  "runtime.providerBudget.host.maxTokens": "Nonnegative total token ceiling. Input/output model bounds are reserved before dispatch and reconciled from final usage. Unknown attempts retain their reservation.",
+  "runtime.providerBudget.host.maxCostUsd": "Nonnegative USD ceiling (maximum 9000000). Uses conservative model-rate estimates in integer microdollars; unknown pricing or prior unknown costs block new charged calls. Not an invoice reconciliation.",
+  "runtime.providerBudget.project.maxTokens": "Nonnegative total token ceiling. Input/output model bounds are reserved before dispatch and reconciled from final usage. Unknown attempts retain their reservation.",
+  "runtime.providerBudget.project.maxCostUsd": "Nonnegative USD ceiling (maximum 9000000). Uses conservative model-rate estimates in integer microdollars; unknown pricing or prior unknown costs block new charged calls. Not an invoice reconciliation.",
+  "runtime.providerBudget.session.maxTokens": "Nonnegative total token ceiling. Input/output model bounds are reserved before dispatch and reconciled from final usage. Unknown attempts retain their reservation.",
+  "runtime.providerBudget.session.maxCostUsd": "Nonnegative USD ceiling (maximum 9000000). Uses conservative model-rate estimates in integer microdollars; unknown pricing or prior unknown costs block new charged calls. Not an invoice reconciliation.",
   "runtime.providerRegistry":
     "Provider registry shadow settings for Phase-3 runtime migration diagnostics.",
   "runtime.providerRegistry.shadow":

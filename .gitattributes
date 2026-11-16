@@ -1,3 +1,7 @@
+# Keep ordinary text files stable across Windows and POSIX checkouts. The
+# byte-locked exceptions below override this default explicitly.
+* text=auto eol=lf
+
 # VerseShell process-lifecycle patch is content-addressed by the committed
 # manifest (provenance.build_input.diff_sha256 / compliance checksum) and
 # verified by tests/unit/uas-05-verseshell-process-lifecycle.test.ts and
@@ -45,6 +49,10 @@ artifacts/runtime-test-integrity/credential-scan.json -text whitespace=blank-at-
 artifacts/runtime-test-integrity/SHA256SUMS -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 # Current desktop acceptance evidence is byte-addressed on every checkout.
+harness/specs/fixtures/chat-output-visual-hierarchy/round-7/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/chat-output-visual-hierarchy/round-8/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/chat-output-visual-hierarchy/round-9/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/chat-output-visual-hierarchy/round-10/** -text whitespace=-trailing-space,-blank-at-eof
 artifacts/desktop-acceptance-followups/* -text
 artifacts/frozen-windows-acceptance-20261007/* -text
 artifacts/windows-delivery-blocker-fixes/* -text
@@ -58,7 +66,30 @@ artifacts/stepfun-basic-live-evidence-20261008/* -text
 # SHA-256 evidence manifests use the standard two-space separator. Keep their hash-locked bytes and recognize CRLF line endings on every checkout.
 harness/specs/fixtures/**/SHA256SUMS -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Test fixture transcripts preserve exact captured stdout/stderr bytes; whitespace diagnostics would rewrite hashed evidence.
+harness/specs/fixtures/chat-composer-popovers/20261106/build.txt whitespace=-trailing-space
+harness/specs/fixtures/session-worktree-storage/20261107/*.txt whitespace=-trailing-space,-blank-at-eof
 tests/unit/fixtures/**/*.txt whitespace=-trailing-space
 
 # Runtime memory baseline docs hash the fixture raw bytes on every checkout.
 tests/fixtures/runtime-memory-eval/locomo-full-500-report.json -text
+
+# This retained admission evidence is verified by exact-byte SHA-256 readback.
+harness/specs/fixtures/architecture-admission-ast/** -text
+harness/specs/fixtures/architecture-small-cycles/** -text
+harness/specs/fixtures/architecture-runtime-cycles/** -text
+harness/specs/fixtures/architecture-authority-convergence/** -text
+harness/specs/fixtures/architecture-convergence-final/** -text
+harness/specs/fixtures/architecture-review-integration/** -text
+
+# G7 frozen design, raw responses, and retained fifth-round bytes use SHA-256.
+harness/specs/fixtures/context-inline-spill-benefit-round6/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/context-inline-spill-benefit-round7/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/context-inline-spill-benefit-round8/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/context-inline-spill-benefit-round9/** -text whitespace=-trailing-space,-blank-at-eof
+# Keep the runner's existing CRLF format visible to whitespace checks.
+scripts/context-inline-spill-benefit-loop-eval.mts whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/modules/context-and-memory.md whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# G7 closeout manifests retain command output bytes, including Windows CRLF.
+harness/specs/fixtures/context-inline-spill-g7-closeout/** -text
+harness/specs/fixtures/context-inline-spill-final-hygiene-20261114/** -text

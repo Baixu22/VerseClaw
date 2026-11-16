@@ -88,15 +88,13 @@ export const useMcpStore = create<McpState>((set) => ({
 
   listTools: async (id) => {
     const result = await hostApi.mcp.listTools({ serverId: id });
-    if (result.success) {
-      set((state) => ({
+    set((state) => ({
         servers: state.servers.map((server) => (
           server.id === id
-            ? { ...server, toolCount: result.tools.length, runtimeStatus: result.status }
+            ? { ...server, toolCount: result.success ? result.tools.length : undefined, runtimeStatus: result.status }
             : server
         )),
-      }));
-    }
+    }));
     return result;
   },
 

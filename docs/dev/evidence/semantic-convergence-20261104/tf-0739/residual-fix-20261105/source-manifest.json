@@ -1,0 +1,26 @@
+{
+  "candidate": {
+    "commit": "b5558f44aa78398aacef3ef9345ff776e593353c",
+    "tree": "47e0ff065e996d5120f1e509cd8fe848745328bd",
+    "dirty": false
+  },
+  "base": "d3503b9a67101455896ff2021d60d39955995fee",
+  "sourceHashes": {
+    "harness/specs/tasks/semantic-convergence-remediation.md": "9ccd9e7980aa65a242959f7e4d9f045d7f3c0c0770f9d90937cd080f68d86c80",
+    "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts": "4ad2cbc99715b0b9bce2c07503d555393c170cbdf69b1d41e3621071e39bc008",
+    "scripts/rsi-sekb-arms.d.mts": "a72d9b478148139d7b2872e23d4c4d3af08c59cfa69956bc932a1b62ee27f541"
+  },
+  "priorEvidence": {
+    "path": "docs/dev/evidence/semantic-convergence-20261104/tf-0739/report.json",
+    "sha256": "a173548769ca34aa8cd0a1d6eb6be6721c2fd6773aea71ecd651293c4d54386c",
+    "unchanged": true
+  },
+  "unchangedRuntime": {
+    "rsiImplementation": "d8858a66adfda5c460ff8fb90b40cabcf6f80aa6",
+    "compassConfig": "a81653f65fab012f9eb878ec0be6347cdef12f6d",
+    "compassConfigHistory": [
+      "91c429310",
+      "fffb289e5"
+    ]
+  }
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "path": "src/pages/Chat/index.tsx",
+    "sha256": "6b3b5bb8284fbc377a3d82be346445559a8939ea779497a836e285ea3f787c9b"
+  },
+  {
+    "path": "src/components/chat/WelcomeProjectPicker.tsx",
+    "sha256": "79017483a0cbc7605a29e3fc2eb14fd0e9dbf19b2aef7358eb4ea2a9e4314a15"
+  },
+  {
+    "path": "src/components/chat/WelcomeBranchPicker.tsx",
+    "sha256": "c0c1f0e651054498c35c6376eb0c264e60fbbf2892f008d14ad0cdee47e00dac"
+  },
+  {
+    "path": "src/styles/codex-welcome-hero.css",
+    "sha256": "d183a47319c0fe11125a97badb37c437b47e91e09c841bf33dbd956405d0afeb"
+  },
+  {
+    "path": "tests/e2e/chat-welcome-hero-fakecoding.spec.ts",
+    "sha256": "78c30f64c82bb8066cf6f51aa08fc2def717b3b871e8cb83e0d2b122e6eda9b4"
+  },
+  {
+    "path": "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+    "sha256": "0d796d6b31198dc9acd301667019eb75541f08c14f583e0db1c9aeca658bb2b2"
+  },
+  {
+    "path": "tests/unit/welcome-project-picker.test.tsx",
+    "sha256": "07a5fdce06ec9df7445244010a62a54eff2583a7a74e6f1cb5f72fe70ffce81b"
+  },
+  {
+    "path": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+    "sha256": "2a574e399d167c0eb195ddc4c796f34928af133fa2d62322f5077925be42392a"
+  },
+  {
+    "path": "harness/specs/scenarios/windows-ui-v2.md",
+    "sha256": "013bdece7a9716ea1f75962090ab55116c4811ece669eaca5bfde521b72a3446"
+  },
+  {
+    "path": "harness/specs/rules/ui-motion-material-system.md",
+    "sha256": "849fe1d7f48ec41c22d407633e02a8a97370679de1e018da9911c38e876b12b8"
+  },
+  {
+    "path": "docs/modules/workspace-and-coding.md",
+    "sha256": "26a44a4338408b44faa830572a19e949805097bd86999a71b02982035fe43834"
+  },
+  {
+    "path": "README.md",
+    "sha256": "812041cfa2c95b03d0067c92b5844db55cb58a5b3c6c92cbf873a4572639849f"
+  },
+  {
+    "path": "README.zh-CN.md",
+    "sha256": "3529c9002b327eae06fe20a377ae25149c5389c157aafe15aae23e4058699238"
+  },
+  {
+    "path": "README.ja-JP.md",
+    "sha256": "4256783771a1a59be08c5fb6635b3d003911d15e5b4b8fefc5bf09bb33849002"
+  },
+  {
+    "path": "README.ru-RU.md",
+    "sha256": "3cdb0f256221c4a5bf08cf0e9a87619db50713c470c3499a04621265c38fe4cd"
+  },
+  {
+    "path": "shared/i18n/locales/en/chat.json",
+    "sha256": "2eb9119b057a34539391257d661a4b3920760ee0bd8bae4fe8585b89082a72ca"
+  },
+  {
+    "path": "shared/i18n/locales/zh/chat.json",
+    "sha256": "8259b54b72534d5f5708d23294174226a66d2c29605d71341caee5b66c5744b4"
+  },
+  {
+    "path": "shared/i18n/locales/ja/chat.json",
+    "sha256": "da7680f663c36fe8c82b915986b579aaa37a185fee2e9e6d224fbba170eb59ae"
+  },
+  {
+    "path": "shared/i18n/locales/ru/chat.json",
+    "sha256": "c88aa7edba2667a70a69671278936c411ac693127ae4c58a83c89ab93eb1f695"
+  },
+  {
+    "path": "tests/e2e/chat-composer-git-strip.spec.ts",
+    "sha256": "f81722464c3ed7b5e5fe15646ca848ef90e2de0f4c2c2f94bc504fbb38d6746f"
+  },
+  {
+    "path": "tests/unit/welcome-branch-picker.test.tsx",
+    "sha256": "1b70023000f5e3a2862bfdb82385156955eec9a994357ce6530cc420b52aed72"
+  }
+]

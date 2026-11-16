@@ -1,0 +1,26 @@
+{
+  "actor": "codex/prompt-authority",
+  "files": [
+    "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts",
+    "openclaw_runtime/src/plugins/hooks.ts",
+    "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts"
+  ],
+  "reason": "The source chat resumed TF-0737 in the same checkout while the candidate checks were running; initial clean state alone cannot prove stable source inputs.",
+  "candidate": "cc580c2f33d3ef21a5a678cd038dcf40ec7d3737",
+  "observedAt": "2026-11-04T07:49:21.8283915Z",
+  "excludedFromClosure": [
+    "root-tests",
+    "typecheck",
+    "comms-replay",
+    "comms-compare"
+  ],
+  "schema": "SemanticConvergenceRunInterference/v1",
+  "sourceChat": "01a1a446-104b-78d0-8322-24b46625fecf",
+  "driven_by": "agent",
+  "resolution": {
+    "sourceChatStatus": "interrupted and idle",
+    "coordinatedByOwner": true,
+    "preservedUnder": "D:/tmp/tf0737-source-chat-backup",
+    "inheritedSourceChange": "Host selector and initial fixtures retained; target-derived builtin grants replaced with fixed scopes. Fresh stable candidate used for all acceptance evidence."
+  }
+}

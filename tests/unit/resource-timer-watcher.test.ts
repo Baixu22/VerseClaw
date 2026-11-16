@@ -91,6 +91,6 @@ describe('WatcherHub', () => {
     firstHandle.close();
     expect(unwatch).not.toHaveBeenCalled();
     hub.resetForTest();
-    expect(unwatch).toHaveBeenCalledWith('/root/file.txt');
+    expect(unwatch).toHaveBeenCalledWith('/root/file.txt', expect.any(Function));
   });
 });

@@ -165,7 +165,8 @@ test.describe('Verse Claw chat workspace header', () => {
       }, SESSION_KEY);
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'running');
       await expect(page.getByTestId('chat-current-session-status')).toHaveAttribute('data-state', 'streaming');
-      await expect(page.getByTestId('assistant-stream-status-dot')).toHaveAttribute('data-state', 'thinking');
+      await expect(page.getByTestId('chat-turn-summary-orb')).toBeVisible();
+      await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
       await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
 
       const screenshotPath = testInfo.outputPath('chat-dot-matrix-running-status.png');
@@ -223,7 +224,7 @@ test.describe('Verse Claw chat workspace header', () => {
     }
   });
 
-  test('keeps sidebar new chat scoped to the active workspace', async ({ launchElectronApp }) => {
+  for (const entry of ['sidebar', 'slash'] as const) test(`keeps ${entry} new chat scoped to the active workspace and preserves drafts after owner refusal`, async ({ launchElectronApp }, info) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -308,6 +309,7 @@ test.describe('Verse Claw chat workspace header', () => {
         const calls = {
           workspaceUpdate: [] as Record<string, unknown>[],
           workspaceSaveState: [] as Record<string, unknown>[],
+          rejectedUpdates: [] as Record<string, unknown>[],
         };
         let activeWorkspace = params.workspace;
         const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
@@ -330,6 +332,10 @@ test.describe('Verse Claw chat workspace header', () => {
           payload?: Record<string, unknown>;
         }) => {
           if (request.module === 'workspaces' && request.action === 'update') {
+            if (calls.rejectedUpdates.length === 0) {
+              calls.rejectedUpdates.push(request.payload ?? {});
+              return { id: request.id, ok: false, error: { code: 'CONFLICT', message: 'U5_NEW_SESSION_REJECTED' } };
+            }
             calls.workspaceUpdate.push(request.payload ?? {});
             const payload = request.payload ?? {};
             const agentId = String(payload.agentId ?? activeWorkspace.selectedAgentId);
@@ -378,7 +384,23 @@ test.describe('Verse Claw chat workspace header', () => {
         });
       }, { workspace: WORKSPACE, otherWorkspace: OTHER_WORKSPACE });
 
-      await page.getByTestId('sidebar-new-chat').click();
+      const draft = entry === 'slash' ? '/new' : 'Preserve this source draft after rejected creation';
+      const create = async () => {
+        if (entry === 'sidebar') await page.getByTestId('sidebar-new-chat').click();
+        else {
+          await page.getByTestId('chat-composer-input').fill('/ne'); await page.getByTestId('chat-composer-input').press('w');
+          const option = page.getByTestId('chat-slash-command-option-new');
+          await expect(option).toBeVisible(); await option.focus(); await expect(option).toBeFocused(); await option.press('Enter');
+        }
+      };
+      await page.getByTestId('chat-composer-input').fill(draft);
+      await create();
+      await expect(page.getByText('U5_NEW_SESSION_REJECTED', { exact: false })).toBeVisible();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(draft);
+      expect(await app.evaluate(() => (globalThis as unknown as {
+        __workspaceNewChatCalls: { workspaceUpdate: unknown[]; rejectedUpdates: unknown[] };
+      }).__workspaceNewChatCalls)).toMatchObject({ workspaceUpdate: [], rejectedUpdates: [expect.objectContaining({ id: WORKSPACE.id })] });
+      await create();
 
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & {
@@ -405,6 +427,9 @@ test.describe('Verse Claw chat workspace header', () => {
       }));
       expect(calls?.workspaceUpdate[0]?.sessionKey).toEqual(expect.stringMatching(/^agent:main:session-\d+-[a-z0-9]+$/));
       expect(calls?.workspaceUpdate[0]?.activeSessionKey).toBe(calls?.workspaceUpdate[0]?.sessionKey);
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('');
+      await info.attach('new-session-refusal-recovery', { body: JSON.stringify({ driven_by: 'agent', actor: 'playwright-u5-new-session',
+        fixture: 'Host owner rejection followed by original UI retry', sourceDraftRetained: true, calls }), contentType: 'application/json' });
     } finally {
       await closeElectronApp(app);
     }

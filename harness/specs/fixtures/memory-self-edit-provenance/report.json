@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "node": "TF-0741",
+  "driven_by": "agent",
+  "actor": "codex/tf0741-memory-provenance",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-04T12:58:35.182Z",
+  "candidate": "1e6e03cc73dc9da6b34f6555b5efd3cb630cd231",
+  "base": "7abbf58a3e1d4404f26076c54fd7ea00d75e26a3",
+  "sourceStable": true,
+  "candidateDirtyDuringChecks": false,
+  "decision": {
+    "status": "node-accepted",
+    "persist": false,
+    "productApproved": false,
+    "liveReady": false,
+    "ga": false
+  },
+  "metric": {
+    "id": "MEM-1",
+    "method": "static source labels",
+    "formula": "count(source human_confirmation) + count(verificationStatus human_approved) + count(promotedBy human)",
+    "before": 5,
+    "after": 0,
+    "source": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+    "limitation": "Unreachable in current product; preventive provenance correction, not measured runtime benefit."
+  },
+  "tests": {
+    "files": 7,
+    "total": 71,
+    "passed": 71,
+    "failed": 0,
+    "skipped": 0
+  },
+  "baselineReproduction": {
+    "total": 9,
+    "passed": 3,
+    "failed": 6,
+    "fixtureVersion": "initial nine-case reproduction; final suite adds candidate-bypass assertion and corrects a test-port timestamp type",
+    "evidence": "before-tests.json"
+  },
+  "acceptance": [
+    {
+      "criterion": "Agent actions generate no human approval",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "source-manifest.json"
+      ],
+      "detail": "update and forget exercised with in-memory store and explicit in-memory persistence port; historical human lineage preserved separately"
+    },
+    {
+      "criterion": "Strengthen preserves source and approval",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json"
+      ],
+      "detail": "usage increments while original fact remains unchanged in both paths"
+    },
+    {
+      "criterion": "Forged human rejection/schema records denied",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json"
+      ],
+      "detail": "rejection before writes and accepted/candidate schema boundary checked"
+    },
+    {
+      "criterion": "Persistence remains retired",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json"
+      ],
+      "detail": "existing adapter and TF-0500 tests pass; no production configuration changed"
+    }
+  ],
+  "verification": [
+    {
+      "name": "unit",
+      "executable": "node",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/memory-self-edit-provenance.test.ts",
+        "tests/unit/runtime-memory-context-contracts.test.ts",
+        "tests/unit/runtime-memory-store.test.ts",
+        "tests/unit/runtime-memory-self-edit.test.ts",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+        "tests/unit/memory-self-edit-adapter.test.ts",
+        "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/tf0741/candidate-tests.json"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 39650
+    },
+    {
+      "name": "typecheck",
+      "executable": "node",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "D:/tmp/tf0741/tsconfig.json"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 1585
+    },
+    {
+      "name": "lint",
+      "executable": "node",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/runtime-core/memory-context.ts",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts",
+        "tests/unit/memory-self-edit-provenance.test.ts",
+        "tests/unit/runtime-memory-self-edit.test.ts",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+        "tests/unit/runtime-memory-context-contracts.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 3679
+    },
+    {
+      "name": "harness-validate",
+      "executable": "node",
+      "args": [
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/memory-self-edit-provenance.md",
+        "--since",
+        "7abbf58a3e1d4404f26076c54fd7ea00d75e26a3"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 641
+    },
+    {
+      "name": "harness-plan",
+      "executable": "node",
+      "args": [
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/memory-self-edit-provenance.md",
+        "--since",
+        "7abbf58a3e1d4404f26076c54fd7ea00d75e26a3",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 604
+    },
+    {
+      "name": "comms-replay",
+      "executable": "node",
+      "args": [
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 266
+    },
+    {
+      "name": "comms-compare",
+      "executable": "node",
+      "args": [
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 186
+    },
+    {
+      "name": "retention",
+      "executable": "node",
+      "args": [
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 4750
+    }
+  ],
+  "autoreview": {
+    "exitCode": 0,
+    "findings": 0,
+    "result": "patch is correct",
+    "evidence": "review.json",
+    "priorAttempt": "First run failed on provider HTTP 429; a later reply failed helper path validation. Neither was counted as a pass. Same engine/model retried through unchanged helper validation; final wrapper retained raw reply only.",
+    "findingsFixed": [
+      "Agent promoter with human status under another source",
+      "Candidate fallback accepting contradictory verified/deterministic approval"
+    ],
+    "earlierReview": "review-before-fixes.json"
+  },
+  "limitations": [
+    "Development acceptance only; no release/GA claim.",
+    "No live provider, Electron E2E or real SQLite write; product persistence is retired.",
+    "Typecheck covers touched runtime dependency closure and new test, not the entire repository.",
+    "Installed dependencies reused from D:/ClawX; no fresh install validation.",
+    "Schema additions do not rewrite existing stored records.",
+    "Atomicity/cache/facade work remains in TF-0742..TF-0744."
+  ]
+}

@@ -1,0 +1,1779 @@
+{
+  "schema": "PromptAuthorityCommandEvidence/v1",
+  "driven_by": "agent",
+  "actor": "codex/prompt-authority",
+  "candidate": {
+    "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+    "tree": "be287894c58222959238611b31564bca17e5d33e",
+    "dirty": false
+  },
+  "gates": [
+    {
+      "id": "root-tests-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts",
+        "tests/unit/provider-error-retry-boundaries.test.ts",
+        "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+        "tests/unit/memory-self-edit-adapter.test.ts",
+        "tests/unit/context-orchestrator-entry-scan.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:/tmp/tf0737-root-tests-final.json"
+      ],
+      "startedAt": "2026-11-04T08:09:08.785Z",
+      "completedAt": "2026-11-04T08:10:04.923Z",
+      "durationMs": 56136,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-root-tests-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "pnpm_config_verify_deps_before_run": "warn"
+      }
+    },
+    {
+      "id": "runtime-tests-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.unit.config.ts",
+        "src/context-engine/prompt-contribution-authority.test.ts",
+        "src/context-engine/context-candidate.test.ts",
+        "src/context-engine/context-orchestrator.test.ts",
+        "src/context-engine/context-orchestrator.compass.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:/tmp/tf0737-runtime-tests-final.json"
+      ],
+      "startedAt": "2026-11-04T08:12:51.939Z",
+      "completedAt": "2026-11-04T08:13:20.540Z",
+      "durationMs": 28595,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-runtime-tests-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      }
+    },
+    {
+      "id": "retry-tests-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents-core.config.ts",
+        "src/agents/request-attempt-budget.test.ts",
+        "src/agents/model-fallback.loop-termination.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:/tmp/tf0737-retry-tests-final.json"
+      ],
+      "startedAt": "2026-11-04T08:15:24.895Z",
+      "completedAt": "2026-11-04T08:15:48.367Z",
+      "durationMs": 23457,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-retry-tests-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:\\tmp\\tf0737-runtime-module-cache"
+      }
+    },
+    {
+      "id": "typecheck-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "scripts/typecheck-agent-dev.mjs"
+      ],
+      "startedAt": "2026-11-04T08:09:08.783Z",
+      "completedAt": "2026-11-04T08:09:55.340Z",
+      "durationMs": 46557,
+      "exitCode": 1,
+      "log": "D:/tmp/tf0737-typecheck-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "pnpm_config_verify_deps_before_run": "warn"
+      }
+    },
+    {
+      "id": "scoped-typecheck-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "D:/tmp/tf0737-typecheck.json",
+        "--composite",
+        "false"
+      ],
+      "startedAt": "2026-11-04T08:12:51.939Z",
+      "completedAt": "2026-11-04T08:13:04.288Z",
+      "durationMs": 12343,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-scoped-typecheck-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      }
+    },
+    {
+      "id": "eslint-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts",
+        "openclaw_runtime/src/context-engine/context-candidate.ts",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+        "openclaw_runtime/src/context-engine/types.ts",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts",
+        "openclaw_runtime/src/plugins/hook-types.ts",
+        "openclaw_runtime/src/plugins/types.ts",
+        "openclaw_runtime/src/plugins/registry.ts",
+        "openclaw_runtime/src/plugins/hooks.ts",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts",
+        "scripts/semantic-convergence-baseline.mjs",
+        "--max-warnings=0"
+      ],
+      "startedAt": "2026-11-04T08:09:08.783Z",
+      "completedAt": "2026-11-04T08:09:16.934Z",
+      "durationMs": 8150,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-eslint-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      }
+    },
+    {
+      "id": "harness-validate-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/semantic-convergence-remediation.md"
+      ],
+      "startedAt": "2026-11-04T08:09:17.047Z",
+      "completedAt": "2026-11-04T08:09:18.974Z",
+      "durationMs": 1926,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-harness-validate-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      }
+    },
+    {
+      "id": "harness-dry-run-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/semantic-convergence-remediation.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-04T08:09:19.153Z",
+      "completedAt": "2026-11-04T08:09:42.072Z",
+      "durationMs": 22920,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-harness-dry-run-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      }
+    },
+    {
+      "id": "behavioral-trace-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "--experimental-transform-types",
+        "D:/tmp/tf0737-behavioral-trace-driver.mjs",
+        "D:/ClawX-work/semantic-convergence-20261104",
+        "D:/tmp/tf0737-behavioral-trace.json"
+      ],
+      "startedAt": "2026-11-04T08:13:04.420Z",
+      "completedAt": "2026-11-04T08:13:06.119Z",
+      "durationMs": 1698,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-behavioral-trace-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp"
+      }
+    },
+    {
+      "id": "comms-replay-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "startedAt": "2026-11-04T08:12:51.939Z",
+      "completedAt": "2026-11-04T08:12:55.750Z",
+      "durationMs": 3804,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-comms-replay-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "COMMS_OUTPUT_DIR": "D:\\tmp\\tf0737-comms-final"
+      }
+    },
+    {
+      "id": "comms-compare-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "startedAt": "2026-11-04T08:12:55.968Z",
+      "completedAt": "2026-11-04T08:13:04.447Z",
+      "durationMs": 8472,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-comms-compare-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "COMMS_OUTPUT_DIR": "D:\\tmp\\tf0737-comms-final"
+      }
+    },
+    {
+      "id": "baseline-before-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "scripts/semantic-convergence-baseline.mjs"
+      ],
+      "startedAt": "2026-11-04T08:15:24.895Z",
+      "completedAt": "2026-11-04T08:15:33.777Z",
+      "durationMs": 8868,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-baseline-before-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "SEMANTIC_CONVERGENCE_SOURCE": "git-head",
+        "SEMANTIC_CONVERGENCE_REF": "f7afdc11f2dbf918901e31833ed081d03c96a2bc",
+        "SEMANTIC_CONVERGENCE_OUT": "D:\\tmp\\tf0737-before-final.json"
+      }
+    },
+    {
+      "id": "baseline-after-final",
+      "driven_by": "agent",
+      "actor": "codex/prompt-authority",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "tree": "be287894c58222959238611b31564bca17e5d33e",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "sourceHashesAfter": {
+        ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+        "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+        "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+        "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+        "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+        "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+        "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+        "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+        "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+        "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+        "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+        "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+        "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+        "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+        "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+      },
+      "command": [
+        "node",
+        "scripts/semantic-convergence-baseline.mjs"
+      ],
+      "startedAt": "2026-11-04T08:15:33.951Z",
+      "completedAt": "2026-11-04T08:15:36.999Z",
+      "durationMs": 3047,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0737-baseline-after-final.log",
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "SEMANTIC_CONVERGENCE_SOURCE": "git-head",
+        "SEMANTIC_CONVERGENCE_REF": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+        "SEMANTIC_CONVERGENCE_OUT": "D:\\tmp\\tf0737-after-final.json"
+      }
+    }
+  ],
+  "fullTypecheck": {
+    "success": false,
+    "mode": "parallel",
+    "testTypes": {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 2,
+      "durationMs": 36414,
+      "observationMode": false,
+      "errorCount": 2,
+      "errorLog": "D:\\ClawX-work\\semantic-convergence-20261104\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    },
+    "cache": {
+      "enabled": false,
+      "status": "disabled",
+      "key": "cf1e92bd8c0895a82d5f72c721a0539aff0fe967a6bce37135f8da5bb9a351b2",
+      "inputCount": 13029,
+      "report": "D:\\ClawX-work\\semantic-convergence-20261104\\artifacts\\typecheck-cache\\report.json"
+    },
+    "totalDurationMs": 44685,
+    "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+    "results": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 114
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 33240
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 21459
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 2,
+        "durationMs": 36414,
+        "observationMode": false,
+        "errorCount": 2,
+        "errorLog": "D:\\ClawX-work\\semantic-convergence-20261104\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ]
+  },
+  "behavioralTrace": {
+    "schema": "PromptAuthorityBehavioralTrace/v1",
+    "driven_by": "agent",
+    "actor": "codex/prompt-authority",
+    "generatedAt": "2026-11-04T08:13:05.517Z",
+    "scope": "Actual authority module calls; deterministic API fixture, not provider/runtime effects",
+    "sourceStable": true,
+    "sourceHashes": {
+      "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+      "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308"
+    },
+    "fieldCount": 5,
+    "deniedDecisionCount": 8,
+    "admittedUnauthorizedCount": 0,
+    "events": [
+      {
+        "index": 0,
+        "type": "request",
+        "stage": "undeclared",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "systemPrompt",
+          "requiredAuthority": "replace_system_prompt",
+          "declaration": null
+        }
+      },
+      {
+        "index": 1,
+        "type": "decision",
+        "stage": "undeclared",
+        "allowed": false,
+        "error": {
+          "name": "PromptContributionAuthorityError",
+          "code": "PROMPT_CONTRIBUTION_AUTHORITY_DENIED",
+          "source": "trace-plugin",
+          "scope": "systemPrompt",
+          "requiredAuthority": "replace_system_prompt",
+          "reason": "undeclared"
+        }
+      },
+      {
+        "index": 2,
+        "type": "request",
+        "stage": "continuation-with-registration",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "systemPrompt",
+          "requiredAuthority": "replace_system_prompt",
+          "declaration": {
+            "source": "trace-plugin",
+            "scope": [
+              "systemPrompt"
+            ],
+            "authority": [
+              "replace_system_prompt"
+            ],
+            "reason": "Recorded fixture producer registration"
+          }
+        }
+      },
+      {
+        "index": 3,
+        "type": "decision",
+        "stage": "continuation-with-registration",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 4,
+        "type": "request",
+        "stage": "undeclared",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "prependContext",
+          "requiredAuthority": "append_data",
+          "declaration": null
+        }
+      },
+      {
+        "index": 5,
+        "type": "decision",
+        "stage": "undeclared",
+        "allowed": true,
+        "status": "default-data"
+      },
+      {
+        "index": 6,
+        "type": "request",
+        "stage": "continuation-with-registration",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "prependContext",
+          "requiredAuthority": "append_data",
+          "declaration": {
+            "source": "trace-plugin",
+            "scope": [
+              "prependContext"
+            ],
+            "authority": [
+              "append_data"
+            ],
+            "reason": "Recorded fixture producer registration"
+          }
+        }
+      },
+      {
+        "index": 7,
+        "type": "decision",
+        "stage": "continuation-with-registration",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 8,
+        "type": "request",
+        "stage": "undeclared",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "appendContext",
+          "requiredAuthority": "append_data",
+          "declaration": null
+        }
+      },
+      {
+        "index": 9,
+        "type": "decision",
+        "stage": "undeclared",
+        "allowed": true,
+        "status": "default-data"
+      },
+      {
+        "index": 10,
+        "type": "request",
+        "stage": "continuation-with-registration",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "appendContext",
+          "requiredAuthority": "append_data",
+          "declaration": {
+            "source": "trace-plugin",
+            "scope": [
+              "appendContext"
+            ],
+            "authority": [
+              "append_data"
+            ],
+            "reason": "Recorded fixture producer registration"
+          }
+        }
+      },
+      {
+        "index": 11,
+        "type": "decision",
+        "stage": "continuation-with-registration",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 12,
+        "type": "request",
+        "stage": "undeclared",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "prependSystemContext",
+          "requiredAuthority": "append_instruction",
+          "declaration": null
+        }
+      },
+      {
+        "index": 13,
+        "type": "decision",
+        "stage": "undeclared",
+        "allowed": false,
+        "error": {
+          "name": "PromptContributionAuthorityError",
+          "code": "PROMPT_CONTRIBUTION_AUTHORITY_DENIED",
+          "source": "trace-plugin",
+          "scope": "prependSystemContext",
+          "requiredAuthority": "append_instruction",
+          "reason": "undeclared"
+        }
+      },
+      {
+        "index": 14,
+        "type": "request",
+        "stage": "continuation-with-registration",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "prependSystemContext",
+          "requiredAuthority": "append_instruction",
+          "declaration": {
+            "source": "trace-plugin",
+            "scope": [
+              "prependSystemContext"
+            ],
+            "authority": [
+              "append_instruction"
+            ],
+            "reason": "Recorded fixture producer registration"
+          }
+        }
+      },
+      {
+        "index": 15,
+        "type": "decision",
+        "stage": "continuation-with-registration",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 16,
+        "type": "request",
+        "stage": "undeclared",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "appendSystemContext",
+          "requiredAuthority": "append_instruction",
+          "declaration": null
+        }
+      },
+      {
+        "index": 17,
+        "type": "decision",
+        "stage": "undeclared",
+        "allowed": false,
+        "error": {
+          "name": "PromptContributionAuthorityError",
+          "code": "PROMPT_CONTRIBUTION_AUTHORITY_DENIED",
+          "source": "trace-plugin",
+          "scope": "appendSystemContext",
+          "requiredAuthority": "append_instruction",
+          "reason": "undeclared"
+        }
+      },
+      {
+        "index": 18,
+        "type": "request",
+        "stage": "continuation-with-registration",
+        "request": {
+          "source": "trace-plugin",
+          "scope": "appendSystemContext",
+          "requiredAuthority": "append_instruction",
+          "declaration": {
+            "source": "trace-plugin",
+            "scope": [
+              "appendSystemContext"
+            ],
+            "authority": [
+              "append_instruction"
+            ],
+            "reason": "Recorded fixture producer registration"
+          }
+        }
+      },
+      {
+        "index": 19,
+        "type": "decision",
+        "stage": "continuation-with-registration",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 20,
+        "type": "request",
+        "stage": "core-escalation",
+        "request": {
+          "source": "dcs-knowledge",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "declaration": {
+            "source": "dcs-knowledge",
+            "authority": [
+              "append_data"
+            ],
+            "scope": [
+              "message"
+            ],
+            "reason": "Resolved chat knowledge data projection"
+          }
+        }
+      },
+      {
+        "index": 21,
+        "type": "decision",
+        "stage": "core-escalation",
+        "allowed": false,
+        "error": {
+          "name": "PromptContributionAuthorityError",
+          "code": "PROMPT_CONTRIBUTION_AUTHORITY_DENIED",
+          "source": "dcs-knowledge",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "reason": "scope-mismatch"
+        }
+      },
+      {
+        "index": 22,
+        "type": "request",
+        "stage": "continuation-with-fixed-core-scope",
+        "request": {
+          "source": "dcs-knowledge",
+          "scope": "message",
+          "requiredAuthority": "append_data",
+          "declaration": {
+            "source": "dcs-knowledge",
+            "authority": [
+              "append_data"
+            ],
+            "scope": [
+              "message"
+            ],
+            "reason": "Resolved chat knowledge data projection"
+          }
+        }
+      },
+      {
+        "index": 23,
+        "type": "decision",
+        "stage": "continuation-with-fixed-core-scope",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 24,
+        "type": "request",
+        "stage": "core-escalation",
+        "request": {
+          "source": "context-block:knowledge",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "declaration": {
+            "source": "context-block:knowledge",
+            "authority": [
+              "append_data"
+            ],
+            "scope": [
+              "message"
+            ],
+            "reason": "DCS Assembler context-block data projection"
+          }
+        }
+      },
+      {
+        "index": 25,
+        "type": "decision",
+        "stage": "core-escalation",
+        "allowed": false,
+        "error": {
+          "name": "PromptContributionAuthorityError",
+          "code": "PROMPT_CONTRIBUTION_AUTHORITY_DENIED",
+          "source": "context-block:knowledge",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "reason": "scope-mismatch"
+        }
+      },
+      {
+        "index": 26,
+        "type": "request",
+        "stage": "continuation-with-fixed-core-scope",
+        "request": {
+          "source": "context-block:knowledge",
+          "scope": "message",
+          "requiredAuthority": "append_data",
+          "declaration": {
+            "source": "context-block:knowledge",
+            "authority": [
+              "append_data"
+            ],
+            "scope": [
+              "message"
+            ],
+            "reason": "DCS Assembler context-block data projection"
+          }
+        }
+      },
+      {
+        "index": 27,
+        "type": "decision",
+        "stage": "continuation-with-fixed-core-scope",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 28,
+        "type": "request",
+        "stage": "core-escalation",
+        "request": {
+          "source": "compass-ssp",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "declaration": {
+            "source": "compass-ssp",
+            "authority": [
+              "append_instruction"
+            ],
+            "scope": [
+              "system_prompt"
+            ],
+            "reason": "COMPASS session-state projection"
+          }
+        }
+      },
+      {
+        "index": 29,
+        "type": "decision",
+        "stage": "core-escalation",
+        "allowed": false,
+        "error": {
+          "name": "PromptContributionAuthorityError",
+          "code": "PROMPT_CONTRIBUTION_AUTHORITY_DENIED",
+          "source": "compass-ssp",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "reason": "scope-mismatch"
+        }
+      },
+      {
+        "index": 30,
+        "type": "request",
+        "stage": "continuation-with-fixed-core-scope",
+        "request": {
+          "source": "compass-ssp",
+          "scope": "system_prompt",
+          "requiredAuthority": "append_instruction",
+          "declaration": {
+            "source": "compass-ssp",
+            "authority": [
+              "append_instruction"
+            ],
+            "scope": [
+              "system_prompt"
+            ],
+            "reason": "COMPASS session-state projection"
+          }
+        }
+      },
+      {
+        "index": 31,
+        "type": "decision",
+        "stage": "continuation-with-fixed-core-scope",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 32,
+        "type": "request",
+        "stage": "core-escalation",
+        "request": {
+          "source": "session-start:summary",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "declaration": {
+            "source": "session-start:summary",
+            "authority": [
+              "append_instruction"
+            ],
+            "scope": [
+              "system_prompt"
+            ],
+            "reason": "Session-start plan system context"
+          }
+        }
+      },
+      {
+        "index": 33,
+        "type": "decision",
+        "stage": "core-escalation",
+        "allowed": false,
+        "error": {
+          "name": "PromptContributionAuthorityError",
+          "code": "PROMPT_CONTRIBUTION_AUTHORITY_DENIED",
+          "source": "session-start:summary",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "reason": "scope-mismatch"
+        }
+      },
+      {
+        "index": 34,
+        "type": "request",
+        "stage": "continuation-with-fixed-core-scope",
+        "request": {
+          "source": "session-start:summary",
+          "scope": "system_prompt",
+          "requiredAuthority": "append_instruction",
+          "declaration": {
+            "source": "session-start:summary",
+            "authority": [
+              "append_instruction"
+            ],
+            "scope": [
+              "system_prompt"
+            ],
+            "reason": "Session-start plan system context"
+          }
+        }
+      },
+      {
+        "index": 35,
+        "type": "decision",
+        "stage": "continuation-with-fixed-core-scope",
+        "allowed": true,
+        "status": "declared"
+      },
+      {
+        "index": 36,
+        "type": "request",
+        "stage": "core-escalation",
+        "request": {
+          "source": "memory-inject-pilot:runtime-memory",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "declaration": {
+            "source": "memory-inject-pilot:runtime-memory",
+            "authority": [
+              "append_instruction"
+            ],
+            "scope": [
+              "system_prompt"
+            ],
+            "reason": "Runtime Memory pilot system context"
+          }
+        }
+      },
+      {
+        "index": 37,
+        "type": "decision",
+        "stage": "core-escalation",
+        "allowed": false,
+        "error": {
+          "name": "PromptContributionAuthorityError",
+          "code": "PROMPT_CONTRIBUTION_AUTHORITY_DENIED",
+          "source": "memory-inject-pilot:runtime-memory",
+          "scope": "message_replacement",
+          "requiredAuthority": "replace_messages",
+          "reason": "scope-mismatch"
+        }
+      },
+      {
+        "index": 38,
+        "type": "request",
+        "stage": "continuation-with-fixed-core-scope",
+        "request": {
+          "source": "memory-inject-pilot:runtime-memory",
+          "scope": "system_prompt",
+          "requiredAuthority": "append_instruction",
+          "declaration": {
+            "source": "memory-inject-pilot:runtime-memory",
+            "authority": [
+              "append_instruction"
+            ],
+            "scope": [
+              "system_prompt"
+            ],
+            "reason": "Runtime Memory pilot system context"
+          }
+        }
+      },
+      {
+        "index": 39,
+        "type": "decision",
+        "stage": "continuation-with-fixed-core-scope",
+        "allowed": true,
+        "status": "declared"
+      }
+    ]
+  },
+  "behavioralTraceDriver": {
+    "filename": "tf0737-behavioral-trace-driver.mjs",
+    "sha256": "9d97381c3e599569e6ab656d274a0de57a2fadfc5b68f9258f1d3b032d0679a2",
+    "source": "import assert from 'node:assert/strict';\nimport { readFileSync, writeFileSync } from 'node:fs';\nimport { resolve } from 'node:path';\nimport { pathToFileURL } from 'node:url';\nimport { createHash } from 'node:crypto';\nconst [root, output] = process.argv.slice(2);\nconst paths = ['openclaw_runtime/src/context-engine/prompt-contribution-authority.ts', 'openclaw_runtime/src/plugins/hook-before-agent-start.types.ts'];\nconst hashes = () => Object.fromEntries(paths.map(path => [path, createHash('sha256').update(readFileSync(resolve(root, path))).digest('hex')]));\nconst before = hashes();\nconst authority = await import(pathToFileURL(resolve(root, paths[0])).href);\nconst { PLUGIN_PROMPT_MUTATION_AUTHORITIES: fields } = await import(pathToFileURL(resolve(root, paths[1])).href);\nconst events = [];\nfunction attempt(source, scope, requiredAuthority, declaration, shouldDeny, stage) {\n  const request = { source, scope, requiredAuthority, declaration: declaration ?? null };\n  events.push({ index: events.length, type: 'request', stage, request });\n  try {\n    const status = authority.admitPromptContribution(source, scope, requiredAuthority, { mode: 'enforce', declaration });\n    assert.equal(shouldDeny, false, 'An unauthorized contribution was admitted');\n    events.push({ index: events.length, type: 'decision', stage, allowed: true, status });\n  } catch (error) {\n    assert.equal(shouldDeny, true, 'An authorized contribution was denied');\n    assert.equal(error.code, 'PROMPT_CONTRIBUTION_AUTHORITY_DENIED');\n    events.push({ index: events.length, type: 'decision', stage, allowed: false,\n      error: { name: error.name, code: error.code, source: error.source, scope: error.scope, requiredAuthority: error.requiredAuthority, reason: error.reason } });\n  }\n}\nfor (const [scope, requiredAuthority] of Object.entries(fields)) {\n  attempt('trace-plugin', scope, requiredAuthority, undefined, requiredAuthority !== 'append_data', 'undeclared');\n  const declaration = { source: 'trace-plugin', scope: [scope], authority: [requiredAuthority], reason: 'Recorded fixture producer registration' };\n  attempt('trace-plugin', scope, requiredAuthority, declaration, false, 'continuation-with-registration');\n}\nfor (const source of ['dcs-knowledge', 'context-block:knowledge', 'compass-ssp', 'session-start:summary', 'memory-inject-pilot:runtime-memory']) {\n  const declaration = authority.getBuiltinPromptContributionDeclaration(source);\n  assert.ok(declaration);\n  attempt(source, 'message_replacement', 'replace_messages', declaration, true, 'core-escalation');\n  attempt(source, declaration.scope[0], declaration.authority[0], declaration, false, 'continuation-with-fixed-core-scope');\n}\nconst after = hashes();\nassert.deepEqual(after, before, 'Source changed during trace recording');\nconst report = { schema: 'PromptAuthorityBehavioralTrace/v1', driven_by: 'agent', actor: 'codex/prompt-authority', generatedAt: new Date().toISOString(),\n  scope: 'Actual authority module calls; deterministic API fixture, not provider/runtime effects', sourceStable: true, sourceHashes: before,\n  fieldCount: Object.keys(fields).length, deniedDecisionCount: events.filter(event => event.type === 'decision' && !event.allowed).length,\n  admittedUnauthorizedCount: 0, events };\nwriteFileSync(output, JSON.stringify(report, null, 2) + '\\n');\nconsole.log(JSON.stringify({ fieldCount: report.fieldCount, deniedDecisionCount: report.deniedDecisionCount, admittedUnauthorizedCount: report.admittedUnauthorizedCount }));\n"
+  },
+  "runtimeCacheSetup": {
+    "source": "agent invocation",
+    "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0737-runtime-module-cache"
+  },
+  "postEvidenceChecks": {
+    "scope": "Artifact/index checks after curation; candidate.dirty=true records added evidence, not an uncommitted runtime change",
+    "gates": [
+      {
+        "id": "retention-final",
+        "driven_by": "agent",
+        "actor": "codex/prompt-authority",
+        "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+        "candidate": {
+          "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+          "tree": "be287894c58222959238611b31564bca17e5d33e",
+          "dirty": true
+        },
+        "sourceStable": true,
+        "sourceHashes": {
+          ".gitignore": "d69ad0fcb68422268ca6398a7eb7300bc68dd31623dd5d69376831b3f7ab057a",
+          "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/README.md": "fb48eb1f11f51174bca4b8e15f5f8249801c6ad8c47b63d999545b9b1107cff6",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/SHA256SUMS": "da32318b19f25743fda28b5e65eece546204f6a5da151c318cff4150b6719d3e",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/commands.json": "1cc3ecbe23f1c24247c2c9ecfa0a4e348fb10c9facb5e0600f245459d4532cda",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/comms-compare.json": "fa946c0be6872bd4dc378959d5c675dfd6d671601a103abfc7ba11e4f9b4fd0c",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/comms-replay.json": "8f971ff662e331ebe1bff8f7673dd2837b08d709342247603a1c361c316140c4",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/credential-scan.json": "7345d8f86ed4caeaf0560420760f01becffc6e049c93d366521f68655103e9d7",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/interference.json": "2a949a7a9029eb383f3c9626092eb966c129785ca9d9fcfa78f6c741c3fd64b7",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/prompt-after.json": "a946b92598c5ada022597a33fcda29b6bd11a7251619dd8a1b1cd41c6fb4da77",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/prompt-before.json": "ae76f38f59032da8796c57038eec001928ddcd977c672efef88746082b22c53d",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/report.json": "3a750542bdb8fa025527e95b083abec094e8d6b2b3c4835714095edd7e258dc9",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/retry-tests.json": "d637f9494648f4a5d634f53df251c97aa6dd4760c456373a48f1c4e84ab5d448",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/runtime-tests.json": "ef80e3e65db1d19fc34bbac0d46314b91e006791d4d194c0f845c29ac8a0db0d",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/scope-typecheck.json": "53c7924aa408c6bf84812ec0a443abc57dd4802b3fab55d0cfce1ee7aef1f80f",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/source-manifest.json": "c18df1ffadc5d0b5c88bebb2dd0cb0fc1eda673ce5e3565d47cd180b41f00522",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/typecheck-errors.log": "9fbc7f9fd99161f1cb082eb8094add138033aebfa60261fa6710b4ed06d6d882",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/unit-tests.json": "9ea841aee14e1cb17e6dc1d1d6db7a7486ffb2ae210e4a41fb134deb5e71c8b1",
+          "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+          "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+          "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+          "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+          "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+          "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+          "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+          "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+          "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+          "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+          "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+          "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+          "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+          "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+          "scripts/repository-artifacts.json": "298edb7a8ab4f1511e89da521ed0c3a0c7103ef9cc4ae0115c765960b7a04e11",
+          "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+          "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+        },
+        "sourceHashesAfter": {
+          ".gitignore": "d69ad0fcb68422268ca6398a7eb7300bc68dd31623dd5d69376831b3f7ab057a",
+          "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/README.md": "fb48eb1f11f51174bca4b8e15f5f8249801c6ad8c47b63d999545b9b1107cff6",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/SHA256SUMS": "da32318b19f25743fda28b5e65eece546204f6a5da151c318cff4150b6719d3e",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/commands.json": "1cc3ecbe23f1c24247c2c9ecfa0a4e348fb10c9facb5e0600f245459d4532cda",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/comms-compare.json": "fa946c0be6872bd4dc378959d5c675dfd6d671601a103abfc7ba11e4f9b4fd0c",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/comms-replay.json": "8f971ff662e331ebe1bff8f7673dd2837b08d709342247603a1c361c316140c4",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/credential-scan.json": "7345d8f86ed4caeaf0560420760f01becffc6e049c93d366521f68655103e9d7",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/interference.json": "2a949a7a9029eb383f3c9626092eb966c129785ca9d9fcfa78f6c741c3fd64b7",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/prompt-after.json": "a946b92598c5ada022597a33fcda29b6bd11a7251619dd8a1b1cd41c6fb4da77",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/prompt-before.json": "ae76f38f59032da8796c57038eec001928ddcd977c672efef88746082b22c53d",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/report.json": "3a750542bdb8fa025527e95b083abec094e8d6b2b3c4835714095edd7e258dc9",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/retry-tests.json": "d637f9494648f4a5d634f53df251c97aa6dd4760c456373a48f1c4e84ab5d448",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/runtime-tests.json": "ef80e3e65db1d19fc34bbac0d46314b91e006791d4d194c0f845c29ac8a0db0d",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/scope-typecheck.json": "53c7924aa408c6bf84812ec0a443abc57dd4802b3fab55d0cfce1ee7aef1f80f",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/source-manifest.json": "c18df1ffadc5d0b5c88bebb2dd0cb0fc1eda673ce5e3565d47cd180b41f00522",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/typecheck-errors.log": "9fbc7f9fd99161f1cb082eb8094add138033aebfa60261fa6710b4ed06d6d882",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/unit-tests.json": "9ea841aee14e1cb17e6dc1d1d6db7a7486ffb2ae210e4a41fb134deb5e71c8b1",
+          "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+          "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+          "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+          "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+          "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+          "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+          "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+          "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+          "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+          "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+          "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+          "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+          "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+          "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+          "scripts/repository-artifacts.json": "298edb7a8ab4f1511e89da521ed0c3a0c7103ef9cc4ae0115c765960b7a04e11",
+          "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+          "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+        },
+        "command": [
+          "node",
+          "scripts/check-repository-artifacts.mjs",
+          "--json"
+        ],
+        "startedAt": "2026-11-04T08:22:05.307Z",
+        "completedAt": "2026-11-04T08:22:08.511Z",
+        "durationMs": 3203,
+        "exitCode": 0,
+        "log": "D:/tmp/tf0737-retention-final.log",
+        "environment": {
+          "TEMP": "D:\\tmp",
+          "TMP": "D:\\tmp"
+        }
+      },
+      {
+        "id": "evidence-refs-final",
+        "driven_by": "agent",
+        "actor": "codex/prompt-authority",
+        "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+        "candidate": {
+          "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+          "tree": "be287894c58222959238611b31564bca17e5d33e",
+          "dirty": true
+        },
+        "sourceStable": true,
+        "sourceHashes": {
+          ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+          "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/README.md": "fb48eb1f11f51174bca4b8e15f5f8249801c6ad8c47b63d999545b9b1107cff6",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/SHA256SUMS": "da32318b19f25743fda28b5e65eece546204f6a5da151c318cff4150b6719d3e",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/commands.json": "1cc3ecbe23f1c24247c2c9ecfa0a4e348fb10c9facb5e0600f245459d4532cda",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/comms-compare.json": "fa946c0be6872bd4dc378959d5c675dfd6d671601a103abfc7ba11e4f9b4fd0c",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/comms-replay.json": "8f971ff662e331ebe1bff8f7673dd2837b08d709342247603a1c361c316140c4",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/credential-scan.json": "7345d8f86ed4caeaf0560420760f01becffc6e049c93d366521f68655103e9d7",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/interference.json": "2a949a7a9029eb383f3c9626092eb966c129785ca9d9fcfa78f6c741c3fd64b7",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/prompt-after.json": "a946b92598c5ada022597a33fcda29b6bd11a7251619dd8a1b1cd41c6fb4da77",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/prompt-before.json": "ae76f38f59032da8796c57038eec001928ddcd977c672efef88746082b22c53d",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/report.json": "3a750542bdb8fa025527e95b083abec094e8d6b2b3c4835714095edd7e258dc9",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/retry-tests.json": "d637f9494648f4a5d634f53df251c97aa6dd4760c456373a48f1c4e84ab5d448",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/runtime-tests.json": "ef80e3e65db1d19fc34bbac0d46314b91e006791d4d194c0f845c29ac8a0db0d",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/scope-typecheck.json": "53c7924aa408c6bf84812ec0a443abc57dd4802b3fab55d0cfce1ee7aef1f80f",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/source-manifest.json": "c18df1ffadc5d0b5c88bebb2dd0cb0fc1eda673ce5e3565d47cd180b41f00522",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/typecheck-errors.log": "9fbc7f9fd99161f1cb082eb8094add138033aebfa60261fa6710b4ed06d6d882",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/unit-tests.json": "9ea841aee14e1cb17e6dc1d1d6db7a7486ffb2ae210e4a41fb134deb5e71c8b1",
+          "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+          "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+          "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+          "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+          "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+          "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+          "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+          "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+          "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+          "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+          "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+          "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+          "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+          "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+          "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+          "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+          "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+        },
+        "sourceHashesAfter": {
+          ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+          "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/README.md": "fb48eb1f11f51174bca4b8e15f5f8249801c6ad8c47b63d999545b9b1107cff6",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/SHA256SUMS": "da32318b19f25743fda28b5e65eece546204f6a5da151c318cff4150b6719d3e",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/commands.json": "1cc3ecbe23f1c24247c2c9ecfa0a4e348fb10c9facb5e0600f245459d4532cda",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/comms-compare.json": "fa946c0be6872bd4dc378959d5c675dfd6d671601a103abfc7ba11e4f9b4fd0c",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/comms-replay.json": "8f971ff662e331ebe1bff8f7673dd2837b08d709342247603a1c361c316140c4",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/credential-scan.json": "7345d8f86ed4caeaf0560420760f01becffc6e049c93d366521f68655103e9d7",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/interference.json": "2a949a7a9029eb383f3c9626092eb966c129785ca9d9fcfa78f6c741c3fd64b7",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/prompt-after.json": "a946b92598c5ada022597a33fcda29b6bd11a7251619dd8a1b1cd41c6fb4da77",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/prompt-before.json": "ae76f38f59032da8796c57038eec001928ddcd977c672efef88746082b22c53d",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/report.json": "3a750542bdb8fa025527e95b083abec094e8d6b2b3c4835714095edd7e258dc9",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/retry-tests.json": "d637f9494648f4a5d634f53df251c97aa6dd4760c456373a48f1c4e84ab5d448",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/runtime-tests.json": "ef80e3e65db1d19fc34bbac0d46314b91e006791d4d194c0f845c29ac8a0db0d",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/scope-typecheck.json": "53c7924aa408c6bf84812ec0a443abc57dd4802b3fab55d0cfce1ee7aef1f80f",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/source-manifest.json": "c18df1ffadc5d0b5c88bebb2dd0cb0fc1eda673ce5e3565d47cd180b41f00522",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/typecheck-errors.log": "9fbc7f9fd99161f1cb082eb8094add138033aebfa60261fa6710b4ed06d6d882",
+          "docs/dev/evidence/semantic-convergence-20261104/tf-0737/unit-tests.json": "9ea841aee14e1cb17e6dc1d1d6db7a7486ffb2ae210e4a41fb134deb5e71c8b1",
+          "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+          "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+          "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+          "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+          "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+          "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+          "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+          "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+          "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+          "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+          "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+          "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+          "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+          "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+          "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+          "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+          "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+        },
+        "command": [
+          "node",
+          "scripts/check-evidence-refs.mjs"
+        ],
+        "startedAt": "2026-11-04T08:19:23.624Z",
+        "completedAt": "2026-11-04T08:19:24.631Z",
+        "durationMs": 1006,
+        "exitCode": 0,
+        "log": "D:/tmp/tf0737-evidence-refs-final.log",
+        "environment": {
+          "TEMP": "D:\\tmp",
+          "TMP": "D:\\tmp"
+        }
+      }
+    ]
+  }
+}

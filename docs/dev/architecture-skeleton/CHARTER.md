@@ -1,14 +1,14 @@
 # 架构骨架收敛宪章（Architecture Skeleton Convergence）
 
-> 状态：`proposal`（规划件，不授权实现；**2026-11-01 修订**：所有者授权批次 A 的实际收敛，见 §2.1 第 4 条、§5 批次 A 与 §9）
+> 状态：`done`（五叶整改及限定架构复验已完成；保留LOC与Agent Dev证据时效残差，非全仓通过、非GA。原候选及范围见 §9）
 > 录入日期：2026-10-31，Asia/Shanghai
-> 父目标：`TF-0001`（记忆-上下文-工具-经验联合系统受控可运营，非全量 GA）
+> 根目标：`TF-0628`；关联战略：`TF-0001`（记忆-上下文-工具-经验联合系统受控可运营，非全量 GA）
 > 关联研究：`harness/specs/guides/ontology-agent-systems-research.md`
 > 任务真源：`.agent-workbench/task-forest/`（本地，不入 Git）
 
 本文件回答一个问题：**在不破坏现有功能结构的前提下，如何把「散」的骨架收成一套可校验的统一底座。**
 
-它是规划与边界文件，不授权实现，不改变产品锁、默认值、发布状态、真人证据口径或 Task Forest 状态。所有落地动作必须在 Task Forest 上有一个 ready 叶子节点和一份 Harness task spec。
+它是当前架构边界与进展入口。实现依据所有者授权及已应用的 Task Forest 叶子；每次只推进一个 ready 叶子并先读取其 Harness task spec。产品锁、默认值和发布状态仍受原边界约束，所有验收均标为 agent 驱动。第 1 节保留 2026-10-31 的问题快照，当前结果与残差以 §9 为准。
 
 ---
 
@@ -143,15 +143,16 @@ Palantir 真正值得借鉴的是「对象—关系—动作—权限—血缘�
 
 | 批次 | 节点 | 状态 |
 |---|---|---|
-| 根 | TF-0628 架构骨架收敛 | proposed |
+| 根 | TF-0628 架构骨架收敛 | done；限定架构范围，保留残差 |
 | A | TF-0629 接入层盘点与唯一入口裁定；TF-0630 contract:check 覆盖扁平 IPC | done / done |
 | B | TF-0631 语义权威矩阵逐条对齐；TF-0632 唯一 owner 校验 | done / done |
 | C | TF-0633 语义合同硬化接入骨架（父）；TF-0634…TF-0637 C1–C4 四叶 | done |
 | 审查后续 | TF-0638 B2 对账承重化；TF-0639 C5 报告观测化（`REVIEW-20261101.md` §5） | done / done |
-| A（2026-11-01 修订） | TF-0649 A3 迁移活体消费者；TF-0650 A4 改写 E2E mock 缝；TF-0651 A5 退役扁平通道与 preload 第二入口；TF-0652 A6 兼容回归与收口 | proposed（串行，未启动） |
+| A（2026-11-03 已验收） | TF-0649 A3 迁移活体消费者；TF-0650 A4 改写 E2E mock 缝；TF-0651 A5 退役扁平通道与 preload 第二入口；TF-0652 A6 兼容回归与收口 | done；保留已分类的全仓失败 |
+| 2026-11-05 修复 | TF-0786：TF-0787 门禁 → TF-0788 小依赖环 → TF-0789 runtime 反向依赖 → TF-0790 权威描述 → TF-0791 复验 | 五叶限定验收完成（5/5）；584项专项与owner测试通过，残差见 §9 |
 | D | 未登记（消费需求未证实） | - |
 
-> 状态更新（2026-10-31 收口决策轮）：A 批 TF-0629 / TF-0630 已 done；B 批 TF-0631 done、TF-0632 ready；C 批 TF-0633 拆为 TF-0634…TF-0637 四个串行子叶（均 proposed，C1 依赖 TF-0632）；D 批仍未登记。表中原始状态保留为规划时读数。决策、最小形状与收口口径见 `docs/dev/architecture-skeleton/CLOSURE-DECISIONS-20261031.md`。
+> 2026-10-31 的拆分与规划状态保留在历史决策记录 `docs/dev/architecture-skeleton/CLOSURE-DECISIONS-20261031.md`；上表表达当前交付和正在推进的阶段。
 
 ---
 
@@ -243,9 +244,33 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 
 ## 9. 当前状态与已知风险
 
-- 本宪章为 `proposal`，不授权任何实现；
-- 第 1 节数字取自当前检出的静态读取，不是运行时观测；
-- 批次 C 前置研究已完成，实施未开始；未运行项不得当作已通过；
-- 批次 D 尚未证实消费需求，保持未启动；
-- 本轮会话期间工作区曾被其他进程改动（HEAD 从 `b2a98f265` 迁到 `1bae32407`，并出现一次大面积瞬时脏化后恢复）。后续实现必须**重新基线**，不得沿用本轮读数作为验收候选。
-- **2026-11-01 修订**：批次 A/B/C 与审查后续 TF-0638 / TF-0639 已全部落地并推送（HEAD `12c17c935`），收尾审查见 `REVIEW-20261101.md`；所有者授权批次 A 的实际收敛（A3–A6，TF-0649…TF-0652，`proposed` 未启动）。这是本主线首次允许改动运行时路径，边界见 §2.1 第 4 条修订；批次 D 仍未启动。
+- 当前修复基线为 `bfcf57616b361a12845014b3f054b95e31c4021c`。TF-0789 的实现提交为 `b834bf3e1`，验收包由归档快照 `2d1373988` 完整保留；接力分支为 `codex/architecture-convergence-recovery-20261105`；2026-11-06审查集成后主仓路径为 `D:/ClawX`。首叶冻结现场与临时树按用户要求回收，原日志/图保存在私有压缩归档 `D:/ClawX-acceptance/architecture-review-merge-20261106/prior-architecture-raw-complete.zip`，同目录index给出恢复原路径；本地任务图唯一目标仍为 `D:/ClawX/.agent-workbench/task-forest`。
+- A/B/C 与审查后续已经实施；A3–A6 已验收，历史全仓失败不改写为通过。旧规划和验收记录保留原候选、日期与范围。
+- `TF-0787` 的接入门禁限定验收通过：72/72 测试、38 项真实入口负例拒绝，完整类型与十项记录门禁均 exit 0。候选 `11adcfbdb`，36 份保留文件的清单读回 35/35 匹配、凭据扫描 0 命中。机制与限制见 `ADMISSION-GATE.md`；证据位于 `harness/specs/fixtures/architecture-admission-ast/report.json`。
+- `TF-0788` 把同步叶模块的 workspace 查询改为 owner 传入的读取函数，sandbox API 与同步复用同一个 `sandbox-state` 存储；只读工具目录持有四个名称常量，工厂保持原导出。持久存储、权限 mapper、工具名称/顺序/摘要和注册条件保持。前后依赖图、owner 测试、原循环门禁残差与最终候选见 `harness/specs/fixtures/architecture-small-cycles/report.json`。README 三语已复核，内部依赖重排无需产品说明更新。
+- `TF-0788` 限定验收通过：干净候选 `36b37acd4` 的 80/80 相关测试和 4 条反向边负例通过；20 项记录运行 exit 0，含完整 uncached node/web/test 类型、契约、scoped lint、comms 与 Harness。应用静态图 825 → 826 文件、环 1 → 0；context 两文件环 1 → 0。该候选的原 runtime checker 分量 [23, 2] → [23]，exit 1，23 文件成员不变。20 份保留文件的哈希读回 19/19 匹配、凭据 0 命中。两次 Codex 复核无发现；四入口 bundle smoke 不替代完整构建。剩余分量由 `TF-0789` 接续。
+- `TF-0789` 将 CVK 引擎身份放到静态叶模块并保持工厂模块原导出；registry 只读取身份，kill-switch 与 VToken 配置解析直接消费原 `runtime-core/types` 中的 `isRecord`。三条反向边均已移开，原循环检查从 23 文件分量降为 0；限定候选 `b834bf3e1` 的 58/58 相关测试通过，24 项记录门禁为 0，完整 `runtime:source:check` 仍保留与基线逐字一致的 LOC 残差。证据见 `harness/specs/fixtures/architecture-runtime-cycles/report.json`；不把该限定结果外推为全仓通过。
+- TF-0790 已修正五组件的陈旧声明并删除对应八条裁定。原 checker 规则不变，当前裁定为0；结构例外55项、登记gap35项。逐项分类为18项描述映射缺口、16项领域外owner、1项未实现的全系统model echo保证，详见 `AUTHORITY-RECONCILIATION.md` §12 与 `harness/specs/fixtures/architecture-authority-convergence/gap-classification.json`。TF-0790候选2ca6e2092的150项测试及完整类型通过，证据提交a80f06b17；TF-0791已补关键关系约束并完成既定架构范围复验。
+- 原测评的共享工作区会话接口类型漂移属于另一工作流；本轮独立候选的完整node/web/test类型检查已通过。
+- TF-0791限定通过：干净候选 `ec2053701`（tree `b5bca90ffa3d81ffc5af1e92d75db3c936777d51`）的29文件584项测试全部通过，含399架构、136 owner、19能力、30 runtime；完整uncached node/web/test类型通过。五种关系的245个已知概念组合只接受六种合法关系，错误目标经原报告入口拒绝；12关系规则与8来源规则均实际观测。
+- 同候选应用静态图826文件/2375值边，环0与禁止层间边0；runtime9159文件，环0。9985图输入匹配候选Git原字节，前四叶85哈希匹配；最终证据在 `harness/specs/fixtures/architecture-convergence-final/report.json` 与 `report.md`，18文件/17哈希/凭据0。
+- 完整runtime source仍exit1，最后LOC子门禁保留23个未登记超500行及110个超既有基线文件，与TF-0789逐字相同；未新增或加重。额外Harness CI在5文件59测试和policy/catalog通过后，因四份Agent Dev产物过24小时而exit1；CI后续evidence及test-coverage单独通过。详情见最终包 `residuals.json`。不改变LOC基线、时效门槛或旧证据日期。
+- 本根收口表示其声明的接入、静态依赖、权威描述与关系约束范围有证据，不能外推为全仓健康、完整发行构建、Electron/live provider效果或GA。维护效率、agent成功率与可靠性净收益尚无本轮对照测量。35gap仍保留，批次D消费需求未证实。
+
+
+## 10. 合并前独立审查与集成（2026-11-06）
+
+三个同模型子代理分别核查IPC、运行拆环、语义/证据。运行拆环44项测试及服务组合复现通过；
+审查发现并修复四类IPC漏检、历史gap哈希钉死活源码及旧报告verify未重跑规则探针，共六项。
+修复提交9394c6142、fixture EOF提交23d53a29a；原历史证据不修改。
+
+合并候选已包含main的2fff49d09。615项相关测试全部通过，node/web/test完整类型及VerseBrowser声明
+通过；契约、权威、证据report/verify、comms、循环门禁、lint、retention与Harness通过。
+测试候选23d53a29a，复验候选d5750f2ba仅变更task spec比较基准，所有受测实现相同。
+LOC仍exit1：与当前main同23个未登记/111个增长文件；较main的唯一行数差为此前TF-0788
+格式化保留的context-agent-tools +40行，review没有新增runtime/tool行数。
+
+详见 `harness/specs/fixtures/architecture-review-integration/report.json` 与 `report.md`。
+这是独立agent审查，非真人；共享依赖安装曾被意外触发并中止，随后在隔离临时依赖上完成验证，
+该副作用与失败尝试已记录。主仓快进与其它会话脏文件的保留、进程/工作树清理结果记录在本地
+`docs/dev/handoffs/ARCHITECTURE-REVIEW-MERGED-20261106.md`，不由旧报告推断。

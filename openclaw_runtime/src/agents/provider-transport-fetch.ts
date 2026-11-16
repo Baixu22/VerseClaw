@@ -4,11 +4,6 @@
  * Applies request timeouts, proxy/TLS overrides, SSRF policy, local-service leases, retry hints, and SSE normalization.
  */
 import {
-  isCloudMetadataIpAddress,
-  isLinkLocalIpAddress,
-  parseCanonicalIpAddress,
-} from "@openclaw/net-policy/ip";
-import {
   asFiniteNumberInRange,
   clampTimerTimeoutMs,
   parseStrictFiniteNumber,
@@ -19,12 +14,7 @@ import {
   withTrustedEnvProxyGuardedFetchMode,
 } from "../infra/net/fetch-guard.js";
 import { shouldUseEnvHttpProxyForUrl } from "../infra/net/proxy-env.js";
-import {
-  mergeSsrFPolicies,
-  ssrfPolicyFromHttpBaseUrlFakeIpHostnameAllowlist,
-  ssrfPolicyFromHttpBaseUrlAllowedOrigin,
-  type SsrFPolicy,
-} from "../infra/net/ssrf.js";
+import type { SsrFPolicy } from "../infra/net/ssrf.js";
 import type { Model } from "../llm/types.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveDebugProxySettings } from "../proxy-capture/env.js";
@@ -63,6 +53,7 @@ import {
   mergeModelProviderRequestOverrides,
   resolveProviderRequestPolicyConfig,
 } from "./provider-request-config.js";
+import { resolveProviderNetworkPolicy } from "./provider-network-policy.js";
 import {
   emitRc03WireReceipt,
   emitShadowWireReceipt,
@@ -72,11 +63,11 @@ import {
   type ShadowReceiptOptions,
 } from "./shadow-census.js";
 import { buildStage1RequestEnvelope } from "./stage1-request-envelope.js";
+import { admitProviderSpendWireAttempt } from './provider-spend-context.js';
 
 const DEFAULT_MAX_SDK_RETRY_WAIT_SECONDS = 60;
 const OPENAI_SDK_STREAM_CONTENT_SNIFF_BYTES = 2 * 1024;
 const log = createSubsystemLogger("provider-transport-fetch");
-const BLOCKED_EXACT_ORIGIN_TRUST_HOSTNAME_LABELS = new Set(["instance-data"]);
 const PLAIN_DECIMAL_NUMBER_RE = /^\d+(?:\.\d+)?$/;
 const RETRY_AFTER_HTTP_DATE_RE =
   /^(?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} GMT|(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), \d{2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2} \d{2}:\d{2}:\d{2} GMT|(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [ \d]\d \d{2}:\d{2}:\d{2} \d{4})$/;
@@ -619,15 +610,15 @@ function buildManagedResponse(
       try {
         const chunk = await reader?.read();
         if (!chunk || chunk.done) {
-          controller.close();
           await finalize();
+          controller.close();
           return;
         }
         refreshTimeout?.();
         controller.enqueue(chunk.value);
       } catch (error) {
-        controller.error(error);
         await finalize();
+        controller.error(error);
       }
     },
     async cancel(reason) {
@@ -707,96 +698,19 @@ function buildModelRequestSignal(
   return AbortSignal.any([baseSignal, timeoutSignal]);
 }
 
-function resolveHttpOrigin(value: unknown): string | undefined {
-  if (typeof value !== "string" || !value.trim()) {
-    return undefined;
-  }
-  try {
-    const parsed = new URL(value);
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      return undefined;
-    }
-    parsed.hostname = parsed.hostname.replace(/\.+$/, "");
-    return parsed.origin.toLowerCase();
-  } catch {
-    return undefined;
-  }
-}
-
-function normalizeProviderOriginHostname(value: unknown): string | undefined {
-  if (typeof value !== "string" || !value.trim()) {
-    return undefined;
-  }
-  try {
-    const parsed = new URL(value);
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      return undefined;
-    }
-    const normalized = parsed.hostname.trim().toLowerCase().replace(/\.+$/, "");
-    return normalized || undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-function canImplicitlyTrustConfiguredBaseUrlOrigin(value: unknown): value is string {
-  const hostname = normalizeProviderOriginHostname(value);
-  if (!hostname) {
-    return false;
-  }
-  const labels = hostname.split(".").filter(Boolean);
-  return (
-    !labels.some(
-      (label) =>
-        label.includes("metadata") || BLOCKED_EXACT_ORIGIN_TRUST_HOSTNAME_LABELS.has(label),
-    ) &&
-    !isLinkLocalIpAddress(hostname) &&
-    !isCloudMetadataIpAddress(hostname)
-  );
-}
-
-function canApplyFakeIpHostnamePolicy(value: unknown): value is string {
-  const hostname = normalizeProviderOriginHostname(value);
-  if (!hostname) {
-    return false;
-  }
-  const labels = hostname.split(".").filter(Boolean);
-  return (
-    !labels.some(
-      (label) =>
-        label.includes("metadata") || BLOCKED_EXACT_ORIGIN_TRUST_HOSTNAME_LABELS.has(label),
-    ) && !parseCanonicalIpAddress(hostname)
-  );
-}
-
 function resolveModelTransportSsrFPolicy(params: {
   model: Model;
   url: string;
   allowPrivateNetwork?: boolean;
   trustConfiguredBaseUrlOrigin?: boolean;
 }): SsrFPolicy | undefined {
-  const baseUrl = (params.model as { baseUrl?: unknown }).baseUrl;
-  const baseOrigin = resolveHttpOrigin(baseUrl);
-  const requestOrigin = resolveHttpOrigin(params.url);
-  const requestMatchesBaseOrigin =
-    typeof baseUrl === "string" && Boolean(baseOrigin) && requestOrigin === baseOrigin;
-  const baseUrlOriginPolicy =
-    requestMatchesBaseOrigin &&
-    params.trustConfiguredBaseUrlOrigin &&
-    canImplicitlyTrustConfiguredBaseUrlOrigin(baseUrl)
-      ? ssrfPolicyFromHttpBaseUrlAllowedOrigin(baseUrl)
-      : undefined;
-  // Fake-IP trust is hostname-scoped and orthogonal to exact-origin private-IP trust.
-  // It is for DNS hostnames only and does not allow literal private IPs by itself.
-  const fakeIpPolicy =
-    requestMatchesBaseOrigin && canApplyFakeIpHostnamePolicy(baseUrl)
-      ? ssrfPolicyFromHttpBaseUrlFakeIpHostnameAllowlist(baseUrl)
-      : undefined;
-  return mergeSsrFPolicies(
-    baseUrlOriginPolicy,
-    fakeIpPolicy,
-    params.allowPrivateNetwork ? { allowPrivateNetwork: true } : undefined,
-  );
+  // TF-0734: the same policy resolver is used by the validation probe.
+  return resolveProviderNetworkPolicy({
+    baseUrl: (params.model as { baseUrl?: unknown }).baseUrl,
+    requestUrl: params.url,
+    allowPrivateNetwork: params.allowPrivateNetwork,
+    trustConfiguredBaseUrlOrigin: params.trustConfiguredBaseUrlOrigin,
+  }).policy;
 }
 
 export class ProviderRequestAttemptBudgetExhaustedError extends Error {
@@ -840,7 +754,7 @@ export function buildGuardedModelFetch(
       `message=${error instanceof Error ? error.message : read(record.message)}`,
     ].join(" ");
   };
-  return async (input, init) => {
+  const fetchRequest = async (input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1], spendTicket: ReturnType<typeof admitProviderSpendWireAttempt>) => {
     // NET-E (TF-0442): share the caller's logical deadline. An already-expired
     // deadline fails closed before any provider request is prepared, and a live
     // budget tightens the provider window to what remains.
@@ -1070,6 +984,7 @@ export function buildGuardedModelFetch(
         baseInit?.headers,
         localServiceSignal,
       );
+      spendTicket?.markSent();
       result = await fetchWithSsrFGuard(
         useEnvProxy
           ? withTrustedEnvProxyGuardedFetchMode(guardedFetchOptions)
@@ -1122,5 +1037,10 @@ export function buildGuardedModelFetch(
     return options?.sanitizeSse === false || !shouldSanitizeOpenAISdkSseResponse(model)
       ? response
       : sanitizeOpenAISdkSseResponse(response, { synthesizeJsonAsSse });
+  };
+  return async (input, init) => {
+    const ticket = admitProviderSpendWireAttempt();
+    try { return await fetchRequest(input, init, ticket); }
+    catch (error) { ticket?.rejectBeforeSend(); throw error; }
   };
 }

@@ -4,6 +4,7 @@ import path from "node:path";
 import { getOpenClawConfigDir } from "../utils/paths";
 import { logger } from "../utils/logger";
 import { withFileLock, writeFileAtomic } from "../utils/atomic-write";
+import type { ReclaimReceipt } from "@shared/long-session-resource-reclamation";
 
 export type SessionLifecycleMutationKind = "delete" | "archive" | "restore";
 
@@ -16,6 +17,19 @@ export type SessionDeleteGateRecord = {
   expectedSessionId?: string;
   terminalClosed?: boolean;
   localSweepCommitted?: boolean;
+  /** Captured from the original workspace owner, never the active project on retry. */
+  workspaceId?: string | null;
+  runtimeReceipt?: {
+    key: string;
+    operationId: string;
+    journalState: 'runtime_committed';
+    sessionId: string;
+    previousSessionId?: string;
+  };
+  coordinatorCommitted?: boolean;
+  resourcesCommitted?: boolean;
+  resourceReclamationAttempts?: ReclaimReceipt[];
+  tailError?: string;
   /**
    * Why the local mirror sweep was skipped even though the Gateway commit
    * succeeded (for example: this runtime keeps no legacy sessions.json).
@@ -151,15 +165,26 @@ export async function findSessionDeleteGateBySession(
 }
 
 
+export async function listSessionMutationGates(agentId: string): Promise<SessionDeleteGateRecord[]> {
+  return withGateFileLock(async () => Object.values((await readGateFile()).gates)
+    .filter((gate) => gate.agentId === agentId).map((gate) => ({ ...gate })));
+}
+
 export async function persistSessionMutationGate(input: {
   sessionKey: string;
   agentId: string;
   operationKind: SessionLifecycleMutationKind;
   requestDigest: string;
+  expectedOperationId?: unknown;
 }): Promise<SessionDeleteGateRecord> {
   return withGateFileLock(async () => {
     const file = await readGateFile();
     const existing = Object.values(file.gates).find((gate) => gate.sessionKey === input.sessionKey);
+    // A stale recovery row may resume its recorded operation, never start a new one.
+    if (input.expectedOperationId !== undefined &&
+      (typeof input.expectedOperationId !== 'string' || existing?.operationId !== input.expectedOperationId)) {
+      throw new Error('SESSION_MUTATION_CHANGED: refresh the pending operation');
+    }
     if (existing) {
       if (
         (existing.operationKind ?? "delete") !== input.operationKind ||
@@ -193,11 +218,13 @@ export async function persistSessionMutationGate(input: {
 export async function persistSessionDeleteGate(
   sessionKey: string,
   agentId: string,
+  expectedOperationId?: unknown,
 ): Promise<SessionDeleteGateRecord> {
   return persistSessionMutationGate({
     sessionKey,
     agentId,
     operationKind: "delete",
+    expectedOperationId,
     requestDigest: buildSessionMutationRequestDigest("delete", { sessionKey, agentId }),
   });
 }
@@ -205,7 +232,9 @@ export async function persistSessionDeleteGate(
 export async function updateSessionDeleteGate(
   operationId: string,
   patch: Partial<Pick<SessionDeleteGateRecord,
-    'expectedSessionId' | 'terminalClosed' | 'localSweepCommitted' | 'localSweepSkipped'>>,
+    'expectedSessionId' | 'terminalClosed' | 'localSweepCommitted' | 'localSweepSkipped' |
+    'workspaceId' | 'runtimeReceipt' | 'coordinatorCommitted' | 'resourcesCommitted' |
+    'resourceReclamationAttempts' | 'tailError'>>,
 ): Promise<SessionDeleteGateRecord | undefined> {
   return withGateFileLock(async () => {
     const file = await readGateFile();

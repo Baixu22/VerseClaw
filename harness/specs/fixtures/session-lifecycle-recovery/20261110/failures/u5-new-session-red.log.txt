@@ -1,0 +1,50 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-unified-relay-20261109
+
+ ❯ tests/unit/workspace-session.test.ts (12 tests | 2 failed) 101ms
+     × keeps a newer navigation when new-session creation replies late 6ms
+     × preserves the source after rejected creation and can retry the same intent 1ms
+     ✓ creates new sessions inside the active workspace and current agent binding 26ms
+     ✓ does not activate a late fork after leaving and returning to the same source 1ms
+     ✓ does not activate a late handoff after leaving and returning to the same source 1ms
+     ✓ does not activate a project after its route is disposed during the workspace switch 59ms
+     ✓ restores the default workspace before creating a workspace-scoped new session 2ms
+     ✓ creates handoff sessions with the edited draft persisted in workspace state 1ms
+     ✓ keeps a newly created session in the current workgroup 1ms
+     ✓ forks sessions through Host API and preserves non-running workspace state 1ms
+     ✓ forwards an explicit fromLeafId when forking from a message (#180) 0ms
+     ✓ keeps the current view when Main refuses handoff creation 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/workspace-session.test.ts > workspace session helpers > keeps a newer navigation when new-session creation replies late
+ReferenceError: createWorkspaceScopedNewSession is not defined
+ ❯ tests/unit/workspace-session.test.ts:172:21
+    170|     const next = 'agent:reviewer:neighbour';
+    171|     workspaceState.activeWorkspace.sessionStates = { [next]: {} };
+    172|     const created = createWorkspaceScopedNewSession();
+       |                     ^
+    173|     await vi.waitFor(() => expect(hostApiMock.workspaces.update).toHav…
+    174|     const navigation = activateWorkspaceScopedSession('workspace-a', n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/workspace-session.test.ts > workspace session helpers > preserves the source after rejected creation and can retry the same intent
+ReferenceError: createWorkspaceScopedNewSession is not defined
+ ❯ tests/unit/workspace-session.test.ts:184:11
+    182|   it('preserves the source after rejected creation and can retry the s…
+    183|     hostApiMock.workspaces.update.mockRejectedValueOnce(new Error('NEW…
+    184|     await expect(createWorkspaceScopedNewSession()).rejects.toThrow('N…
+       |           ^
+    185|     expect(chatState.currentSessionKey).toBe('agent:reviewer:old');
+    186|     expect(chatState.resetSessionView).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 10 passed (12)
+   Start at  00:56:34
+   Duration  3.89s (transform 183ms, setup 230ms, import 48ms, tests 101ms, environment 3.20s)
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-new-session-red.tests.json

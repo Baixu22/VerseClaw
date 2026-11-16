@@ -46,6 +46,18 @@ function readTokenUsage(data: Record<string, unknown>) {
   return { input, output, cacheRead, cacheWrite, total };
 }
 
+/** The Gateway chat union marks final/error/aborted as terminal run events. */
+export function normalizeGatewayChatTerminalEvent(payload: unknown): ChatRuntimeEvent | null {
+  const raw=asRecord(payload);
+  if(!raw || !['final','error','aborted'].includes(String(raw.state)))return null;
+  const base=withBase('run.ended',raw);
+  if(!base || !base.sessionKey)return null;
+  const message=asRecord(raw.message);
+  const endedAt=readNumber(raw.endedAt)??readNumber(raw.ts)??readNumber(message?.timestamp)??Date.now();
+  return {...base,type:'run.ended',status:raw.state==='final'?'completed':raw.state as 'error'|'aborted',endedAt,
+    error:readString(raw.errorMessage),stopReason:readString(raw.stopReason)};
+}
+
 export function normalizeGatewayChatRuntimeEvent(payload: unknown): ChatRuntimeEvent | null {
   const raw = asRecord(payload);
   if (!raw) return null;

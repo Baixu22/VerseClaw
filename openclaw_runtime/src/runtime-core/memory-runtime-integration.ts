@@ -1,6 +1,7 @@
 import {
   isRuntimeMemoryTemporalFact,
   isRuntimeMemoryTemporalFactCandidate,
+  isRuntimeMemoryAcceptedVerificationStatus,
   resolveRuntimeMemoryFeatureFlags,
   type RuntimeMemoryEpisodeRecord,
   type RuntimeMemoryFactRelation,
@@ -26,14 +27,36 @@ import {
   type WriteCurationConfig,
 } from "./memory-write-curation.js";
 
+type CurationWriteFailure = Extract<RuntimeMemoryPersistenceWriteResult<unknown> | RuntimeMemoryPersistenceRelationResult, { persisted: false }>;
+
+export type RuntimeMemoryFactWriteResult =
+  | RuntimeMemoryPersistenceWriteResult<RuntimeMemoryQueryableFact>
+  | CurationWriteFailure
+  | { status: "applied" | "already_applied"; action: "DELETE"; persisted: true; factId: string };
+
+class CurationWriteAborted extends Error {
+  constructor(readonly result: CurationWriteFailure) {
+    super(result.status === "rejected" ? result.message : `persistence skipped (${result.reason})`);
+  }
+}
+
+function requirePersisted(result: RuntimeMemoryFactWriteResult | RuntimeMemoryPersistenceWriteResult<RuntimeMemoryInvalidationProposal> | RuntimeMemoryPersistenceRelationResult): void {
+  if (result.status === "persisted") return;
+  if (result.status === "skipped" || result.status === "rejected") throw new CurationWriteAborted(result);
+  throw new Error("Curation deleted a fact instead of appending its replacement.");
+}
+
 export type RuntimeMemoryRuntimeIntegrationPort = {
+  /** Required for multi-write mutations; missing support rejects before effects. */
+  runAtomic?<T>(operation: () => T): T;
+  getReadRevision?(): string | undefined;
   migrate(): RuntimeMemoryPersistenceMigrationResult;
   appendEpisode(
     episode: RuntimeMemoryEpisodeRecord,
   ): RuntimeMemoryPersistenceWriteResult<RuntimeMemoryEpisodeRecord>;
   appendFact(
     fact: RuntimeMemoryTemporalFact | RuntimeMemoryTemporalFactCandidate,
-  ): RuntimeMemoryPersistenceWriteResult<RuntimeMemoryQueryableFact>;
+  ): RuntimeMemoryFactWriteResult;
   invalidateFact(
     proposal: RuntimeMemoryInvalidationProposal,
   ): RuntimeMemoryPersistenceWriteResult<RuntimeMemoryInvalidationProposal>;
@@ -95,7 +118,7 @@ export class RuntimeMemoryRuntimeIntegration {
 
   appendFact(
     fact: RuntimeMemoryTemporalFact | RuntimeMemoryTemporalFactCandidate,
-  ): RuntimeMemoryPersistenceWriteResult<RuntimeMemoryQueryableFact> {
+  ): RuntimeMemoryFactWriteResult {
     if (!this.persistEnabled()) {
       return disabledWriteResult();
     }
@@ -106,13 +129,27 @@ export class RuntimeMemoryRuntimeIntegration {
       return this.#persistence.appendFact(fact);
     }
 
-    return this.appendFactWithCuration(fact);
+    try {
+      return this.runAtomic(() => this.appendFactWithCuration(fact));
+    } catch (error) {
+      if (error instanceof CurationWriteAborted) return error.result;
+      throw error;
+    }
+  }
+
+  runAtomic<T>(operation: () => T): T {
+    if (!this.persistEnabled()) throw new Error("persistence skipped (flag_disabled)");
+    if (!this.#persistence.runAtomic) throw new Error("Atomic memory persistence is unsupported; no writes performed.");
+    return this.#persistence.runAtomic(operation);
   }
 
   private appendFactWithCuration(
     candidate: RuntimeMemoryTemporalFactCandidate,
-  ): RuntimeMemoryPersistenceWriteResult<RuntimeMemoryQueryableFact> {
+  ): RuntimeMemoryFactWriteResult {
     const loadResult = this.#persistence.loadStore();
+    if (loadResult.status === "skipped") {
+      throw new CurationWriteAborted({ status: "skipped", reason: loadResult.reason, persisted: false });
+    }
     const store = loadResult.store;
 
     const existingFacts = store
@@ -133,70 +170,56 @@ export class RuntimeMemoryRuntimeIntegration {
       case "ADD":
         return this.#persistence.appendFact(candidate);
 
-      case "UPDATE": {
-        const invalidation = buildSupersedeInvalidation(
-          decision.supersedes,
-          candidate,
-        );
-        const invResult = this.#persistence.invalidateFact(invalidation);
-        if (invResult.status === "rejected") {
-          return invResult;
-        }
-        const appendResult = this.#persistence.appendFact(candidate);
-        if (appendResult.status === "persisted") {
-          this.#persistence.persistRelation({
-            sourceFactId: candidate.factId,
-            targetFactId: decision.supersedes,
-            relationType: "supersedes",
-            confidence: 0.9,
-          });
-        }
-        return appendResult;
-      }
-
+      case "UPDATE":
       case "SUPERSEDE": {
         const invalidation = buildSupersedeInvalidation(
           decision.supersedes,
           candidate,
-          "contradicted",
+          decision.action === "SUPERSEDE" ? "contradicted" : "superseded",
         );
-        const invResult = this.#persistence.invalidateFact(invalidation);
-        if (invResult.status === "rejected") {
-          return invResult;
-        }
+        requirePersisted(this.#persistence.invalidateFact(invalidation));
         const appendResult = this.#persistence.appendFact(candidate);
-        if (appendResult.status === "persisted") {
-          this.#persistence.persistRelation({
+        requirePersisted(appendResult);
+        requirePersisted(this.#persistence.persistRelation({
             sourceFactId: candidate.factId,
             targetFactId: decision.supersedes,
             relationType: "supersedes",
-            confidence: 1.0,
-          });
-          this.#persistence.persistRelation({
+            confidence: decision.action === "SUPERSEDE" ? 1.0 : 0.9,
+          }));
+        if (decision.action === "SUPERSEDE") {
+          requirePersisted(this.#persistence.persistRelation({
             sourceFactId: candidate.factId,
             targetFactId: decision.supersedes,
             relationType: "contradicts",
             confidence: 0.8,
-          });
+          }));
         }
         return appendResult;
       }
 
       case "DELETE": {
+        const alreadyInvalid = store.listInvalidations().some(value =>
+          value.factId === decision.targetFactId && isRuntimeMemoryAcceptedVerificationStatus(value.verificationStatus)
+          && value.invalid_at <= candidate.proposedAt);
+        const fact = store.getFactById(decision.targetFactId);
+        if (!fact) {
+          return { status: "rejected", reason: "invalid_fact", message: `DELETE target not found: ${decision.targetFactId}.`, persisted: false };
+        }
+        if (alreadyInvalid || (fact?.invalid_at !== undefined && fact.invalid_at <= candidate.proposedAt)) {
+          return { status: "already_applied", action: "DELETE", factId: decision.targetFactId, persisted: true };
+        }
         const invalidation = buildDeleteInvalidation(
           decision.targetFactId,
           decision.reason,
           candidate,
         );
-        const invResult = this.#persistence.invalidateFact(invalidation);
-        if (invResult.status === "rejected") {
-          return invResult;
-        }
+        requirePersisted(this.#persistence.invalidateFact(invalidation));
         // DELETE appends no new fact; the target was invalidated above.
         return {
-          status: "skipped",
-          reason: "flag_disabled",
-          persisted: false,
+          status: "applied",
+          action: "DELETE",
+          factId: decision.targetFactId,
+          persisted: true,
         };
       }
     }
@@ -236,6 +259,11 @@ export class RuntimeMemoryRuntimeIntegration {
       };
     }
     return this.#persistence.loadStore();
+  }
+
+  getReadRevision(): string | undefined {
+    if (!this.persistEnabled()) return undefined;
+    return this.#persistence.getReadRevision?.();
   }
 
   private persistEnabled(): boolean {

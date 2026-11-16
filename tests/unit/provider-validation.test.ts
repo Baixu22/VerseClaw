@@ -232,7 +232,15 @@ describe('validateApiKeyWithProvider', () => {
       apiProtocol: 'openai-completions',
     });
 
-    expect(result).toMatchObject({ valid: true, status: 400 });
+    // TF-0733: credential/protocol are accepted, but the model is unavailable,
+    // so the compatibility `valid` field may stay true while `ready` is false.
+    expect(result).toMatchObject({
+      valid: true,
+      status: 400,
+      model: 'unavailable',
+      ready: false,
+      reason: 'model-unavailable',
+    });
   });
 
   it('treats auth-like error codes on probe responses as invalid after fallback', async () => {
@@ -287,7 +295,15 @@ describe('validateApiKeyWithProvider', () => {
       apiProtocol: 'openai-responses',
     });
 
-    expect(result).toMatchObject({ valid: true, status: 400 });
+    // TF-0733: a parameter rejection is protocol-incompatible, not a ready
+    // credential. The UI must offer protocol guidance, never "verified".
+    expect(result).toMatchObject({
+      valid: false,
+      status: 400,
+      protocol: 'incompatible',
+      ready: false,
+      reason: 'protocol-error',
+    });
   });
 
   it('does not mask localized auth-like 400 errors behind a fallback probe', async () => {

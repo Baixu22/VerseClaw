@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "RsiProtocolLocalAdmissionTransfer/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-preflight",
+  "sourcePreparationRun": "ab782e0c-1973-4e94-af77-f1476356b1dc",
+  "targetStudyRun": "74b24199-1522-4c7e-8c30-babe86e67d0b",
+  "sourceRevision": "2a46454cc76a0fc7f4b5c6ad127118f80decad5b",
+  "targetRevision": "67dd017512525bd94b98ecf34f26bb38d7961d05",
+  "source": "D:/tmp/rsi-protocol-experiment-20261109-01a1be64",
+  "target": "D:/tmp/rsi-protocol-experiment-20261109-01a1be64-final",
+  "exactOracleTaskIdentitiesEqual": true,
+  "originalAdmissionBytesCopied": 261,
+  "retainedFailedTasks": [
+    {
+      "taskId": "tf-0277-s02",
+      "firstAttempt": "D:\\tmp\\rsi-protocol-experiment-20261109-01a1be64\\admission\\calibration\\tf-0277-s02",
+      "rerun": "D:\\tmp\\rsi-protocol-experiment-20261109-01a1be64-final\\admission\\calibration\\tf-0277-s02",
+      "firstAttemptPreserved": true
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "firstAttempt": "D:\\tmp\\rsi-protocol-experiment-20261109-01a1be64\\admission\\calibration\\tf-0297-a05",
+      "rerun": "D:\\tmp\\rsi-protocol-experiment-20261109-01a1be64-final\\admission\\calibration\\tf-0297-a05",
+      "firstAttemptPreserved": true
+    }
+  ],
+  "providerCallsBeforeTransfer": 0,
+  "rationale": "Final arithmetic serialization source changed before any model dispatch; all historical task definitions, baseline and oracle inputs are equal. Failed local admission attempts are preserved in the original preparation and independently rerun.",
+  "admissionStatus": "24/24 admitted",
+  "passed": true
+}

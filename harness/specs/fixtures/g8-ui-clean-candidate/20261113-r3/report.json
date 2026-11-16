@@ -1,0 +1,279 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "schemaVersion": 2,
+  "createdAt": "2026-11-13T10:17:36.980773+00:00",
+  "candidate": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "frozenAt": "2026-11-13T09:44:49.452656+00:00",
+    "commit": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+    "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+    "branch": "codex/g8-ui-closeout-20261113",
+    "root": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+    "dirty": false,
+    "originalMain": "42ad5e0b223d935e57630eb20c3501640721bf2e",
+    "uiBase": "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6",
+    "claudeCommit": "d1905d1eb4b51e04d0af3e44d53e91e6c6d2face",
+    "ciSourceCommit": "efbece9f28d5956e088bf57d284fe29032cdefd4",
+    "agentDevPrecursorRun": "gates/accepted-agent-dev-deep-04.json"
+  },
+  "claudeFiles": 25,
+  "uiChangedPaths": 42,
+  "maintenanceChangedPaths": 17,
+  "integrationChangedPaths": 59,
+  "historicalForeignPathsExcluded": 14,
+  "allRequiredGatesPassed": true,
+  "unitFiles": 38,
+  "unitPassed": 451,
+  "unitGroups": {
+    "chat-output-visual-hierarchy": {
+      "files": 19,
+      "plannedFiles": 19,
+      "passed": 291
+    },
+    "chat-composer-popovers": {
+      "files": 9,
+      "plannedFiles": 9,
+      "passed": 149
+    },
+    "sidebar-session-row-polish": {
+      "files": 10,
+      "plannedFiles": 10,
+      "passed": 97
+    },
+    "session-task-scope-contract": {
+      "files": 2,
+      "plannedFiles": 2,
+      "passed": 34
+    },
+    "g8-startup-regression": {
+      "files": 4,
+      "plannedFiles": 4,
+      "passed": 21
+    }
+  },
+  "maintenanceUnitFiles": 8,
+  "maintenanceUnitPassed": 189,
+  "electronPassed": 69,
+  "electronGroups": [
+    {
+      "group": "popovers",
+      "passed": 12,
+      "total": 12,
+      "stats": {
+        "startTime": "2026-11-13T09:54:52.376Z",
+        "duration": 218601.829,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 36,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "environment",
+      "passed": 5,
+      "total": 5,
+      "stats": {
+        "startTime": "2026-11-13T09:58:34.300Z",
+        "duration": 88897.31700000001,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 15,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "workspace",
+      "passed": 2,
+      "total": 2,
+      "stats": {
+        "startTime": "2026-11-13T10:00:05.923Z",
+        "duration": 20767.782,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 6,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "output",
+      "passed": 10,
+      "total": 10,
+      "stats": {
+        "startTime": "2026-11-13T10:00:28.414Z",
+        "duration": 214006.257,
+        "expected": 10,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 31,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "welcome",
+      "passed": 4,
+      "total": 4,
+      "stats": {
+        "startTime": "2026-11-13T10:04:06.433Z",
+        "duration": 82290.052,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 12,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "yield",
+      "passed": 1,
+      "total": 1,
+      "stats": {
+        "startTime": "2026-11-13T10:05:30.471Z",
+        "duration": 10369.488000000001,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 3,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "claude-ui",
+      "passed": 18,
+      "total": 18,
+      "stats": {
+        "startTime": "2026-11-13T10:05:42.367Z",
+        "duration": 198939.662,
+        "expected": 18,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 54,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "ui-material-rules",
+      "passed": 7,
+      "total": 7,
+      "stats": {
+        "startTime": "2026-11-13T10:09:06.710Z",
+        "duration": 74903.21999999999,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 21,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "startup",
+      "passed": 6,
+      "total": 6,
+      "stats": {
+        "startTime": "2026-11-13T10:10:23.322Z",
+        "duration": 50633.693,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 18,
+      "survivors": [],
+      "sourceUnchanged": true
+    },
+    {
+      "group": "agent-dev-quality",
+      "passed": 4,
+      "total": 4,
+      "stats": {
+        "startTime": "2026-11-13T10:11:15.629Z",
+        "duration": 18833.128,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": "passed",
+      "processChecks": 12,
+      "survivors": [],
+      "sourceUnchanged": true
+    }
+  ],
+  "uniqueScreenshots": 120,
+  "reviewedContactSheets": 34,
+  "motionReadback": [
+    {
+      "theme": "light",
+      "openingFrames": 32,
+      "closingFrames": 12,
+      "settledFilter": "none",
+      "settledOpacity": 1,
+      "allClosingFramesInert": true,
+      "allClosingFramesIgnorePointer": true
+    },
+    {
+      "theme": "dark",
+      "openingFrames": 31,
+      "closingFrames": 13,
+      "settledFilter": "none",
+      "settledOpacity": 1,
+      "allClosingFramesInert": true,
+      "allClosingFramesIgnorePointer": true
+    }
+  ],
+  "sourceGuard": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+    "tree": "6ec3f4e522dfd882cf89ad48623e29c886dbc920",
+    "filesChecked": 26584,
+    "beforeDigest": "ca1abcb3626f2752b59b460d10aa25ea908b8313ea52a057a18c0d20540fc147",
+    "afterDigest": "ca1abcb3626f2752b59b460d10aa25ea908b8313ea52a057a18c0d20540fc147",
+    "sourceUnchanged": true,
+    "before": "candidate-before.json",
+    "after": "candidate-after.json"
+  },
+  "repositoryCi": {
+    "exitCode": 0,
+    "auditStatus": "warn",
+    "auditScore": 88,
+    "hardVetoCount": 0
+  },
+  "closureEligible": true,
+  "taskForestProposal": "Apply locally after Git blob verification and a fresh graph hash check.",
+  "evidenceEnvironment": "Windows Electron renderer with agent-driven Host API fixtures. Final gate receipts bind the clean candidate above.",
+  "harnessMode": "Complete changed-path validate and dry-run; required task commands executed separately.",
+  "priorEvidence": "The preceding 1fe17aabb attempt remains at the paths and hashes in prior-attempts.json. The earlier b570 package remains at its original local acceptance path and evidence commit 97ec25bf0a89d81f34e1096e424892950196d2d0."
+}

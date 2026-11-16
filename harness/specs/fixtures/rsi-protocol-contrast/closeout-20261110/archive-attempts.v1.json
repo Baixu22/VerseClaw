@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-archive-reader",
+  "failedArchive": "D:/ClawX-acceptance/rsi-protocol-contrast-20261109-01a1be64/raw-campaign.zip",
+  "firstFailure": "gates/archive-prepare.log changed while the archive writer was running",
+  "finalArchive": "D:\\ClawX-acceptance\\rsi-protocol-contrast-20261109-01a1be64-final\\raw-campaign.zip",
+  "retry": "exclude mutable archive-writer logs and preserve the failed archive",
+  "finalVerified": true
+}
