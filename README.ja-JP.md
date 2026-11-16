@@ -263,3 +263,5 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell te
 同じプロセス内の turn claim は ID の後処理が終わるまで保持します。SQLite による claim の解除が失敗しても元の試行予算を保存し、再構築したコントローラーは未開始と確認できる要求を続行します。不明な結果は引き続き照合します。
 
 ensure/status の ACK が失われた場合、既存の ACP 行と現在の Session 世代からコミットを確認します。Goal-wake も同じ authority を使って元の durable helper と task を照合します。nonce と Session epoch を検証し、ファイル削除前に task の終端を保存します。再起動後は既存の Mission CAS で未処理の wait を進め、元の helper を保持します。
+
+初回と更新時の圧縮要約は、ユーザーが指定した有効な事実を元の文のまま保持します。[2026-11-16 の復旧検証](harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-candidate-6115256e-20261116/REPORT.zh-CN.md)では、回帰 505 件、事実 120/120 件、candidate の故障後終端 15/15 件が通過し、legacy の二回の実行は全 15 スロットで一致しました。GA は NO_GO です。復旧 P50/P95 は 17.439/83.204 秒で、ビルド時間とソース行数のゲートも未達です。

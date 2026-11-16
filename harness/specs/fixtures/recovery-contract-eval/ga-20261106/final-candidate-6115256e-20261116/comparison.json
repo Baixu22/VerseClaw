@@ -1,0 +1,100 @@
+{
+  "schema": "RecoveryCandidateComparison/v1",
+  "driven_by": "agent",
+  "actor": "codex-g3-development-closeout-20261116",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "6115256e882051a154945b5b7298ef8a83d756cc",
+    "tree": "5446a4a8046a697c5de23b0898e2f78e012d82fe",
+    "dirty": false
+  },
+  "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+  "deltaDefinition": "candidate - baseline",
+  "metricUnit": "Frozen evaluator units; latency in milliseconds",
+  "confidenceIntervals": {
+    "status": "EVIDENCE_INSUFFICIENT",
+    "reason": "One complete candidate batch; cross-batch confidence intervals were not measured."
+  },
+  "metrics": [
+    {
+      "metric": "duplicateEffects",
+      "baseline": 0,
+      "candidate": 0,
+      "delta": 0,
+      "samplesPerArm": 15,
+      "confidenceInterval": null
+    },
+    {
+      "metric": "lostTasks",
+      "baseline": 0,
+      "candidate": 0,
+      "delta": 0,
+      "samplesPerArm": 15,
+      "confidenceInterval": null
+    },
+    {
+      "metric": "terminalCorrectness",
+      "baseline": 0.6,
+      "candidate": 1,
+      "delta": 0.4,
+      "samplesPerArm": 15,
+      "confidenceInterval": null
+    },
+    {
+      "metric": "unknownClassifiableRate",
+      "baseline": 0.4,
+      "candidate": 0,
+      "delta": -0.4,
+      "samplesPerArm": 15,
+      "confidenceInterval": null
+    },
+    {
+      "metric": "mustPreserveFidelity",
+      "baseline": 1,
+      "candidate": 1,
+      "delta": 0,
+      "samplesPerArm": 30,
+      "confidenceInterval": null
+    },
+    {
+      "metric": "falseCompletionClaims",
+      "baseline": 0,
+      "candidate": 0,
+      "delta": 0,
+      "samplesPerArm": 30,
+      "confidenceInterval": null
+    },
+    {
+      "metric": "nextActionAccuracy",
+      "baseline": 1,
+      "candidate": 1,
+      "delta": 0,
+      "samplesPerArm": 30,
+      "confidenceInterval": null
+    },
+    {
+      "metric": "recoveryLatencyP50",
+      "baseline": 26580,
+      "candidate": 17439,
+      "delta": -9141,
+      "samplesPerArm": 45,
+      "confidenceInterval": null
+    },
+    {
+      "metric": "recoveryLatencyP95",
+      "baseline": 74246.7999999999,
+      "candidate": 83203.9999999999,
+      "delta": 8957.199999999997,
+      "samplesPerArm": 45,
+      "confidenceInterval": null
+    }
+  ],
+  "legacyStatus": "FAIL",
+  "candidateStatus": "FAIL",
+  "gaStatus": "NO_GO",
+  "independentLegacy": {
+    "samples": 15,
+    "matched": 15,
+    "structureHash": "689c99ac956746a62f6173028bb93cdc4486f0efcfcbc31d4f04b6d9aec6ba6b"
+  }
+}

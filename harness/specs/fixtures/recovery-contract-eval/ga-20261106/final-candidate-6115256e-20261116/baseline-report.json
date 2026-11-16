@@ -1,0 +1,1162 @@
+{
+  "schema": "RecoveryBaselineRepeat/v2",
+  "status": "MATCH",
+  "targetSamplesPerRun": 15,
+  "primaryCompleteSamples": 15,
+  "repeatCompleteSamples": 15,
+  "repeatIncompleteSamples": 0,
+  "incompleteAttempts": [],
+  "fieldMapping": {
+    "schema": "RecoveryBaselineFieldMapping/v1",
+    "originalOracleSha256": "974130f3a5d515174cb886ceaac298dc54a2ac2c7ce4b7560add18c2cc7986c3",
+    "originalComparatorSha256": "f9f2b305c88aaa17f94a550bd0034feaa33e2548f992fc3c591ab569f76b892c",
+    "correctedComparatorSha256": "5c71e8e56aa59a11ddc01ffb10e9b6db7f1e54f1290a0a6a4bc43982a9a58124",
+    "reason": "The frozen projection named two receipt fields that do not exist. K4 sampler source and primary disk receipts expose error, unchanged, retryApplied. Compare all three actual fields, preserving errors and timeouts; original oracle and comparator remain retained.",
+    "replacement": {
+      "storeWriteAcknowledged": "storeRetryApplied from observed.retryApplied",
+      "oldStateReadable": "storeWriteUnchanged from observed.unchanged",
+      "additionalError": "storeWriteError from observed.error"
+    },
+    "excludedUnchanged": [
+      "timestamps",
+      "paths",
+      "latencies",
+      "absolute process/session IDs"
+    ],
+    "createdAt": "2026-11-05T09:45:08.870Z",
+    "driven_by": "agent",
+    "actor": "recovery-baseline-verifier",
+    "realHumanEvidence": false,
+    "runnerExtension": {
+      "beforeSha256": "5c71e8e56aa59a11ddc01ffb10e9b6db7f1e54f1290a0a6a4bc43982a9a58124",
+      "afterSha256": "71062d7d652a18dcaa3071921b1907554de3499fd37fb8c9cc5e4bf99371b81b",
+      "reason": "Retain and distinguish the incomplete K5 attempt; do not change projected fields or replace a negative attempt.",
+      "createdAt": "2026-11-05T10:12:21.985Z"
+    }
+  },
+  "runtimeCandidate": "6115256e882051a154945b5b7298ef8a83d756cc",
+  "samplerCandidate": "6115256e882051a154945b5b7298ef8a83d756cc",
+  "samplesPerRun": 15,
+  "identityRule": "absolute IDs are excluded, while same-session and distinct-PID invariants are retained",
+  "excluded": [
+    "timestamps",
+    "paths",
+    "latency values",
+    "absolute process/session IDs"
+  ],
+  "primaryHash": "689c99ac956746a62f6173028bb93cdc4486f0efcfcbc31d4f04b6d9aec6ba6b",
+  "repeatHash": "689c99ac956746a62f6173028bb93cdc4486f0efcfcbc31d4f04b6d9aec6ba6b",
+  "matched": 15,
+  "mismatches": [],
+  "primary": [
+    {
+      "windowId": "child-created-before-parent-advance-kill",
+      "trialIndex": 0,
+      "injectionPoint": "after the child task record is durably created, before the parent task node advances",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 1,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 0,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "child-created-before-parent-advance-kill",
+      "trialIndex": 1,
+      "injectionPoint": "after the child task record is durably created, before the parent task node advances",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 1,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 0,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "child-created-before-parent-advance-kill",
+      "trialIndex": 2,
+      "injectionPoint": "after the child task record is durably created, before the parent task node advances",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 1,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 0,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "effect-before-receipt-kill",
+      "trialIndex": 0,
+      "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "effect-before-receipt-kill",
+      "trialIndex": 1,
+      "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "effect-before-receipt-kill",
+      "trialIndex": 2,
+      "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "intent-after-persist-kill",
+      "trialIndex": 0,
+      "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "intent-after-persist-kill",
+      "trialIndex": 1,
+      "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "intent-after-persist-kill",
+      "trialIndex": 2,
+      "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "repeated-restart",
+      "trialIndex": 0,
+      "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable",
+        "recovery-before-dispatch",
+        "recovery-before-dispatch"
+      ],
+      "crashCount": 3,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume",
+        "resume",
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "repeated-restart",
+      "trialIndex": 1,
+      "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable",
+        "recovery-before-dispatch",
+        "recovery-before-dispatch"
+      ],
+      "crashCount": 3,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume",
+        "resume",
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "repeated-restart",
+      "trialIndex": 2,
+      "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable",
+        "recovery-before-dispatch",
+        "recovery-before-dispatch"
+      ],
+      "crashCount": 3,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume",
+        "resume",
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "store-write-failure",
+      "trialIndex": 0,
+      "injectionPoint": "during a store write, before the write acknowledgment is returned",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [],
+      "crashCount": 0,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": null,
+      "realResult": null,
+      "reconciliation": null,
+      "duplicateIntents": null,
+      "effectsCount": 0,
+      "decisionActions": [],
+      "shadowKindsAndOutcomes": [],
+      "observationTimedOut": false,
+      "storeWriteError": "Error: [INTERNAL] Error: EIO: injected session-store failure before commit acknowledgement",
+      "storeWriteUnchanged": true,
+      "storeRetryApplied": true
+    },
+    {
+      "windowId": "store-write-failure",
+      "trialIndex": 1,
+      "injectionPoint": "during a store write, before the write acknowledgment is returned",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [],
+      "crashCount": 0,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": null,
+      "realResult": null,
+      "reconciliation": null,
+      "duplicateIntents": null,
+      "effectsCount": 0,
+      "decisionActions": [],
+      "shadowKindsAndOutcomes": [],
+      "observationTimedOut": false,
+      "storeWriteError": "Error: [INTERNAL] Error: EIO: injected session-store failure before commit acknowledgement",
+      "storeWriteUnchanged": true,
+      "storeRetryApplied": true
+    },
+    {
+      "windowId": "store-write-failure",
+      "trialIndex": 2,
+      "injectionPoint": "during a store write, before the write acknowledgment is returned",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [],
+      "crashCount": 0,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": null,
+      "realResult": null,
+      "reconciliation": null,
+      "duplicateIntents": null,
+      "effectsCount": 0,
+      "decisionActions": [],
+      "shadowKindsAndOutcomes": [],
+      "observationTimedOut": false,
+      "storeWriteError": "Error: [INTERNAL] Error: EIO: injected session-store failure before commit acknowledgement",
+      "storeWriteUnchanged": true,
+      "storeRetryApplied": true
+    }
+  ],
+  "repeat": [
+    {
+      "windowId": "child-created-before-parent-advance-kill",
+      "trialIndex": 0,
+      "injectionPoint": "after the child task record is durably created, before the parent task node advances",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 1,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 0,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "child-created-before-parent-advance-kill",
+      "trialIndex": 1,
+      "injectionPoint": "after the child task record is durably created, before the parent task node advances",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 1,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 0,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "child-created-before-parent-advance-kill",
+      "trialIndex": 2,
+      "injectionPoint": "after the child task record is durably created, before the parent task node advances",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 1,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 0,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "effect-before-receipt-kill",
+      "trialIndex": 0,
+      "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "effect-before-receipt-kill",
+      "trialIndex": 1,
+      "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "effect-before-receipt-kill",
+      "trialIndex": 2,
+      "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": false,
+      "unknownClassifiable": true,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [
+        "tool-return-before-receipt"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": false,
+      "reconciliation": false,
+      "duplicateIntents": 0,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "intent-after-persist-kill",
+      "trialIndex": 0,
+      "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "intent-after-persist-kill",
+      "trialIndex": 1,
+      "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "intent-after-persist-kill",
+      "trialIndex": 2,
+      "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable"
+      ],
+      "crashCount": 1,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "repeated-restart",
+      "trialIndex": 0,
+      "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable",
+        "recovery-before-dispatch",
+        "recovery-before-dispatch"
+      ],
+      "crashCount": 3,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume",
+        "resume",
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "repeated-restart",
+      "trialIndex": 1,
+      "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable",
+        "recovery-before-dispatch",
+        "recovery-before-dispatch"
+      ],
+      "crashCount": 3,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume",
+        "resume",
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "repeated-restart",
+      "trialIndex": 2,
+      "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": true,
+      "crashPoints": [
+        "user-intent-durable",
+        "recovery-before-dispatch",
+        "recovery-before-dispatch"
+      ],
+      "crashCount": 3,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": 0,
+      "realResult": true,
+      "reconciliation": false,
+      "duplicateIntents": 1,
+      "effectsCount": 1,
+      "decisionActions": [
+        "resume",
+        "resume",
+        "resume"
+      ],
+      "shadowKindsAndOutcomes": [
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        },
+        {
+          "kind": "reconcile",
+          "outcome": "resumed",
+          "drift": true
+        }
+      ],
+      "observationTimedOut": false,
+      "storeWriteError": null,
+      "storeWriteUnchanged": null,
+      "storeRetryApplied": null
+    },
+    {
+      "windowId": "store-write-failure",
+      "trialIndex": 0,
+      "injectionPoint": "during a store write, before the write acknowledgment is returned",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [],
+      "crashCount": 0,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": null,
+      "realResult": null,
+      "reconciliation": null,
+      "duplicateIntents": null,
+      "effectsCount": 0,
+      "decisionActions": [],
+      "shadowKindsAndOutcomes": [],
+      "observationTimedOut": false,
+      "storeWriteError": "Error: [INTERNAL] Error: EIO: injected session-store failure before commit acknowledgement",
+      "storeWriteUnchanged": true,
+      "storeRetryApplied": true
+    },
+    {
+      "windowId": "store-write-failure",
+      "trialIndex": 1,
+      "injectionPoint": "during a store write, before the write acknowledgment is returned",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [],
+      "crashCount": 0,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": null,
+      "realResult": null,
+      "reconciliation": null,
+      "duplicateIntents": null,
+      "effectsCount": 0,
+      "decisionActions": [],
+      "shadowKindsAndOutcomes": [],
+      "observationTimedOut": false,
+      "storeWriteError": "Error: [INTERNAL] Error: EIO: injected session-store failure before commit acknowledgement",
+      "storeWriteUnchanged": true,
+      "storeRetryApplied": true
+    },
+    {
+      "windowId": "store-write-failure",
+      "trialIndex": 2,
+      "injectionPoint": "during a store write, before the write acknowledgment is returned",
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrect": true,
+      "unknownClassifiable": false,
+      "diskEvidenceComplete": true,
+      "rerunOutsideAllowedRegion": false,
+      "crashPoints": [],
+      "crashCount": 0,
+      "sameCrashSession": true,
+      "distinctCrashPids": true,
+      "childCount": null,
+      "realResult": null,
+      "reconciliation": null,
+      "duplicateIntents": null,
+      "effectsCount": 0,
+      "decisionActions": [],
+      "shadowKindsAndOutcomes": [],
+      "observationTimedOut": false,
+      "storeWriteError": "Error: [INTERNAL] Error: EIO: injected session-store failure before commit acknowledgement",
+      "storeWriteUnchanged": true,
+      "storeRetryApplied": true
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "recovery-baseline-verifier",
+  "realHumanEvidence": false
+}
