@@ -5,11 +5,16 @@ import type { MemorySearchResult } from "openclaw/plugin-sdk/memory-core-host-ru
 import {
   resolveDefaultAgentId,
   resolveSessionAgentId,
+  createOwnerReadSnapshot,
   type OwnerReadSnapshotV1,
   type ReadAdmissionContextV1,
   type SourceRefV2,
 } from "openclaw/plugin-sdk/memory-host-core";
 import { getActiveMemorySearchManager } from "openclaw/plugin-sdk/memory-host-search";
+import {
+  readNativeMemorySource,
+  boundOwnerReadSnapshot,
+} from "openclaw/plugin-sdk/knowledge-retrieval";
 import {
   extractTranscriptIdentityFromSessionsMemoryHit,
   loadCombinedSessionStoreForGateway,
@@ -188,6 +193,7 @@ type WikiSearchResult = {
   evidenceKinds?: string[];
   evidenceSourceIds?: string[];
   sourceRef?: SourceRefV2;
+  ownerSnapshot?: OwnerReadSnapshotV1;
 };
 
 type WikiGetResult = {
@@ -1577,7 +1583,56 @@ export async function searchMemoryWiki(params: {
       hits: rawMemoryResults,
     });
   }
-  const memoryResults = rawMemoryResults.map((result) => toMemoryWikiSearchResult(result, mode));
+  const memoryResults: WikiSearchResult[] = [];
+  for (const hit of rawMemoryResults) {
+    // Transcript hits keep their existing visibility path; native file snippets
+    // are replaced only by a fresh read from the selected memory owner.
+    if (hit.source === "sessions") {
+      memoryResults.push(toMemoryWikiSearchResult(hit, mode));
+      continue;
+    }
+    if (hit.source !== "memory") continue;
+    const read = await readNativeMemorySource({
+      cfg: params.appConfig,
+      agentId: params.agentId,
+      identity: {
+        ...params.readIdentity,
+        agentSessionKey: params.readIdentity?.agentSessionKey ?? params.agentSessionKey,
+      },
+      lookup: hit.path,
+    });
+    if (read.status !== "admitted") continue;
+    if (
+      !Number.isSafeInteger(hit.startLine) ||
+      !Number.isSafeInteger(hit.endLine) ||
+      hit.startLine < 1 ||
+      hit.endLine < hit.startLine
+    )
+      continue;
+    const lines = read.snapshot.content.split(/(?<=\n)/);
+    if (hit.startLine > lines.length) continue;
+    const startChar = lines.slice(0, hit.startLine - 1).join("").length;
+    const endChar = startChar + lines.slice(hit.startLine - 1, hit.endLine).join("").length;
+    if (startChar === endChar) continue;
+    const selected = createOwnerReadSnapshot({
+      raw: read.snapshot.content,
+      startChar,
+      endChar,
+      source: read.snapshot.source,
+      context: read.snapshot.context,
+      policy: read.snapshot.policy,
+      title: read.snapshot.title,
+    });
+    const bounded = boundOwnerReadSnapshot(selected, 4000);
+    memoryResults.push({
+      ...toMemoryWikiSearchResult(hit, mode),
+      snippet: bounded.content,
+      startLine: bounded.source.locator!.startLine,
+      endLine: bounded.source.locator!.endLine,
+      sourceRef: bounded.source,
+      ownerSnapshot: bounded,
+    });
+  }
 
   const merged = mergeWikiSearchCorpusResults({
     wikiResults,

@@ -1,4 +1,6 @@
 /** Owner-bound source normalization, structural projection and citation verification. */
+export { readNativeMemorySource } from "../memory/native-memory-source.js";
+export { boundOwnerReadSnapshot } from "../runtime-core/knowledge-owner-read.js";
 export {
   normalizeProjectRagConfig,
   PROJECT_RAG_DEFAULTS,

@@ -1078,6 +1078,7 @@ export class MemoryIndexManager extends MemoryManagerEmbeddingOps implements Mem
     relPath: string;
     from?: number;
     lines?: number;
+    raw?: boolean;
   }): Promise<{ text: string; path: string }> {
     return await readMemoryFile({
       workspaceDir: this.workspaceDir,
@@ -1085,6 +1086,7 @@ export class MemoryIndexManager extends MemoryManagerEmbeddingOps implements Mem
       relPath: params.relPath,
       from: params.from,
       lines: params.lines,
+      raw: params.raw,
     });
   }
 

@@ -41,7 +41,8 @@ import { createContextBlockSink } from '../../openclaw_runtime/src/agents/harnes
 import { isRuntimeLineage } from '../../openclaw_runtime/src/runtime-core/lineage';
 import { readBoundedKnowledgePage, retrieveSelectedSourceSetEvidence } from './knowledge-source-set-answer';
 import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent } from './knowledge-read-scope';
-import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
+import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot, type SourceRefV2 } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
+import { getMemorySourceOwner, isMemorySourceRef } from '../../shared/knowledge/memory';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatus, KnowledgeEmbeddingStatusResult } from '../../shared/knowledge/embedding';
 import { normalizeProjectRagConfig, type ProjectRagConfigV2, type IndexStatusV1, type KnowledgeIndexResult, type RetrievalCapabilitySnapshotV1 } from '../../shared/knowledge/operations';
 import type { KnowledgeVectorStatus, KnowledgeVectorStatusResult } from '../../shared/knowledge/vector';
@@ -822,7 +823,7 @@ async function loadRoleRegistry(): Promise<KnowledgeRoleRegistryFile> {
     const parsed = JSON.parse(raw) as unknown;
     const { registry, issues } = normalizeRoleRegistry(parsed);
     if (issues.length > 0) {
-       
+
       console.warn(`[knowledge] steward-roles.json issues:`, issues);
     }
     cachedRoleRegistry = registry;
@@ -832,7 +833,7 @@ async function loadRoleRegistry(): Promise<KnowledgeRoleRegistryFile> {
     // Missing file is the expected initial state — log debug, not warn.
     const code = (error as NodeJS.ErrnoException)?.code;
     if (code !== 'ENOENT') {
-       
+
       console.warn(`[knowledge] steward-roles.json load failed (${code ?? 'unknown'}); using default`);
     }
     return DEFAULT_REGISTRY;
@@ -2891,6 +2892,9 @@ const ROUTER_BUDGET = {
 } as const;
 
 function retrievalSourceKindFromRow(row: Record<string, unknown>): KnowledgeRetrievalDiagnostics['items'][number]['sourceKind'] {
+  const sourceRef = normalizeSourceRefV2(row.sourceRef);
+  if (sourceRef?.domain === 'native-memory') return 'memory-file';
+  if (sourceRef?.domain === 'role-memory') return 'memory-card';
   const metadata = routeMetadataFromRow(row);
   const knowledgeKind = routeStringFromRecord(metadata, ['knowledgeKind', 'kind']).toLowerCase();
   const type = (rowString(row, ['type', 'draftType', 'okfType']) || routeStringFromRecord(metadata, ['type', 'draftType', 'okfType'])).toLowerCase();
@@ -2916,11 +2920,13 @@ function buildRetrievalDiagnostics(input: {
   const items = input.rows.map((row) => {
     const lookup = rowString(row, ['lookup', 'pagePath', 'path', 'id', 'pageId']);
     const score = rowNumber(row, ['score', 'rank', 'similarity'], 0);
+    const sourceRef = normalizeSourceRefV2(row.sourceRef);
     return {
       id: rowString(row, ['id', 'pageId']) || lookup || rowString(row, ['title', 'name']) || 'unknown',
       title: rowString(row, ['title', 'name', 'pageTitle']) || lookup || 'Untitled',
       lookup,
       sourceKind: retrievalSourceKindFromRow(row),
+      ...(sourceRef ? { owner: sourceRef.authorityId, sourceRef } : {}),
       reason: lookup && selectedLookups.has(lookup) ? input.reason : 'available search result',
       ...(score > 0 ? { score } : {}),
       ...(rowString(row, ['sourcePath', 'pagePath', 'path']) ? { path: rowString(row, ['sourcePath', 'pagePath', 'path']) } : {}),
@@ -3375,6 +3381,20 @@ export function createKnowledgeApi({
     semanticStewardInvoker = (context) => runSemanticStewardInvoker(gatewayManager, context);
   }
 
+  async function readMemoryOwnerSource(sourceRef: SourceRefV2, readScope: Awaited<ReturnType<typeof prepareKnowledgeReadScope>>) {
+    const read = await rpc<import('../../shared/knowledge/memory').MemoryOwnerReadResult>('memory.readSource', {
+      sourceRef, readIdentity: readScope.identity,
+    });
+    await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+    if (read.status !== 'admitted') return { success: false, readDenial: read.reason, error: 'Memory source cannot be read' };
+    const snapshot = read.snapshot;
+    if (!isOwnerReadSnapshotV1(snapshot) || evaluateOwnerReadSnapshot(snapshot, snapshot.context))
+      return { success: false, readDenial: 'digest_mismatch' as const, error: 'Memory owner snapshot is invalid' };
+    return { success: true, corpus: 'memory' as const, path: snapshot.source.subjectId, title: snapshot.title,
+      content: snapshot.content, sourceRef: snapshot.source, ownerSnapshot: snapshot,
+      fromLine: snapshot.source.locator!.startLine, totalLines: snapshot.totalLines, truncated: snapshot.truncated };
+  }
+
   async function buildAnswerFromSourceSet(input: {
     answerMode?: KnowledgeAnswerMode;
     question: string;
@@ -3436,8 +3456,9 @@ export function createKnowledgeApi({
         ref, question, workspaceId: input.workspaceId ?? getString(sourceSet?.metadata?.workspaceId),
         read: async range => {
           await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
-          const result = await rpc('wiki.get', { lookup: ref.path || ref.id, ...range, corpus: 'wiki',
-            ...(ref.sourceRef ? { sourceRef: ref.sourceRef } : {}), readIdentity: readScope.identity }, 30_000);
+          const result = isMemorySourceRef(ref.sourceRef) ? await readMemoryOwnerSource(ref.sourceRef, readScope)
+            : await rpc('wiki.get', { lookup: ref.path || ref.id, ...range, corpus: 'wiki',
+              ...(ref.sourceRef ? { sourceRef: ref.sourceRef } : {}), readIdentity: readScope.identity }, 30_000);
           await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
           return result;
         },
@@ -3462,7 +3483,7 @@ export function createKnowledgeApi({
           if (remaining <= 0) throw new Error('Knowledge answer model budget expired');
           return remaining;
         };
-        const pinned = sources.map(source => ({ id: source.id, kind: 'wiki' as const, path: source.path,
+        const pinned = sources.map(source => ({ id: source.id, kind: source.citation?.sourceRef?.domain === 'native-memory' ? 'file' as const : source.citation?.sourceRef?.domain === 'role-memory' ? 'other' as const : 'wiki' as const, path: source.path,
           ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
           ...(source.citation?.sourceRef ? { sourceRef: source.citation.sourceRef } : {}) }));
         evidence = await readEvidence(pinned);
@@ -3475,7 +3496,8 @@ export function createKnowledgeApi({
         if (modelSelection.dropped.length) packingUnknowns.push('Knowledge reference transport limit excluded: ' + modelSelection.dropped.join(', '));
         if (!modelSelection.sources.length && answerMode === 'strict') throw new Error('No complete knowledge group fits the reference transport limit');
         const references = modelSelection.sources.map(source => ({
-          id: source.citation!.refId, title: source.title, lookup: source.path ?? source.lookup, corpus: 'wiki' as const,
+          id: source.citation!.refId, title: source.title, lookup: source.path ?? source.lookup,
+          corpus: isMemorySourceRef(source.citation?.sourceRef) ? 'memory' as const : 'wiki' as const,
           sourceRef: source.citation!.sourceRef, revision: source.citation!.revision, contentDigest: source.citation!.contentDigest,
           ...(source.conflictGroupId ? { conflictGroupId: source.conflictGroupId } : {}),
         }));
@@ -3540,9 +3562,11 @@ export function createKnowledgeApi({
     }
     const rows = sources.map((source) => ({
       id: source.id, title: source.title, lookup: source.lookup, pagePath: source.path ?? source.lookup,
+      sourceRef: source.citation?.sourceRef,
     }));
+    const corpora = new Set(sourceRefs.map(ref => getMemorySourceOwner(ref) ? 'memory' : 'wiki'));
     const retrievalDiagnostics = buildRetrievalDiagnostics({
-      query: question, corpus: 'wiki', mode: 'source-set', rows,
+      query: question, corpus: corpora.size > 1 ? 'all' : corpora.has('memory') ? 'memory' : 'wiki', mode: 'source-set', rows,
       selectedLookups: new Set(rows.map((row) => row.lookup)),
       reason: 'explicit Source Set selection after owner admission',
       backend: semanticRequested && evidence.sourceSet.semanticLane.status === 'available' ? 'semantic' : 'fallback-keyword',
@@ -4200,10 +4224,16 @@ export function createKnowledgeApi({
         if (!lookup) return { success: false, error: 'lookup is required' };
         const sourceRef = normalizeSourceRefV2(body.sourceRef);
         if (body.sourceRef !== undefined && !sourceRef) return { success: false, readDenial: 'invalid_range', error: 'Invalid SourceRef/v2 pin' };
+        if (!sourceRef && (body.corpus === 'memory' || getMemorySourceOwner({ id: lookup })))
+          return { success: false, readDenial: 'denied', error: 'Memory source requires a current owner pin' };
         const readScope = await prepareKnowledgeReadScope(gatewayManager, {
           sessionKey: getString(body.sessionKey), workspaceId: getString(body.workspaceId),
         });
-        const result = await rpc<Record<string, unknown>>('wiki.get', {
+        if (isMemorySourceRef(sourceRef) && body.corpus === 'wiki')
+          return { success: false, readDenial: 'scope_mismatch', error: 'Memory pin requires memory corpus' };
+        const result: Record<string, unknown> = isMemorySourceRef(sourceRef)
+          ? await readMemoryOwnerSource(sourceRef, readScope)
+          : await rpc<Record<string, unknown>>('wiki.get', {
           lookup,
           ...(typeof body.fromLine === 'number' ? { fromLine: body.fromLine } : {}),
           ...(typeof body.lineCount === 'number' ? { lineCount: body.lineCount } : {}),
@@ -4212,6 +4242,9 @@ export function createKnowledgeApi({
           readIdentity: readScope.identity,
         }, 30_000);
         await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+        if (result.success === false) return result;
+        if (result.corpus === 'memory' && !isMemorySourceRef(sourceRef))
+          return { success: false, readDenial: 'denied', error: 'Memory source requires a current owner pin' };
         if (result?.status === 'denied') return { success: false, readDenial: result.reason as import('../../shared/knowledge/owner-read-contract').OwnerReadRejectionCode, error: `Knowledge source is unavailable (${String(result.reason)}).` };
         if (result?.ownerSnapshot !== undefined) {
           if (!isOwnerReadSnapshotV1(result.ownerSnapshot) || evaluateOwnerReadSnapshot(result.ownerSnapshot, result.ownerSnapshot.context)
@@ -4529,8 +4562,9 @@ export function createKnowledgeApi({
         return { success: false, error: 'No admitted selected sources are available for a Studio draft.' };
       }
       const admittedSourceRefs: KnowledgeSourceRef[] = answer.sources.map((source) => ({
-        id: source.id, kind: 'wiki', label: source.title, path: source.path || source.lookup,
+        id: source.id, kind: source.citation?.sourceRef?.domain === 'native-memory' ? 'file' : source.citation?.sourceRef?.domain === 'role-memory' ? 'other' : 'wiki', label: source.title, path: source.path || source.lookup,
         ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
+        ...(source.citation?.sourceRef ? { sourceRef: source.citation.sourceRef } : {}),
       }));
       const draft = createDraftFromPayload({
         title,
@@ -6259,7 +6293,7 @@ export function createKnowledgeApi({
         const info = await lstat(normalizedPath);
         if (!info.isDirectory() || info.isSymbolicLink()) return { success: false, error: 'Watched path must be a real directory' };
       }
-      
+
       configs[idx] = updated;
       await writeWatchedDirConfigs(configs);
 

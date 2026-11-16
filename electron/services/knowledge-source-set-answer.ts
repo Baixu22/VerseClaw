@@ -15,6 +15,7 @@ import {
 import type { RuntimeEmbeddingProvider } from '../../openclaw_runtime/src/runtime-core/memory-embedding-provider';
 import { isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot, matchOwnerReadPin,
   type OwnerReadRejectionCode } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
+import { getMemorySourceOwner, isMemorySourceRef } from '../../shared/knowledge/memory';
 
 const UNKNOWN_FRESHNESS = '1970-01-01T00:00:00.000Z';
 
@@ -73,9 +74,13 @@ export async function readBoundedKnowledgePage(input: {
   workspaceId?: string;
   read: (range: { fromLine?: number; lineCount: number }) => Promise<unknown>;
 }): Promise<unknown> {
+  if (getMemorySourceOwner(input.ref) && !isMemorySourceRef(input.ref.sourceRef)) {
+    return { success: false, readDenial: 'denied' };
+  }
   const first = await input.read({ lineCount: 80 });
-  if (!record(first) || typeof first.content !== 'string' || input.ref.contentDigest || input.ref.sourceRef?.locator) return first;
-  if (first.content.length > 96_000) return { ...first, status: 'denied', statusReason: 'source read exceeds the character budget' };
+  if (!record(first) || typeof first.content !== 'string') return first;
+  if (first.content.length > 96_000) return { success: false, readDenial: 'denied', status: 'denied', statusReason: 'source read exceeds the character budget' };
+  if (input.ref.contentDigest || input.ref.sourceRef?.locator) return first;
   const admitted = await retrieveSelectedSourceSetEvidence({
     question: input.question, sourceRefs: [input.ref], workspaceId: input.workspaceId,
     readPage: async () => first,
@@ -110,13 +115,17 @@ export async function readBoundedKnowledgePage(input: {
 }
 
 function materializeSource(ref: KnowledgeSourceRef, page: unknown): MaterializedSource | null {
-  if (!record(page) || page.success === false || (page.corpus !== undefined && page.corpus !== 'wiki')) return null;
+  if (!record(page) || page.success === false) return null;
+  const snapshot = isOwnerReadSnapshotV1(page.ownerSnapshot) ? page.ownerSnapshot : undefined;
+  if (page.corpus !== undefined && page.corpus !== 'wiki'
+    && !(page.corpus === 'memory' && snapshot && isMemorySourceRef(snapshot.source))) return null;
+  const owner = snapshot?.source.domain === 'native-memory' ? 'native-memory'
+    : snapshot?.source.domain === 'role-memory' ? 'memory-slot' : 'memory-wiki';
   const contentValue = ['content', 'body', 'text', 'snippet', 'bodyPreview'].map((key) => page[key])
     .find((value) => value !== undefined);
   const content = typeof contentValue === 'string' && contentValue.trim().length > 0 ? contentValue : undefined;
   if (!content) return null;
   const metadata = record(page.metadata) ? page.metadata : {};
-  const snapshot = isOwnerReadSnapshotV1(page.ownerSnapshot) ? page.ownerSnapshot : undefined;
   const ownerValue = (key: string): unknown => {
     if (snapshot) {
       if (key === 'revision') return snapshot.source.revision;
@@ -130,7 +139,7 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
     return page[key] !== undefined ? page[key] : metadata[key];
   };
   const lookup = ref.path || ref.id;
-  const path = text(page.path) ?? text(page.pagePath) ?? lookup;
+  const path = snapshot?.source.subjectId ?? text(page.path) ?? text(page.pagePath) ?? lookup;
   const title = text(page.title) ?? text(page.name) ?? ref.label ?? lookup;
   const digest = digestSourceSetContent(content);
   const ownerRevision = ownerValue('revision');
@@ -156,7 +165,7 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
   const invalidScope = (ownerScope !== undefined && !record(ownerScope))
     || [scopeRecord.workspaceId, scopeRecord.agentId, ownerValue('workspaceId'), ownerValue('agentId')]
       .some((value) => value !== undefined && !text(value));
-  const invalidPolicy = page.ownerSnapshot !== undefined && (!snapshot || snapshot.content !== content
+  const invalidPolicy = page.ownerSnapshot !== undefined && (!snapshot || snapshot.source.authorityId !== owner || snapshot.content !== content
     || evaluateOwnerReadSnapshot(snapshot, snapshot.context)) ? 'invalid owner snapshot'
     : ownerAcl !== undefined && !validAcl
     ? 'invalid owner ACL' : invalidScope
@@ -179,8 +188,8 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
   const truncated = page.truncated === true || fromLine > 1 || (totalLines !== undefined && totalLines > toLine);
   const candidate: SourceSetCandidate = {
     ref: {
-      refId: snapshot ? `memory-wiki:${snapshot.source.namespaceId}:${path}:${snapshot.source.locator!.startByte}-${snapshot.source.locator!.endByteExclusive}` : `memory-wiki:${path}`,
-      owner: 'memory-wiki', subjectKind: 'wiki-page', subjectId: path,
+      refId: snapshot ? `${owner}:${snapshot.source.namespaceId}:${path}:${snapshot.source.locator!.startByte}-${snapshot.source.locator!.endByteExclusive}` : `memory-wiki:${path}`,
+      owner, subjectKind: owner === 'native-memory' ? 'memory-file' : owner === 'memory-slot' ? 'memory-card' : 'wiki-page', subjectId: path,
       revision, contentDigest,
       trust: sourceTrust(ownerValue('trust')),
       sensitivity: sourceSensitivity(ownerValue('sensitivity') === undefined ? ownerValue('privacyTier') : ownerValue('sensitivity')),
@@ -244,7 +253,8 @@ export async function retrieveSelectedSourceSetEvidence(input: {
         return { workspaceId: context.workspaceId, agentId: context.agentId, sessionKey: context.sessionKey };
       })() } : input.workspaceId ? { taskContext: { workspaceId: input.workspaceId } } : {}),
       pinnedRefs: input.sourceRefs.map((ref, index) => ({
-        owner: 'memory-wiki', subjectId: materialized[index]?.candidate.ref.subjectId ?? ref.path ?? ref.id,
+        owner: materialized[index]?.candidate.ref.owner ?? getMemorySourceOwner(ref) ?? 'memory-wiki',
+        subjectId: materialized[index]?.candidate.ref.subjectId ?? ref.sourceRef?.subjectId ?? ref.path ?? ref.id,
         ...(ref.revision === undefined ? {} : { revision: ref.revision }),
         ...(ref.contentDigest === undefined ? {} : { contentDigest: ref.contentDigest }),
         ...(ref.sourceRef ? { sourceRef: ref.sourceRef } : {}),

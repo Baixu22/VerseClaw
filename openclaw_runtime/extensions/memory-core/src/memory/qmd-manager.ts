@@ -38,6 +38,7 @@ import {
   isFileMissingError,
   type MemoryReadResult,
   requireNodeSqlite,
+  readMemoryFile,
   statRegularFile,
   type MemoryEmbeddingProbeResult,
   type MemoryProviderStatus,
@@ -1402,6 +1403,7 @@ export class QmdMemoryManager implements MemorySearchManager {
     relPath: string;
     from?: number;
     lines?: number;
+    raw?: boolean;
   }): Promise<MemoryReadResult> {
     const relPath = params.relPath?.trim();
     if (!relPath) {
@@ -1410,6 +1412,15 @@ export class QmdMemoryManager implements MemorySearchManager {
     const absPath = this.resolveReadPath(relPath);
     if (!absPath.endsWith(".md")) {
       throw new Error("path required");
+    }
+    if (params.raw) {
+      const full = await readMemoryFile({
+        workspaceDir: this.workspaceDir,
+        extraPaths: [...this.collectionRoots.values()].map((entry) => entry.path),
+        relPath: absPath,
+        raw: true,
+      });
+      return { ...full, path: relPath };
     }
     let statResult: Awaited<ReturnType<typeof statRegularFile>>;
     try {

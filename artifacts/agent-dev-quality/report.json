@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-11-15T18:17:40.627Z",
+  "generatedAt": "2026-11-16T17:35:06.304Z",
   "success": true,
   "buildReuse": {
     "mode": "reuse",
@@ -11,15 +11,15 @@
     "artifacts": [
       {
         "path": "dist/index.html",
-        "mtimeMs": 1794764299665.0237
+        "mtimeMs": 1794850403515.141
       },
       {
         "path": "dist-electron/main/index.js",
-        "mtimeMs": 1794764304679.2593
+        "mtimeMs": 1794850409513.7334
       },
       {
         "path": "dist-electron/preload/index.js",
-        "mtimeMs": 1794764304741.0288
+        "mtimeMs": 1794850409546.6445
       }
     ],
     "requiredArtifacts": [
@@ -56,7 +56,9 @@
     ],
     "watchSteps": [
       "playwright-agent-dev",
-      "contract"
+      "contract",
+      "harness-agent-dev",
+      "i18n"
     ],
     "limitSteps": []
   },
@@ -73,7 +75,7 @@
   },
   "playwright": {
     "ok": true,
-    "durationMs": 16226,
+    "durationMs": 18525,
     "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
     "mode": "smoke",
@@ -81,11 +83,11 @@
     "diagnostics": {
       "kind": "playwright",
       "passed": 1,
-      "reportedDurationMs": 14300,
+      "reportedDurationMs": 15400,
       "tests": [
         {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 11800
+          "durationMs": 12200
         }
       ]
     },

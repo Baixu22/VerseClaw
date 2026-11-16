@@ -136,6 +136,8 @@ export type MemoryPluginCapability = {
 
 export type MemoryPluginCapabilityRegistration = {
   pluginId: string;
+  /** Artifact-only bridges can share a capability without owning its runtime. */
+  runtimePluginId?: string;
   capability: MemoryPluginCapability;
 };
 
@@ -177,6 +179,11 @@ export function registerMemoryCapability(
     !capability.runtime;
   memoryPluginState.capability = {
     pluginId,
+    ...(capability.runtime
+      ? { runtimePluginId: pluginId }
+      : shouldPreserveExisting
+        ? { runtimePluginId: memoryPluginState.capability?.runtimePluginId }
+        : {}),
     capability: {
       ...(shouldPreserveExisting ? existingCapability : {}),
       ...capability,
@@ -185,17 +192,19 @@ export function registerMemoryCapability(
 }
 
 function patchMemoryCapability(pluginId: string, patch: MemoryPluginCapability): void {
-  const current =
-    memoryPluginState.capability?.pluginId === pluginId
-      ? memoryPluginState.capability.capability
-      : {};
+  const registration = memoryPluginState.capability;
+  const current = registration?.pluginId === pluginId ? registration.capability : {};
   registerMemoryCapability(pluginId, { ...current, ...patch });
+  // Updating a prompt or flush hook does not transfer a bridge's inherited runtime.
+  if (!patch.runtime && current.runtime && memoryPluginState.capability) {
+    memoryPluginState.capability.runtimePluginId = registration?.runtimePluginId;
+  }
 }
 
 export function getMemoryCapabilityRegistration(): MemoryPluginCapabilityRegistration | undefined {
   return memoryPluginState.capability
     ? {
-        pluginId: memoryPluginState.capability.pluginId,
+        ...memoryPluginState.capability,
         capability: { ...memoryPluginState.capability.capability },
       }
     : undefined;
@@ -342,7 +351,7 @@ export async function listActiveMemoryPublicArtifacts(params: {
 export function restoreMemoryPluginState(state: MemoryPluginState): void {
   memoryPluginState.capability = state.capability
     ? {
-        pluginId: state.capability.pluginId,
+        ...state.capability,
         capability: { ...state.capability.capability },
       }
     : undefined;

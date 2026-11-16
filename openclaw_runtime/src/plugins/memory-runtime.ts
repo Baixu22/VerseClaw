@@ -4,7 +4,7 @@ import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { resolveUserPath } from "../utils.js";
 import { getLoadedRuntimePluginRegistry } from "./active-runtime-registry.js";
 import { normalizePluginsConfig } from "./config-state.js";
-import { getMemoryRuntime } from "./memory-state.js";
+import { getMemoryRuntime, getMemoryCapabilityRegistration } from "./memory-state.js";
 import { ensureStandaloneRuntimePluginRegistryLoaded } from "./runtime/standalone-runtime-registry-loader.js";
 
 /** Resolves the configured memory slot to the single runtime plugin that may load memory. */
@@ -65,12 +65,29 @@ export async function getActiveMemorySearchManager(params: {
   cfg: OpenClawConfig;
   agentId: string;
   purpose?: "default" | "status" | "cli";
+  expectedRuntimePluginId?: string;
 }) {
+  if (resolveMemoryRuntimePluginIds(params.cfg).length === 0)
+    return { manager: null, error: "memory plugin unavailable" };
   const runtime = ensureMemoryRuntime(params.cfg);
+  const selected = resolveMemoryRuntimePluginIds(params.cfg)[0];
+  if (
+    params.expectedRuntimePluginId &&
+    getMemoryCapabilityRegistration()?.runtimePluginId !== params.expectedRuntimePluginId
+  )
+    return { manager: null, error: "selected memory plugin is unavailable" };
   if (!runtime) {
     return { manager: null, error: "memory plugin unavailable" };
   }
-  return await runtime.getMemorySearchManager(params);
+  const result = await runtime.getMemorySearchManager(params);
+  if (
+    getMemoryRuntime() !== runtime ||
+    (params.expectedRuntimePluginId &&
+      getMemoryCapabilityRegistration()?.runtimePluginId !== params.expectedRuntimePluginId) ||
+    resolveMemoryRuntimePluginIds(params.cfg)[0] !== selected
+  )
+    return { manager: null, error: "memory owner changed during manager resolution" };
+  return result;
 }
 
 /** Resolves current memory backend config without constructing a manager. */

@@ -376,6 +376,7 @@ function buildContextBlockFactory(params: {
       current = await revalidateChatKnowledgeRefs({
         refs: requested,
         cfg: params.cfg,
+        internalRunId: params.runId,
         identity: {
           sessionId: params.sessionId,
           agentSessionKey: params.sessionKey,

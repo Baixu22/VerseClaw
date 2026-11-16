@@ -315,7 +315,7 @@
 
 ### RAG-13 接通原生记忆与角色记忆的独立读取
 
-综合可用记忆，同时保持各存储域和作用域的边界。
+综合可用记忆，同时保持各存储域和作用域的边界。 读取契约见 [原生与角色记忆](MEMORY-SOURCE-CONTRACT.md)。
 
 - Owner：native memory / Role Memory / retrieval adapters。
 - 契约：RetrievalOwnerDescriptor/v1、MemorySourceRef/v1。

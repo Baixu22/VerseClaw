@@ -102,6 +102,76 @@ vi.mock('@electron/utils/paths', () => ({
 }));
 
 describe('knowledge host API', () => {
+  it('rejects unpinned memory reads and an all-corpus raw-memory fallback', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.get') return { corpus: 'memory', content: 'UNADMITTED_MEMORY_BODY' };
+      throw Error(method);
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    for (const corpus of ['memory', 'all'] as const) {
+      const result = await api.get({ lookup: 'memory/source.md', corpus });
+      expect(result).toMatchObject({ success: false, readDenial: 'denied' });
+      expect(JSON.stringify(result)).not.toContain('UNADMITTED_MEMORY_BODY');
+    }
+    expect(gatewayManager.rpc.mock.calls.filter(([method]) => method === 'wiki.get')).toHaveLength(1);
+  });
+
+  it.each(['native-memory', 'role-memory'] as const)('reads %s for SourceSet answers and preserves Studio pins', async domain => {
+    const owner = domain === 'native-memory' ? 'native-memory' : 'memory-slot';
+    const namespaceId = `${owner}:host-source-fixture`;
+    let changed = false;
+    const snapshotFor = (identity: { workspaceId?: string; workspaceDir?: string; agentSessionKey?: string; sessionId?: string }) => {
+      const content = changed ? 'CHANGED_MEMORY_SOURCE_BODY' : 'Memory source requires review before applying.';
+      const context = deriveReadAdmissionContext({ principalId: 'operator', agentId: 'main',
+        sessionId: identity.sessionId!, sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId!,
+        workspaceRootDigest: digestOwnerReadContent(identity.workspaceDir!), ownerNamespaces: [namespaceId],
+        policyDigest: digestOwnerReadContent('memory-host-policy'), egressProviderRefs: [], expiresAt: new Date(Date.now() + 30000).toISOString() });
+      return createOwnerReadSnapshot({ raw: content, startChar: 0, endChar: content.length, context, title: 'Memory source',
+        source: { domain, authorityId: owner, namespaceId, subjectId: 'memory-source', revision: changed ? '2' : '1' },
+        policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] },
+          scope: { workspaceId: context.workspaceId, agentId: 'main' }, retention: { policy: 'source-coupled' }, updatedAt: '2026-11-16T00:00:00Z' } });
+    };
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'memory.readSource') return { status: 'admitted', snapshot: snapshotFor(params.readIdentity as never) };
+      throw Error(`Unexpected memory source RPC ${method}`);
+    }) };
+    const { prepareKnowledgeReadScope } = await import('@electron/services/knowledge-read-scope');
+    const scope = await prepareKnowledgeReadScope(gatewayManager as never, {});
+    const pin = snapshotFor(scope.identity).source;
+    const ref = { id: 'memory-source', kind: 'other' as const, sourceRef: pin };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const answer = await api.answerFromSourceSet({ question: 'Review memory source', sourceRefs: [ref] });
+    expect(answer.sources).toHaveLength(1);
+    expect(answer.sources[0].citation).toMatchObject({ owner, sourceRef: pin });
+    expect(answer.retrievalDiagnostics).toMatchObject({ corpus: 'memory', items: [
+      expect.objectContaining({ owner, sourceRef: pin, sourceKind: domain === 'native-memory' ? 'memory-file' : 'memory-card' }),
+    ] });
+    expect(await api.get({ lookup: pin.subjectId, sourceRef: pin, corpus: 'memory' })).toMatchObject({ success: true });
+    for (const conflicting of [{ revision: 'stale-version' }, { contentDigest: digestOwnerReadContent('stale body') }, { corpus: 'wiki' as const }]) {
+      const rejected = await api.get({ lookup: pin.subjectId, sourceRef: pin, ...conflicting });
+      expect(rejected).toMatchObject({ success: false });
+      expect(JSON.stringify(rejected)).not.toContain('Memory source requires review');
+    }
+    const studio = await api.createArtifactDraft({ artifactType: 'summary', sourceRefs: [ref] });
+    expect(studio).toMatchObject({ success: true, draft: { sourceRefs: [expect.objectContaining({ sourceRef: pin })] } });
+    expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'wiki.get')).toBe(false);
+    changed = true;
+    const stale = await api.answerFromSourceSet({ question: 'Review memory source', sourceRefs: [ref] });
+    expect(stale.sources).toEqual([]);
+    expect(stale.retrievalDiagnostics).toMatchObject({ corpus: 'memory', items: [] });
+    expect(stale.answer).not.toContain('CHANGED_MEMORY_SOURCE_BODY');
+    const legacy = { id: owner + ':memory-source', kind: 'file' as const };
+    const unpinned = await api.answerFromSourceSet({ question: 'Review legacy memory', sourceRefs: [legacy] });
+    expect(unpinned.sources).toEqual([]);
+    expect(unpinned.retrievalDiagnostics).toMatchObject({ corpus: 'memory' });
+    expect(unpinned.rejections).toEqual(expect.arrayContaining([expect.objectContaining({ owner, reason: 'not_found' })]));
+    expect(await api.createArtifactDraft({ artifactType: 'summary', sourceRefs: [legacy] })).toMatchObject({ success: false });
+    expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'wiki.get')).toBe(false);
+  });
   beforeEach(async () => {
     closeOpenClawStateDatabaseForTest();
     const mod = await import('@electron/services/knowledge-api');

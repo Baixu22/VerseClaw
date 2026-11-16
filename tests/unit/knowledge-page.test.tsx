@@ -1085,6 +1085,21 @@ describe('Knowledge page', () => {
     hostApiMock.dialogOpen.mockResolvedValue({ canceled: false, filePaths: ['C:/notes/decision.md'] });
   });
 
+  it.each(['native-memory', 'role-memory'])('opens a %s pin with its memory corpus', async domain => {
+    const sourceRef = { schema: 'SourceRef/v2', domain, authorityId: domain === 'native-memory' ? 'native-memory' : 'memory-slot',
+      namespaceId: 'memory-owner', subjectId: 'memory/source.md', revision: '1', sourceDigest: 'sha256:digest', policyEpoch: 'sha256:policy' };
+    hostApiMock.search.mockResolvedValue({ success: true, results: [{ pagePath: 'memory/source.md', title: 'Memory source', sourceRef }] });
+    hostApiMock.get.mockResolvedValue({ success: true, corpus: 'memory', content: 'MEMORY_PREVIEW_BODY', sourceRef });
+    renderKnowledge();
+    await screen.findByTestId('knowledge-page');
+    fireEvent.change(screen.getByTestId('knowledge-search-input'), { target: { value: 'memory source' } });
+    await waitFor(() => expect(screen.getByTestId('knowledge-search-submit')).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId('knowledge-search-submit'));
+    fireEvent.click(await screen.findByTestId('knowledge-search-result'));
+    await waitFor(() => expect(hostApiMock.get).toHaveBeenCalledWith(expect.objectContaining({ corpus: 'memory', sourceRef })));
+    expect(await screen.findByTestId('knowledge-markdown-preview')).toHaveTextContent('MEMORY_PREVIEW_BODY');
+  });
+
   it('initializes, imports, searches, opens results, and applies drafts', async () => {
     renderKnowledge();
 
@@ -1308,20 +1323,16 @@ describe('Knowledge page', () => {
     await waitFor(() => expect(screen.getByTestId('knowledge-librarian-ask')).not.toBeDisabled());
     fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
 
-    await waitFor(() => expect(hostApiMock.search).toHaveBeenCalledWith({
-      query: 'Why use native wiki?',
-      maxResults: 4,
-      corpus: 'wiki',
-      roleTag: 'knowledge-librarian',
-    }));
-    await waitFor(() => expect(hostApiMock.get).toHaveBeenCalledWith({ lookup: 'notes/decision.md', lineCount: 80, corpus: 'wiki' }));
-    await screen.findByText(/I searched the vault/);
+    await waitFor(() => expect(hostApiMock.answerFromSourceSet).toHaveBeenCalledWith(expect.objectContaining({
+      question: 'Why use native wiki?', sourceRefs: [], synthesis: true, answerMode: 'strict',
+    })));
+    await screen.findByTestId('knowledge-librarian-message-assistant');
     expect(screen.getByTestId('knowledge-librarian-message-assistant')).toHaveTextContent('Decision');
     expect(screen.getByTestId('knowledge-librarian-answer-section')).not.toHaveTextContent('I searched the vault');
-    expect(screen.getByTestId('knowledge-librarian-retrieval-inspector')).toHaveTextContent('I searched the vault');
+    expect(screen.getByTestId('knowledge-librarian-answer-section')).toHaveTextContent('Use native wiki.');
     expect(screen.getByTestId('knowledge-librarian-sources-section')).toHaveTextContent('Decision');
     expect(screen.getByTestId('knowledge-librarian-unknowns-section')).toHaveTextContent('Grounding is page/snippet level.');
-    expect(screen.getByTestId('knowledge-librarian-next-action-section')).toHaveTextContent('Save the grounded answer');
+    expect(screen.getByTestId('knowledge-librarian-next-action-section')).toHaveTextContent('Create a Studio artifact draft');
     expect(screen.getByTestId('knowledge-librarian-retrieval-inspector')).toHaveTextContent('Why use native wiki?');
     // A grounded answer lists its sources once, in the sources section. The separate
     // citation strip is only rendered for plain (non-grounded) replies, so asserting
@@ -1365,12 +1376,7 @@ describe('Knowledge page', () => {
   });
 
   it('shows a recoverable librarian retrieval error with retry', async () => {
-    hostApiMock.search
-      .mockResolvedValueOnce({ success: false, error: 'Index unavailable' })
-      .mockResolvedValueOnce({
-        success: true,
-        results: [{ pagePath: 'notes/decision.md', title: 'Decision', snippet: 'Use native wiki.' }],
-      });
+    hostApiMock.answerFromSourceSet.mockResolvedValueOnce({ success: false, error: 'Index unavailable' });
 
     renderKnowledge();
 
@@ -1387,8 +1393,8 @@ describe('Knowledge page', () => {
 
     fireEvent.click(screen.getByTestId('knowledge-librarian-retry'));
 
-    await waitFor(() => expect(hostApiMock.search).toHaveBeenCalledTimes(2));
-    await screen.findByText(/I searched the vault/);
+    await waitFor(() => expect(hostApiMock.answerFromSourceSet).toHaveBeenCalledTimes(2));
+    expect(await screen.findByTestId('knowledge-librarian-message-assistant')).toHaveTextContent('Use native wiki.');
     expect(screen.queryByTestId('knowledge-librarian-error')).not.toBeInTheDocument();
   });
 

@@ -24,6 +24,7 @@ export const SOURCE_SET_SCHEMA = "SourceSet/v1" as const;
 
 export type SourceSetOwner =
   | "memory-wiki"
+  | "native-memory"
   | "memory-slot"
   | "sekb"
   | "task-ledger"
@@ -32,6 +33,7 @@ export type SourceSetOwner =
 
 export type SourceSetSubjectKind =
   | "wiki-page"
+  | "memory-file"
   | "memory-card"
   | "experience-principle"
   | "task-context"

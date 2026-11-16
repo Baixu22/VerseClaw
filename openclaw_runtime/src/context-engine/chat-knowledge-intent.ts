@@ -35,7 +35,7 @@ export type ChatKnowledgeReferenceIntent = {
   invalidPin?: boolean;
 };
 
-export type ChatKnowledgeOwner = "memory-wiki" | "memory-slot" | "sekb";
+export type ChatKnowledgeOwner = "memory-wiki" | "native-memory" | "memory-slot" | "sekb";
 
 export type ChatKnowledgeDenialReason =
   | "invalid_ref"
@@ -54,7 +54,7 @@ export type ResolvedChatKnowledgeRef = {
   refId: string;
   intentId?: string;
   owner: ChatKnowledgeOwner;
-  subjectKind: "wiki-page" | "memory-card" | "experience-principle";
+  subjectKind: "wiki-page" | "memory-file" | "memory-card" | "experience-principle";
   subjectId: string;
   revision: string;
   contentDigest: string;
@@ -177,19 +177,28 @@ export function normalizeChatKnowledgeReferences(value: unknown): ChatKnowledgeR
 function ownerCandidates(ref: ChatKnowledgeReferenceIntent): ChatKnowledgeOwner[] {
   if (ref.sourceRef) {
     const owner = ref.sourceRef.authorityId;
-    if (owner !== "memory-wiki" && owner !== "memory-slot" && owner !== "sekb") return [];
+    if (
+      owner !== "memory-wiki" &&
+      owner !== "native-memory" &&
+      owner !== "memory-slot" &&
+      owner !== "sekb"
+    )
+      return [];
     if (
       (ref.corpus === "wiki" && owner !== "memory-wiki") ||
-      (ref.corpus === "memory" && owner !== "memory-slot")
+      (ref.corpus === "memory" && owner !== "memory-slot" && owner !== "native-memory")
     )
       return [];
     return [owner];
   }
-  if (ref.corpus === "memory") return ["memory-slot"];
+  if (ref.lookup.startsWith("native-memory:"))
+    return ref.corpus === "wiki" ? [] : ["native-memory"];
+  if (ref.lookup.startsWith("memory-slot:")) return ref.corpus === "wiki" ? [] : ["memory-slot"];
+  if (ref.corpus === "memory") return ["native-memory", "memory-slot"];
   if (ref.corpus === "wiki") return ["memory-wiki"];
   // Explicit pinned refs from the Knowledge Hub may not carry a corpus yet.
-  if (ref.corpus === "all") return ["memory-wiki", "memory-slot", "sekb"];
-  return ["memory-wiki", "memory-slot", "sekb"];
+  if (ref.corpus === "all") return ["memory-wiki", "native-memory", "memory-slot", "sekb"];
+  return ["memory-wiki", "native-memory", "memory-slot", "sekb"];
 }
 
 function denial(
@@ -212,8 +221,17 @@ export async function resolveChatKnowledgeIntent(params: {
   const mode = normalizeChatKnowledgeMode(params.mode);
   const references = normalizeChatKnowledgeReferences(params.references);
   const exactMessage = typeof params.message === "string" ? params.message.trim() : "";
-  const autoParents = new Set(references.filter(ref => ref.attachKind === "auto").map(ref =>
-    JSON.stringify([ref.sourceRef?.authorityId, ref.sourceRef?.namespaceId, ref.sourceRef?.subjectId])));
+  const autoParents = new Set(
+    references
+      .filter((ref) => ref.attachKind === "auto")
+      .map((ref) =>
+        JSON.stringify([
+          ref.sourceRef?.authorityId,
+          ref.sourceRef?.namespaceId,
+          ref.sourceRef?.subjectId,
+        ]),
+      ),
+  );
   let autoAdmitted = 0;
   const admitted: ResolvedChatKnowledgeRef[] = [];
   const denied: ChatKnowledgeDenial[] = [];
@@ -315,8 +333,10 @@ export async function resolveChatKnowledgeIntent(params: {
           ref.attachKind === "auto" &&
           (!result.resolved.ownerSnapshot ||
             !["confirmed", "high-trust"].includes(result.resolved.ownerSnapshot.policy.trust) ||
-            ![result.resolved.ownerSnapshot.policy.verifiedAt, result.resolved.ownerSnapshot.policy.updatedAt]
-              .some(value => Number.isFinite(Date.parse(value ?? ""))))
+            ![
+              result.resolved.ownerSnapshot.policy.verifiedAt,
+              result.resolved.ownerSnapshot.policy.updatedAt,
+            ].some((value) => Number.isFinite(Date.parse(value ?? ""))))
         ) {
           denied.push(
             denial(
@@ -328,10 +348,23 @@ export async function resolveChatKnowledgeIntent(params: {
           resolvedForRef = true;
           break;
         }
-        if (ref.attachKind === "auto" && (result.resolved.conflictGroupId || !result.resolved.content.trim()
-          || (mode !== "manual" && (!ref.sourceRef || autoParents.size !== 1
-            || exactMessage !== result.resolved.ownerSnapshot?.source.subjectId || autoAdmitted >= 3)))) {
-          denied.push(denial(ref, "denied", "Automatic knowledge read requires a unique exact, conflict-free source and at most three fragments."));
+        if (
+          ref.attachKind === "auto" &&
+          (result.resolved.conflictGroupId ||
+            !result.resolved.content.trim() ||
+            (mode !== "manual" &&
+              (!ref.sourceRef ||
+                autoParents.size !== 1 ||
+                exactMessage !== result.resolved.ownerSnapshot?.source.subjectId ||
+                autoAdmitted >= 3)))
+        ) {
+          denied.push(
+            denial(
+              ref,
+              "denied",
+              "Automatic knowledge read requires a unique exact, conflict-free source and at most three fragments.",
+            ),
+          );
           resolvedForRef = true;
           break;
         }

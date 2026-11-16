@@ -1,17 +1,54 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: implemented
 id: project-rag-memory-source-adapters
 title: 接通原生记忆与角色记忆的独立读取
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-13
 intent: 综合可用记忆，同时保持各存储域和作用域的边界。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: c6460d144
 touchedAreas:
+  - "artifacts/agent-dev-deep-test/history.json"
+  - "artifacts/agent-dev-deep-test/report.json"
+  - "artifacts/agent-dev-deep-test/report.md"
+  - "artifacts/agent-dev-quality/report.json"
+  - "artifacts/agent-dev-workbench/evidence.json"
+  - "src/pages/Knowledge/index.tsx"
+  - "openclaw_runtime/src/plugins/memory-state.ts"
+  - "tests/unit/knowledge-page.test.tsx"
+  - "openclaw_runtime/src/agents/command/attempt-execution.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts"
+  - "openclaw_runtime/src/infra/agent-events.ts"
+  - "shared/host-api/contract.ts"
   - "openclaw_runtime/src/memory/**"
   - "openclaw_runtime/extensions/memory-core/runtime-api.ts"
   - "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts"
+  - "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts"
+  - "openclaw_runtime/src/context-engine/source-set.ts"
+  - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+  - "openclaw_runtime/src/plugins/memory-runtime.ts"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "openclaw_runtime/src/plugin-sdk/memory-host-core.ts"
+  - "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/owner-read.ts"
+  - "openclaw_runtime/packages/memory-host-sdk/src/host/types.ts"
+  - "openclaw_runtime/packages/memory-host-sdk/src/host/read-file.ts"
+  - "openclaw_runtime/packages/memory-host-sdk/src/host/read-file-shared.ts"
+  - "openclaw_runtime/extensions/memory-core/src/memory/manager.ts"
+  - "openclaw_runtime/extensions/memory-core/src/memory/qmd-manager.ts"
+  - "openclaw_runtime/extensions/memory-core/src/memory/search-manager.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/query.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/query.native-memory.test.ts"
+  - "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts"
+  - "openclaw_runtime/src/gateway/methods/core-descriptors.ts"
+  - "openclaw_runtime/src/gateway/server-methods.ts"
+  - "electron/services/knowledge-api.ts"
+  - "electron/services/knowledge-source-set-answer.ts"
+  - "electron/services/gateway-api.ts"
+  - "openclaw_runtime/extensions/memory-core/src/memory/qmd-manager.raw-read.test.ts"
+  - "harness/specs/scenarios/gateway-backend-communication.md"
+  - "docs/dev/evidence/project-rag/RAG-13/**"
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "shared/knowledge/**"
   - "shared/dcs/prod-flags-catalog.ts"
@@ -33,6 +70,9 @@ touchedAreas:
   - "tests/unit/chat-knowledge-scope.test.ts"
   - "tests/unit/project-rag-memory-domains.test.ts"
   - "tests/e2e/project-rag-source-domains.spec.ts"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/knowledge-source-set-answer.test.ts"
+  - "tests/unit/gateway-permissions-api.test.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -42,9 +82,18 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "tests/unit/knowledge-page.test.tsx"
   - "tests/unit/chat-knowledge-scope.test.ts"
+  - "tests/unit/project-rag-memory-domains.test.ts"
+  - "tests/e2e/project-rag-source-domains.spec.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/query.native-memory.test.ts"
+  - "openclaw_runtime/extensions/memory-core/src/memory/qmd-manager.raw-read.test.ts"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/knowledge-source-set-answer.test.ts"
+  - "tests/unit/gateway-permissions-api.test.ts"
 plannedTests:
   - "tests/unit/project-rag-memory-domains.test.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/query.native-memory.test.ts"
 plannedE2E:
   - "tests/e2e/project-rag-source-domains.spec.ts"
 expectedUserBehavior:
@@ -61,6 +110,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/MEMORY-SOURCE-CONTRACT.md
 ---
 
 # 接通原生记忆与角色记忆的独立读取

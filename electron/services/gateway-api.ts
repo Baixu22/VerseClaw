@@ -472,6 +472,9 @@ export function createGatewayApi(
       if (!method) {
         throw new Error('Invalid gateway RPC method');
       }
+      if (method === 'memory.readSource') {
+        return { success: false, rejectedBeforeDispatch: true, error: 'Memory owner reads use the knowledge service' };
+      }
       if (method.startsWith('taskScope.')) {
         return { success: false, rejectedBeforeDispatch: true, error: 'Task scope bridge methods are backend-owned' };
       }

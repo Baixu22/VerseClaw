@@ -27,6 +27,7 @@ requiredTests:
 6. mode、profile、scope 独立；初始 none/suggest 与产品锁保持。新的用户可见功能必须可以通过正常 UI/Host API 启用并有 Electron E2E。
 7. embedding space 绑定模型、维度、tokenizer、输入格式、normalization；cross-encoder score 与校准相关性、引用、语义支持不是同一个指标。
 8. SEKB candidate 不进入 active retrieval；observed adoption 继续由既有同 run 事务验证。Memory、Code Graph、Task Ledger 保留独立 owner，Task Ledger 不写入长期 chunk store。
+   原生 memory 文件与 Role Memory 卡使用各自领域、namespace 和精确 ID；raw 读取只由选中 provider 的安全读取完成，禁用或 Runtime Memory 诊断 slot 不读取前一 owner。引用与 prompt 准备重验当前版本、作用域、敏感性、retention 和 session generation。
 9. 只有离线、版本化、固定数据与预算的策略晋级可以改变在线排序。attach/dismiss 或单次成功不能自动写回或调权。
 10. 索引重建/撤销/删除/崩溃/模型更换/平台缺包的恢复与回滚是实现合同的一部分。普通 Chat 在总期限内继续，不能把退化结果标成完整成功。
 11. 新增测试进入 requiredTests；plannedTests 必须实际实现。完成状态来自 clean candidate 的磁盘证据，保留 partial、unknown、未运行和失败。所有模拟与验收标为 agent 驱动。

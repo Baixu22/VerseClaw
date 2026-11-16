@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { retrieveSelectedSourceSetEvidence } from '@electron/services/knowledge-source-set-answer';
+import { readBoundedKnowledgePage, retrieveSelectedSourceSetEvidence } from '@electron/services/knowledge-source-set-answer';
 import { digestSourceSetContent } from '../../openclaw_runtime/src/context-engine/source-set';
+import { createOwnerReadSnapshot, deriveReadAdmissionContext, digestOwnerReadContent } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 
 const ref = { id: 'notes/decision.md', kind: 'wiki' as const, path: 'notes/decision.md' };
 const content = '  Review before applying.\nKeep the original read bytes.\n';
@@ -12,6 +13,63 @@ const page = {
 const read = (patch: Record<string, unknown> = {}) => vi.fn(async () => ({ ...page, ...patch }));
 
 describe('selected Source Set owner admission', () => {
+  it('enforces the read budget for an explicit pinned source', async () => {
+    const result = await readBoundedKnowledgePage({ ref: { ...ref, contentDigest: 'sha256:pinned' },
+      question: 'Review?', read: async () => ({ content: 'x'.repeat(96_001) }) });
+    expect(result).toMatchObject({ success: false, readDenial: 'denied' });
+    expect(result).not.toHaveProperty('content');
+  });
+
+  it.each([false, true])('revalidates distinct ranges of one native subject, later denial=%s', async denyLater => {
+    const raw = 'Review first range.\nReview second range.\n', split = raw.indexOf('Review second');
+    const context = deriveReadAdmissionContext({ principalId: 'operator', agentId: 'main', sessionId: 'range-test',
+      sessionKey: 'agent:main:ranges', workspaceId: 'range-workspace', ownerNamespaces: ['native-memory:ranges'],
+      policyDigest: digestOwnerReadContent('range-policy'), egressProviderRefs: [], expiresAt: new Date(Date.now() + 30_000).toISOString() });
+    const snapshots = [[0, split], [split, raw.length]].map(([startChar, endChar]) => createOwnerReadSnapshot({ raw,
+      startChar, endChar, context, title: 'Memory ranges', source: { domain: 'native-memory', authorityId: 'native-memory',
+        namespaceId: 'native-memory:ranges', subjectId: 'memory/ranges.md', revision: '1' },
+      policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } }));
+    const reads = [0, 0];
+    const result = await retrieveSelectedSourceSetEvidence({ question: 'Review?',
+      sourceRefs: snapshots.map(snapshot => ({ id: 'same-input-id', kind: 'file', sourceRef: snapshot.source })),
+      readPage: async ref => {
+        const index = snapshots.findIndex(snapshot => snapshot.source.locator!.startByte === ref.sourceRef!.locator!.startByte);
+        const snapshot = snapshots[index];
+        if (denyLater && index === 1 && ++reads[index] > 1) return { status: 'denied', reason: 'deleted' };
+        if (!denyLater || index === 0) reads[index] += 1;
+        return { success: true, corpus: 'memory', path: snapshot.source.subjectId, content: snapshot.content,
+          sourceRef: snapshot.source, ownerSnapshot: snapshot };
+      },
+    });
+    expect(reads.every(count => count >= 2)).toBe(true);
+    expect(result.sources).toHaveLength(denyLater ? 1 : 2);
+    expect(new Set(result.sources.map(source => source.citation!.refId)).size).toBe(denyLater ? 1 : 2);
+    expect(result.modelSources.map(source => source.content)).toEqual(denyLater ? [snapshots[0].content] : snapshots.map(snapshot => snapshot.content));
+    if (denyLater) expect(result.sourceSet.rejections).toEqual(expect.arrayContaining([expect.objectContaining({ owner: 'native-memory', reason: 'deleted' })]));
+    else expect(result.sourceSet.rejections).toEqual([]);
+  });
+
+
+  it.each(['native-memory', 'role-memory'] as const)('preserves %s ownership through selected-source materialization', async domain => {
+    const owner = domain === 'native-memory' ? 'native-memory' : 'memory-slot';
+    const namespaceId = `${owner}:source-set-fixture`;
+    const context = deriveReadAdmissionContext({ principalId: 'operator', agentId: 'main', sessionId: 'source-set-test',
+      sessionKey: 'agent:main:source-set', workspaceId: 'source-set-workspace', workspaceRootDigest: digestOwnerReadContent('workspace'),
+      ownerNamespaces: [namespaceId], policyDigest: digestOwnerReadContent('policy'), egressProviderRefs: [],
+      expiresAt: new Date(Date.now() + 30000).toISOString() });
+    const snapshot = createOwnerReadSnapshot({ raw: content, startChar: 0, endChar: content.length, context, title: 'Memory evidence',
+      source: { domain, authorityId: owner, namespaceId, subjectId: 'same-source', revision: '1' },
+      policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } });
+    const selected = { id: 'same-source', kind: 'other' as const, sourceRef: snapshot.source };
+    const result = await retrieveSelectedSourceSetEvidence({ question: 'Review?', sourceRefs: [selected],
+      readPage: async () => ({ success: true, corpus: 'memory', path: snapshot.source.subjectId,
+        content: snapshot.content, sourceRef: snapshot.source, ownerSnapshot: snapshot }) });
+    expect(result.sourceSet.rejections).toEqual([]);
+    expect(result.sources).toHaveLength(1);
+    expect(result.sources[0].citation).toMatchObject({ owner, subjectId: 'same-source', sourceRef: { domain, namespaceId } });
+    expect(result.modelSources[0].content).toBe(content);
+    expect(result.sourceSet.retrieved[0].ref.subjectKind).toBe(domain === 'native-memory' ? 'memory-file' : 'memory-card');
+  });
   it('retains owner revision, freshness, exact read bytes and advisory trust', async () => {
     const result = await retrieveSelectedSourceSetEvidence({ question: 'Review?', sourceRefs: [ref], readPage: read() });
     expect(result.sourceSet.retrieved[0]).toMatchObject({

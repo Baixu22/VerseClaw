@@ -4193,7 +4193,9 @@ export type KnowledgeRetrievalDiagnosticItem = {
   id: string;
   title: string;
   lookup: string;
-  sourceKind: 'wiki-page' | 'memory-card' | 'error-experience' | 'rule' | 'draft' | 'inbox' | 'unknown';
+  sourceKind: 'wiki-page' | 'memory-file' | 'memory-card' | 'error-experience' | 'rule' | 'draft' | 'inbox' | 'unknown';
+  owner?: SourceRefV2['authorityId'];
+  sourceRef?: SourceRefV2;
   reason: string;
   score?: number;
   confidence?: number;

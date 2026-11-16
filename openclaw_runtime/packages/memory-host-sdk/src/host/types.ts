@@ -103,7 +103,12 @@ export interface MemorySearchManager {
       sources?: MemorySource[];
     },
   ): Promise<MemorySearchResult[]>;
-  readFile(params: { relPath: string; from?: number; lines?: number }): Promise<MemoryReadResult>;
+  readFile(params: {
+    relPath: string;
+    from?: number;
+    lines?: number;
+    raw?: boolean;
+  }): Promise<MemoryReadResult>;
   status(): MemoryProviderStatus;
   sync?(params?: {
     reason?: string;

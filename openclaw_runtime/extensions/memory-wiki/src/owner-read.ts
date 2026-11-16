@@ -1,6 +1,7 @@
 import path from "node:path";
 import {
   createOwnerReadSnapshot,
+  readOwnerReadPolicyMetadata,
   deriveReadAdmissionContext,
   digestOwnerReadContent,
   evaluateOwnerReadPolicy,
@@ -83,100 +84,8 @@ export function createMemoryWikiReadContext(input: {
   });
 }
 
-function record(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-function text(value: unknown): string | undefined {
-  return typeof value === "string" && value.trim() ? value.trim() : undefined;
-}
-
 export function readMemoryWikiOwnerPolicy(raw: string): OwnerReadPolicy {
-  const metadata = parseWikiMarkdown(raw).frontmatter;
-  let invalid = false;
-  const status = metadata.status === undefined ? "active" : metadata.status;
-  if (
-    typeof status !== "string" ||
-    !["active", "stale", "archived", "revoked", "deleted", "denied"].includes(status)
-  )
-    invalid = true;
-  const trust = metadata.trust === undefined ? "advisory" : metadata.trust;
-  if (
-    typeof trust !== "string" ||
-    !["untrusted", "advisory", "confirmed", "high-trust"].includes(trust)
-  )
-    invalid = true;
-  if (
-    metadata.revision !== undefined &&
-    !(Number.isSafeInteger(metadata.revision) && Number(metadata.revision) > 0)
-  )
-    invalid = true;
-  const tiers: Record<string, OwnerReadPolicy["sensitivity"]> = {
-    public: "public",
-    internal: "workspace",
-    workspace: "workspace",
-    personal: "sensitive",
-    private: "sensitive",
-    sensitive: "sensitive",
-    secret_adjacent: "secret-adjacent",
-    "secret-adjacent": "secret-adjacent",
-    secret: "secret",
-  };
-  const tier =
-    metadata.sensitivity !== undefined
-      ? metadata.sensitivity
-      : metadata.privacyTier !== undefined
-        ? metadata.privacyTier
-        : "workspace";
-  const sensitivity =
-    typeof tier === "string" && Object.hasOwn(tiers, tier) ? tiers[tier]! : "secret";
-  let acl: OwnerReadPolicy["acl"] = { read: ["operator"] };
-  if (metadata.acl !== undefined) {
-    const ownerAcl = metadata.acl;
-    if (
-      !record(ownerAcl) ||
-      !Array.isArray(ownerAcl.read) ||
-      !ownerAcl.read.every((entry) => typeof entry === "string" && Boolean(entry.trim()))
-    )
-      invalid = true;
-    else acl = { read: ownerAcl.read.map((entry: string) => entry.trim()) };
-  }
-  let scope: OwnerReadPolicy["scope"];
-  if (metadata.scope !== undefined && !record(metadata.scope)) invalid = true;
-  const ownerScope = record(metadata.scope) ? metadata.scope : {};
-  const scopeFields = ["workspaceId", "agentId", "sessionKey", "taskId"] as const;
-  for (const key of scopeFields) {
-    const value = ownerScope[key] !== undefined ? ownerScope[key] : metadata[key];
-    if (value === undefined) continue;
-    if (!text(value)) invalid = true;
-    else scope = { ...scope, [key]: text(value) };
-  }
-  if (metadata.retention !== undefined && !record(metadata.retention)) invalid = true;
-  const ownerRetention = record(metadata.retention) ? metadata.retention : {};
-  const retentionPolicy =
-    ownerRetention.policy === undefined ? "source-coupled" : ownerRetention.policy;
-  if (
-    typeof retentionPolicy !== "string" ||
-    !["source-coupled", "promoted", "ephemeral", "legal-hold"].includes(retentionPolicy)
-  )
-    invalid = true;
-  const expiresAt =
-    ownerRetention.expiresAt !== undefined ? ownerRetention.expiresAt : metadata.expiresAt;
-  if (expiresAt !== undefined && !text(expiresAt)) invalid = true;
-  return {
-    status: invalid ? "denied" : (status as OwnerReadPolicy["status"]),
-    trust: invalid ? "untrusted" : (trust as OwnerReadPolicy["trust"]),
-    sensitivity,
-    acl,
-    ...(scope ? { scope } : {}),
-    retention: {
-      policy: invalid
-        ? "source-coupled"
-        : (retentionPolicy as OwnerReadPolicy["retention"]["policy"]),
-      ...(text(expiresAt) ? { expiresAt: text(expiresAt) } : {}),
-    },
-    ...(text(metadata.verifiedAt) ? { verifiedAt: text(metadata.verifiedAt) } : {}),
-    ...(text(metadata.updatedAt) ? { updatedAt: text(metadata.updatedAt) } : {}),
-  };
+  return readOwnerReadPolicyMetadata(parseWikiMarkdown(raw).frontmatter);
 }
 
 export function readMemoryWikiOwnerSnapshot(input: {

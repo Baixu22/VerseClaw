@@ -159,6 +159,7 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "memory.utilityReport", scope: "operator.read" },
   { name: "memory.evalReport", scope: "operator.read" },
   { name: "memory.detail", scope: "operator.read" },
+  { name: "memory.readSource", scope: "operator.admin" },
   { name: "memory.previewProposal", scope: "operator.read" },
   { name: "memory.feedbackList", scope: "operator.read" },
   { name: "memory.propose", scope: "operator.write" },

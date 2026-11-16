@@ -17,7 +17,11 @@ import {
   injectTimestamp,
   timestampOptsFromConfig,
 } from "../../gateway/server-methods/agent-timestamp.js";
-import { emitAgentEvent } from "../../infra/agent-events.js";
+import {
+  emitAgentEvent,
+  getAgentRunContext,
+  registerAgentRunContext,
+} from "../../infra/agent-events.js";
 import { readErrorName } from "../../infra/errors.js";
 import { redactSensitiveText } from "../../logging/redact.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
@@ -687,107 +691,128 @@ export async function runAgentAttempt(params: {
     });
   }
 
-  let chatKnowledgeRefs:
-    | import("../../context-engine/chat-knowledge-intent.js").ResolvedChatKnowledgeRef[]
-    | undefined;
-  if (params.opts.knowledgeReferences?.length) {
-    const deadline = Date.now() + Math.min(5000, params.timeoutMs);
-    const { resolveChatKnowledgeIntent } =
-      await import("../../context-engine/chat-knowledge-intent.js");
-    const { createProductionChatKnowledgeSourceAdapters } =
-      await import("../../context-engine/chat-knowledge-source-adapters.js");
-    const signal = AbortSignal.any([
-      ...(params.opts.abortSignal ? [params.opts.abortSignal] : []),
-      AbortSignal.timeout(Math.max(1, deadline - Date.now())),
-    ]);
-    const resolution = await resolveChatKnowledgeIntent({
-      scope: "all",
-      mode: "manual",
-      references: params.opts.knowledgeReferences,
-      signal,
-      adapters: createProductionChatKnowledgeSourceAdapters(params.cfg, {
-        signal,
-        identity: {
+  const internalKnowledgeRead =
+    params.opts.knowledgeReferences?.length &&
+    params.opts.sessionEffects === "internal" &&
+    params.opts.runId &&
+    params.sessionKey
+      ? {
+          sessionKey: params.sessionKey,
           sessionId: params.sessionId,
-          agentSessionKey: params.sessionKey,
           workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
           workspaceDir: params.workspaceDir,
-          egressProviderRefs: [embeddedAgentProvider],
-        },
-      }),
+        }
+      : undefined;
+  if (internalKnowledgeRead) registerAgentRunContext(params.opts.runId!, { internalKnowledgeRead });
+  try {
+    let chatKnowledgeRefs:
+      | import("../../context-engine/chat-knowledge-intent.js").ResolvedChatKnowledgeRef[]
+      | undefined;
+    if (params.opts.knowledgeReferences?.length) {
+      const deadline = Date.now() + Math.min(5000, params.timeoutMs);
+      const { resolveChatKnowledgeIntent } =
+        await import("../../context-engine/chat-knowledge-intent.js");
+      const { createProductionChatKnowledgeSourceAdapters } =
+        await import("../../context-engine/chat-knowledge-source-adapters.js");
+      const signal = AbortSignal.any([
+        ...(params.opts.abortSignal ? [params.opts.abortSignal] : []),
+        AbortSignal.timeout(Math.max(1, deadline - Date.now())),
+      ]);
+      const resolution = await resolveChatKnowledgeIntent({
+        scope: "all",
+        mode: "manual",
+        references: params.opts.knowledgeReferences,
+        signal,
+        adapters: createProductionChatKnowledgeSourceAdapters(params.cfg, {
+          signal,
+          internalRunId: params.opts.runId,
+          identity: {
+            sessionId: params.sessionId,
+            agentSessionKey: params.sessionKey,
+            workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
+            workspaceDir: params.workspaceDir,
+            egressProviderRefs: [embeddedAgentProvider],
+          },
+        }),
+      });
+      chatKnowledgeRefs = resolution.admitted;
+    }
+    return await runEmbeddedAgent({
+      chatKnowledgeRefs,
+      sessionId: params.sessionId,
+      sessionKey: params.sessionKey,
+      agentId: params.sessionAgentId,
+      trigger: "user",
+      messageChannel: params.messageChannel,
+      messageProvider: params.opts.messageProvider ?? params.messageChannel,
+      agentAccountId: params.runContext.accountId,
+      messageTo: params.opts.replyTo ?? params.opts.to,
+      messageThreadId: params.opts.threadId,
+      groupId: params.runContext.groupId,
+      groupChannel: params.runContext.groupChannel,
+      groupSpace: params.runContext.groupSpace,
+      spawnedBy: params.spawnedBy,
+      // B-3 v3: forward the write-set coordinate into the embedded run.
+      ...(params.writeSet?.length ? { writeSet: [...params.writeSet] } : {}),
+      currentChannelId: params.runContext.currentChannelId,
+      currentThreadTs: params.runContext.currentThreadTs,
+      currentInboundAudio: params.runContext.currentInboundAudio,
+      replyToMode: params.runContext.replyToMode,
+      hasRepliedRef: params.runContext.hasRepliedRef,
+      senderIsOwner: params.opts.senderIsOwner,
+      sessionFile: params.sessionFile,
+      workspaceDir: params.workspaceDir,
+      workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
+      cwd: params.cwd,
+      config: params.cfg,
+      agentHarnessId: embeddedAgentHarnessOverride,
+      agentHarnessRuntimeOverride: embeddedAgentHarnessOverride,
+      skillsSnapshot: params.skillsSnapshot,
+      prompt: effectivePrompt,
+      images: params.isFallbackRetry ? undefined : params.opts.images,
+      imageOrder: params.isFallbackRetry ? undefined : params.opts.imageOrder,
+      clientTools: params.opts.clientTools,
+      provider: embeddedAgentProvider,
+      model: params.modelOverride,
+      modelFallbacksOverride: params.modelFallbacksOverride,
+      authProfileId,
+      authProfileIdSource: authProfileId ? harnessAuthSelection.authProfileIdSource : undefined,
+      thinkLevel: params.resolvedThinkLevel,
+      fastMode: params.fastMode,
+      verboseLevel: params.resolvedVerboseLevel,
+      bashElevated: params.opts.bashElevated,
+      timeoutMs: params.timeoutMs,
+      runId: params.runId,
+      lane: params.opts.lane,
+      abortSignal: params.opts.abortSignal,
+      extraSystemPrompt: params.opts.extraSystemPrompt,
+      bootstrapContextMode: params.opts.bootstrapContextMode,
+      bootstrapContextRunKind: params.opts.bootstrapContextRunKind,
+      toolsAllow: params.opts.toolsAllow,
+      internalEvents: params.opts.internalEvents,
+      inputProvenance: params.opts.inputProvenance,
+      sourceReplyDeliveryMode: params.opts.sourceReplyDeliveryMode,
+      disableMessageTool: params.opts.disableMessageTool,
+      streamParams: params.opts.streamParams,
+      agentDir: params.agentDir,
+      allowTransientCooldownProbe: params.allowTransientCooldownProbe,
+      cleanupBundleMcpOnRunEnd: params.opts.cleanupBundleMcpOnRunEnd,
+      modelRun: params.opts.modelRun,
+      promptMode: params.opts.promptMode,
+      disableTools: params.opts.modelRun === true,
+      onAgentEvent: params.onAgentEvent,
+      deferTerminalLifecycleEnd: params.deferTerminalLifecycleEnd,
+      suppressNextUserMessagePersistence: params.suppressPromptPersistenceOnRetry === true,
+      onUserMessagePersisted: params.onUserMessagePersisted,
+      bootstrapPromptWarningSignaturesSeen,
+      bootstrapPromptWarningSignature,
     });
-    chatKnowledgeRefs = resolution.admitted;
+  } finally {
+    const context = params.opts.runId ? getAgentRunContext(params.opts.runId) : undefined;
+    if (internalKnowledgeRead && context?.internalKnowledgeRead === internalKnowledgeRead) {
+      delete context.internalKnowledgeRead;
+    }
   }
-  return runEmbeddedAgent({
-    chatKnowledgeRefs,
-    sessionId: params.sessionId,
-    sessionKey: params.sessionKey,
-    agentId: params.sessionAgentId,
-    trigger: "user",
-    messageChannel: params.messageChannel,
-    messageProvider: params.opts.messageProvider ?? params.messageChannel,
-    agentAccountId: params.runContext.accountId,
-    messageTo: params.opts.replyTo ?? params.opts.to,
-    messageThreadId: params.opts.threadId,
-    groupId: params.runContext.groupId,
-    groupChannel: params.runContext.groupChannel,
-    groupSpace: params.runContext.groupSpace,
-    spawnedBy: params.spawnedBy,
-    // B-3 v3: forward the write-set coordinate into the embedded run.
-    ...(params.writeSet?.length ? { writeSet: [...params.writeSet] } : {}),
-    currentChannelId: params.runContext.currentChannelId,
-    currentThreadTs: params.runContext.currentThreadTs,
-    currentInboundAudio: params.runContext.currentInboundAudio,
-    replyToMode: params.runContext.replyToMode,
-    hasRepliedRef: params.runContext.hasRepliedRef,
-    senderIsOwner: params.opts.senderIsOwner,
-    sessionFile: params.sessionFile,
-    workspaceDir: params.workspaceDir,
-    workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
-    cwd: params.cwd,
-    config: params.cfg,
-    agentHarnessId: embeddedAgentHarnessOverride,
-    agentHarnessRuntimeOverride: embeddedAgentHarnessOverride,
-    skillsSnapshot: params.skillsSnapshot,
-    prompt: effectivePrompt,
-    images: params.isFallbackRetry ? undefined : params.opts.images,
-    imageOrder: params.isFallbackRetry ? undefined : params.opts.imageOrder,
-    clientTools: params.opts.clientTools,
-    provider: embeddedAgentProvider,
-    model: params.modelOverride,
-    modelFallbacksOverride: params.modelFallbacksOverride,
-    authProfileId,
-    authProfileIdSource: authProfileId ? harnessAuthSelection.authProfileIdSource : undefined,
-    thinkLevel: params.resolvedThinkLevel,
-    fastMode: params.fastMode,
-    verboseLevel: params.resolvedVerboseLevel,
-    bashElevated: params.opts.bashElevated,
-    timeoutMs: params.timeoutMs,
-    runId: params.runId,
-    lane: params.opts.lane,
-    abortSignal: params.opts.abortSignal,
-    extraSystemPrompt: params.opts.extraSystemPrompt,
-    bootstrapContextMode: params.opts.bootstrapContextMode,
-    bootstrapContextRunKind: params.opts.bootstrapContextRunKind,
-    toolsAllow: params.opts.toolsAllow,
-    internalEvents: params.opts.internalEvents,
-    inputProvenance: params.opts.inputProvenance,
-    sourceReplyDeliveryMode: params.opts.sourceReplyDeliveryMode,
-    disableMessageTool: params.opts.disableMessageTool,
-    streamParams: params.opts.streamParams,
-    agentDir: params.agentDir,
-    allowTransientCooldownProbe: params.allowTransientCooldownProbe,
-    cleanupBundleMcpOnRunEnd: params.opts.cleanupBundleMcpOnRunEnd,
-    modelRun: params.opts.modelRun,
-    promptMode: params.opts.promptMode,
-    disableTools: params.opts.modelRun === true,
-    onAgentEvent: params.onAgentEvent,
-    deferTerminalLifecycleEnd: params.deferTerminalLifecycleEnd,
-    suppressNextUserMessagePersistence: params.suppressPromptPersistenceOnRetry === true,
-    onUserMessagePersisted: params.onUserMessagePersisted,
-    bootstrapPromptWarningSignaturesSeen,
-    bootstrapPromptWarningSignature,
-  });
 }
 
 export function buildAcpResult(params: {

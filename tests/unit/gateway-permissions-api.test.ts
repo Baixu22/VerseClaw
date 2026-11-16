@@ -106,6 +106,17 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 }
 
 describe('gateway permission approval flow', () => {
+  it('rejects the memory owner bridge before renderer RPC dispatch', async () => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({})) };
+    const backpressure = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, backpressure as never);
+    const result = await api.rpc({ method: 'memory.readSource', params: { readIdentity: { workspaceId: 'forged' }, sourceRef: {} } });
+    expect(result).toMatchObject({ success: false, rejectedBeforeDispatch: true });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+    expect(backpressure.run).not.toHaveBeenCalled();
+  });
   it('binds chat workspace identity to the Main owner and refuses forged scopes', async () => {
     activeWorkspace.profile = workspace('fullAccess');
     const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({ runId: 'bounded-run' })) };

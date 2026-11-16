@@ -53,6 +53,7 @@ import {
   type KnowledgeStewardTriageAction,
 } from '@/lib/host-api';
 import type { KnowledgeRuntimeLineage } from '@shared/host-api/contract';
+import { isMemorySourceRef } from '@shared/knowledge/memory';
 import { errorMessageFrom } from '@/lib/user-error';
 import { cn } from '@/lib/utils';
 import { asRecord, getString, getSearchRows, getLookup, getTitle, getPageBody, type SearchRow } from './knowledge-view-utils';
@@ -1045,7 +1046,7 @@ export function Knowledge() {
     setSelectedPage(null);
     setEditorBody('');
     try {
-      const result = await hostApi.knowledge.get({ lookup, lineCount: 120, corpus: 'wiki', sourceRef,
+      const result = await hostApi.knowledge.get({ lookup, lineCount: 120, corpus: isMemorySourceRef(sourceRef) ? 'memory' : 'wiki', sourceRef,
         sessionKey: sourceWorkspace?.activeSessionKey, workspaceId: sourceWorkspace?.id });
       if (serial !== sourceReadSerialRef.current) return;
       if (!result.success) throw new Error(result.readDenial ? t('errors.ownerReadDenied') : result.error || t('errors.get'));

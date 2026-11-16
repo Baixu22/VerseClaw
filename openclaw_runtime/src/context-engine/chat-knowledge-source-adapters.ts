@@ -6,6 +6,8 @@ import {
   resolveRoleMemoryStorePath,
 } from "../memory/memory-store.js";
 import { isMemoryCardInContextScope } from "../memory/memory-card.js";
+import { readNativeMemorySource } from "../memory/native-memory-source.js";
+import { applyMemoryUseGateOverlay, isPoisonRevokedCard } from "../memory/memory-dual-gate.js";
 import { KnowledgeStore } from "../knowledge/sekb/knowledge-store.js";
 import { isSekbEnabled } from "../knowledge/sekb/feature-flags.js";
 import {
@@ -38,6 +40,7 @@ type OwnerReadOptions = {
   cfg?: OpenClawConfig;
   identity?: MemoryWikiReadIdentity;
   signal?: AbortSignal;
+  internalRunId?: string;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -82,9 +85,11 @@ function resolved(
       subjectKind:
         owner === "memory-wiki"
           ? "wiki-page"
-          : owner === "memory-slot"
-            ? "memory-card"
-            : "experience-principle",
+          : owner === "native-memory"
+            ? "memory-file"
+            : owner === "memory-slot"
+              ? "memory-card"
+              : "experience-principle",
       subjectId: snapshot.source.subjectId,
       revision: snapshot.source.revision,
       title: snapshot.title,
@@ -205,15 +210,46 @@ export class MemoryWikiChatKnowledgeSourceAdapter implements ChatKnowledgeSource
   }
 }
 
+export class NativeMemoryChatKnowledgeSourceAdapter implements ChatKnowledgeSourceAdapter {
+  readonly owner = "native-memory" as const;
+  constructor(private readonly options: OwnerReadOptions = {}) {}
+  async resolve(ref: ChatKnowledgeReferenceIntent): Promise<ChatKnowledgeSourceAdapterResult> {
+    if (!ref.sourceRef && !ref.lookup.startsWith("native-memory:") && !/\.md$/i.test(ref.lookup))
+      return { status: "not_found" };
+    try {
+      const read = await readNativeMemorySource({
+        ...this.options,
+        lookup: ref.lookup,
+        sourceRef: ref.sourceRef,
+      });
+      return read.status === "admitted"
+        ? resolved(ref, read.snapshot)
+        : denied(read.reason as OwnerReadRejectionCode);
+    } catch {
+      return denied("denied");
+    }
+  }
+}
+
 export class RoleMemoryChatKnowledgeSourceAdapter implements ChatKnowledgeSourceAdapter {
   readonly owner = "memory-slot" as const;
   constructor(private readonly options: OwnerReadOptions = {}) {}
 
   async resolve(ref: ChatKnowledgeReferenceIntent): Promise<ChatKnowledgeSourceAdapterResult> {
     if (!isRoleMemoryEnabled() || !isMemoryStoreConfigured()) return denied("not_found");
+    const namespaceId = `memory-slot:${digestOwnerReadContent(resolveRoleMemoryStorePath()).slice(7)}`;
+    if (
+      ref.sourceRef &&
+      (ref.sourceRef.domain !== "role-memory" ||
+        ref.sourceRef.authorityId !== "memory-slot" ||
+        ref.sourceRef.namespaceId !== namespaceId)
+    )
+      return denied("namespace_mismatch");
     const ids = ref.sourceRef
       ? [ref.sourceRef.subjectId]
-      : [ref.id, ref.pageId, ref.sourcePath, ref.lookup];
+      : ref.lookup.startsWith("memory-slot:")
+        ? [ref.lookup]
+        : [ref.id, ref.pageId, ref.sourcePath, ref.lookup];
     const card = ids
       .flatMap((id) => (id ? [getMemoryCard(id.replace(/^memory-slot:/, ""))] : []))
       .find(Boolean);
@@ -221,11 +257,15 @@ export class RoleMemoryChatKnowledgeSourceAdapter implements ChatKnowledgeSource
       return ref.sourceRef || ref.corpus === "memory"
         ? denied("not_found")
         : { status: "not_found" };
+    if (isPoisonRevokedCard(card) || applyMemoryUseGateOverlay([card]).length === 0)
+      return denied("denied");
     const context = createMemoryWikiReadContext({
       config: wikiConfig(this.options.cfg),
       appConfig: this.options.cfg,
       identity: this.options.identity,
     });
+    if (this.options.identity?.sessionId && context.sessionId !== this.options.identity.sessionId)
+      return denied("invalid_context");
     if (["agent", "workspace", "project", "session", "task"].includes(card.scope) && !card.scopeKey)
       return denied("scope_mismatch");
     if (
@@ -248,7 +288,7 @@ export class RoleMemoryChatKnowledgeSourceAdapter implements ChatKnowledgeSource
     return readOwnedBody(ref, {
       owner: this.owner,
       domain: "role-memory",
-      namespaceId: `memory-slot:${digestOwnerReadContent(resolveRoleMemoryStorePath()).slice(7)}`,
+      namespaceId,
       subjectId: card.id,
       revision: String(card.version),
       raw: card.content,
@@ -345,6 +385,7 @@ export function createProductionChatKnowledgeSourceAdapters(
 ): ChatKnowledgeSourceAdapter[] {
   return [
     new MemoryWikiChatKnowledgeSourceAdapter(cfg, options),
+    new NativeMemoryChatKnowledgeSourceAdapter({ ...options, cfg }),
     new RoleMemoryChatKnowledgeSourceAdapter({ ...options, cfg }),
     new SekbChatKnowledgeSourceAdapter(undefined, { ...options, cfg }),
   ];
@@ -356,6 +397,7 @@ export async function revalidateChatKnowledgeRefs(input: {
   cfg?: OpenClawConfig;
   identity: MemoryWikiReadIdentity;
   signal?: AbortSignal;
+  internalRunId?: string;
 }): Promise<ResolvedChatKnowledgeRef[]> {
   const adapters = new Map(
     createProductionChatKnowledgeSourceAdapters(input.cfg, input).map((adapter) => [

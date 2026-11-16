@@ -12,6 +12,7 @@ export * from "./memory-core-host-runtime-core.js";
 export {
   boundOwnerReadSnapshot,
   createOwnerReadSnapshot,
+  readOwnerReadPolicyMetadata,
   deriveReadAdmissionContext,
   digestOwnerReadContent,
   evaluateOwnerReadPolicy,
