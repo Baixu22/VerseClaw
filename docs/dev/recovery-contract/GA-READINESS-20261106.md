@@ -1,5 +1,7 @@
 # 恢复统一与 GA 验收
 
+2026-11-17 接力候选 `da1125874` 完成租约过期同 owner 接续修复，193 项定向回归通过，三次真实 kill 的复测效果一次、重复与丢失均为0、终态正确。过期分支另有标注时钟构造的跨进程 SQLite 证明。当前 GA 为 **NO_GO**：连续重启76.466秒，桌面构建63.724秒，完整同候选冻结矩阵尚待执行。[本轮验证与原件](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/relay-20261117/README.md)保留各候选结果。
+
 恢复验收先检查 Electron 可执行路径、桌面与 runtime 构建产物。故障夹具通过现有 Host API 创建任务、绑定协调会话并认领任务后再注入故障；长会话夹具使用 `activeWorkspace.id` 作为交接和分支的 owner。`recovery-contract-acceptance.mjs` 将九指标结论写入 `acceptance.json`，候选未通过时以非零状态退出。每个跑次单独保留 Playwright 诊断，关闭隐式重试，避免覆盖原始失败。
 
 Windows 插件加载将 `file:` URL 转回原生路径后执行已编译 JavaScript，并按同一身份清理模块缓存。源码插件与依赖加载失败沿用原回退策略。
