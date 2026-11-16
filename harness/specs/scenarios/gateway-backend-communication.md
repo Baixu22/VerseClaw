@@ -99,6 +99,11 @@ shadow records the observed owner outcome, including failed RPC admission.
 See `recovery-tool-redispatch` for the frozen fault-window and post-boundary
 assistant-readback validation.
 
+After a Gateway restart exceeds a task lease, the same Session generation and
+worktree may resume an idle task by advancing its existing owner epoch. Pending
+or unknown effects remain a reconciliation barrier, and stale credentials cannot
+start a tool under the new epoch.
+
 ## Explicit coding diagnostics
 
 An explicitly selected runtime diagnostic consumer may observe destructive-tier classification rates through the existing diagnostic logger. It must not create approvals or alter tool effects; missing/expired windows are unavailable, not healthy. See `coding-approval-rate-diagnostics` and task `harness-gap-approval-rate-alerts`. Main-process copies of process-local counters do not count as runtime observations.

@@ -8,6 +8,8 @@ Provider spend limits can be enabled explicitly with `runtime.providerBudget` fo
 
 # Verse Claw
 
+An idle task can continue after its lease expires in the same session generation and worktree. Recovery advances its ownership epoch to reject stale credentials; unresolved effects still require reconciliation.
+
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery uses the conversation’s recorded working directory.

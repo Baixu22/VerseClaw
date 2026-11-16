@@ -690,10 +690,15 @@ export class TaskSystemStore {
             if (
               view.claim.sessionKey === sessionKey &&
               view.claim.generation === generation &&
-              view.claim.state === "active" &&
               view.claim.worktree === this.domain.worktree
-            )
-              return view;
+            ) {
+              if (view.claim.state === "active") return view;
+              // An idle owner may continue after expiry, fencing every old credential.
+              // Pending effects and clock rollback still require owner reconciliation.
+              if (view.claim.state === "recovery_required" && view.claim.expiresAt <= this.now()
+                && view.pendingOperations === 0)
+                return this.handoff(view.claim, sessionKey, generation, this.domain.worktree);
+            }
             throw new Error(`TASK_ALREADY_CLAIMED:${view.claim.sessionKey}`);
           }
           const binding = this.db

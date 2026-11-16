@@ -12,6 +12,9 @@ touchedAreas:
   - harness/specs/rules/recovery-authority-owner-admission.md
   - harness/specs/scenarios/gateway-backend-communication.md
   - shared/recovery-authority/**
+  - shared/task-system/store.ts
+  - tests/unit/durable-task-system.test.ts
+  - harness/specs/rules/durable-task-system-boundary.md
   - openclaw_runtime/src/agents/recovery-authority/**
   - openclaw_runtime/src/agents/execution-phase/**
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
@@ -139,6 +142,7 @@ requiredProfiles:
   - comms
 requiredRules:
   - backend-communication-boundary
+  - durable-task-system-boundary
   - comms-regression
   - docs-sync
   - disk-temp-policy
@@ -180,6 +184,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - An expired idle task resumes only for the same session generation and worktree with a new fencing epoch; unresolved effects, changed identities, paused owners and clock rollback remain rejected.
   - The runtime Control UI build resolves the installed Lit decorator entry through its package exports and completes without externalizing it.
   - Native fault fixtures create and claim the real workspace task before injection; handoff/fork fixtures consume the typed active workspace owner returned by the Host API.
   - Frozen acceptance rejects missing build inputs before live calls and returns failure for a failed candidate evaluation even when all sample receipts are present.
