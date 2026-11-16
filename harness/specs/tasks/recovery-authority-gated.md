@@ -102,6 +102,7 @@ touchedAreas:
   - tests/unit/recovery-acceptance-checks.test.ts
   - tests/unit/gateway-native-module-loading.test.ts
   - openclaw_runtime/src/plugins/native-module-require.ts
+  - openclaw_runtime/ui/vite.config.ts
   - harness/specs/tasks/gateway-startup-performance.md
   - scripts/typecheck-agent-dev.mjs
   - src/components/file-preview/MonacoViewer.tsx
@@ -179,6 +180,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - The runtime Control UI build resolves the installed Lit decorator entry through its package exports and completes without externalizing it.
   - Native fault fixtures create and claim the real workspace task before injection; handoff/fork fixtures consume the typed active workspace owner returned by the Host API.
   - Frozen acceptance rejects missing build inputs before live calls and returns failure for a failed candidate evaluation even when all sample receipts are present.
   - Initial and update model calls pass active statements as complete original lines without synthesized labels, colons, or repeated identifiers; branch regressions and same-candidate live compression readback verify preservation.

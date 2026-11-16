@@ -246,6 +246,8 @@ export default function controlUiViteConfig(): UserConfig {
     resolve: {
       alias: [
         { find: "json5", replacement: json5EsmPath },
+        // Keep Rolldown's decorator entry on the resolved Windows pnpm package path.
+        { find: "lit/decorators.js", replacement: require.resolve("lit/decorators.js") },
         ...resolveSourcePackageAliasesForVite(),
         ...resolveTsconfigPathAliasesForVite(),
       ],
