@@ -71,6 +71,7 @@ describe("quiet conversation task dock", () => {
     expect(screen.getByTestId("session-task-dock")).toHaveAttribute("data-placement", "composer");
     expect(plan.querySelector("button")).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByTestId("session-task-current")).toHaveTextContent("Verify the result");
+    expect(screen.getByTestId("session-task-status-glyph")).toHaveAttribute("data-state", "running");
     fireEvent.click(plan.querySelector("button")!);
     expect(screen.getByTestId("session-task-details")).toHaveTextContent("Verify the result");
     expect(screen.queryByTestId("session-task-current")).toBeNull();
@@ -290,6 +291,7 @@ describe("dock lifetime", () => {
     mocks.read.mockResolvedValue(done);
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
     expect(await screen.findByTestId("session-task-status")).toHaveTextContent("conversation.states.done");
+    expect(screen.getByTestId("session-task-status-glyph")).toHaveAttribute("data-state", "success");
     expect(screen.getByTestId("session-task-id")).toBeInTheDocument();
     expect(screen.queryByTestId("session-task-current")).toBeNull();
     expect(screen.queryByTestId("session-task-details")).toBeNull();

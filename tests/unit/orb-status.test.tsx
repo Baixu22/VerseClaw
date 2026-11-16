@@ -46,7 +46,7 @@ describe('OrbStatus motion states', () => {
     '%s renders the thinking-orbs canvas',
     (state) => {
       const { root, matrix, canvas } = renderOrb(state);
-      expect(root?.getAttribute('data-state')).toBe(state);
+      expect(root?.getAttribute('data-state')).toBe(['loading', 'streaming', 'working'].includes(state) ? 'running' : state);
       expect(canvas).not.toBeNull();
       expect(matrix).toBeNull();
     },

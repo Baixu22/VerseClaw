@@ -118,11 +118,12 @@ export function OrbStatus({
   }
 
   const orbState = ANIMATED_ORB[state] ?? 'breathing';
+  const motionState = state === 'working' || state === 'streaming' || state === 'loading' ? 'running' : state;
   return (
     <span
       className={cn('inline-flex shrink-0 items-center justify-center', className)}
       data-testid={rest['data-testid']}
-      data-state={state}
+      data-state={motionState}
     >
       <ThinkingOrb
         state={orbState}

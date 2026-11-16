@@ -424,13 +424,12 @@ function ProjectSessionHeader({
   runError?: string | null;
 }) {
   const { t } = useTranslation('chat');
-  const [open, setOpen] = useState<'workspace' | 'session' | null>(null);
+  const [open, setOpen] = useState(false);
   const [editingSession, setEditingSession] = useState(false);
   const [sessionDraft, setSessionDraft] = useState('');
   const [sessionSearch, setSessionSearch] = useState('');
   const [renaming, setRenaming] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
   const { triggerRef: sessionTriggerRef, layerRef: sessionLayerRef, setOpen: setSessionMenuOpen, style: sessionMenuStyle } = usePopover<HTMLButtonElement>({ align: 'left', gap: 4 });
   const overlayContainer = useOverlayPortalContainer();
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
@@ -452,9 +451,9 @@ function ProjectSessionHeader({
   const matchingSource = Boolean(sourceSession && matchesSearch(sourceSession));
 
   useEffect(() => {
-    setSessionMenuOpen(open === 'session');
-    if (open === 'session' && sessionMenuStyle.visibility === 'visible') sessionLayerRef.current?.querySelector('input')?.focus();
-    if (open !== 'session') setSessionSearch('');
+    setSessionMenuOpen(open);
+    if (open && sessionMenuStyle.visibility === 'visible') sessionLayerRef.current?.querySelector('input')?.focus();
+    if (!open) setSessionSearch('');
   }, [open, sessionLayerRef, sessionMenuStyle.visibility, setSessionMenuOpen]);
 
   useEffect(() => {
@@ -462,16 +461,16 @@ function ProjectSessionHeader({
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target;
       if (target instanceof Node && (rootRef.current?.contains(target) || sessionLayerRef.current?.contains(target))) return;
-      setOpen(null);
+      setOpen(false);
     };
-    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); (open === 'session' ? sessionTriggerRef : projectTriggerRef).current?.focus(); } };
+    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(false); sessionTriggerRef.current?.focus(); } };
     document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleKey);
     return () => { document.removeEventListener('pointerdown', handlePointerDown); document.removeEventListener('keydown', handleKey); };
   }, [open, sessionLayerRef, sessionTriggerRef]);
 
   const startRenameSession = () => {
-    setOpen(null);
+    setOpen(false);
     setSessionDraft(sessionName);
     setEditingSession(true);
   };
@@ -500,7 +499,7 @@ function ProjectSessionHeader({
       data-derived={derived || undefined}
       data-testid={derived ? `chat-session-derived-${session.key}` : `chat-session-item-${session.key}`}
       aria-current={session.key === currentSessionKey ? 'page' : undefined}
-      onClick={() => { setOpen(null); setSessionSearch(''); switchSession(session.key); }}>
+      onClick={() => { setOpen(false); setSessionSearch(''); switchSession(session.key); }}>
       {dotState ? <OrbStatus state={dotState} className="size-4 shrink-0" /> : <MessagesSquare className="h-4 w-4 shrink-0 opacity-60" aria-hidden="true" />}
       <span className="min-w-0 flex-1">
         <span className="block truncate text-meta">{getSessionDisplayName(session.key, sessions, sessionLabels)}</span>
@@ -514,41 +513,16 @@ function ProjectSessionHeader({
 
   return (
     <div ref={rootRef} className="chat-project-session-header flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
-      {showProject && <div className="chat-header-environment-project relative order-1 min-w-0" data-testid="chat-header-environment-project">
-        {/* Project selection stays secondary to the task header. */}
+      {showProject && <div className="chat-header-environment-project order-1 min-w-0" data-testid="chat-header-environment-project">
         <Tooltip>
           <TooltipTrigger asChild>
-        <button
-          ref={projectTriggerRef}
-          type="button"
-          className={cn('chat-header-dropdown-trigger chat-header-project-trigger inline-flex max-w-[144px] items-center gap-1.5 px-1.5 py-1 text-xs font-normal text-muted-foreground hover:text-foreground', open === 'workspace' && 'is-open')}
-          aria-haspopup="menu"
-          aria-expanded={open === 'workspace'}
-          onClick={() => setOpen((current) => current === 'workspace' ? null : 'workspace')}
-        >
-          <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          <span className="truncate">{projectName}</span>
-          <ChevronDown className="chat-header-session-chevron h-3 w-3 shrink-0 opacity-60" />
-        </button>
+            <span className="inline-flex max-w-[144px] items-center gap-1.5 px-1.5 py-1 text-xs text-muted-foreground">
+              <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{projectName}</span>
+            </span>
           </TooltipTrigger>
           <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{projectPath}</TooltipContent>
         </Tooltip>
-        {open === 'workspace' && (
-          <WorkspacePickerMenu
-            profiles={workspaceProfiles}
-            activeWorkspaceId={workspaceId}
-            onSelect={(id) => {
-              setOpen(null);
-              return switchWorkspace(id);
-            }}
-            onPickFolder={() => {
-              setOpen(null);
-              return pickWorkspaceFolder();
-            }}
-            menuTestId="chat-header-workspace-menu"
-            className="chat-header-project-menu"
-          />
-        )}
       </div>}
       {showProject && <span className="chat-header-separator order-1 text-muted-foreground/30" aria-hidden="true">/</span>}
       <div className="relative order-2 min-w-0 max-w-[360px]">
@@ -579,10 +553,10 @@ function ProjectSessionHeader({
           <button
             ref={sessionTriggerRef}
             type="button"
-            className={cn('chat-header-dropdown-trigger chat-header-session-trigger inline-flex min-w-0 max-w-full items-center gap-1.5 px-1.5 py-1 text-sm font-medium text-foreground', open === 'session' && 'is-open')}
+            className={cn('chat-header-dropdown-trigger chat-header-session-trigger inline-flex min-w-0 max-w-full items-center gap-1.5 px-1.5 py-1 text-sm font-medium text-foreground', open && 'is-open')}
             aria-haspopup="dialog"
-            aria-expanded={open === 'session'}
-            onClick={() => setOpen((current) => current === 'session' ? null : 'session')}
+            aria-expanded={open}
+            onClick={() => setOpen((current) => !current)}
             onDoubleClick={(event) => {
               event.preventDefault();
               startRenameSession();
@@ -598,7 +572,7 @@ function ProjectSessionHeader({
             </TooltipContent>
           </Tooltip>
         )}
-        {open === 'session' && createPortal(
+        {open && createPortal(
             <div ref={sessionLayerRef} style={sessionMenuStyle} className="codex-header-menu chat-session-navigation-menu" data-testid="chat-session-navigation-menu" role="dialog" aria-label={t('session.navigation.title')}
               onKeyDown={event => {
                 const editing = event.target instanceof HTMLInputElement;
@@ -630,7 +604,7 @@ function ProjectSessionHeader({
             </label>
             <div className="chat-session-navigation-list">
             {currentEntry && (!sessionSearch.trim() || matchingSource) && <SessionFamilyNavigation session={currentEntry} sessions={sessions} derivation={derivation}
-              onNavigate={(key) => { setOpen(null); switchSession(key); }} onRefresh={onRefresh} />}
+              onNavigate={(key) => { setOpen(false); switchSession(key); }} onRefresh={onRefresh} />}
             {matchingRecent.map((session) => renderNavigationRow(session, false))}
             {matchingDerived.length > 0 && (
               <>
@@ -642,6 +616,23 @@ function ProjectSessionHeader({
             )}
             {matchingRecent.length === 0 && matchingDerived.length === 0 && !matchingSource && <p role="status" className="px-2 py-3 text-xs text-muted-foreground">{t('archive.noMatches')}</p>}
             </div>
+            {showProject && <div className="chat-session-workspace-section">
+              <div className="codex-header-menu__label">{t('session.navigation.currentWorkspace', { workspace: projectName })}</div>
+              <WorkspacePickerMenu
+                profiles={workspaceProfiles}
+                activeWorkspaceId={workspaceId}
+                onSelect={(id) => {
+                  setOpen(false);
+                  return switchWorkspace(id);
+                }}
+                onPickFolder={() => {
+                  setOpen(false);
+                  return pickWorkspaceFolder();
+                }}
+                menuTestId="chat-header-workspace-menu"
+                className="chat-header-project-menu"
+              />
+            </div>}
           </div>, overlayContainer ?? document.body,
         )}
       </div>

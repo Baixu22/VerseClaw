@@ -215,7 +215,7 @@ describe('Rare UI production adaptations', () => {
     const bell = screen.getByTestId('chat-completion-bell');
     expect(bell).toHaveAttribute('data-live', 'running');
     // Running state is the session rows' own orb, not a private bell animation.
-    expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'streaming');
+    expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'running');
     expect(screen.queryByTestId('chat-activity-bell-icon')).toBeNull();
     expect(screen.queryByTestId('chat-activity-live-ring')).toBeNull();
     // Three unread, one of them an error: the badge says so in number and colour.

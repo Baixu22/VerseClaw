@@ -142,6 +142,19 @@ test.describe('Verse Claw chat workspace header', () => {
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-project-session-header')).toContainText('Demo Workspace');
       await expect(page.getByTestId('chat-topic-selector')).toHaveCount(0);
+      await expect(page.getByTestId('chat-header-environment-project').getByRole('button')).toHaveCount(0);
+      await page.getByTestId('chat-header-session-name').click();
+      await expect(page.getByTestId('chat-session-navigation-menu')).toBeVisible();
+      await expect(page.getByTestId('chat-header-workspace-menu')).toBeVisible();
+      await expect(page.getByTestId('chat-session-navigation-menu')).toContainText('Workspace · Demo Workspace');
+      await page.screenshot({ path: testInfo.outputPath('chat-session-unified-menu.png'), fullPage: false });
+      await testInfo.attach('chat-session-unified-menu', {
+        path: testInfo.outputPath('chat-session-unified-menu.png'),
+        contentType: 'image/png',
+      });
+      await page.keyboard.press('Escape');
+      await expect(page.getByTestId('chat-session-navigation-menu')).toHaveCount(0);
+      await expect(page.getByTestId('chat-header-session-name')).toBeFocused();
       await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
       await expect(page.getByTestId('sidebar-session-organize')).toBeVisible();
       await expect(page.getByTestId('sidebar-session-search')).toBeVisible();
@@ -164,8 +177,7 @@ test.describe('Verse Claw chat workspace header', () => {
         }
       }, SESSION_KEY);
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'running');
-      await expect(page.getByTestId('chat-current-session-status')).toHaveAttribute('data-state', 'streaming');
-      await expect(page.getByTestId('chat-turn-summary-orb')).toBeVisible();
+      await expect(page.getByTestId('chat-turn-summary-orb').locator('[data-state]')).toHaveAttribute('data-state', 'running');
       await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
       await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
 
@@ -194,6 +206,7 @@ test.describe('Verse Claw chat workspace header', () => {
         }
       }, SESSION_KEY);
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'completed');
+      await expect(page.getByTestId('chat-turn-summary-card')).toHaveCount(0);
       await page.getByTestId(`sidebar-session-status-${SESSION_KEY}`).click();
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveCount(0);
 

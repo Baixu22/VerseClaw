@@ -1371,6 +1371,7 @@
   },
   "session": {
     "navigation": {
+      "currentWorkspace": "ワークスペース · {{workspace}}",
       "title": "このワークスペースの会話",
       "search": "会話を検索",
       "source": "元の会話",

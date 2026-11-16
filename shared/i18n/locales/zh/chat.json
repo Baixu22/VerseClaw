@@ -1371,6 +1371,7 @@
   },
   "session": {
     "navigation": {
+      "currentWorkspace": "工作区 · {{workspace}}",
       "title": "当前工作区的会话",
       "search": "查找会话",
       "source": "来源会话",

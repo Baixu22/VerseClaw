@@ -85,7 +85,7 @@
   -webkit-backdrop-filter: none;
 }
 .codex-header-menu.chat-session-navigation-menu {
-  width: min(320px, calc(100vw - 16px));
+  width: min(340px, calc(100vw - 16px));
   max-height: calc(100vh - 80px);
   overflow: hidden;
   padding: 4px;
@@ -125,6 +125,15 @@
 @media (prefers-reduced-motion: reduce) { .chat-toolbar-shell::after { transition: none; } }
 .chat-header-dropdown-trigger.is-open .chat-header-session-chevron { transform: rotate(180deg); }
 .chat-session-navigation-list { min-height: 0; max-height: 300px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.chat-session-workspace-section {
+  max-height: 224px;
+  margin-top: 4px;
+  padding-top: 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-top: 1px solid var(--color-border);
+}
+.chat-session-workspace-section .chat-header-project-menu { position: static; width: 100%; border: 0; border-radius: 0; box-shadow: none; background: transparent; padding: 0; }
 .chat-session-navigation-row { min-height: 32px; padding-block: 6px; }
 .codex-header-menu__item:focus-visible { outline: none; background: var(--sp-menu-hover); color: var(--color-text-foreground); }
 .chat-session-navigation-row[aria-current='page'] { background: color-mix(in srgb, var(--color-text-foreground) 8%, transparent); }

@@ -1371,6 +1371,7 @@
   },
   "session": {
     "navigation": {
+      "currentWorkspace": "Рабочая область · {{workspace}}",
       "title": "Беседы рабочего пространства",
       "search": "Найти беседу",
       "source": "Исходная беседа",

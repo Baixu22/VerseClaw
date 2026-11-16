@@ -20,15 +20,12 @@ import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent }
 import { createPortal } from "react-dom";
 import {
   AlertTriangle,
-  Check,
   ChevronDown,
-  CircleSlash,
   Copy,
   ExternalLink,
   EyeOff,
   ListChecks,
   MoreHorizontal,
-  Pause,
   RefreshCw,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -36,6 +33,7 @@ import { toast } from "sonner";
 import { useDismissOnOutside, usePopover } from "@/components/settings/primitives/usePopover";
 import { ToolUiPlanItemIcon, type ToolUiPlanTodoStatus } from "@/components/tool-ui/plan-view";
 import { useOverlayPortalContainer } from "@/components/ui/overlay-portal";
+import { OrbStatus, type OrbStatusState } from "@/components/assistant-ui/orb-status";
 import { hostApi } from "@/lib/host-api";
 import { hostEvents } from "@/lib/host-events";
 import { formatRelativeTime } from "@/lib/git-ui";
@@ -257,49 +255,10 @@ export function SessionTaskDock({
 
 type Tone = "active" | "done" | "cancelled" | "warn" | "idle";
 
-/** Neutral glyphs; colour is reserved for a finished check and for warnings. */
-function StatusGlyph({ tone, progress }: { tone: Tone; progress: number | null }) {
-  if (tone === "done") {
-    return <Check className="h-3.5 w-3.5 shrink-0 text-emerald-700 dark:text-emerald-400" aria-hidden="true" />;
-  }
-  if (tone === "cancelled") {
-    return <CircleSlash className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />;
-  }
-  if (tone === "warn") {
-    return <Pause className="h-3.5 w-3.5 shrink-0 text-amber-700 dark:text-amber-400" aria-hidden="true" />;
-  }
-  if (tone === "active" && progress !== null) {
-    // A ring that fills with known progress — no percentage is invented for
-    // tasks that only report a next action. Track and fill are two layers so
-    // the gradient stays a plain `currentColor` stop.
-    return (
-      <span className="relative inline-flex h-3.5 w-3.5 shrink-0 text-foreground/70" aria-hidden="true">
-        <span className="absolute inset-0 rounded-full border-[1.5px] border-foreground/15" />
-        <span
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: `conic-gradient(currentColor ${Math.max(progress, 6)}%, transparent 0)`,
-            WebkitMaskImage: "radial-gradient(circle, transparent 52%, #000 56%)",
-            maskImage: "radial-gradient(circle, transparent 52%, #000 56%)",
-          }}
-        />
-      </span>
-    );
-  }
-  if (tone === "active") {
-    return (
-      <span
-        className="h-3.5 w-3.5 shrink-0 rounded-full border-[1.5px] border-foreground/20 border-t-foreground/70 motion-safe:animate-spin"
-        aria-hidden="true"
-      />
-    );
-  }
-  return (
-    <span
-      className="h-3.5 w-3.5 shrink-0 rounded-full border-[1.5px] border-dashed border-muted-foreground/45"
-      aria-hidden="true"
-    />
-  );
+/** The same live/settled status language as the conversation and session list. */
+function StatusGlyph({ tone }: { tone: Tone; progress: number | null }) {
+  const state: OrbStatusState = tone === "active" ? "working" : tone === "done" ? "success" : tone === "warn" ? "warning" : tone === "cancelled" ? "stopped" : "idle";
+  return <OrbStatus state={state} className="size-4 shrink-0" data-testid="session-task-status-glyph" />;
 }
 
 function copyTaskId(id: string, t: Translate) {

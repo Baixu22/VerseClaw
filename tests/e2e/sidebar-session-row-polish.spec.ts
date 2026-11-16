@@ -295,7 +295,7 @@ test.describe('Sidebar session rows and activity bell', () => {
       // Live state reuses the session rows' status orb: no swing, no corner dot.
       const orb = page.getByTestId('chat-activity-live-orb');
       await expect(orb).toBeVisible();
-      await expect(orb).toHaveAttribute('data-state', 'streaming');
+      await expect(orb).toHaveAttribute('data-state', 'running');
       await expect(page.getByTestId('chat-activity-bell-icon')).toHaveCount(0);
       await expect(page.getByTestId('chat-activity-waiting')).toHaveCount(0);
       await expect(bell).toHaveAttribute('aria-label', /1 running/);

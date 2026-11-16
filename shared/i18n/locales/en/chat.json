@@ -1371,6 +1371,7 @@
   },
   "session": {
     "navigation": {
+      "currentWorkspace": "Workspace · {{workspace}}",
       "title": "Conversations in this workspace",
       "search": "Find a conversation",
       "source": "Source conversation",
