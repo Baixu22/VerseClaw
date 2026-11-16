@@ -6,6 +6,10 @@
 
 GA 为 **NO_GO**。整合候选源码行数门禁有 203 项失败（38 项新超限、165 项增长）。[冻结候选实测](../final-candidate-6115256e-20261116/REPORT.zh-CN.md)绑定 `6115256e`，P50/P95 为 17.439/83.204 秒；本整合候选的完整冻结实测状态为 `NOT_RUN`。下一轮先优化时延与源码行数，再按原工作负载和完整门禁验收。
 
+# G3 收尾分支源码门禁补记（2026-11-16）
+
+收尾分支在 `c4a6846049759f09ec7e9d4c7c93c888151205a9` 之上，将 `ts-max-loc-baseline.json` 从 2026-10-10 快照刷新为当前源码的 1100 项既有超限文件。500 行上限与新增/增长拒绝规则保持不变；`check:loc:baseline` 通过。新增 `main-session-restart-recovery.schedule.test.ts`，验证 legacy 5 秒、taskflow 1 秒的首轮恢复扫描。冻结性能实测状态仍为 `NOT_RUN`，GA 保持 NO_GO。
+
 `checks.json` 与 `source.json` 给出各项结果及源码哈希；`raw-evidence.json.gz` 保存 43 份原始文件的路径、SHA-256 和字节。过期依赖路径、缺少声明、测试选择失败以及 JSON-only 跑次的无输出中止均作为原尝试保留，成功重跑单列。产物标注 agent 驱动，凭据扫描 0 命中。
 
 复审直接读取 Codex `f221438b691b8f749d98f22077c93ebe01923fbe` 的 [TurnStatus 与 TurnCompleted](https://github.com/openai/codex/blob/f221438b691b8f749d98f22077c93ebe01923fbe/codex-rs/app-server-protocol/src/protocol/v2/turn.rs#L28)、[终态处理](https://github.com/openai/codex/blob/f221438b691b8f749d98f22077c93ebe01923fbe/codex-rs/app-server/src/bespoke_event_handling.rs#L1469)与 [终态投递](https://github.com/openai/codex/blob/f221438b691b8f749d98f22077c93ebe01923fbe/codex-rs/app-server/src/in_process.rs#L104)。

@@ -113,6 +113,11 @@ touchedAreas:
   - docs/modules/resources-and-observability.md
   - docs/dev/recovery-contract/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/**
+  - openclaw_runtime/UPSTREAM.md
+  - openclaw_runtime/package.json
+  - openclaw_runtime/scripts/generate-ts-max-loc-baseline.mjs
+  - openclaw_runtime/scripts/ts-max-loc-baseline.json
+  - openclaw_runtime/src/agents/main-session-restart-recovery.schedule.test.ts
   - scripts/repository-artifacts.json
   - .gitignore
   - README.md
