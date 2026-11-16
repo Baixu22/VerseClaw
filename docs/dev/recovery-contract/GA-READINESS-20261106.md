@@ -68,7 +68,9 @@ Goal-wake 在原 `task_runs.progress_summary` 中保存统一对账决定。原 
 
 两臂各 30 份真实模型答案和 15 个故障窗口已完整采集。candidate 事实 120/120、下一步 30/30、终态 15/15，重复效果与丢失任务为 0；两轮 legacy 逐槽 15/15 匹配，原冻结投影 hash 一致。最终原件、九指标与差值见[同候选验收报告](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-candidate-6115256e-20261116/REPORT.zh-CN.md)。
 
-GA 当前为 **NO_GO**：candidate 恢复 P50/P95 为 17.439/83.204 秒，构建 1,621.766 秒超出 58 秒限额，源码行数门禁有 165 项失败。类型检查 27.079 秒满足 45 秒限额，完整功能步骤、Harness 证据与覆盖尾门通过。剩余开发集中在时延、构建耗时和源码行数，修正后须绑定新的干净候选重跑。
+冻结候选 `6115256e` 的 GA 为 **NO_GO**：恢复 P50/P95 为 17.439/83.204 秒，构建 1,621.766 秒超出 58 秒限额，源码行数门禁有 165 项失败。类型检查 27.079 秒满足 45 秒限额，完整功能步骤、Harness 证据与覆盖尾门通过。
+
+主线整合候选 `7abba413c47be1e5a772bda7bb3aafc8e87b14c5` 已消除与 main `c3521cfc4` 的十二处冲突。200 次回归、完整无缓存 Node/Web/Test 类型检查、桌面与 runtime 构建、Gateway 启动检查、通信、contract 和目标 Harness 通过；固定 DeepSeek fresh review 发现 0 项问题。其源码行数门禁有 203 项失败，完整冻结实测状态为 `NOT_RUN`，GA 保持 NO_GO。源码与原件见[主线整合开发验证](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/README.md)。后续先处理时延、完整构建耗时和源码行数，再在新的干净候选上按原门槛实测。
 
 冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。所有原生样本启动前须满足 2500 MiB 可用内存，candidate 同时启用 authority 与两种 taskflow writer。发布候选还需通过完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
 

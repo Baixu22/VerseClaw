@@ -1,0 +1,267 @@
+{
+  "schema": "RecoveryMainIntegrationChecks/v1",
+  "driven_by": "agent",
+  "actor": "codex-g3-main-integration-20261116",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5",
+    "tree": "b56ce210f3d540dd142a83ee9d0fd7f931d2fe80",
+    "dirty": false
+  },
+  "regressionExecutions": 200,
+  "testFiles": [
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-integration-20261116/recovery-ga-20261113-01a1d350/tests/unit/context-inline-spill-retention.test.ts",
+      "status": "passed",
+      "passed": 38
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-integration-20261116/recovery-ga-20261113-01a1d350/tests/unit/context-inline-spill-truncation.test.ts",
+      "status": "passed",
+      "passed": 5
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-integration-20261116/recovery-ga-20261113-01a1d350/tests/unit/context-view-tool-surface.test.ts",
+      "status": "passed",
+      "passed": 6
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-integration-20261116/recovery-ga-20261113-01a1d350/tests/unit/rc03-seal-coverage.test.ts",
+      "status": "passed",
+      "passed": 32
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-integration-20261116/recovery-ga-20261113-01a1d350/tests/unit/recovery-authority-contract.test.ts",
+      "status": "passed",
+      "passed": 14
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-integration-20261116/recovery-ga-20261113-01a1d350/tests/unit/recovery-contract-eval.test.ts",
+      "status": "passed",
+      "passed": 17
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-integration-20261116/recovery-ga-20261113-01a1d350/tests/unit/recovery-observation.test.ts",
+      "status": "passed",
+      "passed": 7
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-integration-20261116/recovery-ga-20261113-01a1d350/tests/unit/session-lifecycle-generation-barrier.test.ts",
+      "status": "passed",
+      "passed": 27
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-validation-20261116/recovery-ga-20261113-01a1d350/openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts",
+      "status": "passed",
+      "passed": 22
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-validation-20261116/recovery-ga-20261113-01a1d350/openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+      "status": "passed",
+      "passed": 27
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-validation-20261116/recovery-ga-20261113-01a1d350/openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+      "status": "passed",
+      "passed": 3
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/g3-closeout-validation-20261116/recovery-ga-20261113-01a1d350/openclaw_runtime/src/agents/subagent-registry-run-manager.recovery.test.ts",
+      "status": "passed",
+      "passed": 2
+    }
+  ],
+  "typecheck": {
+    "check": "typecheck",
+    "exitCode": 0,
+    "candidate": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5"
+  },
+  "desktop": {
+    "check": "desktop-build",
+    "exitCode": 0,
+    "candidate": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5"
+  },
+  "runtime": {
+    "check": "runtime-build",
+    "exitCode": 0,
+    "candidate": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5"
+  },
+  "comms": {
+    "replayExit": 0,
+    "compareExit": 0,
+    "contractExit": 0,
+    "candidate": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5"
+  },
+  "harness": {
+    "harnessExit": 0,
+    "artifactExit": 0,
+    "candidate": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5"
+  },
+  "agentCoreExports": {
+    "status": "PASS",
+    "candidate": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5",
+    "sourceMatchedDeclarationCandidate": "6115256e882051a154945b5b7298ef8a83d756cc",
+    "declarationFiles": [
+      {
+        "path": "agent-BnsQiO4Y.d.ts",
+        "sha256": "fee435d934c60ac30c5e4fde9a5958c3abea9fd805a7393e2a4ba018de89e338"
+      },
+      {
+        "path": "agent-harness-DH1ih3mz.d.ts",
+        "sha256": "a8fad8017e4c98e846a0098528395926f6f76596ba603008eb5c0c11bc07fa5f"
+      },
+      {
+        "path": "agent-loop-D5-Dz7N-.d.ts",
+        "sha256": "dad0799b48ebaa034ae6b36a3d9ab25fe37dbb7bed9d6cdd434020da7df82c6e"
+      },
+      {
+        "path": "agent-loop.d.ts",
+        "sha256": "9e5745d616c59819c76a45499d6db314c1fb21827c44691079c6cd335cfa1010"
+      },
+      {
+        "path": "agent.d.ts",
+        "sha256": "916608f43b267348f603b8dc9d7b97a5ed358e4b2a458a3a0754e59f82783cb0"
+      },
+      {
+        "path": "harness\\agent-harness.d.ts",
+        "sha256": "1bf88391803e3dbf780b5f006f8fcc7c0343443713555caef751a4cbd070ac8e"
+      },
+      {
+        "path": "harness\\branch-summarization.d.ts",
+        "sha256": "45c7c0cba696bdb4a8d99d6735b757eaa4366b1de1538f5e7b59bf8af9a3e02b"
+      },
+      {
+        "path": "harness\\compaction.d.ts",
+        "sha256": "3411db8e373f3e9e720b88ccb94ecc21f2b18243326d59b6e83eb972217c88b8"
+      },
+      {
+        "path": "harness\\env\\kill-tree.d.ts",
+        "sha256": "f821fe565e9a1730bf634e4264d5c12f705d6d06759d887fb7c9bc4e980b3d7d"
+      },
+      {
+        "path": "harness\\messages.d.ts",
+        "sha256": "3ddd1252dbb5c058873e2a53aca1df06d9d1cbf0f2524d8db98ab649cfec9cb8"
+      },
+      {
+        "path": "harness\\prompt-templates.d.ts",
+        "sha256": "62c00300e244920345bacc567f557b9de95f758cdd081355677b91674824ec98"
+      },
+      {
+        "path": "harness\\session\\jsonl-repo.d.ts",
+        "sha256": "de07c61e279985b2182550c66729cd7b493c871961f0195a5aba5573a262a8c4"
+      },
+      {
+        "path": "harness\\session\\jsonl-storage.d.ts",
+        "sha256": "63a336ac5080eb2db82ec946a40952b02f9bb2aadb75bbf969d0b8b5705fea94"
+      },
+      {
+        "path": "harness\\session\\memory-repo.d.ts",
+        "sha256": "ecd985c2c52276f284f8190de581326fc40e8e80274a76984c5a4127d9c688a5"
+      },
+      {
+        "path": "harness\\session\\memory-storage.d.ts",
+        "sha256": "e51c1701b5d9d49498e91d6aadd3d49e7e2564fe0e51127f83ae4307b742d635"
+      },
+      {
+        "path": "harness\\session\\repo-utils.d.ts",
+        "sha256": "3b141bb02b9434f3ce3d01610563646d04b14afded313452ef79a0f3359bbe20"
+      },
+      {
+        "path": "harness\\session\\uuid.d.ts",
+        "sha256": "1f1dc9bb69b422b8e2623f29ef6c66d66b68bdd800abbdf3dae302abaa9545ba"
+      },
+      {
+        "path": "harness\\session.d.ts",
+        "sha256": "fc2ddc25a8cfb3ea607d3360c3f6db3eebe4704e5757345c0f70145914a31975"
+      },
+      {
+        "path": "harness\\skills.d.ts",
+        "sha256": "e301a0796ae76b4759c7c16e8c8ae27c15d681f288ddde558a50d4f6f61a05e8"
+      },
+      {
+        "path": "harness\\system-prompt.d.ts",
+        "sha256": "024336ba822c8a2c4723bffa0d99af7177752ebb383cb0c6e8ab971bd9ab112e"
+      },
+      {
+        "path": "harness\\types.d.ts",
+        "sha256": "9e148f8b994ee1d03b15bb5af6e2acb7622c636a25fc87843b2bc2a809fb892c"
+      },
+      {
+        "path": "harness\\utils\\shell-output.d.ts",
+        "sha256": "033cfd80f31f1c234908dace14580f8b41c65a19acadb5d3450eb38de151edb8"
+      },
+      {
+        "path": "harness\\utils\\truncate.d.ts",
+        "sha256": "16efbfc5494e2c00921ba7ab567da26eb68472183740b9dae026dcc8623796ff"
+      },
+      {
+        "path": "index-DD_tbius.d.ts",
+        "sha256": "1239cea26a61fc78249fef8171ec7c2dc44e03b82929f4340f30c26b85262685"
+      },
+      {
+        "path": "index.d.ts",
+        "sha256": "6699e76c9e7e45836dc3899fb69898c4bd6350065e0a340c59326bba1604b90e"
+      },
+      {
+        "path": "kill-tree-CbJ-wT-A.d.ts",
+        "sha256": "afbed280f91dca78ebf1abe2987a9de45b8667a28f0d58f69474d18bc2668a44"
+      },
+      {
+        "path": "llm.d.ts",
+        "sha256": "bfd3b3a212d5af6461b6d337224654c118322cc0dab999c90c668768fe2891a8"
+      },
+      {
+        "path": "messages-DAdfd4ZG.d.ts",
+        "sha256": "092ffe5ec8f3b7df12f8d1e96fb73f5d423cc6978bc413364acf1cfe616f9fcb"
+      },
+      {
+        "path": "node.d.ts",
+        "sha256": "6699e76c9e7e45836dc3899fb69898c4bd6350065e0a340c59326bba1604b90e"
+      },
+      {
+        "path": "runtime-deps-CytY3Hhp.d.ts",
+        "sha256": "814b2e317a67fe29399c1bb65b0496e0001e463226da0843b1076f3aaf499db8"
+      },
+      {
+        "path": "runtime-deps.d.ts",
+        "sha256": "dfa0b2dd3bd908b20640dbbef5ffb02a9bb5817bae0679e0648d7bddb0e71523"
+      },
+      {
+        "path": "truncate-DUPgJ82A.d.ts",
+        "sha256": "ef770d9702abf57da15981392cc34dbf10a152c0802c195ff59ca3eaa2dd323b"
+      },
+      {
+        "path": "types-3KOUr4Em.d.ts",
+        "sha256": "36327946d115121b950fc6b2af88d12442c46d1ef7139e1ccd5d985fd0d72e7b"
+      },
+      {
+        "path": "types.d.ts",
+        "sha256": "d3ffe9813cf36388df3bf5f52a6fd974e4c40a5ffa2c69df0ab3de7b7cb63fa2"
+      },
+      {
+        "path": "uuid-Dmc96voB.d.ts",
+        "sha256": "e98d0e6a21629472e29e0a6821759ae71d34f45a560919256e34f17019543211"
+      },
+      {
+        "path": "validation-TvCq9TaP.d.ts",
+        "sha256": "c4187e1e091c17c59acef342d28b0fce668e56ef6638015a08fed5a2b1036bdf"
+      },
+      {
+        "path": "validation.d.ts",
+        "sha256": "4b463d1f6744e8531584d737558fe0214dca84c0705509a25d606e842f4a525e"
+      }
+    ],
+    "exportsVerified": 26,
+    "compiledVerbatimRule": true,
+    "compiledCompleteLineRule": true,
+    "bundledRuntime": "proxy-DlB1xFn1.js"
+  },
+  "runtimeSource": {
+    "sourceExit": 1,
+    "locFailures": 203,
+    "newFailures": 38,
+    "grownFailures": 165,
+    "candidate": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5"
+  },
+  "gaStatus": "NO_GO"
+}
