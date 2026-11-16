@@ -22,6 +22,7 @@ touchedAreas:
   - tests/unit/autonomy-host-readiness.test.ts
   - tests/unit/long-session-effective-policy.test.ts
   - tests/unit/gateway-manager-diagnostics.test.ts
+  - tests/unit/dcs-preview-switch.test.ts
   - tests/e2e/autonomy-host-readiness.spec.ts
   - tests/e2e/autonomy-runtime-readiness.spec.ts
   - harness/specs/tasks/autonomy-host-readiness.md
@@ -61,6 +62,7 @@ requiredRules:
   - disk-temp-policy
   - docs-sync
 requiredTests:
+  - pnpm exec vitest run tests/unit/dcs-preview-switch.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm test:e2e:run tests/e2e/autonomy-runtime-readiness.spec.ts --workers=1
   - pnpm exec vitest run tests/unit/autonomy-host-readiness.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/gateway-manager-diagnostics.test.ts tests/unit/gateway-manager-restart-recovery.test.ts tests/unit/session-activity-background-read.test.ts tests/unit/workspace-preflight.test.ts --maxWorkers=1
   - pnpm typecheck

@@ -76,12 +76,14 @@ ownedPaths: &paths
   - tests/unit/electron-process-identity.test.ts
   - tests/unit/electron-window-size.test.ts
   - tests/unit/resource-chip-activity-readback.test.tsx
+  - tests/unit/dcs-preview-switch.test.ts
   - docs/agent-dev-control-plane.md
   - tests/e2e/fixtures/windows-process.ts
   - harness/specs/guides/long-session-delegation-admission.md
   - harness/specs/tasks/unified-acceptance-fixture-refresh.md
   - harness/specs/tasks/autonomy-task-actions.md
   - harness/specs/tasks/autonomy-task-completion.md
+  - harness/specs/tasks/autonomy-host-readiness.md
 touchedAreas: *paths
 requiredRules:
   - backend-communication-boundary
@@ -133,10 +135,12 @@ acceptance:
   - Source E2E launches may select a byte-identical staged Electron runtime through the existing G4 executable resolver; explicit per-test executables take precedence.
   - Window sizing selects the visible live window, waits for restored window state and measured renderer dimensions, and reports the actual size after minimum-size clamping; zero or unchanged wide/narrow captures cannot satisfy the coordination journey.
   - Renderer measurement uses the remaining resize deadline and rechecks window identity and native dimensions after the read; CSS viewport assertions convert through the owning window's zoom factor.
+  - DCS Preview regression checks use its three registered preview flags; enabling or disabling the preview preserves the advanced stale-write guard's current opt-in setting.
   - Paired baseline inputs permit only the declared transitive executable resolver alongside the five measured helpers; both sides retain identical dependency bytes and reject other input changes.
   - Opening the resource popover reads the current session's activity owner through the existing store even when background status polling has stopped.
   - Cleanup reports launch markers remaining on disk after native process checks and removal, retains the detected count, and preserves markers when process discovery is unavailable.
 requiredTests:
+  - pnpm exec vitest run tests/unit/dcs-preview-switch.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/electron-window-size.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/resource-chip-activity-readback.test.tsx tests/unit/session-activity-store-scope.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/electron-executable.test.ts tests/unit/electron-process-identity.test.ts --maxWorkers=1 --no-file-parallelism
