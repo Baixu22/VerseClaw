@@ -1,12 +1,27 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-11-13T09:13:48.007Z",
+  "generatedAt": "2026-11-16T02:42:53.575Z",
   "success": true,
   "buildReuse": {
-    "mode": "fresh",
-    "status": "fresh",
-    "reusable": false,
-    "reason": "fresh build mode always runs pnpm run build:vite",
+    "mode": "reuse",
+    "status": "reused",
+    "reusable": true,
+    "reason": "all required build artifacts are newer than relevant Agent Dev sources",
+    "oldestArtifact": "dist/index.html",
+    "artifacts": [
+      {
+        "path": "dist/index.html",
+        "mtimeMs": 1794764161411.927
+      },
+      {
+        "path": "dist-electron/main/index.js",
+        "mtimeMs": 1794764168165.4924
+      },
+      {
+        "path": "dist-electron/preload/index.js",
+        "mtimeMs": 1794764168296.7815
+      }
+    ],
     "requiredArtifacts": [
       "dist/index.html",
       "dist-electron/main/index.js",
@@ -23,71 +38,62 @@
     ]
   },
   "decision": {
-    "status": "daily-loop-ok",
-    "reason": "All selected Agent Dev gates passed within hard limits.",
+    "status": "needs-full-gate",
+    "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
     "dailyLoopReady": true,
-    "releaseReady": true,
-    "fullGateComplete": true,
+    "releaseReady": false,
+    "fullGateComplete": false,
     "budgetStatus": "watch",
-    "fastPathModes": [],
-    "requiredFullGates": [],
+    "fastPathModes": [
+      "reuse-build",
+      "cached-typecheck",
+      "smoke-e2e"
+    ],
+    "requiredFullGates": [
+      "pnpm run build:vite",
+      "pnpm run typecheck",
+      "pnpm test:e2e:agent-dev-quality"
+    ],
     "watchSteps": [
-      "e2e-build",
       "vitest-agent-dev",
+      "playwright-agent-dev",
+      "harness-agent-dev",
       "contract",
-      "typecheck"
+      "i18n"
     ],
     "limitSteps": []
   },
   "unitMode": "full",
-  "typecheckMode": "full",
-  "e2eMode": "full",
+  "typecheckMode": "cached",
+  "e2eMode": "smoke",
   "build": {
     "ok": true,
-    "durationMs": 53963,
-    "commandLine": "pnpm run build:vite",
-    "reused": false,
-    "skipped": false,
-    "reuseStatus": "fresh"
+    "durationMs": 1,
+    "commandLine": "reuse existing build",
+    "reused": true,
+    "skipped": true,
+    "reuseStatus": "reused"
   },
   "playwright": {
     "ok": true,
-    "durationMs": 20158,
-    "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+    "durationMs": 16508,
+    "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
-    "mode": "full",
-    "expectedTests": 4,
+    "mode": "smoke",
+    "expectedTests": 1,
     "diagnostics": {
       "kind": "playwright",
-      "passed": 4,
-      "reportedDurationMs": 19000,
+      "passed": 1,
+      "reportedDurationMs": 14700,
       "tests": [
         {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
-          "durationMs": 8900
-        },
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
-          "durationMs": 8900
-        },
-        {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 8300
-        },
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
-          "durationMs": 7200
+          "durationMs": 12400
         }
       ]
     },
     "evidence": [
-      "seeded scenario accessibility report",
-      "assistant-ui welcome suggestions visual artifact",
-      "seeded scenario visual artifact",
       "Settings > Developer Agent Dev Workbench host-api record path"
     ]
-  },
-  "driven_by": "agent",
-  "actor": "codex-g8-ui-01a1d351",
-  "realHumanEvidence": false
+  }
 }

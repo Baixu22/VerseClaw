@@ -1,5 +1,6 @@
 /** Evidence persistence boundary: containment and redaction belong at the write point. */
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { assertInsideRoot } from './path-guard.ts';
 import { redactSecretsInText, serializeRedactedJson } from '../security/redact-secrets.ts';
 
@@ -21,5 +22,6 @@ export async function writeEvidenceJson(root: string, path: string, value: unkno
 export async function writeEvidenceBinary(root: string, path: string, bytes: Buffer): Promise<void> {
   const target = assertInsideRoot(root, path, 'binary evidence');
   if (!Buffer.isBuffer(bytes)) throw new TypeError('Binary evidence requires a Buffer');
+  await mkdir(dirname(target), { recursive: true });
   await writeFile(target, bytes);
 }

@@ -1,0 +1,253 @@
+{
+  "schema": "clawx.kitesurf-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "decision": "NO_GO",
+  "evaluatedAt": "2026-11-15T14:20:00.444Z",
+  "task": "kitesurf-loopback-cdp",
+  "repository": "D:/ClawX-work/kitesurf-cdp-20261114",
+  "branch": "codex/kitesurf-cdp-20261114",
+  "head": "c3521cfc4252fab0a6c19c75eb3231cbf0f8e9af",
+  "sourceHashes": {
+    "packages/versebrowser/src/engine/kitesurf-cdp.ts": "992fb4ea7ef2f0311d8a05a6032a12cd615e63c808e817f3cbeba6530b070cb4",
+    "packages/versebrowser/src/engine/service.ts": "7eeb08edc22e388c7ac7d171d4eea1565fce8fb0411e0af128a15cb629963748",
+    "packages/versebrowser/src/engine/playwright-host-api.ts": "fb93c7bc9d1f215de0ee26266a4f57abac89d8620913da40d2545736605f1388",
+    "packages/versebrowser/src/engine/persistent-sessions.ts": "b2ec309cf2b6f98ea634e98d39d6408a23119cfbb4aa2638278ae0638768b3c6",
+    "packages/versebrowser/src/cli.ts": "4b17db0f4c1ca180dd9fe16224af9e55fc544dc98da204e17c000c1615be0722",
+    "packages/versebrowser/src/types/host-api.ts": "faf159cc7468f04f8885fb01dcb2effc9bfd263b7522f935e6bc9c869eb53e29",
+    "packages/versebrowser/src/engine/kitesurf-session.ts": "d428d6875a6275fa47f838d492ca767f991f538a74e08752ca3b0efd659bae09",
+    "packages/versebrowser/src/engine/upstream-control.ts": "57100d6cf4a3e8cb3e9812e26f1fdb8a25178e18e143fa3dc73d109434162e7c",
+    "packages/versebrowser/src/engine/facade.ts": "c53b2082a93fdda20964fdd1ec7fe4c93a9eb90dab16b8373f2b4af29b3c6ce5",
+    "packages/versebrowser/src/engine/driver-profile.ts": "c82907eb8ed7b7be1cc1508f8cc9a4841bb0a25248c37d2817b9f2ecaa321ea9",
+    "packages/versebrowser/src/evidence/output.ts": "5d3eb307c5f81a7b683856274e91b26b075f64cdfc00576b51746d8b3d013229"
+  },
+  "sourceMatchesReceipts": true,
+  "package": {
+    "files": 129,
+    "passed": 1129,
+    "failed": 1,
+    "skipped": 0,
+    "sourceUnchanged": true,
+    "startedAt": "2026-11-15T02:59:43.906Z",
+    "finishedAt": "2026-11-15T03:20:00.503Z",
+    "resultPath": "D:\\tmp\\kitesurf-acceptance-20261115-01a1dc94\\batched-package-tests.json",
+    "failedTests": [
+      {
+        "file": "D:/ClawX-work/kitesurf-cdp-20261114/packages/versebrowser/tests/mcp-shutdown-race.test.ts",
+        "name": "closes the stdio worker on EOF with an open request pending=true",
+        "error": "AssertionError: worker did not exit after its input closed: expected Symbol(timeout) to be +0 // Object.is equality\n    at D:/ClawX-work/kitesurf-cdp-20261114/packages/versebrowser/tests/mcp-shutdown-race.test.ts:122:76\n    at file:///D:/ClawX-work/kitesurf-cdp-20261114/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      }
+    ]
+  },
+  "native": {
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "assertedChecks": 19,
+    "actualCalls": 92,
+    "engine": "Kitesurf/0.0.1",
+    "engineLimits": [
+      "Kitesurf confirm() is not implemented; unowned dialog ids are refused.",
+      "Kitesurf omits global property descriptors; bounded runtime inspection is refused before reading the page."
+    ]
+  },
+  "protocol": {
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+  },
+  "isolatedEofRecheck": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 4
+  },
+  "cli": {
+    "requiredSteps": 17,
+    "strongestAttemptPath": "D:\\tmp\\kitesurf-acceptance-20261115-01a1dc94\\cli-failed-attempt-1794711581957.json",
+    "attemptedSteps": 13,
+    "passed": 12,
+    "failed": [
+      {
+        "name": "public-page-navigation-and-read",
+        "ok": false,
+        "error": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('h1') to be visible\u001b[22m\n",
+        "page": {
+          "success": true,
+          "text": "kitesurf: egress timeout after 25000ms",
+          "truncated": false,
+          "usedFallback": true,
+          "sourceUrl": "https://example.com/",
+          "observation": {
+            "sessionId": "8c1b8bce-8d30-4d45-9852-eb9026dbcf35",
+            "pageId": "a3c30926-4e84-413a-a604-0bea762a9993",
+            "frameId": "main",
+            "observationId": "038946f2-f972-414c-ad0e-e8c4d0e024ed",
+            "capturedAt": "2026-11-15T02:59:30.412Z"
+          }
+        },
+        "network": {
+          "success": true,
+          "requests": [
+            {
+              "id": "n-1",
+              "url": "http://127.0.0.1:8787/__fixtures/accessibility.html",
+              "method": "GET",
+              "status": 200,
+              "failed": false
+            },
+            {
+              "id": "n-2",
+              "url": "http://127.0.0.1:8787/x.png",
+              "method": "GET",
+              "failed": true,
+              "error": "Network connection lost."
+            },
+            {
+              "id": "n-3",
+              "url": "http://127.0.0.1:8787/y.png",
+              "method": "GET",
+              "status": 404,
+              "failed": true,
+              "error": "HTTP 404"
+            },
+            {
+              "id": "n-4",
+              "url": "http://127.0.0.1:8787/heart.png",
+              "method": "GET",
+              "status": 404,
+              "failed": true,
+              "error": "HTTP 404"
+            },
+            {
+              "id": "n-5",
+              "url": "http://127.0.0.1:8787/__fixtures/bench-static.html",
+              "method": "GET",
+              "status": 200,
+              "failed": false
+            },
+            {
+              "id": "n-6",
+              "url": "https://example.com/",
+              "method": "GET",
+              "status": 403,
+              "failed": true,
+              "error": "HTTP 403"
+            }
+          ],
+          "cursor": "a3c30926-4e84-413a-a604-0bea762a9993:6",
+          "currentPageStart": 5
+        }
+      }
+    ],
+    "notEvaluated": 4,
+    "latestRuntime": {
+      "ok": false,
+      "error": "fetch failed",
+      "cause": "ECONNREFUSED",
+      "checkedAt": "2026-11-15T14:20:00.426Z"
+    }
+  },
+  "evidenceVerification": {
+    "passed": 35,
+    "failed": [
+      {
+        "name": "live CLI executes the complete acceptance flow",
+        "ok": false
+      },
+      {
+        "name": "live receipt matches the same source",
+        "ok": false
+      },
+      {
+        "name": "CLI verifier hash matches current assertions",
+        "ok": false
+      },
+      {
+        "name": "CLI executable hash matches the tested build",
+        "ok": false
+      }
+    ],
+    "guardTests": 7,
+    "guardsPassed": true,
+    "controlledNegativeInputs": true
+  },
+  "checks": {
+    "packageTypecheck": "PASS",
+    "packageBuild": "PASS",
+    "eslint": "PASS",
+    "contract": "PASS",
+    "commsCompare": "PASS",
+    "rootWebTypecheck": "PASS after ext bridge generation",
+    "rootNodeTypecheck": "FAILED: runtime dependency layout is missing; supplemental temporary-path validation has no captured exit receipt",
+    "harnessCi": {
+      "result": "FAILED",
+      "unitPassed": 59,
+      "unitFailed": 0,
+      "stop": "catalog check: tsx not found",
+      "log": "D:\\tmp\\kitesurf-acceptance-20261115-01a1dc94\\harness-ci.log"
+    }
+  },
+  "runtimeProvenance": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "recordedAt": "2026-11-15T01:08:54.9324097Z",
+    "workspace": "D:\\ClawX-work\\kitesurf-cdp-20261114",
+    "branch": "codex/kitesurf-cdp-20261114",
+    "head": "c3521cfc4252fab0a6c19c75eb3231cbf0f8e9af",
+    "engine": {
+      "Browser": "Kitesurf/0.0.1",
+      "Protocol-Version": "1.3",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+      "V8-Version": "12.0.0",
+      "WebKit-Version": "537.36",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:8787/devtools/browser"
+    },
+    "health": "kitesurf: OK\n",
+    "runtimeHead": "4a2903813a22b08d4f3cc64a4b35339d0293a5d1",
+    "runtimeDirty": [],
+    "runtimePath": "/home/bai/tmp/kitesurf-upstream-20261114",
+    "workers": [],
+    "disks": [
+      {
+        "Name": "C",
+        "Free": 7957614592
+      },
+      {
+        "Name": "D",
+        "Free": 19893178368
+      }
+    ],
+    "memory": {
+      "FreePhysicalMemory": 2764968,
+      "TotalVisibleMemorySize": 15913508
+    }
+  },
+  "assets": {
+    "page.png": {
+      "path": "D:\\tmp\\kitesurf-acceptance-20261115-01a1dc94\\exports\\page.png",
+      "sha256": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e"
+    },
+    "page.pdf": {
+      "path": "D:\\tmp\\kitesurf-acceptance-20261115-01a1dc94\\exports\\page.pdf",
+      "sha256": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136"
+    },
+    "cli-page.png": {
+      "path": "D:\\tmp\\kitesurf-acceptance-20261115-01a1dc94\\exports\\cli-page.png",
+      "sha256": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e"
+    },
+    "cli-page.pdf": {
+      "path": "D:\\tmp\\kitesurf-acceptance-20261115-01a1dc94\\exports\\cli-page.pdf",
+      "sha256": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136"
+    }
+  },
+  "changes": [
+    "IPv6 loopback normalization and Kitesurf CLI auto detection use the persistent control process.",
+    "Session routing keeps the base API immutable, caches clients per session and preserves host method receivers.",
+    "Form and exact-element refs bind pinned DOM nodes; dense-page exact queries stay scoped.",
+    "Native filling replaces existing editable values; appending remains a separate action.",
+    "Frame reads use the actual frame owner, including loaded unnamed sibling frames.",
+    "Upstream continues using pinned Playwright; Legacy hides unsupported query methods.",
+    "Startup failure and action-timeout cleanup remove the owned control worker.",
+    "Receipts require complete assertions and actual calls, and bind source/test/CLI hashes."
+  ]
+}

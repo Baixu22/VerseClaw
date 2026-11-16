@@ -14,6 +14,7 @@ const CACHE_SCHEMA = 'clawx.typecheck-cache.v2';
 const CACHE_INPUTS = [
   'package.json',
   'pnpm-lock.yaml',
+  'pnpm-workspace.yaml',
   'tsconfig.json',
   'tsconfig.node.json',
   'tsconfig.web.json',
@@ -26,8 +27,12 @@ const CACHE_INPUTS = [
   'tests',
   'extensions',
   'resources/openclaw-plugins',
+  'packages/versebrowser/package.json',
+  'packages/versebrowser/src',
+  'packages/versebrowser/dist',
   'openclaw_runtime/package.json',
   'openclaw_runtime/pnpm-lock.yaml',
+  'openclaw_runtime/pnpm-workspace.yaml',
   'openclaw_runtime/src',
   'openclaw_runtime/packages',
   'openclaw_runtime/extensions',
@@ -248,7 +253,7 @@ function shouldSkipDirectory(name) {
 
 function shouldHashFile(path) {
   const normalized = normalizePath(path);
-  if (normalized.endsWith('pnpm-lock.yaml')) return true;
+  if (normalized.endsWith('pnpm-lock.yaml') || normalized.endsWith('pnpm-workspace.yaml')) return true;
   const match = normalized.match(/(\.[^.\/]+)$/u);
   return match ? SOURCE_EXTENSIONS.has(match[1]) : false;
 }

@@ -34,11 +34,12 @@ const fileMutations = new Map();
 // Files whose fixture mutations were actually read by the gate. A fixture that
 // only mutates files the gate never reads would otherwise print a valid pass.
 const consumedMutationFiles = new Set();
-// One fixture batch evaluates an immutable source snapshot. Ordinary gate runs
-// read the repository directly; mutations and consumed paths reset per case.
+// One invocation reads each source once. Fixture mutations and consumed paths
+// reset per case; parsed sources are keyed by their exact text.
 let projectSnapshot = null;
 let ipcSourceSnapshot = null;
 let ipcParseCache = null;
+const ipcSourceCache = new Map();
 
 async function readProjectFile(path) {
   const [{ readFile }, { resolve }] = await Promise.all([
@@ -227,23 +228,28 @@ function parseIpcCalls(text, file, ipcName, methods) {
   // Any escape forces AST parsing; a context-free lexer cannot safely skip
   // template/regexp contents and would hide subsequent registrations.
   if (!text.includes(ipcName) && !text.includes('\\')) return [];
-  const cacheKey = ipcParseCache && `${ipcName}\0${file}\0${text}`;
+  const cacheKey = ipcParseCache && `${ipcName}\0${JSON.stringify(methods)}\0${file}\0${text}`;
   if (ipcParseCache?.has(cacheKey)) return ipcParseCache.get(cacheKey);
-  const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+  const sourceKey = `${file}\0${text}`;
+  let parsed = ipcSourceCache.get(sourceKey);
+  if (!parsed) {
+    parsed = { source: ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true) };
+    ipcSourceCache.set(sourceKey, parsed);
+  }
+  const source = parsed.source;
   if (source.parseDiagnostics.length) {
     const diagnostic = source.parseDiagnostics[0];
     const line = source.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1;
     throw new Error(`${file}:${line}: [flat-ipc/source-parse] ${ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ')}`);
   }
-  let checker;
   function declarations(node) {
-    if (!checker) {
-      const options = { allowJs: true, noLib: true, noResolve: true };
+    if (!parsed.checker) {
+      const options = { allowJs: true, noLib: true, noResolve: true, types: [] };
       const host = ts.createCompilerHost(options);
       host.getSourceFile = (name) => name === file ? source : undefined;
-      checker = ts.createProgram([file], options, host).getTypeChecker();
+      parsed.checker = ts.createProgram([file], options, host).getTypeChecker();
     }
-    return checker.getSymbolAtLocation(node)?.declarations ?? [];
+    return parsed.checker.getSymbolAtLocation(node)?.declarations ?? [];
   }
   function unwrap(node) {
     while (node && (ts.isParenthesizedExpression(node) || ts.isAsExpression(node)
@@ -854,13 +860,13 @@ async function main() {
     process.exitCode = 2;
     return;
   }
+  projectSnapshot = new Map();
+  ipcSourceSnapshot = new Map();
+  ipcParseCache = new Map();
   if (!options.batch.length) {
     process.exitCode = await runCheck(options.fixtures);
     return;
   }
-  projectSnapshot = new Map();
-  ipcSourceSnapshot = new Map();
-  ipcParseCache = new Map();
   const results = [];
   for (const fixture of options.batch) {
     const result = { fixture, code: 0, stdout: '', stderr: '' };

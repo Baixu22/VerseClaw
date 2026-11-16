@@ -1,0 +1,29 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "exitCode": 0,
+  "files": [
+    "packages/versebrowser/src/cli.ts",
+    "packages/versebrowser/src/engine/driver-profile.ts",
+    "packages/versebrowser/src/engine/facade.ts",
+    "packages/versebrowser/src/engine/kitesurf-cdp.ts",
+    "packages/versebrowser/src/engine/kitesurf-session.ts",
+    "packages/versebrowser/src/engine/persistent-sessions.ts",
+    "packages/versebrowser/src/engine/playwright-host-api.ts",
+    "packages/versebrowser/src/engine/service.ts",
+    "packages/versebrowser/src/engine/upstream-control.ts",
+    "packages/versebrowser/src/evidence/output.ts",
+    "packages/versebrowser/src/types/host-api.ts",
+    "packages/versebrowser/tests/agent-browser-network-service.test.ts",
+    "packages/versebrowser/tests/agent-browser-standalone-facade.test.ts",
+    "packages/versebrowser/tests/kitesurf-cdp.test.ts",
+    "packages/versebrowser/tests/kitesurf-live.test.ts",
+    "scripts/contract-check.mjs",
+    "scripts/kitesurf-live-verify.mjs",
+    "scripts/kitesurf-local-runtime.mjs",
+    "scripts/kitesurf-loopback-cdp-verify.mjs",
+    "scripts/typecheck-agent-dev.mjs",
+    "tests/unit/typecheck-gate.test.ts",
+    "vitest.agent-dev.node.config.ts"
+  ]
+}

@@ -1,77 +1,79 @@
 # Agent Dev Deep Test
 
-Generated: 2026-11-13T09:13:48.548Z
+Generated: 2026-11-16T02:42:54.610Z
 
 Result: pass
 
-Decision: daily-loop-ok - All selected Agent Dev gates passed within hard limits.
+Decision: needs-full-gate - Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.
 
-Total elapsed: 119570ms
+Total elapsed: 49825ms
 
-Modes: build=fresh, unit=full, typecheck=full, e2e=full
+Modes: build=reused, unit=full, typecheck=cached, e2e=smoke
 
-Build reuse reason: fresh build mode always runs pnpm run build:vite
+Build reuse reason: all required build artifacts are newer than relevant Agent Dev sources
 
 ## Decision
 
 - Daily loop ready: yes
-- Release ready: yes
+- Release ready: no
 - Budget status: watch
-- Full gate complete: yes
+- Full gate complete: no
 
 Required full gates:
 
-- None.
+- `pnpm run build:vite`
+- `pnpm run typecheck`
+- `pnpm test:e2e:agent-dev-quality`
 
-Trend: improved; same-mode delta -131907ms; sample count 7.
+Trend: regressed; same-mode delta 10885ms; sample count 4.
 
 ## Steps
 
 | Status | Step | Skipped | Duration | Command | Goal |
 |---|---:|---:|---:|---|---|
-| pass | typecheck | no | 26s | `pnpm run typecheck` | Compiled contract and renderer/Main type safety |
+| pass | typecheck | no | 9s | `pnpm run typecheck:cached` | Fingerprint-cached node/web TypeScript safety for repeated Agent Dev diagnosis |
 | pass | contract | no | 2s | `node scripts/contract-check.mjs` | Host-api contract/facade/service drift |
 | pass | i18n | no | 1s | `pnpm i18n:lint` | Four-locale namespace/key coverage |
 | pass | workbench | no | 1s | `pnpm agent-dev:workbench` | Static Workbench evidence generation |
-| pass | harness-agent-dev | no | 2s | `pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md` | Shared Agent Dev scenario baseline; task ownership is validated separately for each change set |
+| pass | harness-agent-dev | no | 4s | `pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md` | Shared Agent Dev scenario baseline; task ownership is validated separately for each change set |
 | pass | vitest-agent-dev | no | 13s | `pnpm agent-dev:unit` | Focused Agent Dev behavior and facade tests |
 | pass | comms-replay | no | 1s | `pnpm run comms:replay` | Communication replay metrics |
 | pass | comms-compare | no | 1s | `pnpm run comms:compare` | Communication baseline comparison |
-| pass | e2e-build | no | 54s | `pnpm run build:vite` | Reusable Vite/Electron production build for no-build Playwright loops |
-| pass | playwright-agent-dev | no | 20s | `pnpm run test:e2e:agent-dev-quality:run` | Electron Agent Dev scenario and in-app Workbench path |
+| pass | e2e-build | yes | 0s | `reuse existing build` | Verified reusable Vite/Electron production build for no-build Playwright loops |
+| pass | playwright-agent-dev | no | 17s | `pnpm run test:e2e:agent-dev-quality:smoke` | Smoke Agent Dev Settings > Developer Workbench path |
 | pass | workbench-refresh | no | 1s | `pnpm agent-dev:workbench` | Refresh Workbench evidence after quality report generation |
 
 ## Bottlenecks
 
-1. e2e-build: 53963ms
-2. typecheck: 25578ms
-3. playwright-agent-dev: 20158ms
-4. vitest-agent-dev: 12925ms
-5. contract: 2185ms
+1. playwright-agent-dev: 16508ms
+2. vitest-agent-dev: 12860ms
+3. typecheck: 8935ms
+4. harness-agent-dev: 3827ms
+5. contract: 1569ms
 
 ## Performance Limits
 
 | Severity | Step | Skipped | Duration | Target | Limit | Loop | Mitigation |
 |---|---:|---:|---:|---:|---:|---|---|
-| watch | e2e-build | no | 53963ms | 25000ms | 58000ms | full-local | Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build. |
-| watch | vitest-agent-dev | no | 12925ms | 10000ms | 21000ms | fast-pr | Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe. |
-| watch | contract | no | 2185ms | 1000ms | 3000ms | fast-pr | Keep contract scanning text-based and bounded to host-api/service sources. |
-| watch | typecheck | no | 25578ms | 25000ms | 45000ms | full-local | Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate. |
-| ok | playwright-agent-dev | no | 20158ms | 25000ms | 40000ms | full-local | Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding. |
-| ok | harness-agent-dev | no | 1614ms | 3000ms | 8000ms | full-local | Keep the shared scenario baseline separate from task-specific changed-path ownership checks. |
-| ok | i18n | no | 732ms | 1000ms | 3000ms | fast-pr | Keep literal namespace scans bounded to source and locale directories. |
-| ok | comms-replay | no | 667ms | 2000ms | 5000ms | nightly-release | Keep replay corpus bounded for Agent Dev deep diagnostics; broader comms evidence belongs in release gates. |
-| ok | comms-compare | no | 611ms | 2000ms | 5000ms | nightly-release | Refresh baselines intentionally and keep compare output compact. |
-| ok | workbench | no | 589ms | 1500ms | 5000ms | fast-pr | Index report presence and contract metadata only; avoid expensive test/build execution inside Workbench generation. |
-| ok | workbench-refresh | no | 534ms | 1500ms | 5000ms | nightly-release | Refresh evidence from existing artifacts only. |
+| watch | vitest-agent-dev | no | 12860ms | 10000ms | 21000ms | fast-pr | Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe. |
+| watch | playwright-agent-dev | no | 16508ms | 15000ms | 25000ms | full-local | Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding. |
+| watch | harness-agent-dev | no | 3827ms | 3000ms | 8000ms | full-local | Keep the shared scenario baseline separate from task-specific changed-path ownership checks. |
+| watch | contract | no | 1569ms | 1000ms | 3000ms | fast-pr | Keep contract scanning text-based and bounded to host-api/service sources. |
+| watch | i18n | no | 1272ms | 1000ms | 3000ms | fast-pr | Keep literal namespace scans bounded to source and locale directories. |
+| ok | typecheck | no | 8935ms | 25000ms | 45000ms | full-local | Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate. |
+| ok | comms-replay | no | 1301ms | 2000ms | 5000ms | nightly-release | Keep replay corpus bounded for Agent Dev deep diagnostics; broader comms evidence belongs in release gates. |
+| ok | comms-compare | no | 1224ms | 2000ms | 5000ms | nightly-release | Refresh baselines intentionally and keep compare output compact. |
+| ok | workbench | no | 1208ms | 1500ms | 5000ms | fast-pr | Index report presence and contract metadata only; avoid expensive test/build execution inside Workbench generation. |
+| ok | workbench-refresh | no | 1026ms | 1500ms | 5000ms | nightly-release | Refresh evidence from existing artifacts only. |
+| ok | e2e-build | yes | 1ms | 25000ms | 58000ms | full-local | Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build. |
 
 ## Gate Profile
 
 | Loop | Duration | Steps | Skipped steps | Slowest step |
 |---|---:|---:|---:|---|
-| full-local | 101313ms | 4 | 0 | e2e-build |
-| fast-pr | 16431ms | 4 | 0 | vitest-agent-dev |
-| nightly-release | 1812ms | 3 | 0 | comms-replay |
+| full-local | 29271ms | 4 | 1 | playwright-agent-dev |
+| fast-pr | 16909ms | 4 | 0 | vitest-agent-dev |
+| nightly-release | 3551ms | 3 | 0 | comms-replay |
 
 ## Step Diagnostics
 
@@ -79,40 +81,31 @@ Typecheck phases:
 
 | Phase | Duration | Status |
 |---|---:|---|
-| `node scripts/generate-ext-bridge.mjs` | 86ms | pass |
-| `pnpm run typecheck:node` | 8475ms | pass |
-| `pnpm run typecheck:web` | 4181ms | pass |
-| `pnpm run typecheck:test` | 16473ms | pass |
+| `node scripts/generate-ext-bridge.mjs` | 132ms | pass |
+| `pnpm run typecheck:node` | 0ms | pass |
+| `pnpm run typecheck:web` | 0ms | pass |
+| `pnpm run typecheck:test` | 0ms | pass |
 
 Largest build assets:
 
 | Asset | Size |
 |---|---:|
-| `dist/assets/editor-CONRKkre.js` | 3750.05 kB |
-| `dist-electron/main/index-CVzytNKG.js` | 2438.24 kB |
-| `dist/assets/GeneratedFilesPanel-2kes45Km.js` | 1726.23 kB |
-| `dist/assets/emacs-lisp-CXvaQtF9.js` | 779.88 kB |
-| `dist/assets/App-DQPeAFyj.js` | 705.4 kB |
-| `dist/assets/cpp-UfJy6YNI.js` | 626.08 kB |
-| `dist/assets/wasm-CG6Dc4jp.js` | 622.34 kB |
-| `dist/assets/index-Bv-312-X.js` | 567.78 kB |
+
 
 Playwright test durations:
 
 | Duration | Test |
 |---:|---|
-| 8900ms | tests\e2e\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling |
-| 8900ms | tests\e2e\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario |
-| 8300ms | tests\e2e\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario |
-| 7200ms | tests\e2e\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario |
+| 12400ms | tests\e2e\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario |
 
 ## Optimization Recommendations
 
-- e2e-build exceeded its target by 28963ms; Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.
-- vitest-agent-dev exceeded its target by 2925ms; Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.
-- contract exceeded its target by 1185ms; Keep contract scanning text-based and bounded to host-api/service sources.
-- Vite/Electron build is the dominant E2E setup cost; use pnpm agent-dev:deep-test:reuse after a fresh build for repeated local loops.
-- Typecheck is a major fixed cost; the Agent Dev parallel typecheck path preserves both node and web projects while reducing local wait time.
+- vitest-agent-dev exceeded its target by 2860ms; Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.
+- playwright-agent-dev exceeded its target by 1508ms; Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.
+- harness-agent-dev exceeded its target by 827ms; Keep the shared scenario baseline separate from task-specific changed-path ownership checks.
+- Build reuse skipped e2e-build after verifying dist and dist-electron artifacts are fresh enough for the selected Playwright loop.
+- cached typecheck mode is reported separately from the default full gate; run pnpm run typecheck before review or release if this was a local-only loop.
+- Smoke E2E mode covers the Workbench record path only; run the full Agent Dev quality E2E before review or release.
 - Playwright runtime remains the dominant full-local cost; keep pnpm agent-dev:deep-test:reuse on smoke E2E for daily diagnosis and use pnpm agent-dev:deep-test:reuse:full only when full E2E evidence is needed.
-
-driven_by: agent · actor: codex-g8-ui-01a1d351 · realHumanEvidence: false
+- Vitest has full and fast paths now; keep host-api facade coverage in the fast path and do not treat node-only evidence as full unit proof.
+- Typecheck is a major fixed cost; the Agent Dev parallel typecheck path preserves both node and web projects while reducing local wait time.

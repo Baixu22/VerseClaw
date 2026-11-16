@@ -69,10 +69,18 @@ export type AgentBrowserOpenPayload = {
   width?: number;
   height?: number;
   runtimeMode?: AgentBrowserRuntimeMode;
+  /**
+   * Standalone loopback CDP only. Desktop managed sessions reject this before
+   * creating a window. Absent from the desktop host contract on purpose.
+   */
+  browser?: 'kitesurf';
 } & AgentBrowserSecurityPayload & AgentBrowserWorkspaceContext;
 export type AgentBrowserSessionPayload = {
   sessionId: string;
 };
+
+export type AgentBrowserPdfPayload = AgentBrowserSessionPayload & { printBackground?: boolean; landscape?: boolean; scale?: number; paperWidth?: number; paperHeight?: number; margin?: { top?: number; bottom?: number; left?: number; right?: number } };
+export type AgentBrowserPdfResult = HostSuccess & { dataUrl: string; bytes: number; format: 'pdf' };
 export type AgentBrowserNavigatePayload = AgentBrowserSessionPayload & {
   url: string;
   waitUntil?: 'dom-ready' | 'load';
@@ -861,6 +869,7 @@ type AgentBrowserHostApiContract = {
     appendText?: (payload: AgentBrowserTypePayload) => AgentBrowserActionResult;
     setChecked?: (payload: AgentBrowserSelectorPayload & { checked: boolean }) => AgentBrowserActionResult;
     evaluate: (payload: AgentBrowserEvaluatePayload) => AgentBrowserEvaluateResult;
+    pdf?: (payload: AgentBrowserPdfPayload) => AgentBrowserPdfResult;
     screenshot: (payload: AgentBrowserScreenshotPayload) => AgentBrowserScreenshotResult;
     command: (payload: AgentBrowserCommandPayload) => AgentBrowserCommandResult;
     tasks: () => AgentBrowserTasksResult;

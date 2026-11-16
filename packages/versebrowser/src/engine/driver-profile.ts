@@ -11,6 +11,8 @@
  * tool surface itself.
  */
 
+import { KITESURF_METHODS } from './kitesurf-cdp.ts';
+
 export type DriverKind = 'host-api' | 'playwright' | 'upstream' | 'injected' | 'none';
 
 export type DriverProfile = {
@@ -69,6 +71,10 @@ export const NONE_DRIVER_PROFILE: DriverProfile = Object.freeze({
   kind: 'none',
   methods: new Set<string>(),
 });
+
+export function profileForKitesurf(): DriverProfile {
+  return { kind: 'upstream', clickAfter: true, readFeatures: new Set(['structuredText', 'rowExtraction', 'scopedSnapshot', 'pagedSnapshot']), methods: new Set(['open', ...KITESURF_METHODS]) };
+}
 
 /** Host-injected facade: trust the full contract until the host says otherwise. */
 export const ASSUMED_FULL_DRIVER_PROFILE: DriverProfile = Object.freeze({

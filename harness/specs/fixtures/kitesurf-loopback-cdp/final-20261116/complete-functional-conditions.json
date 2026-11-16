@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "command": "node scripts/agent-dev-deep-test.mjs --reuse-build",
+  "GOMAXPROCS": "2",
+  "TEMP": "D:\\tmp",
+  "startedAt": "2026-11-16T02:20:29.7153532Z",
+  "finishedAt": "2026-11-16T02:22:49.4793679Z",
+  "exitCode": 0
+}

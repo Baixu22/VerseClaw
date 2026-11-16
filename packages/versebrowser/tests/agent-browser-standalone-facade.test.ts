@@ -1,8 +1,30 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createStandaloneFacade } from '../src/engine/standalone.ts';
 import { errResult } from '../src/contracts/index.ts';
+import { AgentBrowserFacade } from '../src/engine/facade.ts';
+import { mkdtemp } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 describe('standalone facade (TF-0020 Live MCP without host injection)', () => {
+  it('preserves the host receiver when routing a session call', async () => {
+    class Host {
+      #message = 'receiver preserved';
+      getConsoleMessages() { return { success: true, content: this.#message }; }
+    }
+    const workspaceRoot = await mkdtemp(join(tmpdir(), 'vb-receiver-'));
+    const facade = new AgentBrowserFacade({ api: new Host() as never, workspaceRoot });
+    expect(await facade.console('opaque-session')).toMatchObject({ ok: true, content: 'receiver preserved' });
+  });
+
+  it('preserves a missing-session code through snapshot routing', async () => {
+    const workspaceRoot = await mkdtemp(join(tmpdir(), 'vb-missing-session-'));
+    const facade = new AgentBrowserFacade({ workspaceRoot, api: {
+      takeSnapshot() { throw Object.assign(new Error('unknown session'), { code: 'E_NO_SESSION' }); },
+    } as never });
+    expect(await facade.snapshot('closed-session')).toMatchObject({ ok: false, error: { code: 'E_NO_SESSION' } });
+  });
+
   afterEach(() => {
     delete process.env.VERSEBROWSER_NO_DRIVER;
   });

@@ -1,0 +1,18 @@
+# snapshot
+- title: Example Domain
+- url: https://example.com/
+
+## Interactive (8)
+- use selector `[data-vb-ref="ref"]` with vb_click / vb_type / vb_press / vb_select / vb_check
+- [uc2f64461-2-f2e1] generic | sel=[data-vb-ref="uc2f64461-2-f2e1"]
+- [uc2f64461-2-f2e7] paragraph | sel=[data-vb-ref="uc2f64461-2-f2e7"]
+- [uc2f64461-2-f2e8] paragraph | sel=[data-vb-ref="uc2f64461-2-f2e8"]
+- [uc2f64461-2-f2e9] paragraph | sel=[data-vb-ref="uc2f64461-2-f2e9"]
+- [uc2f64461-2-f2e10] paragraph | sel=[data-vb-ref="uc2f64461-2-f2e10"]
+- [uc2f64461-2-f2e11] paragraph | sel=[data-vb-ref="uc2f64461-2-f2e11"]
+- [uc2f64461-2-f2e12] paragraph | sel=[data-vb-ref="uc2f64461-2-f2e12"]
+- [uc2f64461-2-f2e13] link | "Learn more" | sel=[data-vb-ref="uc2f64461-2-f2e13"]
+
+## Metrics
+- html_bytes: 2358
+- text_chars: 1180

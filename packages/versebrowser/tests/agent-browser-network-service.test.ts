@@ -40,6 +40,7 @@ class FakeWebContents extends EventEmitter {
   url = '';
   title = '';
   readonly debugger = new FakeDebugger();
+  readonly setWebRTCIPHandlingPolicy = vi.fn();
 
   getURL() { return this.url; }
   getTitle() { return this.title; }
@@ -93,8 +94,9 @@ function emitNetworkEvent(debugger_: FakeDebugger, method: string, params: Recor
 
 describe('P1-2 Network service 安全校验', () => {
   it('setEnabled(false) 时 networkListRequests 被拒', async () => {
-    const { service } = createService();
+    const { service, windows } = createService();
     const opened = await service.open({ url: 'example.com', profile: 'Work', mode: 'headless', runtimeMode: 'controlled_enhanced' });
+    expect(windows[0]!.webContents.setWebRTCIPHandlingPolicy).toHaveBeenCalledWith('disable_non_proxied_udp');
     service.setEnabled(true);
     await service.takeSnapshot({ sessionId: opened.session.id });
     service.setEnabled(false);

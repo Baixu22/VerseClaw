@@ -6,6 +6,8 @@ packages:
   - 'packages/versebrowser'
   - 'resources/verseshell-mcp'
 
+shamefullyHoist: true
+
 overrides:
   isbinaryfile: ^5.0.0
 

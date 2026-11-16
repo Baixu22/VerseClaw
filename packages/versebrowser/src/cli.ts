@@ -63,6 +63,13 @@ async function loadFacade(
   return result.facade;
 }
 
+async function openFacade(kitesurf: boolean): Promise<AgentBrowserFacade> {
+  if (!kitesurf) return loadFacade();
+  const { AgentBrowserFacade } = await import('./engine/facade.ts');
+  const { profileForKitesurf } = await import('./engine/driver-profile.ts');
+  return new AgentBrowserFacade({ api: {} as never, driverProfile: profileForKitesurf() });
+}
+
 /**
  * A persistent session holds a CDP socket open, which would keep the event loop
  * alive after the result is printed. Flush stdout, then exit deliberately.
@@ -157,13 +164,20 @@ export function createCli(): Command {
     .option('--profile <profile>', 'profile name')
     .option('--mode <mode>', 'headless|visible')
     .option('--cdp <endpoint>', 'attach to an existing CDP endpoint instead of launching')
-    .action(async (opts: { url?: string; profile?: string; mode?: string; cdp?: string }) => {
-      const facade = await loadFacade();
+    .option('--kitesurf', 'treat --cdp as a loopback Kitesurf engine')
+    .action(async (opts: { url?: string; profile?: string; mode?: string; cdp?: string; kitesurf?: boolean }) => {
+      let kitesurf = opts.kitesurf === true;
+      if (!kitesurf && opts.cdp) {
+        const { readCdpVersion, isKitesurfVersion } = await import('./engine/kitesurf-cdp.ts');
+        kitesurf = isKitesurfVersion(await readCdpVersion(opts.cdp).catch(() => undefined));
+      }
+      const facade = await openFacade(kitesurf);
       const opened = await facade.open({
         ...(opts.url ? { url: opts.url } : {}),
         ...(opts.profile ? { profile: opts.profile } : {}),
         ...(opts.mode === 'headless' || opts.mode === 'visible' ? { mode: opts.mode } : {}),
         ...(opts.cdp ? { cdpEndpoint: opts.cdp, connectionMode: 'cdp' as const } : {}),
+        ...(kitesurf ? { browser: 'kitesurf' as const } : {}),
       });
       printResult(opened);
       const sessionId = (opened.data as { session?: { id?: string } } | undefined)?.session?.id;
@@ -208,6 +222,16 @@ export function createCli(): Command {
           ...(opts.name ? { fileName: opts.name } : {}),
         }),
       );
+    });
+
+  live('pdf')
+    .description('Render the current Kitesurf page to a PDF under .ae/evidence/pdf/')
+    .requiredOption('--session <id>', 'session id')
+    .option('--name <file>', 'file name under pdf/')
+    .option('--no-background', 'omit background graphics')
+    .action(async (opts: { session: string; name?: string; background?: boolean }) => {
+      const facade = await loadFacade();
+      printResult(await facade.pdfToDisk(opts.session, { ...(opts.name ? { fileName: opts.name } : {}), printBackground: opts.background !== false }));
     });
 
   live('console')

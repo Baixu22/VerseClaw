@@ -1,0 +1,51 @@
+{
+  "schema": "clawx.kitesurf-loopback-cdp/v2",
+  "driven_by": "agent",
+  "actor": "codex",
+  "liveEngine": false,
+  "remoteBrowserRun": false,
+  "sourceHashes": {
+    "packages/versebrowser/src/engine/kitesurf-cdp.ts": "992fb4ea7ef2f0311d8a05a6032a12cd615e63c808e817f3cbeba6530b070cb4",
+    "packages/versebrowser/src/engine/service.ts": "7eeb08edc22e388c7ac7d171d4eea1565fce8fb0411e0af128a15cb629963748",
+    "packages/versebrowser/src/engine/playwright-host-api.ts": "1820b67d2929104f1e43636b3ca708b846a4286a696ac8e5f3b0c4bc6fb843d1",
+    "packages/versebrowser/src/engine/persistent-sessions.ts": "b2ec309cf2b6f98ea634e98d39d6408a23119cfbb4aa2638278ae0638768b3c6",
+    "packages/versebrowser/src/cli.ts": "4b17db0f4c1ca180dd9fe16224af9e55fc544dc98da204e17c000c1615be0722",
+    "packages/versebrowser/src/types/host-api.ts": "faf159cc7468f04f8885fb01dcb2effc9bfd263b7522f935e6bc9c869eb53e29",
+    "packages/versebrowser/src/engine/kitesurf-session.ts": "d428d6875a6275fa47f838d492ca767f991f538a74e08752ca3b0efd659bae09",
+    "packages/versebrowser/src/engine/upstream-control.ts": "57100d6cf4a3e8cb3e9812e26f1fdb8a25178e18e143fa3dc73d109434162e7c",
+    "packages/versebrowser/src/engine/facade.ts": "580052b4ab742238d91c30dbb6bddec0667303b7c0992b1b68a88c82e17dc01c",
+    "packages/versebrowser/src/engine/driver-profile.ts": "c82907eb8ed7b7be1cc1508f8cc9a4841bb0a25248c37d2817b9f2ecaa321ea9",
+    "packages/versebrowser/src/evidence/output.ts": "5d3eb307c5f81a7b683856274e91b26b075f64cdfc00576b51746d8b3d013229",
+    "scripts/kitesurf-local-runtime.mjs": "4feefe23a1dd03399e5aabedac34d07c83d9204496a8e4b3fa2c15e6064f7554",
+    "pnpm-workspace.yaml": "09032c26656852712da8f0c25af16f9156162d67cba6fa633bef40f408298ff3",
+    "scripts/contract-check.mjs": "b1edfdceaaafab017d195462f0de36dcd768097d49e01beeb9e2a0dc9a4f6961",
+    "vitest.agent-dev.node.config.ts": "89cea603aaa5f854ac4a2bb4ff8e447c352e62a54bd22fc273a7dd2c4dcae301",
+    "scripts/typecheck-agent-dev.mjs": "04d3306e3685e453130d51f7e571984f562bc8d36cf108f4d2517ab3bace230b",
+    "tests/unit/typecheck-gate.test.ts": "23dd25334137fbcdcbe525ef5f96e7a58fa9049dc6198bedd10a5eb3ab821fc7"
+  },
+  "observations": {
+    "allLoopbackFamilies": true,
+    "nativeProfileMatchesAdapter": true,
+    "versionIdentity": true,
+    "desktopRejectedBeforeWindow": true,
+    "connectCallsAfterRejection": 0,
+    "sessionEngine": "kitesurf",
+    "probedBeforeConnect": true,
+    "statusSynchronous": true,
+    "screenshotCallsAfterAttach": 1,
+    "bannedActions": [
+      "uploadFiles",
+      "downloadFile",
+      "semanticRead"
+    ],
+    "restoredUnsupportedActionBlockedBeforeConnect": true,
+    "restoredIdentityRevalidated": true,
+    "evaluateCallsAfterAutoDetect": 1,
+    "chromiumFallbackOnProbeFailure": true,
+    "noChromiumResourcesCreated": true,
+    "cliFlagForwarded": true,
+    "cliAutoDetectForwarded": true
+  },
+  "executedAt": "2026-11-16T02:29:07.142Z",
+  "testSourceHash": "3bd6fa2ec75b83cc75d385a19d25d6b423c2f080b5cdafd1c76de6dcd7bb7a9b"
+}

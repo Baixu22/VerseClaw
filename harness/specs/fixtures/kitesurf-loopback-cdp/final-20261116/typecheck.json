@@ -1,0 +1,46 @@
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 18532,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\ClawX-work\\kitesurf-cdp-20261114\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": true,
+    "status": "miss",
+    "key": "deb9759d3741b46d0c32ea5e7b8ae5a5797404ca7fbb6ab1cff4b8f9bafc866c",
+    "inputCount": 13910,
+    "report": "D:\\ClawX-work\\kitesurf-cdp-20261114\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 44684,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 144
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 17576
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 10257
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 18532,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\ClawX-work\\kitesurf-cdp-20261114\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}
