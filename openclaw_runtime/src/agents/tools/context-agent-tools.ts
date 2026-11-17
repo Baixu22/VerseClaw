@@ -10,6 +10,8 @@
  * same shell factory as the original three BlockStore tools.
  */
 import { createHash } from "node:crypto";
+import path from "node:path";
+import { realpath } from "node:fs/promises";
 import { Type } from "typebox";
 import { normalizeArchiveHandle } from "../../../../shared/types/context-item.js";
 import {
@@ -64,13 +66,23 @@ import {
   writeContext,
   type WriteOperation,
 } from "../../context-engine/tools/context-write-tool.js";
-import { analyzeImpact } from "../../context-engine/views/impact/impact-view.js";
 import {
   buildContextPack,
   DEFAULT_PACK_BUDGET_CHARS,
 } from "../../context-engine/views/pack/context-pack-view.js";
 import { buildQueryContext } from "../../context-engine/views/retrieval/query-context.js";
 import { retrieveHybrid } from "../../context-engine/views/retrieval/hybrid-retriever.js";
+import { parseImpactTarget } from "../../context-engine/views/impact/impact-view.js";
+import { expandCodeRelationships } from "../../context-engine/views/retrieval/relationship-expansion.js";
+import {
+  readTaskContextHint,
+  readTaskContextHintSnapshot,
+} from "../../knowledge/retrieval/task-context-hint.js";
+import type { TaskContextHintV1 } from "../../../../shared/knowledge/code-task-context.js";
+import { resolveAgentWorkspaceDir, resolveSessionAgentId } from "../agent-scope.js";
+import { getSessionEntry } from "../../config/sessions/store.js";
+import { resolveStorePath } from "../../config/sessions/paths.js";
+import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { buildReuseCandidateReport } from "../../context-engine/views/reuse-detector.js";
 import { reviewDiff } from "../../context-engine/views/verify/review-diff-view.js";
 import { type AnyAgentTool, jsonResult, readStringParam, asToolParamsRecord } from "./common.js";
@@ -214,7 +226,7 @@ const ContextImpactSchema = Type.Object({
   }),
   depth: Type.Optional(
     Type.Number({
-      description: "Caller/callee chain depth (default 2).",
+      description: "Relationship depth (default 1, hard maximum 2).",
     }),
   ),
 });
@@ -231,6 +243,29 @@ const ContextUnderstandSchema = Type.Object({
   budgetChars: Type.Optional(
     Type.Number({
       description: "Character budget for the pack (default from W0-4).",
+    }),
+  ),
+  intent: Type.Optional(
+    Type.String({
+      enum: ["lookup", "relationship", "research"],
+      description:
+        "Use relationship or research for exact bounded code-graph expansion; defaults to lookup.",
+    }),
+  ),
+  depth: Type.Optional(
+    Type.Number({
+      minimum: 1,
+      maximum: 2,
+      description: "Relationship hops: defaults to 1, hard maximum 2.",
+    }),
+  ),
+  maxNodes: Type.Optional(
+    Type.Number({ minimum: 1, maximum: 32, description: "Relationship endpoint cap, at most 32." }),
+  ),
+  includeTaskHint: Type.Optional(
+    Type.Boolean({
+      description:
+        "Include the currently bound task revision, constraints and evidence references; defaults to true for relationship requests.",
     }),
   ),
 });
@@ -361,6 +396,130 @@ function viewToolBlockedResult(
 
 function flushService(service: WorkspaceFactService): void {
   service.materializer.flushTouched();
+}
+
+async function relationshipToolResult(
+  options: DcsContextAgentToolOptions,
+  service: WorkspaceFactService,
+  query: string,
+  params: Record<string, unknown>,
+) {
+  const canonical = (value: string) => realpath(path.resolve(value));
+  const ownerRoot = await canonical(service.repoRoot);
+  const sessionKey = options.runSessionKey || options.agentSessionKey;
+  const cfg = options.config as OpenClawConfig | undefined;
+  const agentId =
+    cfg && sessionKey ? resolveSessionAgentId({ config: cfg, sessionKey }) : undefined;
+  const session = () =>
+    cfg && agentId && sessionKey
+      ? getSessionEntry({
+          agentId,
+          sessionKey,
+          storePath: resolveStorePath(cfg.session?.store, { agentId }),
+        })
+      : undefined;
+  const initial = session();
+  const sessionPin = (entry: ReturnType<typeof session>) =>
+    JSON.stringify([
+      entry?.sessionId,
+      entry?.workspaceDir,
+      entry?.workspaceId,
+      entry?.executionMigration,
+    ]);
+  let taskHint: TaskContextHintV1 | undefined;
+  const assertCurrent = async (filePath?: string) => {
+    if (
+      requireViewFactService(options) !== service ||
+      (await canonical(options.workspaceRoot || service.repoRoot)) !== ownerRoot
+    )
+      throw new Error("workspace_changed");
+    if (cfg && sessionKey) {
+      const current = session();
+      if (
+        !initial ||
+        !current ||
+        current.sessionId !== options.sessionId ||
+        sessionPin(current) !== sessionPin(initial)
+      )
+        throw new Error("session_changed");
+      if (
+        (await canonical(current.workspaceDir || resolveAgentWorkspaceDir(cfg, agentId!))) !==
+        ownerRoot
+      )
+        throw new Error("workspace_changed");
+    }
+    if (filePath === "" && taskHint?.status === "available")
+      taskHint = readTaskContextHintSnapshot({
+        workspaceRoot: ownerRoot,
+        sessionKey,
+        generation: initial?.sessionId || options.sessionId,
+        sourceRef: taskHint.sourceRef,
+      });
+  };
+  await assertCurrent();
+  const active = Array.isArray(params.activeFiles)
+    ? params.activeFiles.filter((file): file is string => typeof file === "string")
+    : [];
+  const context = buildQueryContext(query);
+  let seeds = [...new Set(active)];
+  let seedReason: string | undefined;
+  if (!seeds.length) {
+    for (const token of [query.trim(), ...context.codeTokens]) {
+      const file = token.replace(/[:#][^/\\:#]+$/, "");
+      if (service.store.getFileRecord(service.repoRoot, file)) seeds.push(file);
+    }
+    if (!seeds.length) {
+      const names = [
+        ...new Set([...context.codeTokens, ...context.lexicalTerms.map((term) => term.term)]),
+      ];
+      const matched = names.flatMap((name) =>
+        service.store
+          .findSymbolByNameLike(service.repoRoot, name)
+          .filter(
+            (symbol) => symbol.kind !== "file" && symbol.name.toLowerCase() === name.toLowerCase(),
+          ),
+      );
+      seeds = [...new Set(matched.map((symbol) => symbol.filePath))];
+      if (seeds.length > 1) {
+        seeds = [];
+        seedReason = "ambiguous_symbol_use_exact_path";
+      }
+    }
+  }
+  if (!seeds.length && !seedReason && params.target === undefined)
+    seeds = [...new Set(options.activeFiles ?? [])];
+  taskHint = await readTaskContextHint({
+    workspaceRoot: ownerRoot,
+    sessionKey,
+    generation: initial?.sessionId || options.sessionId,
+    enabled: params.includeTaskHint !== false,
+    assertCurrent,
+  });
+  const { expansion, snippets } = await expandCodeRelationships({
+    store: service.store,
+    repoRoot: service.repoRoot,
+    seeds: [...new Set(seeds)],
+    intent: params.intent === "research" ? "research" : "relationship",
+    depth: typeof params.depth === "number" ? params.depth : undefined,
+    maxNodes: typeof params.maxNodes === "number" ? params.maxNodes : undefined,
+    budgetChars: typeof params.budgetChars === "number" ? params.budgetChars : options.budgetChars,
+    assertCurrent,
+  });
+  await assertCurrent("");
+  if (seedReason) expansion.rejected.push({ filePath: "", reason: seedReason });
+  codingObservability.recordFactStoreHit(snippets.length > 0);
+  return {
+    ok: expansion.status === "complete" || expansion.status === "partial",
+    answerable: snippets.length > 0,
+    editReadiness: "investigate_only",
+    mode: "explain",
+    projectId: service.materializer.projectId,
+    snippets,
+    relationships: expansion,
+    taskHint,
+    missingEvidence: expansion.rejected.map((item) => `${item.filePath}: ${item.reason}`),
+    nextQueries: [],
+  };
 }
 
 function recordViewCall(toolName: string): void {
@@ -692,30 +851,74 @@ export function createContextImpactTool(options: DcsContextAgentToolOptions): An
           ? params.depth
           : undefined;
       flushService(service);
-      const analysis = analyzeImpact(
-        service.store,
-        service.repoRoot,
-        target,
-        depth !== undefined ? { depth } : {},
+      const result = await relationshipToolResult(options, service, target, {
+        ...params,
+        depth,
+        includeTaskHint: false,
+      });
+      const files = result.relationships.sources.map((source) => source.subjectId);
+      const symbols = files.flatMap((file) =>
+        service.store.getSymbolsByFile(service.repoRoot, file),
       );
-      const hasHits = analysis.matchedSymbols.length > 0 || analysis.callers.length > 0;
-      codingObservability.recordFactStoreHit(hasHits);
+      const caller = (edge: (typeof result.relationships.edges)[number], outgoing: boolean) => {
+        const symbol = symbols.find(
+          (symbol) => symbol.id === (outgoing ? edge.targetSymbolId : edge.sourceSymbolId),
+        );
+        return {
+          name: outgoing ? edge.targetSymbol : edge.sourceSymbol,
+          filePath: outgoing ? edge.target.subjectId : edge.source.subjectId,
+          kind: symbol?.kind || "unknown",
+          startLine: symbol?.startLine || edge.line,
+          endLine: symbol?.endLine || edge.line,
+          depth: edge.depth,
+          via: outgoing ? edge.sourceSymbol : edge.targetSymbol,
+        };
+      };
+      const targetSpec = parseImpactTarget(target);
+      const matched = symbols.filter(
+        (symbol) =>
+          symbol.kind !== "file" &&
+          (targetSpec.qualified
+            ? symbol.filePath === targetSpec.filePath && symbol.name === targetSpec.symbolName
+            : symbol.name === target || symbol.filePath === targetSpec.normalized),
+      );
+      const calls = result.relationships.edges.filter((edge) => edge.kind === "calls");
+      const chain = (outgoing: boolean) => {
+        let frontier = new Set(matched.map((symbol) => symbol.id));
+        const seen = new Set<string>(),
+          found: ReturnType<typeof caller>[] = [];
+        for (let level = 1; level <= result.relationships.maxDepth && frontier.size; level++) {
+          const next = new Set<string>();
+          for (const edge of calls) {
+            if (!frontier.has(outgoing ? edge.sourceSymbolId : edge.targetSymbolId)) continue;
+            const id = outgoing ? edge.targetSymbolId : edge.sourceSymbolId;
+            if (seen.has(id)) continue;
+            seen.add(id);
+            next.add(id);
+            found.push({ ...caller(edge, outgoing), depth: level });
+          }
+          frontier = next;
+        }
+        return found;
+      };
+      const callers = chain(false),
+        callees = chain(true);
       return jsonResult({
-        ok: true,
-        target: analysis.target,
-        riskLevel: analysis.riskLevel,
-        matchedSymbols: analysis.matchedSymbols.map((symbol) => ({
+        ...result,
+        target,
+        riskLevel: files.length > 12 ? "high" : files.length > 4 ? "medium" : "low",
+        matchedSymbols: matched.map((symbol) => ({
           name: symbol.name,
           filePath: symbol.filePath,
           kind: symbol.kind,
           startLine: symbol.startLine,
           endLine: symbol.endLine,
         })),
-        callers: analysis.callers,
-        callees: analysis.callees,
-        impactedFiles: analysis.impactedFiles,
+        callers,
+        callees,
+        impactedFiles: files,
         // Radius evidence for C0-1' acceptance: callers with depth + via.
-        evidence: analysis.callers.slice(0, 8).map((caller) => ({
+        evidence: callers.slice(0, 8).map((caller) => ({
           name: caller.name,
           filePath: caller.filePath,
           depth: caller.depth,
@@ -747,6 +950,10 @@ export function createContextUnderstandTool(
       recordViewCall(CONTEXT_UNDERSTAND_TOOL_NAME);
       const params = asToolParamsRecord(args);
       const query = readStringParam(params, "query", { required: true })!;
+      if (params.intent === "relationship" || params.intent === "research") {
+        flushService(service);
+        return jsonResult(await relationshipToolResult(options, service, query, params));
+      }
       const activeFromArgs = Array.isArray(params.activeFiles)
         ? params.activeFiles.filter((entry): entry is string => typeof entry === "string")
         : undefined;

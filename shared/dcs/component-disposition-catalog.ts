@@ -182,7 +182,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.dcs-context-tools', label: 'DCS fact views and context tools', disposition: 'default', owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'opt-in', targetDefaultMode: 'baseline',
     ...user('model context_read/search/understand tools in ordinary Chat'),
     currentConsumers: ['context_read', 'context_search', 'context_understand', 'tool catalog'], evidenceRefs: [...CONTEXT_EVIDENCE, LANDED],
-    coverage: { authorityComponentIds: ['dcs-fact-view-and-tools'], dcsFlagIds: ['context-view-tools', 'context-tools-alias'], runtimeLeafPatterns: ['contextBlock.context-write.*', 'contextBlock.context-understand.*'] },
+    coverage: { authorityComponentIds: ['dcs-fact-view-and-tools'], dcsFlagIds: ['context-view-tools', 'context-tools-alias', 'project-rag-code-relationships', 'project-rag-task-context-hint'], runtimeLeafPatterns: ['contextBlock.context-write.*', 'contextBlock.context-understand.*'] },
   }),
   entry({
     id: 'component.role-memory', label: 'Role-memory card governance', disposition: 'default', owner: 'role-memory-card-governance', implementationNodeId: 'TF-0498', currentMode: 'opt-in', targetDefaultMode: 'baseline',

@@ -36,6 +36,22 @@ export type DcsProdFlagEntry = {
 
 export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
   {
+    id: 'project-rag-code-relationships', wave: 'RAG-15', kind: 'request',
+    key: 'context_understand.intent', defaultDisplay: 'lookup', defaultValue: 'lookup', risk: 'request-only',
+    enable: 'Request relationship or research in the normal coding context tool; context_impact explicitly requests the same exact relationship discovery.',
+    rollback: 'Use lookup; the existing context-view-tools rollback removes the tool family.',
+    riskNote: 'Current owner/version checks admit each endpoint; traversal defaults to one hop and is capped at two hops and 32 files.',
+    executor: { status: 'wired', sites: ['openclaw_runtime/src/agents/tools/context-agent-tools.ts:401'] },
+  },
+  {
+    id: 'project-rag-task-context-hint', wave: 'RAG-15', kind: 'request',
+    key: 'context_understand.includeTaskHint', defaultDisplay: 'true for relationship/research', defaultValue: true, risk: 'request-only',
+    enable: 'Read the bound task revision, constraints and evidence references in an explicit relationship request or taskLedger.contextHint.',
+    rollback: 'Set includeTaskHint=false; the independent taskLedger.contextHint request accepts enabled=false.',
+    riskNote: 'The current session generation and Task Ledger binding own the read; changed or missing bindings return a gap without a task write.',
+    executor: { status: 'wired', sites: ['openclaw_runtime/src/knowledge/retrieval/task-context-hint.ts:129'] },
+  },
+  {
     id: 'project-rag-default-profile', wave: 'RAG-12', kind: 'config',
     key: 'plugins.entries.memory-wiki.config.retrieval.profile', defaultDisplay: 'local',
     defaultValue: PROJECT_RAG_DEFAULTS.profile, risk: 'opt-in',

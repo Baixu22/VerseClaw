@@ -5079,6 +5079,8 @@ export type TaskSystemQueryPayload = TaskLedgerWorkspacePayload & import('../tas
 export type TaskSystemQueryResult = HostSuccess & import('../task-system/types').TaskPage;
 export type TaskSessionPayload = { workspaceId: string; sessionKey: string };
 export type TaskSessionResult = HostSuccess & import('../task-system/types').TaskSessionSnapshot;
+export type TaskContextHintPayload = TaskSessionPayload & { enabled?: boolean; sourceRef?: SourceRefV2 };
+export type TaskContextHintResult = HostSuccess & { hint: import('../knowledge/code-task-context').TaskContextHintV1 };
 export type TaskLedgerSnapshotResult = HostSuccess & { snapshot: TaskLedgerSnapshot };
 export type TaskLedgerAppendEventsPayload = TaskLedgerWorkspacePayload & {
   events: TaskLedgerEventInput[];
@@ -6396,6 +6398,7 @@ export type HostApiContract = {
     managedTasks: (payload?: TaskLedgerWorkspacePayload) => TaskSystemListResult;
     queryTasks: (payload?: TaskSystemQueryPayload) => TaskSystemQueryResult;
     sessionTask: (payload: TaskSessionPayload) => TaskSessionResult;
+    contextHint: (payload: TaskContextHintPayload) => TaskContextHintResult;
     command: (payload: TaskSystemCommandPayload) => TaskSystemCommandResult;
     snapshot: (payload?: TaskLedgerWorkspacePayload) => TaskLedgerSnapshotResult;
     appendEvents: (payload: TaskLedgerAppendEventsPayload) => TaskLedgerSnapshotResult;

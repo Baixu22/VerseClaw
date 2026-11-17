@@ -1644,6 +1644,16 @@ export class TaskSystemStore {
         .all(taskNodeId) as Row[]
     ).map((row) => JSON.parse(row.json) as TaskEvidence);
   }
+  /** Checkpoint writes and contract revisions share the owner event sequence. */
+  getTaskCheckpointRevision(taskNodeId: string): number | undefined {
+    this.get(taskNodeId);
+    const row = this.db.prepare(`SELECT json FROM task_events
+      WHERE task_id=? AND kind IN ('created','revised')
+        AND seq <= (SELECT max(seq) FROM task_events WHERE task_id=? AND kind='checkpoint')
+      ORDER BY seq DESC LIMIT 1`).get(taskNodeId, taskNodeId) as Row | undefined;
+    const revision = row ? (JSON.parse(row.json) as TaskContract).revision : undefined;
+    return Number.isSafeInteger(revision) && Number(revision) > 0 ? revision : undefined;
+  }
   replayCompletedTask(
     taskNodeId: string,
     sessionKey: string,

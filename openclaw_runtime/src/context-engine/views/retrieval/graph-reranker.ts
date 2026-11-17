@@ -7,10 +7,13 @@
 // work lands with the impact view (Task G).
 import type { FactStore } from "../../factstore/store.js";
 import type { SearchHit } from "./hybrid-retriever.js";
+import type { SourceRefV2 } from "../../../runtime-core/knowledge-owner-read.js";
 
 export interface GraphRerankOptions {
   maxSeeds?: number;
   proximityBoost?: number;
+  /** Exact endpoint pins produced by the owner-admitted relationship expansion. */
+  admittedSources?: readonly SourceRefV2[];
 }
 
 const DEFAULT_MAX_SEEDS = 3;
@@ -22,18 +25,32 @@ export function rerankWithGraph(
   hits: SearchHit[],
   options: GraphRerankOptions = {},
 ): SearchHit[] {
-  if (hits.length <= 1) return hits;
+  if (hits.length <= 1 || !options.admittedSources?.length) return hits;
   const maxSeeds = options.maxSeeds ?? DEFAULT_MAX_SEEDS;
   const proximityBoost = options.proximityBoost ?? DEFAULT_PROXIMITY_BOOST;
 
   const seedFiles = uniqueFilesByScore(hits).slice(0, maxSeeds);
   if (seedFiles.length === 0) return hits;
-  const neighborhood = importNeighborhood(store, repoRoot, seedFiles);
+  const neighborhood = new Map(
+    options.admittedSources
+      .filter((source) => source.domain === "code")
+      .map((source) => [source.subjectId, source]),
+  );
 
   return hits
     .map((hit) => {
       const filePath = hit.chunk.filePath;
-      if (seedFiles.includes(filePath) || !neighborhood.has(fileStem(filePath))) return hit;
+      const pin = neighborhood.get(filePath);
+      const file = store.getFileRecord(repoRoot, filePath);
+      if (
+        seedFiles.includes(filePath) ||
+        !pin ||
+        !file ||
+        file.status !== "fresh" ||
+        pin.authorityId !== hit.chunk.projectId ||
+        pin.sourceDigest !== `sha256:${file.provenance.producedHash}`
+      )
+        return hit;
       const boosted = hit.score + proximityBoost;
       return {
         ...hit,
@@ -59,41 +76,4 @@ function uniqueFilesByScore(hits: SearchHit[]): string[] {
     }
   }
   return [...bestByFile.entries()].sort((a, b) => b[1] - a[1]).map(([filePath]) => filePath);
-}
-
-/**
- * 1-hop neighborhood as file stems: everything a seed file imports or calls into,
- * plus files that import the seed (matched by module-specifier stem — resolving
- * specifiers to concrete files is Task G territory).
- */
-function importNeighborhood(store: FactStore, repoRoot: string, seedFiles: string[]): Set<string> {
-  const neighborhood = new Set<string>();
-  const seedStems = new Set(seedFiles.map(fileStem));
-  for (const seed of seedFiles) {
-    for (const edge of store.getEdgesByFile(repoRoot, seed)) {
-      if (edge.kind !== "imports" && edge.kind !== "calls") continue;
-      const source = edge.metadata?.source;
-      if (typeof source === "string") neighborhood.add(specifierStem(source));
-      const targetName = edge.metadata?.targetName;
-      if (typeof targetName === "string") neighborhood.add(targetName.toLowerCase());
-    }
-  }
-  for (const edge of store.getEdgesByKind(repoRoot, "imports")) {
-    const source = edge.metadata?.source;
-    const sourceFile = edge.metadata?.sourceFile;
-    if (typeof source !== "string" || typeof sourceFile !== "string") continue;
-    if (seedStems.has(specifierStem(source))) neighborhood.add(fileStem(sourceFile));
-  }
-  return neighborhood;
-}
-
-function fileStem(filePath: string): string {
-  const base = filePath.replaceAll("\\", "/").split("/").pop() ?? filePath;
-  return base.replace(/\.[^.]+$/, "").toLowerCase();
-}
-
-function specifierStem(specifier: string): string {
-  const cleaned = specifier.replace(/['"]/g, "");
-  const base = cleaned.split("/").pop() ?? cleaned;
-  return base.replace(/\.(js|ts|mjs|cjs|jsx|tsx)$/, "").toLowerCase();
 }

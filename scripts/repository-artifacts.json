@@ -3458,6 +3458,7 @@
     "docs/dev/pending-worktree-consolidation.md",
     "docs/dev/project-rag/ANSWER-CITATION-CONTRACT.md",
     "docs/dev/project-rag/CHAT-INTERACTION-CONTRACT.md",
+    "docs/dev/project-rag/CODE-TASK-CONTEXT-CONTRACT.md",
     "docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md",
     "docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md",
     "docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md",

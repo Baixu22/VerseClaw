@@ -59,7 +59,9 @@ describe('ComponentDispositionManifest/v1', () => {
     expect(COMPONENT_DISPOSITION_MANIFEST.schemaVersion).toBe('ComponentDispositionManifest/v1');
     expect(new Set(COMPONENT_DISPOSITION_ENTRIES.map((entry) => entry.id)).size).toBe(COMPONENT_DISPOSITION_ENTRIES.length);
     expect(COMPONENT_AUTHORITY_MANIFEST.components).toHaveLength(35);
-    expect(DCS_PROD_FLAGS).toHaveLength(25);
+    expect(DCS_PROD_FLAGS).toHaveLength(27);
+    expect(COMPONENT_DISPOSITION_ENTRIES.find(entry => entry.id === 'component.dcs-context-tools')?.coverage.dcsFlagIds)
+      .toEqual(['context-view-tools', 'context-tools-alias', 'project-rag-code-relationships', 'project-rag-task-context-hint']);
     expect(runtimeLeafPaths.length).toBeGreaterThan(100);
   });
 

@@ -464,6 +464,8 @@ quality/research 的 providerRef 必须引用已有凭据系统；未配置时�
 - **Memory**：native memory provider/file 和 Role Memory card 用独立 adapter 与 namespace，遵守现有 read/use gates。不能因为 UI 的 memory/all 标签相同而互换 id。Runtime Memory 诊断域不进入 active。
 - **Code Graph**：使用 FactStore 符号/边和源码版本；修正文件 stem 歧义。一跳默认、两跳上限；只支持 relationship/research 中的有界扩展。代码片段沿代码 DCS 路径，不复制为 Wiki 真相。
 - **Task Ledger**：提供当前 task revision、约束和 evidence refs；不由 RAG 创建 root、接受任务事实、写入长期知识或决定运行状态。
+
+代码关系通过正常编码会话的 `context_understand`（显式 `relationship`／`research`）和 `context_impact` 消费 FactStore；相对模块和真实调用绑定都经过当前源码复验，最多两跳、32 个文件落点。`taskLedger.contextHint` 从 Main 当前 owner 身份读取既有任务绑定，并固定 task revision、约束与证据引用。入口、降级原因、源码范围与回滚方式见[代码关系与任务线索](../project-rag/CODE-TASK-CONTEXT-CONTRACT.md)。
 - **RSI**：只复用实验身份和配对评测纪律；本程序有独立的 `ProjectRagPromotionPolicy/v1`。原 RSI NO_GO 不重签，retrieval feedback 不自动改排序或确认经验。
 - **反馈**：attach/dismiss 是弱交互信号；实际入模来自 DCS receipt；adoption 需要同 run observed operation。重复信号幂等，来源被删时执行既有保留/删除规则。
 

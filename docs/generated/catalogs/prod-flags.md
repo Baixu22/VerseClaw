@@ -3,11 +3,39 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-11-14T22:21:06.672Z
+Generated at: 2026-11-08T11:13:56.681Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
 This file is generated — edit the source of truth instead.
+
+## project-rag-code-relationships
+
+- wave: RAG-15
+- kind: request
+- key: `context_understand.intent`
+- default: "lookup"
+- defaultDisplay: lookup
+- risk: request-only
+- enable: Request relationship or research in the normal coding context tool; context_impact explicitly requests the same exact relationship discovery.
+- rollback: Use lookup; the existing context-view-tools rollback removes the tool family.
+- executor: wired — `openclaw_runtime/src/agents/tools/context-agent-tools.ts:401`
+
+> Current owner/version checks admit each endpoint; traversal defaults to one hop and is capped at two hops and 32 files.
+
+## project-rag-task-context-hint
+
+- wave: RAG-15
+- kind: request
+- key: `context_understand.includeTaskHint`
+- default: true
+- defaultDisplay: true for relationship/research
+- risk: request-only
+- enable: Read the bound task revision, constraints and evidence references in an explicit relationship request or taskLedger.contextHint.
+- rollback: Set includeTaskHint=false; the independent taskLedger.contextHint request accepts enabled=false.
+- executor: wired — `openclaw_runtime/src/knowledge/retrieval/task-context-hint.ts:129`
+
+> The current session generation and Task Ledger binding own the read; changed or missing bindings return a gap without a task write.
 
 ## project-rag-default-profile
 

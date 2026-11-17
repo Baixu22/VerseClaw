@@ -357,6 +357,8 @@
 
 支持跨文件关系与任务相关证据发现，避免创建通用图权威。
 
+入口、数据字段、精确路径／符号解析、逐落点准入、任务版本固定和回滚方式见[代码关系与任务线索合同](CODE-TASK-CONTEXT-CONTRACT.md)。
+
 - Owner：FactStore / Task Ledger / retrieval。
 - 契约：RelationshipExpansion/v1、TaskContextHint/v1。
 - 落点：`openclaw_runtime/src/context-engine/views/retrieval/**`、`openclaw_runtime/src/context-engine/factstore/**`、`electron/services/task-ledger-api.ts`、`openclaw_runtime/src/knowledge/retrieval/**`。
