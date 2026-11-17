@@ -118,8 +118,8 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc.mock.calls.filter(([method]) => method === 'wiki.get')).toHaveLength(1);
   });
 
-  it.each(['native-memory', 'role-memory'] as const)('reads %s for SourceSet answers and preserves Studio pins', async domain => {
-    const owner = domain === 'native-memory' ? 'native-memory' : 'memory-slot';
+  it.each(['native-memory', 'role-memory', 'experience'] as const)('reads %s for SourceSet answers and preserves Studio pins', async domain => {
+    const owner = domain === 'native-memory' ? 'native-memory' : domain === 'experience' ? 'sekb' : 'memory-slot';
     const namespaceId = `${owner}:host-source-fixture`;
     let changed = false;
     const snapshotFor = (identity: { workspaceId?: string; workspaceDir?: string; agentSessionKey?: string; sessionId?: string }) => {
@@ -135,7 +135,7 @@ describe('knowledge host API', () => {
     };
     const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
       if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
-      if (method === 'memory.readSource') return { status: 'admitted', snapshot: snapshotFor(params.readIdentity as never) };
+      if (method === 'memory.readSource' || method === 'sekb.readSource') return { status: 'admitted', snapshot: snapshotFor(params.readIdentity as never) };
       throw Error(`Unexpected memory source RPC ${method}`);
     }) };
     const { prepareKnowledgeReadScope } = await import('@electron/services/knowledge-read-scope');
@@ -147,10 +147,10 @@ describe('knowledge host API', () => {
     const answer = await api.answerFromSourceSet({ question: 'Review memory source', sourceRefs: [ref] });
     expect(answer.sources).toHaveLength(1);
     expect(answer.sources[0].citation).toMatchObject({ owner, sourceRef: pin });
-    expect(answer.retrievalDiagnostics).toMatchObject({ corpus: 'memory', items: [
-      expect.objectContaining({ owner, sourceRef: pin, sourceKind: domain === 'native-memory' ? 'memory-file' : 'memory-card' }),
+    expect(answer.retrievalDiagnostics).toMatchObject({ corpus: domain === 'experience' ? 'all' : 'memory', items: [
+      expect.objectContaining({ owner, sourceRef: pin, sourceKind: domain === 'native-memory' ? 'memory-file' : domain === 'experience' ? 'sekb-principle' : 'memory-card' }),
     ] });
-    expect(await api.get({ lookup: pin.subjectId, sourceRef: pin, corpus: 'memory' })).toMatchObject({ success: true });
+    expect(await api.get({ lookup: pin.subjectId, sourceRef: pin, corpus: domain === 'experience' ? 'all' : 'memory' })).toMatchObject({ success: true });
     for (const conflicting of [{ revision: 'stale-version' }, { contentDigest: digestOwnerReadContent('stale body') }, { corpus: 'wiki' as const }]) {
       const rejected = await api.get({ lookup: pin.subjectId, sourceRef: pin, ...conflicting });
       expect(rejected).toMatchObject({ success: false });
@@ -162,12 +162,12 @@ describe('knowledge host API', () => {
     changed = true;
     const stale = await api.answerFromSourceSet({ question: 'Review memory source', sourceRefs: [ref] });
     expect(stale.sources).toEqual([]);
-    expect(stale.retrievalDiagnostics).toMatchObject({ corpus: 'memory', items: [] });
+    expect(stale.retrievalDiagnostics).toMatchObject({ corpus: domain === 'experience' ? 'all' : 'memory', items: [] });
     expect(stale.answer).not.toContain('CHANGED_MEMORY_SOURCE_BODY');
     const legacy = { id: owner + ':memory-source', kind: 'file' as const };
     const unpinned = await api.answerFromSourceSet({ question: 'Review legacy memory', sourceRefs: [legacy] });
     expect(unpinned.sources).toEqual([]);
-    expect(unpinned.retrievalDiagnostics).toMatchObject({ corpus: 'memory' });
+    expect(unpinned.retrievalDiagnostics).toMatchObject({ corpus: domain === 'experience' ? 'all' : 'memory' });
     expect(unpinned.rejections).toEqual(expect.arrayContaining([expect.objectContaining({ owner, reason: 'not_found' })]));
     expect(await api.createArtifactDraft({ artifactType: 'summary', sourceRefs: [legacy] })).toMatchObject({ success: false });
     expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'wiki.get')).toBe(false);
@@ -1263,11 +1263,26 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
-  it('keeps Runtime Lessons opt-in and exposes principle provenance', async () => {
+  it('keeps Runtime Lessons opt-in and records only current acknowledged candidates', async () => {
+    let sessionId = '10000000-0000-4000-8000-000000000001';
+    let retrievalDelay = Promise.resolve();
     const gatewayManager = {
-      rpc: vi.fn(async (method: string) => {
-        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId } };
         if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
+        if (method === 'sekb.recordExposure') return { success: true, recorded: 1 };
+        if (method === 'sekb.retrieve') {
+          await retrievalDelay;
+          const identity = params.readIdentity as { sessionId: string; workspaceId: string; agentSessionKey: string; workspaceDir: string };
+          const context = deriveReadAdmissionContext({ principalId: 'operator', agentId: 'main', sessionId: identity.sessionId,
+            sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId, workspaceRootDigest: digestOwnerReadContent(identity.workspaceDir),
+            ownerNamespaces: ['sekb:test'], policyDigest: digestOwnerReadContent('policy'), egressProviderRefs: [], expiresAt: new Date(Date.now()+30000).toISOString() });
+          const snapshot = createOwnerReadSnapshot({ raw: principle.action, startChar: 0, endChar: principle.action.length, context,
+            title: principle.title, source: { domain: 'experience', authorityId: 'sekb', namespaceId: 'sekb:test', subjectId: principle.principle_id, revision: 'version' },
+            policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } });
+          return { status: 'admitted', candidates: [{ ...principle, content: snapshot.content, sourceRef: snapshot.source, snapshot }] };
+        }
+
         if (method === 'wiki.retrieve') {
           return retrievalFixture([{
               id: 'route-1',
@@ -1345,6 +1360,34 @@ describe('knowledge host API', () => {
     expect(withSourcePolicy.candidateGroups).toEqual(expect.arrayContaining([
       expect.objectContaining({ key: 'runtime_lessons' }),
     ]));
+    expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'sekb.recordExposure')).toBe(false);
+    expect(await api.recordExperienceExposure({ requestId: 'not-issued', principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    expect(await api.recordExperienceExposure({ requestId: withSourcePolicy.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: true, recorded: 1 });
+    expect(await api.recordExperienceExposure({ requestId: withSourcePolicy.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    const retrieve = () => api.routeContext({ message: '之前项目里为什么选择 managed wiki 架构？', scope: 'wiki', mode: 'suggest', sourcePolicy: { runtimeLessons: true } });
+    const expired = await retrieve();
+    const now = Date.now();
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(now + 31_000);
+    try {
+      expect(await api.recordExperienceExposure({ requestId: expired.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    } finally { clock.mockRestore(); }
+    const changed = await retrieve();
+    sessionId = '10000000-0000-4000-8000-000000000002';
+    expect(await api.recordExperienceExposure({ requestId: changed.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    const unselected = await retrieve();
+    expect(await api.recordExperienceExposure({ requestId: unselected.experienceExposureId!, principleIds: ['not-retrieved'] })).toMatchObject({ success: true, recorded: 0 });
+    const stillVisible = await retrieve();
+    let release!: () => void;
+    retrievalDelay = new Promise<void>(resolve => { release = resolve; });
+    const lateStart = gatewayManager.rpc.mock.calls.length;
+    const timedOut = await Promise.all(Array.from({ length: 64 }, () => retrieve()));
+    expect(timedOut.every(result => result.runtimeLessons?.reason === 'deadline-exceeded' && !result.experienceExposureId)).toBe(true);
+    release();
+    const lateResults = gatewayManager.rpc.mock.calls.flatMap(([method], index) => index >= lateStart && method === 'sekb.retrieve' ? [gatewayManager.rpc.mock.results[index].value] : []);
+    await Promise.all(lateResults);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(await api.recordExperienceExposure({ requestId: stillVisible.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: true, recorded: 1 });
+    expect(gatewayManager.rpc.mock.calls.filter(([method]) => method === 'sekb.recordExposure')).toHaveLength(2);
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 

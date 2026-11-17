@@ -23,6 +23,7 @@ import {
 } from "../../context-engine/context-candidate.js";
 import { type ResolvedChatKnowledgeRef } from "../../context-engine/chat-knowledge-intent.js";
 import { packKnowledgeCandidates } from "../../context-engine/project-rag-packing.js";
+import { listContextFinalSnapshots } from "../../context-engine/context-final-snapshot.js";
 import { revalidateChatKnowledgeRefs } from "../../context-engine/chat-knowledge-source-adapters.js";
 import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
@@ -953,6 +954,9 @@ function buildTaskStateFactory(params: {
  * agent_end) that other DCS factories use. Disabled by default.
  */
 function buildSekbFactory(params: {
+  chatKnowledgeRefs?: ResolvedChatKnowledgeRef[];
+  injectionTurnId?: string;
+  attemptIndex?: number;
   sekbRuntime?: EmbeddedSekbRuntime;
   cfg?: OpenClawConfig | undefined;
   lineage?: RuntimeLineage;
@@ -976,15 +980,35 @@ function buildSekbFactory(params: {
             runId: params.runId,
             sessionId: params.sessionKey ?? params.sessionId,
           })?.lineage;
-    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime, lineage, {
-      runId: params.runId ?? null,
-      sessionId: params.sessionId ?? null,
-      sessionKey: params.sessionKey ?? null,
-      taskId: params.sekbAttribution?.taskId ?? null,
-      experimentId: params.sekbAttribution?.experimentId ?? null,
-      arm: params.sekbAttribution?.arm ?? null,
-      repeat: params.sekbAttribution?.repeat ?? null,
-    });
+    installEmbeddedSekbHarnessHooks(
+      agent as unknown as SekbInstallableAgent,
+      runtime,
+      lineage,
+      {
+        runId: params.runId ?? null,
+        sessionId: params.sessionId ?? null,
+        sessionKey: params.sessionKey ?? null,
+        taskId: params.sekbAttribution?.taskId ?? null,
+        experimentId: params.sekbAttribution?.experimentId ?? null,
+        arm: params.sekbAttribution?.arm ?? null,
+        repeat: params.sekbAttribution?.repeat ?? null,
+      },
+      params.chatKnowledgeRefs !== undefined
+        ? () =>
+            listContextFinalSnapshots(params.runId)
+              .filter(
+                (snapshot) =>
+                  snapshot.turnId === params.injectionTurnId &&
+                  snapshot.attemptIndex === (params.attemptIndex ?? 0),
+              )
+              .flatMap(
+                (snapshot) =>
+                  snapshot.budget.retainedEvidence?.units.flatMap((unit) =>
+                    unit.citations.map((citation) => citation.sourceRef),
+                  ) ?? [],
+              )
+        : undefined,
+    );
   };
 }
 

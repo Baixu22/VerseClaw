@@ -1,3 +1,6 @@
+import { KnowledgeStore } from "../../knowledge/sekb/knowledge-store.js";
+import { RetrievalEngine } from "../../knowledge/sekb/retrieval-engine.js";
+import { isSekbEnabled } from "../../knowledge/sekb/feature-flags.js";
 // Role-first orchestration gateway methods.
 //
 // Exposes the role registry, team templates, and orchestrator planning/execution
@@ -14,7 +17,10 @@ import { resolveAgentWorkspaceDir, resolveSessionAgentId } from "../../agents/ag
 import { getSessionEntry } from "../../config/sessions/store.js";
 import { resolveStorePath } from "../../config/sessions/paths.js";
 import { normalizeSourceRefV2 } from "../../runtime-core/knowledge-owner-read.js";
-import { createProductionChatKnowledgeSourceAdapters } from "../../context-engine/chat-knowledge-source-adapters.js";
+import {
+  createProductionChatKnowledgeSourceAdapters,
+  SekbChatKnowledgeSourceAdapter,
+} from "../../context-engine/chat-knowledge-source-adapters.js";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
 import { GATEWAY_CLIENT_MODES } from "../../../packages/gateway-protocol/src/client-info.js";
 import { updateSessionStoreEntry } from "../../config/sessions/store.js";
@@ -434,13 +440,29 @@ function readExplicitWorkers(
   return workers;
 }
 
-export const roleOrchestrationHandlers: GatewayRequestHandlers = {
-  "memory.readSource": async ({ params, respond, context, client }) => {
+function ownerReadHandler(
+  mode: "memory" | "experience" | "experience-search" | "experience-exposure",
+): GatewayRequestHandlers[string] {
+  return async ({ params, respond, context, client }) => {
     const reference = normalizeSourceRefV2(params.sourceRef);
     const rawIdentity = params.readIdentity;
+    const validRequest =
+      mode === "experience-search"
+        ? typeof params.query === "string" &&
+          Boolean(params.query.trim()) &&
+          params.query.length <= 8000
+        : mode === "experience-exposure"
+          ? typeof params.requestId === "string" &&
+            /^[a-f0-9-]{36}$/i.test(params.requestId) &&
+            Array.isArray(params.sourceRefs) &&
+            params.sourceRefs.length <= 5 &&
+            params.sourceRefs.every((pin) => normalizeSourceRefV2(pin)?.domain === "experience")
+          : reference &&
+            (mode === "memory" ? ["native-memory", "role-memory"] : ["experience"]).includes(
+              reference.domain,
+            );
     if (
-      !reference ||
-      !["native-memory", "role-memory"].includes(reference.domain) ||
+      !validRequest ||
       !rawIdentity ||
       typeof rawIdentity !== "object" ||
       Array.isArray(rawIdentity)
@@ -505,6 +527,132 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       respond(true, { status: "denied", reason: "invalid_context" });
       return;
     }
+    const readIdentity = {
+      workspaceId: identity.workspaceId as string,
+      workspaceDir: identity.workspaceDir as string,
+      agentSessionKey: identity.agentSessionKey as string,
+      sessionId: identity.sessionId as string,
+      egressProviderRefs: readStringArray(identity.egressProviderRefs),
+    };
+    const currentIdentity = async () => {
+      const current = getSessionEntry({
+        agentId,
+        sessionKey: readIdentity.agentSessionKey,
+        storePath: resolveStorePath(cfg.session?.store, { agentId }),
+      });
+      return (
+        current?.sessionId === readIdentity.sessionId &&
+        current?.workspaceId === entry?.workspaceId &&
+        (await canonicalPath(current?.workspaceDir ?? resolveAgentWorkspaceDir(cfg, agentId))) ===
+          (await canonicalPath(readIdentity.workspaceDir))
+      );
+    };
+    if (mode === "experience-search") {
+      try {
+        if (!isSekbEnabled(cfg)) {
+          respond(true, { status: "denied", reason: "denied", candidates: [] });
+          return;
+        }
+        const store = new KnowledgeStore();
+        const engine = new RetrievalEngine({ store, confirmedOnly: true });
+        const adapter = new SekbChatKnowledgeSourceAdapter(store, { cfg, identity: readIdentity });
+        const candidates = [];
+        const requestId = crypto.randomUUID();
+        const maxResults =
+          typeof params.maxResults === "number" && Number.isSafeInteger(params.maxResults)
+            ? Math.max(0, Math.min(5, params.maxResults))
+            : 5;
+        for (const principle of engine.retrieve_for_task(
+          params.query as string,
+          readString(params.taskType) ?? "chat",
+          readStringArray(params.contextTags),
+          maxResults,
+        )) {
+          const result = await adapter.resolve({
+            id: principle.principle_id,
+            title: principle.title,
+            lookup: `sekb:${principle.principle_id}`,
+            corpus: "all",
+          });
+          if (result.status !== "resolved") continue;
+          const snapshot = result.resolved.ownerSnapshot;
+          if (!snapshot) continue;
+          candidates.push({
+            principle_id: principle.principle_id,
+            title: principle.title,
+            condition: principle.condition,
+            action: principle.action,
+            reason: principle.reason,
+            retrieval_count: principle.retrieval_count,
+            sourceRef: snapshot.source,
+            content: snapshot.content,
+            snapshot,
+          });
+        }
+        if (!(await currentIdentity())) {
+          respond(true, { status: "denied", reason: "invalid_context", candidates: [] });
+          return;
+        }
+        respond(true, { status: "admitted", requestId, candidates });
+      } catch {
+        respond(true, { status: "denied", reason: "denied", candidates: [] });
+      }
+      return;
+    }
+    if (mode === "experience-exposure") {
+      try {
+        if (!isSekbEnabled(cfg)) {
+          respond(true, { success: false, recorded: 0 });
+          return;
+        }
+        const store = new KnowledgeStore();
+        const adapter = new SekbChatKnowledgeSourceAdapter(store, { cfg, identity: readIdentity });
+        const pins = (params.sourceRefs as unknown[]).map((value) => normalizeSourceRefV2(value)!);
+        const admitted = [];
+        for (const pin of pins) {
+          const result = await adapter.resolve({
+            id: pin.subjectId,
+            title: pin.subjectId,
+            lookup: `sekb:${pin.subjectId}`,
+            sourceRef: pin,
+            corpus: "all",
+          });
+          if (result.status === "resolved") admitted.push(pin);
+        }
+        if (!(await currentIdentity())) {
+          respond(true, { success: false, recorded: 0 });
+          return;
+        }
+        let recorded = 0;
+        for (const pin of admitted) {
+          const result = store.record_adoption(pin.subjectId, {
+            schemaVersion: "RsiExperienceAttribution/v1",
+            principleVersion: pin.revision,
+            taskId: null,
+            runId: `ui:${params.requestId}`,
+            sessionId: readIdentity.sessionId,
+            sessionKey: readIdentity.agentSessionKey,
+            experimentId: null,
+            arm: null,
+            repeat: null,
+            trajectoryId: null,
+            trigger: "ui-exposure",
+            source: "runtime",
+            outcome: "unknown",
+            outcomeKind: null,
+            observationId: null,
+            operation: null,
+            actor: "project-rag-ui",
+            driven_by: "agent",
+          });
+          if (result.status === "accepted") recorded++;
+        }
+        respond(true, { success: true, recorded });
+      } catch {
+        respond(true, { success: false, recorded: 0 });
+      }
+      return;
+    }
     const owner = createProductionChatKnowledgeSourceAdapters(cfg, {
       identity: {
         workspaceId: identity.workspaceId as string,
@@ -513,19 +661,23 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         sessionId: identity.sessionId as string,
         egressProviderRefs: readStringArray(identity.egressProviderRefs),
       },
-    }).find((adapter) => adapter.owner === reference.authorityId);
+    }).find((adapter) => adapter.owner === reference!.authorityId);
     if (!owner) {
       respond(true, { status: "denied", reason: "namespace_mismatch" });
       return;
     }
     try {
       const result = await owner.resolve({
-        id: reference.subjectId,
-        title: reference.subjectId,
-        lookup: reference.subjectId,
-        corpus: "memory",
+        id: reference!.subjectId,
+        title: reference!.subjectId,
+        lookup: reference!.subjectId,
+        corpus: mode === "memory" ? "memory" : "all",
         sourceRef: reference,
       });
+      if (!(await currentIdentity())) {
+        respond(true, { status: "denied", reason: "invalid_context" });
+        return;
+      }
       respond(
         true,
         result.status === "resolved"
@@ -535,7 +687,14 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     } catch {
       respond(true, { status: "denied", reason: "denied" });
     }
-  },
+  };
+}
+
+export const roleOrchestrationHandlers: GatewayRequestHandlers = {
+  "memory.readSource": ownerReadHandler("memory"),
+  "sekb.readSource": ownerReadHandler("experience"),
+  "sekb.retrieve": ownerReadHandler("experience-search"),
+  "sekb.recordExposure": ownerReadHandler("experience-exposure"),
   "roles.list": async ({ respond, context }) => {
     const cfg = context.getRuntimeConfig();
     const registry = buildRoleRegistry(rolesConfig(cfg));

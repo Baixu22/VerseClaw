@@ -562,7 +562,16 @@
     "lineageTrace": "Trace",
     "lineageLedger": "任务账本",
     "sourceTrajectories": "来源轨迹",
-    "confirmProvenance": "会话 {{sessionId}} · 来源 {{trajectories}}"
+    "confirmProvenance": "会话 {{sessionId}} · 来源 {{trajectories}}",
+    "attribution": {
+      "uiExposures": "界面展示",
+      "contextExposures": "上下文曝光",
+      "citations": "引用",
+      "adoptions": "已观察的采用",
+      "operationalOutcomes": "运行结果",
+      "taskGrades": "独立任务评分",
+      "unknownOperationalOutcomes": "未知运行结果"
+    }
   },
   "governance": {
     "title": "治理",

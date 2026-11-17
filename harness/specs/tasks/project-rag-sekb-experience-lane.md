@@ -1,14 +1,41 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: implemented
 id: project-rag-sekb-experience-lane
 title: 接通已确认经验和可观察的采用归因
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-14
 intent: 让历史经验帮助实际执行，并知道是否被采用及是否有效。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: 7e48c13a8b3ab74d7447360cbe2dd1cde64b5d05
 touchedAreas:
+  - "artifacts/agent-dev-deep-test/history.json"
+  - "artifacts/agent-dev-deep-test/report.json"
+  - "artifacts/agent-dev-deep-test/report.md"
+  - "artifacts/agent-dev-quality/report.json"
+  - "artifacts/agent-dev-workbench/evidence.json"
+  - "tests/unit/knowledge-page.test.tsx"
+  - "src/lib/host-api/knowledge/runtime-lessons.ts"
+  - "tests/unit/host-api-facade.test.ts"
+  - "src/pages/Chat/ChatInput.tsx"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"
+  - "openclaw_runtime/src/gateway/server-methods.ts"
+  - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+  - "tests/unit/rsi-adoption-runtime.test.ts"
+  - "tests/unit/gateway-permissions-api.test.ts"
+  - "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts"
+  - "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts"
+  - "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts"
+  - "openclaw_runtime/src/gateway/methods/core-descriptors.ts"
+  - "electron/services/gateway-api.ts"
+  - "electron/services/knowledge-source-set-answer.ts"
+  - "shared/host-api/contract.ts"
+  - "shared/knowledge/**"
+  - "shared/i18n/locales/*/knowledge.json"
+  - "src/pages/Knowledge/index.tsx"
+  - "src/pages/Chat/KnowledgeChat.tsx"
+  - "docs/dev/evidence/project-rag/RAG-14/**"
   - "electron/services/knowledge-api.ts"
   - "openclaw_runtime/src/knowledge/sekb/**"
   - "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts"
@@ -43,6 +70,15 @@ requiredRules:
   - "rsi-experience-attribution-boundary"
   - "sekb-hermes-write-path-boundary"
 requiredTests:
+  - "tests/unit/knowledge-page.test.tsx"
+  - "tests/unit/host-api-facade.test.ts"
+  - "tests/unit/rsi-adoption-attribution.test.ts"
+  - "tests/unit/rsi-adoption-runtime.test.ts"
+  - "tests/unit/gateway-permissions-api.test.ts"
+  - "tests/unit/knowledge-source-set-answer.test.ts"
+  - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+  - "tests/unit/project-rag-sekb-attribution.test.ts"
+  - "tests/e2e/project-rag-source-domains.spec.ts"
   - "tests/unit/knowledge-api.test.ts"
 plannedTests:
   - "tests/unit/project-rag-sekb-attribution.test.ts"
@@ -62,6 +98,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/EXPERIENCE-LANE-CONTRACT.md
 ---
 
 # 接通已确认经验和可观察的采用归因

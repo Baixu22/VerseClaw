@@ -334,6 +334,8 @@
 
 ### RAG-14 接通已确认经验和可观察的采用归因
 
+读取与归因合同见 [EXPERIENCE-LANE-CONTRACT.md](EXPERIENCE-LANE-CONTRACT.md)。
+
 让历史经验帮助实际执行，并知道是否被采用及是否有效。
 
 - Owner：SEKB / attribution / retrieval。

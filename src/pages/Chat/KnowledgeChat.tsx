@@ -1,3 +1,5 @@
+import { isMemorySourceRef } from '@shared/knowledge/memory';
+import { isExperienceSourceRef } from '@shared/knowledge/experience';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -187,14 +189,14 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
         excerpt: source.excerpt || t('librarian.emptyCitation'),
         sourceRef: result.claims?.flatMap(claim => claim.citations).find(citation => citation.sourceId === source.citation?.refId)?.sourceRef ?? source.citation?.sourceRef,
       }));
-      const sources = result.sources.map(source => ({ ...source, path: source.path || source.lookup, corpus: 'wiki' as const,
+      const sources = result.sources.map(source => ({ ...source, path: source.path || source.lookup, corpus: isExperienceSourceRef(source.citation?.sourceRef) ? 'all' as const : isMemorySourceRef(source.citation?.sourceRef) ? 'memory' as const : 'wiki' as const,
         answerCitation: result.claims?.flatMap(claim => claim.citations).find(citation => citation.sourceId === source.citation?.refId) }));
       const groundedAnswer: KnowledgeLibrarianGroundedAnswer = {
         question, answer: result.answer, sources, unknowns: result.unknowns,
         suggestions: result.suggestedNextActions, nextActions: result.suggestedNextActions,
         groundingStatus: result.groundingStatus,
         answerMode: result.answerMode ?? answerMode, claims: result.claims,
-        retrieval: { query: question, corpus: 'wiki', roleTag: 'knowledge-librarian', resultCount: result.retrievalDiagnostics.resultCount, selectedSources: sources },
+        retrieval: { query: question, corpus: result.retrievalDiagnostics.corpus, roleTag: 'knowledge-librarian', resultCount: result.retrievalDiagnostics.resultCount, selectedSources: sources },
       };
       setLibrarianMessages(messages => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
       setActivity(groundedAnswer.groundingStatus === 'missing_sources' ? 'confused' : 'finished');

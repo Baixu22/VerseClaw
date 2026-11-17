@@ -1,3 +1,4 @@
+import { SEKB_ADOPTION_TOOL_NAME } from "../../../knowledge/sekb/harness-integration.js";
 /**
  * Orchestrates one embedded-agent attempt from prompt setup through stream result.
  */
@@ -409,7 +410,10 @@ import {
   shouldWarnEmbeddedRunStageSummary,
 } from "./attempt-stage-timing.js";
 import { buildAttemptSystemPrompt } from "./attempt-system-prompt.js";
-import { restoreTaskModelContext, finishPersistentTaskRun } from "../../../../../shared/task-system/runtime.js";
+import {
+  restoreTaskModelContext,
+  finishPersistentTaskRun,
+} from "../../../../../shared/task-system/runtime.js";
 import { createExecutionTaskGuard } from "../../execution-task-guard.js";
 import { flushEmbeddedAttemptTrajectoryRecorder } from "./attempt-trajectory-flush-cleanup.js";
 import {
@@ -1715,8 +1719,7 @@ export async function runEmbeddedAttempt(
       },
     );
     const allowedBundledTools = [...allowedBundleMcpTools, ...allowedBundleLspTools];
-    const filteredBundledTools = applyFinalEffectiveToolPolicy({
-      bundledTools: allowedBundledTools,
+    const finalToolPolicy = {
       config: params.config,
       sandboxToolPolicy: sandbox?.tools,
       sessionKey: sandboxSessionKey,
@@ -1733,7 +1736,11 @@ export async function runEmbeddedAttempt(
       senderName: params.senderName,
       senderUsername: params.senderUsername,
       senderE164: params.senderE164,
-      warn: (message) => log.warn(message),
+      warn: (message: string) => log.warn(message),
+    };
+    const filteredBundledTools = applyFinalEffectiveToolPolicy({
+      ...finalToolPolicy,
+      bundledTools: allowedBundledTools,
     });
     const normalizedBundledTools =
       filteredBundledTools.length > 0
@@ -2688,9 +2695,31 @@ export async function runEmbeddedAttempt(
       // The session runtime treats `tools` as a name allowlist during session creation. Pass the
       // exact OpenClaw-managed registrations so custom tools survive startup and
       // client-provided names do not broaden the prompt/runtime boundary.
+      const experienceTools =
+        toolsEnabled && !params.disableTools && !isRawModelRun && dcsExtensionDeps?.sekbRuntime
+          ? resourceLoader
+              .getExtensions()
+              .extensions.flatMap((extension) =>
+                [...extension.tools.values()]
+                  .filter((tool) => tool.definition.name === SEKB_ADOPTION_TOOL_NAME)
+                  .map((tool) => tool.definition),
+              )
+          : [];
+      // Internal extension registration still obeys the same run, role and sandbox tool policy.
+      const allowedExperienceTools = applyFinalEffectiveToolPolicy({
+        ...finalToolPolicy,
+        bundledTools: applyEmbeddedAttemptToolsAllow(
+          experienceTools,
+          effectiveToolsAllow,
+        ) as unknown as import("../../tools/common.js").AnyAgentTool[],
+      });
       const sessionToolAllowlist = toSessionToolAllowlist(
-        collectRegisteredToolNames(allCustomTools),
+        collectRegisteredToolNames([...allCustomTools, ...allowedExperienceTools]),
       );
+      for (const tool of allowedExperienceTools) {
+        allowedToolNames.add(tool.name);
+        replayAllowedToolNames.add(tool.name);
+      }
 
       const createdSession = await createEmbeddedAgentSessionWithResourceLoader<
         Awaited<ReturnType<typeof createAgentSession>>
@@ -3073,9 +3102,17 @@ export async function runEmbeddedAttempt(
       });
       activeSession.agent.streamFn = resolveEmbeddedAgentStreamFn({
         cfg: params.config,
-        spend: { config: params.config?.runtime?.providerBudget, workspaceId: params.workspaceId,
-          sessionKey: params.sessionKey, sessionGeneration: params.sessionId, runId: params.runId, attemptIndex: params.attemptIndex,
-          sessionStorePath: params.sessionKey ? resolveStorePath(params.config?.session?.store, { agentId: sessionAgentId }) : undefined },
+        spend: {
+          config: params.config?.runtime?.providerBudget,
+          workspaceId: params.workspaceId,
+          sessionKey: params.sessionKey,
+          sessionGeneration: params.sessionId,
+          runId: params.runId,
+          attemptIndex: params.attemptIndex,
+          sessionStorePath: params.sessionKey
+            ? resolveStorePath(params.config?.session?.store, { agentId: sessionAgentId })
+            : undefined,
+        },
         currentStreamFn: defaultSessionStreamFn,
         providerStreamFn,
         sessionId: params.sessionId,
@@ -3324,12 +3361,32 @@ export async function runEmbeddedAttempt(
         );
       }
       let diagnosticModelCallSeq = 0;
-      if(!isRawModelRun){
-        const taskModelGuard=createExecutionTaskGuard(effectiveWorkspace,params.sessionKey,params.sessionId,params.runId);
-        const taskModelStream=activeSession.agent.streamFn;
-        activeSession.agent.streamFn=(model,context,options)=>taskModelStream(model,{
-          ...context,systemPrompt:restoreTaskModelContext(taskModelGuard,context.systemPrompt??'',Math.min(12_000,Math.floor((params.contextWindowInfo?.tokens??model.contextWindow??48_000)/4))),
-        },options);
+      if (!isRawModelRun) {
+        const taskModelGuard = createExecutionTaskGuard(
+          effectiveWorkspace,
+          params.sessionKey,
+          params.sessionId,
+          params.runId,
+        );
+        const taskModelStream = activeSession.agent.streamFn;
+        activeSession.agent.streamFn = (model, context, options) =>
+          taskModelStream(
+            model,
+            {
+              ...context,
+              systemPrompt: restoreTaskModelContext(
+                taskModelGuard,
+                context.systemPrompt ?? "",
+                Math.min(
+                  12_000,
+                  Math.floor(
+                    (params.contextWindowInfo?.tokens ?? model.contextWindow ?? 48_000) / 4,
+                  ),
+                ),
+              ),
+            },
+            options,
+          );
       }
       activeSession.agent.streamFn = wrapStreamFnWithDiagnosticModelCallEvents(
         activeSession.agent.streamFn,
@@ -6166,7 +6223,11 @@ ${preparedProjection.systemPromptAddition}`
     }
   } finally {
     removeExternalAbortSignalListener?.();
-    try{finishPersistentTaskRun(effectiveWorkspace,params.sessionKey,params.runId);}catch(error){log.warn(`task run cleanup requires recovery: ${String(error)}`);}
+    try {
+      finishPersistentTaskRun(effectiveWorkspace, params.sessionKey, params.runId);
+    } catch (error) {
+      log.warn(`task run cleanup requires recovery: ${String(error)}`);
+    }
     if (!sessionCleanupOwnsEmbeddedResources) {
       try {
         await cleanupEmbeddedPrepResourcesAfterEarlyExit();

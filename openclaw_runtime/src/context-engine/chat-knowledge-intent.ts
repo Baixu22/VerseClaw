@@ -194,6 +194,8 @@ function ownerCandidates(ref: ChatKnowledgeReferenceIntent): ChatKnowledgeOwner[
   if (ref.lookup.startsWith("native-memory:"))
     return ref.corpus === "wiki" ? [] : ["native-memory"];
   if (ref.lookup.startsWith("memory-slot:")) return ref.corpus === "wiki" ? [] : ["memory-slot"];
+  if (ref.lookup.startsWith("sekb:"))
+    return ref.corpus === "wiki" || ref.corpus === "memory" ? [] : ["sekb"];
   if (ref.corpus === "memory") return ["native-memory", "memory-slot"];
   if (ref.corpus === "wiki") return ["memory-wiki"];
   // Explicit pinned refs from the Knowledge Hub may not carry a corpus yet.

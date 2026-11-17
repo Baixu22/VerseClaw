@@ -12,6 +12,7 @@ import type { MemoryCard } from "../../memory/types.js";
 export type CascadeTargetKind =
   | "sekb_principle"
   | "sekb_trajectory"
+  | "sekb_attribution"
   | "memory_card"
   | "dcs_experience_journal"
   | "dcs_experience_block"
@@ -43,6 +44,8 @@ export type SessionCascadeReport = {
 };
 
 export type SessionCascadeStores = {
+  listAttributionEvents?: KnowledgeStore["list_adoption_events"];
+  deleteAttributionEvent?: KnowledgeStore["delete_adoption_event"];
   listPrinciples: () => Principle[];
   deletePrinciple: (id: string) => void;
   listTrajectories: () => Trajectory[];
@@ -59,9 +62,7 @@ export type SessionCascadeStores = {
 };
 
 function principleSessionId(principle: Principle): string | undefined {
-  const provenance = principle.metadata?.confirmProvenance as
-    | { sessionId?: string }
-    | undefined;
+  const provenance = principle.metadata?.confirmProvenance as { sessionId?: string } | undefined;
   if (typeof provenance?.sessionId === "string" && provenance.sessionId.trim()) {
     return provenance.sessionId.trim();
   }
@@ -119,6 +120,18 @@ export function collectSessionCascadeTargets(
   const targets: CascadeTarget[] = [];
   const principleIds = new Set<string>();
   const trajectoryIds = new Set<string>();
+  for (const event of stores.listAttributionEvents?.() ?? []) {
+    if (
+      sessionIds.includes(event.evidence.sessionId ?? "") ||
+      sessionIds.includes(event.evidence.sessionKey ?? "")
+    ) {
+      targets.push({
+        kind: "sekb_attribution",
+        id: event.eventId,
+        lineage: [`session:${sessionId}`],
+      });
+    }
+  }
 
   for (const principle of stores.listPrinciples()) {
     if (matchesSessionId(principleSessionId(principle))) {
@@ -205,6 +218,9 @@ export function executeSessionCascadeDelete(
   for (const target of targets) {
     try {
       switch (target.kind) {
+        case "sekb_attribution":
+          stores.deleteAttributionEvent?.(target.id);
+          break;
         case "sekb_principle":
           stores.deletePrinciple(target.id);
           break;
@@ -235,9 +251,7 @@ export function executeSessionCascadeDelete(
   }
 
   const remainingCanaryHits =
-    options.canary && stores.searchPlaintext
-      ? stores.searchPlaintext(options.canary).length
-      : 0;
+    options.canary && stores.searchPlaintext ? stores.searchPlaintext(options.canary).length : 0;
 
   const success = errors.length === 0 && remainingCanaryHits === 0;
   return {
@@ -285,10 +299,7 @@ export function purgeExpiredSekbTrajectories(
 }
 
 /** Locate lineage strings for a derivative id (A3). */
-export function locateDerivativeLineage(
-  targets: CascadeTarget[],
-  derivativeId: string,
-): string[] {
+export function locateDerivativeLineage(targets: CascadeTarget[], derivativeId: string): string[] {
   const match = targets.find((target) => target.id === derivativeId);
   return match?.lineage ?? [];
 }
@@ -336,12 +347,14 @@ export function createInMemoryCascadeStores(seed: {
       state.dcsJournalIds = state.dcsJournalIds.filter((entry) => entry !== id);
     },
     searchPlaintext: (canary) =>
-      state.plaintextBlobs.filter((blob) => blob.includes(canary)).concat(
-        ...state.principles.map((p) => JSON.stringify(p)).filter((s) => s.includes(canary)),
-        ...state.trajectories.map((t) => JSON.stringify(t)).filter((s) => s.includes(canary)),
-        ...state.memoryCards.map((c) => JSON.stringify(c)).filter((s) => s.includes(canary)),
-        ...state.dcsJournalIds.filter((id) => id.includes(canary)),
-      ),
+      state.plaintextBlobs
+        .filter((blob) => blob.includes(canary))
+        .concat(
+          ...state.principles.map((p) => JSON.stringify(p)).filter((s) => s.includes(canary)),
+          ...state.trajectories.map((t) => JSON.stringify(t)).filter((s) => s.includes(canary)),
+          ...state.memoryCards.map((c) => JSON.stringify(c)).filter((s) => s.includes(canary)),
+          ...state.dcsJournalIds.filter((id) => id.includes(canary)),
+        ),
   };
 }
 
@@ -359,8 +372,13 @@ export function createKnowledgeStoreCascadeAdapter(
 ): SessionCascadeStores {
   return {
     listPrinciples: () => store.query_principles({}),
+    listAttributionEvents: () => store.list_adoption_events(),
+    deleteAttributionEvent: (id) => store.delete_adoption_event(id),
     deletePrinciple: (id) => {
-      if (typeof (store as { delete_principle?: (id: string) => void }).delete_principle === "function") {
+      if (
+        typeof (store as { delete_principle?: (id: string) => void }).delete_principle ===
+        "function"
+      ) {
         (store as { delete_principle: (id: string) => void }).delete_principle(id);
         return;
       }
@@ -369,7 +387,10 @@ export function createKnowledgeStoreCascadeAdapter(
     },
     listTrajectories: () => store.query_trajectories({}),
     deleteTrajectory: (id) => {
-      if (typeof (store as { delete_trajectory?: (id: string) => void }).delete_trajectory === "function") {
+      if (
+        typeof (store as { delete_trajectory?: (id: string) => void }).delete_trajectory ===
+        "function"
+      ) {
         (store as { delete_trajectory: (id: string) => void }).delete_trajectory(id);
         return;
       }
@@ -389,4 +410,3 @@ export function createKnowledgeStoreCascadeAdapter(
     },
   };
 }
-

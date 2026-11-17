@@ -472,7 +472,7 @@ export function createGatewayApi(
       if (!method) {
         throw new Error('Invalid gateway RPC method');
       }
-      if (method === 'memory.readSource') {
+      if (['memory.readSource', 'sekb.readSource', 'sekb.retrieve', 'sekb.recordExposure'].includes(method)) {
         return { success: false, rejectedBeforeDispatch: true, error: 'Memory owner reads use the knowledge service' };
       }
       if (method.startsWith('taskScope.')) {

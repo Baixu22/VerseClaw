@@ -41,8 +41,9 @@ import { createContextBlockSink } from '../../openclaw_runtime/src/agents/harnes
 import { isRuntimeLineage } from '../../openclaw_runtime/src/runtime-core/lineage';
 import { readBoundedKnowledgePage, retrieveSelectedSourceSetEvidence } from './knowledge-source-set-answer';
 import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent } from './knowledge-read-scope';
-import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot, type SourceRefV2 } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
-import { getMemorySourceOwner, isMemorySourceRef } from '../../shared/knowledge/memory';
+import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot, matchOwnerReadPin, type SourceRefV2 } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
+import { isMemorySourceRef } from '../../shared/knowledge/memory';
+import { getExplicitKnowledgeOwner, isExperienceSourceRef, type ExperienceRetrieveResult } from '../../shared/knowledge/experience';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatus, KnowledgeEmbeddingStatusResult } from '../../shared/knowledge/embedding';
 import { normalizeProjectRagConfig, type ProjectRagConfigV2, type IndexStatusV1, type KnowledgeIndexResult, type RetrievalCapabilitySnapshotV1 } from '../../shared/knowledge/operations';
 import type { KnowledgeVectorStatus, KnowledgeVectorStatusResult } from '../../shared/knowledge/vector';
@@ -2895,6 +2896,7 @@ function retrievalSourceKindFromRow(row: Record<string, unknown>): KnowledgeRetr
   const sourceRef = normalizeSourceRefV2(row.sourceRef);
   if (sourceRef?.domain === 'native-memory') return 'memory-file';
   if (sourceRef?.domain === 'role-memory') return 'memory-card';
+  if (isExperienceSourceRef(sourceRef)) return 'sekb-principle';
   const metadata = routeMetadataFromRow(row);
   const knowledgeKind = routeStringFromRecord(metadata, ['knowledgeKind', 'kind']).toLowerCase();
   const type = (rowString(row, ['type', 'draftType', 'okfType']) || routeStringFromRecord(metadata, ['type', 'draftType', 'okfType'])).toLowerCase();
@@ -3381,16 +3383,16 @@ export function createKnowledgeApi({
     semanticStewardInvoker = (context) => runSemanticStewardInvoker(gatewayManager, context);
   }
 
-  async function readMemoryOwnerSource(sourceRef: SourceRefV2, readScope: Awaited<ReturnType<typeof prepareKnowledgeReadScope>>) {
-    const read = await rpc<import('../../shared/knowledge/memory').MemoryOwnerReadResult>('memory.readSource', {
+  async function readPinnedOwnerSource(sourceRef: SourceRefV2, readScope: Awaited<ReturnType<typeof prepareKnowledgeReadScope>>) {
+    const read = await rpc<import('../../shared/knowledge/memory').MemoryOwnerReadResult>(isExperienceSourceRef(sourceRef) ? 'sekb.readSource' : 'memory.readSource', {
       sourceRef, readIdentity: readScope.identity,
     });
     await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
     if (read.status !== 'admitted') return { success: false, readDenial: read.reason, error: 'Memory source cannot be read' };
     const snapshot = read.snapshot;
-    if (!isOwnerReadSnapshotV1(snapshot) || evaluateOwnerReadSnapshot(snapshot, snapshot.context))
+    if (!isOwnerReadSnapshotV1(snapshot) || evaluateOwnerReadSnapshot(snapshot, snapshot.context) || matchOwnerReadPin(snapshot, sourceRef))
       return { success: false, readDenial: 'digest_mismatch' as const, error: 'Memory owner snapshot is invalid' };
-    return { success: true, corpus: 'memory' as const, path: snapshot.source.subjectId, title: snapshot.title,
+    return { success: true, corpus: isExperienceSourceRef(sourceRef) ? 'all' as const : 'memory' as const, path: snapshot.source.subjectId, title: snapshot.title,
       content: snapshot.content, sourceRef: snapshot.source, ownerSnapshot: snapshot,
       fromLine: snapshot.source.locator!.startLine, totalLines: snapshot.totalLines, truncated: snapshot.truncated };
   }
@@ -3456,7 +3458,7 @@ export function createKnowledgeApi({
         ref, question, workspaceId: input.workspaceId ?? getString(sourceSet?.metadata?.workspaceId),
         read: async range => {
           await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
-          const result = isMemorySourceRef(ref.sourceRef) ? await readMemoryOwnerSource(ref.sourceRef, readScope)
+          const result = isMemorySourceRef(ref.sourceRef) || isExperienceSourceRef(ref.sourceRef) ? await readPinnedOwnerSource(ref.sourceRef, readScope)
             : await rpc('wiki.get', { lookup: ref.path || ref.id, ...range, corpus: 'wiki',
               ...(ref.sourceRef ? { sourceRef: ref.sourceRef } : {}), readIdentity: readScope.identity }, 30_000);
           await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
@@ -3483,7 +3485,7 @@ export function createKnowledgeApi({
           if (remaining <= 0) throw new Error('Knowledge answer model budget expired');
           return remaining;
         };
-        const pinned = sources.map(source => ({ id: source.id, kind: source.citation?.sourceRef?.domain === 'native-memory' ? 'file' as const : source.citation?.sourceRef?.domain === 'role-memory' ? 'other' as const : 'wiki' as const, path: source.path,
+        const pinned = sources.map(source => ({ id: source.id, kind: source.citation?.sourceRef?.domain === 'native-memory' ? 'file' as const : (source.citation?.sourceRef?.domain === 'role-memory' || source.citation?.sourceRef?.domain === 'experience') ? 'other' as const : 'wiki' as const, path: source.path,
           ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
           ...(source.citation?.sourceRef ? { sourceRef: source.citation.sourceRef } : {}) }));
         evidence = await readEvidence(pinned);
@@ -3497,7 +3499,7 @@ export function createKnowledgeApi({
         if (!modelSelection.sources.length && answerMode === 'strict') throw new Error('No complete knowledge group fits the reference transport limit');
         const references = modelSelection.sources.map(source => ({
           id: source.citation!.refId, title: source.title, lookup: source.path ?? source.lookup,
-          corpus: isMemorySourceRef(source.citation?.sourceRef) ? 'memory' as const : 'wiki' as const,
+          corpus: isExperienceSourceRef(source.citation?.sourceRef) ? 'all' as const : isMemorySourceRef(source.citation?.sourceRef) ? 'memory' as const : 'wiki' as const,
           sourceRef: source.citation!.sourceRef, revision: source.citation!.revision, contentDigest: source.citation!.contentDigest,
           ...(source.conflictGroupId ? { conflictGroupId: source.conflictGroupId } : {}),
         }));
@@ -3564,9 +3566,9 @@ export function createKnowledgeApi({
       id: source.id, title: source.title, lookup: source.lookup, pagePath: source.path ?? source.lookup,
       sourceRef: source.citation?.sourceRef,
     }));
-    const corpora = new Set(sourceRefs.map(ref => getMemorySourceOwner(ref) ? 'memory' : 'wiki'));
+    const corpora = new Set(sourceRefs.map(ref => getExplicitKnowledgeOwner(ref) === 'sekb' ? 'all' : getExplicitKnowledgeOwner(ref) ? 'memory' : 'wiki'));
     const retrievalDiagnostics = buildRetrievalDiagnostics({
-      query: question, corpus: corpora.size > 1 ? 'all' : corpora.has('memory') ? 'memory' : 'wiki', mode: 'source-set', rows,
+      query: question, corpus: corpora.size > 1 || corpora.has('all') ? 'all' : corpora.has('memory') ? 'memory' : 'wiki', mode: 'source-set', rows,
       selectedLookups: new Set(rows.map((row) => row.lookup)),
       reason: 'explicit Source Set selection after owner admission',
       backend: semanticRequested && evidence.sourceSet.semanticLane.status === 'available' ? 'semantic' : 'fallback-keyword',
@@ -3763,76 +3765,43 @@ export function createKnowledgeApi({
     return job;
   }
 
-  const retrieveRuntimeLessonsForRoute = async (
-    query: string,
-    reason: string,
-  ): Promise<{
-    candidates: KnowledgeRouteCandidate[];
-    runtimeLessons: NonNullable<KnowledgeRouteContextResult['runtimeLessons']>;
-  }> => {
-    const sekb = await loadSekbRuntimeModule();
-    if (!sekb || typeof sekb.RetrievalEngine !== 'function') {
-      return {
-        candidates: [],
-        runtimeLessons: {
-          requested: true,
-          included: false,
-          available: false,
-          principleCount: 0,
-          reason: 'runtimeUnavailable',
-        },
-      };
-    }
-    try {
-      const store = createHostSekbStore(sekb);
-      const engine = new sekb.RetrievalEngine({ store });
-      const principles = engine.retrieve_for_task(query, 'chat', [], ROUTER_BUDGET.maxReferences);
-      const candidates: KnowledgeRouteCandidate[] = principles.map((principle, index) => ({
-        id: `sekb:${principle.principle_id}`,
-        title: principle.title,
-        lookup: `sekb:${principle.principle_id}`,
-        corpus: 'all',
-        attachKind: 'suggested',
-        routingReason: reason,
-        routeGroup: 'runtime_lessons',
-        rank: index + 1,
-        scoreKind: 'owner-rank',
-        snippet: [
-          `Condition: ${principle.condition}`,
-          `Action: ${principle.action}`,
-          `Reason: ${principle.reason}`,
-        ].join('\n').slice(0, ROUTER_BUDGET.maxSnippetChars),
-        sourceKind: 'sekb-principle',
-        runtimeLesson: {
-          principleId: principle.principle_id,
-          condition: principle.condition,
-          action: principle.action,
-          reason: principle.reason,
-          retrievalCount: principle.retrieval_count,
-        },
-      }));
-      return {
-        candidates,
-        runtimeLessons: {
-          requested: true,
-          included: candidates.length > 0,
-          available: true,
-          principleCount: candidates.length,
-          ...(candidates.length === 0 ? { reason: 'noMatchingPrinciples' } : {}),
-        },
-      };
-    } catch {
-      return {
-        candidates: [],
-        runtimeLessons: {
-          requested: true,
-          included: false,
-          available: false,
-          principleCount: 0,
-          reason: 'retrieveFailed',
-        },
-      };
-    }
+  // A bounded, single-use receipt links UI acknowledgment to the exact admitted pins and owner.
+  const pendingExperienceExposures = new Map<string, { scope: Awaited<ReturnType<typeof prepareKnowledgeReadScope>>; pins: SourceRefV2[]; expiresAt: number }>();
+  async function retrieveExperience(input: { taskIntent: string; taskType?: string; contextTags?: string[]; topK?: number; sessionKey?: string; workspaceId?: string }, signal?: AbortSignal) {
+    const scope = await prepareKnowledgeReadScope(gatewayManager, input);
+    signal?.throwIfAborted();
+    const result = await rpc<ExperienceRetrieveResult>('sekb.retrieve', { query: input.taskIntent, taskType: input.taskType,
+      contextTags: input.contextTags, maxResults: input.topK, readIdentity: scope.identity });
+    await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+    // Late route results cannot consume a slot needed by a candidate the UI received.
+    signal?.throwIfAborted();
+    if (result.status !== 'admitted') return { ...result, candidates: [] };
+    const candidates = result.candidates.filter(candidate => isOwnerReadSnapshotV1(candidate.snapshot)
+      && isExperienceSourceRef(candidate.sourceRef) && !evaluateOwnerReadSnapshot(candidate.snapshot, candidate.snapshot.context)
+      && !matchOwnerReadPin(candidate.snapshot, candidate.sourceRef) && candidate.content === candidate.snapshot.content);
+    for (const [id, pending] of pendingExperienceExposures) if (pending.expiresAt <= Date.now()) pendingExperienceExposures.delete(id);
+    if (pendingExperienceExposures.size >= 64) pendingExperienceExposures.delete(pendingExperienceExposures.keys().next().value!);
+    const requestId = randomUUID();
+    if (candidates.length) pendingExperienceExposures.set(requestId, { scope, pins: candidates.map(candidate => candidate.sourceRef), expiresAt: Date.now() + 30000 });
+    return { ...result, requestId, candidates };
+
+  }
+
+  const retrieveRuntimeLessonsForRoute = async (query: string, reason: string, payload: KnowledgeRouteContextPayload, signal: AbortSignal) => {
+    const result = await retrieveExperience({ taskIntent: query, taskType: 'chat', topK: ROUTER_BUDGET.maxReferences,
+      sessionKey: payload.sessionKey, workspaceId: payload.workspaceId ?? undefined }, signal);
+    const candidates: KnowledgeRouteCandidate[] = result.candidates.map((principle, index) => ({
+      id: `sekb:${principle.principle_id}`, title: principle.title, lookup: `sekb:${principle.principle_id}`,
+      corpus: 'all', attachKind: 'suggested', routingReason: reason, routeGroup: 'runtime_lessons',
+      rank: index + 1, scoreKind: 'owner-rank', snippet: principle.content.slice(0, ROUTER_BUDGET.maxSnippetChars),
+      sourceKind: 'sekb-principle', sourceRef: principle.sourceRef,
+      revision: principle.sourceRef.revision, contentDigest: principle.snapshot.contentDigest,
+      runtimeLesson: { principleId: principle.principle_id, condition: principle.condition, action: principle.action,
+        reason: principle.reason, retrievalCount: principle.retrieval_count },
+    }));
+    return { candidates, experienceExposureId: result.requestId, runtimeLessons: { requested: true, included: candidates.length > 0,
+      available: result.status === 'admitted', principleCount: candidates.length,
+      ...(candidates.length ? {} : { reason: result.reason ?? 'noMatchingPrinciples' }) } };
   };
 
   const embeddingOperation = async (operation: string, selection?: KnowledgeEmbeddingSelection): Promise<KnowledgeEmbeddingStatusResult> => {
@@ -4224,15 +4193,15 @@ export function createKnowledgeApi({
         if (!lookup) return { success: false, error: 'lookup is required' };
         const sourceRef = normalizeSourceRefV2(body.sourceRef);
         if (body.sourceRef !== undefined && !sourceRef) return { success: false, readDenial: 'invalid_range', error: 'Invalid SourceRef/v2 pin' };
-        if (!sourceRef && (body.corpus === 'memory' || getMemorySourceOwner({ id: lookup })))
+        if (!sourceRef && (body.corpus === 'memory' || getExplicitKnowledgeOwner({ id: lookup })))
           return { success: false, readDenial: 'denied', error: 'Memory source requires a current owner pin' };
         const readScope = await prepareKnowledgeReadScope(gatewayManager, {
           sessionKey: getString(body.sessionKey), workspaceId: getString(body.workspaceId),
         });
-        if (isMemorySourceRef(sourceRef) && body.corpus === 'wiki')
+        if ((isMemorySourceRef(sourceRef) && body.corpus === 'wiki') || (isExperienceSourceRef(sourceRef) && (body.corpus === 'wiki' || body.corpus === 'memory')))
           return { success: false, readDenial: 'scope_mismatch', error: 'Memory pin requires memory corpus' };
-        const result: Record<string, unknown> = isMemorySourceRef(sourceRef)
-          ? await readMemoryOwnerSource(sourceRef, readScope)
+        const result: Record<string, unknown> = isMemorySourceRef(sourceRef) || isExperienceSourceRef(sourceRef)
+          ? await readPinnedOwnerSource(sourceRef, readScope)
           : await rpc<Record<string, unknown>>('wiki.get', {
           lookup,
           ...(typeof body.fromLine === 'number' ? { fromLine: body.fromLine } : {}),
@@ -4562,7 +4531,7 @@ export function createKnowledgeApi({
         return { success: false, error: 'No admitted selected sources are available for a Studio draft.' };
       }
       const admittedSourceRefs: KnowledgeSourceRef[] = answer.sources.map((source) => ({
-        id: source.id, kind: source.citation?.sourceRef?.domain === 'native-memory' ? 'file' : source.citation?.sourceRef?.domain === 'role-memory' ? 'other' : 'wiki', label: source.title, path: source.path || source.lookup,
+        id: source.id, kind: source.citation?.sourceRef?.domain === 'native-memory' ? 'file' : (source.citation?.sourceRef?.domain === 'role-memory' || source.citation?.sourceRef?.domain === 'experience') ? 'other' : 'wiki', label: source.title, path: source.path || source.lookup,
         ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
         ...(source.citation?.sourceRef ? { sourceRef: source.citation.sourceRef } : {}),
       }));
@@ -5288,9 +5257,11 @@ export function createKnowledgeApi({
         }, RETRIEVAL_PROFILES.local.deadlineMs);
         const rows = getRouteSearchRows(result);
         const wikiCandidates = routeCandidatesFromSearch(result, corpus, mode, decision.reason);
-        const runtimeLessonResult = runtimeLessonsRequested && mode !== 'auto-read'
-          ? await waitForRetrievalOperation(retrieveRuntimeLessonsForRoute(decision.query, decision.reason),
-            AbortSignal.timeout(Math.max(1, (retrieval?.plan.budget.deadlineAtMs ?? Date.now() + RETRIEVAL_PROFILES.local.deadlineMs) - Date.now())))
+        const runtimeLessonSignal = runtimeLessonsRequested && mode !== 'auto-read'
+          ? AbortSignal.timeout(Math.max(1, (retrieval?.plan.budget.deadlineAtMs ?? Date.now() + RETRIEVAL_PROFILES.local.deadlineMs) - Date.now()))
+          : undefined;
+        const runtimeLessonResult = runtimeLessonSignal
+          ? await waitForRetrievalOperation(retrieveRuntimeLessonsForRoute(decision.query, decision.reason, payload, runtimeLessonSignal), runtimeLessonSignal)
               .catch(() => ({ candidates: [], runtimeLessons: { requested: true, included: false, available: false, principleCount: 0, reason: 'deadline-exceeded' } }))
           : undefined;
         const candidates = runtimeLessonResult
@@ -5322,6 +5293,7 @@ export function createKnowledgeApi({
           reason: candidates.length > 0 ? decision.reason : 'no relevant knowledge candidates found',
           query: decision.query,
           candidates,
+          ...(runtimeLessonResult && 'experienceExposureId' in runtimeLessonResult ? { experienceExposureId: runtimeLessonResult.experienceExposureId } : {}),
           candidateGroups,
           groupedCandidates: routeCandidateGroupRecord(candidates),
           retrievalDiagnostics: buildRetrievalDiagnostics({
@@ -5916,53 +5888,33 @@ export function createKnowledgeApi({
       }
     },
 
-    sekbRetrieveForTask: async (
-      payload: KnowledgeSekbRetrieveForTaskPayload,
-    ): Promise<KnowledgeSekbRetrieveForTaskResult> => {
-      const sekb = await loadSekbRuntimeModule();
-      if (!sekb || typeof sekb.RetrievalEngine !== 'function') {
-        return {
-          success: true,
-          available: false,
-          reason: 'runtimeUnavailable',
-          principles: [],
-          injection: '',
-        };
-      }
+    sekbRetrieveForTask: async (payload: KnowledgeSekbRetrieveForTaskPayload): Promise<KnowledgeSekbRetrieveForTaskResult> => {
       try {
-        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
-        const taskIntent = typeof body.taskIntent === 'string' ? body.taskIntent : '';
-        const taskType = typeof body.taskType === 'string' ? body.taskType : '';
-        const contextTags = Array.isArray(body.contextTags)
-          ? body.contextTags.filter((tag): tag is string => typeof tag === 'string')
-          : [];
-        const topK = typeof body.topK === 'number' ? body.topK : 5;
-        const store = createHostSekbStore(sekb);
-        const engine = new sekb.RetrievalEngine({ store });
-        const principles = engine.retrieve_for_task(taskIntent, taskType, contextTags, topK).map((p) => ({
-          principle_id: p.principle_id,
-          title: p.title,
-          condition: p.condition,
-          action: p.action,
-          reason: p.reason,
-          retrieval_count: p.retrieval_count,
-        }));
-        return {
-          success: true,
-          available: true,
-          principles,
-          injection: engine.format_for_injection(principles),
-        };
+        const result = await retrieveExperience(payload);
+        return { success: true, available: result.status === 'admitted', experienceExposureId: result.requestId, principles: result.candidates.map(({ snapshot: _snapshot, content: _content, ...principle }) => principle),
+          injection: result.candidates.map(candidate => candidate.content).join('\n\n') };
       } catch (error) {
-        return {
-          success: false,
-          available: false,
-          reason: 'retrieveFailed',
-          principles: [],
-          injection: '',
-          error: sanitizeUiErrorText(error),
-        };
+        return { success: false, available: false, reason: 'retrieveFailed', principles: [], injection: '', error: sanitizeUiErrorText(error) };
       }
+    },
+
+    recordExperienceExposure: async payload => {
+      const pending = pendingExperienceExposures.get(payload?.requestId);
+      if (!pending) return { success: false, recorded: 0 };
+      if (pending.expiresAt <= Date.now()) { pendingExperienceExposures.delete(payload.requestId); return { success: false, recorded: 0 }; }
+      if (!Array.isArray(payload.principleIds) || payload.principleIds.length > 5
+        || payload.principleIds.some(id => typeof id !== 'string')) return { success: false, recorded: 0 };
+      const selected = new Set(payload.principleIds);
+      const sourceRefs = pending.pins.filter(pin => selected.has(pin.subjectId));
+      pendingExperienceExposures.delete(payload.requestId);
+      if (!sourceRefs.length) return { success: true, recorded: 0 };
+      try {
+        await assertKnowledgeReadScopeCurrent(gatewayManager, pending.scope);
+        if (pending.expiresAt <= Date.now()) return { success: false, recorded: 0 };
+        return await rpc<{ success: boolean; recorded: number }>('sekb.recordExposure', {
+          requestId: payload.requestId, sourceRefs, readIdentity: pending.scope.identity,
+        });
+      } catch { return { success: false, recorded: 0 }; }
     },
 
     matchErrorExperience: async (payload) => {

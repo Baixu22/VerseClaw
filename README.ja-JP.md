@@ -211,6 +211,7 @@ Main layers：
 - 設定 > モデルとプロバイダーから、プロジェクト検索用のローカル EmbeddingGemma または設定済みリモート Qwen VL を選択できます。インストール、検証、準備、キャンセル、認証情報の更新は [embedding ライフサイクル](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md) を参照してください。
 - 同じページのナレッジ運用で検索と回答の既定方針、インデックスの有効化・一時停止・再開・再構築、公開容量予算を管理できます。有効なソース世代、更新待ち、削除、旧世代の整理、モデル機能の状態を表示します。[設定と運用](docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md)を参照してください。
 - Chat の参照では、ネイティブ記憶ファイルと Role Memory カードの所有者、バージョン、スコープを個別に確認します。使用前に参照を再読し、変更・削除されたソースを拒否します。[記憶ソースの読み取り](docs/dev/project-rag/MEMORY-SOURCE-CONTRACT.md)を参照してください。
+- 確認済み Runtime Lessons は owner と内容バージョンの pin を保持し、Chat、SourceSet、Studio、引用プレビューで読み取ります。画面への提示、DCS コンテキスト、引用、観測された採用、実行結果、独立したタスク評価は既存の SEKB 記録で区別します。
 - プロジェクトのベクトル索引は SQLite 厳密検索とライブラリ単位の LanceDB ANN に対応し、generation 切替、資料の権限撤回、owner による引用再読込を行います。[ベクトル後端](docs/dev/project-rag/VECTOR-BACKEND-CONTRACT.md)を参照してください。
 - Chat Preflight は共通の検索計画で字句・ベクトルの順位を統合し、ソース権限を維持して順位の根拠と縮退理由を返します。[検索計画](docs/dev/project-rag/RETRIEVAL-PLAN-CONTRACT.md)を参照してください。
 - Log、trace、screenshot、Task Forest、handoff は明示的に curated されない限り local working data。

@@ -3722,6 +3722,7 @@ export type KnowledgeRouteCandidateGroup = {
 };
 
 export type KnowledgeRouteContextResult = HostSuccess & {
+  experienceExposureId?: string;
   decision: 'skip' | 'suggest' | 'auto_attach';
   reason: string;
   query?: string;
@@ -3763,6 +3764,10 @@ export type KnowledgeRetrievalReport = Omit<RetrievalResultV2<unknown>, 'results
 export type KnowledgeRetrieveResult = HostSuccess & { retrieval?: KnowledgeRetrievalReport };
 
 export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
+  attribution?: {
+    uiExposures: number; contextExposures: number; citations: number; adoptions: number;
+    operationalOutcomes: number; taskGrades: number; unknownOperationalOutcomes: number;
+  };
   available: boolean;
   reason?: 'runtimeUnavailable' | 'reportFailed';
   counts: {
@@ -4025,6 +4030,8 @@ export type KnowledgeSekbCaptureTrajectoryResult = HostSuccess & {
 };
 
 export type KnowledgeSekbRetrieveForTaskPayload = {
+  sessionKey?: string;
+  workspaceId?: string;
   taskIntent: string;
   taskType: string;
   contextTags?: string[];
@@ -4032,9 +4039,11 @@ export type KnowledgeSekbRetrieveForTaskPayload = {
 };
 
 export type KnowledgeSekbRetrieveForTaskResult = HostSuccess & {
+  experienceExposureId?: string;
   available: boolean;
   reason?: 'runtimeUnavailable' | 'retrieveFailed';
   principles: Array<{
+    sourceRef?: import('../knowledge/experience').ExperienceRefV1;
     principle_id: string;
     title: string;
     condition: string;
@@ -4193,7 +4202,7 @@ export type KnowledgeRetrievalDiagnosticItem = {
   id: string;
   title: string;
   lookup: string;
-  sourceKind: 'wiki-page' | 'memory-file' | 'memory-card' | 'error-experience' | 'rule' | 'draft' | 'inbox' | 'unknown';
+  sourceKind: 'wiki-page' | 'memory-file' | 'memory-card' | 'sekb-principle' | 'error-experience' | 'rule' | 'draft' | 'inbox' | 'unknown';
   owner?: SourceRefV2['authorityId'];
   sourceRef?: SourceRefV2;
   reason: string;
@@ -6354,6 +6363,7 @@ export type HostApiContract = {
     sekbRejectSuggestion: (payload: KnowledgeSekbRejectSuggestionPayload) => KnowledgeSekbRejectSuggestionResult;
     sekbCaptureTrajectory: (payload: KnowledgeSekbCaptureTrajectoryPayload) => KnowledgeSekbCaptureTrajectoryResult;
     sekbRetrieveForTask: (payload: KnowledgeSekbRetrieveForTaskPayload) => KnowledgeSekbRetrieveForTaskResult;
+    recordExperienceExposure: (payload: { requestId: string; principleIds: string[] }) => HostSuccess & { recorded: number };
     matchErrorExperience: (payload: KnowledgeMatchErrorExperiencePayload) => KnowledgeMatchErrorExperienceResult;
     updateErrorExperienceEffectiveness: (payload: KnowledgeUpdateErrorExperienceEffectivenessPayload) => KnowledgeUpdateErrorExperienceEffectivenessResult;
     recordKnowledgeReference: (payload: KnowledgeRecordReferencePayload) => KnowledgeProvenanceResult;

@@ -729,6 +729,9 @@ describe('hostApi facade', () => {
       taskType: 'config/db',
       contextTags: ['postgresql'],
     });
+    await hostApi.knowledge.recordExperienceExposure({ requestId: 'exposure-request', principleIds: ['principle-1'] });
+    expect(hostInvoke).toHaveBeenLastCalledWith(expect.objectContaining({ module: 'knowledge', action: 'recordExperienceExposure',
+      payload: { requestId: 'exposure-request', principleIds: ['principle-1'] } }));
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'knowledge',

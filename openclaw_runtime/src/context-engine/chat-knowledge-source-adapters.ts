@@ -11,6 +11,11 @@ import { applyMemoryUseGateOverlay, isPoisonRevokedCard } from "../memory/memory
 import { KnowledgeStore } from "../knowledge/sekb/knowledge-store.js";
 import { isSekbEnabled } from "../knowledge/sekb/feature-flags.js";
 import {
+  experienceReadPolicy,
+  getPrincipleVersion,
+  isConfirmedPrinciple,
+} from "../knowledge/sekb/types.js";
+import {
   createMemoryWikiReadContext,
   getMemoryWikiPage,
   resolveMemoryWikiConfig,
@@ -338,39 +343,35 @@ export class SekbChatKnowledgeSourceAdapter implements ChatKnowledgeSourceAdapte
   async resolve(ref: ChatKnowledgeReferenceIntent): Promise<ChatKnowledgeSourceAdapterResult> {
     if (!isSekbEnabled(this.options.cfg)) return denied("not_found");
     try {
-      const ids = (
-        ref.sourceRef ? [ref.sourceRef.subjectId] : [ref.id, ref.pageId, ref.sourcePath, ref.lookup]
+      const namespaceId = this.store.get_source_namespace_id();
+      if (ref.corpus === "wiki" || ref.corpus === "memory") return denied("scope_mismatch");
+      if (
+        ref.sourceRef &&
+        (ref.sourceRef.domain !== "experience" ||
+          ref.sourceRef.authorityId !== "sekb" ||
+          ref.sourceRef.namespaceId !== namespaceId)
       )
-        .filter((id): id is string => Boolean(id))
-        .map((id) => id.replace(/^sekb:/, ""));
-      const principle = this.store
-        .query_principles({ status: null })
-        .find(
-          (entry) =>
-            ids.includes(entry.principle_id) || (!ref.sourceRef && ids.includes(entry.title)),
-        );
-      if (!principle) return ref.sourceRef ? denied("not_found") : { status: "not_found" };
+        return denied("namespace_mismatch");
+      const id = ref.sourceRef?.subjectId ?? ref.lookup.replace(/^sekb:/, "");
+      const principle = this.store.get_principle(id);
+      if (!isConfirmedPrinciple(principle))
+        return denied(principle.status === "archived" ? "archived" : "denied");
+      const context = createMemoryWikiReadContext({
+        config: wikiConfig(this.options.cfg),
+        appConfig: this.options.cfg,
+        identity: this.options.identity,
+      });
+      if (this.options.identity?.sessionId && context.sessionId !== this.options.identity.sessionId)
+        return denied("invalid_context");
       return readOwnedBody(ref, {
         owner: this.owner,
         domain: "experience",
-        namespaceId: this.store.get_source_namespace_id(),
+        namespaceId,
         subjectId: principle.principle_id,
-        revision: principle.updated_at,
+        revision: getPrincipleVersion(principle),
         raw: principle.full_content,
         title: principle.title,
-        policy: {
-          status:
-            principle.status === "active"
-              ? "active"
-              : principle.status === "archived"
-                ? "archived"
-                : "stale",
-          trust: "confirmed",
-          sensitivity: "workspace",
-          acl: { read: ["operator"] },
-          retention: { policy: "source-coupled" },
-          updatedAt: principle.updated_at,
-        },
+        policy: experienceReadPolicy(principle),
         options: this.options,
       });
     } catch {

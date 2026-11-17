@@ -5,6 +5,9 @@ import { closeElectronApp, expect, getStableWindow, test } from './fixtures/elec
 import { allocatePort, buildMockProviderConfig, startScriptedLlm, MOCK_MODEL_ID } from './fixtures/fp-p1-harness';
 import type { SourceRefV2 } from '../../shared/knowledge/owner-read-contract';
 import type { ChatSendWithMediaResult } from '../../shared/host-api/contract';
+import type { KnowledgeSekbRetrieveForTaskResult, KnowledgeRuntimeLessonsReportResult } from '../../shared/host-api/contract';
+import type { TaskView } from '../../shared/task-system/types';
+import { createHash } from 'node:crypto';
 
 type Json = Record<string, unknown>;
 async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {
@@ -49,7 +52,10 @@ test('Project RAG reads native and role memory independently and fences changed 
     expect((await host(page, 'providers', 'createAccount', { account, apiKey: 'test-key-ok' })).success).toBe(true);
     await host(page, 'providers', 'setDefaultAccount', { accountId: account.id });
     // Provider writes schedule a reload; cancel it before starting the configured fixture.
-    await host(page, 'gateway', 'stop');
+    await host(page, 'gateway', 'stop').catch(error => {
+      if (!String(error).includes('Owned Gateway process did not exit')) throw error;
+    });
+    await expect.poll(async () => (await host(page, 'gateway', 'status')).state, { timeout: 30000 }).toBe('stopped');
     const state = join(userDataDir, 'openclaw-source-state');
     for (const directory of [join(homeDir, '.openclaw'), state]) {
       await mkdir(directory, { recursive: true }); await writeFile(join(directory, 'openclaw.json'), JSON.stringify(cfg));
@@ -188,6 +194,144 @@ test('Project RAG reads native and role memory independently and fences changed 
     await writeFile(testInfo.outputPath('memory-domains-receipt.json'), JSON.stringify(receipt, null, 2));
     await testInfo.attach('memory-domains', { body: await readFile(testInfo.outputPath('memory-domains-receipt.json')), contentType: 'application/json' });
     try { await host(await getStableWindow(app), 'gateway', 'stop'); } catch { /* Keep the observed first failure. */ }
+    await closeElectronApp(app); await new Promise<void>(resolve => llm.server.close(() => resolve()));
+  }
+});
+
+test('Project RAG binds confirmed experience to DCS and observed adoption', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
+  test.setTimeout(360000);
+  let principleId = '', version = '';
+  let operationStep = 0;
+  const wire: string[] = [];
+  const llm = await startScriptedLlm(async text => {
+    wire.push(text);
+    if (text.includes('RAG14_ADOPT')) {
+      const step = operationStep++;
+      if (step === 0) return { toolCall: { id: 'rag14write', name: 'write', args: { path: 'adopted.txt', content: 'RAG14_OBSERVED_OPERATION' } } };
+      if (step === 1) return { toolCall: { id: 'rag14cite', name: 'record_sekb_adoption', args: { principleId, principleVersion: version, trigger: 'cited' } } };
+      if (step === 2) return { toolCall: { id: 'rag14adopt', name: 'record_sekb_adoption', args: { principleId, principleVersion: version, trigger: 'adopted', operationToolCallId: 'rag14write' } } };
+    }
+    return { text: 'RAG14 scripted completion' };
+  });
+  const workspace = join(homeDir, 'rag14-workspace'), vault = join(homeDir, 'rag14-vault');
+  await mkdir(workspace, { recursive: true }); await mkdir(vault, { recursive: true });
+  const app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
+  const receipt: Json = { schema: 'ProjectRagExperienceElectron/v1', actor: process.env.PROJECT_RAG_ACTOR ?? 'rag14-e2e',
+    driven_by: 'agent', realHumanEvidence: false, status: 'fail', steps: {} };
+  const steps = receipt.steps as Json;
+  try {
+    const page = await getStableWindow(app);
+    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60000 });
+    const created = await host(page, 'workspaces', 'create', { name: 'Agent experience lane', rootPath: workspace, agentId: 'main', permissionMode: 'fullAccess' });
+    const owner = created.activeWorkspace as { id: string; activeSessionKey: string };
+    const config = buildMockProviderConfig(llm.port, workspace);
+    config.channels = {}; config.update = { checkOnStart: false };
+    config.runtime = { contextBlock: { sekb: { enabled: true } } };
+    config.plugins = { enabled: true, entries: { 'memory-wiki': { enabled: true, config: { vaultMode: 'isolated', vault: { path: vault }, search: { backend: 'local', corpus: 'wiki' } } } } };
+    const account = { id: 'rag14-provider', vendorId: 'openai', label: 'RAG14 fixture', authMode: 'api_key',
+      baseUrl: `http://127.0.0.1:${llm.port}/v1`, model: MOCK_MODEL_ID, enabled: true, isDefault: true,
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    expect((await host(page, 'providers', 'createAccount', { account, apiKey: 'test-key-ok' })).success).toBe(true);
+    await host(page, 'providers', 'setDefaultAccount', { accountId: account.id });
+    await host(page, 'gateway', 'stop').catch(error => {
+      if (!String(error).includes('Owned Gateway process did not exit')) throw error;
+    });
+    await expect.poll(async () => (await host(page, 'gateway', 'status')).state, { timeout: 30000 }).toBe('stopped');
+    for (const directory of [join(homeDir, '.openclaw'), join(userDataDir, 'openclaw-source-state')]) {
+      await mkdir(directory, { recursive: true }); await writeFile(join(directory, 'openclaw.json'), JSON.stringify(config));
+    }
+    await host(page, 'settings', 'set', { key: 'gatewayPort', value: await allocatePort() });
+    await host(page, 'gateway', 'start');
+    await expect.poll(async () => (await host(page, 'gateway', 'status')).state, { timeout: 120000 }).toBe('running');
+    await host(page, 'gateway', 'rpc', { method: 'sessions.create', params: { key: owner.activeSessionKey, agentId: 'main' } });
+    const session = await host(page, 'gateway', 'rpc', { method: 'sessions.describe', params: { key: owner.activeSessionKey } });
+    const sessionId = (session.session as { sessionId: string }).sessionId;
+    const task = await host<{ success: boolean; result: { task: TaskView } }>(page, 'taskLedger', 'command', { workspaceId: owner.id,
+      command: { action: 'create', requestId: 'rag14-task', contract: { objective: 'Apply confirmed nebula experience', target: 'adopted.txt',
+        constraints: [], acceptance: [{ id: 'file', description: 'Observed output', verification: { kind: 'file-sha256', path: 'adopted.txt',
+          sha256: createHash('sha256').update('RAG14_OBSERVED_OPERATION').digest('hex') } }] } } });
+    expect(task.success).toBe(true);
+    const taskId = task.result.task.contract.taskNodeId;
+    await host(page, 'taskLedger', 'linkSession', { workspaceId: owner.id, sessionKey: owner.activeSessionKey, sessionGeneration: sessionId, nodeId: taskId });
+    await host(page, 'workspaces', 'bindCoordinator', { workspaceId: owner.id, sessionKey: owner.activeSessionKey, agentId: 'main', expectedRevision: 0,
+      taskLedgerNodeIds: [taskId], environment: { kind: 'local', rootPath: workspace }, archiveRestorePolicy: 'restore' });
+    expect((await host(page, 'taskLedger', 'command', { workspaceId: owner.id,
+      command: { action: 'claim', taskNodeId: taskId, sessionKey: owner.activeSessionKey, requestId: 'rag14-claim' } })).success).toBe(true);
+    const suggestion = { cluster_summary: 'RAG14 confirmed fixture', source_trajectory_ids: [], confidence: 1,
+      suggested_principle: { title: 'Nebula operation evidence', condition: 'When processing nebula tasks',
+        action: 'Write RAG14_OBSERVED_OPERATION and verify the result', reason: 'Nebula work needs an observed operation',
+        full_content: 'RAG14_CONFIRMED_NEBULA_BODY: verify the observed operation before attributing adoption.', task_types: ['chat'], context_tags: ['nebula'] } };
+    const lookup = () => host<KnowledgeSekbRetrieveForTaskResult>(page, 'knowledge', 'sekbRetrieveForTask', {
+      taskIntent: 'nebula', taskType: 'chat', workspaceId: owner.id, sessionKey: owner.activeSessionKey });
+    expect((await lookup()).principles).toEqual([]); steps.unconfirmedAbsent = true;
+    const confirmed = await host(page, 'knowledge', 'sekbConfirmPrinciple', { suggestion, sessionId });
+    expect(confirmed.success).toBe(true); principleId = confirmed.principleId as string;
+    const found = await lookup(); expect(found.principles).toHaveLength(1);
+    const pin = found.principles[0].sourceRef!; version = pin.revision;
+    expect(pin).toMatchObject({ domain: 'experience', authorityId: 'sekb', subjectId: principleId });
+    receipt.pin = pin; steps.confirmedPin = true;
+    expect((await host<KnowledgeRuntimeLessonsReportResult>(page, 'knowledge', 'runtimeLessonsReport')).attribution?.uiExposures).toBe(0);
+    expect((await host(page, 'knowledge', 'recordExperienceExposure', { requestId: found.experienceExposureId!, principleIds: [principleId] })).recorded).toBe(1);
+    const before = await host<KnowledgeRuntimeLessonsReportResult>(page, 'knowledge', 'runtimeLessonsReport');
+    expect(before.attribution).toMatchObject({ uiExposures: 1, contextExposures: 0, adoptions: 0, taskGrades: 0 });
+    const got = await host(page, 'knowledge', 'get', { lookup: principleId, sourceRef: pin, corpus: 'all' });
+    expect(got.content).toContain('RAG14_CONFIRMED_NEBULA_BODY');
+    expect((await host(page, 'knowledge', 'get', { lookup: `sekb:${principleId}`, corpus: 'all' })).success).toBe(false);
+    steps.pinnedRead = true;
+    const refs = [{ id: `sekb:${principleId}`, title: 'Nebula experience', lookup: `sekb:${principleId}`, sourceRef: pin, corpus: 'all' }];
+    const send = async (message: string, references: unknown[]) => {
+      const sent = await host<ChatSendWithMediaResult>(page, 'chat', 'sendWithMedia', { sessionKey: owner.activeSessionKey,
+        workspaceId: owner.id, message, idempotencyKey: crypto.randomUUID(), knowledgeScope: 'all', knowledgeMode: 'manual', knowledgeReferences: references });
+      expect(sent.success).toBe(true);
+      const done = await host(page, 'gateway', 'rpc', { method: 'agent.wait', params: { runId: sent.result!.runId, timeoutMs: 50000 }, timeoutMs: 55000 });
+      expect(['completed', 'ok']).toContain(done.status); return done;
+    };
+    const done = await send('RAG14_ADOPT nebula', refs);
+    receipt.run = done; expect(wire.some(text => text.includes('RAG14_CONFIRMED_NEBULA_BODY'))).toBe(true);
+    expect(await readFile(join(workspace, 'adopted.txt'), 'utf8')).toBe('RAG14_OBSERVED_OPERATION');
+    const after = await host<KnowledgeRuntimeLessonsReportResult>(page, 'knowledge', 'runtimeLessonsReport');
+    receipt.attribution = after.attribution;
+    expect(after.attribution).toMatchObject({ uiExposures: 1, contextExposures: 1, citations: 1, adoptions: 1, operationalOutcomes: 1, taskGrades: 0 });
+    expect(after.activePrinciples.find(p => p.principle_id === principleId)?.adoption_count).toBe(1);
+    steps.observedAdoption = true;
+    await page.getByTestId('sidebar-nav-knowledge').click();
+    await page.evaluate(pin => {
+      window.history.pushState({ usr: { knowledgeCitation: { sourceRef: pin } }, key: crypto.randomUUID() }, '', `#/knowledge?lookup=${encodeURIComponent(pin.subjectId)}`);
+      window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
+    }, pin);
+    await expect(page.getByTestId('knowledge-markdown-preview')).toContainText('RAG14_CONFIRMED_NEBULA_BODY');
+    await page.screenshot({ path: testInfo.outputPath('experience-citation.png'), fullPage: true }); steps.citationPreview = true;
+    await page.getByTestId('knowledge-more-actions').click();
+    await page.getByTestId('knowledge-tab-runtime').click();
+    await expect(page.getByTestId('knowledge-runtime-attribution')).toBeVisible();
+    await expect(page.getByTestId('knowledge-runtime-adoptions')).toContainText('1');
+    await expect(page.getByTestId('knowledge-runtime-taskGrades')).toContainText('0');
+    await page.screenshot({ path: testInfo.outputPath('experience-attribution.png'), fullPage: true }); steps.attributionUi = true;
+    await page.getByTestId('knowledge-runtime-retrieve-intent').fill('nebula');
+    await page.getByTestId('knowledge-runtime-retrieve-type').fill('chat');
+    await page.getByTestId('knowledge-runtime-retrieve').click();
+    await expect(page.getByTestId('knowledge-runtime-retrieve-result')).toContainText(suggestion.suggested_principle.title);
+    await expect.poll(async () => (await host<KnowledgeRuntimeLessonsReportResult>(page, 'knowledge', 'runtimeLessonsReport')).attribution?.uiExposures).toBe(2);
+    steps.uiAcknowledgment = true;
+    await host(page, 'knowledge', 'sekbConfirmPrinciple', { suggestion, sessionId, edits: { full_content: 'RAG14_CORRECTED_NEBULA_BODY' } });
+    expect((await host(page, 'knowledge', 'get', { lookup: principleId, sourceRef: pin, corpus: 'all' })).success).toBe(false);
+    steps.correctionInvalidatesPin = true;
+    const fresh = await lookup(); const freshPin = fresh.principles[0].sourceRef!;
+    await host(page, 'gateway', 'stop').catch(error => {
+      if (!String(error).includes('Owned Gateway process did not exit')) throw error;
+    });
+    await expect.poll(async () => (await host(page, 'gateway', 'status')).state, { timeout: 30000 }).toBe('stopped');
+    (config.runtime as { contextBlock: { sekb: { enabled: boolean } } }).contextBlock.sekb.enabled = false;
+    for (const directory of [join(homeDir, '.openclaw'), join(userDataDir, 'openclaw-source-state')]) await writeFile(join(directory, 'openclaw.json'), JSON.stringify(config));
+    await host(page, 'gateway', 'start');
+    expect((await lookup()).principles).toEqual([]);
+    expect((await host(page, 'knowledge', 'get', { lookup: principleId, sourceRef: freshPin, corpus: 'all' })).success).toBe(false);
+    steps.rollbackDisablesLane = true;
+    receipt.status = 'pass';
+  } finally {
+    receipt.wire = wire; receipt.provider = llm.log;
+    await writeFile(testInfo.outputPath('experience-receipt.json'), JSON.stringify(receipt, null, 2));
+    try { await host(await getStableWindow(app), 'gateway', 'stop'); } catch { /* Preserve the first failure. */ }
     await closeElectronApp(app); await new Promise<void>(resolve => llm.server.close(() => resolve()));
   }
 });

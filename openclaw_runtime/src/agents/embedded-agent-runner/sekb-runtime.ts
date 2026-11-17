@@ -141,6 +141,7 @@ export function installEmbeddedSekbHarnessHooks(
   runtime: EmbeddedSekbRuntime | undefined,
   lineage?: RuntimeLineage | (() => RuntimeLineage | undefined),
   identity?: InstallSekbHarnessHooksOptions["identity"],
+  retainedExperience?: InstallSekbHarnessHooksOptions["retainedExperience"],
 ): () => void {
   if (!runtime) {
     return () => {};
@@ -151,6 +152,7 @@ export function installEmbeddedSekbHarnessHooks(
     injector: runtime.injector,
     store: runtime.store,
     ...(identity ? { identity } : {}),
+    ...(retainedExperience ? { retainedExperience } : {}),
     ...(lineage ? { lineage } : {}),
     onError: (error) => {
       log.warn(`sekb harness hook failed: ${String(error)}`);

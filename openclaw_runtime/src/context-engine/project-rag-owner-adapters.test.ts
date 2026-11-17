@@ -146,29 +146,63 @@ describe("Project RAG production owner adapters", () => {
     const file = join(root, "vault", "concepts", "owner.md");
     const readAuto = async (message = ref.lookup) => {
       const source = (await read()).admitted[0]?.ownerSnapshot?.source;
-      return resolveChatKnowledgeIntent({ scope: "wiki", mode: "auto-read", message,
+      return resolveChatKnowledgeIntent({
+        scope: "wiki",
+        mode: "auto-read",
+        message,
         references: [{ ...ref, sourceRef: source, attachKind: "auto", score: 999, confidence: 1 }],
-        adapters: createProductionChatKnowledgeSourceAdapters(cfg, { identity: identity() }) });
+        adapters: createProductionChatKnowledgeSourceAdapters(cfg, { identity: identity() }),
+      });
     };
-    await writeFile(file, `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\nupdatedAt: "2026-11-14T00:00:00Z"\n---\n${body}`, "utf8");
+    await writeFile(
+      file,
+      `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\nupdatedAt: "2026-11-14T00:00:00Z"\n---\n${body}`,
+      "utf8",
+    );
     const accepted = await readAuto();
     expect(accepted.admitted).toHaveLength(1);
-    expect(await revalidateChatKnowledgeRefs({ refs: accepted.admitted, cfg, identity: identity() })).toHaveLength(1);
-    const limited = await resolveChatKnowledgeIntent({ scope: "wiki", mode: "auto-read", message: ref.lookup,
-      references: Array.from({ length: 4 }, (_, index) => ({ ...ref, id: `auto-${index}`, attachKind: "auto",
-        sourceRef: accepted.admitted[0]!.ownerSnapshot!.source })),
-      adapters: createProductionChatKnowledgeSourceAdapters(cfg, { identity: identity() }) });
+    expect(
+      await revalidateChatKnowledgeRefs({ refs: accepted.admitted, cfg, identity: identity() }),
+    ).toHaveLength(1);
+    const limited = await resolveChatKnowledgeIntent({
+      scope: "wiki",
+      mode: "auto-read",
+      message: ref.lookup,
+      references: Array.from({ length: 4 }, (_, index) => ({
+        ...ref,
+        id: `auto-${index}`,
+        attachKind: "auto",
+        sourceRef: accepted.admitted[0]!.ownerSnapshot!.source,
+      })),
+      adapters: createProductionChatKnowledgeSourceAdapters(cfg, { identity: identity() }),
+    });
     expect(limited.admitted).toHaveLength(3);
     expect(limited.denied).toHaveLength(1);
-    const knownRaw = await readFile(file, 'utf8');
-    await writeFile(file, knownRaw.replace('updatedAt:', 'verifiedAt: "unknown"\nupdatedAt:'), 'utf8');
+    const knownRaw = await readFile(file, "utf8");
+    await writeFile(
+      file,
+      knownRaw.replace("updatedAt:", 'verifiedAt: "unknown"\nupdatedAt:'),
+      "utf8",
+    );
     expect((await readAuto()).admitted).toHaveLength(1);
     expect((await readAuto("Which project source should I read?")).admitted).toEqual([]);
-    await writeFile(file, `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\nupdatedAt: "2026-11-14T00:00:00Z"\ncontradictions: [unresolved conflict]\n---\n${body}`, "utf8");
+    await writeFile(
+      file,
+      `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\nupdatedAt: "2026-11-14T00:00:00Z"\ncontradictions: [unresolved conflict]\n---\n${body}`,
+      "utf8",
+    );
     expect((await readAuto()).admitted).toEqual([]);
-    await writeFile(file, `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\n---\n${body}`, "utf8");
+    await writeFile(
+      file,
+      `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\n---\n${body}`,
+      "utf8",
+    );
     expect((await readAuto()).admitted).toEqual([]);
-    await writeFile(file, `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: advisory\nupdatedAt: "2026-11-14T00:00:00Z"\n---\n${body}`, "utf8");
+    await writeFile(
+      file,
+      `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: advisory\nupdatedAt: "2026-11-14T00:00:00Z"\n---\n${body}`,
+      "utf8",
+    );
     expect((await readAuto()).admitted).toEqual([]);
   });
 
@@ -420,7 +454,17 @@ describe("Project RAG production owner adapters", () => {
       post_adoption_success: 0,
       criticality: "medium",
       pinned: false,
-      metadata: {},
+      metadata: {
+        confirmIntegrity: "confirmed",
+        confirmProvenance: {
+          schema: "sekb-confirm-provenance.v1",
+          sessionId: generation,
+          sourceSystem: "ui-confirm",
+          integrity: "confirmed",
+          confirmedAt: now,
+          revokeKey: "revoke:sekb-principle:principle-rag",
+        },
+      },
     });
     const adapter = new SekbChatKnowledgeSourceAdapter(store, { cfg, identity: identity() });
     const value = await adapter.resolve({

@@ -562,7 +562,16 @@
     "lineageTrace": "Трасса",
     "lineageLedger": "Журнал задач",
     "sourceTrajectories": "Исходные траектории",
-    "confirmProvenance": "Сессия {{sessionId}} · источники {{trajectories}}"
+    "confirmProvenance": "Сессия {{sessionId}} · источники {{trajectories}}",
+    "attribution": {
+      "uiExposures": "Показы в интерфейсе",
+      "contextExposures": "Включения в контекст",
+      "citations": "Цитирования",
+      "adoptions": "Наблюдаемые применения",
+      "operationalOutcomes": "Результаты выполнения",
+      "taskGrades": "Независимые оценки задач",
+      "unknownOperationalOutcomes": "Неизвестные результаты выполнения"
+    }
   },
   "governance": {
     "title": "Governance",

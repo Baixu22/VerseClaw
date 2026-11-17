@@ -211,6 +211,7 @@ flowchart LR
 - 设置 > 模型与服务可为项目检索选择本地 EmbeddingGemma 或配置的远端 Qwen VL，提供安装、校验、预热、取消和凭据刷新。参见 [embedding 生命周期](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md)。
 - 同页的知识运维管理默认检索方案、回答策略、索引启用/暂停/恢复/重建和发布空间预算，显示有效来源代际、索引滞后、逻辑删除、旧代际清理和模型能力原因。参见[配置与运维](docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md)。
 - 原生记忆文件与角色记忆卡在 Chat 引用时保持独立 owner、版本和作用域；使用前回读 owner pin，拒绝已修改或删除的来源。参见[记忆来源读取](docs/dev/project-rag/MEMORY-SOURCE-CONTRACT.md)。
+已确认 Runtime Lessons 通过 owner 与内容版本 pin 进入 Chat、SourceSet、Studio 和引用预览；界面曝光、DCS 保留上下文、引用、已观察采用、运行结果和独立任务评分分别记录在现有 SEKB 收据中。
 - 项目向量索引支持 SQLite 可移植精确检索和库级 LanceDB ANN，提供 generation 切换、来源撤销与 owner 回源引用。参见[向量后端合同](docs/dev/project-rag/VECTOR-BACKEND-CONTRACT.md)。
 - Chat Preflight 通过统一计划融合词法和向量名次，保持来源权限，并返回排序信号与退化原因。参见[检索计划合同](docs/dev/project-rag/RETRIEVAL-PLAN-CONTRACT.md)。
 - 日志、trace、截图、Task Forest 与 handoff 默认是本地工作数据，除非明确整理为 curated evidence。

@@ -590,7 +590,16 @@
     "lineageTrace": "Trace",
     "lineageLedger": "Task ledger",
     "sourceTrajectories": "Source trajectories",
-    "confirmProvenance": "Session {{sessionId}} · sources {{trajectories}}"
+    "confirmProvenance": "Session {{sessionId}} · sources {{trajectories}}",
+    "attribution": {
+      "uiExposures": "UI exposures",
+      "contextExposures": "Context exposures",
+      "citations": "Citations",
+      "adoptions": "Observed adoptions",
+      "operationalOutcomes": "Operational outcomes",
+      "taskGrades": "Independent task grades",
+      "unknownOperationalOutcomes": "Unknown operational outcomes"
+    }
   },
   "governance": {
     "title": "Governance",

@@ -1784,6 +1784,8 @@ export function ChatInput({
         : (result.candidateGroups ?? []).flatMap((group) => group.candidates);
       if (result.decision === 'suggest') {
         setSuggestedKnowledgeRefs(routedCandidates);
+        if (result.experienceExposureId) void hostApi.knowledge.recordExperienceExposure({ requestId: result.experienceExposureId,
+          principleIds: routedCandidates.flatMap(candidate => candidate.runtimeLesson ? [candidate.runtimeLesson.principleId] : []) }).catch(() => undefined);
         setKnowledgePreflightExpanded(false);
         return [];
       }

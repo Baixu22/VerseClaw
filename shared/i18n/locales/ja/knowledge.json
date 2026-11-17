@@ -562,7 +562,16 @@
     "lineageTrace": "Trace",
     "lineageLedger": "Task ledger",
     "sourceTrajectories": "ソース軌跡",
-    "confirmProvenance": "セッション {{sessionId}} · ソース {{trajectories}}"
+    "confirmProvenance": "セッション {{sessionId}} · ソース {{trajectories}}",
+    "attribution": {
+      "uiExposures": "画面への提示",
+      "contextExposures": "コンテキストへの提示",
+      "citations": "引用",
+      "adoptions": "観測された採用",
+      "operationalOutcomes": "実行結果",
+      "taskGrades": "独立したタスク評価",
+      "unknownOperationalOutcomes": "不明な実行結果"
+    }
   },
   "governance": {
     "title": "Governance",

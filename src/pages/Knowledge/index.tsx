@@ -54,6 +54,7 @@ import {
 } from '@/lib/host-api';
 import type { KnowledgeRuntimeLineage } from '@shared/host-api/contract';
 import { isMemorySourceRef } from '@shared/knowledge/memory';
+import { isExperienceSourceRef } from '@shared/knowledge/experience';
 import { errorMessageFrom } from '@/lib/user-error';
 import { cn } from '@/lib/utils';
 import { asRecord, getString, getSearchRows, getLookup, getTitle, getPageBody, type SearchRow } from './knowledge-view-utils';
@@ -447,6 +448,11 @@ export function Knowledge() {
   const [runtimeShadowResult, setRuntimeShadowResult] = useState<KnowledgeSekbShadowEvaluationExportResult | null>(null);
   const [runtimeRetrieveTags, setRuntimeRetrieveTags] = useState('');
   const [runtimeRetrieveResult, setRuntimeRetrieveResult] = useState<KnowledgeSekbRetrieveForTaskResult | null>(null);
+  const runtimeReadSerialRef = useRef(0);
+  useEffect(() => {
+    setRuntimeRetrieveResult(null);
+    return () => { runtimeReadSerialRef.current += 1; };
+  }, [sourceWorkspace?.id, sourceWorkspace?.activeSessionKey]);
 
   const rows = useMemo(() => getSearchRows(searchResult), [searchResult]);
   useEffect(() => {
@@ -689,6 +695,7 @@ export function Knowledge() {
 
   const retrieveRuntimePrinciples = useCallback(async () => {
     if (!runtimeRetrieveIntent.trim() || !runtimeRetrieveType.trim()) return;
+    const serial = ++runtimeReadSerialRef.current;
     setRunning('runtimeRetrieve');
     setError(null);
     try {
@@ -698,11 +705,16 @@ export function Knowledge() {
         taskType: runtimeRetrieveType.trim(),
         contextTags,
         topK: 5,
+        sessionKey: sourceWorkspace?.activeSessionKey,
+        workspaceId: sourceWorkspace?.id,
       });
+      if (serial !== runtimeReadSerialRef.current) return;
       if (!result.success || !result.available) {
         throw new Error(result.error || t('runtime.errors.retrieve'));
       }
       setRuntimeRetrieveResult(result);
+      if (result.experienceExposureId) void hostApi.knowledge.recordExperienceExposure({ requestId: result.experienceExposureId,
+        principleIds: result.principles.map(principle => principle.principle_id) }).catch(() => undefined);
       toast.success(t('runtime.toasts.retrieved', { count: result.principles.length }));
     } catch (err) {
       const message = errorMessageFrom(err);
@@ -711,7 +723,7 @@ export function Knowledge() {
     } finally {
       setRunning(null);
     }
-  }, [runtimeRetrieveIntent, runtimeRetrieveTags, runtimeRetrieveType, t]);
+  }, [runtimeRetrieveIntent, runtimeRetrieveTags, runtimeRetrieveType, sourceWorkspace?.id, sourceWorkspace?.activeSessionKey, t]);
 
   const captureRuntimeTrajectory = useCallback(async () => {
     if (!runtimeCaptureIntent.trim() || !runtimeCaptureType.trim()) return;
@@ -1046,7 +1058,7 @@ export function Knowledge() {
     setSelectedPage(null);
     setEditorBody('');
     try {
-      const result = await hostApi.knowledge.get({ lookup, lineCount: 120, corpus: isMemorySourceRef(sourceRef) ? 'memory' : 'wiki', sourceRef,
+      const result = await hostApi.knowledge.get({ lookup, lineCount: 120, corpus: isExperienceSourceRef(sourceRef) ? 'all' : isMemorySourceRef(sourceRef) ? 'memory' : 'wiki', sourceRef,
         sessionKey: sourceWorkspace?.activeSessionKey, workspaceId: sourceWorkspace?.id });
       if (serial !== sourceReadSerialRef.current) return;
       if (!result.success) throw new Error(result.readDenial ? t('errors.ownerReadDenied') : result.error || t('errors.get'));
@@ -2428,6 +2440,17 @@ export function Knowledge() {
                         </div>
                       ))}
                     </div>
+
+                    {runtimeLessons.attribution ? (
+                      <div className="grid gap-2 sm:grid-cols-3" data-testid="knowledge-runtime-attribution">
+                        {(['uiExposures', 'contextExposures', 'citations', 'adoptions', 'operationalOutcomes', 'taskGrades', 'unknownOperationalOutcomes'] as const).map(key => (
+                          <div key={key} className="rounded-xl bg-surface-input p-3" data-testid={`knowledge-runtime-${key}`}>
+                            <div className="text-xl font-semibold tabular-nums">{runtimeLessons.attribution![key]}</div>
+                            <div className="mt-1 text-xs text-muted-foreground">{t(`runtime.attribution.${key}`)}</div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
 
                     <div className="grid gap-4 xl:grid-cols-2">
                       <section className="space-y-3" aria-labelledby="runtime-undistilled-title">

@@ -56,6 +56,7 @@ const hostApiMock = vi.hoisted(() => ({
   sekbConfirmPrinciple: vi.fn(),
   sekbRejectSuggestion: vi.fn(),
   sekbRetrieveForTask: vi.fn(),
+  recordExperienceExposure: vi.fn(),
   dialogOpen: vi.fn(),
 }));
 
@@ -110,6 +111,7 @@ vi.mock('@/lib/host-api', () => ({
       sekbConfirmPrinciple: hostApiMock.sekbConfirmPrinciple,
       sekbRejectSuggestion: hostApiMock.sekbRejectSuggestion,
       sekbRetrieveForTask: hostApiMock.sekbRetrieveForTask,
+      recordExperienceExposure: hostApiMock.recordExperienceExposure,
     },
     dialog: {
       open: hostApiMock.dialogOpen,
@@ -565,6 +567,7 @@ describe('Knowledge page', () => {
     hostApiMock.sekbConfirmPrinciple.mockReset();
     hostApiMock.sekbRejectSuggestion.mockReset();
     hostApiMock.sekbRetrieveForTask.mockReset();
+    hostApiMock.recordExperienceExposure.mockReset().mockResolvedValue({ success: true, recorded: 1 });
     hostApiMock.dialogOpen.mockReset();
 
     hostApiMock.status.mockResolvedValue({
@@ -637,6 +640,7 @@ describe('Knowledge page', () => {
     });
     hostApiMock.sekbRejectSuggestion.mockResolvedValue({ success: true, available: true });
     hostApiMock.sekbRetrieveForTask.mockResolvedValue({
+      experienceExposureId: "ui-receipt",
       success: true,
       available: true,
       principles: [{
@@ -1568,5 +1572,6 @@ describe('Knowledge page', () => {
     }));
     expect(screen.getByTestId('knowledge-runtime-retrieve-result')).toHaveTextContent('Review before durable knowledge writes');
     expect(screen.getByTestId('knowledge-runtime-injection')).toHaveTextContent('Runtime Lessons');
+    expect(hostApiMock.recordExperienceExposure).toHaveBeenCalledWith({ requestId: 'ui-receipt', principleIds: ['principle-runtime-1'] });
   });
 });

@@ -15,7 +15,8 @@ import {
 import type { RuntimeEmbeddingProvider } from '../../openclaw_runtime/src/runtime-core/memory-embedding-provider';
 import { isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot, matchOwnerReadPin,
   type OwnerReadRejectionCode } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
-import { getMemorySourceOwner, isMemorySourceRef } from '../../shared/knowledge/memory';
+import { isMemorySourceRef } from '../../shared/knowledge/memory';
+import { getExplicitKnowledgeOwner, isExperienceSourceRef } from '../../shared/knowledge/experience';
 
 const UNKNOWN_FRESHNESS = '1970-01-01T00:00:00.000Z';
 
@@ -74,7 +75,7 @@ export async function readBoundedKnowledgePage(input: {
   workspaceId?: string;
   read: (range: { fromLine?: number; lineCount: number }) => Promise<unknown>;
 }): Promise<unknown> {
-  if (getMemorySourceOwner(input.ref) && !isMemorySourceRef(input.ref.sourceRef)) {
+  if (getExplicitKnowledgeOwner(input.ref) && !isMemorySourceRef(input.ref.sourceRef) && !isExperienceSourceRef(input.ref.sourceRef)) {
     return { success: false, readDenial: 'denied' };
   }
   const first = await input.read({ lineCount: 80 });
@@ -118,9 +119,11 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
   if (!record(page) || page.success === false) return null;
   const snapshot = isOwnerReadSnapshotV1(page.ownerSnapshot) ? page.ownerSnapshot : undefined;
   if (page.corpus !== undefined && page.corpus !== 'wiki'
-    && !(page.corpus === 'memory' && snapshot && isMemorySourceRef(snapshot.source))) return null;
+    && !(page.corpus === 'memory' && snapshot && isMemorySourceRef(snapshot.source))
+    && !(page.corpus === 'all' && snapshot && isExperienceSourceRef(snapshot.source))) return null;
   const owner = snapshot?.source.domain === 'native-memory' ? 'native-memory'
-    : snapshot?.source.domain === 'role-memory' ? 'memory-slot' : 'memory-wiki';
+    : snapshot?.source.domain === 'role-memory' ? 'memory-slot'
+    : snapshot?.source.domain === 'experience' ? 'sekb' : 'memory-wiki';
   const contentValue = ['content', 'body', 'text', 'snippet', 'bodyPreview'].map((key) => page[key])
     .find((value) => value !== undefined);
   const content = typeof contentValue === 'string' && contentValue.trim().length > 0 ? contentValue : undefined;
@@ -189,7 +192,7 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
   const candidate: SourceSetCandidate = {
     ref: {
       refId: snapshot ? `${owner}:${snapshot.source.namespaceId}:${path}:${snapshot.source.locator!.startByte}-${snapshot.source.locator!.endByteExclusive}` : `memory-wiki:${path}`,
-      owner, subjectKind: owner === 'native-memory' ? 'memory-file' : owner === 'memory-slot' ? 'memory-card' : 'wiki-page', subjectId: path,
+      owner, subjectKind: owner === 'native-memory' ? 'memory-file' : owner === 'memory-slot' ? 'memory-card' : owner === 'sekb' ? 'experience-principle' : 'wiki-page', subjectId: path,
       revision, contentDigest,
       trust: sourceTrust(ownerValue('trust')),
       sensitivity: sourceSensitivity(ownerValue('sensitivity') === undefined ? ownerValue('privacyTier') : ownerValue('sensitivity')),
@@ -253,7 +256,7 @@ export async function retrieveSelectedSourceSetEvidence(input: {
         return { workspaceId: context.workspaceId, agentId: context.agentId, sessionKey: context.sessionKey };
       })() } : input.workspaceId ? { taskContext: { workspaceId: input.workspaceId } } : {}),
       pinnedRefs: input.sourceRefs.map((ref, index) => ({
-        owner: materialized[index]?.candidate.ref.owner ?? getMemorySourceOwner(ref) ?? 'memory-wiki',
+        owner: materialized[index]?.candidate.ref.owner ?? getExplicitKnowledgeOwner(ref) ?? 'memory-wiki',
         subjectId: materialized[index]?.candidate.ref.subjectId ?? ref.sourceRef?.subjectId ?? ref.path ?? ref.id,
         ...(ref.revision === undefined ? {} : { revision: ref.revision }),
         ...(ref.contentDigest === undefined ? {} : { contentDigest: ref.contentDigest }),
