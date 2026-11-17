@@ -327,8 +327,20 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       if (!(await id('execution-migration-open').isVisible())) await click('chat-toolbar-more');
       await need('execution-migration-open'); await click('execution-migration-open');
       await expect(id('execution-migration-dialog')).toBeVisible();
-      if (await id('execution-migration-target').inputValue() !== targetWorkspaceId) await ui('selectOption', 'checkout:target',
-        () => id('execution-migration-target').selectOption(targetWorkspaceId!), { identity: true, value: targetWorkspaceId! });
+      const migrationTarget = id('execution-migration-target');
+      const nativeSelect = await migrationTarget.evaluate(element => element instanceof HTMLSelectElement);
+      if (nativeSelect) {
+        if (await migrationTarget.inputValue() !== targetWorkspaceId) await ui('selectOption', 'checkout:target',
+          () => migrationTarget.selectOption(targetWorkspaceId!), { identity: true, value: targetWorkspaceId! });
+        await expect(migrationTarget).toHaveValue(targetWorkspaceId!);
+      } else {
+        if ((await migrationTarget.textContent())?.trim() !== 'Migration target') {
+          await ui('click', 'checkout:target:open', () => migrationTarget.click());
+          await ui('click', 'option:Migration target', () => page.getByRole('option', { name: 'Migration target', exact: true }).click(),
+            { identity: true, value: targetWorkspaceId! });
+        }
+        await expect(migrationTarget).toHaveText('Migration target');
+      }
       await click('execution-migration-start', { confirmation: 'migrate', value: targetWorkspaceId! });
       await expect(id('execution-migration-dialog')).toHaveCount(0, { timeout: 60_000 });
       const moved = await hostInvoke<{ operation: { id: string; phase: string; sessionKey: string; targetGeneration: string } }>(app,
@@ -394,14 +406,14 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
           return response;
         });
       });
-      if (!(await id('chat-session-handoff').isVisible())) {
-        await ui('click', 'chat-header:options', () => id('chat-toolbar-more').click());
-      }
-      await need('chat-session-handoff');
-      await expect(id('chat-session-handoff')).toBeEnabled();
-      await ui('press', 'testid:chat-session-handoff:Enter', async () => {
-        await id('chat-session-handoff').focus(); await id('chat-session-handoff').press('Enter');
-      });
+      const handoffRow = id(`sidebar-session-${project.sessionKey}`);
+      const handoffMore = id(`sidebar-session-more-${project.sessionKey}`);
+      await need(`sidebar-session-${project.sessionKey}`);
+      await ui('hover', 'session:source', () => hoverUntilVisible(handoffRow, handoffMore));
+      await ui('click', 'session:more', () => handoffMore.click());
+      await need('sidebar-session-context-handoff');
+      await expect(id('sidebar-session-context-handoff')).toBeEnabled();
+      await click('sidebar-session-context-handoff');
       await expect(id('chat-handoff-dialog')).toBeVisible();
       let draft = await id('chat-handoff-draft').inputValue(); expect(draft.trim()).not.toBe('');
       if (!draft.includes(objective)) {

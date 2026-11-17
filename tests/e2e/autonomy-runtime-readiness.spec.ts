@@ -2,7 +2,7 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { createHash, createPrivateKey, createPublicKey, generateKeyPairSync, sign } from 'node:crypto';
+import { createHash, createPrivateKey, createPublicKey, generateKeyPairSync, randomUUID, sign } from 'node:crypto';
 import { expect, test } from '@playwright/test';
 import { GatewayClient } from '../../openclaw_runtime/packages/gateway-client/src/index';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
@@ -30,7 +30,9 @@ test('reads actual Gateway tool exposure and continues the same isolated session
   let output = '';
   async function boot() {
     output = '';
-    child = spawn(process.execPath, [resolve('openclaw_runtime/dist/entry.js'), 'gateway', 'run', '--port', String(port), '--bind', 'loopback', '--token', token, '--tailscale', 'off', '--allow-unconfigured'], { cwd: resolve('openclaw_runtime'), env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+    // The direct launcher supplies the generation normally stamped by Main.
+    const launchEnv = { ...env, VERSE_CLAW_GATEWAY_GENERATION: randomUUID() };
+    child = spawn(process.execPath, [resolve('openclaw_runtime/dist/entry.js'), 'gateway', 'run', '--port', String(port), '--bind', 'loopback', '--token', token, '--tailscale', 'off', '--allow-unconfigured'], { cwd: resolve('openclaw_runtime'), env: launchEnv, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
     const append = (chunk: Buffer) => { output = (output + chunk.toString()).slice(-16000); };
     child.stdout?.on('data', append);
     child.stderr?.on('data', append);
@@ -106,7 +108,10 @@ test('reads actual Gateway tool exposure and continues the same isolated session
     expect(continued.policy?.generation.runtimeGeneration).toBe(secondAck.gatewayGeneration);
     expect(continued.policy?.tools?.status).toBe('effective');
     expect(llm.anomalies).toEqual([]);
-    if (process.env.CLAWX_A5_RUNTIME_RECEIPT) await writeFile(process.env.CLAWX_A5_RUNTIME_RECEIPT, JSON.stringify({ schema: 'AutonomyA5RuntimeIntegration/v1', driven_by: 'agent', actor: 'codex-a5-runtime-integration', candidate: process.env.CLAWX_TEST_CANDIDATE ?? null, firstAck, secondAck, firstPolicy: first.policy, continuedPolicy: continued.policy, cronEnabled: cron.enabled, providerRequests: llm.log.length, transcriptReadback: true, limitations: ['Node Gateway integration; native Electron host and production close-to-tray not exercised', 'scripted local provider; no model quality or installed-service claim'] }, null, 2));
+    if (process.env.CLAWX_A5_RUNTIME_RECEIPT) {
+      await writeFile(process.env.CLAWX_A5_RUNTIME_RECEIPT, JSON.stringify({ schema: 'AutonomyA5RuntimeIntegration/v1', driven_by: 'agent', actor: 'codex-a5-runtime-integration', candidate: process.env.CLAWX_TEST_CANDIDATE ?? null, firstAck, secondAck, firstPolicy: first.policy, continuedPolicy: continued.policy, cronEnabled: cron.enabled, providerRequests: llm.log.length, transcriptReadback: true, limitations: ['Node Gateway integration; native Electron host and production close-to-tray not exercised', 'scripted local provider; no model quality or installed-service claim'] }, null, 2));
+      await testInfo.attach('reads actual Gateway tool exposure', { path: process.env.CLAWX_A5_RUNTIME_RECEIPT, contentType: 'application/json' });
+    }
   } finally {
     const logPath = testInfo.outputPath('gateway.log');
     await writeFile(logPath, output);

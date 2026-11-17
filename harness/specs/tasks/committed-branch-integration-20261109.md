@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: active
 id: committed-branch-integration-20261109
 title: Integrate committed work while preserving current owners and local edits
 taskType: runtime-bridge

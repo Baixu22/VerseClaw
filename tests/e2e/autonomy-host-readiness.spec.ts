@@ -53,6 +53,10 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
     const active = await hostInvoke<{ activeWorkspace: { id: string } }>(app, 'workspaces', 'getActive');
     const workspaceId = active.activeWorkspace.id;
     await hostInvoke(app, 'workspaces', 'update', { id: workspaceId, permissionMode: 'fullAccess', rootPath: workspaceDir });
+    await expect.poll(async () => {
+      const status = await hostInvoke<{ state: string; gatewayReady?: boolean }>(app!, 'gateway', 'status');
+      return status.state === 'running' && status.gatewayReady === true;
+    }, { timeout: 120_000 }).toBe(true);
     const created = await hostInvoke<{ key?: string; sessionKey?: string }>(app, 'gateway', 'rpc', { method: 'sessions.create', params: { agentId: 'main', label: 'A5 isolated host-readiness' } });
     const sessionKey = created.key ?? created.sessionKey;
     if (!sessionKey) throw new Error('sessions.create returned no session key');
