@@ -334,12 +334,12 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
           () => migrationTarget.selectOption(targetWorkspaceId!), { identity: true, value: targetWorkspaceId! });
         await expect(migrationTarget).toHaveValue(targetWorkspaceId!);
       } else {
-        if ((await migrationTarget.textContent())?.trim() !== 'Migration target') {
+        if ((await migrationTarget.textContent())?.trim() !== 'U6 target') {
           await ui('click', 'checkout:target:open', () => migrationTarget.click());
-          await ui('click', 'option:Migration target', () => page.getByRole('option', { name: 'Migration target', exact: true }).click(),
+          await ui('click', 'option:U6 target', () => page.getByRole('option', { name: 'U6 target', exact: true }).click(),
             { identity: true, value: targetWorkspaceId! });
         }
-        await expect(migrationTarget).toHaveText('Migration target');
+        await expect(migrationTarget).toHaveText('U6 target');
       }
       await click('execution-migration-start', { confirmation: 'migrate', value: targetWorkspaceId! });
       await expect(id('execution-migration-dialog')).toHaveCount(0, { timeout: 60_000 });
