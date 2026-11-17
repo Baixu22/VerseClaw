@@ -1,0 +1,135 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "types",
+  "candidate": {
+    "head": "7e48c13a8b3ab74d7447360cbe2dd1cde64b5d05",
+    "tree": "5b2dee7ce9d4d1cd16bdaf2edd18e419e6cb2a97",
+    "branch": "codex/project-rag-longterm-20261109",
+    "dirty": "M electron/services/gateway-api.ts\n M electron/services/knowledge-api.ts\n M electron/services/knowledge-source-set-answer.ts\n M harness/specs/tasks/project-rag-sekb-experience-lane.md\n M openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts\n M openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts\n M openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts\n M openclaw_runtime/src/context-engine/chat-knowledge-intent.ts\n M openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts\n M openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts\n M openclaw_runtime/src/gateway/methods/core-descriptors.ts\n M openclaw_runtime/src/gateway/server-methods.ts\n M openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts\n M openclaw_runtime/src/knowledge/sekb/harness-integration.ts\n M openclaw_runtime/src/knowledge/sekb/knowledge-store.ts\n M openclaw_runtime/src/knowledge/sekb/operator-report.ts\n M openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts\n M openclaw_runtime/src/knowledge/sekb/session-cascade-delete.ts\n M openclaw_runtime/src/knowledge/sekb/types.ts\n M shared/host-api/contract.ts\n M shared/i18n/locales/en/knowledge.json\n M shared/i18n/locales/ja/knowledge.json\n M shared/i18n/locales/ru/knowledge.json\n M shared/i18n/locales/zh/knowledge.json\n M src/pages/Chat/KnowledgeChat.tsx\n M src/pages/Knowledge/index.tsx\n M tests/e2e/project-rag-source-domains.spec.ts\n M tests/unit/gateway-permissions-api.test.ts\n M tests/unit/knowledge-api.test.ts\n M tests/unit/rsi-adoption-runtime.test.ts\n?? shared/knowledge/experience.ts\n?? tests/unit/project-rag-sekb-attribution.test.ts",
+    "worktreeInputs": {
+      "electron/services/gateway-api.ts": "b3a4d3ab8f426b4f8f8b787e5f742472fa89f36a363c000930e3cb0fef02f78b",
+      "electron/services/knowledge-api.ts": "9d95b831bf83755d1955ddb64adbff2afa47afd64171667b5405ca82ddf6df63",
+      "electron/services/knowledge-source-set-answer.ts": "4420a779e48b2b43ed68747dcd6b3a446edeb2507502c157654bb0c76a5bdfb4",
+      "harness/specs/tasks/project-rag-sekb-experience-lane.md": "32202ec976f616b40bcb89b2da3ea568e9f07f739497b30257db4ab4f0e0a5b8",
+      "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts": "e4a605e8dae6897a13e16da0de62acffc21404daabe58bcabbc30a673727ddc9",
+      "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "7b16c1088c828c218e319018040ca3b197134d4adf90c48eacb1ee884a2c3f3d",
+      "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts": "b8fccc3f84e76a32e52bcd88d44a12c65b2e58bb91c3328c20afd8be235c0864",
+      "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts": "bbb12305eadb3ffbe5c57bf921acc1f79a990acae516774922c5a0edcd27f181",
+      "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts": "08581b5a9d7571e0c600c167977035d8ca6eb309e34f8809104568632ed9a4ef",
+      "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts": "1688f4cb6a0bcc51f04d2a9b4d470f12f289ac7f9babe27e6fcf0229c7831550",
+      "openclaw_runtime/src/gateway/methods/core-descriptors.ts": "95877e305c550e676a58b09faf63c5d14b0bcf4c60eb3cf8f1774d43320039c6",
+      "openclaw_runtime/src/gateway/server-methods.ts": "ab3594ba27c8b6e2f4f73abc9f0101edf9fe0c8b0a72874a94d142ec82b5ea7a",
+      "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts": "f4eefb33e8118599495c43377668504ce07ac32eea2dc906337653bc880ce302",
+      "openclaw_runtime/src/knowledge/sekb/harness-integration.ts": "d771fdb8fa29bbb346b38e9c61a6ad119f8e3c034a9dd0539e3331ec3840d5b0",
+      "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts": "84cd5c67173d444d33ddd83fe02369eae4c58f90d650d0761a1c94a264f9787c",
+      "openclaw_runtime/src/knowledge/sekb/operator-report.ts": "e3076ee2604014da6dea6b8d407f202456c8bf66617fb0cab42f7deb5acd33a5",
+      "openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts": "09a566ecf9813b2244315fb129ab174c6e2aaca16a110578c9aec9a075edea53",
+      "openclaw_runtime/src/knowledge/sekb/session-cascade-delete.ts": "2b27f60e30531b641eac4547f39951a41b830eccb26c701fe84911d397545173",
+      "openclaw_runtime/src/knowledge/sekb/types.ts": "7ab38f4693e1701ff14266ac9203138a4c99923617a540f94ab6e7aae8518a82",
+      "shared/host-api/contract.ts": "557263c5bc8480aa0c9d1069933553e4ff918fba6fa43b675df7e6a0e5e0dc6d",
+      "shared/i18n/locales/en/knowledge.json": "6c27a846eb7533df5aa82e4f19b87564720a1f860138206210a718243eb626f4",
+      "shared/i18n/locales/ja/knowledge.json": "3d706ae83c090d66a69127161d3bbc6928c697868ede5dd022a82091887c05fd",
+      "shared/i18n/locales/ru/knowledge.json": "cd8e962c64398fb282abf80c81459fb2badefab07095c0499c47f7e2b2f2749d",
+      "shared/i18n/locales/zh/knowledge.json": "9e064fd244c1e132e7399fbedebc2c191f3dd3bc7924645932588e1f33754eff",
+      "shared/knowledge/experience.ts": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad",
+      "src/pages/Chat/KnowledgeChat.tsx": "492ce31ebed0b2f3dcb8b3f7ed37fa726554d44d1dff69c4296139ccdd7d5a8b",
+      "src/pages/Knowledge/index.tsx": "c85745fa40912bf29a32c35a6fc67422236beb49e3d1f2b6a340391157f6dd16",
+      "tests/e2e/project-rag-source-domains.spec.ts": "b0c17f192e2abf1ebb533beb5852fb80125c1f342b78c5cf57f5249edd759f25",
+      "tests/unit/gateway-permissions-api.test.ts": "cd9a086231d429ca1b4bb212ea4c29f336d8634de1c66d342dec175a63471c0d",
+      "tests/unit/knowledge-api.test.ts": "9af513a78a9d15fda944c96f2ebdf9a764356bd8fa53a9e31f99a66eecfb74a8",
+      "tests/unit/project-rag-sekb-attribution.test.ts": "a7d06a9539d609697be8765d58d25c626dc5dbdc65865d2058cd7c56e6b86133",
+      "tests/unit/rsi-adoption-runtime.test.ts": "fc6e37c2d1bf6afec1c9520dc2bea43403e9661592723bc0149e8bedf755a336"
+    }
+  },
+  "startedAt": "2026-11-17T04:20:56.647106+00:00",
+  "commands": [
+    {
+      "name": "bridge",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "elapsedMs": 251,
+      "stdout": "bridge.stdout.log",
+      "stderr": "bridge.stderr.log"
+    },
+    {
+      "name": "typecheck-node",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\node_modules\\@typescript\\native-preview\\bin\\tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 1,
+      "elapsedMs": 24007,
+      "stdout": "typecheck-node.stdout.log",
+      "stderr": "typecheck-node.stderr.log"
+    }
+  ],
+  "status": "fail",
+  "coverage": {
+    "cache": "disabled",
+    "projects": [
+      "node",
+      "web",
+      "test"
+    ],
+    "commandsEquivalentTo": [
+      "typecheck:node",
+      "typecheck:web",
+      "typecheck:test"
+    ]
+  },
+  "after": {
+    "head": "7e48c13a8b3ab74d7447360cbe2dd1cde64b5d05",
+    "tree": "5b2dee7ce9d4d1cd16bdaf2edd18e419e6cb2a97",
+    "branch": "codex/project-rag-longterm-20261109",
+    "dirty": "M electron/services/gateway-api.ts\n M electron/services/knowledge-api.ts\n M electron/services/knowledge-source-set-answer.ts\n M harness/specs/tasks/project-rag-sekb-experience-lane.md\n M openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts\n M openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts\n M openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts\n M openclaw_runtime/src/context-engine/chat-knowledge-intent.ts\n M openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts\n M openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts\n M openclaw_runtime/src/gateway/methods/core-descriptors.ts\n M openclaw_runtime/src/gateway/server-methods.ts\n M openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts\n M openclaw_runtime/src/knowledge/sekb/harness-integration.ts\n M openclaw_runtime/src/knowledge/sekb/knowledge-store.ts\n M openclaw_runtime/src/knowledge/sekb/operator-report.ts\n M openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts\n M openclaw_runtime/src/knowledge/sekb/session-cascade-delete.ts\n M openclaw_runtime/src/knowledge/sekb/types.ts\n M shared/host-api/contract.ts\n M shared/i18n/locales/en/knowledge.json\n M shared/i18n/locales/ja/knowledge.json\n M shared/i18n/locales/ru/knowledge.json\n M shared/i18n/locales/zh/knowledge.json\n M src/pages/Chat/KnowledgeChat.tsx\n M src/pages/Knowledge/index.tsx\n M tests/e2e/project-rag-source-domains.spec.ts\n M tests/unit/gateway-permissions-api.test.ts\n M tests/unit/knowledge-api.test.ts\n M tests/unit/rsi-adoption-runtime.test.ts\n?? shared/knowledge/experience.ts\n?? tests/unit/project-rag-sekb-attribution.test.ts",
+    "worktreeInputs": {
+      "electron/services/gateway-api.ts": "b3a4d3ab8f426b4f8f8b787e5f742472fa89f36a363c000930e3cb0fef02f78b",
+      "electron/services/knowledge-api.ts": "9d95b831bf83755d1955ddb64adbff2afa47afd64171667b5405ca82ddf6df63",
+      "electron/services/knowledge-source-set-answer.ts": "4420a779e48b2b43ed68747dcd6b3a446edeb2507502c157654bb0c76a5bdfb4",
+      "harness/specs/tasks/project-rag-sekb-experience-lane.md": "32202ec976f616b40bcb89b2da3ea568e9f07f739497b30257db4ab4f0e0a5b8",
+      "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts": "e4a605e8dae6897a13e16da0de62acffc21404daabe58bcabbc30a673727ddc9",
+      "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "7b16c1088c828c218e319018040ca3b197134d4adf90c48eacb1ee884a2c3f3d",
+      "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts": "b8fccc3f84e76a32e52bcd88d44a12c65b2e58bb91c3328c20afd8be235c0864",
+      "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts": "bbb12305eadb3ffbe5c57bf921acc1f79a990acae516774922c5a0edcd27f181",
+      "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts": "08581b5a9d7571e0c600c167977035d8ca6eb309e34f8809104568632ed9a4ef",
+      "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts": "1688f4cb6a0bcc51f04d2a9b4d470f12f289ac7f9babe27e6fcf0229c7831550",
+      "openclaw_runtime/src/gateway/methods/core-descriptors.ts": "95877e305c550e676a58b09faf63c5d14b0bcf4c60eb3cf8f1774d43320039c6",
+      "openclaw_runtime/src/gateway/server-methods.ts": "ab3594ba27c8b6e2f4f73abc9f0101edf9fe0c8b0a72874a94d142ec82b5ea7a",
+      "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts": "f4eefb33e8118599495c43377668504ce07ac32eea2dc906337653bc880ce302",
+      "openclaw_runtime/src/knowledge/sekb/harness-integration.ts": "d771fdb8fa29bbb346b38e9c61a6ad119f8e3c034a9dd0539e3331ec3840d5b0",
+      "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts": "84cd5c67173d444d33ddd83fe02369eae4c58f90d650d0761a1c94a264f9787c",
+      "openclaw_runtime/src/knowledge/sekb/operator-report.ts": "e3076ee2604014da6dea6b8d407f202456c8bf66617fb0cab42f7deb5acd33a5",
+      "openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts": "09a566ecf9813b2244315fb129ab174c6e2aaca16a110578c9aec9a075edea53",
+      "openclaw_runtime/src/knowledge/sekb/session-cascade-delete.ts": "2b27f60e30531b641eac4547f39951a41b830eccb26c701fe84911d397545173",
+      "openclaw_runtime/src/knowledge/sekb/types.ts": "7ab38f4693e1701ff14266ac9203138a4c99923617a540f94ab6e7aae8518a82",
+      "shared/host-api/contract.ts": "557263c5bc8480aa0c9d1069933553e4ff918fba6fa43b675df7e6a0e5e0dc6d",
+      "shared/i18n/locales/en/knowledge.json": "6c27a846eb7533df5aa82e4f19b87564720a1f860138206210a718243eb626f4",
+      "shared/i18n/locales/ja/knowledge.json": "3d706ae83c090d66a69127161d3bbc6928c697868ede5dd022a82091887c05fd",
+      "shared/i18n/locales/ru/knowledge.json": "cd8e962c64398fb282abf80c81459fb2badefab07095c0499c47f7e2b2f2749d",
+      "shared/i18n/locales/zh/knowledge.json": "9e064fd244c1e132e7399fbedebc2c191f3dd3bc7924645932588e1f33754eff",
+      "shared/knowledge/experience.ts": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad",
+      "src/pages/Chat/KnowledgeChat.tsx": "492ce31ebed0b2f3dcb8b3f7ed37fa726554d44d1dff69c4296139ccdd7d5a8b",
+      "src/pages/Knowledge/index.tsx": "c85745fa40912bf29a32c35a6fc67422236beb49e3d1f2b6a340391157f6dd16",
+      "tests/e2e/project-rag-source-domains.spec.ts": "b0c17f192e2abf1ebb533beb5852fb80125c1f342b78c5cf57f5249edd759f25",
+      "tests/unit/gateway-permissions-api.test.ts": "cd9a086231d429ca1b4bb212ea4c29f336d8634de1c66d342dec175a63471c0d",
+      "tests/unit/knowledge-api.test.ts": "9af513a78a9d15fda944c96f2ebdf9a764356bd8fa53a9e31f99a66eecfb74a8",
+      "tests/unit/project-rag-sekb-attribution.test.ts": "a7d06a9539d609697be8765d58d25c626dc5dbdc65865d2058cd7c56e6b86133",
+      "tests/unit/rsi-adoption-runtime.test.ts": "fc6e37c2d1bf6afec1c9520dc2bea43403e9661592723bc0149e8bedf755a336"
+    }
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-17T04:21:22.256051+00:00"
+}

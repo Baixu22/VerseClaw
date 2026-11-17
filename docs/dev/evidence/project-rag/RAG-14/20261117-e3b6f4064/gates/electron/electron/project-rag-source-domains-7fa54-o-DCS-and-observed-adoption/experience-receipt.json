@@ -1,0 +1,95 @@
+{
+  "schema": "ProjectRagExperienceElectron/v1",
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "pass",
+  "steps": {
+    "unconfirmedAbsent": true,
+    "confirmedPin": true,
+    "pinnedRead": true,
+    "observedAdoption": true,
+    "citationPreview": true,
+    "attributionUi": true,
+    "uiAcknowledgment": true,
+    "correctionInvalidatesPin": true,
+    "rollbackDisablesLane": true
+  },
+  "pin": {
+    "domain": "experience",
+    "authorityId": "sekb",
+    "namespaceId": "sekb:b364ea32d7f88dcabe8f3924b41dd217cd1dac88d5e547d002d8741542f968df",
+    "subjectId": "principle-88d137810edc3a182a8ac3ba",
+    "revision": "f90ef438e04112557732fc1b58d55af6331298505b726b4e25ff27e85f413aa4",
+    "schema": "SourceRef/v2",
+    "sourceDigest": "sha256:2a21cf0b9195324f354b10dd3e73a219dc99589cf7078e03ef862ba0f2ff51fa",
+    "policyEpoch": "sha256:1fff88dad6aa6de45a84800df32b0ae553d56c25bdd7fe0729bd16765193c497",
+    "locator": {
+      "coordinateSpace": "raw-source-utf8-v1",
+      "startByte": 0,
+      "endByteExclusive": 87,
+      "startLine": 1,
+      "endLine": 1
+    }
+  },
+  "run": {
+    "runId": "b4cd0bfc-fa26-4818-bbc2-ef50d04dd369",
+    "status": "ok",
+    "endedAt": 1794894624877,
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:main::b4cd0bfc-fa26-4818-bbc2-ef50d04dd369",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [],
+      "retainedChars": 0,
+      "retainedUtf8Bytes": 0,
+      "estimatedTokens": 0
+    }
+  },
+  "attribution": {
+    "uiExposures": 1,
+    "contextExposures": 1,
+    "citations": 1,
+    "adoptions": 1,
+    "operationalOutcomes": 1,
+    "taskGrades": 0,
+    "unknownOperationalOutcomes": 1
+  },
+  "wire": [
+    "[Tue 2026-11-17 13:50 GMT+8] Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=116/1800; truncated=false\n- [knowledge-ref] Nebula experience (sekb:principle-88d137810edc3a182a8ac3ba) (source=knowledge-ref; scope=workspace:agent-experience-lane; freshness=unknown; trust=owner-fact)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:main; taskLedger=task-ledger:agent-experience-lane; taskLedgerEvents=1; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\n\nRAG14_ADOPT nebula\n[Tue 2026-11-17 13:50 GMT+8] [Knowledge reference: Nebula operation evidence (principle-88d137810edc3a182a8ac3ba)]\nrefId: sekb:principle-88d137810edc3a182a8ac3ba\nowner: sekb; subjectId: principle-88d137810edc3a182a8ac3ba; revision: f90ef438e04112557732fc1b58d55af6331298505b726b4e25ff27e85f413aa4; digest: sha256:2a21cf0b9195324f354b10dd3e73a219dc99589cf7078e03ef862ba0f2ff51fa\nsource: {\"domain\":\"experience\",\"authorityId\":\"sekb\",\"namespaceId\":\"sekb:b364ea32d7f88dcabe8f3924b41dd217cd1dac88d5e547d002d8741542f968df\",\"subjectId\":\"principle-88d137810edc3a182a8ac3ba\",\"revision\":\"f90ef438e04112557732fc1b58d55af6331298505b726b4e25ff27e85f413aa4\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:2a21cf0b9195324f354b10dd3e73a219dc99589cf7078e03ef862ba0f2ff51fa\",\"policyEpoch\":\"sha256:1fff88dad6aa6de45a84800df32b0ae553d56c25bdd7fe0729bd16765193c497\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":0,\"endByteExclusive\":87,\"startLine\":1,\"endLine\":1}}\n---\nRAG14_CONFIRMED_NEBULA_BODY: verify the observed operation before attributing adoption.",
+    "[Tue 2026-11-17 13:50 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nContinuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=116/1800; truncated=false\n- [knowledge-ref] Nebula experience (sekb:principle-88d137810edc3a182a8ac3ba) (source=knowledge-ref; scope=workspace:agent-experience-lane; freshness=unknown; trust=owner-fact)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:main; taskLedger=task-ledger:agent-experience-lane; taskLedgerEvents=1; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\n\nRAG14_ADOPT nebula",
+    "[Tue 2026-11-17 13:50 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nContinuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=116/1800; truncated=false\n- [knowledge-ref] Nebula experience (sekb:principle-88d137810edc3a182a8ac3ba) (source=knowledge-ref; scope=workspace:agent-experience-lane; freshness=unknown; trust=owner-fact)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:main; taskLedger=task-ledger:agent-experience-lane; taskLedgerEvents=1; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\n\nRAG14_ADOPT nebula",
+    "[Tue 2026-11-17 13:50 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nContinuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=116/1800; truncated=false\n- [knowledge-ref] Nebula experience (sekb:principle-88d137810edc3a182a8ac3ba) (source=knowledge-ref; scope=workspace:agent-experience-lane; freshness=unknown; trust=owner-fact)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:main; taskLedger=task-ledger:agent-experience-lane; taskLedgerEvents=1; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\n\nRAG14_ADOPT nebula"
+  ],
+  "provider": [
+    {
+      "turn": "[Tue 2026-11-17 13:50 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {},
+      "issued": "rag14write"
+    },
+    {
+      "turn": "[Tue 2026-11-17 13:50 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "rag14write": "Successfully wrote 24 bytes to adopted.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "rag14cite"
+    },
+    {
+      "turn": "[Tue 2026-11-17 13:50 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "rag14write": "Successfully wrote 24 bytes to adopted.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+        "rag14cite": "{\"eventId\":\"37fc0a5051788032c77c21680a7afd7202e14d03ad480f187ef7095cedc8abcd\",\"principleId\":\"principle-88d137810edc3a182a8ac3ba\",\"evidence\":{\"runId\":\"b4cd0bfc-fa26-4818-bbc2-ef50d04dd369\",\"sessionId\":\"e06d90ce-c3c8-4fab-83d8-fdea5bf32f96\",\"sessionKey\":\"agent:main:main\",\"taskId\":null,\"experimentId\":null,\"arm\":null,\"repeat\":null,\"schemaVersion\":\"RsiExperienceAttribution/v1\",\"principleVersion\":\"f90ef438e04112557732fc1b58d55af6331298505b726b4e25ff27e85f413aa4\",\"trajectoryId\":\"750e49a9-a0a5-4699-b515-028d024600c5\",\"trigger\":\"cited\",\"source\":\"agent\",\"outcome\":\"unknown\",\"outcomeKind\":null,\"observationId\":null,\"operation\":null,\"actor\":\"embedded-agent\",\"driven_by\":\"agent\"},\"status\":\"accepted\",\"reason\":null,\"recordedAt\":\"2026-11-17T05:50:24.052Z\",\"duplicateCount\":0,\"conflictCount\":0,\"rejectionCount\":0,\"firstRejection\":null,\"lastConflict\":null,\"disposition\":\"recorded\"}"
+      },
+      "issued": "rag14adopt"
+    },
+    {
+      "turn": "[Tue 2026-11-17 13:50 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "rag14write": "Successfully wrote 24 bytes to adopted.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+        "rag14cite": "{\"eventId\":\"37fc0a5051788032c77c21680a7afd7202e14d03ad480f187ef7095cedc8abcd\",\"principleId\":\"principle-88d137810edc3a182a8ac3ba\",\"evidence\":{\"runId\":\"b4cd0bfc-fa26-4818-bbc2-ef50d04dd369\",\"sessionId\":\"e06d90ce-c3c8-4fab-83d8-fdea5bf32f96\",\"sessionKey\":\"agent:main:main\",\"taskId\":null,\"experimentId\":null,\"arm\":null,\"repeat\":null,\"schemaVersion\":\"RsiExperienceAttribution/v1\",\"principleVersion\":\"f90ef438e04112557732fc1b58d55af6331298505b726b4e25ff27e85f413aa4\",\"trajectoryId\":\"750e49a9-a0a5-4699-b515-028d024600c5\",\"trigger\":\"cited\",\"source\":\"agent\",\"outcome\":\"unknown\",\"outcomeKind\":null,\"observationId\":null,\"operation\":null,\"actor\":\"embedded-agent\",\"driven_by\":\"agent\"},\"status\":\"accepted\",\"reason\":null,\"recordedAt\":\"2026-11-17T05:50:24.052Z\",\"duplicateCount\":0,\"conflictCount\":0,\"rejectionCount\":0,\"firstRejection\":null,\"lastConflict\":null,\"disposition\":\"recorded\"}",
+        "rag14adopt": "{\"eventId\":\"9e66fc38885343b151ef3fd559c1d6b455af6a798460c3599daf0b8bb74d1e2a\",\"principleId\":\"principle-88d137810edc3a182a8ac3ba\",\"evidence\":{\"runId\":\"b4cd0bfc-fa26-4818-bbc2-ef50d04dd369\",\"sessionId\":\"e06d90ce-c3c8-4fab-83d8-fdea5bf32f96\",\"sessionKey\":\"agent:main:main\",\"taskId\":null,\"experimentId\":null,\"arm\":null,\"repeat\":null,\"schemaVersion\":\"RsiExperienceAttribution/v1\",\"principleVersion\":\"f90ef438e04112557732fc1b58d55af6331298505b726b4e25ff27e85f413aa4\",\"trajectoryId\":\"750e49a9-a0a5-4699-b515-028d024600c5\",\"trigger\":\"adopted\",\"source\":\"agent\",\"outcome\":\"unknown\",\"outcomeKind\":null,\"observationId\":null,\"operation\":{\"toolCallId\":\"rag14write\",\"toolName\":\"write\",\"observed\":true,\"succeeded\":true},\"actor\":\"embedded-agent\",\"driven_by\":\"agent\"},\"status\":\"accepted\",\"reason\":null,\"recordedAt\":\"2026-11-17T05:50:24.178Z\",\"duplicateCount\":0,\"conflictCount\":0,\"rejectionCount\":0,\"firstRejection\":null,\"lastConflict\":null,\"disposition\":\"recorded\"}"
+      },
+      "issued": "text:RAG14 scripted completion"
+    }
+  ]
+}

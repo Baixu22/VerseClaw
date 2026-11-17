@@ -1,0 +1,218 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\playwright.config.ts",
+    "rootDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-rag14-20261117/dev-electron-v4/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-source-domains.spec.ts",
+      "file": "project-rag-source-domains.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG reads native and role memory independently and fences changed owners",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6788,
+                  "error": {
+                    "message": "Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 10 src file(s) newer than dist.\nRun `pnpm build:runtime` before E2E to avoid testing a stale bundle.\nSample stale files: openclaw_runtime\\src\\agents\\embedded-agent-runner\\extensions.ts, openclaw_runtime\\src\\agents\\embedded-agent-runner\\run\\attempt.ts, openclaw_runtime\\src\\context-engine\\chat-knowledge-source-adapters.ts, openclaw_runtime\\src\\gateway\\server-methods\\role-orchestration-methods.ts, openclaw_runtime\\src\\knowledge\\sekb\\harness-integration.ts (and 5 more)",
+                    "stack": "Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 10 src file(s) newer than dist.\nRun `pnpm build:runtime` before E2E to avoid testing a stale bundle.\nSample stale files: openclaw_runtime\\src\\agents\\embedded-agent-runner\\extensions.ts, openclaw_runtime\\src\\agents\\embedded-agent-runner\\run\\attempt.ts, openclaw_runtime\\src\\context-engine\\chat-knowledge-source-adapters.ts, openclaw_runtime\\src\\gateway\\server-methods\\role-orchestration-methods.ts, openclaw_runtime\\src\\knowledge\\sekb\\harness-integration.ts (and 5 more)\n    at assertRuntimeDistFresh (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts:120:11)\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts:557:33\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts:33:15",
+                    "location": {
+                      "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 11,
+                      "line": 120
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:120\n\n  118 |   if (stale.length > 0) {\n  119 |     const sample = stale.slice(0, 5).map((f) => f.replace(repoRoot + '\\\\', ''));\n> 120 |     throw new Error(\n      |           ^\n  121 |       `[FP-P3-05] openclaw_runtime/dist/entry.js is stale. ${stale.length} src file(s) newer than dist.\\n` +\n  122 |         `Run \\`pnpm build:runtime\\` before E2E to avoid testing a stale bundle.\\n` +\n  123 |         `Sample stale files: ${sample.join(', ')}${stale.length > 5 ? ` (and ${stale.length - 5} more)` : ''}`,"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 11,
+                        "line": 120
+                      },
+                      "message": "Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 10 src file(s) newer than dist.\nRun `pnpm build:runtime` before E2E to avoid testing a stale bundle.\nSample stale files: openclaw_runtime\\src\\agents\\embedded-agent-runner\\extensions.ts, openclaw_runtime\\src\\agents\\embedded-agent-runner\\run\\attempt.ts, openclaw_runtime\\src\\context-engine\\chat-knowledge-source-adapters.ts, openclaw_runtime\\src\\gateway\\server-methods\\role-orchestration-methods.ts, openclaw_runtime\\src\\knowledge\\sekb\\harness-integration.ts (and 5 more)\n\n   at fixtures\\electron.ts:120\n\n  118 |   if (stale.length > 0) {\n  119 |     const sample = stale.slice(0, 5).map((f) => f.replace(repoRoot + '\\\\', ''));\n> 120 |     throw new Error(\n      |           ^\n  121 |       `[FP-P3-05] openclaw_runtime/dist/entry.js is stale. ${stale.length} src file(s) newer than dist.\\n` +\n  122 |         `Run \\`pnpm build:runtime\\` before E2E to avoid testing a stale bundle.\\n` +\n  123 |         `Sample stale files: ${sample.join(', ')}${stale.length > 5 ? ` (and ${stale.length - 5} more)` : ''}`,\n    at assertRuntimeDistFresh (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts:120:11)\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts:557:33\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts:33:15"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:31:09.597Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v4\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v4\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 11,
+                    "line": 120
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "297f115fc458f7c63e83-1cbc50e09c6bf6fb7686",
+          "file": "project-rag-source-domains.spec.ts",
+          "line": 21,
+          "column": 5
+        },
+        {
+          "title": "Project RAG binds confirmed experience to DCS and observed adoption",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 587,
+                  "error": {
+                    "message": "Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 10 src file(s) newer than dist.\nRun `pnpm build:runtime` before E2E to avoid testing a stale bundle.\nSample stale files: openclaw_runtime\\src\\agents\\embedded-agent-runner\\extensions.ts, openclaw_runtime\\src\\agents\\embedded-agent-runner\\run\\attempt.ts, openclaw_runtime\\src\\context-engine\\chat-knowledge-source-adapters.ts, openclaw_runtime\\src\\gateway\\server-methods\\role-orchestration-methods.ts, openclaw_runtime\\src\\knowledge\\sekb\\harness-integration.ts (and 5 more)",
+                    "stack": "Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 10 src file(s) newer than dist.\nRun `pnpm build:runtime` before E2E to avoid testing a stale bundle.\nSample stale files: openclaw_runtime\\src\\agents\\embedded-agent-runner\\extensions.ts, openclaw_runtime\\src\\agents\\embedded-agent-runner\\run\\attempt.ts, openclaw_runtime\\src\\context-engine\\chat-knowledge-source-adapters.ts, openclaw_runtime\\src\\gateway\\server-methods\\role-orchestration-methods.ts, openclaw_runtime\\src\\knowledge\\sekb\\harness-integration.ts (and 5 more)\n    at assertRuntimeDistFresh (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts:120:11)\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts:557:33\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts:218:15",
+                    "location": {
+                      "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 11,
+                      "line": 120
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:120\n\n  118 |   if (stale.length > 0) {\n  119 |     const sample = stale.slice(0, 5).map((f) => f.replace(repoRoot + '\\\\', ''));\n> 120 |     throw new Error(\n      |           ^\n  121 |       `[FP-P3-05] openclaw_runtime/dist/entry.js is stale. ${stale.length} src file(s) newer than dist.\\n` +\n  122 |         `Run \\`pnpm build:runtime\\` before E2E to avoid testing a stale bundle.\\n` +\n  123 |         `Sample stale files: ${sample.join(', ')}${stale.length > 5 ? ` (and ${stale.length - 5} more)` : ''}`,"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 11,
+                        "line": 120
+                      },
+                      "message": "Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 10 src file(s) newer than dist.\nRun `pnpm build:runtime` before E2E to avoid testing a stale bundle.\nSample stale files: openclaw_runtime\\src\\agents\\embedded-agent-runner\\extensions.ts, openclaw_runtime\\src\\agents\\embedded-agent-runner\\run\\attempt.ts, openclaw_runtime\\src\\context-engine\\chat-knowledge-source-adapters.ts, openclaw_runtime\\src\\gateway\\server-methods\\role-orchestration-methods.ts, openclaw_runtime\\src\\knowledge\\sekb\\harness-integration.ts (and 5 more)\n\n   at fixtures\\electron.ts:120\n\n  118 |   if (stale.length > 0) {\n  119 |     const sample = stale.slice(0, 5).map((f) => f.replace(repoRoot + '\\\\', ''));\n> 120 |     throw new Error(\n      |           ^\n  121 |       `[FP-P3-05] openclaw_runtime/dist/entry.js is stale. ${stale.length} src file(s) newer than dist.\\n` +\n  122 |         `Run \\`pnpm build:runtime\\` before E2E to avoid testing a stale bundle.\\n` +\n  123 |         `Sample stale files: ${sample.join(', ')}${stale.length > 5 ? ` (and ${stale.length - 5} more)` : ''}`,\n    at assertRuntimeDistFresh (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts:120:11)\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts:557:33\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts:218:15"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:31:18.299Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v4\\electron\\project-rag-source-domains-7fa54-o-DCS-and-observed-adoption\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v4\\electron\\project-rag-source-domains-7fa54-o-DCS-and-observed-adoption\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 11,
+                    "line": 120
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "297f115fc458f7c63e83-a6be7d8f1becb6ed2e8a",
+          "file": "project-rag-source-domains.spec.ts",
+          "line": 201,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T04:31:05.422Z",
+    "duration": 18904.892,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "7e48c13a8b3ab74d7447360cbe2dd1cde64b5d05"
+}

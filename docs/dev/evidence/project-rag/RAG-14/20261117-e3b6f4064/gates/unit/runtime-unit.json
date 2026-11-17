@@ -1,0 +1,613 @@
+{
+  "numTotalTestSuites": 4,
+  "numPassedTestSuites": 4,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 35,
+  "numPassedTests": 35,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794893996002,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters retains complete source identity through normalization, Gateway schema and prompt packing",
+          "status": "passed",
+          "title": "retains complete source identity through normalization, Gateway schema and prompt packing",
+          "duration": 260.48359999999957,
+          "failureMessages": [],
+          "location": {
+            "line": 101,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters admits confirmed automatic references with an owner update time and rejects unknown freshness",
+          "status": "passed",
+          "title": "admits confirmed automatic references with an owner update time and rejects unknown freshness",
+          "duration": 501.3212999999996,
+          "failureMessages": [],
+          "location": {
+            "line": 145,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters rejects owner policy before a forged high-score reference can be materialized: status: revoked\n",
+          "status": "passed",
+          "title": "rejects owner policy before a forged high-score reference can be materialized: status: revoked\n",
+          "duration": 138.25209999999788,
+          "failureMessages": [],
+          "location": {
+            "line": 215,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters rejects owner policy before a forged high-score reference can be materialized: privacyTier: secret\n",
+          "status": "passed",
+          "title": "rejects owner policy before a forged high-score reference can be materialized: privacyTier: secret\n",
+          "duration": 144.23329999999987,
+          "failureMessages": [],
+          "location": {
+            "line": 215,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters rejects owner policy before a forged high-score reference can be materialized: acl:\n  read: [another-principal]\n",
+          "status": "passed",
+          "title": "rejects owner policy before a forged high-score reference can be materialized: acl:\n  read: [another-principal]\n",
+          "duration": 177.37840000000142,
+          "failureMessages": [],
+          "location": {
+            "line": 215,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters rejects owner policy before a forged high-score reference can be materialized: scope:\n  workspaceId: other\n",
+          "status": "passed",
+          "title": "rejects owner policy before a forged high-score reference can be materialized: scope:\n  workspaceId: other\n",
+          "duration": 241.41240000000107,
+          "failureMessages": [],
+          "location": {
+            "line": 215,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters rejects owner policy before a forged high-score reference can be materialized: retention:\n  expiresAt: invalid\n",
+          "status": "passed",
+          "title": "rejects owner policy before a forged high-score reference can be materialized: retention:\n  expiresAt: invalid\n",
+          "duration": 178.9382000000005,
+          "failureMessages": [],
+          "location": {
+            "line": 215,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters refuses a changed tail below the old 80-line window and never falls back to another owner",
+          "status": "passed",
+          "title": "refuses a changed tail below the old 80-line window and never falls back to another owner",
+          "duration": 187.16869999999835,
+          "failureMessages": [],
+          "location": {
+            "line": 239,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters rechecks revocation, session generation and workspace at prompt preparation",
+          "status": "passed",
+          "title": "rechecks revocation, session generation and workspace at prompt preparation",
+          "duration": 216.97660000000178,
+          "failureMessages": [],
+          "location": {
+            "line": 251,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters releases a cancelled read and discards a later production adapter response",
+          "status": "passed",
+          "title": "releases a cancelled read and discards a later production adapter response",
+          "duration": 119.64979999999923,
+          "failureMessages": [],
+          "location": {
+            "line": 272,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters uses the actual Role Memory owner version, namespace, retention and scope",
+          "status": "passed",
+          "title": "uses the actual Role Memory owner version, namespace, retention and scope",
+          "duration": 481.7619999999988,
+          "failureMessages": [],
+          "location": {
+            "line": 311,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters does not read globally disabled Wiki or SEKB owners",
+          "status": "passed",
+          "title": "does not read globally disabled Wiki or SEKB owners",
+          "duration": 79.49459999999817,
+          "failureMessages": [],
+          "location": {
+            "line": 354,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters preserves queued owner refs and removes their projection when DCS preparation fails",
+          "status": "passed",
+          "title": "preserves queued owner refs and removes their projection when DCS preparation fails",
+          "duration": 185.5689999999995,
+          "failureMessages": [],
+          "location": {
+            "line": 372,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG production owner adapters"
+          ],
+          "fullName": "Project RAG production owner adapters resolves a qualified confirmed SEKB id from its real owner namespace",
+          "status": "passed",
+          "title": "resolves a qualified confirmed SEKB id from its real owner namespace",
+          "duration": 197.03580000000147,
+          "failureMessages": [],
+          "location": {
+            "line": 434,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794894019984,
+      "endTime": 1794894023094.036,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle publishes chunks and FTS atomically, then searches the active generation",
+          "status": "passed",
+          "title": "publishes chunks and FTS atomically, then searches the active generation",
+          "duration": 535.1292000000003,
+          "failureMessages": [],
+          "location": {
+            "line": 96,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle measures committed staging before activating within the storage budget",
+          "status": "passed",
+          "title": "measures committed staging before activating within the storage budget",
+          "duration": 157.33149999999978,
+          "failureMessages": [],
+          "location": {
+            "line": 119,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle keeps a staged generation unreadable when its owner is revoked before activation",
+          "status": "passed",
+          "title": "keeps a staged generation unreadable when its owner is revoked before activation",
+          "duration": 184.9348,
+          "failureMessages": [],
+          "location": {
+            "line": 149,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle revokes readability on invalidate and does not resurrect an old event",
+          "status": "passed",
+          "title": "revokes readability on invalidate and does not resurrect an old event",
+          "duration": 180.11080000000038,
+          "failureMessages": [],
+          "location": {
+            "line": 163,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle keeps repeated semantic polls idempotent without growing the event ledger",
+          "status": "passed",
+          "title": "keeps repeated semantic polls idempotent without growing the event ledger",
+          "duration": 165.67889999999989,
+          "failureMessages": [],
+          "location": {
+            "line": 189,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle recovers expired pending deadlines and expired leases through one CAS claim",
+          "status": "passed",
+          "title": "recovers expired pending deadlines and expired leases through one CAS claim",
+          "duration": 182.77900000000045,
+          "failureMessages": [],
+          "location": {
+            "line": 200,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle rejects a locator whose byte and line spans do not match the quote",
+          "status": "passed",
+          "title": "rejects a locator whose byte and line spans do not match the quote",
+          "duration": 187.21969999999965,
+          "failureMessages": [],
+          "location": {
+            "line": 217,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle keeps the subject row stable when its byte locator changes during a stop",
+          "status": "passed",
+          "title": "keeps the subject row stable when its byte locator changes during a stop",
+          "duration": 168.85549999999967,
+          "failureMessages": [],
+          "location": {
+            "line": 228,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle fences the old generation when only the admitted source range changes",
+          "status": "passed",
+          "title": "fences the old generation when only the admitted source range changes",
+          "duration": 194.07969999999932,
+          "failureMessages": [],
+          "location": {
+            "line": 252,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle refreshes an expired unfinished intent without rebuilding an active generation",
+          "status": "passed",
+          "title": "refreshes an expired unfinished intent without rebuilding an active generation",
+          "duration": 186.4309000000003,
+          "failureMessages": [],
+          "location": {
+            "line": 275,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle does not consume the failure budget when claims are cancelled repeatedly",
+          "status": "passed",
+          "title": "does not consume the failure budget when claims are cancelled repeatedly",
+          "duration": 176.1907999999994,
+          "failureMessages": [],
+          "location": {
+            "line": 299,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle carries genuine failures through cancellation and recovery without resetting their budget",
+          "status": "passed",
+          "title": "carries genuine failures through cancellation and recovery without resetting their budget",
+          "duration": 166.67720000000008,
+          "failureMessages": [],
+          "location": {
+            "line": 322,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle does not renew interrupted jobs during a passive paused observation",
+          "status": "passed",
+          "title": "does not renew interrupted jobs during a passive paused observation",
+          "duration": 132.65799999999945,
+          "failureMessages": [],
+          "location": {
+            "line": 349,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle renews an actual worker deadline failure during explicit recovery",
+          "status": "passed",
+          "title": "renews an actual worker deadline failure during explicit recovery",
+          "duration": 199.72900000000027,
+          "failureMessages": [],
+          "location": {
+            "line": 365,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle fences a recovered lease across independent store instances",
+          "status": "passed",
+          "title": "fences a recovered lease across independent store instances",
+          "duration": 183.02630000000045,
+          "failureMessages": [],
+          "location": {
+            "line": 395,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle rolls back a whole generation when FTS insertion fails and leaves shared state readable",
+          "status": "passed",
+          "title": "rolls back a whole generation when FTS insertion fails and leaves shared state readable",
+          "duration": 208.76609999999982,
+          "failureMessages": [],
+          "location": {
+            "line": 413,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle keeps terminal budgets closed until an explicit rebuild and expires unclaimed jobs",
+          "status": "passed",
+          "title": "keeps terminal budgets closed until an explicit rebuild and expires unclaimed jobs",
+          "duration": 145.38820000000032,
+          "failureMessages": [],
+          "location": {
+            "line": 432,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle supersedes an in-flight build and cleanup never changes the invalidation tombstone",
+          "status": "passed",
+          "title": "supersedes an in-flight build and cleanup never changes the invalidation tombstone",
+          "duration": 168.8032000000003,
+          "failureMessages": [],
+          "location": {
+            "line": 452,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle publishes more chunks than one SQLite parameter batch atomically",
+          "status": "passed",
+          "title": "publishes more chunks than one SQLite parameter batch atomically",
+          "duration": 323.89450000000033,
+          "failureMessages": [],
+          "location": {
+            "line": 475,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle never relabels recreated empty FTS as complete and recovers on explicit rebuild",
+          "status": "passed",
+          "title": "never relabels recreated empty FTS as complete and recovers on explicit rebuild",
+          "duration": 177.98919999999998,
+          "failureMessages": [],
+          "location": {
+            "line": 516,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle returns unavailable when the FTS table has an invalid format",
+          "status": "passed",
+          "title": "returns unavailable when the FTS table has an invalid format",
+          "duration": 165.74049999999988,
+          "failureMessages": [],
+          "location": {
+            "line": 543,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893998098,
+      "endTime": 1794894002291.7405,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
+    }
+  ],
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "e3b6f40644ed01f492db4495803c77b820b24431"
+}

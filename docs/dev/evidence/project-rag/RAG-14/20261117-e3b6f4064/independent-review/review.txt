@@ -1,0 +1,3 @@
+autoreview clean: no accepted/actionable findings reported
+overall: patch is correct (0.97)
+本次修复关闭了前次发现：同一 AbortSignal 同时驱动 waitForRetrievalOperation 与 retrieveExperience，并在读取作用域准备后及 owner 复验后检查取消；最终取消检查与 pending token 写入之间没有 await，因此超时后被丢弃的 late result 不再占用 64 槽或淘汰有效 token。确认路径在异步 scope 校验后重新检查 expiry，仍保持单次 token、身份切换和过期约束；回归测试覆盖 64 个 late route 后正常已展示候选仍可确认。routeContext、sekbRetrieveForTask 和曝光确认调用路径未发现可操作回归。

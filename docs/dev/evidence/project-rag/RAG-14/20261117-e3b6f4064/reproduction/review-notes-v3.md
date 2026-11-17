@@ -1,0 +1,4 @@
+复核RAG-14同一写集的最后修复，返回官方完整JSON结论。用户指定模型ccs-workbuddy/deepseek-v4.1-flash。输出中文，确定缺陷需给具体当前代码和影响；不要给无关免责声明。最多5次只读shell，不运行测试或另一个review，不要浏览器或其它聊天。
+前次完整独立复核v2已检查45个文件，只剩1项：超时route仍登记pending token，可能挤占已返回候选。其余已确认owner/canonical pin/ACL/content version、UI acknowledgment、DCS context-exposure、同run操作采用、session删除传播通过。
+本次只改electron/services/knowledge-api.ts和tests/unit/knowledge-api.test.ts；数据集包含完整旧结论、当前全部hash。检查同一AbortSignal被route wait和retrieveExperience共用，RPC前和最终owner身份验证后throwIfAborted，map无await时再颁发token。确认操作异步scope验证之后也重新检查expiry。测试模拟64个late route，释放后仍能确认正常已展示候选。测试delay初始改Promise.resolve修复lint。
+重点验证这些变化确实关闭前次发现，以及相关调用路径无回归；其他文件提供完整上下文，无需重复已检查的全部内容。若没有可操作问题，返回patch is correct；必须有完整有实质内容的JSON正文。

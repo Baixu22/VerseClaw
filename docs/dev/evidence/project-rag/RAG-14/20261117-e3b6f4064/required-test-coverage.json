@@ -1,0 +1,73 @@
+{
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "e3b6f40644ed01f492db4495803c77b820b24431",
+  "counts": {
+    "root-unit": 269,
+    "runtime-unit": 35,
+    "extension-unit": 3
+  },
+  "coverage": [
+    {
+      "file": "tests/unit/knowledge-page.test.tsx",
+      "passed": 13,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "passed": 47,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/rsi-adoption-attribution.test.ts",
+      "passed": 4,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/rsi-adoption-runtime.test.ts",
+      "passed": 2,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "passed": 11,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/knowledge-source-set-answer.test.ts",
+      "passed": 46,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts",
+      "passed": 14,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/project-rag-sekb-attribution.test.ts",
+      "passed": 16,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/e2e/project-rag-source-domains.spec.ts",
+      "passed": 2,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/knowledge-api.test.ts",
+      "passed": 61,
+      "failed": 0,
+      "pending": 0
+    }
+  ]
+}

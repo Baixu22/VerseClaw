@@ -1,0 +1,46 @@
+
+D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\electron\services\knowledge-api.ts
+  6047:35   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6050:32   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6061:50   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6061:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6067:39   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6067:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6068:45   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6068:89   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6085:41   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6086:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6086:100  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6087:52   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6088:54   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6103:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6104:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6105:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6106:51   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6121:36   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6122:42   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6123:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6124:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6138:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6139:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6139:91   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6139:115  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6140:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6140:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6141:55   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6141:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\src\pages\Chat\ChatInput.tsx
+  2470:6  warning  React Hook useCallback has an unnecessary dependency: 'longTaskControlStatus.available'. Either exclude it or remove the dependency array                                                                                     react-hooks/exhaustive-deps
+  3009:6  warning  React Hook useCallback has unnecessary dependencies: 'activeTaskNodeId', 'captureHeroComposerPosition', 'onSend', 'pendingTurnModelRef', and 'recordKnowledgeReferences'. Either exclude them or remove the dependency array  react-hooks/exhaustive-deps
+
+D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\src\pages\Knowledge\index.tsx
+  361:6   warning  React Hook useEffect has missing dependencies: 'editorMode' and 'selectedLookup'. Either include them or remove the dependency array                                                                        react-hooks/exhaustive-deps
+  423:60  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  511:9   warning  The 'okfConcepts' logical expression could make the dependencies of useCallback Hook (at line 935) change on every render. To fix this, wrap the initialization of 'okfConcepts' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  803:35  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  804:38  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  810:45  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+
+✖ 37 problems (0 errors, 37 warnings)
+

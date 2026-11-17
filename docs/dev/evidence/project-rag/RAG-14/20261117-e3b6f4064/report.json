@@ -1,0 +1,42 @@
+{
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "schema": "ProjectRagExperienceAcceptance/v1",
+  "node": "TF-0891",
+  "programKey": "RAG-14",
+  "candidate": "e3b6f40644ed01f492db4495803c77b820b24431",
+  "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+  "status": "pass",
+  "tests": {
+    "root-unit": 269,
+    "runtime-unit": 35,
+    "extension-unit": 3
+  },
+  "electronJourneys": 2,
+  "experienceSteps": {
+    "unconfirmedAbsent": true,
+    "confirmedPin": true,
+    "pinnedRead": true,
+    "observedAdoption": true,
+    "citationPreview": true,
+    "attributionUi": true,
+    "uiAcknowledgment": true,
+    "correctionInvalidatesPin": true,
+    "rollbackDisablesLane": true
+  },
+  "attribution": {
+    "uiExposures": 1,
+    "contextExposures": 1,
+    "citations": 1,
+    "adoptions": 1,
+    "operationalOutcomes": 1,
+    "taskGrades": 0,
+    "unknownOperationalOutcomes": 1
+  },
+  "ciStages": 12,
+  "independentReviewFindings": 0,
+  "providerEvidence": "Agent-driven scripted provider with real Electron/Gateway/DCS/tool/SQLite paths",
+  "completedAt": "2026-11-17T05:54:47.283845+00:00",
+  "next": "RAG-15 / TF-0892"
+}

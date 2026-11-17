@@ -1,0 +1,40 @@
+{
+  "findings": [
+    {
+      "title": "UI exposure receipt is written before the candidate is delivered",
+      "body": "\u5728 `sekb.retrieve` \u7684\u5019\u9009\u5faa\u73af\u4e2d\uff0c`store.record_adoption(..., { trigger: \"ui-exposure\" })` \u5148\u5199\u5165\u6bcf\u4e00\u6761\u66dd\u5149\u6536\u636e\uff0c\u4e4b\u540e\u624d\u5728\u7b2c 603 \u884c\u8c03\u7528 `currentIdentity()`\u3002\u5982\u679c\u4f1a\u8bdd generation \u6216 workspace \u5728\u8fd9\u6b21\u8bfb\u53d6\u671f\u95f4\u53d8\u5316\uff0c\u63a5\u53e3\u4f1a\u8fd4\u56de `invalid_context` \u548c\u7a7a\u5019\u9009\uff0c\u4f46\u6570\u636e\u5e93\u4ecd\u4fdd\u7559\u8fd9\u6279\u672a\u8fd4\u56de\u7ed9\u754c\u9762\u7684 UI \u66dd\u5149\u6536\u636e\uff0c\u6c61\u67d3\u5f52\u56e0\u62a5\u544a\u5e76\u7559\u4e0b\u9519\u8bef\u7684\u4f7f\u7528\u8bb0\u5f55\u3002\u5e94\u5728\u6700\u7ec8\u8eab\u4efd\u6821\u9a8c\u901a\u8fc7\u3001\u5019\u9009\u786e\u5b9a\u8fd4\u56de\u540e\u518d\u5199\u5165\uff0c\u6216\u5148\u6682\u5b58\u5e76\u5728\u6210\u529f\u54cd\u5e94\u65f6\u63d0\u4ea4\u3002",
+      "priority": "P2",
+      "confidence": 0.93,
+      "category": "regression",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "line": 571
+      }
+    },
+    {
+      "title": "Route timeout can still persist a UI exposure",
+      "body": "`retrieveRuntimeLessonsForRoute` \u7528 `waitForRetrievalOperation` \u5305\u4f4f `retrieveExperience`\uff1b\u8be5 helper \u660e\u786e\u4f1a\u4e22\u5f03\u8d85\u65f6\u540e\u7684 late value\u3002\u4f46 `retrieveExperience` \u6ca1\u6709\u63a5\u53d7\u6216\u4f20\u9012\u53d6\u6d88\u4fe1\u53f7\uff0c\u5e95\u5c42 `sekb.retrieve` \u4ecd\u53ef\u80fd\u7ee7\u7eed\u6267\u884c\u5e76\u5199\u5165 `ui-exposure`\u3002\u56e0\u6b64\u8def\u7531\u5df2\u7ecf\u8fd4\u56de `deadline-exceeded` \u548c\u7a7a\u5019\u9009\u65f6\uff0c\u6536\u636e\u4ecd\u53ef\u80fd\u88ab\u6301\u4e45\u5316\uff0c\u5bfc\u81f4 UI \u66dd\u5149\u6570\u9ad8\u4e8e\u5b9e\u9645\u5c55\u793a\u7684\u5019\u9009\u3002\u5e94\u628a\u53d6\u6d88\u4fe1\u53f7\u8d2f\u7a7f\u5230\u8bfb\u53d6\u8bf7\u6c42\uff0c\u6216\u53ea\u5728\u6210\u529f\u4ea4\u4ed8\u5019\u9009\u540e\u63d0\u4ea4\u66dd\u5149\u6536\u636e\u3002",
+      "priority": "P2",
+      "confidence": 0.9,
+      "category": "bug",
+      "code_location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 5250
+      }
+    },
+    {
+      "title": "Legacy retrieval is counted as DCS context exposure",
+      "body": "`operator-report` \u5c06\u6240\u6709 accepted \u7684 `retrieved` \u4e8b\u4ef6\u8ba1\u5165 `contextExposures`\uff0c\u4f46\u65e7\u7684\u975e DCS `recordExposure` \u8def\u5f84\u4ecd\u4f1a\u4e3a system prompt \u6216 error advice \u5199\u5165 `trigger: \"retrieved\"`\u3002\u8fd9\u6837\u6ca1\u6709 `retainedExperience` \u7684\u5386\u53f2 hook \u6ce8\u5165\u4f1a\u88ab\u663e\u793a\u4e3a DCS \u5b9e\u9645\u4fdd\u7559\u4e0a\u4e0b\u6587\uff0c\u4e0e\u201c\u53ea\u6709 sealed ContextFinalSnapshot \u4e2d\u7684\u7ecf\u9a8c pin \u624d\u7b97 context exposure\u201d\u7684\u5408\u540c\u4e0d\u4e00\u81f4\u3002\u9700\u8981\u533a\u5206\u65e7\u6ce8\u5165\u4e0e DCS retained pin\uff0c\u6216\u4ec5\u5728 DCS \u8def\u5f84\u8bb0\u5f55\u8be5\u6307\u6807\u3002",
+      "priority": "P2",
+      "confidence": 0.95,
+      "category": "regression",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/knowledge/sekb/operator-report.ts",
+        "line": 166
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "\u6838\u5fc3 owner pin\u3001\u5185\u5bb9\u7248\u672c\u548c policy epoch \u6821\u9a8c\u5df2\u7ecf\u63a5\u5165\uff0c\u4f46 UI \u66dd\u5149\u4e0e DCS context exposure \u7684\u6301\u4e45\u5316\u8fb9\u754c\u4ecd\u4e0d\u95ed\u5408\uff1a\u66dd\u5149\u53ef\u80fd\u5728\u6700\u7ec8\u8eab\u4efd\u6216\u65f6\u9650\u786e\u8ba4\u524d\u5199\u5165\uff0c\u5e76\u4e14\u62a5\u544a\u4f1a\u628a\u65e7 hook \u7684 retrieved \u4e8b\u4ef6\u6df7\u5165 DCS \u4e0a\u4e0b\u6587\u6307\u6807\u3002\u8fd9\u4e9b\u4f1a\u4ea7\u751f\u672a\u5b9e\u9645\u8fd4\u56de\u5019\u9009\u7684\u6536\u636e\u548c\u5931\u771f\u7684\u91c7\u7528\u94fe\u8def\u7edf\u8ba1\uff0c\u5408\u5e76\u524d\u9700\u8981\u4fee\u6b63\u3002",
+  "overall_confidence": 0.93
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "runtime-lint",
+  "candidate": {
+    "head": "e3b6f40644ed01f492db4495803c77b820b24431",
+    "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-17T05:52:29.415834+00:00",
+  "commands": [
+    {
+      "name": "runtime-lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-oxlint.mjs",
+        "--type-aware",
+        "--tsconfig",
+        "tsconfig.json",
+        "src/agents/embedded-agent-runner/extensions.ts",
+        "src/agents/embedded-agent-runner/run/attempt.ts",
+        "src/agents/embedded-agent-runner/sekb-runtime.ts",
+        "src/context-engine/chat-knowledge-intent.ts",
+        "src/context-engine/chat-knowledge-source-adapters.ts",
+        "src/context-engine/project-rag-owner-adapters.test.ts",
+        "src/gateway/methods/core-descriptors.ts",
+        "src/gateway/server-methods.ts",
+        "src/gateway/server-methods/role-orchestration-methods.ts",
+        "src/knowledge/sekb/harness-integration.ts",
+        "src/knowledge/sekb/knowledge-store.ts",
+        "src/knowledge/sekb/operator-report.ts",
+        "src/knowledge/sekb/retrieval-engine.ts",
+        "src/knowledge/sekb/session-cascade-delete.ts",
+        "src/knowledge/sekb/types.ts"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime",
+      "exitCode": 0,
+      "elapsedMs": 19542,
+      "stdout": "runtime-lint.stdout.log",
+      "stderr": "runtime-lint.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "declarationPreparation": "Reused installed generated SDK declarations; current node/web/test type gates and runtime build recorded separately.",
+  "after": {
+    "head": "e3b6f40644ed01f492db4495803c77b820b24431",
+    "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-17T05:52:51.328164+00:00"
+}

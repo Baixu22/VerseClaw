@@ -1,0 +1,103 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "types",
+  "candidate": {
+    "head": "e3b6f40644ed01f492db4495803c77b820b24431",
+    "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-17T05:40:39.313153+00:00",
+  "commands": [
+    {
+      "name": "bridge",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 184,
+      "stdout": "bridge.stdout.log",
+      "stderr": "bridge.stderr.log"
+    },
+    {
+      "name": "typecheck-node",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@typescript\\native-preview\\bin\\tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 36720,
+      "stdout": "typecheck-node.stdout.log",
+      "stderr": "typecheck-node.stderr.log"
+    },
+    {
+      "name": "typecheck-web",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@typescript\\native-preview\\bin\\tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 14959,
+      "stdout": "typecheck-web.stdout.log",
+      "stderr": "typecheck-web.stderr.log"
+    },
+    {
+      "name": "typecheck-test",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@typescript\\native-preview\\bin\\tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 216189,
+      "stdout": "typecheck-test.stdout.log",
+      "stderr": "typecheck-test.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "coverage": {
+    "cache": "disabled",
+    "projects": [
+      "node",
+      "web",
+      "test"
+    ],
+    "commandsEquivalentTo": [
+      "typecheck:node",
+      "typecheck:web",
+      "typecheck:test"
+    ]
+  },
+  "after": {
+    "head": "e3b6f40644ed01f492db4495803c77b820b24431",
+    "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-17T05:45:39.095453+00:00"
+}

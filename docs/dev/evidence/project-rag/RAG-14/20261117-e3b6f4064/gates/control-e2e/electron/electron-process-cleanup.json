@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-rag14-20261117\\formal-control-e2e-e3b6f4064\\fixtures\\verse-claw-e2e-run-vU4QW1",
+  "ledgerEntries": 20,
+  "checks": [
+    {
+      "pid": 38532,
+      "creationTime": 1794894682582,
+      "status": "exited"
+    },
+    {
+      "pid": 28124,
+      "creationTime": 1794894694821,
+      "status": "exited"
+    },
+    {
+      "pid": 26176,
+      "creationTime": 1794894682559,
+      "status": "exited"
+    },
+    {
+      "pid": 6232,
+      "creationTime": 1794894694840,
+      "status": "exited"
+    },
+    {
+      "pid": 39144,
+      "creationTime": 1794894695373,
+      "status": "exited"
+    },
+    {
+      "pid": 41540,
+      "creationTime": 1794894695331,
+      "status": "exited"
+    },
+    {
+      "pid": 19920,
+      "creationTime": 1794894699438,
+      "status": "exited"
+    },
+    {
+      "pid": 37500,
+      "creationTime": 1794894707875,
+      "status": "exited"
+    },
+    {
+      "pid": 2428,
+      "creationTime": 1794894699418,
+      "status": "exited"
+    },
+    {
+      "pid": 24428,
+      "creationTime": 1794894707879,
+      "status": "exited"
+    },
+    {
+      "pid": 43380,
+      "creationTime": 1794894708329,
+      "status": "exited"
+    },
+    {
+      "pid": 20616,
+      "creationTime": 1794894708454,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

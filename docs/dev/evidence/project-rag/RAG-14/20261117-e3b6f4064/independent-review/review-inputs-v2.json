@@ -1,0 +1,110 @@
+{
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "head": "7e48c13a8b3ab74d7447360cbe2dd1cde64b5d05",
+  "sourceHashes": {
+    ".gitignore": "33b4f359d6ed7377e341d83940c534cf25183b2c9504eedde6a9ceb3cbf3b90a",
+    "README.ja-JP.md": "0f4261a053b4953a651b66b318a2421be7c1726f4e0c884582749bedcd92e222",
+    "README.md": "9edca98ed03377e67597e5b1a1e43cf6815d2cb60133e268ebc334cda5603fce",
+    "README.ru-RU.md": "f443017fecd9761183b36b4e5754ba0a21adb7161a55d75134d868c3f07aaaea",
+    "README.zh-CN.md": "b394646ff4d3536e25d1961a49b521b7ab11efb3afbbf424983c9dae601f7de9",
+    "docs/dev/project-rag/EXPERIENCE-LANE-CONTRACT.md": "72c3419b4b5058e2787868f7ebca67c2b39c38aa4a3c742495e569c6c7bd3b1d",
+    "docs/dev/project-rag/WORK-PACKAGES.md": "ce9fc7b8b28981e53b093b67a3a917451635eaab560671293001be659780f6a1",
+    "electron/services/gateway-api.ts": "025105fdb83c188e02e782861c87cebe7a087a73f6876b559a9ff71eed949d24",
+    "electron/services/knowledge-api.ts": "90acbac75500ed8b51f342ddb818152267e27e52412eda106cff7b42e0982324",
+    "electron/services/knowledge-source-set-answer.ts": "e1a79fd3400185382d4c8a4d5b4c389057470531233e131f5c481ceaae35c2c5",
+    "harness/specs/rules/project-rag-long-term-boundary.md": "f4d449080aa5c601d0687cfb259cee8f4f8e40b83100ad2f6f32306500dc4c5f",
+    "harness/specs/tasks/project-rag-sekb-experience-lane.md": "cac6024e12dfa43d97e08637cd5bb783a0b24a88226c947147a517b3560bd989",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts": "375617c1401ed73395ee4d6dbdc7f58698e35444ac139800aff5a6cfb29cf13d",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "a2c5c2380439cf89ee462e854de576a9f76b0835fe4cf8366b93e4405b449915",
+    "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts": "b8fccc3f84e76a32e52bcd88d44a12c65b2e58bb91c3328c20afd8be235c0864",
+    "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts": "bbb12305eadb3ffbe5c57bf921acc1f79a990acae516774922c5a0edcd27f181",
+    "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts": "2a813fcfef096d824a255c91872cc0b17b31a4e838e0c01386bc90545a8ba82c",
+    "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts": "f7aca5cbec3bcc3bf5f5af4ff051079184ca74f6e757b4b65ea6286e64359fc9",
+    "openclaw_runtime/src/gateway/methods/core-descriptors.ts": "691c105935209835539b1a4084d2704255dfa3caff4d71c0466f48837228f0e2",
+    "openclaw_runtime/src/gateway/server-methods.ts": "6d4cf27dd4e941bda87f7c45fe07dffc3f33fcdbfd0bace185e168657390025f",
+    "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts": "b263b3fd21f945960213f3cb47903a9473a77485c655ee308b929f6e43f37468",
+    "openclaw_runtime/src/knowledge/sekb/harness-integration.ts": "780692615632eac615e9b21c0b9c9a1fd468460d2980e3c6d3e6e37d55176669",
+    "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts": "73578da04c6120ceab94e84a8187b4ff4c57d442de6a47ab70c03287f744c9fa",
+    "openclaw_runtime/src/knowledge/sekb/operator-report.ts": "320860187024363800b83a58ee10ae684ee867c0ad809ae49491a9212ee44fd3",
+    "openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts": "de58e7bd80937657ffb0f8c7306909ef36d0ccc64297d8bbcf394980f035f189",
+    "openclaw_runtime/src/knowledge/sekb/session-cascade-delete.ts": "c58f795d2a0697bc9d080dfa1019e5df2a78a05cee3d10b8c14904dcfca847dc",
+    "openclaw_runtime/src/knowledge/sekb/types.ts": "b7099855bace80cf24bcfb66843dd0aa3c8075aa019279c2e2bb0373a733e3e2",
+    "scripts/repository-artifacts.json": "39a11e51c38d89f4db78f8a8b568eb1b8d6ec6d6bfaa2900a7372b6b1a88bc56",
+    "shared/host-api/contract.ts": "49e362b2339c39db2ca6ce9370e804c202d502ab472428afb88c181d0d54b03b",
+    "shared/i18n/locales/en/knowledge.json": "6c27a846eb7533df5aa82e4f19b87564720a1f860138206210a718243eb626f4",
+    "shared/i18n/locales/ja/knowledge.json": "3d706ae83c090d66a69127161d3bbc6928c697868ede5dd022a82091887c05fd",
+    "shared/i18n/locales/ru/knowledge.json": "cd8e962c64398fb282abf80c81459fb2badefab07095c0499c47f7e2b2f2749d",
+    "shared/i18n/locales/zh/knowledge.json": "9e064fd244c1e132e7399fbedebc2c191f3dd3bc7924645932588e1f33754eff",
+    "shared/knowledge/experience.ts": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad",
+    "src/lib/host-api/knowledge/runtime-lessons.ts": "2eaff8bec727c697a00af1b1083f3243ee053e1ea246780c986c89ad85dd0ebe",
+    "src/pages/Chat/ChatInput.tsx": "a55919fa6accf982df5faec959bb44c2535bb545d218cb88d54f91f322a9ce46",
+    "src/pages/Chat/KnowledgeChat.tsx": "46fffd6fa8ecff4bd06d7847bb310777c964889539368f371111215e5ec3b82e",
+    "src/pages/Knowledge/index.tsx": "dcecac3cea54356720d30ddf116a8666ae1c80ca7e5ffbafa9047fc08ec7b454",
+    "tests/e2e/project-rag-source-domains.spec.ts": "b8e4f073fbf91116b544b1331018325d835ee5a781441453f6a79494d98af84c",
+    "tests/unit/gateway-permissions-api.test.ts": "6f5927da7768de94606eca4ceac7090512d8996d28b83f6575e6e98307cb6326",
+    "tests/unit/host-api-facade.test.ts": "e9aea7272db224415a69258d6d3f1bc0bae5064f2a2c21fae8b8cf4cde385202",
+    "tests/unit/knowledge-api.test.ts": "242021eefc7115c0c417cb70f4a20c934861bffab99d55339df4314624dcdca4",
+    "tests/unit/knowledge-page.test.tsx": "ed98ca3d8980c2debc7e0041c968a0d19fbb8d2da12997fd65c20c01dd643b91",
+    "tests/unit/project-rag-sekb-attribution.test.ts": "34aa3e5f4adabe86919d1eb868479155d4ef1828c8051669c688349656436ce7",
+    "tests/unit/rsi-adoption-runtime.test.ts": "fc6e37c2d1bf6afec1c9520dc2bea43403e9661592723bc0149e8bedf755a336"
+  },
+  "previousReview": {
+    "findings": [
+      {
+        "title": "UI exposure receipt is written before the candidate is delivered",
+        "body": "在 `sekb.retrieve` 的候选循环中，`store.record_adoption(..., { trigger: \"ui-exposure\" })` 先写入每一条曝光收据，之后才在第 603 行调用 `currentIdentity()`。如果会话 generation 或 workspace 在这次读取期间变化，接口会返回 `invalid_context` 和空候选，但数据库仍保留这批未返回给界面的 UI 曝光收据，污染归因报告并留下错误的使用记录。应在最终身份校验通过、候选确定返回后再写入，或先暂存并在成功响应时提交。",
+        "priority": "P2",
+        "confidence": 0.93,
+        "category": "regression",
+        "code_location": {
+          "file_path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+          "line": 571
+        }
+      },
+      {
+        "title": "Route timeout can still persist a UI exposure",
+        "body": "`retrieveRuntimeLessonsForRoute` 用 `waitForRetrievalOperation` 包住 `retrieveExperience`；该 helper 明确会丢弃超时后的 late value。但 `retrieveExperience` 没有接受或传递取消信号，底层 `sekb.retrieve` 仍可能继续执行并写入 `ui-exposure`。因此路由已经返回 `deadline-exceeded` 和空候选时，收据仍可能被持久化，导致 UI 曝光数高于实际展示的候选。应把取消信号贯穿到读取请求，或只在成功交付候选后提交曝光收据。",
+        "priority": "P2",
+        "confidence": 0.9,
+        "category": "bug",
+        "code_location": {
+          "file_path": "electron/services/knowledge-api.ts",
+          "line": 5250
+        }
+      },
+      {
+        "title": "Legacy retrieval is counted as DCS context exposure",
+        "body": "`operator-report` 将所有 accepted 的 `retrieved` 事件计入 `contextExposures`，但旧的非 DCS `recordExposure` 路径仍会为 system prompt 或 error advice 写入 `trigger: \"retrieved\"`。这样没有 `retainedExperience` 的历史 hook 注入会被显示为 DCS 实际保留上下文，与“只有 sealed ContextFinalSnapshot 中的经验 pin 才算 context exposure”的合同不一致。需要区分旧注入与 DCS retained pin，或仅在 DCS 路径记录该指标。",
+        "priority": "P2",
+        "confidence": 0.95,
+        "category": "regression",
+        "code_location": {
+          "file_path": "openclaw_runtime/src/knowledge/sekb/operator-report.ts",
+          "line": 166
+        }
+      }
+    ],
+    "overall_correctness": "patch is incorrect",
+    "overall_explanation": "核心 owner pin、内容版本和 policy epoch 校验已经接入，但 UI 曝光与 DCS context exposure 的持久化边界仍不闭合：曝光可能在最终身份或时限确认前写入，并且报告会把旧 hook 的 retrieved 事件混入 DCS 上下文指标。这些会产生未实际返回候选的收据和失真的采用链路统计，合并前需要修正。",
+    "overall_confidence": 0.93
+  },
+  "adjudication": [
+    {
+      "finding": "UI exposure receipt is written before the candidate is delivered",
+      "decision": "accepted",
+      "fix": "No side effects in retrieval. Main issues bounded one-use token; current UI acknowledges issued IDs, backend re-reads pins and identity before storing."
+    },
+    {
+      "finding": "Route timeout can still persist a UI exposure",
+      "decision": "accepted",
+      "fix": "No acknowledged token is returned by failed/timed-out routing. Late retrieval remains side-effect-free; pending tokens expire."
+    },
+    {
+      "finding": "Legacy retrieval is counted as DCS context exposure",
+      "decision": "accepted",
+      "fix": "DCS retained pins use context-exposure. Legacy retrieved remains distinct and excluded from context metric."
+    }
+  ]
+}

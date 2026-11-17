@@ -1,0 +1,95 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 3,
+  "numPassedTests": 3,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794894024956,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "retains raw QMD bytes and rejects a parent junction escape",
+          "status": "passed",
+          "title": "retains raw QMD bytes and rejects a parent junction escape",
+          "duration": 70.96260000000075,
+          "failureMessages": [],
+          "location": {
+            "line": 8,
+            "column": 1
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794894035957,
+      "endTime": 1794894036027.9626,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/extensions/memory-core/src/memory/qmd-manager.raw-read.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "rejects provider hits outside the declared memory or sessions source contract",
+          "status": "passed",
+          "title": "rejects provider hits outside the declared memory or sessions source contract",
+          "duration": 26.310600000000704,
+          "failureMessages": [],
+          "location": {
+            "line": 24,
+            "column": 1
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "keeps a late native search hit and its raw-source coordinates instead of the file prefix",
+          "status": "passed",
+          "title": "keeps a late native search hit and its raw-source coordinates instead of the file prefix",
+          "duration": 4.957200000000739,
+          "failureMessages": [],
+          "location": {
+            "line": 50,
+            "column": 1
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794894033750,
+      "endTime": 1794894033780.9573,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/extensions/memory-wiki/src/query.native-memory.test.ts"
+    }
+  ],
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "e3b6f40644ed01f492db4495803c77b820b24431"
+}

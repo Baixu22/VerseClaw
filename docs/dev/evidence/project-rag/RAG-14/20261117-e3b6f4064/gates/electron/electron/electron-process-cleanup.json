@@ -1,0 +1,43 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-rag14-20261117\\formal-electron-e3b6f4064\\fixtures\\verse-claw-e2e-run-PxtbLj",
+  "ledgerEntries": 10,
+  "checks": [
+    {
+      "pid": 15952,
+      "creationTime": 1794894479423,
+      "status": "exited"
+    },
+    {
+      "pid": 1668,
+      "creationTime": 1794894490412,
+      "status": "exited"
+    },
+    {
+      "pid": 31844,
+      "creationTime": 1794894491436,
+      "status": "exited"
+    },
+    {
+      "pid": 40480,
+      "creationTime": 1794894566023,
+      "status": "exited"
+    },
+    {
+      "pid": 30300,
+      "creationTime": 1794894580988,
+      "status": "exited"
+    },
+    {
+      "pid": 4496,
+      "creationTime": 1794894581659,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

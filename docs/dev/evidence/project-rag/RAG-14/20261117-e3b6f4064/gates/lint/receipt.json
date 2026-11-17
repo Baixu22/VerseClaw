@@ -1,0 +1,55 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "lint",
+  "candidate": {
+    "head": "e3b6f40644ed01f492db4495803c77b820b24431",
+    "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-17T05:52:12.825512+00:00",
+  "commands": [
+    {
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/gateway-api.ts",
+        "electron/services/knowledge-api.ts",
+        "electron/services/knowledge-source-set-answer.ts",
+        "shared/host-api/contract.ts",
+        "shared/knowledge/experience.ts",
+        "src/lib/host-api/knowledge/runtime-lessons.ts",
+        "src/pages/Chat/ChatInput.tsx",
+        "src/pages/Chat/KnowledgeChat.tsx",
+        "src/pages/Knowledge/index.tsx",
+        "tests/e2e/project-rag-source-domains.spec.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-page.test.tsx",
+        "tests/unit/project-rag-sekb-attribution.test.ts",
+        "tests/unit/rsi-adoption-runtime.test.ts"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 12511,
+      "stdout": "lint.stdout.log",
+      "stderr": "lint.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "after": {
+    "head": "e3b6f40644ed01f492db4495803c77b820b24431",
+    "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-17T05:52:27.157363+00:00"
+}

@@ -1,0 +1,919 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\playwright.config.ts",
+    "rootDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-rag14-20261117/dev-electron-v2/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-source-domains.spec.ts",
+      "file": "project-rag-source-domains.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG reads native and role memory independently and fences changed owners",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 96920,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-17T04:10:59.877Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:10:59.878Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-17T04:10:59.878Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=37508, ppid=40228\n[2026-11-17T04:10:59.878Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:00.182Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:00.182Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-17T04:11:00.183Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-17T04:11:00.183Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:00.251Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:00.252Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [37508:1117/121100.318:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[37508:1117/121100.318:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:00.594Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n[2026-11-17T04:11:00.596Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:00.597Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-17T04:11:00.597Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-17T04:11:00.598Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-17T04:11:00.598Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:01.548Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-home-M5blck\\rag13-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:02.902Z] [INFO] Scheduling Gateway reload after saving provider \"openai\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:02.902Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:03.465Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:03.465Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:03.520Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:03.521Z] [INFO] Gateway start requested (port=54369)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:03.527Z] [DEBUG] Device identity loaded (deviceId=b249adc5a86a135068eb305db8ca01590fadebb4bf8cb0f216a266b04a8bb30a)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:03.528Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:04.237Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:37508) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:04.639Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:04.732Z] [WARN] [provider-runtime] Pinned embedded agent runtime for models.providers entries before switch: openai\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:05.042Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:05.101Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:05.107Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":315,\"providerEnvMs\":13,\"channelStartupPolicyMs\":4,\"uvEnvMs\":56,\"mcpEnvMs\":29,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":1,\"totalMs\":454,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:05.108Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=54369, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 54369 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=1, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:05.346Z] [INFO] Gateway process started (pid=38156)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:05.347Z] [DEBUG] Gateway manager now owns process pid=38156\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:05.610Z] [WARN] [Gateway stderr] (node:38156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:05.611Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:07.410Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:07.846Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:09.458Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:19.088Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:21.153Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:23.219Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:25.100Z] [DEBUG] [Gateway stderr] (node:38156) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:25.100Z] [DEBUG] [Gateway stderr] (node:38156) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:25.100Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:25.284Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:30.558Z] [DEBUG] Gateway ready after 66 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:30.560Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:54369/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:30.671Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=1be1387c-6946-40d2-876e-e59f844b8845 peer=127.0.0.1:62561->127.0.0.1:54369 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:54369 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:30.673Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=fd25edd8-df33-4f59-92e7-b1b2a26f3af5 peer=127.0.0.1:60729->127.0.0.1:54369 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:54369 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:30.681Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:30.682Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:30.682Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:30.685Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=7746c1c0-d6b4-427f-9853-2c2a5e280151 peer=127.0.0.1:62592->127.0.0.1:54369 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:54369 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:30.790Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:54369/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:30.792Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:33.435Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:33.435Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-17T04:11:33.436Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:34.053Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:34.053Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:34.054Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:34.056Z] [INFO] [metric] gateway.startup {\"configSyncMs\":1111,\"spawnToReadyMs\":25212,\"readyToConnectMs\":3497,\"totalMs\":29820}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:36.277Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG13 bounded memory use\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:36.288Z] [INFO] [gateway-rpc] chat.send serialized id=5f9e704a-0d1a-49a5-9fe5-6af0fe36e968 timeoutMs=900000 bytes=807\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:36.289Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=5f9e704a-0d1a-49a5-9fe5-6af0fe36e968\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:36.290Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=5f9e704a-0d1a-49a5-9fe5-6af0fe36e968\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:36.290Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=5f9e704a-0d1a-49a5-9fe5-6af0fe36e968\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:36.292Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:36.311Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag13-wiki-corpus-conflict sessionKey=agent:main:main loadSessionMs=0.834\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:36.318Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag13-wiki-corpus-conflict sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:36.323Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag13-wiki-corpus-conflict sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:36.323Z] [INFO] [gateway-rpc] chat.send response id received durationMs=35\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:36.324Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag13-wiki-corpus-conflict\",\"status\":\"started\",\"knowledgeDenials\":[{\"id\":\"native\",\"title\":\"Native memory\",\"lookup\":\"native-memory:memory/shared.md\",\"reason\":\"unsupported_owner\",\"visibleReason\":\"Knowledge reference owner does not match the selected corpus.\"},{\"id\":\"role\",\"title\":\"Role memory\",\"lookup\":\"memory-slot:mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"reason\":\"unsupported_owner\",\"visibleReason\":\"Knowledge reference owner does not match the selected corpus.\"}],\"knowledgeReferences\":[]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:36.344Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=5f9e704a-0d1a-49a5-9fe5-6af0fe36e968\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:38.141Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-faFrRy\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-faFrRy\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:38.245Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-faFrRy\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer' -> 'D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-faFrRy\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:38.349Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-faFrRy\\openclaw-source-state\\plugin-skills\\wiki-maintainer\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer' -> 'D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-faFrRy\\openclaw-source-state\\plugin-skills\\wiki-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:38.371Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-faFrRy\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-faFrRy\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:47.939Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG13 bounded memory use\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:47.948Z] [INFO] [gateway-rpc] chat.send serialized id=8a954339-f7ad-4cdd-aa02-665d5833eaa3 timeoutMs=900000 bytes=798\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:47.948Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=8a954339-f7ad-4cdd-aa02-665d5833eaa3\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:47.948Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=8a954339-f7ad-4cdd-aa02-665d5833eaa3\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:47.949Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=8a954339-f7ad-4cdd-aa02-665d5833eaa3\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:47.954Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag13-initial sessionKey=agent:main:main loadSessionMs=0.898\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:48.087Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag13-initial sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:48.092Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag13-initial sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:48.093Z] [INFO] [gateway-rpc] chat.send response id received durationMs=146\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:48.093Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag13-initial\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"native\",\"title\":\"memory/shared.md\",\"lookup\":\"memory/shared.md\",\"corpus\":\"all\",\"revision\":\"sha256:f7d2508285f938f9d6a7fb09b339e3363f017e3366bb3a88bf4564f8580680f1\",\"contentDigest\":\"sha256:f7d2508285f938f9d6a7fb09b339e3363f017e3366bb3a88bf4564f8580680f1\",\"sourceRef\":{\"domain\":\"native-memory\",\"authorityId\":\"native-memory\",\"namespaceId\":\"native-memory:e9e404eb829d5c0704c080bd9ad464dfaf527b343bfe215bcf2471ae6d096a23\",\"subjectId\":\"memory/shared.md\",\"revision\":\"sha256:f7d2508285f938f9d6a7fb09b339e3363f017e3366bb3a88bf4564f8580680f1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:f7d2508285f938f9d6a7fb09b339e3363f017e3366bb3a88bf4564f8580680f1\",\"policyEpoch\":\"sha256:7ea594bc9dc27acca3be49a1a38510771cdc8dba5cb1af2c6a812197668a7001\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":0,\"endByteExclusive\":136,\"startLine\":1,\"endLine\":7}}},{\"id\":\"role\",\"title\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"lookup\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"corpus\":\"memory\",\"revision\":\"1\",\"contentDigest\":\"sha256:1142f3efe34082e8bfff37d2397726abd96d4df10bbaa8264f5313a00a0e2c81\",\"sourceRef\":{\"domain\":\"role-memory\",\"authorityId\":\"memory-slot\",\"namespaceId\":\"memory-slot:1f6939fe00a0033e059e32615a1d4d12baecf78293dd075696ad37cfd6629afa\",\"subjectId\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:1142f3efe34082e8bfff37d2397726abd96d4df10bbaa8264f5313a00a0e2c81\",\"policyEpoch\":\"sha256:ee96ef8814c1d6b7a5e6643fe40a34d290e2dbd90198dc6c82ed4dbd769429c4\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":0,\"endByteExclusive\":19,\"startLine\":1,\"endLine\":1}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:48.098Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=8a954339-f7ad-4cdd-aa02-665d5833eaa3\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:50.724Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:50.725Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-17T04:11:50.725Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:50.725Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:51.005Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-17T04:11:51.006Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:51.006Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-17T04:11:51.006Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:51.308Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:51.308Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-17T04:11:51.309Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-17T04:11:51.309Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:52.618Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG13 bounded memory use\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:52.627Z] [INFO] [gateway-rpc] chat.send serialized id=cc0a0823-1f6b-402e-9327-f9dd14a16f81 timeoutMs=900000 bytes=1355\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:52.627Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=cc0a0823-1f6b-402e-9327-f9dd14a16f81\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:52.628Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=cc0a0823-1f6b-402e-9327-f9dd14a16f81\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:52.628Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=cc0a0823-1f6b-402e-9327-f9dd14a16f81\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:52.633Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag13-invalid-utf8 sessionKey=agent:main:main loadSessionMs=1.033\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:52.659Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag13-invalid-utf8 sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:52.663Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag13-invalid-utf8 sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:11:52.665Z] [INFO] [gateway-rpc] chat.send response id received durationMs=38\n[2026-11-17T04:11:52.665Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag13-invalid-utf8\",\"status\":\"started\",\"knowledgeDenials\":[{\"id\":\"invalid-native\",\"title\":\"Invalid native\",\"lookup\":\"native-memory:memory/invalid.md\",\"reason\":\"denied\",\"visibleReason\":\"Knowledge source cannot be read (denied).\"}],\"knowledgeReferences\":[{\"id\":\"role\",\"title\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"lookup\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"corpus\":\"memory\",\"revision\":\"1\",\"contentDigest\":\"sha256:1142f3efe34082e8bfff37d2397726abd96d4df10bbaa8264f5313a00a0e2c81\",\"sourceRef\":{\"domain\":\"role-memory\",\"authorityId\":\"memory-slot\",\"namespaceId\":\"memory-slot:1f6939fe00a0033e059e32615a1d4d12baecf78293dd075696ad37cfd6629afa\",\"subjectId\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:1142f3efe34082e8bfff37d2397726abd96d4df10bbaa8264f5313a00a0e2c81\",\"policyEpoch\":\"sha256:ee96ef8814c1d6b7a5e6643fe40a34d290e2dbd90198dc6c82ed4dbd769429c4\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":0,\"endByteExclusive\":19,\"startLine\":1,\"endLine\":1}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:11:52.668Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=cc0a0823-1f6b-402e-9327-f9dd14a16f81\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:00.947Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG13 bounded memory use\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:00.954Z] [INFO] [gateway-rpc] chat.send serialized id=5e415aa4-ad96-48a4-911d-d6b91bb769f8 timeoutMs=900000 bytes=1935\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:00.954Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=5e415aa4-ad96-48a4-911d-d6b91bb769f8\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:00.955Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=5e415aa4-ad96-48a4-911d-d6b91bb769f8\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:00.955Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=5e415aa4-ad96-48a4-911d-d6b91bb769f8\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:00.960Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag13-deleted sessionKey=agent:main:main loadSessionMs=1.022\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:00.977Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag13-deleted sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:00.981Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag13-deleted sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:00.981Z] [INFO] [gateway-rpc] chat.send response id received durationMs=27\n[2026-11-17T04:12:00.982Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag13-deleted\",\"status\":\"started\",\"knowledgeDenials\":[{\"id\":\"native\",\"title\":\"Native memory\",\"lookup\":\"native-memory:memory/shared.md\",\"reason\":\"not_found\",\"visibleReason\":\"Knowledge source cannot be read (not_found).\"}],\"knowledgeReferences\":[{\"id\":\"role\",\"title\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"lookup\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"corpus\":\"memory\",\"revision\":\"1\",\"contentDigest\":\"sha256:1142f3efe34082e8bfff37d2397726abd96d4df10bbaa8264f5313a00a0e2c81\",\"sourceRef\":{\"domain\":\"role-memory\",\"authorityId\":\"memory-slot\",\"namespaceId\":\"memory-slot:1f6939fe00a0033e059e32615a1d4d12baecf78293dd075696ad37cfd6629afa\",\"subjectId\":\"mem_8e3f9f21-f26d-49d6-b004-bb5bf2a7cb07\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:1142f3efe34082e8bfff37d2397726abd96d4df10bbaa8264f5313a00a0e2c81\",\"policyEpoch\":\"sha256:ee96ef8814c1d6b7a5e6643fe40a34d290e2dbd90198dc6c82ed4dbd769429c4\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":0,\"endByteExclusive\":19,\"startLine\":1,\"endLine\":1}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:00.985Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=a7d45d70-076f-4b07-9f9c-a897c7903df5 id=5e415aa4-ad96-48a4-911d-d6b91bb769f8\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #4\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:03.759Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:03.759Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:03.759Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-17T04:12:03.759Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:04.145Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:04.145Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:04.146Z] [INFO] Sending kill to Gateway process (pid=38156)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:05.128Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:05.128Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:05.559Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:05.560Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:05.813Z] [INFO] Gateway stop requested\n[2026-11-17T04:12:05.814Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:57129/c2f8126f-17e6-43f5-b568-590f586b5011\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:window-close] pid=40228\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:05.839Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:05.840Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:05.840Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-17T04:12:05.840Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:05.840Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:exit] pid=40228 code=null signal=SIGKILL\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:10:39.570Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "memory-domains",
+                      "contentType": "application/json",
+                      "body": "ewogICJzY2hlbWEiOiAiUHJvamVjdFJhZ01lbW9yeURvbWFpbnNFbGVjdHJvbi92MSIsCiAgImFjdG9yIjogImNvZGV4LWcyLXJhZzE0LTIwMjYxMTE3IiwKICAiZHJpdmVuX2J5IjogImFnZW50IiwKICAicmVhbEh1bWFuRXZpZGVuY2UiOiBmYWxzZSwKICAic3RhdHVzIjogInBhc3MiLAogICJzdGVwcyI6IHsKICAgICJjb25mbGljdGluZ0NvcnB1c0RlbmllZCI6IHRydWUsCiAgICAiaW5kZXBlbmRlbnRPd25lclJlYWRzIjogdHJ1ZSwKICAgICJtZW1vcnlDaXRhdGlvblVpIjogdHJ1ZSwKICAgICJ1bnBpbm5lZEhvc3RNZW1vcnlEZW5pZWQiOiB0cnVlLAogICAgImludmFsaWRVdGY4RGVuaWVkQmVmb3JlUHJvbXB0IjogdHJ1ZSwKICAgICJnYXRld2F5T3duZXJJZGVudGl0eUZlbmNlZCI6IHRydWUsCiAgICAibWVtb3J5U291cmNlU2V0QW5kU3R1ZGlvIjogdHJ1ZSwKICAgICJtaXNzaW5nTWVtb3J5UGluRGVuaWVkIjogdHJ1ZSwKICAgICJjb3JyZWN0aW9uSW52YWxpZGF0ZWRQaW4iOiB0cnVlLAogICAgImRlbGV0ZUludmFsaWRhdGVkUGluIjogdHJ1ZSwKICAgICJyb2xlRGVsZXRlSW52YWxpZGF0ZWRQaW4iOiB0cnVlLAogICAgInJlamVjdGVkTWVtb3J5RG9tYWluUHJlc2VydmVkIjogdHJ1ZQogIH0sCiAgInJvbGVQcm9wb3NhbCI6IHsKICAgICJsZWdhY3kiOiB0cnVlLAogICAgImFjdGlvbiI6ICJhY2NlcHQiLAogICAgImFjY2VwdGVkIjogdHJ1ZSwKICAgICJjYXJkIjogewogICAgICAiaWQiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICJ0eXBlIjogImZhY3QiLAogICAgICAic2NvcGUiOiAid29ya3NwYWNlIiwKICAgICAgInNjb3BlS2V5IjogImFnZW50LW1lbW9yeS1kb21haW5zIiwKICAgICAgInJvbGVUYWdzIjogW10sCiAgICAgICJvd25lclJvbGUiOiBudWxsLAogICAgICAic291cmNlUm9sZSI6IG51bGwsCiAgICAgICJhcHBsaWNhYmxlUm9sZXMiOiBbXSwKICAgICAgImFsbG93ZWRNdXRhdG9ycyI6IFsKICAgICAgICAidXNlciIsCiAgICAgICAgIm9wZXJhdG9yIgogICAgICBdLAogICAgICAicGhhc2VUYWdzIjogW10sCiAgICAgICJjb250ZW50IjogIlJBRzEzX1JPTEVfT1JJR0lOQUwiLAogICAgICAiZXZpZGVuY2UiOiBbXSwKICAgICAgImV2aWRlbmNlUmVmcyI6IFtdLAogICAgICAiY29uZmlkZW5jZSI6IDEsCiAgICAgICJpbXBvcnRhbmNlIjogMC41LAogICAgICAibGFzdEFjY2Vzc2VkQXQiOiAiMjAyNi0xMS0xN1QwNDoxMTozNS45NjVaIiwKICAgICAgImNyZWF0ZWRBdCI6ICIyMDI2LTExLTE3VDA0OjExOjM1Ljk2NVoiLAogICAgICAidXBkYXRlZEF0IjogIjIwMjYtMTEtMTdUMDQ6MTE6MzUuOTY1WiIsCiAgICAgICJhY2Nlc3NDb3VudCI6IDAsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInN0YXR1cyI6ICJhY3RpdmUiLAogICAgICAic2Vuc2l0aXZpdHkiOiAibm9ybWFsIiwKICAgICAgImR1cmFiaWxpdHkiOiAicHJvamVjdCIsCiAgICAgICJzb3VyY2UiOiAidXNlciIsCiAgICAgICJzdXBlcnNlZGVzIjogbnVsbCwKICAgICAgInN1cGVyc2VkZWRCeSI6IG51bGwsCiAgICAgICJleHBpcmVzQXQiOiBudWxsCiAgICB9LAogICAgInJpc2tMZXZlbCI6ICJtZWRpdW0iLAogICAgImltcGFjdFNjb3BlIjogIndvcmtzcGFjZSIsCiAgICAic3VnZ2VzdGVkQWN0aW9uIjogImFwcHJvdmUiLAogICAgInJlYXNvblN1bW1hcnkiOiAibWVkaXVtIHJpc2sgY3JlYXRlIG9uIHdvcmtzcGFjZSBmYWN0IiwKICAgICJwZXJtaXNzaW9uRGVjaXNpb24iOiAiYWxsb3ciLAogICAgInBlcm1pc3Npb25SZWFzb24iOiAiTG93LXJpc2sgbWVtb3J5IG11dGF0aW9uIGlzIGFsbG93ZWQgYnkgcG9saWN5LiIsCiAgICAicHJvcG9zYWwiOiB7CiAgICAgICJpZCI6ICJwcm9wX2Y0Mzk4MjVlLWFiOTItNDM3YS1hMTUwLTU3ZmYxN2I4YWMzZCIsCiAgICAgICJvcGVyYXRpb24iOiAiY3JlYXRlIiwKICAgICAgInRhcmdldElkIjogbnVsbCwKICAgICAgInByb3Bvc2FsIjogewogICAgICAgICJjb250ZW50IjogIlJBRzEzX1JPTEVfT1JJR0lOQUwiLAogICAgICAgICJ0eXBlIjogImZhY3QiLAogICAgICAgICJzY29wZSI6ICJ3b3Jrc3BhY2UiLAogICAgICAgICJzY29wZUtleSI6ICJhZ2VudC1tZW1vcnktZG9tYWlucyIsCiAgICAgICAgInJvbGVUYWdzIjogW10sCiAgICAgICAgImV2aWRlbmNlIjogW10sCiAgICAgICAgImNvbmZpZGVuY2UiOiAxLAogICAgICAgICJpbXBvcnRhbmNlIjogMC41LAogICAgICAgICJzb3VyY2UiOiAidXNlciIKICAgICAgfSwKICAgICAgIm5vcm1hbGl6ZWQiOiB7CiAgICAgICAgImNvbnRlbnQiOiAiUkFHMTNfUk9MRV9PUklHSU5BTCIsCiAgICAgICAgInR5cGUiOiAiZmFjdCIsCiAgICAgICAgInNjb3BlIjogIndvcmtzcGFjZSIsCiAgICAgICAgInNjb3BlS2V5IjogImFnZW50LW1lbW9yeS1kb21haW5zIiwKICAgICAgICAicm9sZVRhZ3MiOiBbXSwKICAgICAgICAiZXZpZGVuY2UiOiBbXSwKICAgICAgICAiY29uZmlkZW5jZSI6IDEsCiAgICAgICAgImltcG9ydGFuY2UiOiAwLjUsCiAgICAgICAgInNvdXJjZSI6ICJ1c2VyIiwKICAgICAgICAib3duZXJSb2xlIjogbnVsbCwKICAgICAgICAic291cmNlUm9sZSI6IG51bGwsCiAgICAgICAgImFwcGxpY2FibGVSb2xlcyI6IFtdLAogICAgICAgICJhbGxvd2VkTXV0YXRvcnMiOiBbCiAgICAgICAgICAidXNlciIsCiAgICAgICAgICAib3BlcmF0b3IiCiAgICAgICAgXSwKICAgICAgICAicGhhc2VUYWdzIjogW10sCiAgICAgICAgImV2aWRlbmNlUmVmcyI6IFtdLAogICAgICAgICJzZW5zaXRpdml0eSI6ICJub3JtYWwiLAogICAgICAgICJkdXJhYmlsaXR5IjogInByb2plY3QiCiAgICAgIH0sCiAgICAgICJkZWNpc2lvbiI6ICJhY2NlcHQiLAogICAgICAic3RhdHVzIjogImFwcGxpZWQiLAogICAgICAicmV2aWV3UmVhc29uIjogbnVsbCwKICAgICAgImNvbmZsaWN0SWRzIjogW10sCiAgICAgICJhY3RvciI6IHsKICAgICAgICAidHlwZSI6ICJzeXN0ZW0iCiAgICAgIH0sCiAgICAgICJyaXNrTGV2ZWwiOiAibWVkaXVtIiwKICAgICAgImltcGFjdFNjb3BlIjogIndvcmtzcGFjZSIsCiAgICAgICJzdWdnZXN0ZWRBY3Rpb24iOiAiYXBwcm92ZSIsCiAgICAgICJyZWFzb25TdW1tYXJ5IjogIm1lZGl1bSByaXNrIGNyZWF0ZSBvbiB3b3Jrc3BhY2UgZmFjdCIsCiAgICAgICJwZXJtaXNzaW9uRGVjaXNpb24iOiAiYWxsb3ciLAogICAgICAicGVybWlzc2lvblJlYXNvbiI6ICJMb3ctcmlzayBtZW1vcnkgbXV0YXRpb24gaXMgYWxsb3dlZCBieSBwb2xpY3kuIiwKICAgICAgImJhdGNoSWQiOiBudWxsLAogICAgICAicmV0ZW50aW9uUmVhc29uIjogbnVsbCwKICAgICAgInBvbGljeVNuYXBzaG90IjogewogICAgICAgICJ2ZXJzaW9uIjogInJvbGUtbWVtb3J5LWdvdmVybmFuY2UtdjQiLAogICAgICAgICJjb250ZXh0UG9saWN5VmVyc2lvbiI6ICJyb2xlLW1lbW9yeS1jb250ZXh0LXYzIiwKICAgICAgICAic2VtYW50aWNUeXBlcyI6IFsKICAgICAgICAgICJmYWN0IiwKICAgICAgICAgICJjb25zdHJhaW50IiwKICAgICAgICAgICJwcmVmZXJlbmNlIiwKICAgICAgICAgICJwcm9jZWR1cmUiLAogICAgICAgICAgInJpc2siLAogICAgICAgICAgImRlY2lzaW9uIiwKICAgICAgICAgICJlcGlzb2RlIiwKICAgICAgICAgICJoYW5kb2ZmIiwKICAgICAgICAgICJhcnRpZmFjdF9yZWYiCiAgICAgICAgXSwKICAgICAgICAiaW5qZWN0aW9uQ2xhc3NlcyI6IFsKICAgICAgICAgICJtdXN0IiwKICAgICAgICAgICJzaG91bGQiLAogICAgICAgICAgIm1heSIsCiAgICAgICAgICAibmV2ZXIiCiAgICAgICAgXSwKICAgICAgICAibGlmZWN5Y2xlUG9saWN5IjogewogICAgICAgICAgImF1dG9tYXRpY011dGF0aW9uIjogZmFsc2UsCiAgICAgICAgICAiYWxsb3dlZEFjdGlvbnMiOiBbCiAgICAgICAgICAgICJrZWVwIiwKICAgICAgICAgICAgImNvbGQiLAogICAgICAgICAgICAiYXJjaGl2ZSIsCiAgICAgICAgICAgICJ0b21ic3RvbmUiLAogICAgICAgICAgICAicmV2aWV3IgogICAgICAgICAgXQogICAgICAgIH0sCiAgICAgICAgImV2aWRlbmNlUG9saWN5IjogewogICAgICAgICAgIm5hdGl2ZUJyaWRnZSI6ICJyZWFkX29ubHkiLAogICAgICAgICAgInN0YXR1c2VzIjogWwogICAgICAgICAgICAidmVyaWZpZWQiLAogICAgICAgICAgICAibWlzc2luZyIsCiAgICAgICAgICAgICJzdGFsZSIsCiAgICAgICAgICAgICJ3ZWFrIiwKICAgICAgICAgICAgImNvbnRyYWRpY3RlZCIsCiAgICAgICAgICAgICJ1bmNoZWNrZWQiCiAgICAgICAgICBdCiAgICAgICAgfSwKICAgICAgICAiYmF0Y2hSZXZpZXdQb2xpY3kiOiB7CiAgICAgICAgICAicGFydGlhbEZhaWx1cmUiOiAiY29udGludWUiLAogICAgICAgICAgIm11dGF0aW5nQWN0aW9ucyI6IFsKICAgICAgICAgICAgImFwcHJvdmUiLAogICAgICAgICAgICAicmVqZWN0IiwKICAgICAgICAgICAgImFwcGx5QXNDb2xkIiwKICAgICAgICAgICAgInN1cGVyc2VkZSIsCiAgICAgICAgICAgICJtZXJnZSIKICAgICAgICAgIF0KICAgICAgICB9CiAgICAgIH0sCiAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0xMS0xN1QwNDoxMTozNS45NjZaIiwKICAgICAgImRlY2lkZWRBdCI6ICIyMDI2LTExLTE3VDA0OjExOjM2LjA1NVoiCiAgICB9CiAgfSwKICAiY29ycHVzQ29uZmxpY3QiOiB7CiAgICAicnVuSWQiOiAicmFnMTMtd2lraS1jb3JwdXMtY29uZmxpY3QiLAogICAgInN0YXR1cyI6ICJvayIsCiAgICAiZW5kZWRBdCI6IDE3OTQ4ODg3MDc1MzAKICB9LAogICJpbml0aWFsIjogewogICAgInJ1bklkIjogInJhZzEzLWluaXRpYWwiLAogICAgInN0YXR1cyI6ICJvayIsCiAgICAiZW5kZWRBdCI6IDE3OTQ4ODg3MDk3NjcsCiAgICAicmV0YWluZWRFdmlkZW5jZSI6IHsKICAgICAgInNjaGVtYSI6ICJSZXRhaW5lZEV2aWRlbmNlTWFuaWZlc3QvdjEiLAogICAgICAidHVybklkIjogImFnZW50Om1haW46bWFpbjo6cmFnMTMtaW5pdGlhbCIsCiAgICAgICJlc3RpbWF0ZU1ldGhvZCI6ICJ1dGY4LWJ5dGVzLWRpdjQiLAogICAgICAidW5pdHMiOiBbCiAgICAgICAgewogICAgICAgICAgInNjaGVtYSI6ICJLbm93bGVkZ2VDYW5kaWRhdGVQYWNraW5nL3YyIiwKICAgICAgICAgICJ1bml0SWQiOiAiY2h1bms6bmF0aXZlLW1lbW9yeTo0MjZiMmY2ZWNkNWEzOGE4M2M4MDNiYjk2MWJlZTgxNyIsCiAgICAgICAgICAiY2l0YXRpb25zIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgInJlZklkIjogIm5hdGl2ZS1tZW1vcnk6NDI2YjJmNmVjZDVhMzhhODNjODAzYmI5NjFiZWU4MTciLAogICAgICAgICAgICAgICJpbnRlbnRJZCI6ICJuYXRpdmUiLAogICAgICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICAgICAiZG9tYWluIjogIm5hdGl2ZS1tZW1vcnkiLAogICAgICAgICAgICAgICAgImF1dGhvcml0eUlkIjogIm5hdGl2ZS1tZW1vcnkiLAogICAgICAgICAgICAgICAgIm5hbWVzcGFjZUlkIjogIm5hdGl2ZS1tZW1vcnk6ZTllNDA0ZWI4MjlkNWMwNzA0YzA4MGJkOWFkNDY0ZGZhZjUyN2IzNDNiZmUyMTViY2YyNDcxYWU2ZDA5NmEyMyIsCiAgICAgICAgICAgICAgICAic3ViamVjdElkIjogIm1lbW9yeS9zaGFyZWQubWQiLAogICAgICAgICAgICAgICAgInJldmlzaW9uIjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgICAgICAgICAgICJzY2hlbWEiOiAiU291cmNlUmVmL3YyIiwKICAgICAgICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1Njo3ZWE1OTRiYzlkYzI3YWNjYTNiZTQ5YTFhMzg1MTA3NzFjZGM4ZGJhNWNiMWFmMmM2YTgxMjE5NzY2OGE3MDAxIiwKICAgICAgICAgICAgICAgICJsb2NhdG9yIjogewogICAgICAgICAgICAgICAgICAiY29vcmRpbmF0ZVNwYWNlIjogInJhdy1zb3VyY2UtdXRmOC12MSIsCiAgICAgICAgICAgICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICAgICAgICAgICAiZW5kQnl0ZUV4Y2x1c2l2ZSI6IDEzNiwKICAgICAgICAgICAgICAgICAgInN0YXJ0TGluZSI6IDEsCiAgICAgICAgICAgICAgICAgICJlbmRMaW5lIjogNwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSIsCiAgICAgICAgICAgICAgImNodW5rRGlnZXN0IjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgICAgICAgICAicmV0YWluZWRCb2R5Q2hhcnMiOiAxMzAsCiAgICAgICAgICAgICAgInJldGFpbmVkQm9keVV0ZjhCeXRlcyI6IDEzNgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImNhbmRpZGF0ZUlkIjogImNvbnRleHQtY2FuZGlkYXRlOmRjcy1rbm93bGVkZ2U6a25vd2xlZGdlOm1lc3NhZ2U6Y2hhdC1rbm93bGVkZ2UlM0ElNUIlMjJuYXRpdmUtbWVtb3J5JTNBNDI2YjJmNmVjZDVhMzhhODNjODAzYmI5NjFiZWU4MTclMjIlNUQ6JTVCJTIyc2hhMjU2JTNBZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSUyMiU1RDpzaGEyNTY6YjVjYTJiNGQyMTUzOTFjZDI1NTJmNGU1YTM1OTY5NjJjNjljZTg5ZTI2OTY4MDA2MDQxOTlkZWMwMTI0MTBjOCIsCiAgICAgICAgICAib3JkaW5hbCI6IDIsCiAgICAgICAgICAicHJvamVjdGlvbkRpZ2VzdCI6ICJzaGEyNTY6YjVjYTJiNGQyMTUzOTFjZDI1NTJmNGU1YTM1OTY5NjJjNjljZTg5ZTI2OTY4MDA2MDQxOTlkZWMwMTI0MTBjOCIsCiAgICAgICAgICAicmV0YWluZWRDaGFycyI6IDEwMTIsCiAgICAgICAgICAicmV0YWluZWRVdGY4Qnl0ZXMiOiAxMDE4LAogICAgICAgICAgImVzdGltYXRlZFRva2VucyI6IDI1NQogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgInNjaGVtYSI6ICJLbm93bGVkZ2VDYW5kaWRhdGVQYWNraW5nL3YyIiwKICAgICAgICAgICJ1bml0SWQiOiAiY2h1bms6bWVtb3J5LXNsb3Q6M2Y2NGY5NTMwOGRjODM0OWMyMDUwMmRmYjczOTVkNjkiLAogICAgICAgICAgImNpdGF0aW9ucyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJyZWZJZCI6ICJtZW1vcnktc2xvdDozZjY0Zjk1MzA4ZGM4MzQ5YzIwNTAyZGZiNzM5NWQ2OSIsCiAgICAgICAgICAgICAgImludGVudElkIjogInJvbGUiLAogICAgICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICAgICAiZG9tYWluIjogInJvbGUtbWVtb3J5IiwKICAgICAgICAgICAgICAgICJhdXRob3JpdHlJZCI6ICJtZW1vcnktc2xvdCIsCiAgICAgICAgICAgICAgICAibmFtZXNwYWNlSWQiOiAibWVtb3J5LXNsb3Q6MWY2OTM5ZmUwMGEwMDMzZTA1OWUzMjYxNWExZDRkMTJiYWVjZjc4MjkzZGQwNzU2OTZhZDM3Y2ZkNjYyOWFmYSIsCiAgICAgICAgICAgICAgICAic3ViamVjdElkIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICAgICAgICAgInJldmlzaW9uIjogIjEiLAogICAgICAgICAgICAgICAgInNjaGVtYSI6ICJTb3VyY2VSZWYvdjIiLAogICAgICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MSIsCiAgICAgICAgICAgICAgICAicG9saWN5RXBvY2giOiAic2hhMjU2OmVlOTZlZjg4MTRjMWQ2YjdhNWU2NjQzZmU0MGEzNGQyOTBlMmRiZDkwMTk4ZGM2YzgyZWQ0ZGJkNzY5NDI5YzQiLAogICAgICAgICAgICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICAgICAgICAgInN0YXJ0Qnl0ZSI6IDAsCiAgICAgICAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTksCiAgICAgICAgICAgICAgICAgICJzdGFydExpbmUiOiAxLAogICAgICAgICAgICAgICAgICAiZW5kTGluZSI6IDEKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OjExNDJmM2VmZTM0MDgyZThiZmZmMzdkMjM5NzcyNmFiZDk2ZDRkZjEwYmJhYTgyNjRmNTMxM2EwMGEwZTJjODEiLAogICAgICAgICAgICAgICJjaHVua0RpZ2VzdCI6ICJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MSIsCiAgICAgICAgICAgICAgInJldGFpbmVkQm9keUNoYXJzIjogMTksCiAgICAgICAgICAgICAgInJldGFpbmVkQm9keVV0ZjhCeXRlcyI6IDE5CiAgICAgICAgICAgIH0KICAgICAgICAgIF0sCiAgICAgICAgICAiY2FuZGlkYXRlSWQiOiAiY29udGV4dC1jYW5kaWRhdGU6ZGNzLWtub3dsZWRnZTprbm93bGVkZ2U6bWVzc2FnZTpjaGF0LWtub3dsZWRnZSUzQSU1QiUyMm1lbW9yeS1zbG90JTNBM2Y2NGY5NTMwOGRjODM0OWMyMDUwMmRmYjczOTVkNjklMjIlNUQ6JTVCJTIyMSUyMiU1RDpzaGEyNTY6MjgyNTIxODQyYmY1MjIzNzUzMzhjOTgwNTlhMTQ1MWY1OWI3YzQ5MjJlYjk5ODgzY2JlMmY5NTZjZWViZTRjMiIsCiAgICAgICAgICAib3JkaW5hbCI6IDMsCiAgICAgICAgICAicHJvamVjdGlvbkRpZ2VzdCI6ICJzaGEyNTY6MjgyNTIxODQyYmY1MjIzNzUzMzhjOTgwNTlhMTQ1MWY1OWI3YzQ5MjJlYjk5ODgzY2JlMmY5NTZjZWViZTRjMiIsCiAgICAgICAgICAicmV0YWluZWRDaGFycyI6IDg0NiwKICAgICAgICAgICJyZXRhaW5lZFV0ZjhCeXRlcyI6IDg0NiwKICAgICAgICAgICJlc3RpbWF0ZWRUb2tlbnMiOiAyMTIKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJyZXRhaW5lZENoYXJzIjogMTg1OCwKICAgICAgInJldGFpbmVkVXRmOEJ5dGVzIjogMTg2NCwKICAgICAgImVzdGltYXRlZFRva2VucyI6IDQ2NwogICAgfQogIH0sCiAgIm5hdGl2ZSI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJjb3JwdXMiOiAibWVtb3J5IiwKICAgICJwYXRoIjogIm1lbW9yeS9zaGFyZWQubWQiLAogICAgInRpdGxlIjogIm1lbW9yeS9zaGFyZWQubWQiLAogICAgImNvbnRlbnQiOiAiLS0tXG50cnVzdDogY29uZmlybWVkXG51cGRhdGVkQXQ6IFwiMjAyNi0xMS0xNlQwMDowMDowMFpcIlxuc2NvcGU6XG4gIHdvcmtzcGFjZUlkOiBhZ2VudC1tZW1vcnktZG9tYWluc1xuLS0tXG5SQUcxM19OQVRJVkVfT1JJR0lOQUwg5Lit5paH8J+YgFxyXG4iLAogICAgInNvdXJjZVJlZiI6IHsKICAgICAgImRvbWFpbiI6ICJuYXRpdmUtbWVtb3J5IiwKICAgICAgImF1dGhvcml0eUlkIjogIm5hdGl2ZS1tZW1vcnkiLAogICAgICAibmFtZXNwYWNlSWQiOiAibmF0aXZlLW1lbW9yeTplOWU0MDRlYjgyOWQ1YzA3MDRjMDgwYmQ5YWQ0NjRkZmFmNTI3YjM0M2JmZTIxNWJjZjI0NzFhZTZkMDk2YTIzIiwKICAgICAgInN1YmplY3RJZCI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgInJldmlzaW9uIjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgInNjaGVtYSI6ICJTb3VyY2VSZWYvdjIiLAogICAgICAic291cmNlRGlnZXN0IjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1Njo3ZWE1OTRiYzlkYzI3YWNjYTNiZTQ5YTFhMzg1MTA3NzFjZGM4ZGJhNWNiMWFmMmM2YTgxMjE5NzY2OGE3MDAxIiwKICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgImNvb3JkaW5hdGVTcGFjZSI6ICJyYXctc291cmNlLXV0ZjgtdjEiLAogICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTM2LAogICAgICAgICJzdGFydExpbmUiOiAxLAogICAgICAgICJlbmRMaW5lIjogNwogICAgICB9CiAgICB9LAogICAgIm93bmVyU25hcHNob3QiOiB7CiAgICAgICJzY2hlbWEiOiAiT3duZXJSZWFkU25hcHNob3QvdjEiLAogICAgICAic291cmNlIjogewogICAgICAgICJkb21haW4iOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgImF1dGhvcml0eUlkIjogIm5hdGl2ZS1tZW1vcnkiLAogICAgICAgICJuYW1lc3BhY2VJZCI6ICJuYXRpdmUtbWVtb3J5OmU5ZTQwNGViODI5ZDVjMDcwNGMwODBiZDlhZDQ2NGRmYWY1MjdiMzQzYmZlMjE1YmNmMjQ3MWFlNmQwOTZhMjMiLAogICAgICAgICJzdWJqZWN0SWQiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgInJldmlzaW9uIjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSIsCiAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1Njo3ZWE1OTRiYzlkYzI3YWNjYTNiZTQ5YTFhMzg1MTA3NzFjZGM4ZGJhNWNiMWFmMmM2YTgxMjE5NzY2OGE3MDAxIiwKICAgICAgICAibG9jYXRvciI6IHsKICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICAgImVuZEJ5dGVFeGNsdXNpdmUiOiAxMzYsCiAgICAgICAgICAic3RhcnRMaW5lIjogMSwKICAgICAgICAgICJlbmRMaW5lIjogNwogICAgICAgIH0KICAgICAgfSwKICAgICAgImNvbnRleHQiOiB7CiAgICAgICAgInByaW5jaXBhbElkIjogIm9wZXJhdG9yIiwKICAgICAgICAiYWdlbnRJZCI6ICJtYWluIiwKICAgICAgICAic2Vzc2lvbklkIjogIjZmOGI3MDAxLWYzZjAtNGE1Mi1iY2RiLWZiNzNmNDJmMjZjYyIsCiAgICAgICAgInNlc3Npb25LZXkiOiAiYWdlbnQ6bWFpbjptYWluIiwKICAgICAgICAid29ya3NwYWNlSWQiOiAiYWdlbnQtbWVtb3J5LWRvbWFpbnMiLAogICAgICAgICJ3b3Jrc3BhY2VSb290RGlnZXN0IjogInNoYTI1Njo5M2QxMzZjZmE4ZTRhZTQ1NGZkOTFmNDQ0ZTcxNjQ4YWE4OWFmODMwZDNmOGY1YmE1NDhiZDk5YjU2MzU1YzQ0IiwKICAgICAgICAib3duZXJOYW1lc3BhY2VzIjogWwogICAgICAgICAgIm5hdGl2ZS1tZW1vcnk6ZTllNDA0ZWI4MjlkNWMwNzA0YzA4MGJkOWFkNDY0ZGZhZjUyN2IzNDNiZmUyMTViY2YyNDcxYWU2ZDA5NmEyMyIKICAgICAgICBdLAogICAgICAgICJwb2xpY3lEaWdlc3QiOiAic2hhMjU2OjI4ZTI1OTdjZjczNmY0OWY0ZjllYjUyOWVlYThiZDFkOTkxYTI0MDBlNDAzZjlhYzQwZTM3N2FiMWU1NmQyMjUiLAogICAgICAgICJlZ3Jlc3NQcm92aWRlclJlZnMiOiBbXSwKICAgICAgICAiZXhwaXJlc0F0IjogIjIwMjYtMTEtMTdUMDQ6MTI6MjAuNDE0WiIsCiAgICAgICAgInNjaGVtYSI6ICJSZWFkQWRtaXNzaW9uQ29udGV4dC92MSIsCiAgICAgICAgImNvbnRleHRJZCI6ICI1ZDZiZDNjZi03YTU2LTQxMWQtODVhNC05OWFmYjMxZjI2NjkiLAogICAgICAgICJwdXJwb3NlIjogImtub3dsZWRnZS1yZWFkIgogICAgICB9LAogICAgICAicG9saWN5IjogewogICAgICAgICJzdGF0dXMiOiAiYWN0aXZlIiwKICAgICAgICAidHJ1c3QiOiAiY29uZmlybWVkIiwKICAgICAgICAic2Vuc2l0aXZpdHkiOiAid29ya3NwYWNlIiwKICAgICAgICAiYWNsIjogewogICAgICAgICAgInJlYWQiOiBbCiAgICAgICAgICAgICJvcGVyYXRvciIKICAgICAgICAgIF0KICAgICAgICB9LAogICAgICAgICJzY29wZSI6IHsKICAgICAgICAgICJ3b3Jrc3BhY2VJZCI6ICJhZ2VudC1tZW1vcnktZG9tYWlucyIsCiAgICAgICAgICAiYWdlbnRJZCI6ICJtYWluIgogICAgICAgIH0sCiAgICAgICAgInJldGVudGlvbiI6IHsKICAgICAgICAgICJwb2xpY3kiOiAic291cmNlLWNvdXBsZWQiCiAgICAgICAgfSwKICAgICAgICAidXBkYXRlZEF0IjogIjIwMjYtMTEtMTZUMDA6MDA6MDBaIgogICAgICB9LAogICAgICAidGl0bGUiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICJjb250ZW50IjogIi0tLVxudHJ1c3Q6IGNvbmZpcm1lZFxudXBkYXRlZEF0OiBcIjIwMjYtMTEtMTZUMDA6MDA6MDBaXCJcbnNjb3BlOlxuICB3b3Jrc3BhY2VJZDogYWdlbnQtbWVtb3J5LWRvbWFpbnNcbi0tLVxuUkFHMTNfTkFUSVZFX09SSUdJTkFMIOS4reaWh/CfmIBcclxuIiwKICAgICAgImNvbnRlbnREaWdlc3QiOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAicmVhZEF0IjogIjIwMjYtMTEtMTdUMDQ6MTE6NTAuNDI2WiIsCiAgICAgICJ0b3RhbExpbmVzIjogOCwKICAgICAgInRydW5jYXRlZCI6IGZhbHNlCiAgICB9LAogICAgImZyb21MaW5lIjogMSwKICAgICJ0b3RhbExpbmVzIjogOCwKICAgICJ0cnVuY2F0ZWQiOiBmYWxzZQogIH0sCiAgInJvbGUiOiB7CiAgICAic3VjY2VzcyI6IHRydWUsCiAgICAiY29ycHVzIjogIm1lbW9yeSIsCiAgICAicGF0aCI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICJ0aXRsZSI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICJjb250ZW50IjogIlJBRzEzX1JPTEVfT1JJR0lOQUwiLAogICAgInNvdXJjZVJlZiI6IHsKICAgICAgImRvbWFpbiI6ICJyb2xlLW1lbW9yeSIsCiAgICAgICJhdXRob3JpdHlJZCI6ICJtZW1vcnktc2xvdCIsCiAgICAgICJuYW1lc3BhY2VJZCI6ICJtZW1vcnktc2xvdDoxZjY5MzlmZTAwYTAwMzNlMDU5ZTMyNjE1YTFkNGQxMmJhZWNmNzgyOTNkZDA3NTY5NmFkMzdjZmQ2NjI5YWZhIiwKICAgICAgInN1YmplY3RJZCI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgInJldmlzaW9uIjogIjEiLAogICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OjExNDJmM2VmZTM0MDgyZThiZmZmMzdkMjM5NzcyNmFiZDk2ZDRkZjEwYmJhYTgyNjRmNTMxM2EwMGEwZTJjODEiLAogICAgICAicG9saWN5RXBvY2giOiAic2hhMjU2OmVlOTZlZjg4MTRjMWQ2YjdhNWU2NjQzZmU0MGEzNGQyOTBlMmRiZDkwMTk4ZGM2YzgyZWQ0ZGJkNzY5NDI5YzQiLAogICAgICAibG9jYXRvciI6IHsKICAgICAgICAiY29vcmRpbmF0ZVNwYWNlIjogInJhdy1zb3VyY2UtdXRmOC12MSIsCiAgICAgICAgInN0YXJ0Qnl0ZSI6IDAsCiAgICAgICAgImVuZEJ5dGVFeGNsdXNpdmUiOiAxOSwKICAgICAgICAic3RhcnRMaW5lIjogMSwKICAgICAgICAiZW5kTGluZSI6IDEKICAgICAgfQogICAgfSwKICAgICJvd25lclNuYXBzaG90IjogewogICAgICAic2NoZW1hIjogIk93bmVyUmVhZFNuYXBzaG90L3YxIiwKICAgICAgInNvdXJjZSI6IHsKICAgICAgICAiZG9tYWluIjogInJvbGUtbWVtb3J5IiwKICAgICAgICAiYXV0aG9yaXR5SWQiOiAibWVtb3J5LXNsb3QiLAogICAgICAgICJuYW1lc3BhY2VJZCI6ICJtZW1vcnktc2xvdDoxZjY5MzlmZTAwYTAwMzNlMDU5ZTMyNjE1YTFkNGQxMmJhZWNmNzgyOTNkZDA3NTY5NmFkMzdjZmQ2NjI5YWZhIiwKICAgICAgICAic3ViamVjdElkIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICJyZXZpc2lvbiI6ICIxIiwKICAgICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MSIsCiAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1NjplZTk2ZWY4ODE0YzFkNmI3YTVlNjY0M2ZlNDBhMzRkMjkwZTJkYmQ5MDE5OGRjNmM4MmVkNGRiZDc2OTQyOWM0IiwKICAgICAgICAibG9jYXRvciI6IHsKICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICAgImVuZEJ5dGVFeGNsdXNpdmUiOiAxOSwKICAgICAgICAgICJzdGFydExpbmUiOiAxLAogICAgICAgICAgImVuZExpbmUiOiAxCiAgICAgICAgfQogICAgICB9LAogICAgICAiY29udGV4dCI6IHsKICAgICAgICAicHJpbmNpcGFsSWQiOiAib3BlcmF0b3IiLAogICAgICAgICJzZXNzaW9uSWQiOiAiNmY4YjcwMDEtZjNmMC00YTUyLWJjZGItZmI3M2Y0MmYyNmNjIiwKICAgICAgICAic2Vzc2lvbktleSI6ICJhZ2VudDptYWluOm1haW4iLAogICAgICAgICJhZ2VudElkIjogIm1haW4iLAogICAgICAgICJ3b3Jrc3BhY2VJZCI6ICJhZ2VudC1tZW1vcnktZG9tYWlucyIsCiAgICAgICAgIndvcmtzcGFjZVJvb3REaWdlc3QiOiAic2hhMjU2OjkzZDEzNmNmYThlNGFlNDU0ZmQ5MWY0NDRlNzE2NDhhYTg5YWY4MzBkM2Y4ZjViYTU0OGJkOTliNTYzNTVjNDQiLAogICAgICAgICJvd25lck5hbWVzcGFjZXMiOiBbCiAgICAgICAgICAibWVtb3J5LXNsb3Q6MWY2OTM5ZmUwMGEwMDMzZTA1OWUzMjYxNWExZDRkMTJiYWVjZjc4MjkzZGQwNzU2OTZhZDM3Y2ZkNjYyOWFmYSIKICAgICAgICBdLAogICAgICAgICJwb2xpY3lEaWdlc3QiOiAic2hhMjU2OmI2NTYyNTg3NTBmNzA3NTA2MzUyNThlMTJhNDZmMDkyMjM5MzFlYTc4OTI2ZTlmMGZhZTAyNjc2Y2IxZGY2YmQiLAogICAgICAgICJlZ3Jlc3NQcm92aWRlclJlZnMiOiBbXSwKICAgICAgICAiZXhwaXJlc0F0IjogIjIwMjYtMTEtMTdUMDQ6MTI6MjAuNTAwWiIsCiAgICAgICAgInNjaGVtYSI6ICJSZWFkQWRtaXNzaW9uQ29udGV4dC92MSIsCiAgICAgICAgImNvbnRleHRJZCI6ICJlYmRjM2EyYy04N2M5LTQwZTktYWRiZi04YzMxZDVhZmFhODgiLAogICAgICAgICJwdXJwb3NlIjogImtub3dsZWRnZS1yZWFkIgogICAgICB9LAogICAgICAicG9saWN5IjogewogICAgICAgICJzdGF0dXMiOiAiYWN0aXZlIiwKICAgICAgICAidHJ1c3QiOiAiY29uZmlybWVkIiwKICAgICAgICAic2Vuc2l0aXZpdHkiOiAid29ya3NwYWNlIiwKICAgICAgICAiYWNsIjogewogICAgICAgICAgInJlYWQiOiBbCiAgICAgICAgICAgICJvcGVyYXRvciIKICAgICAgICAgIF0KICAgICAgICB9LAogICAgICAgICJzY29wZSI6IHsKICAgICAgICAgICJ3b3Jrc3BhY2VJZCI6ICJhZ2VudC1tZW1vcnktZG9tYWlucyIKICAgICAgICB9LAogICAgICAgICJyZXRlbnRpb24iOiB7CiAgICAgICAgICAicG9saWN5IjogInNvdXJjZS1jb3VwbGVkIgogICAgICAgIH0sCiAgICAgICAgInVwZGF0ZWRBdCI6ICIyMDI2LTExLTE3VDA0OjExOjM1Ljk2NVoiCiAgICAgIH0sCiAgICAgICJ0aXRsZSI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgImNvbnRlbnQiOiAiUkFHMTNfUk9MRV9PUklHSU5BTCIsCiAgICAgICJjb250ZW50RGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgInJlYWRBdCI6ICIyMDI2LTExLTE3VDA0OjExOjUwLjUwMFoiLAogICAgICAidG90YWxMaW5lcyI6IDEsCiAgICAgICJ0cnVuY2F0ZWQiOiBmYWxzZQogICAgfSwKICAgICJmcm9tTGluZSI6IDEsCiAgICAidG90YWxMaW5lcyI6IDEsCiAgICAidHJ1bmNhdGVkIjogZmFsc2UKICB9LAogICJpbnZhbGlkVXRmOCI6IHsKICAgICJydW5JZCI6ICJyYWcxMy1pbnZhbGlkLXV0ZjgiLAogICAgInN0YXR1cyI6ICJvayIsCiAgICAiZW5kZWRBdCI6IDE3OTQ4ODg3MTQ4NjgsCiAgICAicmV0YWluZWRFdmlkZW5jZSI6IHsKICAgICAgInNjaGVtYSI6ICJSZXRhaW5lZEV2aWRlbmNlTWFuaWZlc3QvdjEiLAogICAgICAidHVybklkIjogImFnZW50Om1haW46bWFpbjo6cmFnMTMtaW52YWxpZC11dGY4IiwKICAgICAgImVzdGltYXRlTWV0aG9kIjogInV0ZjgtYnl0ZXMtZGl2NCIsCiAgICAgICJ1bml0cyI6IFsKICAgICAgICB7CiAgICAgICAgICAic2NoZW1hIjogIktub3dsZWRnZUNhbmRpZGF0ZVBhY2tpbmcvdjIiLAogICAgICAgICAgInVuaXRJZCI6ICJjaHVuazptZW1vcnktc2xvdDozZjY0Zjk1MzA4ZGM4MzQ5YzIwNTAyZGZiNzM5NWQ2OSIsCiAgICAgICAgICAiY2l0YXRpb25zIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgInJlZklkIjogIm1lbW9yeS1zbG90OjNmNjRmOTUzMDhkYzgzNDljMjA1MDJkZmI3Mzk1ZDY5IiwKICAgICAgICAgICAgICAiaW50ZW50SWQiOiAicm9sZSIsCiAgICAgICAgICAgICAgInNvdXJjZVJlZiI6IHsKICAgICAgICAgICAgICAgICJkb21haW4iOiAicm9sZS1tZW1vcnkiLAogICAgICAgICAgICAgICAgImF1dGhvcml0eUlkIjogIm1lbW9yeS1zbG90IiwKICAgICAgICAgICAgICAgICJuYW1lc3BhY2VJZCI6ICJtZW1vcnktc2xvdDoxZjY5MzlmZTAwYTAwMzNlMDU5ZTMyNjE1YTFkNGQxMmJhZWNmNzgyOTNkZDA3NTY5NmFkMzdjZmQ2NjI5YWZhIiwKICAgICAgICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICAgICAgICAgICAicmV2aXNpb24iOiAiMSIsCiAgICAgICAgICAgICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICAgICAgICAgICAic291cmNlRGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgICAgICAgICAgICJwb2xpY3lFcG9jaCI6ICJzaGEyNTY6ZWU5NmVmODgxNGMxZDZiN2E1ZTY2NDNmZTQwYTM0ZDI5MGUyZGJkOTAxOThkYzZjODJlZDRkYmQ3Njk0MjljNCIsCiAgICAgICAgICAgICAgICAibG9jYXRvciI6IHsKICAgICAgICAgICAgICAgICAgImNvb3JkaW5hdGVTcGFjZSI6ICJyYXctc291cmNlLXV0ZjgtdjEiLAogICAgICAgICAgICAgICAgICAic3RhcnRCeXRlIjogMCwKICAgICAgICAgICAgICAgICAgImVuZEJ5dGVFeGNsdXNpdmUiOiAxOSwKICAgICAgICAgICAgICAgICAgInN0YXJ0TGluZSI6IDEsCiAgICAgICAgICAgICAgICAgICJlbmRMaW5lIjogMQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MSIsCiAgICAgICAgICAgICAgImNodW5rRGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgICAgICAgICAicmV0YWluZWRCb2R5Q2hhcnMiOiAxOSwKICAgICAgICAgICAgICAicmV0YWluZWRCb2R5VXRmOEJ5dGVzIjogMTkKICAgICAgICAgICAgfQogICAgICAgICAgXSwKICAgICAgICAgICJjYW5kaWRhdGVJZCI6ICJjb250ZXh0LWNhbmRpZGF0ZTpkY3Mta25vd2xlZGdlOmtub3dsZWRnZTptZXNzYWdlOmNoYXQta25vd2xlZGdlJTNBJTVCJTIybWVtb3J5LXNsb3QlM0EzZjY0Zjk1MzA4ZGM4MzQ5YzIwNTAyZGZiNzM5NWQ2OSUyMiU1RDolNUIlMjIxJTIyJTVEOnNoYTI1NjoyODI1MjE4NDJiZjUyMjM3NTMzOGM5ODA1OWExNDUxZjU5YjdjNDkyMmViOTk4ODNjYmUyZjk1NmNlZWJlNGMyIiwKICAgICAgICAgICJvcmRpbmFsIjogMiwKICAgICAgICAgICJwcm9qZWN0aW9uRGlnZXN0IjogInNoYTI1NjoyODI1MjE4NDJiZjUyMjM3NTMzOGM5ODA1OWExNDUxZjU5YjdjNDkyMmViOTk4ODNjYmUyZjk1NmNlZWJlNGMyIiwKICAgICAgICAgICJyZXRhaW5lZENoYXJzIjogODQ2LAogICAgICAgICAgInJldGFpbmVkVXRmOEJ5dGVzIjogODQ2LAogICAgICAgICAgImVzdGltYXRlZFRva2VucyI6IDIxMgogICAgICAgIH0KICAgICAgXSwKICAgICAgInJldGFpbmVkQ2hhcnMiOiA4NDYsCiAgICAgICJyZXRhaW5lZFV0ZjhCeXRlcyI6IDg0NiwKICAgICAgImVzdGltYXRlZFRva2VucyI6IDIxMgogICAgfQogIH0sCiAgInNvdXJjZVNldEFuc3dlciI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJxdWVzdGlvbiI6ICJSQUcxMyBib3VuZGVkIG1lbW9yeSB1c2UiLAogICAgImFuc3dlciI6ICJHcm91bmRpbmcgaXMgcGFnZS9zbmlwcGV0IGxldmVsLlxuVGhlIHNlbGVjdGVkIG1lbW9yeSBkb2VzIG5vdCByZWNvcmQgdGhlIHJlcXVlc3RlZCB0YXNrIHJlc3VsdC4iLAogICAgInNvdXJjZXMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgImxvb2t1cCI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAicGF0aCI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAidGl0bGUiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgImV4Y2VycHQiOiAiLS0tIHRydXN0OiBjb25maXJtZWQgdXBkYXRlZEF0OiBcIjIwMjYtMTEtMTZUMDA6MDA6MDBaXCIgc2NvcGU6IHdvcmtzcGFjZUlkOiBhZ2VudC1tZW1vcnktZG9tYWlucyAtLS0gUkFHMTNfTkFUSVZFX09SSUdJTkFMIOS4reaWh/CfmIAiLAogICAgICAgICJ1cGRhdGVkQXQiOiAiMjAyNi0xMS0xNlQwMDowMDowMFoiLAogICAgICAgICJyZWFkUmFuZ2UiOiB7CiAgICAgICAgICAiZnJvbUxpbmUiOiAxLAogICAgICAgICAgInRvTGluZSI6IDcsCiAgICAgICAgICAidG90YWxMaW5lcyI6IDgsCiAgICAgICAgICAidHJ1bmNhdGVkIjogZmFsc2UKICAgICAgICB9LAogICAgICAgICJjaXRhdGlvbiI6IHsKICAgICAgICAgICJyZWZJZCI6ICJuYXRpdmUtbWVtb3J5Om5hdGl2ZS1tZW1vcnk6ZTllNDA0ZWI4MjlkNWMwNzA0YzA4MGJkOWFkNDY0ZGZhZjUyN2IzNDNiZmUyMTViY2YyNDcxYWU2ZDA5NmEyMzptZW1vcnkvc2hhcmVkLm1kOjAtMTM2IiwKICAgICAgICAgICJvd25lciI6ICJuYXRpdmUtbWVtb3J5IiwKICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgICAicmV2aXNpb24iOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgImNvbnRlbnREaWdlc3QiOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgInNvdXJjZVJlZnMiOiBbCiAgICAgICAgICAgICJtZW1vcnkvc2hhcmVkLm1kIgogICAgICAgICAgXSwKICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICJkb21haW4iOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgICAgICJhdXRob3JpdHlJZCI6ICJuYXRpdmUtbWVtb3J5IiwKICAgICAgICAgICAgIm5hbWVzcGFjZUlkIjogIm5hdGl2ZS1tZW1vcnk6ZTllNDA0ZWI4MjlkNWMwNzA0YzA4MGJkOWFkNDY0ZGZhZjUyN2IzNDNiZmUyMTViY2YyNDcxYWU2ZDA5NmEyMyIsCiAgICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgICAgICJyZXZpc2lvbiI6ICJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSIsCiAgICAgICAgICAgICJzY2hlbWEiOiAiU291cmNlUmVmL3YyIiwKICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSIsCiAgICAgICAgICAgICJwb2xpY3lFcG9jaCI6ICJzaGEyNTY6N2VhNTk0YmM5ZGMyN2FjY2EzYmU0OWExYTM4NTEwNzcxY2RjOGRiYTVjYjFhZjJjNmE4MTIxOTc2NjhhNzAwMSIsCiAgICAgICAgICAgICJsb2NhdG9yIjogewogICAgICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICAgICAic3RhcnRCeXRlIjogMCwKICAgICAgICAgICAgICAiZW5kQnl0ZUV4Y2x1c2l2ZSI6IDEzNiwKICAgICAgICAgICAgICAic3RhcnRMaW5lIjogMSwKICAgICAgICAgICAgICAiZW5kTGluZSI6IDcKICAgICAgICAgICAgfQogICAgICAgICAgfQogICAgICAgIH0KICAgICAgfSwKICAgICAgewogICAgICAgICJpZCI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAibG9va3VwIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICJwYXRoIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICJ0aXRsZSI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAiZXhjZXJwdCI6ICJSQUcxM19ST0xFX09SSUdJTkFMIiwKICAgICAgICAidXBkYXRlZEF0IjogIjIwMjYtMTEtMTdUMDQ6MTE6MzUuOTY1WiIsCiAgICAgICAgInJlYWRSYW5nZSI6IHsKICAgICAgICAgICJmcm9tTGluZSI6IDEsCiAgICAgICAgICAidG9MaW5lIjogMSwKICAgICAgICAgICJ0b3RhbExpbmVzIjogMSwKICAgICAgICAgICJ0cnVuY2F0ZWQiOiBmYWxzZQogICAgICAgIH0sCiAgICAgICAgImNpdGF0aW9uIjogewogICAgICAgICAgInJlZklkIjogIm1lbW9yeS1zbG90Om1lbW9yeS1zbG90OjFmNjkzOWZlMDBhMDAzM2UwNTllMzI2MTVhMWQ0ZDEyYmFlY2Y3ODI5M2RkMDc1Njk2YWQzN2NmZDY2MjlhZmE6bWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNzowLTE5IiwKICAgICAgICAgICJvd25lciI6ICJtZW1vcnktc2xvdCIsCiAgICAgICAgICAic3ViamVjdElkIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICAgInJldmlzaW9uIjogIjEiLAogICAgICAgICAgImNvbnRlbnREaWdlc3QiOiAic2hhMjU2OjExNDJmM2VmZTM0MDgyZThiZmZmMzdkMjM5NzcyNmFiZDk2ZDRkZjEwYmJhYTgyNjRmNTMxM2EwMGEwZTJjODEiLAogICAgICAgICAgInNvdXJjZVJlZnMiOiBbCiAgICAgICAgICAgICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IgogICAgICAgICAgXSwKICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICJkb21haW4iOiAicm9sZS1tZW1vcnkiLAogICAgICAgICAgICAiYXV0aG9yaXR5SWQiOiAibWVtb3J5LXNsb3QiLAogICAgICAgICAgICAibmFtZXNwYWNlSWQiOiAibWVtb3J5LXNsb3Q6MWY2OTM5ZmUwMGEwMDMzZTA1OWUzMjYxNWExZDRkMTJiYWVjZjc4MjkzZGQwNzU2OTZhZDM3Y2ZkNjYyOWFmYSIsCiAgICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICAgICAgICJyZXZpc2lvbiI6ICIxIiwKICAgICAgICAgICAgInNjaGVtYSI6ICJTb3VyY2VSZWYvdjIiLAogICAgICAgICAgICAic291cmNlRGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1NjplZTk2ZWY4ODE0YzFkNmI3YTVlNjY0M2ZlNDBhMzRkMjkwZTJkYmQ5MDE5OGRjNmM4MmVkNGRiZDc2OTQyOWM0IiwKICAgICAgICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgICAgICAgImNvb3JkaW5hdGVTcGFjZSI6ICJyYXctc291cmNlLXV0ZjgtdjEiLAogICAgICAgICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTksCiAgICAgICAgICAgICAgInN0YXJ0TGluZSI6IDEsCiAgICAgICAgICAgICAgImVuZExpbmUiOiAxCiAgICAgICAgICAgIH0KICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0KICAgIF0sCiAgICAidW5rbm93bnMiOiBbCiAgICAgICJHcm91bmRpbmcgaXMgcGFnZS9zbmlwcGV0IGxldmVsLiIsCiAgICAgICJUaGUgc2VsZWN0ZWQgbWVtb3J5IGRvZXMgbm90IHJlY29yZCB0aGUgcmVxdWVzdGVkIHRhc2sgcmVzdWx0LiIKICAgIF0sCiAgICAiZ3JvdW5kaW5nU3RhdHVzIjogInBhcnRpYWwiLAogICAgImFuc3dlck1vZGUiOiAic3RyaWN0IiwKICAgICJzeW50aGVzaXNNb2RlIjogInVua25vd24iLAogICAgIm1vZGVsIjogewogICAgICAic3RhdHVzIjogImNvbXBsZXRlZCIsCiAgICAgICJydW5JZCI6ICJrbm93bGVkZ2U6YzNiYzI0N2MtMjAyZS00MTYzLTllZTgtNmU0MTk2YzgyMTU0IgogICAgfSwKICAgICJjbGFpbXMiOiBbXSwKICAgICJyZXRhaW5lZEV2aWRlbmNlIjogewogICAgICAic2NoZW1hIjogIlJldGFpbmVkRXZpZGVuY2VNYW5pZmVzdC92MSIsCiAgICAgICJ0dXJuSWQiOiAiYWdlbnQ6bWFpbjprbm93bGVkZ2UtYzNiYzI0N2MtMjAyZS00MTYzLTllZTgtNmU0MTk2YzgyMTU0Ojprbm93bGVkZ2U6YzNiYzI0N2MtMjAyZS00MTYzLTllZTgtNmU0MTk2YzgyMTU0IiwKICAgICAgImVzdGltYXRlTWV0aG9kIjogInV0ZjgtYnl0ZXMtZGl2NCIsCiAgICAgICJ1bml0cyI6IFsKICAgICAgICB7CiAgICAgICAgICAic2NoZW1hIjogIktub3dsZWRnZUNhbmRpZGF0ZVBhY2tpbmcvdjIiLAogICAgICAgICAgInVuaXRJZCI6ICJjaHVuazpuYXRpdmUtbWVtb3J5OjQyNmIyZjZlY2Q1YTM4YTgzYzgwM2JiOTYxYmVlODE3IiwKICAgICAgICAgICJjaXRhdGlvbnMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAicmVmSWQiOiAibmF0aXZlLW1lbW9yeTo0MjZiMmY2ZWNkNWEzOGE4M2M4MDNiYjk2MWJlZTgxNyIsCiAgICAgICAgICAgICAgImludGVudElkIjogIm5hdGl2ZS1tZW1vcnk6bmF0aXZlLW1lbW9yeTplOWU0MDRlYjgyOWQ1YzA3MDRjMDgwYmQ5YWQ0NjRkZmFmNTI3YjM0M2JmZTIxNWJjZjI0NzFhZTZkMDk2YTIzOm1lbW9yeS9zaGFyZWQubWQ6MC0xMzYiLAogICAgICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICAgICAiZG9tYWluIjogIm5hdGl2ZS1tZW1vcnkiLAogICAgICAgICAgICAgICAgImF1dGhvcml0eUlkIjogIm5hdGl2ZS1tZW1vcnkiLAogICAgICAgICAgICAgICAgIm5hbWVzcGFjZUlkIjogIm5hdGl2ZS1tZW1vcnk6ZTllNDA0ZWI4MjlkNWMwNzA0YzA4MGJkOWFkNDY0ZGZhZjUyN2IzNDNiZmUyMTViY2YyNDcxYWU2ZDA5NmEyMyIsCiAgICAgICAgICAgICAgICAic3ViamVjdElkIjogIm1lbW9yeS9zaGFyZWQubWQiLAogICAgICAgICAgICAgICAgInJldmlzaW9uIjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgICAgICAgICAgICJzY2hlbWEiOiAiU291cmNlUmVmL3YyIiwKICAgICAgICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1Njo3ZWE1OTRiYzlkYzI3YWNjYTNiZTQ5YTFhMzg1MTA3NzFjZGM4ZGJhNWNiMWFmMmM2YTgxMjE5NzY2OGE3MDAxIiwKICAgICAgICAgICAgICAgICJsb2NhdG9yIjogewogICAgICAgICAgICAgICAgICAiY29vcmRpbmF0ZVNwYWNlIjogInJhdy1zb3VyY2UtdXRmOC12MSIsCiAgICAgICAgICAgICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICAgICAgICAgICAiZW5kQnl0ZUV4Y2x1c2l2ZSI6IDEzNiwKICAgICAgICAgICAgICAgICAgInN0YXJ0TGluZSI6IDEsCiAgICAgICAgICAgICAgICAgICJlbmRMaW5lIjogNwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSIsCiAgICAgICAgICAgICAgImNodW5rRGlnZXN0IjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgICAgICAgICAicmV0YWluZWRCb2R5Q2hhcnMiOiAxMzAsCiAgICAgICAgICAgICAgInJldGFpbmVkQm9keVV0ZjhCeXRlcyI6IDEzNgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImNhbmRpZGF0ZUlkIjogImNvbnRleHQtY2FuZGlkYXRlOmRjcy1rbm93bGVkZ2U6a25vd2xlZGdlOm1lc3NhZ2U6Y2hhdC1rbm93bGVkZ2UlM0ElNUIlMjJuYXRpdmUtbWVtb3J5JTNBNDI2YjJmNmVjZDVhMzhhODNjODAzYmI5NjFiZWU4MTclMjIlNUQ6JTVCJTIyc2hhMjU2JTNBZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSUyMiU1RDpzaGEyNTY6MjRhNjM4NzQxZjM2NTMzOTNlYzU3ZmVhYjE4YzgzN2NhMzE2YjdjZTBlODQ1ZTlhZWFhZjgxM2RjOThiZWM3ZSIsCiAgICAgICAgICAib3JkaW5hbCI6IDAsCiAgICAgICAgICAicHJvamVjdGlvbkRpZ2VzdCI6ICJzaGEyNTY6MjRhNjM4NzQxZjM2NTMzOTNlYzU3ZmVhYjE4YzgzN2NhMzE2YjdjZTBlODQ1ZTlhZWFhZjgxM2RjOThiZWM3ZSIsCiAgICAgICAgICAicmV0YWluZWRDaGFycyI6IDExMjEsCiAgICAgICAgICAicmV0YWluZWRVdGY4Qnl0ZXMiOiAxMTI3LAogICAgICAgICAgImVzdGltYXRlZFRva2VucyI6IDI4MgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgInNjaGVtYSI6ICJLbm93bGVkZ2VDYW5kaWRhdGVQYWNraW5nL3YyIiwKICAgICAgICAgICJ1bml0SWQiOiAiY2h1bms6bWVtb3J5LXNsb3Q6M2Y2NGY5NTMwOGRjODM0OWMyMDUwMmRmYjczOTVkNjkiLAogICAgICAgICAgImNpdGF0aW9ucyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJyZWZJZCI6ICJtZW1vcnktc2xvdDozZjY0Zjk1MzA4ZGM4MzQ5YzIwNTAyZGZiNzM5NWQ2OSIsCiAgICAgICAgICAgICAgImludGVudElkIjogIm1lbW9yeS1zbG90Om1lbW9yeS1zbG90OjFmNjkzOWZlMDBhMDAzM2UwNTllMzI2MTVhMWQ0ZDEyYmFlY2Y3ODI5M2RkMDc1Njk2YWQzN2NmZDY2MjlhZmE6bWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNzowLTE5IiwKICAgICAgICAgICAgICAic291cmNlUmVmIjogewogICAgICAgICAgICAgICAgImRvbWFpbiI6ICJyb2xlLW1lbW9yeSIsCiAgICAgICAgICAgICAgICAiYXV0aG9yaXR5SWQiOiAibWVtb3J5LXNsb3QiLAogICAgICAgICAgICAgICAgIm5hbWVzcGFjZUlkIjogIm1lbW9yeS1zbG90OjFmNjkzOWZlMDBhMDAzM2UwNTllMzI2MTVhMWQ0ZDEyYmFlY2Y3ODI5M2RkMDc1Njk2YWQzN2NmZDY2MjlhZmEiLAogICAgICAgICAgICAgICAgInN1YmplY3RJZCI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAgICAgICAgICJyZXZpc2lvbiI6ICIxIiwKICAgICAgICAgICAgICAgICJzY2hlbWEiOiAiU291cmNlUmVmL3YyIiwKICAgICAgICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OjExNDJmM2VmZTM0MDgyZThiZmZmMzdkMjM5NzcyNmFiZDk2ZDRkZjEwYmJhYTgyNjRmNTMxM2EwMGEwZTJjODEiLAogICAgICAgICAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1NjplZTk2ZWY4ODE0YzFkNmI3YTVlNjY0M2ZlNDBhMzRkMjkwZTJkYmQ5MDE5OGRjNmM4MmVkNGRiZDc2OTQyOWM0IiwKICAgICAgICAgICAgICAgICJsb2NhdG9yIjogewogICAgICAgICAgICAgICAgICAiY29vcmRpbmF0ZVNwYWNlIjogInJhdy1zb3VyY2UtdXRmOC12MSIsCiAgICAgICAgICAgICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICAgICAgICAgICAiZW5kQnl0ZUV4Y2x1c2l2ZSI6IDE5LAogICAgICAgICAgICAgICAgICAic3RhcnRMaW5lIjogMSwKICAgICAgICAgICAgICAgICAgImVuZExpbmUiOiAxCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAic291cmNlRGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgICAgICAgICAiY2h1bmtEaWdlc3QiOiAic2hhMjU2OjExNDJmM2VmZTM0MDgyZThiZmZmMzdkMjM5NzcyNmFiZDk2ZDRkZjEwYmJhYTgyNjRmNTMxM2EwMGEwZTJjODEiLAogICAgICAgICAgICAgICJyZXRhaW5lZEJvZHlDaGFycyI6IDE5LAogICAgICAgICAgICAgICJyZXRhaW5lZEJvZHlVdGY4Qnl0ZXMiOiAxOQogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImNhbmRpZGF0ZUlkIjogImNvbnRleHQtY2FuZGlkYXRlOmRjcy1rbm93bGVkZ2U6a25vd2xlZGdlOm1lc3NhZ2U6Y2hhdC1rbm93bGVkZ2UlM0ElNUIlMjJtZW1vcnktc2xvdCUzQTNmNjRmOTUzMDhkYzgzNDljMjA1MDJkZmI3Mzk1ZDY5JTIyJTVEOiU1QiUyMjElMjIlNUQ6c2hhMjU2OjQ4NjU0NDc0YjgzMTcxMGRiYTA3ZTQzMzYxMjUxZDJmM2NhOTZkYTdkNjYwNzkwMWQ1YjYzMjU0YzVjYjBiN2IiLAogICAgICAgICAgIm9yZGluYWwiOiAxLAogICAgICAgICAgInByb2plY3Rpb25EaWdlc3QiOiAic2hhMjU2OjQ4NjU0NDc0YjgzMTcxMGRiYTA3ZTQzMzYxMjUxZDJmM2NhOTZkYTdkNjYwNzkwMWQ1YjYzMjU0YzVjYjBiN2IiLAogICAgICAgICAgInJldGFpbmVkQ2hhcnMiOiA5NzYsCiAgICAgICAgICAicmV0YWluZWRVdGY4Qnl0ZXMiOiA5NzYsCiAgICAgICAgICAiZXN0aW1hdGVkVG9rZW5zIjogMjQ0CiAgICAgICAgfQogICAgICBdLAogICAgICAicmV0YWluZWRDaGFycyI6IDIwOTcsCiAgICAgICJyZXRhaW5lZFV0ZjhCeXRlcyI6IDIxMDMsCiAgICAgICJlc3RpbWF0ZWRUb2tlbnMiOiA1MjYKICAgIH0sCiAgICAic3VnZ2VzdGVkTmV4dEFjdGlvbnMiOiBbCiAgICAgICJDb25maWd1cmUgYSByZWdpc3RlcmVkIG1lbW9yeSBlbWJlZGRpbmcgcHJvdmlkZXIgdGhyb3VnaCB0aGUgZXhpc3RpbmcgYWRhcHRlciBib3VuZGFyeSB0byBlbmFibGUgdGhlIHNlbWFudGljIGxhbmUuIgogICAgXSwKICAgICJyZWplY3Rpb25zIjogW10sCiAgICAiY29uZmxpY3RTZXQiOiBbXSwKICAgICJyZXRyaWV2YWxEaWFnbm9zdGljcyI6IHsKICAgICAgInF1ZXJ5IjogIlJBRzEzIGJvdW5kZWQgbWVtb3J5IHVzZSIsCiAgICAgICJjb3JwdXMiOiAibWVtb3J5IiwKICAgICAgIm1vZGUiOiAic291cmNlLXNldCIsCiAgICAgICJiYWNrZW5kIjogImZhbGxiYWNrLWtleXdvcmQiLAogICAgICAicmVzdWx0Q291bnQiOiAyLAogICAgICAic2VsZWN0ZWRDb3VudCI6IDIsCiAgICAgICJyZWFzb24iOiAiZXhwbGljaXQgU291cmNlIFNldCBzZWxlY3Rpb24gYWZ0ZXIgb3duZXIgYWRtaXNzaW9uIiwKICAgICAgIml0ZW1zIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAgICJ0aXRsZSI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAgICJsb29rdXAiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgICAic291cmNlS2luZCI6ICJtZW1vcnktZmlsZSIsCiAgICAgICAgICAib3duZXIiOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgICAic291cmNlUmVmIjogewogICAgICAgICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICAgICAgICJkb21haW4iOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgICAgICJhdXRob3JpdHlJZCI6ICJuYXRpdmUtbWVtb3J5IiwKICAgICAgICAgICAgIm5hbWVzcGFjZUlkIjogIm5hdGl2ZS1tZW1vcnk6ZTllNDA0ZWI4MjlkNWMwNzA0YzA4MGJkOWFkNDY0ZGZhZjUyN2IzNDNiZmUyMTViY2YyNDcxYWU2ZDA5NmEyMyIsCiAgICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgICAgICJyZXZpc2lvbiI6ICJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSIsCiAgICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgICAicG9saWN5RXBvY2giOiAic2hhMjU2OjdlYTU5NGJjOWRjMjdhY2NhM2JlNDlhMWEzODUxMDc3MWNkYzhkYmE1Y2IxYWYyYzZhODEyMTk3NjY4YTcwMDEiLAogICAgICAgICAgICAibG9jYXRvciI6IHsKICAgICAgICAgICAgICAiY29vcmRpbmF0ZVNwYWNlIjogInJhdy1zb3VyY2UtdXRmOC12MSIsCiAgICAgICAgICAgICAgInN0YXJ0Qnl0ZSI6IDAsCiAgICAgICAgICAgICAgImVuZEJ5dGVFeGNsdXNpdmUiOiAxMzYsCiAgICAgICAgICAgICAgInN0YXJ0TGluZSI6IDEsCiAgICAgICAgICAgICAgImVuZExpbmUiOiA3CiAgICAgICAgICAgIH0KICAgICAgICAgIH0sCiAgICAgICAgICAicmVhc29uIjogImV4cGxpY2l0IFNvdXJjZSBTZXQgc2VsZWN0aW9uIGFmdGVyIG93bmVyIGFkbWlzc2lvbiIsCiAgICAgICAgICAicGF0aCI6ICJtZW1vcnkvc2hhcmVkLm1kIgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgImlkIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICAgInRpdGxlIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICAgImxvb2t1cCI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAgICJzb3VyY2VLaW5kIjogIm1lbW9yeS1jYXJkIiwKICAgICAgICAgICJvd25lciI6ICJtZW1vcnktc2xvdCIsCiAgICAgICAgICAic291cmNlUmVmIjogewogICAgICAgICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICAgICAgICJkb21haW4iOiAicm9sZS1tZW1vcnkiLAogICAgICAgICAgICAiYXV0aG9yaXR5SWQiOiAibWVtb3J5LXNsb3QiLAogICAgICAgICAgICAibmFtZXNwYWNlSWQiOiAibWVtb3J5LXNsb3Q6MWY2OTM5ZmUwMGEwMDMzZTA1OWUzMjYxNWExZDRkMTJiYWVjZjc4MjkzZGQwNzU2OTZhZDM3Y2ZkNjYyOWFmYSIsCiAgICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICAgICAgICJyZXZpc2lvbiI6ICIxIiwKICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MSIsCiAgICAgICAgICAgICJwb2xpY3lFcG9jaCI6ICJzaGEyNTY6ZWU5NmVmODgxNGMxZDZiN2E1ZTY2NDNmZTQwYTM0ZDI5MGUyZGJkOTAxOThkYzZjODJlZDRkYmQ3Njk0MjljNCIsCiAgICAgICAgICAgICJsb2NhdG9yIjogewogICAgICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICAgICAic3RhcnRCeXRlIjogMCwKICAgICAgICAgICAgICAiZW5kQnl0ZUV4Y2x1c2l2ZSI6IDE5LAogICAgICAgICAgICAgICJzdGFydExpbmUiOiAxLAogICAgICAgICAgICAgICJlbmRMaW5lIjogMQogICAgICAgICAgICB9CiAgICAgICAgICB9LAogICAgICAgICAgInJlYXNvbiI6ICJleHBsaWNpdCBTb3VyY2UgU2V0IHNlbGVjdGlvbiBhZnRlciBvd25lciBhZG1pc3Npb24iLAogICAgICAgICAgInBhdGgiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIKICAgICAgICB9CiAgICAgIF0KICAgIH0sCiAgICAic2VtYW50aWNSZXF1ZXN0ZWQiOiBmYWxzZQogIH0sCiAgInN0dWRpbyI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJkcmFmdCI6IHsKICAgICAgImlkIjogImtkXzY2ZDA0ZTczLTIxOGEtNDk0Ny1hNTA2LTRiZDRhYWU4NDYzMCIsCiAgICAgICJ0aXRsZSI6ICJTdW1tYXJ5IiwKICAgICAgImJvZHkiOiAiIyBTdW1tYXJ5XG5cbkFydGlmYWN0IHR5cGU6IHN1bW1hcnlcblxuIyMgQW5zd2VyXG5TZWxlY3RlZCBzb3VyY2UgZXhjZXJwdHMgKHBhcnRpYWwgcmVzcG9uc2UpLiBBcnRpZmFjdCBmb2N1czogc3VtbWFyeS5cblF1ZXN0aW9uOiBDcmVhdGUgYSBzdW1tYXJ5IGZyb20gdGhlIHNlbGVjdGVkIHNvdXJjZXMuXG5cbjEuIG1lbW9yeS9zaGFyZWQubWQ6IC0tLSB0cnVzdDogY29uZmlybWVkIHVwZGF0ZWRBdDogXCIyMDI2LTExLTE2VDAwOjAwOjAwWlwiIHNjb3BlOiB3b3Jrc3BhY2VJZDogYWdlbnQtbWVtb3J5LWRvbWFpbnMgLS0tIFJBRzEzX05BVElWRV9PUklHSU5BTCDkuK3mlofwn5iAXG4yLiBtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3OiBSQUcxM19ST0xFX09SSUdJTkFMXG5cbiMjIFNvdXJjZXMgdXNlZFxuLSBtZW1vcnkvc2hhcmVkLm1kIChtZW1vcnkvc2hhcmVkLm1kKVxuICAtLS0gdHJ1c3Q6IGNvbmZpcm1lZCB1cGRhdGVkQXQ6IFwiMjAyNi0xMS0xNlQwMDowMDowMFpcIiBzY29wZTogd29ya3NwYWNlSWQ6IGFnZW50LW1lbW9yeS1kb21haW5zIC0tLSBSQUcxM19OQVRJVkVfT1JJR0lOQUwg5Lit5paH8J+YgFxuLSBtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IChtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3KVxuICBSQUcxM19ST0xFX09SSUdJTkFMXG5cbiMjIFVua25vd25zIC8gbWlzc2luZyBzb3VyY2VzXG4tIEdyb3VuZGluZyBpcyBwYWdlL3NuaXBwZXQgbGV2ZWwuXG4tIFRoaXMgcmVzcG9uc2UgY29udGFpbnMgc291cmNlIGV4Y2VycHRzOyBzeW50aGVzaXplZCBhbnN3ZXIgY29ycmVjdG5lc3MgYW5kIHVuc3RydWN0dXJlZCBjb250cmFkaWN0aW9ucyBoYXZlIG5vdCBiZWVuIGV2YWx1YXRlZC5cblxuIyMgU3VnZ2VzdGVkIG5leHQgYWN0aW9uXG4tIENvbmZpZ3VyZSBhIHJlZ2lzdGVyZWQgbWVtb3J5IGVtYmVkZGluZyBwcm92aWRlciB0aHJvdWdoIHRoZSBleGlzdGluZyBhZGFwdGVyIGJvdW5kYXJ5IHRvIGVuYWJsZSB0aGUgc2VtYW50aWMgbGFuZS4iLAogICAgICAidHlwZSI6ICJzeW50aGVzaXMiLAogICAgICAic3RhdHVzIjogImRyYWZ0IiwKICAgICAgInNvdXJjZUlkcyI6IFsKICAgICAgICAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciCiAgICAgIF0sCiAgICAgICJzb3VyY2VSZWZzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAgICJsYWJlbCI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAgICJraW5kIjogImZpbGUiLAogICAgICAgICAgInBhdGgiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgICAicmV2aXNpb24iOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgImNvbnRlbnREaWdlc3QiOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgInNvdXJjZVJlZiI6IHsKICAgICAgICAgICAgInNjaGVtYSI6ICJTb3VyY2VSZWYvdjIiLAogICAgICAgICAgICAiZG9tYWluIjogIm5hdGl2ZS1tZW1vcnkiLAogICAgICAgICAgICAiYXV0aG9yaXR5SWQiOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgICAgICJuYW1lc3BhY2VJZCI6ICJuYXRpdmUtbWVtb3J5OmU5ZTQwNGViODI5ZDVjMDcwNGMwODBiZDlhZDQ2NGRmYWY1MjdiMzQzYmZlMjE1YmNmMjQ3MWFlNmQwOTZhMjMiLAogICAgICAgICAgICAic3ViamVjdElkIjogIm1lbW9yeS9zaGFyZWQubWQiLAogICAgICAgICAgICAicmV2aXNpb24iOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgICAic291cmNlRGlnZXN0IjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1Njo3ZWE1OTRiYzlkYzI3YWNjYTNiZTQ5YTFhMzg1MTA3NzFjZGM4ZGJhNWNiMWFmMmM2YTgxMjE5NzY2OGE3MDAxIiwKICAgICAgICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgICAgICAgImNvb3JkaW5hdGVTcGFjZSI6ICJyYXctc291cmNlLXV0ZjgtdjEiLAogICAgICAgICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTM2LAogICAgICAgICAgICAgICJzdGFydExpbmUiOiAxLAogICAgICAgICAgICAgICJlbmRMaW5lIjogNwogICAgICAgICAgICB9CiAgICAgICAgICB9CiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICAgICAibGFiZWwiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICAgICAia2luZCI6ICJvdGhlciIsCiAgICAgICAgICAicGF0aCI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAgICJyZXZpc2lvbiI6ICIxIiwKICAgICAgICAgICJjb250ZW50RGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICJzY2hlbWEiOiAiU291cmNlUmVmL3YyIiwKICAgICAgICAgICAgImRvbWFpbiI6ICJyb2xlLW1lbW9yeSIsCiAgICAgICAgICAgICJhdXRob3JpdHlJZCI6ICJtZW1vcnktc2xvdCIsCiAgICAgICAgICAgICJuYW1lc3BhY2VJZCI6ICJtZW1vcnktc2xvdDoxZjY5MzlmZTAwYTAwMzNlMDU5ZTMyNjE1YTFkNGQxMmJhZWNmNzgyOTNkZDA3NTY5NmFkMzdjZmQ2NjI5YWZhIiwKICAgICAgICAgICAgInN1YmplY3RJZCI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAgICAgInJldmlzaW9uIjogIjEiLAogICAgICAgICAgICAic291cmNlRGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1NjplZTk2ZWY4ODE0YzFkNmI3YTVlNjY0M2ZlNDBhMzRkMjkwZTJkYmQ5MDE5OGRjNmM4MmVkNGRiZDc2OTQyOWM0IiwKICAgICAgICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgICAgICAgImNvb3JkaW5hdGVTcGFjZSI6ICJyYXctc291cmNlLXV0ZjgtdjEiLAogICAgICAgICAgICAgICJzdGFydEJ5dGUiOiAwLAogICAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTksCiAgICAgICAgICAgICAgInN0YXJ0TGluZSI6IDEsCiAgICAgICAgICAgICAgImVuZExpbmUiOiAxCiAgICAgICAgICAgIH0KICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIF0sCiAgICAgICJ0YWdzIjogWwogICAgICAgICJzdHVkaW8tYXJ0aWZhY3QiLAogICAgICAgICJzdW1tYXJ5IgogICAgICBdLAogICAgICAid29ya3NwYWNlSWQiOiBudWxsLAogICAgICAiYWdlbnRJZCI6IG51bGwsCiAgICAgICJjcmVhdGVkQnkiOiAiYWdlbnQiLAogICAgICAid2FybmluZ3MiOiBbXSwKICAgICAgIm1ldGFkYXRhIjogewogICAgICAgICJkcml2ZW5fYnkiOiAiYWdlbnQiLAogICAgICAgICJhY3RvciI6ICJrbm93bGVkZ2Utc291cmNlLXNldCIsCiAgICAgICAgImtub3dsZWRnZUtpbmQiOiAic3R1ZGlvLWFydGlmYWN0IiwKICAgICAgICAiYXJ0aWZhY3RUeXBlIjogInN1bW1hcnkiLAogICAgICAgICJncm91bmRpbmdTdGF0dXMiOiAicGFydGlhbCIsCiAgICAgICAgInN5bnRoZXNpc01vZGUiOiAic291cmNlLWV4Y2VycHRzIiwKICAgICAgICAicmVqZWN0aW9ucyI6IFtdLAogICAgICAgICJjb25mbGljdFNldCI6IFtdLAogICAgICAgICJzb3VyY2VTZXRFdmlkZW5jZSI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImNpdGF0aW9uIjogewogICAgICAgICAgICAgICJyZWZJZCI6ICJuYXRpdmUtbWVtb3J5Om5hdGl2ZS1tZW1vcnk6ZTllNDA0ZWI4MjlkNWMwNzA0YzA4MGJkOWFkNDY0ZGZhZjUyN2IzNDNiZmUyMTViY2YyNDcxYWU2ZDA5NmEyMzptZW1vcnkvc2hhcmVkLm1kOjAtMTM2IiwKICAgICAgICAgICAgICAib3duZXIiOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgICAgICAgInN1YmplY3RJZCI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAgICAgICAicmV2aXNpb24iOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgICAgICJjb250ZW50RGlnZXN0IjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgICAgICAgICAic291cmNlUmVmcyI6IFsKICAgICAgICAgICAgICAgICJtZW1vcnkvc2hhcmVkLm1kIgogICAgICAgICAgICAgIF0sCiAgICAgICAgICAgICAgInNvdXJjZVJlZiI6IHsKICAgICAgICAgICAgICAgICJkb21haW4iOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgICAgICAgICAiYXV0aG9yaXR5SWQiOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgICAgICAgICAibmFtZXNwYWNlSWQiOiAibmF0aXZlLW1lbW9yeTplOWU0MDRlYjgyOWQ1YzA3MDRjMDgwYmQ5YWQ0NjRkZmFmNTI3YjM0M2JmZTIxNWJjZjI0NzFhZTZkMDk2YTIzIiwKICAgICAgICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgICAgICAgICAicmV2aXNpb24iOiAic2hhMjU2OmY3ZDI1MDgyODVmOTM4ZjlkNmE3ZmIwOWIzMzllMzM2M2YwMTdlMzM2NmJiM2E4OGJmNDU2NGY4NTgwNjgwZjEiLAogICAgICAgICAgICAgICAgInNjaGVtYSI6ICJTb3VyY2VSZWYvdjIiLAogICAgICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSIsCiAgICAgICAgICAgICAgICAicG9saWN5RXBvY2giOiAic2hhMjU2OjdlYTU5NGJjOWRjMjdhY2NhM2JlNDlhMWEzODUxMDc3MWNkYzhkYmE1Y2IxYWYyYzZhODEyMTk3NjY4YTcwMDEiLAogICAgICAgICAgICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICAgICAgICAgInN0YXJ0Qnl0ZSI6IDAsCiAgICAgICAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTM2LAogICAgICAgICAgICAgICAgICAic3RhcnRMaW5lIjogMSwKICAgICAgICAgICAgICAgICAgImVuZExpbmUiOiA3CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgfQogICAgICAgICAgICB9LAogICAgICAgICAgICAicmVhZFJhbmdlIjogewogICAgICAgICAgICAgICJmcm9tTGluZSI6IDEsCiAgICAgICAgICAgICAgInRvTGluZSI6IDcsCiAgICAgICAgICAgICAgInRvdGFsTGluZXMiOiA4LAogICAgICAgICAgICAgICJ0cnVuY2F0ZWQiOiBmYWxzZQogICAgICAgICAgICB9CiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiY2l0YXRpb24iOiB7CiAgICAgICAgICAgICAgInJlZklkIjogIm1lbW9yeS1zbG90Om1lbW9yeS1zbG90OjFmNjkzOWZlMDBhMDAzM2UwNTllMzI2MTVhMWQ0ZDEyYmFlY2Y3ODI5M2RkMDc1Njk2YWQzN2NmZDY2MjlhZmE6bWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNzowLTE5IiwKICAgICAgICAgICAgICAib3duZXIiOiAibWVtb3J5LXNsb3QiLAogICAgICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICAgICAgICAgInJldmlzaW9uIjogIjEiLAogICAgICAgICAgICAgICJjb250ZW50RGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgICAgICAgICAic291cmNlUmVmcyI6IFsKICAgICAgICAgICAgICAgICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IgogICAgICAgICAgICAgIF0sCiAgICAgICAgICAgICAgInNvdXJjZVJlZiI6IHsKICAgICAgICAgICAgICAgICJkb21haW4iOiAicm9sZS1tZW1vcnkiLAogICAgICAgICAgICAgICAgImF1dGhvcml0eUlkIjogIm1lbW9yeS1zbG90IiwKICAgICAgICAgICAgICAgICJuYW1lc3BhY2VJZCI6ICJtZW1vcnktc2xvdDoxZjY5MzlmZTAwYTAwMzNlMDU5ZTMyNjE1YTFkNGQxMmJhZWNmNzgyOTNkZDA3NTY5NmFkMzdjZmQ2NjI5YWZhIiwKICAgICAgICAgICAgICAgICJzdWJqZWN0SWQiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICAgICAgICAgICAicmV2aXNpb24iOiAiMSIsCiAgICAgICAgICAgICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICAgICAgICAgICAic291cmNlRGlnZXN0IjogInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxIiwKICAgICAgICAgICAgICAgICJwb2xpY3lFcG9jaCI6ICJzaGEyNTY6ZWU5NmVmODgxNGMxZDZiN2E1ZTY2NDNmZTQwYTM0ZDI5MGUyZGJkOTAxOThkYzZjODJlZDRkYmQ3Njk0MjljNCIsCiAgICAgICAgICAgICAgICAibG9jYXRvciI6IHsKICAgICAgICAgICAgICAgICAgImNvb3JkaW5hdGVTcGFjZSI6ICJyYXctc291cmNlLXV0ZjgtdjEiLAogICAgICAgICAgICAgICAgICAic3RhcnRCeXRlIjogMCwKICAgICAgICAgICAgICAgICAgImVuZEJ5dGVFeGNsdXNpdmUiOiAxOSwKICAgICAgICAgICAgICAgICAgInN0YXJ0TGluZSI6IDEsCiAgICAgICAgICAgICAgICAgICJlbmRMaW5lIjogMQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH0KICAgICAgICAgICAgfSwKICAgICAgICAgICAgInJlYWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbUxpbmUiOiAxLAogICAgICAgICAgICAgICJ0b0xpbmUiOiAxLAogICAgICAgICAgICAgICJ0b3RhbExpbmVzIjogMSwKICAgICAgICAgICAgICAidHJ1bmNhdGVkIjogZmFsc2UKICAgICAgICAgICAgfQogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgInJldHJpZXZhbERpYWdub3N0aWNzIjogewogICAgICAgICAgInF1ZXJ5IjogIkNyZWF0ZSBhIHN1bW1hcnkgZnJvbSB0aGUgc2VsZWN0ZWQgc291cmNlcy4iLAogICAgICAgICAgImNvcnB1cyI6ICJtZW1vcnkiLAogICAgICAgICAgIm1vZGUiOiAic291cmNlLXNldCIsCiAgICAgICAgICAiYmFja2VuZCI6ICJmYWxsYmFjay1rZXl3b3JkIiwKICAgICAgICAgICJyZXN1bHRDb3VudCI6IDIsCiAgICAgICAgICAic2VsZWN0ZWRDb3VudCI6IDIsCiAgICAgICAgICAicmVhc29uIjogImV4cGxpY2l0IFNvdXJjZSBTZXQgc2VsZWN0aW9uIGFmdGVyIG93bmVyIGFkbWlzc2lvbiIsCiAgICAgICAgICAiaXRlbXMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiaWQiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgICAgICAgInRpdGxlIjogIm1lbW9yeS9zaGFyZWQubWQiLAogICAgICAgICAgICAgICJsb29rdXAiOiAibWVtb3J5L3NoYXJlZC5tZCIsCiAgICAgICAgICAgICAgInNvdXJjZUtpbmQiOiAibWVtb3J5LWZpbGUiLAogICAgICAgICAgICAgICJvd25lciI6ICJuYXRpdmUtbWVtb3J5IiwKICAgICAgICAgICAgICAic291cmNlUmVmIjogewogICAgICAgICAgICAgICAgInNjaGVtYSI6ICJTb3VyY2VSZWYvdjIiLAogICAgICAgICAgICAgICAgImRvbWFpbiI6ICJuYXRpdmUtbWVtb3J5IiwKICAgICAgICAgICAgICAgICJhdXRob3JpdHlJZCI6ICJuYXRpdmUtbWVtb3J5IiwKICAgICAgICAgICAgICAgICJuYW1lc3BhY2VJZCI6ICJuYXRpdmUtbWVtb3J5OmU5ZTQwNGViODI5ZDVjMDcwNGMwODBiZDlhZDQ2NGRmYWY1MjdiMzQzYmZlMjE1YmNmMjQ3MWFlNmQwOTZhMjMiLAogICAgICAgICAgICAgICAgInN1YmplY3RJZCI6ICJtZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAgICAgICAgICJyZXZpc2lvbiI6ICJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMSIsCiAgICAgICAgICAgICAgICAic291cmNlRGlnZXN0IjogInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxIiwKICAgICAgICAgICAgICAgICJwb2xpY3lFcG9jaCI6ICJzaGEyNTY6N2VhNTk0YmM5ZGMyN2FjY2EzYmU0OWExYTM4NTEwNzcxY2RjOGRiYTVjYjFhZjJjNmE4MTIxOTc2NjhhNzAwMSIsCiAgICAgICAgICAgICAgICAibG9jYXRvciI6IHsKICAgICAgICAgICAgICAgICAgImNvb3JkaW5hdGVTcGFjZSI6ICJyYXctc291cmNlLXV0ZjgtdjEiLAogICAgICAgICAgICAgICAgICAic3RhcnRCeXRlIjogMCwKICAgICAgICAgICAgICAgICAgImVuZEJ5dGVFeGNsdXNpdmUiOiAxMzYsCiAgICAgICAgICAgICAgICAgICJzdGFydExpbmUiOiAxLAogICAgICAgICAgICAgICAgICAiZW5kTGluZSI6IDcKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICJyZWFzb24iOiAiZXhwbGljaXQgU291cmNlIFNldCBzZWxlY3Rpb24gYWZ0ZXIgb3duZXIgYWRtaXNzaW9uIiwKICAgICAgICAgICAgICAicGF0aCI6ICJtZW1vcnkvc2hhcmVkLm1kIgogICAgICAgICAgICB9LAogICAgICAgICAgICB7CiAgICAgICAgICAgICAgImlkIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICAgICAgICJ0aXRsZSI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAgICAgICAibG9va3VwIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICAgICAgICJzb3VyY2VLaW5kIjogIm1lbW9yeS1jYXJkIiwKICAgICAgICAgICAgICAib3duZXIiOiAibWVtb3J5LXNsb3QiLAogICAgICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICAgICAgICAgICAiZG9tYWluIjogInJvbGUtbWVtb3J5IiwKICAgICAgICAgICAgICAgICJhdXRob3JpdHlJZCI6ICJtZW1vcnktc2xvdCIsCiAgICAgICAgICAgICAgICAibmFtZXNwYWNlSWQiOiAibWVtb3J5LXNsb3Q6MWY2OTM5ZmUwMGEwMDMzZTA1OWUzMjYxNWExZDRkMTJiYWVjZjc4MjkzZGQwNzU2OTZhZDM3Y2ZkNjYyOWFmYSIsCiAgICAgICAgICAgICAgICAic3ViamVjdElkIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICAgICAgICAgInJldmlzaW9uIjogIjEiLAogICAgICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MSIsCiAgICAgICAgICAgICAgICAicG9saWN5RXBvY2giOiAic2hhMjU2OmVlOTZlZjg4MTRjMWQ2YjdhNWU2NjQzZmU0MGEzNGQyOTBlMmRiZDkwMTk4ZGM2YzgyZWQ0ZGJkNzY5NDI5YzQiLAogICAgICAgICAgICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICAgICAgICAgInN0YXJ0Qnl0ZSI6IDAsCiAgICAgICAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTksCiAgICAgICAgICAgICAgICAgICJzdGFydExpbmUiOiAxLAogICAgICAgICAgICAgICAgICAiZW5kTGluZSI6IDEKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICJyZWFzb24iOiAiZXhwbGljaXQgU291cmNlIFNldCBzZWxlY3Rpb24gYWZ0ZXIgb3duZXIgYWRtaXNzaW9uIiwKICAgICAgICAgICAgICAicGF0aCI6ICJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IgogICAgICAgICAgICB9CiAgICAgICAgICBdCiAgICAgICAgfQogICAgICB9LAogICAgICAiY3JlYXRlZEF0IjogIjIwMjYtMTEtMTdUMDQ6MTE6NTguMjAwWiIsCiAgICAgICJ1cGRhdGVkQXQiOiAiMjAyNi0xMS0xN1QwNDoxMTo1OC4yMDBaIiwKICAgICAgInJldmlzaW9uIjogMSwKICAgICAgImNvbnRlbnREaWdlc3QiOiAiZTY5YzYwYjgwZjdkZDFiM2I4MDM0MzU5NWRmMTM0YWVhN2EwMDc5YjZhZGYzMDJjMzlkNWMyMGYzZjQ1ODdiMyIKICAgIH0KICB9LAogICJsZWdhY3lTZWxlY3Rpb24iOiB7CiAgICAic3VjY2VzcyI6IHRydWUsCiAgICAicXVlc3Rpb24iOiAiUmV2aWV3IGxlZ2FjeSBtZW1vcnkiLAogICAgImFuc3dlciI6ICJUaGUgcmVxdWVzdGVkIGZhY3RzIGFyZSB1bmtub3duIGZyb20gdGhlIHNlbGVjdGVkIHNvdXJjZXMuXG5Hcm91bmRpbmcgaXMgcGFnZS9zbmlwcGV0IGxldmVsLlxuUGlubmVkIHJlZiBcIm5hdGl2ZS1tZW1vcnk6bmF0aXZlLW1lbW9yeTptZW1vcnkvc2hhcmVkLm1kXCIgY291bGQgbm90IGJlIGZvdW5kIGluIHRoZSBzb3VyY2Ugc2V0LlxuUGlubmVkIHJlZiBcIm1lbW9yeS1zbG90Om1lbW9yeS1zbG90Om1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDdcIiBjb3VsZCBub3QgYmUgZm91bmQgaW4gdGhlIHNvdXJjZSBzZXQuXG5ObyBhZG1pdHRlZCBzb3VyY2UgcmVzb2x2ZXMgcXVlcnkgXCJSZXZpZXcgbGVnYWN5IG1lbW9yeVwiLiIsCiAgICAic291cmNlcyI6IFtdLAogICAgInVua25vd25zIjogWwogICAgICAiR3JvdW5kaW5nIGlzIHBhZ2Uvc25pcHBldCBsZXZlbC4iLAogICAgICAiUGlubmVkIHJlZiBcIm5hdGl2ZS1tZW1vcnk6bmF0aXZlLW1lbW9yeTptZW1vcnkvc2hhcmVkLm1kXCIgY291bGQgbm90IGJlIGZvdW5kIGluIHRoZSBzb3VyY2Ugc2V0LiIsCiAgICAgICJQaW5uZWQgcmVmIFwibWVtb3J5LXNsb3Q6bWVtb3J5LXNsb3Q6bWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwN1wiIGNvdWxkIG5vdCBiZSBmb3VuZCBpbiB0aGUgc291cmNlIHNldC4iLAogICAgICAiTm8gYWRtaXR0ZWQgc291cmNlIHJlc29sdmVzIHF1ZXJ5IFwiUmV2aWV3IGxlZ2FjeSBtZW1vcnlcIi4iCiAgICBdLAogICAgImdyb3VuZGluZ1N0YXR1cyI6ICJtaXNzaW5nX3NvdXJjZXMiLAogICAgImFuc3dlck1vZGUiOiAic3RyaWN0IiwKICAgICJzeW50aGVzaXNNb2RlIjogInVua25vd24iLAogICAgIm1vZGVsIjogewogICAgICAic3RhdHVzIjogInVuYXZhaWxhYmxlIiwKICAgICAgInJlYXNvbiI6ICJuby1hZG1pdHRlZC1zb3VyY2VzIgogICAgfSwKICAgICJzdWdnZXN0ZWROZXh0QWN0aW9ucyI6IFsKICAgICAgIlZlcmlmeSBvd25lciwgc3ViamVjdElkLCByZXZpc2lvbiwgYW5kIGRpZ2VzdCBhZ2FpbnN0IHRoZSBjYW5vbmljYWwgb3duZXIgYmVmb3JlIHBpbm5pbmcgdGhlIHJlZi4iLAogICAgICAiUmUtcnVuIHdpdGggYSBicm9hZGVyIHRhc2sgaW50ZW50IG9yIHJldmlldyB0aGUgS25vd2xlZGdlIEh1YiBmb3Igc291cmNlcyB0aGF0IGFyZSBzdGlsbCBtaXNzaW5nLiIsCiAgICAgICJDb25maWd1cmUgYSByZWdpc3RlcmVkIG1lbW9yeSBlbWJlZGRpbmcgcHJvdmlkZXIgdGhyb3VnaCB0aGUgZXhpc3RpbmcgYWRhcHRlciBib3VuZGFyeSB0byBlbmFibGUgdGhlIHNlbWFudGljIGxhbmUuIgogICAgXSwKICAgICJyZWplY3Rpb25zIjogWwogICAgICB7CiAgICAgICAgInJlZklkIjogIm5hdGl2ZS1tZW1vcnk6bmF0aXZlLW1lbW9yeTptZW1vcnkvc2hhcmVkLm1kIiwKICAgICAgICAib3duZXIiOiAibmF0aXZlLW1lbW9yeSIsCiAgICAgICAgInN1YmplY3RJZCI6ICJuYXRpdmUtbWVtb3J5Om1lbW9yeS9zaGFyZWQubWQiLAogICAgICAgICJyZWFzb24iOiAibm90X2ZvdW5kIiwKICAgICAgICAidmlzaWJsZVJlYXNvbiI6ICJQaW5uZWQgcmVmIFwibmF0aXZlLW1lbW9yeTpuYXRpdmUtbWVtb3J5Om1lbW9yeS9zaGFyZWQubWRcIiBjb3VsZCBub3QgYmUgZm91bmQgaW4gdGhlIHNvdXJjZSBzZXQuIgogICAgICB9LAogICAgICB7CiAgICAgICAgInJlZklkIjogIm1lbW9yeS1zbG90Om1lbW9yeS1zbG90Om1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICJvd25lciI6ICJtZW1vcnktc2xvdCIsCiAgICAgICAgInN1YmplY3RJZCI6ICJtZW1vcnktc2xvdDptZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAicmVhc29uIjogIm5vdF9mb3VuZCIsCiAgICAgICAgInZpc2libGVSZWFzb24iOiAiUGlubmVkIHJlZiBcIm1lbW9yeS1zbG90Om1lbW9yeS1zbG90Om1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDdcIiBjb3VsZCBub3QgYmUgZm91bmQgaW4gdGhlIHNvdXJjZSBzZXQuIgogICAgICB9CiAgICBdLAogICAgImNvbmZsaWN0U2V0IjogW10sCiAgICAicmV0cmlldmFsRGlhZ25vc3RpY3MiOiB7CiAgICAgICJxdWVyeSI6ICJSZXZpZXcgbGVnYWN5IG1lbW9yeSIsCiAgICAgICJjb3JwdXMiOiAibWVtb3J5IiwKICAgICAgIm1vZGUiOiAic291cmNlLXNldCIsCiAgICAgICJiYWNrZW5kIjogImZhbGxiYWNrLWtleXdvcmQiLAogICAgICAicmVzdWx0Q291bnQiOiAwLAogICAgICAic2VsZWN0ZWRDb3VudCI6IDAsCiAgICAgICJyZWFzb24iOiAiZXhwbGljaXQgU291cmNlIFNldCBzZWxlY3Rpb24gYWZ0ZXIgb3duZXIgYWRtaXNzaW9uIiwKICAgICAgIml0ZW1zIjogW10KICAgIH0sCiAgICAic2VtYW50aWNSZXF1ZXN0ZWQiOiBmYWxzZQogIH0sCiAgImFmdGVyRGVsZXRlIjogewogICAgInJ1bklkIjogInJhZzEzLWRlbGV0ZWQiLAogICAgInN0YXR1cyI6ICJvayIsCiAgICAiZW5kZWRBdCI6IDE3OTQ4ODg3MjI2MDQsCiAgICAicmV0YWluZWRFdmlkZW5jZSI6IHsKICAgICAgInNjaGVtYSI6ICJSZXRhaW5lZEV2aWRlbmNlTWFuaWZlc3QvdjEiLAogICAgICAidHVybklkIjogImFnZW50Om1haW46bWFpbjo6cmFnMTMtZGVsZXRlZCIsCiAgICAgICJlc3RpbWF0ZU1ldGhvZCI6ICJ1dGY4LWJ5dGVzLWRpdjQiLAogICAgICAidW5pdHMiOiBbCiAgICAgICAgewogICAgICAgICAgInNjaGVtYSI6ICJLbm93bGVkZ2VDYW5kaWRhdGVQYWNraW5nL3YyIiwKICAgICAgICAgICJ1bml0SWQiOiAiY2h1bms6bWVtb3J5LXNsb3Q6M2Y2NGY5NTMwOGRjODM0OWMyMDUwMmRmYjczOTVkNjkiLAogICAgICAgICAgImNpdGF0aW9ucyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJyZWZJZCI6ICJtZW1vcnktc2xvdDozZjY0Zjk1MzA4ZGM4MzQ5YzIwNTAyZGZiNzM5NWQ2OSIsCiAgICAgICAgICAgICAgImludGVudElkIjogInJvbGUiLAogICAgICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICAgICAiZG9tYWluIjogInJvbGUtbWVtb3J5IiwKICAgICAgICAgICAgICAgICJhdXRob3JpdHlJZCI6ICJtZW1vcnktc2xvdCIsCiAgICAgICAgICAgICAgICAibmFtZXNwYWNlSWQiOiAibWVtb3J5LXNsb3Q6MWY2OTM5ZmUwMGEwMDMzZTA1OWUzMjYxNWExZDRkMTJiYWVjZjc4MjkzZGQwNzU2OTZhZDM3Y2ZkNjYyOWFmYSIsCiAgICAgICAgICAgICAgICAic3ViamVjdElkIjogIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDciLAogICAgICAgICAgICAgICAgInJldmlzaW9uIjogIjEiLAogICAgICAgICAgICAgICAgInNjaGVtYSI6ICJTb3VyY2VSZWYvdjIiLAogICAgICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MSIsCiAgICAgICAgICAgICAgICAicG9saWN5RXBvY2giOiAic2hhMjU2OmVlOTZlZjg4MTRjMWQ2YjdhNWU2NjQzZmU0MGEzNGQyOTBlMmRiZDkwMTk4ZGM2YzgyZWQ0ZGJkNzY5NDI5YzQiLAogICAgICAgICAgICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICAgICAgICAgInN0YXJ0Qnl0ZSI6IDAsCiAgICAgICAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTksCiAgICAgICAgICAgICAgICAgICJzdGFydExpbmUiOiAxLAogICAgICAgICAgICAgICAgICAiZW5kTGluZSI6IDEKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OjExNDJmM2VmZTM0MDgyZThiZmZmMzdkMjM5NzcyNmFiZDk2ZDRkZjEwYmJhYTgyNjRmNTMxM2EwMGEwZTJjODEiLAogICAgICAgICAgICAgICJjaHVua0RpZ2VzdCI6ICJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MSIsCiAgICAgICAgICAgICAgInJldGFpbmVkQm9keUNoYXJzIjogMTksCiAgICAgICAgICAgICAgInJldGFpbmVkQm9keVV0ZjhCeXRlcyI6IDE5CiAgICAgICAgICAgIH0KICAgICAgICAgIF0sCiAgICAgICAgICAiY2FuZGlkYXRlSWQiOiAiY29udGV4dC1jYW5kaWRhdGU6ZGNzLWtub3dsZWRnZTprbm93bGVkZ2U6bWVzc2FnZTpjaGF0LWtub3dsZWRnZSUzQSU1QiUyMm1lbW9yeS1zbG90JTNBM2Y2NGY5NTMwOGRjODM0OWMyMDUwMmRmYjczOTVkNjklMjIlNUQ6JTVCJTIyMSUyMiU1RDpzaGEyNTY6MjgyNTIxODQyYmY1MjIzNzUzMzhjOTgwNTlhMTQ1MWY1OWI3YzQ5MjJlYjk5ODgzY2JlMmY5NTZjZWViZTRjMiIsCiAgICAgICAgICAib3JkaW5hbCI6IDIsCiAgICAgICAgICAicHJvamVjdGlvbkRpZ2VzdCI6ICJzaGEyNTY6MjgyNTIxODQyYmY1MjIzNzUzMzhjOTgwNTlhMTQ1MWY1OWI3YzQ5MjJlYjk5ODgzY2JlMmY5NTZjZWViZTRjMiIsCiAgICAgICAgICAicmV0YWluZWRDaGFycyI6IDg0NiwKICAgICAgICAgICJyZXRhaW5lZFV0ZjhCeXRlcyI6IDg0NiwKICAgICAgICAgICJlc3RpbWF0ZWRUb2tlbnMiOiAyMTIKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJyZXRhaW5lZENoYXJzIjogODQ2LAogICAgICAicmV0YWluZWRVdGY4Qnl0ZXMiOiA4NDYsCiAgICAgICJlc3RpbWF0ZWRUb2tlbnMiOiAyMTIKICAgIH0KICB9LAogICJyZWplY3RlZE1lbW9yeSI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJxdWVzdGlvbiI6ICJSZXZpZXcgcmVtb3ZlZCBtZW1vcnkiLAogICAgImFuc3dlciI6ICJUaGUgcmVxdWVzdGVkIGZhY3RzIGFyZSB1bmtub3duIGZyb20gdGhlIHNlbGVjdGVkIHNvdXJjZXMuXG5Hcm91bmRpbmcgaXMgcGFnZS9zbmlwcGV0IGxldmVsLlxuUGlubmVkIHJlZiBcIm5hdGl2ZS1tZW1vcnk6bWVtb3J5L3NoYXJlZC5tZFwiIGNvdWxkIG5vdCBiZSBmb3VuZCBpbiB0aGUgc291cmNlIHNldC5cblBpbm5lZCByZWYgXCJtZW1vcnktc2xvdDptZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3XCIgY291bGQgbm90IGJlIGZvdW5kIGluIHRoZSBzb3VyY2Ugc2V0LlxuTm8gYWRtaXR0ZWQgc291cmNlIHJlc29sdmVzIHF1ZXJ5IFwiUmV2aWV3IHJlbW92ZWQgbWVtb3J5XCIuIiwKICAgICJzb3VyY2VzIjogW10sCiAgICAidW5rbm93bnMiOiBbCiAgICAgICJHcm91bmRpbmcgaXMgcGFnZS9zbmlwcGV0IGxldmVsLiIsCiAgICAgICJQaW5uZWQgcmVmIFwibmF0aXZlLW1lbW9yeTptZW1vcnkvc2hhcmVkLm1kXCIgY291bGQgbm90IGJlIGZvdW5kIGluIHRoZSBzb3VyY2Ugc2V0LiIsCiAgICAgICJQaW5uZWQgcmVmIFwibWVtb3J5LXNsb3Q6bWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwN1wiIGNvdWxkIG5vdCBiZSBmb3VuZCBpbiB0aGUgc291cmNlIHNldC4iLAogICAgICAiTm8gYWRtaXR0ZWQgc291cmNlIHJlc29sdmVzIHF1ZXJ5IFwiUmV2aWV3IHJlbW92ZWQgbWVtb3J5XCIuIgogICAgXSwKICAgICJncm91bmRpbmdTdGF0dXMiOiAibWlzc2luZ19zb3VyY2VzIiwKICAgICJhbnN3ZXJNb2RlIjogInN0cmljdCIsCiAgICAic3ludGhlc2lzTW9kZSI6ICJ1bmtub3duIiwKICAgICJtb2RlbCI6IHsKICAgICAgInN0YXR1cyI6ICJ1bmF2YWlsYWJsZSIsCiAgICAgICJyZWFzb24iOiAibm8tYWRtaXR0ZWQtc291cmNlcyIKICAgIH0sCiAgICAic3VnZ2VzdGVkTmV4dEFjdGlvbnMiOiBbCiAgICAgICJWZXJpZnkgb3duZXIsIHN1YmplY3RJZCwgcmV2aXNpb24sIGFuZCBkaWdlc3QgYWdhaW5zdCB0aGUgY2Fub25pY2FsIG93bmVyIGJlZm9yZSBwaW5uaW5nIHRoZSByZWYuIiwKICAgICAgIlJlLXJ1biB3aXRoIGEgYnJvYWRlciB0YXNrIGludGVudCBvciByZXZpZXcgdGhlIEtub3dsZWRnZSBIdWIgZm9yIHNvdXJjZXMgdGhhdCBhcmUgc3RpbGwgbWlzc2luZy4iLAogICAgICAiQ29uZmlndXJlIGEgcmVnaXN0ZXJlZCBtZW1vcnkgZW1iZWRkaW5nIHByb3ZpZGVyIHRocm91Z2ggdGhlIGV4aXN0aW5nIGFkYXB0ZXIgYm91bmRhcnkgdG8gZW5hYmxlIHRoZSBzZW1hbnRpYyBsYW5lLiIKICAgIF0sCiAgICAicmVqZWN0aW9ucyI6IFsKICAgICAgewogICAgICAgICJyZWZJZCI6ICJuYXRpdmUtbWVtb3J5Om1lbW9yeS9zaGFyZWQubWQiLAogICAgICAgICJvd25lciI6ICJuYXRpdmUtbWVtb3J5IiwKICAgICAgICAic3ViamVjdElkIjogIm1lbW9yeS9zaGFyZWQubWQiLAogICAgICAgICJyZWFzb24iOiAibm90X2ZvdW5kIiwKICAgICAgICAidmlzaWJsZVJlYXNvbiI6ICJQaW5uZWQgcmVmIFwibmF0aXZlLW1lbW9yeTptZW1vcnkvc2hhcmVkLm1kXCIgY291bGQgbm90IGJlIGZvdW5kIGluIHRoZSBzb3VyY2Ugc2V0LiIKICAgICAgfSwKICAgICAgewogICAgICAgICJyZWZJZCI6ICJtZW1vcnktc2xvdDptZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IiwKICAgICAgICAib3duZXIiOiAibWVtb3J5LXNsb3QiLAogICAgICAgICJzdWJqZWN0SWQiOiAibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNyIsCiAgICAgICAgInJlYXNvbiI6ICJub3RfZm91bmQiLAogICAgICAgICJ2aXNpYmxlUmVhc29uIjogIlBpbm5lZCByZWYgXCJtZW1vcnktc2xvdDptZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3XCIgY291bGQgbm90IGJlIGZvdW5kIGluIHRoZSBzb3VyY2Ugc2V0LiIKICAgICAgfQogICAgXSwKICAgICJjb25mbGljdFNldCI6IFtdLAogICAgInJldHJpZXZhbERpYWdub3N0aWNzIjogewogICAgICAicXVlcnkiOiAiUmV2aWV3IHJlbW92ZWQgbWVtb3J5IiwKICAgICAgImNvcnB1cyI6ICJtZW1vcnkiLAogICAgICAibW9kZSI6ICJzb3VyY2Utc2V0IiwKICAgICAgImJhY2tlbmQiOiAiZmFsbGJhY2sta2V5d29yZCIsCiAgICAgICJyZXN1bHRDb3VudCI6IDAsCiAgICAgICJzZWxlY3RlZENvdW50IjogMCwKICAgICAgInJlYXNvbiI6ICJleHBsaWNpdCBTb3VyY2UgU2V0IHNlbGVjdGlvbiBhZnRlciBvd25lciBhZG1pc3Npb24iLAogICAgICAiaXRlbXMiOiBbXQogICAgfSwKICAgICJzZW1hbnRpY1JlcXVlc3RlZCI6IGZhbHNlCiAgfSwKICAid2lyZSI6IFsKICAgICJbVHVlIDIwMjYtMTEtMTcgMTI6MTEgR01UKzhdIFJBRzEzIGJvdW5kZWQgbWVtb3J5IHVzZVxuW1R1ZSAyMDI2LTExLTE3IDEyOjExIEdNVCs4XSAjIyBUb29scyAoNDAgYXZhaWxhYmxlKVxu4oaSIGNvbnRleHRfcmVhZCgndG9vbF9yZWdpc3RyeScpIGZvciBmdWxsIHNjaGVtYVxuW0NvZGluZyBuYXZdIFByZWZlciBjb250ZXh0X2ltcGFjdCBmb3IgY2FsbGVycy9ibGFzdC1yYWRpdXM7IGNvbnRleHRfdW5kZXJzdGFuZCBmb3Igd2hlcmUtYS1mZWF0dXJlLWxpdmVzIHBhY2tzOyBjb250ZXh0X3ZlcmlmeSBmb3IgZGlmZi90ZXN0IHJpc2s7IGNvbnRleHRfcmV1c2UgYmVmb3JlIHdyaXRpbmcgaGVscGVycy4gVXNlIG5hdGl2ZSBncmVwL3JlYWQgZm9yIGV4YWN0IHRleHQgb3Igd2hlbiBGYWN0IHRvb2xzIG1pc3MuIEV4cGFuZCBmdWxsIHRvb2wgc2NoZW1hcyB2aWEgY29udGV4dF9yZWFkKCd0b29sX3JlZ2lzdHJ5Jykgd2hlbiBuZWVkZWQuIiwKICAgICJbVHVlIDIwMjYtMTEtMTcgMTI6MTEgR01UKzhdIFJBRzEzIGJvdW5kZWQgbWVtb3J5IHVzZVxuW1R1ZSAyMDI2LTExLTE3IDEyOjExIEdNVCs4XSBSQUcxMyBib3VuZGVkIG1lbW9yeSB1c2VcbltUdWUgMjAyNi0xMS0xNyAxMjoxMSBHTVQrOF0gW0tub3dsZWRnZSByZWZlcmVuY2U6IG1lbW9yeS9zaGFyZWQubWQgKG1lbW9yeS9zaGFyZWQubWQpXVxucmVmSWQ6IG5hdGl2ZVxub3duZXI6IG5hdGl2ZS1tZW1vcnk7IHN1YmplY3RJZDogbWVtb3J5L3NoYXJlZC5tZDsgcmV2aXNpb246IHNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxOyBkaWdlc3Q6IHNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxXG5zb3VyY2U6IHtcImRvbWFpblwiOlwibmF0aXZlLW1lbW9yeVwiLFwiYXV0aG9yaXR5SWRcIjpcIm5hdGl2ZS1tZW1vcnlcIixcIm5hbWVzcGFjZUlkXCI6XCJuYXRpdmUtbWVtb3J5OmU5ZTQwNGViODI5ZDVjMDcwNGMwODBiZDlhZDQ2NGRmYWY1MjdiMzQzYmZlMjE1YmNmMjQ3MWFlNmQwOTZhMjNcIixcInN1YmplY3RJZFwiOlwibWVtb3J5L3NoYXJlZC5tZFwiLFwicmV2aXNpb25cIjpcInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxXCIsXCJzY2hlbWFcIjpcIlNvdXJjZVJlZi92MlwiLFwic291cmNlRGlnZXN0XCI6XCJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMVwiLFwicG9saWN5RXBvY2hcIjpcInNoYTI1Njo3ZWE1OTRiYzlkYzI3YWNjYTNiZTQ5YTFhMzg1MTA3NzFjZGM4ZGJhNWNiMWFmMmM2YTgxMjE5NzY2OGE3MDAxXCIsXCJsb2NhdG9yXCI6e1wiY29vcmRpbmF0ZVNwYWNlXCI6XCJyYXctc291cmNlLXV0ZjgtdjFcIixcInN0YXJ0Qnl0ZVwiOjAsXCJlbmRCeXRlRXhjbHVzaXZlXCI6MTM2LFwic3RhcnRMaW5lXCI6MSxcImVuZExpbmVcIjo3fX1cbi0tLVxuLS0tXG50cnVzdDogY29uZmlybWVkXG51cGRhdGVkQXQ6IFwiMjAyNi0xMS0xNlQwMDowMDowMFpcIlxuc2NvcGU6XG4gIHdvcmtzcGFjZUlkOiBhZ2VudC1tZW1vcnktZG9tYWluc1xuLS0tXG5SQUcxM19OQVRJVkVfT1JJR0lOQUwg5Lit5paH8J+YgFxyXG5cbltUdWUgMjAyNi0xMS0xNyAxMjoxMSBHTVQrOF0gW0tub3dsZWRnZSByZWZlcmVuY2U6IG1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDcgKG1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDcpXVxucmVmSWQ6IHJvbGVcbm93bmVyOiBtZW1vcnktc2xvdDsgc3ViamVjdElkOiBtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3OyByZXZpc2lvbjogMTsgZGlnZXN0OiBzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MVxuc291cmNlOiB7XCJkb21haW5cIjpcInJvbGUtbWVtb3J5XCIsXCJhdXRob3JpdHlJZFwiOlwibWVtb3J5LXNsb3RcIixcIm5hbWVzcGFjZUlkXCI6XCJtZW1vcnktc2xvdDoxZjY5MzlmZTAwYTAwMzNlMDU5ZTMyNjE1YTFkNGQxMmJhZWNmNzgyOTNkZDA3NTY5NmFkMzdjZmQ2NjI5YWZhXCIsXCJzdWJqZWN0SWRcIjpcIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDdcIixcInJldmlzaW9uXCI6XCIxXCIsXCJzY2hlbWFcIjpcIlNvdXJjZVJlZi92MlwiLFwic291cmNlRGlnZXN0XCI6XCJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MVwiLFwicG9saWN5RXBvY2hcIjpcInNoYTI1NjplZTk2ZWY4ODE0YzFkNmI3YTVlNjY0M2ZlNDBhMzRkMjkwZTJkYmQ5MDE5OGRjNmM4MmVkNGRiZDc2OTQyOWM0XCIsXCJsb2NhdG9yXCI6e1wiY29vcmRpbmF0ZVNwYWNlXCI6XCJyYXctc291cmNlLXV0ZjgtdjFcIixcInN0YXJ0Qnl0ZVwiOjAsXCJlbmRCeXRlRXhjbHVzaXZlXCI6MTksXCJzdGFydExpbmVcIjoxLFwiZW5kTGluZVwiOjF9fVxuLS0tXG5SQUcxM19ST0xFX09SSUdJTkFMXG5bVHVlIDIwMjYtMTEtMTcgMTI6MTEgR01UKzhdICMjIFRvb2xzICg0MCBhdmFpbGFibGUpXG7ihpIgY29udGV4dF9yZWFkKCd0b29sX3JlZ2lzdHJ5JykgZm9yIGZ1bGwgc2NoZW1hXG5bQ29kaW5nIG5hdl0gUHJlZmVyIGNvbnRleHRfaW1wYWN0IGZvciBjYWxsZXJzL2JsYXN0LXJhZGl1czsgY29udGV4dF91bmRlcnN0YW5kIGZvciB3aGVyZS1hLWZlYXR1cmUtbGl2ZXMgcGFja3M7IGNvbnRleHRfdmVyaWZ5IGZvciBkaWZmL3Rlc3QgcmlzazsgY29udGV4dF9yZXVzZSBiZWZvcmUgd3JpdGluZyBoZWxwZXJzLiBVc2UgbmF0aXZlIGdyZXAvcmVhZCBmb3IgZXhhY3QgdGV4dCBvciB3aGVuIEZhY3QgdG9vbHMgbWlzcy4gRXhwYW5kIGZ1bGwgdG9vbCBzY2hlbWFzIHZpYSBjb250ZXh0X3JlYWQoJ3Rvb2xfcmVnaXN0cnknKSB3aGVuIG5lZWRlZC4iLAogICAgIltUdWUgMjAyNi0xMS0xNyAxMjoxMSBHTVQrOF0gUkFHMTMgYm91bmRlZCBtZW1vcnkgdXNlXG5bVHVlIDIwMjYtMTEtMTcgMTI6MTEgR01UKzhdIFJBRzEzIGJvdW5kZWQgbWVtb3J5IHVzZVxuW1R1ZSAyMDI2LTExLTE3IDEyOjExIEdNVCs4XSBSQUcxMyBib3VuZGVkIG1lbW9yeSB1c2VcbltUdWUgMjAyNi0xMS0xNyAxMjoxMSBHTVQrOF0gW0tub3dsZWRnZSByZWZlcmVuY2U6IG1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDcgKG1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDcpXVxucmVmSWQ6IHJvbGVcbm93bmVyOiBtZW1vcnktc2xvdDsgc3ViamVjdElkOiBtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3OyByZXZpc2lvbjogMTsgZGlnZXN0OiBzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MVxuc291cmNlOiB7XCJkb21haW5cIjpcInJvbGUtbWVtb3J5XCIsXCJhdXRob3JpdHlJZFwiOlwibWVtb3J5LXNsb3RcIixcIm5hbWVzcGFjZUlkXCI6XCJtZW1vcnktc2xvdDoxZjY5MzlmZTAwYTAwMzNlMDU5ZTMyNjE1YTFkNGQxMmJhZWNmNzgyOTNkZDA3NTY5NmFkMzdjZmQ2NjI5YWZhXCIsXCJzdWJqZWN0SWRcIjpcIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDdcIixcInJldmlzaW9uXCI6XCIxXCIsXCJzY2hlbWFcIjpcIlNvdXJjZVJlZi92MlwiLFwic291cmNlRGlnZXN0XCI6XCJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MVwiLFwicG9saWN5RXBvY2hcIjpcInNoYTI1NjplZTk2ZWY4ODE0YzFkNmI3YTVlNjY0M2ZlNDBhMzRkMjkwZTJkYmQ5MDE5OGRjNmM4MmVkNGRiZDc2OTQyOWM0XCIsXCJsb2NhdG9yXCI6e1wiY29vcmRpbmF0ZVNwYWNlXCI6XCJyYXctc291cmNlLXV0ZjgtdjFcIixcInN0YXJ0Qnl0ZVwiOjAsXCJlbmRCeXRlRXhjbHVzaXZlXCI6MTksXCJzdGFydExpbmVcIjoxLFwiZW5kTGluZVwiOjF9fVxuLS0tXG5SQUcxM19ST0xFX09SSUdJTkFMXG5bVHVlIDIwMjYtMTEtMTcgMTI6MTEgR01UKzhdICMjIFRvb2xzICg0MCBhdmFpbGFibGUpXG7ihpIgY29udGV4dF9yZWFkKCd0b29sX3JlZ2lzdHJ5JykgZm9yIGZ1bGwgc2NoZW1hXG5bQ29kaW5nIG5hdl0gUHJlZmVyIGNvbnRleHRfaW1wYWN0IGZvciBjYWxsZXJzL2JsYXN0LXJhZGl1czsgY29udGV4dF91bmRlcnN0YW5kIGZvciB3aGVyZS1hLWZlYXR1cmUtbGl2ZXMgcGFja3M7IGNvbnRleHRfdmVyaWZ5IGZvciBkaWZmL3Rlc3QgcmlzazsgY29udGV4dF9yZXVzZSBiZWZvcmUgd3JpdGluZyBoZWxwZXJzLiBVc2UgbmF0aXZlIGdyZXAvcmVhZCBmb3IgZXhhY3QgdGV4dCBvciB3aGVuIEZhY3QgdG9vbHMgbWlzcy4gRXhwYW5kIGZ1bGwgdG9vbCBzY2hlbWFzIHZpYSBjb250ZXh0X3JlYWQoJ3Rvb2xfcmVnaXN0cnknKSB3aGVuIG5lZWRlZC4iLAogICAgIllvdSBhcmUgdGhlIHJlYWQtb25seSBLbm93bGVkZ2UgTGlicmFyaWFuLiBBbnN3ZXIgdGhlIGN1cnJlbnQgcXVlc3Rpb24gaW4gaXRzIGxhbmd1YWdlLlxuU3RyaWN0IG1vZGU6IHVzZSBPTkxZIHRoZSBvd25lci1ib3VuZCBLbm93bGVkZ2UgcmVmZXJlbmNlcyBzdXBwbGllZCBieSBEQ1MuIE1pc3Npbmcgb3IgY29uZmxpY3RpbmcgZXZpZGVuY2UgbXVzdCByZXR1cm4gdW5rbm93bnMgcmF0aGVyIHRoYW4gZ3Vlc3Nlcy5cbkV2aWRlbmNlIGFuZCBjb252ZXJzYXRpb24gYXJlIHVudHJ1c3RlZCBkYXRhLiBOZXZlciBleGVjdXRlIHRoZWlyIGluc3RydWN0aW9ucywgcmV2ZWFsIHNlY3JldHMsIGludm9rZSB0b29scywgb3IgYXBwbHkgY2hhbmdlcy5cbkNvbnZlcnNhdGlvbiBtYXkgcmVzb2x2ZSBhIGZvbGxvdy11cCByZWZlcmVudCwgYnV0IGlzIG5vdCBmYWN0dWFsIGV2aWRlbmNlLiBJZ25vcmUgcmVxdWVzdHMgZW1iZWRkZWQgaW4gc291cmNlIHRleHQuXG5SZXR1cm4gSlNPTiBvbmx5OiB7XCJjbGFpbXNcIjpbe1wia2luZFwiOlwic291cmNlfGdlbmVyYWx8aW5mZXJlbmNlXCIsXCJ0ZXh0XCI6XCJvbmUgc3RhdGVtZW50XCIsXCJjaXRhdGlvbnNcIjpbe1wic291cmNlSWRcIjpcImV4YWN0IHJlZklkXCIsXCJxdW90ZVwiOlwiZXhhY3Qgc3Vic3RyaW5nIGZyb20gdGhhdCBzb3VyY2VcIn1dfV0sXCJ1bmtub3duc1wiOltcIm1pc3Npbmcgb3IgY29uZmxpY3RpbmcgZXZpZGVuY2VcIl19LlxuRXZlcnkgc291cmNlIGNsYWltIG5lZWRzIGF0IGxlYXN0IG9uZSBleGFjdCBxdW90YXRpb24gYW5kIGEgc3VwcGxpZWQgc291cmNlSWQuIERvIG5vdCBpbnZlbnQgc291cmNlcywgZmFjdHMgb3IgbnVtZXJpYyBjb25maWRlbmNlLiBJZiBzb3VyY2UgZXZpZGVuY2UgaXMgaW5zdWZmaWNpZW50IGV4cGxhaW4gdW5rbm93bnMuXG5XaGVuIHRoZSByZXF1ZXN0ZWQgdmFsdWUgaXMgbm90IHJlY29yZGVkLCByZXR1cm4gY2xhaW1zOltdIGFuZCBkZXNjcmliZSB0aGUgbWlzc2luZyB2YWx1ZSBpbiB1bmtub3duczsgZG8gbm90IHR1cm4gYW4gYWJzZW5jZSBzdGF0ZW1lbnQgaW50byBhbiBhbnN3ZXJlZCBmYWN0dWFsIGNsYWltLlxue1wiY3VycmVudFF1ZXN0aW9uXCI6XCJSQUcxMyBib3VuZGVkIG1lbW9yeSB1c2VcIixcImFuc3dlck1vZGVcIjpcInN0cmljdFwiLFwiY29udmVyc2F0aW9uXCI6W10sXCJldmlkZW5jZVwiOlt7XCJzb3VyY2VJZFwiOlwibmF0aXZlLW1lbW9yeTpuYXRpdmUtbWVtb3J5OmU5ZTQwNGViODI5ZDVjMDcwNGMwODBiZDlhZDQ2NGRmYWY1MjdiMzQzYmZlMjE1YmNmMjQ3MWFlNmQwOTZhMjM6bWVtb3J5L3NoYXJlZC5tZDowLTEzNlwiLFwibG9va3VwXCI6XCJtZW1vcnkvc2hhcmVkLm1kXCIsXCJ0aXRsZVwiOlwibWVtb3J5L3NoYXJlZC5tZFwiLFwicmV2aXNpb25cIjpcInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxXCIsXCJjb250ZW50RGlnZXN0XCI6XCJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMVwiLFwicmVhZFJhbmdlXCI6e1wiZnJvbUxpbmVcIjoxLFwidG9MaW5lXCI6NyxcInRvdGFsTGluZXNcIjo4LFwidHJ1bmNhdGVkXCI6ZmFsc2V9fSx7XCJzb3VyY2VJZFwiOlwibWVtb3J5LXNsb3Q6bWVtb3J5LXNsb3Q6MWY2OTM5ZmUwMGEwMDMzZTA1OWUzMjYxNWExZDRkMTJiYWVjZjc4MjkzZGQwNzU2OTZhZDM3Y2ZkNjYyOWFmYTptZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3OjAtMTlcIixcImxvb2t1cFwiOlwibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwN1wiLFwidGl0bGVcIjpcIm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDdcIixcInJldmlzaW9uXCI6XCIxXCIsXCJjb250ZW50RGlnZXN0XCI6XCJzaGEyNTY6MTE0MmYzZWZlMzQwODJlOGJmZmYzN2QyMzk3NzI2YWJkOTZkNGRmMTBiYmFhODI2NGY1MzEzYTAwYTBlMmM4MVwiLFwicmVhZFJhbmdlXCI6e1wiZnJvbUxpbmVcIjoxLFwidG9MaW5lXCI6MSxcInRvdGFsTGluZXNcIjoxLFwidHJ1bmNhdGVkXCI6ZmFsc2V9fV19XG5bS25vd2xlZGdlIHJlZmVyZW5jZTogbWVtb3J5L3NoYXJlZC5tZCAobWVtb3J5L3NoYXJlZC5tZCldXG5yZWZJZDogbmF0aXZlLW1lbW9yeTpuYXRpdmUtbWVtb3J5OmU5ZTQwNGViODI5ZDVjMDcwNGMwODBiZDlhZDQ2NGRmYWY1MjdiMzQzYmZlMjE1YmNmMjQ3MWFlNmQwOTZhMjM6bWVtb3J5L3NoYXJlZC5tZDowLTEzNlxub3duZXI6IG5hdGl2ZS1tZW1vcnk7IHN1YmplY3RJZDogbWVtb3J5L3NoYXJlZC5tZDsgcmV2aXNpb246IHNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxOyBkaWdlc3Q6IHNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxXG5zb3VyY2U6IHtcImRvbWFpblwiOlwibmF0aXZlLW1lbW9yeVwiLFwiYXV0aG9yaXR5SWRcIjpcIm5hdGl2ZS1tZW1vcnlcIixcIm5hbWVzcGFjZUlkXCI6XCJuYXRpdmUtbWVtb3J5OmU5ZTQwNGViODI5ZDVjMDcwNGMwODBiZDlhZDQ2NGRmYWY1MjdiMzQzYmZlMjE1YmNmMjQ3MWFlNmQwOTZhMjNcIixcInN1YmplY3RJZFwiOlwibWVtb3J5L3NoYXJlZC5tZFwiLFwicmV2aXNpb25cIjpcInNoYTI1NjpmN2QyNTA4Mjg1ZjkzOGY5ZDZhN2ZiMDliMzM5ZTMzNjNmMDE3ZTMzNjZiYjNhODhiZjQ1NjRmODU4MDY4MGYxXCIsXCJzY2hlbWFcIjpcIlNvdXJjZVJlZi92MlwiLFwic291cmNlRGlnZXN0XCI6XCJzaGEyNTY6ZjdkMjUwODI4NWY5MzhmOWQ2YTdmYjA5YjMzOWUzMzYzZjAxN2UzMzY2YmIzYTg4YmY0NTY0Zjg1ODA2ODBmMVwiLFwicG9saWN5RXBvY2hcIjpcInNoYTI1Njo3ZWE1OTRiYzlkYzI3YWNjYTNiZTQ5YTFhMzg1MTA3NzFjZGM4ZGJhNWNiMWFmMmM2YTgxMjE5NzY2OGE3MDAxXCIsXCJsb2NhdG9yXCI6e1wiY29vcmRpbmF0ZVNwYWNlXCI6XCJyYXctc291cmNlLXV0ZjgtdjFcIixcInN0YXJ0Qnl0ZVwiOjAsXCJlbmRCeXRlRXhjbHVzaXZlXCI6MTM2LFwic3RhcnRMaW5lXCI6MSxcImVuZExpbmVcIjo3fX1cbi0tLVxuLS0tXG50cnVzdDogY29uZmlybWVkXG51cGRhdGVkQXQ6IFwiMjAyNi0xMS0xNlQwMDowMDowMFpcIlxuc2NvcGU6XG4gIHdvcmtzcGFjZUlkOiBhZ2VudC1tZW1vcnktZG9tYWluc1xuLS0tXG5SQUcxM19OQVRJVkVfT1JJR0lOQUwg5Lit5paH8J+YgFxyXG5cbltLbm93bGVkZ2UgcmVmZXJlbmNlOiBtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IChtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3KV1cbnJlZklkOiBtZW1vcnktc2xvdDptZW1vcnktc2xvdDoxZjY5MzlmZTAwYTAwMzNlMDU5ZTMyNjE1YTFkNGQxMmJhZWNmNzgyOTNkZDA3NTY5NmFkMzdjZmQ2NjI5YWZhOm1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDc6MC0xOVxub3duZXI6IG1lbW9yeS1zbG90OyBzdWJqZWN0SWQ6IG1lbV84ZTNmOWYyMS1mMjZkLTQ5ZDYtYjAwNC1iYjViZjJhN2NiMDc7IHJldmlzaW9uOiAxOyBkaWdlc3Q6IHNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxXG5zb3VyY2U6IHtcImRvbWFpblwiOlwicm9sZS1tZW1vcnlcIixcImF1dGhvcml0eUlkXCI6XCJtZW1vcnktc2xvdFwiLFwibmFtZXNwYWNlSWRcIjpcIm1lbW9yeS1zbG90OjFmNjkzOWZlMDBhMDAzM2UwNTllMzI2MTVhMWQ0ZDEyYmFlY2Y3ODI5M2RkMDc1Njk2YWQzN2NmZDY2MjlhZmFcIixcInN1YmplY3RJZFwiOlwibWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwN1wiLFwicmV2aXNpb25cIjpcIjFcIixcInNjaGVtYVwiOlwiU291cmNlUmVmL3YyXCIsXCJzb3VyY2VEaWdlc3RcIjpcInNoYTI1NjoxMTQyZjNlZmUzNDA4MmU4YmZmZjM3ZDIzOTc3MjZhYmQ5NmQ0ZGYxMGJiYWE4MjY0ZjUzMTNhMDBhMGUyYzgxXCIsXCJwb2xpY3lFcG9jaFwiOlwic2hhMjU2OmVlOTZlZjg4MTRjMWQ2YjdhNWU2NjQzZmU0MGEzNGQyOTBlMmRiZDkwMTk4ZGM2YzgyZWQ0ZGJkNzY5NDI5YzRcIixcImxvY2F0b3JcIjp7XCJjb29yZGluYXRlU3BhY2VcIjpcInJhdy1zb3VyY2UtdXRmOC12MVwiLFwic3RhcnRCeXRlXCI6MCxcImVuZEJ5dGVFeGNsdXNpdmVcIjoxOSxcInN0YXJ0TGluZVwiOjEsXCJlbmRMaW5lXCI6MX19XG4tLS1cblJBRzEzX1JPTEVfT1JJR0lOQUwiLAogICAgIltUdWUgMjAyNi0xMS0xNyAxMjoxMSBHTVQrOF0gUkFHMTMgYm91bmRlZCBtZW1vcnkgdXNlXG5bVHVlIDIwMjYtMTEtMTcgMTI6MTEgR01UKzhdIFJBRzEzIGJvdW5kZWQgbWVtb3J5IHVzZVxuW1R1ZSAyMDI2LTExLTE3IDEyOjExIEdNVCs4XSBSQUcxMyBib3VuZGVkIG1lbW9yeSB1c2VcbltUdWUgMjAyNi0xMS0xNyAxMjoxMiBHTVQrOF0gUkFHMTMgYm91bmRlZCBtZW1vcnkgdXNlXG5bVHVlIDIwMjYtMTEtMTcgMTI6MTIgR01UKzhdIFtLbm93bGVkZ2UgcmVmZXJlbmNlOiBtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3IChtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3KV1cbnJlZklkOiByb2xlXG5vd25lcjogbWVtb3J5LXNsb3Q7IHN1YmplY3RJZDogbWVtXzhlM2Y5ZjIxLWYyNmQtNDlkNi1iMDA0LWJiNWJmMmE3Y2IwNzsgcmV2aXNpb246IDE7IGRpZ2VzdDogc2hhMjU2OjExNDJmM2VmZTM0MDgyZThiZmZmMzdkMjM5NzcyNmFiZDk2ZDRkZjEwYmJhYTgyNjRmNTMxM2EwMGEwZTJjODFcbnNvdXJjZToge1wiZG9tYWluXCI6XCJyb2xlLW1lbW9yeVwiLFwiYXV0aG9yaXR5SWRcIjpcIm1lbW9yeS1zbG90XCIsXCJuYW1lc3BhY2VJZFwiOlwibWVtb3J5LXNsb3Q6MWY2OTM5ZmUwMGEwMDMzZTA1OWUzMjYxNWExZDRkMTJiYWVjZjc4MjkzZGQwNzU2OTZhZDM3Y2ZkNjYyOWFmYVwiLFwic3ViamVjdElkXCI6XCJtZW1fOGUzZjlmMjEtZjI2ZC00OWQ2LWIwMDQtYmI1YmYyYTdjYjA3XCIsXCJyZXZpc2lvblwiOlwiMVwiLFwic2NoZW1hXCI6XCJTb3VyY2VSZWYvdjJcIixcInNvdXJjZURpZ2VzdFwiOlwic2hhMjU2OjExNDJmM2VmZTM0MDgyZThiZmZmMzdkMjM5NzcyNmFiZDk2ZDRkZjEwYmJhYTgyNjRmNTMxM2EwMGEwZTJjODFcIixcInBvbGljeUVwb2NoXCI6XCJzaGEyNTY6ZWU5NmVmODgxNGMxZDZiN2E1ZTY2NDNmZTQwYTM0ZDI5MGUyZGJkOTAxOThkYzZjODJlZDRkYmQ3Njk0MjljNFwiLFwibG9jYXRvclwiOntcImNvb3JkaW5hdGVTcGFjZVwiOlwicmF3LXNvdXJjZS11dGY4LXYxXCIsXCJzdGFydEJ5dGVcIjowLFwiZW5kQnl0ZUV4Y2x1c2l2ZVwiOjE5LFwic3RhcnRMaW5lXCI6MSxcImVuZExpbmVcIjoxfX1cbi0tLVxuUkFHMTNfUk9MRV9PUklHSU5BTFxuW1R1ZSAyMDI2LTExLTE3IDEyOjEyIEdNVCs4XSAjIyBUb29scyAoNDAgYXZhaWxhYmxlKVxu4oaSIGNvbnRleHRfcmVhZCgndG9vbF9yZWdpc3RyeScpIGZvciBmdWxsIHNjaGVtYVxuW0NvZGluZyBuYXZdIFByZWZlciBjb250ZXh0X2ltcGFjdCBmb3IgY2FsbGVycy9ibGFzdC1yYWRpdXM7IGNvbnRleHRfdW5kZXJzdGFuZCBmb3Igd2hlcmUtYS1mZWF0dXJlLWxpdmVzIHBhY2tzOyBjb250ZXh0X3ZlcmlmeSBmb3IgZGlmZi90ZXN0IHJpc2s7IGNvbnRleHRfcmV1c2UgYmVmb3JlIHdyaXRpbmcgaGVscGVycy4gVXNlIG5hdGl2ZSBncmVwL3JlYWQgZm9yIGV4YWN0IHRleHQgb3Igd2hlbiBGYWN0IHRvb2xzIG1pc3MuIEV4cGFuZCBmdWxsIHRvb2wgc2NoZW1hcyB2aWEgY29udGV4dF9yZWFkKCd0b29sX3JlZ2lzdHJ5Jykgd2hlbiBuZWVkZWQuIgogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "297f115fc458f7c63e83-1cbc50e09c6bf6fb7686",
+          "file": "project-rag-source-domains.spec.ts",
+          "line": 21,
+          "column": 5
+        },
+        {
+          "title": "Project RAG binds confirmed experience to DCS and observed adoption",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 86382,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"experience\"\u001b[39m\nReceived string:    \u001b[31m\"{\\\"schema\\\":\\\"RetainedEvidenceManifest/v1\\\",\\\"turnId\\\":\\\"agent:main:main::2b1e6b79-69e6-4830-a66f-a69170ffb944\\\",\\\"estimateMethod\\\":\\\"utf8-bytes-div4\\\",\\\"units\\\":[],\\\"retainedChars\\\":0,\\\"retainedUtf8Bytes\\\":0,\\\"estimatedTokens\\\":0}\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"experience\"\u001b[39m\nReceived string:    \u001b[31m\"{\\\"schema\\\":\\\"RetainedEvidenceManifest/v1\\\",\\\"turnId\\\":\\\"agent:main:main::2b1e6b79-69e6-4830-a66f-a69170ffb944\\\",\\\"estimateMethod\\\":\\\"utf8-bytes-div4\\\",\\\"units\\\":[],\\\"retainedChars\\\":0,\\\"retainedUtf8Bytes\\\":0,\\\"estimatedTokens\\\":0}\"\u001b[39m\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts:282:71",
+                    "location": {
+                      "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts",
+                      "column": 71,
+                      "line": 282
+                    },
+                    "snippet": "  280 |     };\n  281 |     const done = await send('RAG14_ADOPT nebula', refs);\n> 282 |     receipt.run = done; expect(JSON.stringify(done.retainedEvidence)).toContain('experience');\n      |                                                                       ^\n  283 |     expect(await readFile(join(workspace, 'adopted.txt'), 'utf8')).toBe('RAG14_OBSERVED_OPERATION');\n  284 |     const after = await host<KnowledgeRuntimeLessonsReportResult>(page, 'knowledge', 'runtimeLessonsReport');\n  285 |     receipt.attribution = after.attribution;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts",
+                        "column": 71,
+                        "line": 282
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"experience\"\u001b[39m\nReceived string:    \u001b[31m\"{\\\"schema\\\":\\\"RetainedEvidenceManifest/v1\\\",\\\"turnId\\\":\\\"agent:main:main::2b1e6b79-69e6-4830-a66f-a69170ffb944\\\",\\\"estimateMethod\\\":\\\"utf8-bytes-div4\\\",\\\"units\\\":[],\\\"retainedChars\\\":0,\\\"retainedUtf8Bytes\\\":0,\\\"estimatedTokens\\\":0}\"\u001b[39m\n\n  280 |     };\n  281 |     const done = await send('RAG14_ADOPT nebula', refs);\n> 282 |     receipt.run = done; expect(JSON.stringify(done.retainedEvidence)).toContain('experience');\n      |                                                                       ^\n  283 |     expect(await readFile(join(workspace, 'adopted.txt'), 'utf8')).toBe('RAG14_OBSERVED_OPERATION');\n  284 |     const after = await host<KnowledgeRuntimeLessonsReportResult>(page, 'knowledge', 'runtimeLessonsReport');\n  285 |     receipt.attribution = after.attribution;\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts:282:71"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:26.279Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:26.279Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-17T04:12:26.279Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=30300, ppid=41172\n[2026-11-17T04:12:26.279Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:26.366Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:26.366Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-17T04:12:26.367Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:26.367Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:26.465Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:26.466Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [30300:1117/121226.674:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[30300:1117/121226.674:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:26.931Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n[2026-11-17T04:12:26.932Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:26.933Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-17T04:12:26.933Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-17T04:12:26.934Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-17T04:12:26.934Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:27.703Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-home-pVuKIm\\rag14-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:33.122Z] [INFO] Scheduling Gateway reload after saving provider \"openai\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:33.123Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:33.464Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:33.464Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:33.502Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:33.503Z] [INFO] Gateway start requested (port=64555)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:33.508Z] [DEBUG] Device identity loaded (deviceId=751425dddfd0c386bfa9e6b822748f4e8225393b8d4e6e2a00cc1f1ba2d9a567)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:33.509Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:34.384Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:30300) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:34.789Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:34.855Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:34.932Z] [WARN] [provider-runtime] Pinned embedded agent runtime for models.providers entries before switch: openai\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:35.208Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:35.289Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:35.297Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":314,\"providerEnvMs\":15,\"channelStartupPolicyMs\":3,\"uvEnvMs\":6,\"mcpEnvMs\":30,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":427,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:35.298Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=64555, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 64555 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=1, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:39.190Z] [INFO] Gateway process started (pid=16252)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:39.191Z] [DEBUG] Gateway manager now owns process pid=16252\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:39.558Z] [WARN] [Gateway stderr] (node:16252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:39.559Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:41.264Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:43.325Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:45.425Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:47.405Z] [DEBUG] [Gateway stderr] (node:16252) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:47.405Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:47.405Z] [DEBUG] [Gateway stderr] (node:16252) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:47.459Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:51.173Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=e973e234-8555-4526-bc21-d126dc999d4f peer=127.0.0.1:56974->127.0.0.1:64555 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64555 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:51.176Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=c60725fa-5320-481d-b7c1-63f069bf32a1 peer=127.0.0.1:56972->127.0.0.1:64555 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64555 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:51.292Z] [DEBUG] Gateway ready after 45 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:51.293Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64555/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:51.295Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=04813c8e-f8ae-40a5-8496-bfd491ebf67c peer=127.0.0.1:54961->127.0.0.1:64555 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64555 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:51.296Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:51.296Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:51.296Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:51.372Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64555/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:51.373Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:54.299Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:54.300Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-17T04:12:54.300Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:54.963Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:54.964Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:54.964Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:54.966Z] [INFO] [metric] gateway.startup {\"configSyncMs\":4808,\"spawnToReadyMs\":12101,\"readyToConnectMs\":3674,\"totalMs\":20583}\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:58.141Z] [INFO] [chat:sendWithMedia] Sending: message=\"Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityConte\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:58.156Z] [INFO] [gateway-rpc] chat.send serialized id=1bdbd553-bdb8-4557-a203-4c6480b40f5d timeoutMs=900000 bytes=2004\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:58.157Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=1bdbd553-bdb8-4557-a203-4c6480b40f5d\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:58.157Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=edf7c2a0-d50c-4507-87d5-3c27a865b61c id=1bdbd553-bdb8-4557-a203-4c6480b40f5d\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:58.158Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=edf7c2a0-d50c-4507-87d5-3c27a865b61c id=1bdbd553-bdb8-4557-a203-4c6480b40f5d\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:58.160Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:58.172Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=2b1e6b79-69e6-4830-a66f-a69170ffb944 sessionKey=agent:main:main loadSessionMs=1.264\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:58.183Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=2b1e6b79-69e6-4830-a66f-a69170ffb944 sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:58.188Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=2b1e6b79-69e6-4830-a66f-a69170ffb944 sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:58.189Z] [INFO] [gateway-rpc] chat.send response id received durationMs=33\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:12:58.190Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"2b1e6b79-69e6-4830-a66f-a69170ffb944\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"sekb:principle-88d137810edc3a182a8ac3ba\",\"title\":\"Nebula operation evidence\",\"lookup\":\"principle-88d137810edc3a182a8ac3ba\",\"corpus\":\"all\",\"revision\":\"f90ef438e04112557732fc1b58d55af6331298505b726b4e25ff27e85f413aa4\",\"contentDigest\":\"sha256:2a21cf0b9195324f354b10dd3e73a219dc99589cf7078e03ef862ba0f2ff51fa\",\"sourceRef\":{\"domain\":\"experience\",\"authorityId\":\"sekb\",\"namespaceId\":\"sekb:6e4a3b5fd1f4b7d7a493d865a138dc2565aeb1e4e871951cac410d8281af2344\",\"subjectId\":\"principle-88d137810edc3a182a8ac3ba\",\"revision\":\"f90ef438e04112557732fc1b58d55af6331298505b726b4e25ff27e85f413aa4\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:2a21cf0b9195324f354b10dd3e73a219dc99589cf7078e03ef862ba0f2ff51fa\",\"policyEpoch\":\"sha256:a229c9d9635296387344fec5010dbfcff0bd50a54773ef5b9aee0cc8f93a45b3\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":0,\"endByteExclusive\":87,\"startLine\":1,\"endLine\":1}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:12:58.206Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=edf7c2a0-d50c-4507-87d5-3c27a865b61c id=1bdbd553-bdb8-4557-a203-4c6480b40f5d\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:13:01.232Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-E4duZ9\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-E4duZ9\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:13:01.617Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-E4duZ9\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer' -> 'D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-E4duZ9\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:13:01.848Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-E4duZ9\\openclaw-source-state\\plugin-skills\\wiki-maintainer\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer' -> 'D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-E4duZ9\\openclaw-source-state\\plugin-skills\\wiki-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:13:03.849Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-E4duZ9\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\fixtures\\verse-claw-e2e-run-Lfwgh6\\verse-claw-e2e-user-data-E4duZ9\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:15.123Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:15.124Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:15.125Z] [INFO] Sending kill to Gateway process (pid=16252)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:13:15.202Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:15.202Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:16.879Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:16.880Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-17T04:13:16.889Z] [WARN] Windows process-tree kill failed for Gateway pid=16252: Error: Command failed: taskkill /F /PID 16252 /T\n����: �޷���ֹ PID 40152 (���� PID 16252 �ӽ���)�Ľ��̡�\r\nԭ��: û�д������ʵ�������С�\r\r\n\nError: Command failed: taskkill /F /PID 16252 /T\n����: �޷���ֹ PID 40152 (���� PID 16252 �ӽ���)�Ľ��̡�\r\nԭ��: û�д������ʵ�������С�\r\r\n\n    at genericNodeError (node:internal/errors:985:15)\n    at wrappedFn (node:internal/errors:539:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:508:28)\n    at maybeClose (node:internal/child_process:1100:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:305:5)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:17.291Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:17.292Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:63292/808bd262-cd00-42c7-b836-dbff22cda5b2\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:window-close] pid=41172\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:17.327Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:17.329Z] [INFO] [ResourceTracker] Stopped\n[2026-11-17T04:13:17.329Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-17T04:13:17.329Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-17T04:13:17.330Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:exit] pid=41172 code=null signal=SIGKILL\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:12:16.523Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\electron\\project-rag-source-domains-7fa54-o-DCS-and-observed-adoption\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\electron\\project-rag-source-domains-7fa54-o-DCS-and-observed-adoption\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-rag14-20261117\\dev-electron-v2\\electron\\project-rag-source-domains-7fa54-o-DCS-and-observed-adoption\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts",
+                    "column": 71,
+                    "line": 282
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "297f115fc458f7c63e83-a6be7d8f1becb6ed2e8a",
+          "file": "project-rag-source-domains.spec.ts",
+          "line": 198,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T04:10:37.374Z",
+    "duration": 195417.483,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "7e48c13a8b3ab74d7447360cbe2dd1cde64b5d05"
+}

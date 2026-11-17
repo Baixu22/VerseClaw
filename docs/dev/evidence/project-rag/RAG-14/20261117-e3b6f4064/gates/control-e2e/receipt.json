@@ -1,0 +1,54 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "control-e2e",
+  "candidate": {
+    "head": "e3b6f40644ed01f492db4495803c77b820b24431",
+    "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-17T05:51:15.683208+00:00",
+  "commands": [
+    {
+      "name": "electron",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "tests/e2e/agent-dev-quality.spec.ts",
+        "--workers=2",
+        "--retries=0",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-rag14-20261117\\formal-control-e2e-e3b6f4064\\electron"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 38913,
+      "stdout": "electron.stdout.log",
+      "stderr": "electron.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "stats": {
+    "startTime": "2026-11-17T05:51:19.257Z",
+    "duration": 35281.815,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "after": {
+    "head": "e3b6f40644ed01f492db4495803c77b820b24431",
+    "tree": "5c10f64eb56006796d05678889d3c8499f5f1911",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-17T05:51:56.107534+00:00"
+}

@@ -1,0 +1,31 @@
+{
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "e3b6f40644ed01f492db4495803c77b820b24431",
+  "status": "pass",
+  "method": "Direct visual inspection of four current candidate Electron screenshots",
+  "images": [
+    {
+      "path": "D:\\tmp\\project-rag-rag14-20261117\\formal-electron-e3b6f4064\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\memory-citation-preview.png",
+      "sha256": "1a78454b9661b9dfa8ef04139ac5a8329dd98e4d3c39df0c1dc78c18cf6a5011",
+      "observation": "角色记忆原文RAG13_ROLE_ORIGINAL及原始行号可见，正文布局无重叠。"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-rag14-20261117\\formal-electron-e3b6f4064\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\memory-domain-settings.png",
+      "sha256": "2330153353a5a5e4b34a36b2f7e6d3a5f759600b5d1bf7baca1574adde85d169",
+      "observation": "设置页配置和Disabled状态可见，未拒绝来源的类型保持原状由同候选旅程收据验证。"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-rag14-20261117\\formal-electron-e3b6f4064\\electron\\project-rag-source-domains-7fa54-o-DCS-and-observed-adoption\\experience-attribution.png",
+      "sha256": "4967fe39070116df9aeaf6cf692557552ef0ba04febba5174f4b447d3f3f043b",
+      "observation": "七项指标分别可见：UI、DCS、引用、采用、运行结果为1，独立评分0，未知结果1；文字完整。"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-rag14-20261117\\formal-electron-e3b6f4064\\electron\\project-rag-source-domains-7fa54-o-DCS-and-observed-adoption\\experience-citation.png",
+      "sha256": "9a22e19aa24a84d010b2e0376924aeba79a29ce56093a03039e0453514f6b4b6",
+      "observation": "确认经验原文、canonical ID和原始行号可见，正文无裁切。"
+    }
+  ],
+  "verifiedAt": "2026-11-17T05:53:11.903435+00:00"
+}

@@ -1,0 +1,3370 @@
+{
+  "numTotalTestSuites": 25,
+  "numPassedTestSuites": 25,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 269,
+  "numPassedTests": 269,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794893888478,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "chat knowledge retrieval intent (KS-04)"
+          ],
+          "fullName": "chat knowledge retrieval intent (KS-04) forwards wiki scope as typed retrieval intent without prompt metadata",
+          "status": "passed",
+          "title": "forwards wiki scope as typed retrieval intent without prompt metadata",
+          "duration": 1252.5505999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat knowledge retrieval intent (KS-04)"
+          ],
+          "fullName": "chat knowledge retrieval intent (KS-04) forwards selected references as typed refs and drops renderer snippets",
+          "status": "passed",
+          "title": "forwards selected references as typed refs and drops renderer snippets",
+          "duration": 155.24720000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat knowledge retrieval intent (KS-04)"
+          ],
+          "fullName": "chat knowledge retrieval intent (KS-04) does not pre-read selected references in Main for auto-read mode",
+          "status": "passed",
+          "title": "does not pre-read selected references in Main for auto-read mode",
+          "duration": 164.5574999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat knowledge retrieval intent (KS-04)"
+          ],
+          "fullName": "chat knowledge retrieval intent (KS-04) drops huge renderer snippets instead of injecting them",
+          "status": "passed",
+          "title": "drops huge renderer snippets instead of injecting them",
+          "duration": 221.0401999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat knowledge retrieval intent (KS-04)"
+          ],
+          "fullName": "chat knowledge retrieval intent (KS-04) ignores legacy workMode fields for ordinary chat sends",
+          "status": "passed",
+          "title": "ignores legacy workMode fields for ordinary chat sends",
+          "duration": 162.4432999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat knowledge retrieval intent (KS-04)"
+          ],
+          "fullName": "chat knowledge retrieval intent (KS-04) injects selected Task Ledger context when an active node is provided",
+          "status": "passed",
+          "title": "injects selected Task Ledger context when an active node is provided",
+          "duration": 162.93150000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat knowledge retrieval intent (KS-04)"
+          ],
+          "fullName": "chat knowledge retrieval intent (KS-04) does not inject metadata for none or unknown scope",
+          "status": "passed",
+          "title": "does not inject metadata for none or unknown scope",
+          "duration": 345.23009999999977,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "chat knowledge retrieval intent (KS-04)"
+          ],
+          "fullName": "chat knowledge retrieval intent (KS-04) returns knowledgeDenials from the gateway ack when present",
+          "status": "passed",
+          "title": "returns knowledgeDenials from the gateway ack when present",
+          "duration": 185.97530000000052,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893974570,
+      "endTime": 1794893977219.9753,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/chat-knowledge-scope.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow rejects memory.readSource owner bridge before renderer RPC dispatch",
+          "status": "passed",
+          "title": "rejects memory.readSource owner bridge before renderer RPC dispatch",
+          "duration": 233.0701999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow rejects sekb.readSource owner bridge before renderer RPC dispatch",
+          "status": "passed",
+          "title": "rejects sekb.readSource owner bridge before renderer RPC dispatch",
+          "duration": 0.6372999999998683,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow rejects sekb.retrieve owner bridge before renderer RPC dispatch",
+          "status": "passed",
+          "title": "rejects sekb.retrieve owner bridge before renderer RPC dispatch",
+          "duration": 0.43230000000016844,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow rejects sekb.recordExposure owner bridge before renderer RPC dispatch",
+          "status": "passed",
+          "title": "rejects sekb.recordExposure owner bridge before renderer RPC dispatch",
+          "duration": 0.3220000000001164,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow binds chat workspace identity to the Main owner and refuses forged scopes",
+          "status": "passed",
+          "title": "binds chat workspace identity to the Main owner and refuses forged scopes",
+          "duration": 5.274799999999914,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow rejects verification for a workspace whose permissions were not evaluated",
+          "status": "passed",
+          "title": "rejects verification for a workspace whose permissions were not evaluated",
+          "duration": 2.001899999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow refuses verification when its persisted physical root differs from Main",
+          "status": "passed",
+          "title": "refuses verification when its persisted physical root differs from Main",
+          "duration": 1.6826000000000931,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow requires approval for dangerous gateway RPC and consumes approval before replay",
+          "status": "passed",
+          "title": "requires approval for dangerous gateway RPC and consumes approval before replay",
+          "duration": 3.5416999999999916,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow does not allow an approved gateway request to be reused for different params",
+          "status": "passed",
+          "title": "does not allow an approved gateway request to be reused for different params",
+          "duration": 0.6872000000000753,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+          "status": "passed",
+          "title": "captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+          "duration": 3.445500000000038,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow returns structured sandbox denial details for a fail-closed gateway action",
+          "status": "passed",
+          "title": "returns structured sandbox denial details for a fail-closed gateway action",
+          "duration": 1.1467999999999847,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893962801,
+      "endTime": 1794893963053.1467,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/gateway-permissions-api.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes knowledge operations and index controls through the existing Host boundary",
+          "status": "passed",
+          "title": "routes knowledge operations and index controls through the existing Host boundary",
+          "duration": 274.7211,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+          "status": "passed",
+          "title": "routes handoff creation through Main with the source session and edited draft",
+          "duration": 9.296199999999772,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes the typed session stop surface through the sessions module",
+          "status": "passed",
+          "title": "routes the typed session stop surface through the sessions module",
+          "duration": 7.3081999999999425,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls settings.getAll through hostInvoke",
+          "status": "passed",
+          "title": "calls settings.getAll through hostInvoke",
+          "duration": 5.08580000000029,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+          "status": "passed",
+          "title": "routes diagnostics.exportSupportBundle through hostInvoke",
+          "duration": 4.729600000000119,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade throws response errors",
+          "status": "passed",
+          "title": "throws response errors",
+          "duration": 4.965299999999843,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls settings.setMany and reset through hostInvoke",
+          "status": "passed",
+          "title": "calls settings.setMany and reset through hostInvoke",
+          "duration": 4.671200000000226,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes project rules methods through hostInvoke",
+          "status": "passed",
+          "title": "routes project rules methods through hostInvoke",
+          "duration": 4.508600000000115,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes agent browser methods through hostInvoke",
+          "status": "passed",
+          "title": "routes agent browser methods through hostInvoke",
+          "duration": 6.175600000000031,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes code review methods through hostInvoke",
+          "status": "passed",
+          "title": "routes code review methods through hostInvoke",
+          "duration": 5.5361000000002605,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes Remote Forge reads through the typed host facade",
+          "status": "passed",
+          "title": "routes Remote Forge reads through the typed host facade",
+          "duration": 17.89969999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+          "status": "passed",
+          "title": "routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+          "duration": 4.6249000000002525,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes uv installer setup through hostInvoke",
+          "status": "passed",
+          "title": "routes uv installer setup through hostInvoke",
+          "duration": 3.8645000000001346,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+          "status": "passed",
+          "title": "routes dcsProdFlags methods through hostInvoke",
+          "duration": 5.0504000000000815,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes vtoken methods through hostInvoke",
+          "status": "passed",
+          "title": "routes vtoken methods through hostInvoke",
+          "duration": 7.357199999999921,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes git methods through hostInvoke",
+          "status": "passed",
+          "title": "routes git methods through hostInvoke",
+          "duration": 3.8858000000000175,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes log file path and tail lines through hostInvoke",
+          "status": "passed",
+          "title": "passes log file path and tail lines through hostInvoke",
+          "duration": 3.340700000000197,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls channels.accounts through hostInvoke with options",
+          "status": "passed",
+          "title": "calls channels.accounts through hostInvoke with options",
+          "duration": 5.250800000000254,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes channel credential validation payload through hostInvoke",
+          "status": "passed",
+          "title": "passes channel credential validation payload through hostInvoke",
+          "duration": 3.9353000000000975,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes channel target lookup payload through hostInvoke",
+          "status": "passed",
+          "title": "passes channel target lookup payload through hostInvoke",
+          "duration": 4.578700000000026,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls agents.list through hostInvoke",
+          "status": "passed",
+          "title": "calls agents.list through hostInvoke",
+          "duration": 4.481499999999869,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls providers.list through hostInvoke",
+          "status": "passed",
+          "title": "calls providers.list through hostInvoke",
+          "duration": 3.2561000000000604,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes provider validation payload through hostInvoke",
+          "status": "passed",
+          "title": "passes provider validation payload through hostInvoke",
+          "duration": 3.5569000000000415,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes provider OAuth requests through hostInvoke",
+          "status": "passed",
+          "title": "passes provider OAuth requests through hostInvoke",
+          "duration": 3.484399999999823,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+          "status": "passed",
+          "title": "calls chat.sendWithMedia through hostInvoke",
+          "duration": 6.06060000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls work provider APIs through hostInvoke",
+          "status": "passed",
+          "title": "calls work provider APIs through hostInvoke",
+          "duration": 2.8126000000002023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls knowledge APIs through hostInvoke",
+          "status": "passed",
+          "title": "calls knowledge APIs through hostInvoke",
+          "duration": 4.086099999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls sessions.summaries through hostInvoke",
+          "status": "passed",
+          "title": "calls sessions.summaries through hostInvoke",
+          "duration": 2.0721000000003187,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls session compaction methods through hostInvoke",
+          "status": "passed",
+          "title": "calls session compaction methods through hostInvoke",
+          "duration": 4.625100000000202,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls clawGraph methods through hostInvoke",
+          "status": "passed",
+          "title": "calls clawGraph methods through hostInvoke",
+          "duration": 4.380799999999908,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls cron.list through hostInvoke",
+          "status": "passed",
+          "title": "calls cron.list through hostInvoke",
+          "duration": 3.550799999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls skills.clawhubList through hostInvoke",
+          "status": "passed",
+          "title": "calls skills.clawhubList through hostInvoke",
+          "duration": 3.1122999999997774,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+          "status": "passed",
+          "title": "calls usage.recentTokenHistory through hostInvoke",
+          "duration": 3.8731000000002496,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability queryTraces through hostInvoke",
+          "status": "passed",
+          "title": "calls observability queryTraces through hostInvoke",
+          "duration": 2.3439000000003034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+          "status": "passed",
+          "title": "calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+          "duration": 2.8208999999997104,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability reportTrace through hostInvoke",
+          "status": "passed",
+          "title": "calls observability reportTrace through hostInvoke",
+          "duration": 3.1994999999997162,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+          "status": "passed",
+          "title": "keeps hostApi response types on facade methods instead of call-site generics",
+          "duration": 127.49739999999974,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade uses a function-shaped host API contract to type host invocations",
+          "status": "passed",
+          "title": "uses a function-shaped host API contract to type host invocations",
+          "duration": 3.366700000000037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+          "status": "passed",
+          "title": "keeps async handler flexibility out of the renderer-facing host API contract",
+          "duration": 2.60550000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+          "status": "passed",
+          "title": "keeps production main, preload, renderer, and shared imports on their side of the boundary",
+          "duration": 230.76870000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade lets service handlers inherit payload types from the host API contract",
+          "status": "passed",
+          "title": "lets service handlers inherit payload types from the host API contract",
+          "duration": 15.55580000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+          "status": "passed",
+          "title": "does not keep hostApi-covered legacy direct IPC channels registered",
+          "duration": 2.207300000000032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep uninvoked direct IPC channels registered",
+          "status": "passed",
+          "title": "does not keep uninvoked direct IPC channels registered",
+          "duration": 1.1819000000000415,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep the legacy unified app:request client path",
+          "status": "passed",
+          "title": "does not keep the legacy unified app:request client path",
+          "duration": 0.4137000000000626,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+          "status": "passed",
+          "title": "does not keep legacy IPC helper exports or production call sites",
+          "duration": 100.91170000000011,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+          "status": "passed",
+          "title": "keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+          "duration": 2.7069000000001324,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+          "status": "passed",
+          "title": "keeps diagnostics on the extension-contributed host API path",
+          "duration": 0.7085000000001855,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893919062,
+      "endTime": 1794893919995.7085,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/host-api-facade.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects unpinned memory reads and an all-corpus raw-memory fallback",
+          "status": "passed",
+          "title": "rejects unpinned memory reads and an all-corpus raw-memory fallback",
+          "duration": 1424.6118000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reads native-memory for SourceSet answers and preserves Studio pins",
+          "status": "passed",
+          "title": "reads native-memory for SourceSet answers and preserves Studio pins",
+          "duration": 189.14689999999973,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reads role-memory for SourceSet answers and preserves Studio pins",
+          "status": "passed",
+          "title": "reads role-memory for SourceSet answers and preserves Studio pins",
+          "duration": 199.9327000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reads experience for SourceSet answers and preserves Studio pins",
+          "status": "passed",
+          "title": "reads experience for SourceSet answers and preserves Studio pins",
+          "duration": 185.35289999999986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API wraps wiki.status and reports Gateway failures",
+          "status": "passed",
+          "title": "wraps wiki.status and reports Gateway failures",
+          "duration": 60.39210000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API validates operations config before RPC and preserves the config base hash",
+          "status": "passed",
+          "title": "validates operations config before RPC and preserves the config base hash",
+          "duration": 65.43379999999979,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects late operations snapshots after a session generation changes",
+          "status": "passed",
+          "title": "rejects late operations snapshots after a session generation changes",
+          "duration": 60.79910000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API uses owner config for omitted profiles, keeps explicit bounds and fails closed without config",
+          "status": "passed",
+          "title": "uses owner config for omitted profiles, keeps explicit bounds and fails closed without config",
+          "duration": 57.78939999999966,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API returns a read-only SEKB runtime lessons report without Gateway writes",
+          "status": "passed",
+          "title": "returns a read-only SEKB runtime lessons report without Gateway writes",
+          "duration": 67.10919999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API resolves Host SEKB state dir and workspace root without using process.cwd defaults",
+          "status": "passed",
+          "title": "resolves Host SEKB state dir and workspace root without using process.cwd defaults",
+          "duration": 54.110600000000886,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API exposes SEKB ops host routes without gateway RPC and without auto-writes",
+          "status": "passed",
+          "title": "exposes SEKB ops host routes without gateway RPC and without auto-writes",
+          "duration": 58.3091000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API passes explicit experienceShadow through the production SEKB confirm route",
+          "status": "passed",
+          "title": "passes explicit experienceShadow through the production SEKB confirm route",
+          "duration": 170.91419999999925,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API omits experienceShadow entirely when the explicit request is absent",
+          "status": "passed",
+          "title": "omits experienceShadow entirely when the explicit request is absent",
+          "duration": 173.92799999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API configures memory-wiki defaults without overwriting unrelated plugin config",
+          "status": "passed",
+          "title": "configures memory-wiki defaults without overwriting unrelated plugin config",
+          "duration": 77.58480000000054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API enumerates bounded text files and skips large or non-text imports",
+          "status": "passed",
+          "title": "enumerates bounded text files and skips large or non-text imports",
+          "duration": 67.92739999999958,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps draft review and steward review local until a reviewed change is applied",
+          "status": "passed",
+          "title": "keeps draft review and steward review local until a reviewed change is applied",
+          "duration": 180.59239999999954,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API runs the semantic steward invoker through the gateway agent RPC when the active role is semantic",
+          "status": "passed",
+          "title": "runs the semantic steward invoker through the gateway agent RPC when the active role is semantic",
+          "duration": 200.92320000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API orchestrates inbox candidates into drafts without applying wiki writes",
+          "status": "passed",
+          "title": "orchestrates inbox candidates into drafts without applying wiki writes",
+          "duration": 200.09040000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps automatic knowledge candidates as pending Inbox items without reviewed apply",
+          "status": "passed",
+          "title": "keeps automatic knowledge candidates as pending Inbox items without reviewed apply",
+          "duration": 160.73269999999957,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API triages inbox candidates as duplicate, incomplete, or ready for review",
+          "status": "passed",
+          "title": "triages inbox candidates as duplicate, incomplete, or ready for review",
+          "duration": 62.72530000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API forces watched-directory automation to remain review-gated",
+          "status": "passed",
+          "title": "forces watched-directory automation to remain review-gated",
+          "duration": 283.58650000000034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reconciles watched file changes into versioned agent-driven review candidates",
+          "status": "passed",
+          "title": "reconciles watched file changes into versioned agent-driven review candidates",
+          "duration": 428.7488000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API records knowledge provenance references as metadata only",
+          "status": "passed",
+          "title": "records knowledge provenance references as metadata only",
+          "duration": 164.96980000000076,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API validates proposals and applies only approved create proposals",
+          "status": "passed",
+          "title": "validates proposals and applies only approved create proposals",
+          "duration": 243.89969999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API converts legacy applyDraft calls into review-gated drafts without direct wiki apply",
+          "status": "passed",
+          "title": "converts legacy applyDraft calls into review-gated drafts without direct wiki apply",
+          "duration": 183.92190000000028,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API forwards the selected profile for explicit Wiki search",
+          "status": "passed",
+          "title": "forwards the selected profile for explicit Wiki search",
+          "duration": 59.38130000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API routes knowledge context only when scope and mode allow read-only search",
+          "status": "passed",
+          "title": "routes knowledge context only when scope and mode allow read-only search",
+          "duration": 171.98689999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps Runtime Lessons opt-in and records only current acknowledged candidates",
+          "status": "passed",
+          "title": "keeps Runtime Lessons opt-in and records only current acknowledged candidates",
+          "duration": 1390.3655999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves array Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves array Gateway rows and SourceRef in Host search",
+          "duration": 63.71860000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves results Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves results Gateway rows and SourceRef in Host search",
+          "duration": 75.691499999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves hits Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves hits Gateway rows and SourceRef in Host search",
+          "duration": 75.09209999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API matches error-experience advisories and updates effectiveness counters",
+          "status": "passed",
+          "title": "matches error-experience advisories and updates effectiveness counters",
+          "duration": 262.8258000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API aggregates governance quality metrics from audit issues and error-experience counters",
+          "status": "passed",
+          "title": "aggregates governance quality metrics from audit issues and error-experience counters",
+          "duration": 254.52690000000075,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API auto-read uses owner admission and rejects raw scores without it",
+          "status": "passed",
+          "title": "auto-read uses owner admission and rejects raw scores without it",
+          "duration": 181.98760000000038,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API validates OKF bundles while preserving frontmatter and treating compatibility issues as warnings",
+          "status": "passed",
+          "title": "validates OKF bundles while preserving frontmatter and treating compatibility issues as warnings",
+          "duration": 200.21850000000086,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects OKF concept files missing frontmatter or type",
+          "status": "passed",
+          "title": "rejects OKF concept files missing frontmatter or type",
+          "duration": 154.14760000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API imports selected OKF concepts through wiki.ingest and records mapping metadata without wiki.apply",
+          "status": "passed",
+          "title": "imports selected OKF concepts through wiki.ingest and records mapping metadata without wiki.apply",
+          "duration": 237.67959999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects archived Source Set evidence without fallback (semantic=false)",
+          "status": "passed",
+          "title": "rejects archived Source Set evidence without fallback (semantic=false)",
+          "duration": 67.37760000000162,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects archived Source Set evidence without fallback (semantic=true)",
+          "status": "passed",
+          "title": "rejects archived Source Set evidence without fallback (semantic=true)",
+          "duration": 79.88119999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API retains explicit Source Set version pins and rejects a changed owner revision",
+          "status": "passed",
+          "title": "retains explicit Source Set version pins and rejects a changed owner revision",
+          "duration": 183.67749999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reports unverified Source Set excerpts as partial rather than a calibrated answer",
+          "status": "passed",
+          "title": "reports unverified Source Set excerpts as partial rather than a calibrated answer",
+          "duration": 77.07130000000143,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it",
+          "status": "passed",
+          "title": "keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it",
+          "duration": 301.6801000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API applies saved Source Set workspace context without granting cross-workspace reads",
+          "status": "passed",
+          "title": "applies saved Source Set workspace context without granting cross-workspace reads",
+          "duration": 166.95669999999882,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API checks source answers and support outcome: same",
+          "status": "passed",
+          "title": "checks source answers and support outcome: same",
+          "duration": 76.3706000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API checks source answers and support outcome: changed",
+          "status": "passed",
+          "title": "checks source answers and support outcome: changed",
+          "duration": 70.47630000000026,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API checks source answers and support outcome: provider-error",
+          "status": "passed",
+          "title": "checks source answers and support outcome: provider-error",
+          "duration": 56.89990000000034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API checks source answers and support outcome: unsupported",
+          "status": "passed",
+          "title": "checks source answers and support outcome: unsupported",
+          "duration": 64.42439999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API persists source sets and answers from their selected sources without applying durable wiki changes",
+          "status": "passed",
+          "title": "persists source sets and answers from their selected sources without applying durable wiki changes",
+          "duration": 161.16890000000058,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API uses the selected semantic service with owner pins and one shared deadline (query expires=false)",
+          "status": "passed",
+          "title": "uses the selected semantic service with owner pins and one shared deadline (query expires=false)",
+          "duration": 104.71359999999913,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API uses the selected semantic service with owner pins and one shared deadline (query expires=true)",
+          "status": "passed",
+          "title": "uses the selected semantic service with owner pins and one shared deadline (query expires=true)",
+          "duration": 67.67829999999958,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API normalizes provider whitespace before deriving owner egress and sending configure",
+          "status": "passed",
+          "title": "normalizes provider whitespace before deriving owner egress and sending configure",
+          "duration": 79.51690000000053,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps admitted lexical evidence available when the embedding status service fails",
+          "status": "passed",
+          "title": "keeps admitted lexical evidence available when the embedding status service fails",
+          "duration": 74.68680000000131,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API creates reviewable studio artifact drafts from selected source sets",
+          "status": "passed",
+          "title": "creates reviewable studio artifact drafts from selected source sets",
+          "duration": 163.83430000000044,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance pairs 10 drafts and 10 proposals without cross-selection",
+          "status": "passed",
+          "title": "pairs 10 drafts and 10 proposals without cross-selection",
+          "duration": 249.47289999999884,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance rejects stale approvals as conflicts and never calls wiki.apply",
+          "status": "passed",
+          "title": "rejects stale approvals as conflicts and never calls wiki.apply",
+          "duration": 209.7527000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance concurrent same captureKey calls create exactly one inbox candidate",
+          "status": "passed",
+          "title": "concurrent same captureKey calls create exactly one inbox candidate",
+          "duration": 165.9452999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance idempotent apply retry is duplicate success and writes an operation journal",
+          "status": "passed",
+          "title": "idempotent apply retry is duplicate success and writes an operation journal",
+          "duration": 238.52130000000034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-03 GovernanceStore cutover hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-03 GovernanceStore cutover hard acceptance new inbox/draft/proposal records go to SQLite and JSON governance writers stay zero",
+          "status": "passed",
+          "title": "new inbox/draft/proposal records go to SQLite and JSON governance writers stay zero",
+          "duration": 186.63480000000163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-03 GovernanceStore cutover hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-03 GovernanceStore cutover hard acceptance imports legacy JSON in one transaction and leaves it read-only with parity 100%",
+          "status": "passed",
+          "title": "imports legacy JSON in one transaction and leaves it read-only with parity 100%",
+          "duration": 156.82870000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-02 truthful DCS projection sink"
+          ],
+          "fullName": "knowledge host API KS-02 truthful DCS projection sink exposes a blockstore sink with read-back verification when state DB opens",
+          "status": "passed",
+          "title": "exposes a blockstore sink with read-back verification when state DB opens",
+          "duration": 132.7585999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-02 truthful DCS projection sink"
+          ],
+          "fullName": "knowledge host API KS-02 truthful DCS projection sink falls back to a journal sink and never claims blockstore when state DB cannot open",
+          "status": "passed",
+          "title": "falls back to a journal sink and never claims blockstore when state DB cannot open",
+          "duration": 73.37800000000061,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893891698,
+      "endTime": 1794893903061.378,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/knowledge-api.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA caps large source sets without splitting conflict groups",
+          "status": "passed",
+          "title": "caps large source sets without splitting conflict groups",
+          "duration": 3.962600000000066,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA uses the current terminal model result and never falls back to an earlier owner-session answer",
+          "status": "passed",
+          "title": "uses the current terminal model result and never falls back to an earlier owner-session answer",
+          "duration": 4.996099999999842,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA accepts a version-bound exact quotation and exposes no numeric confidence",
+          "status": "passed",
+          "title": "accepts a version-bound exact quotation and exposes no numeric confidence",
+          "duration": 0.5170000000000528,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA rejects forged or absent evidence {\"claims\":[{\"text\":\"Fabricated\",\"citations\":[{\"sourceId\":\"foreign-source\",\"quote\":\"Port\"}]}],\"unknowns\":[]}",
+          "status": "passed",
+          "title": "rejects forged or absent evidence {\"claims\":[{\"text\":\"Fabricated\",\"citations\":[{\"sourceId\":\"foreign-source\",\"quote\":\"Port\"}]}],\"unknowns\":[]}",
+          "duration": 0.5702000000001135,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA rejects forged or absent evidence {\"claims\":[{\"text\":\"Fabricated\",\"citations\":[{\"sourceId\":\"memory-wiki:deployment.md\",\"quote\":\"port 9090\"}]}],\"unknowns\":[]}",
+          "status": "passed",
+          "title": "rejects forged or absent evidence {\"claims\":[{\"text\":\"Fabricated\",\"citations\":[{\"sourceId\":\"memory-wiki:deployment.md\",\"quote\":\"port 9090\"}]}],\"unknowns\":[]}",
+          "duration": 0.358600000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA rejects forged or absent evidence {\"claims\":[{\"text\":\"Uncited\",\"citations\":[]}],\"unknowns\":[]}",
+          "status": "passed",
+          "title": "rejects forged or absent evidence {\"claims\":[{\"text\":\"Uncited\",\"citations\":[]}],\"unknowns\":[]}",
+          "duration": 0.3529000000000906,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA rejects forged or absent evidence {\"claims\":[],\"unknowns\":[]}",
+          "status": "passed",
+          "title": "rejects forged or absent evidence {\"claims\":[],\"unknowns\":[]}",
+          "duration": 0.3187000000000353,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA bounds conversation and encloses source instructions as untrusted data",
+          "status": "passed",
+          "title": "bounds conversation and encloses source instructions as untrusted data",
+          "duration": 0.7643999999997959,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA passes owner pins instead of evidence bodies and requires the DCS receipt for model-only QA",
+          "status": "passed",
+          "title": "passes owner pins instead of evidence bodies and requires the DCS receipt for model-only QA",
+          "duration": 2.9284000000000106,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA runs through model-only Gateway RPC and captures deltas emitted before acceptance",
+          "status": "passed",
+          "title": "runs through model-only Gateway RPC and captures deltas emitted before acceptance",
+          "duration": 1.3123000000000502,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA does not report incomplete model runs as answers and releases its listener",
+          "status": "passed",
+          "title": "does not report incomplete model runs as answers and releases its listener",
+          "duration": 0.8524999999999636,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893991318,
+      "endTime": 1794893991335.8525,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/knowledge-evidence-qa.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page opens a native-memory pin with its memory corpus",
+          "status": "passed",
+          "title": "opens a native-memory pin with its memory corpus",
+          "duration": 300.41709999999966,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page opens a role-memory pin with its memory corpus",
+          "status": "passed",
+          "title": "opens a role-memory pin with its memory corpus",
+          "duration": 179.51090000000022,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page initializes, imports, searches, opens results, and applies drafts",
+          "status": "passed",
+          "title": "initializes, imports, searches, opens results, and applies drafts",
+          "duration": 1210.7809000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page builds a Source Set from search results and creates Studio artifact drafts without applying",
+          "status": "passed",
+          "title": "builds a Source Set from search results and creates Studio artifact drafts without applying",
+          "duration": 320.89690000000155,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page shows grouped inbox candidates and promotes or dismisses them without applying",
+          "status": "passed",
+          "title": "shows grouped inbox candidates and promotes or dismisses them without applying",
+          "duration": 297.51890000000094,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page shows Governance quality metrics after a health check",
+          "status": "passed",
+          "title": "shows Governance quality metrics after a health check",
+          "duration": 302.0024999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page answers knowledge librarian questions with local citations and a checkpoint",
+          "status": "passed",
+          "title": "answers knowledge librarian questions with local citations and a checkpoint",
+          "duration": 1520.9107000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page shows a recoverable librarian retrieval error with retry",
+          "status": "passed",
+          "title": "shows a recoverable librarian retrieval error with retry",
+          "duration": 267.85599999999977,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page keeps an unfinished note mounted while opening and closing the knowledge floating window",
+          "status": "passed",
+          "title": "keeps an unfinished note mounted while opening and closing the knowledge floating window",
+          "duration": 456.33050000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page requires the selected draft to have its own proposal before approval",
+          "status": "passed",
+          "title": "requires the selected draft to have its own proposal before approval",
+          "duration": 363.4303,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page keeps the current draft and proposal when an earlier proposal request finishes late",
+          "status": "passed",
+          "title": "keeps the current draft and proposal when an earlier proposal request finishes late",
+          "duration": 321.27989999999954,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page validates an OKF folder and imports only user-selected concepts",
+          "status": "passed",
+          "title": "validates an OKF folder and imports only user-selected concepts",
+          "duration": 754.156500000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page keeps SEKB suggestions review-only until explicit confirm and supports reject plus retrieve",
+          "status": "passed",
+          "title": "keeps SEKB suggestions review-only until explicit confirm and supports reject plus retrieve",
+          "duration": 912.0618000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893909709,
+      "endTime": 1794893916916.0618,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/knowledge-page.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission enforces the read budget for an explicit pinned source",
+          "status": "passed",
+          "title": "enforces the read budget for an explicit pinned source",
+          "duration": 3.386700000000019,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission revalidates distinct ranges of one native subject, later denial=false",
+          "status": "passed",
+          "title": "revalidates distinct ranges of one native subject, later denial=false",
+          "duration": 7.650600000000168,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission revalidates distinct ranges of one native subject, later denial=true",
+          "status": "passed",
+          "title": "revalidates distinct ranges of one native subject, later denial=true",
+          "duration": 1.5795000000000528,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission preserves native-memory ownership through selected-source materialization",
+          "status": "passed",
+          "title": "preserves native-memory ownership through selected-source materialization",
+          "duration": 1.0665999999998803,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission preserves role-memory ownership through selected-source materialization",
+          "status": "passed",
+          "title": "preserves role-memory ownership through selected-source materialization",
+          "duration": 0.77150000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission retains owner revision, freshness, exact read bytes and advisory trust",
+          "status": "passed",
+          "title": "retains owner revision, freshness, exact read bytes and advisory trust",
+          "duration": 1.2065999999999804,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status archived",
+          "status": "passed",
+          "title": "rejects owner status archived",
+          "duration": 1.421199999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status revoked",
+          "status": "passed",
+          "title": "rejects owner status revoked",
+          "duration": 0.45050000000014734,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status deleted",
+          "status": "passed",
+          "title": "rejects owner status deleted",
+          "duration": 0.3574999999998454,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status denied",
+          "status": "passed",
+          "title": "rejects owner status denied",
+          "duration": 0.34009999999989304,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status stale",
+          "status": "passed",
+          "title": "rejects owner status stale",
+          "duration": 0.260300000000143,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status unexpected-state",
+          "status": "passed",
+          "title": "rejects owner status unexpected-state",
+          "duration": 0.27140000000008513,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier sensitive",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier sensitive",
+          "duration": 0.33369999999990796,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier secret-adjacent",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier secret-adjacent",
+          "duration": 0.2255999999999858,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier secret",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier secret",
+          "duration": 0.16819999999984248,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier personal",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier personal",
+          "duration": 0.20430000000010295,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier unknown-tier",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier unknown-tier",
+          "duration": 0.16669999999999163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier __proto__",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier __proto__",
+          "duration": 0.14570000000003347,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier constructor",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier constructor",
+          "duration": 0.21119999999996253,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier null",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier null",
+          "duration": 0.4118999999998323,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: {\"read\":[\"another-operator\"]}",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: {\"read\":[\"another-operator\"]}",
+          "duration": 0.4980000000000473,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: null",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: null",
+          "duration": 0.38210000000003674,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: {\"read\":\"operator\"}",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: {\"read\":\"operator\"}",
+          "duration": 0.22179999999980282,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission enforces a supplied workspace filter against the owner scope",
+          "status": "passed",
+          "title": "enforces a supplied workspace filter against the owner scope",
+          "duration": 0.9470999999998639,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: null",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: null",
+          "duration": 0.38040000000000873,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {}",
+          "duration": 0.14629999999988286,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"title\":\"An empty source\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"title\":\"An empty source\"}",
+          "duration": 0.10950000000002547,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"content\":\"   \",\"title\":\"No source body\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"content\":\"   \",\"title\":\"No source body\"}",
+          "duration": 0.09479999999985012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"content\":\"\",\"body\":\"Stale fallback body\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"content\":\"\",\"body\":\"Stale fallback body\"}",
+          "duration": 0.10449999999991633,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"corpus\":\"memory\",\"content\":\"  Review before applying.\\nKeep the original read bytes.\\n\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"corpus\":\"memory\",\"content\":\"  Review before applying.\\nKeep the original read bytes.\\n\"}",
+          "duration": 0.1311000000000604,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission discloses a truncated range without pretending it read the complete page",
+          "status": "passed",
+          "title": "discloses a truncated range without pretending it read the complete page",
+          "duration": 0.5005000000001019,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"scope\":null}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"scope\":null}",
+          "duration": 0.8359000000000378,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"scope\":{\"workspaceId\":42}}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"scope\":{\"workspaceId\":42}}",
+          "duration": 0.5079000000000633,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"workspaceId\":0}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"workspaceId\":0}",
+          "duration": 0.48710000000005493,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"fromLine\":0}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"fromLine\":0}",
+          "duration": 0.7248999999999342,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"totalLines\":2}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"totalLines\":2}",
+          "duration": 0.37380000000007385,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"truncated\":\"false\"}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"truncated\":\"false\"}",
+          "duration": 0.23710000000005493,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not invent an indexing timestamp for a legacy owner result",
+          "status": "passed",
+          "title": "does not invent an indexing timestamp for a legacy owner result",
+          "duration": 0.39190000000007785,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not relax an explicit version pin after a mismatch: {\"revision\":\"18\"}",
+          "status": "passed",
+          "title": "does not relax an explicit version pin after a mismatch: {\"revision\":\"18\"}",
+          "duration": 0.23569999999995161,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not relax an explicit version pin after a mismatch: {\"contentDigest\":\"sha256:2f04f3044eb15f46d7f1f6e22cbb7e34761eb9daa5d91ce425a4048dd82172eb\"}",
+          "status": "passed",
+          "title": "does not relax an explicit version pin after a mismatch: {\"contentDigest\":\"sha256:2f04f3044eb15f46d7f1f6e22cbb7e34761eb9daa5d91ce425a4048dd82172eb\"}",
+          "duration": 0.3426999999999225,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects a supplied owner content digest that does not match the read bytes",
+          "status": "passed",
+          "title": "rejects a supplied owner content digest that does not match the read bytes",
+          "duration": 0.2998999999999796,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission passes only admitted content into the optional embedding provider",
+          "status": "passed",
+          "title": "passes only admitted content into the optional embedding provider",
+          "duration": 1.2467999999998938,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not call the provider or refill rejected text when no source is admitted",
+          "status": "passed",
+          "title": "does not call the provider or refill rejected text when no source is admitted",
+          "duration": 0.7261000000000877,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission preserves structured owner claim conflicts and their version-bound citations",
+          "status": "passed",
+          "title": "preserves structured owner claim conflicts and their version-bound citations",
+          "duration": 8.055100000000039,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission deduplicates canonical aliases without duplicating the evidence",
+          "status": "passed",
+          "title": "deduplicates canonical aliases without duplicating the evidence",
+          "duration": 0.6542999999999211,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not let an active alias hide a later archived read of the same owner",
+          "status": "passed",
+          "title": "does not let an active alias hide a later archived read of the same owner",
+          "duration": 0.36410000000000764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893964394,
+      "endTime": 1794893964434.364,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/knowledge-source-set-answer.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native-memory bootstrap prefix conflicting with wiki corpus before reading",
+          "status": "passed",
+          "title": "rejects a native-memory bootstrap prefix conflicting with wiki corpus before reading",
+          "duration": 2157.1959000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a memory-slot bootstrap prefix conflicting with wiki corpus before reading",
+          "status": "passed",
+          "title": "rejects a memory-slot bootstrap prefix conflicting with wiki corpus before reading",
+          "duration": 407.6926000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners keeps the runtime owner distinct from a public-artifact bridge",
+          "status": "passed",
+          "title": "keeps the runtime owner distinct from a public-artifact bridge",
+          "duration": 127.82560000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope []",
+          "status": "passed",
+          "title": "denies backend owner snapshots without admin scope []",
+          "duration": 8572.344299999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope [\"operator.read\"]",
+          "status": "passed",
+          "title": "denies backend owner snapshots without admin scope [\"operator.read\"]",
+          "duration": 88.16330000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope [\"operator.write\"]",
+          "status": "passed",
+          "title": "denies backend owner snapshots without admin scope [\"operator.write\"]",
+          "duration": 83.54229999999734,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds a plain native file to the configured owner workspace and agent",
+          "status": "passed",
+          "title": "binds a plain native file to the configured owner workspace and agent",
+          "duration": 118.48340000000098,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at absolute-outside",
+          "status": "passed",
+          "title": "rejects an unpinned native lookup at absolute-outside",
+          "duration": 77.34000000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at relative-outside",
+          "status": "passed",
+          "title": "rejects an unpinned native lookup at relative-outside",
+          "duration": 88.99830000000293,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at workspace-nonmemory",
+          "status": "passed",
+          "title": "rejects an unpinned native lookup at workspace-nonmemory",
+          "duration": 85.60360000000219,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with reverse coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with reverse coordinates",
+          "duration": 100.57550000000265,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with past-eof coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with past-eof coordinates",
+          "duration": 108.39289999999892,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with fractional coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with fractional coordinates",
+          "duration": 89.70499999999811,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with wrong-line coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with wrong-line coordinates",
+          "duration": 94.2589999999982,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with split-utf8 coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with split-utf8 coordinates",
+          "duration": 93.68319999999949,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt success",
+          "status": "passed",
+          "title": "releases only its own internal read binding after attempt success",
+          "duration": 10731.196499999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt error",
+          "status": "passed",
+          "title": "releases only its own internal read binding after attempt error",
+          "duration": 895.0878999999986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt rebind",
+          "status": "passed",
+          "title": "releases only its own internal read binding after attempt rebind",
+          "duration": 912.1584999999977,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects invalid UTF8 byte 128 before assigning an owner digest or pin",
+          "status": "passed",
+          "title": "rejects invalid UTF8 byte 128 before assigning an owner digest or pin",
+          "duration": 105.00460000000021,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects invalid UTF8 byte 129 before assigning an owner digest or pin",
+          "status": "passed",
+          "title": "rejects invalid UTF8 byte 129 before assigning an owner digest or pin",
+          "duration": 121.10299999999552,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads a non-default agent from that agent provider and rejects a conflicting session",
+          "status": "passed",
+          "title": "rereads a non-default agent from that agent provider and rejects a conflicting session",
+          "duration": 121.36290000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds internal memory to the registered run while ordinary missing sessions stay denied",
+          "status": "passed",
+          "title": "binds internal memory to the registered run while ordinary missing sessions stay denied",
+          "duration": 143.74049999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds internal memory when its run owner changes by end during IO",
+          "status": "passed",
+          "title": "withholds internal memory when its run owner changes by end during IO",
+          "duration": 156.83230000000185,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds internal memory when its run owner changes by rebind during IO",
+          "status": "passed",
+          "title": "withholds internal memory when its run owner changes by rebind during IO",
+          "duration": 99.70300000000134,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners forwards validated backend egress providers and rejects malformed provider selectors",
+          "status": "passed",
+          "title": "forwards validated backend egress providers and rejects malformed provider selectors",
+          "duration": 114.39820000000327,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners resolves native and role refs with the same ID to separate bodies and namespaces",
+          "status": "passed",
+          "title": "resolves native and role refs with the same ID to separate bodies and namespaces",
+          "duration": 557.9460999999937,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners preserves raw UTF8/CRLF bytes and fences correction, deletion, scope and slot changes",
+          "status": "passed",
+          "title": "preserves raw UTF8/CRLF bytes and fences correction, deletion, scope and slot changes",
+          "duration": 121.70160000000033,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy acl:\n  read: [someone-else]\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy acl:\n  read: [someone-else]\n before returning native content",
+          "duration": 128.7914000000019,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy sensitivity: secret\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy sensitivity: secret\n before returning native content",
+          "duration": 162.1765000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy status: revoked\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy status: revoked\n before returning native content",
+          "duration": 141.4372000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy scope:\n  workspaceId: other-workspace\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy scope:\n  workspaceId: other-workspace\n before returning native content",
+          "duration": 116.4320000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy retention:\n  policy: source-coupled\n  expiresAt: \"2020-01-01T00:00:00Z\"\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy retention:\n  policy: source-coupled\n  expiresAt: \"2020-01-01T00:00:00Z\"\n before returning native content",
+          "duration": 129.9010999999955,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners does not read the previous role store under a foreign namespace pin",
+          "status": "passed",
+          "title": "does not read the previous role store under a foreign namespace pin",
+          "duration": 1224.8910000000033,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners uses the explicit role lookup without falling back to a conflicting reference ID",
+          "status": "passed",
+          "title": "uses the explicit role lookup without falling back to a conflicting reference ID",
+          "duration": 673.5352999999959,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a disabled selected memory owner instead of reading the previous plugin",
+          "status": "passed",
+          "title": "rejects a disabled selected memory owner instead of reading the previous plugin",
+          "duration": 112.20910000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads the provider canonical path when the initial lookup contains an alias segment",
+          "status": "passed",
+          "title": "rereads the provider canonical path when the initial lookup contains an alias segment",
+          "duration": 118.64080000000104,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds a provider junction and the captured physical workspace to one namespace",
+          "status": "passed",
+          "title": "binds a provider junction and the captured physical workspace to one namespace",
+          "duration": 122.83759999999893,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when the provider workspace changes during file IO",
+          "status": "passed",
+          "title": "withholds content when the provider workspace changes during file IO",
+          "duration": 107.99539999999979,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners returns a source denial for invalid metadata",
+          "status": "passed",
+          "title": "returns a source denial for invalid metadata",
+          "duration": 109.45279999999912,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners returns a source denial for invalid provider-io",
+          "status": "passed",
+          "title": "returns a source denial for invalid provider-io",
+          "duration": 104.4554000000062,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners fences a session workspace-id rebind during the read",
+          "status": "passed",
+          "title": "fences a session workspace-id rebind during the read",
+          "duration": 131.96190000000206,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners fences a session workspace-root rebind during the read",
+          "status": "passed",
+          "title": "fences a session workspace-root rebind during the read",
+          "duration": 154.42900000000373,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when slot changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when slot changes during the owner read",
+          "duration": 124.03450000000157,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when disable changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when disable changes during the owner read",
+          "duration": 96.36319999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when search-disable changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when search-disable changes during the owner read",
+          "duration": 101.09079999999813,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when runtime changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when runtime changes during the owner read",
+          "duration": 93.00109999999404,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when session changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when session changes during the owner read",
+          "duration": 111.14480000000185,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when cancel changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when cancel changes during the owner read",
+          "duration": 115.18450000000303,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners preserves the default tool page while raw owner reads retain the full file",
+          "status": "passed",
+          "title": "preserves the default tool page while raw owner reads retain the full file",
+          "duration": 101.11309999999503,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads a late native range with the whole-file version",
+          "status": "passed",
+          "title": "rereads a late native range with the whole-file version",
+          "duration": 106.40600000000268,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893930660,
+      "endTime": 1794893961422.406,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/project-rag-memory-domains.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane retrieves confirmed relevant content without promoting title, tags or ranking metadata",
+          "status": "passed",
+          "title": "retrieves confirmed relevant content without promoting title, tags or ranking metadata",
+          "duration": 221.97590000000037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane binds canonical ID, owner namespace and content version while counters leave pins valid",
+          "status": "passed",
+          "title": "binds canonical ID, owner namespace and content version while counters leave pins valid",
+          "duration": 228.58899999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects staging before experience enters context",
+          "status": "passed",
+          "title": "rejects staging before experience enters context",
+          "duration": 167.3753000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects archived before experience enters context",
+          "status": "passed",
+          "title": "rejects archived before experience enters context",
+          "duration": 182.77909999999974,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects unconfirmed before experience enters context",
+          "status": "passed",
+          "title": "rejects unconfirmed before experience enters context",
+          "duration": 211.5054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects secret before experience enters context",
+          "status": "passed",
+          "title": "rejects secret before experience enters context",
+          "duration": 168.192,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects revoked before experience enters context",
+          "status": "passed",
+          "title": "rejects revoked before experience enters context",
+          "duration": 205.90250000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects scope before experience enters context",
+          "status": "passed",
+          "title": "rejects scope before experience enters context",
+          "duration": 153.35619999999926,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects disabled before experience enters context",
+          "status": "passed",
+          "title": "rejects disabled before experience enters context",
+          "duration": 178.3049000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects an explicit experience prefix conflicting with wiki corpus",
+          "status": "passed",
+          "title": "rejects an explicit experience prefix conflicting with wiki corpus",
+          "duration": 219.9407999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane rejects an explicit experience prefix conflicting with memory corpus",
+          "status": "passed",
+          "title": "rejects an explicit experience prefix conflicting with memory corpus",
+          "duration": 214.8836999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane records UI exposure separately and requires actual context exposure before adoption",
+          "status": "passed",
+          "title": "records UI exposure separately and requires actual context exposure before adoption",
+          "duration": 202.65229999999974,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane removes session UI receipts while retaining a principle confirmed in another session",
+          "status": "passed",
+          "title": "removes session UI receipts while retaining a principle confirmed in another session",
+          "duration": 205.15179999999964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane uses DCS retained pins for real hook adoption, retained=false",
+          "status": "passed",
+          "title": "uses DCS retained pins for real hook adoption, retained=false",
+          "duration": 200.5690999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane uses DCS retained pins for real hook adoption, retained=true",
+          "status": "passed",
+          "title": "uses DCS retained pins for real hook adoption, retained=true",
+          "duration": 260.6100000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG confirmed experience lane"
+          ],
+          "fullName": "Project RAG confirmed experience lane serves pinned confirmed candidates through the backend-only Gateway route",
+          "status": "passed",
+          "title": "serves pinned confirmed candidates through the backend-only Gateway route",
+          "duration": 195.21270000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893969652,
+      "endTime": 1794893972870.2126,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/project-rag-sekb-attribution.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "versioned SEKB adoption attribution"
+          ],
+          "fullName": "versioned SEKB adoption attribution separates exposure, citation, adoption, operational completion and independent grading",
+          "status": "passed",
+          "title": "separates exposure, citation, adoption, operational completion and independent grading",
+          "duration": 249.41409999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "versioned SEKB adoption attribution"
+          ],
+          "fullName": "versioned SEKB adoption attribution retains deduplication across more than twenty receipts and a database reopen",
+          "status": "passed",
+          "title": "retains deduplication across more than twenty receipts and a database reopen",
+          "duration": 389.79429999999957,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "versioned SEKB adoption attribution"
+          ],
+          "fullName": "versioned SEKB adoption attribution rejects unexposed, cross-run, changed-version and conflicting outcome evidence",
+          "status": "passed",
+          "title": "rejects unexposed, cross-run, changed-version and conflicting outcome evidence",
+          "duration": 232.17450000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "versioned SEKB adoption attribution"
+          ],
+          "fullName": "versioned SEKB adoption attribution versions public advice rather than counters and removes receipt data with principle deletion",
+          "status": "passed",
+          "title": "versions public advice rather than counters and removes receipt data with principle deletion",
+          "duration": 192.84979999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893988575,
+      "endTime": 1794893989639.8499,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/rsi-adoption-attribution.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "production SEKB adoption through real extension events"
+          ],
+          "fullName": "production SEKB adoption through real extension events binds a registered agent attribution tool, observed operation and unknown terminal outcome",
+          "status": "passed",
+          "title": "binds a registered agent attribution tool, observed operation and unknown terminal outcome",
+          "duration": 1548.5871000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "production SEKB adoption through real extension events"
+          ],
+          "fullName": "production SEKB adoption through real extension events keeps ordinary runs without experiment coordinates explicit and installs nothing when disabled",
+          "status": "passed",
+          "title": "keeps ordinary runs without experiment coordinates explicit and installs nothing when disabled",
+          "duration": 1515.4685999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794893982481,
+      "endTime": 1794893985544.4685,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/unit/rsi-adoption-runtime.test.ts"
+    }
+  ],
+  "actor": "codex-g2-rag14-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "e3b6f40644ed01f492db4495803c77b820b24431"
+}
