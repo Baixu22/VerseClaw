@@ -57,6 +57,16 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
       const status = await hostInvoke<{ state: string; gatewayReady?: boolean }>(app!, 'gateway', 'status');
       return status.state === 'running' && status.gatewayReady === true;
     }, { timeout: 120_000 }).toBe(true);
+    // The protocol advertises session methods before their runtime is loaded.
+    await expect.poll(async () => {
+      try {
+        await hostInvoke(app!, 'gateway', 'rpc', { method: 'sessions.list', params: {}, timeoutMs: 10_000 });
+        return true;
+      } catch (error) {
+        if (String(error).includes('unavailable during gateway startup')) return false;
+        throw error;
+      }
+    }, { timeout: 120_000, intervals: [500, 1000] }).toBe(true);
     const created = await hostInvoke<{ key?: string; sessionKey?: string }>(app, 'gateway', 'rpc', { method: 'sessions.create', params: { agentId: 'main', label: 'A5 isolated host-readiness' } });
     const sessionKey = created.key ?? created.sessionKey;
     if (!sessionKey) throw new Error('sessions.create returned no session key');
