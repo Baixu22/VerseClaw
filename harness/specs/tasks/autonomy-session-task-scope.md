@@ -4,6 +4,8 @@ id: autonomy-session-task-scope
 title: A4 把强任务范围接入会话与协调器的真实 owner
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+previousValidationDiffBase: null
+diffBase: 177ee7ed214979b82c4615fca6ddfda3b400a6b3
 intent: 复用 Task Ledger sessionLinks 与 coordinator binding，给每个执行会话一个可读、可拒绝的任务作用域；discussion 允许为空，但不从标题或他人链接推断任务，也不复制完成权威。
 requiredRules:
   - identity-scope-boundary
@@ -34,10 +36,17 @@ expectedUserBehavior:
   - 错 workspace、旧 generation、缺失 coordinator/taskRef 或无同会话 link 时拒绝副作用。
   - Fork 可读取被链接任务，但不会继承写 claim；Handoff 不得复用旧 writer 作用域。
   - external task ref 不能冒充 Task Ledger 完成权威。
+residualPaths:
+  - harness/specs/tasks/autonomy-object-owner-contract.md
+  - harness/specs/tasks/autonomy-task-completion.md
+  - harness/specs/tasks/autonomy-host-readiness.md
+  - harness/specs/tasks/durable-task-owner-acceptance.md
+  - harness/specs/tasks/g5-foundation-current-acceptance.md
+  - tests/e2e/u6-interaction-metrics.final.spec.ts
 requiredTests:
   - pnpm exec vitest run tests/unit/session-task-scope.test.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/long-session-coordinator-binding.test.ts
-  - pnpm harness validate --spec harness/specs/tasks/autonomy-session-task-scope.md --no-diff
-  - pnpm harness run --spec harness/specs/tasks/autonomy-session-task-scope.md --no-diff --dry-run
+  - pnpm harness validate --spec harness/specs/tasks/autonomy-session-task-scope.md
+  - pnpm harness run --spec harness/specs/tasks/autonomy-session-task-scope.md --dry-run
   - node scripts/typecheck-agent-dev.mjs --cache
   - pnpm run contract:check
   - pnpm run comms:replay

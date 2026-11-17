@@ -4,7 +4,8 @@ id: autonomy-object-owner-contract
 title: TF-0670 自治对象、角色范围与既有 owner 合同
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 397e7b973
+previousValidationDiffBase: 397e7b973
+diffBase: 177ee7ed214979b82c4615fca6ddfda3b400a6b3
 intent: 为自治消费者建立可拒绝错误 owner、跨项目和陈旧会话代的只读边界，复用现有身份、角色、任务和执行权威。
 expectedUserBehavior:
   - 现有页面和手工操作保持原行为；新增自治消费者只能显示 owner 回读的身份、来源和状态。
@@ -33,6 +34,13 @@ requiredRules:
 requiredProfiles:
   - fast
   - comms
+residualPaths:
+  - harness/specs/tasks/autonomy-task-completion.md
+  - harness/specs/tasks/autonomy-session-task-scope.md
+  - harness/specs/tasks/autonomy-host-readiness.md
+  - harness/specs/tasks/durable-task-owner-acceptance.md
+  - harness/specs/tasks/g5-foundation-current-acceptance.md
+  - tests/e2e/u6-interaction-metrics.final.spec.ts
 requiredTests:
   - pnpm exec vitest run tests/unit/autonomy-object-owner-contract.test.ts tests/unit/identity-scope.test.ts tests/unit/project-projection.test.ts tests/unit/task-ledger-reference.test.ts tests/unit/component-authority-manifest.test.ts tests/unit/product-semantics.test.ts --maxWorkers=1
   - pnpm typecheck

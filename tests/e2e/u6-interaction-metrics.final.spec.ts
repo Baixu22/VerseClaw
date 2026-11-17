@@ -406,14 +406,14 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
           return response;
         });
       });
-      const handoffRow = id(`sidebar-session-${project.sessionKey}`);
-      const handoffMore = id(`sidebar-session-more-${project.sessionKey}`);
-      await need(`sidebar-session-${project.sessionKey}`);
-      await ui('hover', 'session:source', () => hoverUntilVisible(handoffRow, handoffMore));
-      await ui('click', 'session:more', () => handoffMore.click());
-      await need('sidebar-session-context-handoff');
-      await expect(id('sidebar-session-context-handoff')).toBeEnabled();
-      await click('sidebar-session-context-handoff');
+      if (side === 'baseline') {
+        await click('chat-header-session-name');
+      } else {
+        await click('chat-toolbar-more');
+      }
+      await need('chat-session-handoff');
+      await expect(id('chat-session-handoff')).toBeEnabled();
+      await click('chat-session-handoff');
       await expect(id('chat-handoff-dialog')).toBeVisible();
       let draft = await id('chat-handoff-draft').inputValue(); expect(draft.trim()).not.toBe('');
       if (!draft.includes(objective)) {

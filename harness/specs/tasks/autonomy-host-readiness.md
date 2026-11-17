@@ -4,7 +4,8 @@ id: autonomy-host-readiness
 title: TF-0674 实际宿主能力与持续运行回读
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: d0723901104107e602efb7473aae4e1975663398
+previousValidationDiffBase: d0723901104107e602efb7473aae4e1975663398
+diffBase: 177ee7ed214979b82c4615fca6ddfda3b400a6b3
 intent: 在既有 sessionActivity/effective-policy 和 Gateway monitor 中回读当前宿主能力，拒绝把静态声明、过期探针或配置保存当成实际可用。
 expectedUserBehavior:
   - 当前能力通过既有会话诊断回读，未知、失效与不可用保持区别。
@@ -49,6 +50,12 @@ residualPaths:
   - tests/fixtures/contract-check/flat-ipc-retired-channel-live.json
   - tests/unit/contract-check.test.ts
   - tests/unit/system-notifications-api.test.ts
+  - harness/specs/tasks/autonomy-object-owner-contract.md
+  - harness/specs/tasks/autonomy-task-completion.md
+  - harness/specs/tasks/autonomy-session-task-scope.md
+  - harness/specs/tasks/durable-task-owner-acceptance.md
+  - harness/specs/tasks/g5-foundation-current-acceptance.md
+  - tests/e2e/u6-interaction-metrics.final.spec.ts
 requiredRules:
   - identity-scope-boundary
   - autonomy-object-owner-boundary
