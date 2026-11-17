@@ -6,11 +6,12 @@
   "files": [
     {
       "path": "REPORT.md",
-      "sha256": "2df0edbcf592d03702ef1e259f5cba21c8c0b5aaffb7b5b1faef4e5df3ccea4e"
+      "sha256": "776436162a2af4ec0dae6325442b9ec5c50d4128285a7903863b24a905e59cf0"
     },
     {
       "path": "report.json",
-      "sha256": "9144d16d208886967f6711401c6c590a1705be7fad3ef8219f1c474578f6c446"
+      "sha256": "4489bc4434490d9aac733440574e5dd8a77f7fa40546c5a00509840d9a98defa"
     }
-  ]
+  ],
+  "hashScope": "Git blob bytes with LF line endings"
 }
