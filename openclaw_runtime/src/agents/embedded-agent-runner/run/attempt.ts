@@ -4795,10 +4795,9 @@ ${addition}`
           }
 
           if (!skipPromptSubmission) {
-            // Recovery effects share the run gate and fully bound tool lifecycle.
-            // A blocked run never executes its previously admitted pending calls.
+            // Recovery effects run only after the fully bound run gate allows them.
             if (params.sessionKey && originalRecoveryMessages) {
-              activeSession.agent.state.messages = await redispatchAdmittedSessionTools({
+              const recoveredMessages = await redispatchAdmittedSessionTools({
                 entry: recoveryEntry,
                 runId: params.runId,
                 sessionKey: sandboxSessionKey ?? params.sessionKey,
@@ -4816,30 +4815,31 @@ ${addition}`
                 signal: runAbortController.signal,
                 appendResult: (message) => activeSessionManager.appendMessage(message),
               });
-              const { validated } = await sanitizeReplayMessages(activeSession.messages);
-              validated.push(...recoveryPromptAdditions);
-              activeSession.agent.state.messages = limitReplayMessages(validated);
-              // New results enter the same context owner and prompt budget as normal history.
-              preparedPromptHistory = await preparePromptHistory();
-              const recoveredHistory = truncateOversizedToolResultsInMessages(
-                activeSession.messages,
-                contextTokenBudget,
-                promptToolResultMaxChars,
-                promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
-              );
-              promptHistoryMessages = recoveredHistory.messages;
-              messagesForCurrentPrompt = runtimeContextMessageForCurrentTurn
-                ? [...promptHistoryMessages, runtimeContextMessageForCurrentTurn]
-                : promptHistoryMessages;
-              hookMessagesForCurrentPrompt = normalizeMessagesForCurrentPromptBoundary({
-                messages: messagesForCurrentPrompt,
-                prompt: promptForModel,
-                ...(boundaryTimezone ? { timezone: boundaryTimezone } : {}),
-                ...(typeof preparedUserTurnMessage?.timestamp === "number"
-                  ? { currentUserTimestamp: preparedUserTurnMessage.timestamp }
-                  : {}),
-              });
-              systemPromptForHook = getPromptSystemPrompt();
+              if (!isDeepStrictEqual(recoveredMessages, originalRecoveryMessages)) {
+                const { validated } = await sanitizeReplayMessages(recoveredMessages);
+                validated.push(...recoveryPromptAdditions);
+                activeSession.agent.state.messages = limitReplayMessages(validated);
+                preparedPromptHistory = await preparePromptHistory();
+                const recoveredHistory = truncateOversizedToolResultsInMessages(
+                  activeSession.messages,
+                  contextTokenBudget,
+                  promptToolResultMaxChars,
+                  promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
+                );
+                promptHistoryMessages = recoveredHistory.messages;
+                messagesForCurrentPrompt = runtimeContextMessageForCurrentTurn
+                  ? [...promptHistoryMessages, runtimeContextMessageForCurrentTurn]
+                  : promptHistoryMessages;
+                hookMessagesForCurrentPrompt = normalizeMessagesForCurrentPromptBoundary({
+                  messages: messagesForCurrentPrompt,
+                  prompt: promptForModel,
+                  ...(boundaryTimezone ? { timezone: boundaryTimezone } : {}),
+                  ...(typeof preparedUserTurnMessage?.timestamp === "number"
+                    ? { currentUserTimestamp: preparedUserTurnMessage.timestamp }
+                    : {}),
+                });
+                systemPromptForHook = getPromptSystemPrompt();
+              }
             }
             const googlePromptCacheStreamFn = await prepareGooglePromptCacheStreamFn({
               apiKey: await resolveEmbeddedAgentApiKey({

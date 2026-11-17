@@ -8,11 +8,27 @@ intent: Complete TF-0715 with owner-bound, durable recovery decisions and finite
 diffBase: 05d787213
 humanEvidence: not-required
 touchedAreas:
+  - vite.config.ts
+  - scripts/lib/consolidated-icons.mjs
+  - scripts/lib/consolidated-icons.d.mts
+  - scripts/consolidated-icons.test.mjs
+  - tests/unit/vite-config-openclaw-runtime.test.ts
   - harness/specs/tasks/recovery-authority-gated.md
   - harness/specs/rules/recovery-authority-owner-admission.md
   - harness/specs/scenarios/gateway-backend-communication.md
   - shared/recovery-authority/**
   - shared/task-system/store.ts
+  - shared/task-system/runtime.ts
+  - shared/session-task-scope.ts
+  - electron/services/task-system-service.ts
+  - electron/services/workspaces-api.ts
+  - openclaw_runtime/src/agents/execution-checkout-tools.ts
+  - openclaw_runtime/src/agents/execution-checkout-admission.ts
+  - openclaw_runtime/src/agents/session-task-scope.ts
+  - openclaw_runtime/src/gateway/server-methods/session-task-scope.ts
+  - tests/unit/unified-effect-admission.test.ts
+  - tests/unit/session-task-scope.test.ts
+  - tests/unit/session-task-scope-completion.test.ts
   - tests/unit/durable-task-system.test.ts
   - harness/specs/rules/durable-task-system-boundary.md
   - openclaw_runtime/src/agents/recovery-authority/**
@@ -105,7 +121,31 @@ touchedAreas:
   - tests/unit/recovery-acceptance-checks.test.ts
   - tests/unit/gateway-native-module-loading.test.ts
   - openclaw_runtime/src/plugins/native-module-require.ts
+  - openclaw_runtime/src/plugin-sdk/channel-entry-contract.ts
+  - tests/unit/gateway-channel-sidecar-loading.test.ts
+  - tests/unit/gateway-telegram-migration-loading.test.ts
+  - tests/unit/gateway-matrix-migration-loading.test.ts
+  - openclaw_runtime/extensions/matrix/doctor-contract-api.ts
+  - openclaw_runtime/extensions/reach-readers/src/index.ts
+  - openclaw_runtime/src/plugins/registry.ts
+  - tests/unit/gateway-plugin-state-loading.test.ts
+  - tests/unit/recovery-tool-guard-capture.test.ts
+  - openclaw_runtime/src/agents/agent-tools.ts
+  - openclaw_runtime/src/agents/agent-tools.before-tool-call.ts
+  - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
+  - tests/unit/gateway-reach-readers-loading.test.ts
+  - package.json
+  - packages/versebrowser/package.json
+  - scripts/build-versebrowser.mjs
+  - scripts/lib/versebrowser-build-provenance.mjs
+  - scripts/versebrowser-build-wiring.test.mjs
+  - openclaw_runtime/extensions/telegram/src/message-cache*.ts
+  - openclaw_runtime/extensions/telegram/src/thread-bindings*.ts
+  - openclaw_runtime/extensions/telegram/src/state-migrations.ts
   - openclaw_runtime/ui/vite.config.ts
+  - openclaw_runtime/tsdown.config.ts
+  - openclaw_runtime/scripts/lib/fs-safe-build-resolver.mjs
+  - openclaw_runtime/scripts/fs-safe-build-resolver.test.mjs
   - harness/specs/tasks/gateway-startup-performance.md
   - scripts/typecheck-agent-dev.mjs
   - src/components/file-preview/MonacoViewer.tsx
@@ -184,6 +224,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - First tool admission carries the prepared task ID and epoch. Main renews only that same idle owner; committed admission retries retain the original precondition, and only the admitted run can refresh its model context. Explicit handoff, prior runs, and unresolved effects remain fenced.
   - An expired idle task resumes only for the same session generation and worktree with a new fencing epoch; unresolved effects, changed identities, paused owners and clock rollback remain rejected.
   - The runtime Control UI build resolves the installed Lit decorator entry through its package exports and completes without externalizing it.
   - Native fault fixtures create and claim the real workspace task before injection; handoff/fork fixtures consume the typed active workspace owner returned by the Host API.

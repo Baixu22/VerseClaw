@@ -13,6 +13,7 @@ import type {
   TaskQuery,
   TaskPage,
   TaskSessionSnapshot,
+  TaskCredential,
 } from "../../shared/task-system/types";
 import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from "./workspaces-api";
 import type { GatewayManager } from "../gateway/manager";
@@ -220,6 +221,7 @@ export function readManagedSessionEffect(input: ManagedSessionEffectInput): Task
 export function startManagedSessionEffect(input: ManagedSessionEffectInput & {
   requestId: string; expectedContract?: Pick<TaskView['contract'], 'revision' | 'digest'>;
   expectedAuthority?: ExecutionTaskAuthorityBasis;
+  expectedOwner?: TaskCredential;
 }): TaskView {
   const access = createExecutionTaskAccess(input.workspaceRoot, input.expectedAuthority);
   const domain = access.domain;
@@ -228,7 +230,7 @@ export function startManagedSessionEffect(input: ManagedSessionEffectInput & {
   try {
     const task = resolveManagedSessionEffectTask(store, input);
     const view = store.start({ taskNodeId: task.contract.taskNodeId, expectedContract: input.expectedContract },
-      input.sessionKey, input.generation, input.requestId);
+      input.sessionKey, input.generation, input.requestId, input.expectedOwner);
     if (!view.claim) throw new Error('TASK_CLAIM_REQUIRED');
     return store.assertOwner(view.claim);
   } finally {

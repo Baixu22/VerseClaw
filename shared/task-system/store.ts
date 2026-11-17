@@ -675,14 +675,16 @@ export class TaskSystemStore {
     text(sessionKey, "SESSION", 300);
     text(generation, "GENERATION", 200);
     return this.transaction(() => {
-      if (expected) {
-        if (expected.taskNodeId !== taskNodeId) throw new Error("TASK_RESTART_RUN_AFTER_HANDOFF");
-        this.assertOwner(expected);
-      }
       return this.request(
         `claim:${requestId}`,
-        { taskNodeId, sessionKey, generation, worktree: this.domain.worktree },
+        { taskNodeId, sessionKey, generation, worktree: this.domain.worktree, ...(expected ? { expected } : {}) },
         () => {
+          // Replaying a committed admission preserves its original precondition.
+          // New admissions must match the captured owner, including after expiry.
+          if (expected) {
+            if (expected.taskNodeId !== taskNodeId) throw new Error("TASK_RESTART_RUN_AFTER_HANDOFF");
+            this.assertOwner(expected, true);
+          }
           const view = this.get(taskNodeId);
           if (!["ready", "doing"].includes(view.contract.state))
             throw new Error("TASK_NOT_CLAIMABLE");
@@ -1442,15 +1444,17 @@ export class TaskSystemStore {
         .run(operationId, process.pid, this.now());
     });
   }
+  activeRun(credential: TaskCredential): string | undefined {
+    const row = this.db.prepare("SELECT run_id FROM task_active_runs WHERE task_id=? AND epoch=?")
+      .get(credential.taskNodeId, credential.epoch) as { run_id: string } | undefined;
+    return row?.run_id;
+  }
   beginRun(credential: TaskCredential, runId: string): void {
     this.transaction(() => {
       this.assertOwner(credential);
-      const prior = this.db
-        .prepare("SELECT epoch,run_id FROM task_active_runs WHERE task_id=?")
-        .get(credential.taskNodeId) as { epoch: number; run_id: string } | undefined;
-      if (prior && prior.epoch === credential.epoch && prior.run_id !== runId)
-        throw new Error("TASK_RUN_ALREADY_ACTIVE");
-      if (prior && prior.epoch === credential.epoch && prior.run_id === runId) return;
+      const prior = this.activeRun(credential);
+      if (prior && prior !== runId) throw new Error("TASK_RUN_ALREADY_ACTIVE");
+      if (prior === runId) return;
       this.db
         .prepare("INSERT OR REPLACE INTO task_active_runs VALUES(?,?,?)")
         .run(credential.taskNodeId, credential.epoch, runId);

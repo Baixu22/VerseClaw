@@ -80,6 +80,8 @@ function assertLiveRun(context: GatewayRequestContext, request: SessionTaskEffec
     ) &&
     effect.projectWorkspaceDir === request.projectWorkspaceDir &&
     effect.expectedClaimId === request.expectedClaimId &&
+    effect.expectedTaskNodeId === request.expectedTaskNodeId &&
+    effect.expectedTaskEpoch === request.expectedTaskEpoch &&
     effect.operationId === request.operationId &&
     effect.checkoutAccess === request.checkoutAccess &&
     effect.expectedExecutionRevision === request.expectedExecutionRevision;

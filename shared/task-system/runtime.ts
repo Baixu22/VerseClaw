@@ -163,7 +163,13 @@ export function restoreTaskModelContext(
       }
       return index < 0 ? basePrompt : basePrompt.slice(0, index);
     }
-    if (!guard.credential && !view.referenceOnly)
+    // Main can renew an expired idle claim for this exact run. A separately
+    // captured model context adopts it only after that run admission is durable.
+    const admittedContinuation = guard.credential && view.claim.epoch > guard.credential.epoch
+      && view.contract.taskNodeId === guard.credential.taskNodeId
+      && view.claim.sessionKey === guard.sessionKey && view.claim.generation === guard.generation
+      && guard.runId && store.activeRun(view.claim) === guard.runId;
+    if ((!guard.credential || admittedContinuation) && !view.referenceOnly)
       guard.credential = {
         taskNodeId: view.contract.taskNodeId,
         sessionKey: view.claim.sessionKey,

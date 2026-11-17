@@ -397,20 +397,23 @@ function loadBundledEntryModuleSync(
   const profile = shouldProfilePluginLoader();
   const loadStartMs = profile ? performance.now() : 0;
   let sourceLoaderReadyMs = 0;
+  let native: ReturnType<typeof tryNativeRequireJavaScriptModule> = { ok: false };
   if (canTryNodeRequireBuiltModule(modulePath)) {
-    const native = tryNativeRequireJavaScriptModule(modulePath, {
+    const nativeOptions = {
       allowWindows: true,
-      aliasMap: buildPluginLoaderAliasMap(modulePath, process.argv[1], import.meta.url, "dist"),
-      fallbackOnMissingDependency: true,
       fallbackOnNativeError: true,
-    });
-    if (native.ok) {
-      loaded = native.moduleExport;
-    } else {
-      const moduleLoader = getSourceModuleLoader(modulePath, options);
-      sourceLoaderReadyMs = profile ? performance.now() : 0;
-      loaded = moduleLoader(toSafeImportPath(modulePath));
+    };
+    // Relative-only compiled sidecars need no SDK alias discovery.
+    native = tryNativeRequireJavaScriptModule(modulePath, nativeOptions);
+    if (!native.ok) {
+      native = tryNativeRequireJavaScriptModule(modulePath, {
+        ...nativeOptions,
+        aliasMap: buildPluginLoaderAliasMap(modulePath, process.argv[1], import.meta.url, "dist"),
+      });
     }
+  }
+  if (native.ok) {
+    loaded = native.moduleExport;
   } else {
     const moduleLoader = getSourceModuleLoader(modulePath, options);
     sourceLoaderReadyMs = profile ? performance.now() : 0;
@@ -418,10 +421,7 @@ function loadBundledEntryModuleSync(
   }
   if (profile) {
     const endMs = performance.now();
-    // Use shared formatter — but split timing fields ourselves so we can
-    // attribute time spent in source-loader creation vs the actual graph load.
-    // Both are emitted as extras
-    // alongside the canonical `elapsedMs=<total>` field.
+    // Split source-loader setup and graph loading within the total elapsed time.
     console.error(
       formatPluginLoadProfileLine({
         phase: "bundled-entry-module-load",

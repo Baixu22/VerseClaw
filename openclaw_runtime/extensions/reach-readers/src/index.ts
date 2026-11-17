@@ -62,20 +62,19 @@ export const reachReadersPlugin: PluginEntry = definePluginEntry({
   name: 'Reach Readers',
   description: 'Per-platform content readers (yt-dlp, gh, bili-cli, opencli, rss, ...) — TS shadow of Agent Reach',
   register(api: PluginApi) {
-    configureReachBrowserBridge(api.runtime.agentBrowser?.invoke);
-    configureMediaTranscription(
-      api.runtime.mediaUnderstanding.transcribeAudioFile as Parameters<typeof configureMediaTranscription>[0],
-      api.config,
-    );
     let hydration: ReturnType<typeof hydrateReachConfig> | undefined;
     for (const tool of ALL_TOOLS) {
       const configuredTool = {
         ...tool,
         async execute(...args: Parameters<typeof tool.execute>) {
-          hydration ??= hydrateReachConfig({
-            config: api.config,
-            pluginConfig: api.pluginConfig,
-          });
+          if (!hydration) {
+            configureReachBrowserBridge(api.runtime.agentBrowser?.invoke);
+            configureMediaTranscription(
+              api.runtime.mediaUnderstanding.transcribeAudioFile as Parameters<typeof configureMediaTranscription>[0],
+              api.config,
+            );
+            hydration = hydrateReachConfig({ config: api.config, pluginConfig: api.pluginConfig });
+          }
           await hydration;
           return tool.execute(...args);
         },

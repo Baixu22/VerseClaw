@@ -159,6 +159,8 @@ pnpm dev
 
 Built Gateway startup tries native loading for resolved JavaScript doctor contracts before preparing SDK aliases. Windows plugin file URLs are converted to filesystem paths for native loading and cache invalidation. Mounted source overlays and external plugins keep their own contracts, and migration checks still run. After `pnpm run build:runtime`, use `node scripts/measure-gateway-startup.mjs` for an isolated, loopback-only comparison with fresh caches; every accepted sample must exercise the loader and complete an authenticated RPC.
 
+Telegram and Matrix migration discovery loads legacy data readers only when matching files exist. Reach Readers initializes browser and transcription services when its first tool executes. Desktop builds invoke the embedded browser's patch and compiler steps directly while retaining source and output provenance.
+
 First session:
 
 1. Complete Setup.

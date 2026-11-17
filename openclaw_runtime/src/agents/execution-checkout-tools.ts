@@ -48,7 +48,7 @@ export function reconcileExecutionCheckout(checkout: Checkout): void {
   if (current?.terminalReceipt && current.operations.every(operation => operation.state === 'settled') && !processesPending(current)) {
     const ledger = openExecutionTaskStore(current.root);
     let delegation;
-    let terminalTask = false;
+    let terminalTask: boolean;
     try {
       delegation = ledger.delegationForChild(sessionKey);
       const task = ledger.get(state.owner.task.taskNodeId);
@@ -107,6 +107,7 @@ export async function executeManagedTaskTool<T>(
   context: Parameters<typeof withSessionTaskScope>[0], guard: Guard, toolCallId: string,
   toolName: string, args: unknown, signal: AbortSignal | undefined, execute: () => Promise<T>,
 ): Promise<T> {
+  if (guard?.runId && guard.runId !== context?.runId) throw new Error('TASK_CHECKOUT_ADMISSION_MISMATCH');
   const operationId = `${context?.runId ?? 'run'}:${toolCallId}`;
   const action = String((args as { action?: unknown } | null)?.action ?? '');
   const processControl = toolName === 'process' && ['poll','log','list','kill'].includes(action);
@@ -132,7 +133,16 @@ export async function executeManagedTaskTool<T>(
   }
   const checkoutAccess = coordinationTools.has(toolName) ? 'control' : 'write';
   return withSessionTaskScope(context, toolName, args, signal, async admission => {
-    if (!admission || checkoutAccess === 'control') return executeTask(execute);
+    if (!admission) return executeTask(execute);
+    const credential = admission.claim.credential;
+    if (guard && credential && (credential.taskNodeId !== admission.claim.taskNodeId
+      || credential.sessionKey !== guard.sessionKey || credential.generation !== guard.generation
+      || (guard.credential && (credential.taskNodeId !== guard.credential.taskNodeId
+        || credential.epoch < guard.credential.epoch)))) throw new Error('TASK_CHECKOUT_ADMISSION_MISMATCH');
+    if (checkoutAccess === 'control') {
+      if (guard && credential) guard.credential = credential;
+      return executeTask(execute);
+    }
     const checkout = admission.checkout;
     if (!checkout || !guard || !admission.claim.credential || !admission.claim.executionRevision)
       throw new Error('TASK_CHECKOUT_ADMISSION_REQUIRED');
@@ -141,6 +151,8 @@ export async function executeManagedTaskTool<T>(
       || owner.sessionGeneration !== guard.generation || owner.bindingRevision !== admission.claim.executionRevision
       || owner.task?.authorityId !== guard.domain.id || owner.task.taskNodeId !== admission.claim.taskNodeId
       || owner.task.epoch !== admission.claim.credential.epoch) throw new Error('TASK_CHECKOUT_ADMISSION_MISMATCH');
+    // The authenticated Main admission checked the captured epoch before renewing it.
+    guard.credential = admission.claim.credential;
     signal?.throwIfAborted();
     const service = createWorktreeService(checkout.baseRoot);
     const digest = createHash('sha256').update(JSON.stringify({ operationId, toolName, args })).digest('hex');
@@ -172,5 +184,7 @@ export async function executeManagedTaskTool<T>(
       }
       throw error;
     }
-  }, { operationId, checkoutAccess });
+  }, { operationId, checkoutAccess, ...(guard?.credential ? {
+    expectedTaskNodeId: guard.credential.taskNodeId, expectedTaskEpoch: guard.credential.epoch,
+  } : {}) });
 }

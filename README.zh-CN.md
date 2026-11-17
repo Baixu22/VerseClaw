@@ -158,6 +158,8 @@ pnpm dev
 
 已构建的 Gateway 启动时先尝试原生加载已解析的 JavaScript Doctor 契约，减少 SDK 别名加载器准备。Windows 插件的文件 URL 会转为文件系统路径，用于原生加载和缓存失效。挂载源码与外部插件仍使用各自的契约，迁移检查照常执行。运行 `pnpm run build:runtime` 后，可用 `node scripts/measure-gateway-startup.mjs` 在隔离的回环环境和空缓存下对照测速；每个有效样本都必须实际调用被测加载器并完成认证 RPC。
 
+Telegram 与 Matrix 迁移检查在发现对应旧文件后加载数据读取模块。Reach Readers 在首次工具执行时初始化浏览器与转写服务。桌面构建直接执行内置浏览器的补丁与编译步骤，并保留源码和产物溯源记录。
+
 第一次使用：
 
 1. 完成 Setup。

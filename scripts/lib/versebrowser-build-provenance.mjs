@@ -9,6 +9,8 @@ export const PRODUCT_SOURCE_SCOPE = [
   'vite.config.ts', 'electron-builder.yml', 'scripts/generate-ext-bridge.mjs',
   'scripts/sync-lobe-icons.mjs', 'scripts/versebrowser-build-provenance.mjs',
   'scripts/lib/versebrowser-build-provenance.mjs',
+  'scripts/build-versebrowser.mjs',
+  'scripts/lib/consolidated-icons.mjs', 'scripts/lib/consolidated-icons.d.mts',
 ];
 export const COMPILED_ROOTS = [
   { archive: 'app.asar', source: 'dist', prefix: 'dist/' },

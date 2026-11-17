@@ -68,6 +68,20 @@ const run = () =>
   });
 
 describe("recovery through the actual embedded attempt", () => {
+  it("keeps the admitted context projection when recovery leaves history unchanged", async () => {
+    const contextEngine = createContextEngineBootstrapAndAssemble();
+    const result = await createContextEngineAttemptRunner({
+      contextEngine,
+      sessionKey: "agent:main:subagent:unchanged-recovery",
+      tempPaths,
+      sessionMessages: [{ role: "user", content: "pending intent", timestamp: 1 }],
+      attemptOverrides: { disableTools: false },
+      sessionPrompt: async () => {},
+    });
+    if (result.promptError) throw result.promptError;
+    expect(replay).toHaveBeenCalledTimes(1);
+    expect(contextEngine.assemble).toHaveBeenCalledTimes(1);
+  });
   it("runs a standalone helper transcript without requiring a Session owner row", async () => {
     const directory = await mkdtemp(join(tmpdir(), "standalone-main-helper-"));
     tempPaths.push(directory);

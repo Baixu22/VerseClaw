@@ -4,6 +4,14 @@ import { existsSync } from 'fs';
 import { describe, expect, it } from 'vitest';
 
 describe('vite Electron OpenClaw runtime aliases', () => {
+  it('keeps consolidated icon exports in the existing renderer chunk', async () => {
+    const { default: configure } = await import('../../vite.config');
+    const { consolidatedIconsModuleId } = await import('../../scripts/lib/consolidated-icons.mjs');
+    const config = typeof configure === 'function' ? await configure({ command: 'build', mode: 'production' }) : configure;
+    const output = config.build?.rollupOptions?.output;
+    if (!output || Array.isArray(output) || typeof output.manualChunks !== 'function') throw new Error('manual renderer chunks required');
+    expect(output.manualChunks(consolidatedIconsModuleId, {} as never)).toBe('lucide-icons');
+  });
   it('keeps local OpenClaw workspace packages bundled in Electron main', async () => {
     const viteConfig = await import('../../vite.config') as {
       isMainProcessExternal?: (id: string) => boolean;

@@ -14,6 +14,13 @@ touchedAreas:
   - openclaw_runtime/src/gateway/**
   - openclaw_runtime/src/plugins/doctor-contract-registry.ts
   - openclaw_runtime/src/plugins/native-module-require.ts
+  - openclaw_runtime/src/plugin-sdk/channel-entry-contract.ts
+  - openclaw_runtime/extensions/telegram/src/message-cache*.ts
+  - openclaw_runtime/extensions/telegram/src/thread-bindings*.ts
+  - openclaw_runtime/extensions/telegram/src/state-migrations.ts
+  - openclaw_runtime/extensions/matrix/doctor-contract-api.ts
+  - openclaw_runtime/extensions/reach-readers/src/index.ts
+  - openclaw_runtime/src/plugins/registry.ts
   - openclaw_runtime/scripts/profile-extension-memory.mjs
   - tests/unit/gateway-doctor-contract-loading.test.ts
   - scripts/measure-gateway-startup.mjs

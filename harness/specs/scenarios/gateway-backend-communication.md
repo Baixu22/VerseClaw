@@ -103,6 +103,11 @@ After a Gateway restart exceeds a task lease, the same Session generation and
 worktree may resume an idle task by advancing its existing owner epoch. Pending
 or unknown effects remain a reconciliation barrier, and stale credentials cannot
 start a tool under the new epoch.
+The first tool request carries its prepared task ID and epoch. Main checks that
+owner in the original task transaction before renewing it; a lost admission ACK
+replays that decision. A prepared model context adopts the renewed credential only
+after the original task table records admission for that exact run. Explicit
+handoffs and prior run identities remain fenced.
 
 ## Explicit coding diagnostics
 

@@ -56,7 +56,7 @@ export async function admitExecutionCheckout(input: {
       if (observed.inFlightProcesses !== 0) throw new Error('TASK_CHECKOUT_PROCESSES_PENDING');
       assertTask();
       let canonicalTransfer = false;
-      let retainedForDelegation = false;
+      let retainedForDelegation: boolean;
       const store = new TaskSystemStore(access.domain, undefined, access);
       try {
         const old = former.task;
@@ -84,7 +84,11 @@ export async function admitExecutionCheckout(input: {
           }
         }
       } finally { store.close(); }
-      const continuation = sameExecution && !previous.terminalReceipt && observed.inFlightEffects === 1
+      // Main retains the same run grant when an idle task lease advances once.
+      // Every other owner field and the single in-flight operation must match.
+      const continuedTask = former.task && owner.task && owner.task.epoch === former.task.epoch + 1
+        && JSON.stringify({ ...former, task: { ...former.task, epoch: owner.task.epoch } }) === JSON.stringify(owner);
+      const continuation = (sameExecution || continuedTask) && !previous.terminalReceipt && observed.inFlightEffects === 1
         && observed.inFlightOperationIds?.length === 1 && observed.inFlightOperationIds[0] === input.operationId;
       const terminal = Boolean(!retainedForDelegation && previous.terminalReceipt && observed.quiescent && observed.inFlightEffects === 0);
       if (!canonicalTransfer && !continuation && !terminal) throw new Error('checkout_writer_busy');

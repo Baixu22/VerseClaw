@@ -8,6 +8,8 @@ Windows 插件加载将 `file:` URL 转回原生路径后执行已编译 JavaScr
 
 连续重启可能跨过任务的120秒租约。同一会话代次和工作树在没有未决效果时，以递增 epoch 接续原任务并拒绝旧凭据；未决效果、显式暂停、代次变化和时钟回退保留原拒绝行为。
 
+工具首次准入携带准备时捕获的任务 ID 和 epoch，Main 在原任务事务中核对 owner。每个工具 operationId 形成独立准入，ACK 丢失可回读该次已提交决定。同一 run 自然续租时，会话准入 ID 与 executionRevision 保持稳定，工具集合采用已确认的新 Task credential；模型上下文通过原 task_active_runs 行核对该 run。显式交接、旧 run 和未知效果继续拒绝新副作用。
+
 完整 runtime 构建在 Windows 可用 `OPENCLAW_TSDOWN_SERIAL=1` 逐配置生成声明，减少并行编译的内存占用。Control UI 通过安装包的 exports 预解析 Lit decorator 入口，再交给 Rolldown 打包。
 
 当前开发已实现子代理恢复的持久化准入：同一边界复用运行身份，派发前提交决定和尝试次数，旧回调按会话代次与运行身份校验。并发领取会读取已有决定；旧进程退出后，owner 确认效果尚未发生才允许继续。统一决定层遇到已经应用的效果时返回 settle，不再消耗派发预算。

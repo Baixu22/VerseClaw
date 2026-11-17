@@ -149,6 +149,16 @@ describe("durable product task ownership", () => {
     expect(store.get(c.taskNodeId).claim?.epoch).toBe(c.epoch);
     expect(store.get(c.taskNodeId).pendingOperations).toBe(1);
   });
+  it("replays an owner-bound expired admission without checking its retired epoch again", () => {
+    const captured = setupOwner();
+    now += 120_001;
+    const input = { taskNodeId: captured.taskNodeId };
+    const resumed = store.start(input, captured.sessionKey, captured.generation, "owner-bound-resume", captured);
+    expect(resumed.claim?.epoch).toBe(captured.epoch + 1);
+    expect(store.start(input, captured.sessionKey, captured.generation, "owner-bound-resume", captured)).toEqual(resumed);
+    expect(() => store.start(input, captured.sessionKey, captured.generation, "different-run", captured)).toThrow("STALE_OWNER");
+    expect(() => store.beginOperation(captured, "old-effect", "exec")).toThrow("STALE_OWNER");
+  });
   it("keeps generation changes, explicit pauses and clock rollback outside automatic renewal", () => {
     const c = setupOwner();
     now += 120_001;

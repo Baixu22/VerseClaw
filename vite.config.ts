@@ -6,6 +6,7 @@ import renderer from 'vite-plugin-electron-renderer';
 import { resolve } from 'path';
 import { existsSync, readFileSync } from 'fs';
 import { RENDERER_CSP, RENDERER_DEV_CSP } from './shared/security/url-policy';
+import { consolidatedIconsModuleId, consolidatedIconsPlugin } from './scripts/lib/consolidated-icons.mjs';
 
 function getExtensionPackages(): Set<string> {
   try {
@@ -72,6 +73,7 @@ function packageNameFromModuleId(id: string): string | null {
 }
 
 function rendererManualChunks(id: string): string | undefined {
+  if (id === consolidatedIconsModuleId) return 'lucide-icons';
   const normalized = id.replace(/\\/g, '/');
   const packageName = packageNameFromModuleId(normalized);
 
@@ -157,6 +159,7 @@ export default defineConfig(({ command }) => ({
   // build remains correct even if plugin order ever changes.
   base: './',
   plugins: [
+    consolidatedIconsPlugin(),
     rendererCspPlugin(command),
     react(),
     electron([
