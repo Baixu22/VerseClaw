@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync, linkSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -182,6 +182,38 @@ describe('Project RAG exact owner-admitted relationships', () => {
     const data = result.details as { relationships: { status: string }; taskHint: { status: string; reason: string } };
     expect(data.relationships.status).toBe('complete');
     expect(data.taskHint).toMatchObject({ status: 'unavailable', reason: 'missing_task_binding' });
+  });
+  it('rejects a target changed during the last asynchronous owner check', async () => {
+    index(); let changed = false;
+    const result = await expand({ assertCurrent: async file => {
+      if (file === '' && !changed) {
+        await Promise.resolve(); changed = true;
+        writeFileSync(join(root, 'a/model.ts'), 'export function calculate() { return "LATE_TARGET"; }');
+      }
+    } });
+    expect(changed).toBe(true); expect(result.expansion.status).toBe('unavailable');
+    expect(result.expansion.edges).toEqual([]); expect(result.snippets).toEqual([]);
+    expect(result.expansion.rejected).toContainEqual({ filePath: 'a/model.ts', reason: 'stale_edge' });
+  });
+  it('rejects a hardlink introduced during the last owner check', async () => {
+    index(); let linked = false;
+    const result = await expand({ assertCurrent: file => {
+      if (file === '' && !linked) { linked = true; linkSync(join(root, 'a/model.ts'), join(root, 'late-link.ts')); }
+    } });
+    expect(linked).toBe(true); expect(result.expansion.status).toBe('unavailable');
+    expect(result.snippets).toEqual([]); expect(result.expansion.sources).toEqual([]);
+  });
+  it('rechecks code bytes after the final combined workspace check', async () => {
+    const service = index({ 'src/plain.ts': 'export function plain() { return "OLD_PLAIN"; }' });
+    let checks = 0, changed = false;
+    const options = { factService: service, sessionId: 'generation-a', get workspaceRoot() {
+      if (++checks === 9) { changed = true; writeFileSync(join(root, 'src/plain.ts'), 'export function plain() { return "LATE_PLAIN"; }'); }
+      return root;
+    } };
+    const tool = createContextUnderstandTool(options)!; checks = 0;
+    const result = await tool.execute('last-workspace-check', { query: 'src/plain.ts', intent: 'relationship' });
+    const data = result.details as { relationships: { status: string }; snippets: unknown[] };
+    expect(changed).toBe(true); expect(data.relationships.status).toBe('unavailable'); expect(data.snippets).toEqual([]);
   });
   it('rechecks task hints when the final code read fails and the task changes', async () => {
     const owner = bindTask(), service = index();

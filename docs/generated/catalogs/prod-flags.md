@@ -19,7 +19,7 @@ This file is generated — edit the source of truth instead.
 - risk: request-only
 - enable: Request relationship or research in the normal coding context tool; context_impact explicitly requests the same exact relationship discovery.
 - rollback: Use lookup; the existing context-view-tools rollback removes the tool family.
-- executor: wired — `openclaw_runtime/src/agents/tools/context-agent-tools.ts:401`
+- executor: wired — `openclaw_runtime/src/agents/tools/context-agent-tools.ts:404`
 
 > Current owner/version checks admit each endpoint; traversal defaults to one hop and is capped at two hops and 32 files.
 

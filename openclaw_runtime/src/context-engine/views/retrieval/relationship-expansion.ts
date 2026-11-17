@@ -2,11 +2,16 @@ import { execFileSync } from "node:child_process";
 import { realpathSync, statSync } from "node:fs";
 import path from "node:path";
 import ts from "typescript";
+import { assertNoSymlinkParentsSync } from "@openclaw/fs-safe/advanced";
 import type {
   RelationshipExpansionV1,
   RelationshipIntent,
 } from "../../../../../shared/knowledge/code-task-context.js";
-import { root as safeRoot } from "../../../infra/fs-safe.js";
+import {
+  readRegularFileSync,
+  root as safeRoot,
+  statRegularFileSync,
+} from "../../../infra/fs-safe.js";
 import {
   digestOwnerReadContent,
   type SourceRefV2,
@@ -43,6 +48,96 @@ function repositoryRevision(root: string): string {
   } catch {
     return "content-addressed";
   }
+}
+
+/** Recheck endpoint bytes after the last asynchronous owner check. */
+export function revalidateCodeRelationships(input: {
+  store: FactStore;
+  repoRoot: string;
+  expansion: RelationshipExpansionV1;
+}): boolean {
+  const { expansion } = input;
+  if (!expansion.sources.length) return true;
+  const rejected: RelationshipExpansionV1["rejected"] = [];
+  try {
+    const repoRoot = path.resolve(input.repoRoot);
+    const rootReal = realpathSync(repoRoot);
+    const identity = rootIdentity(repoRoot);
+    const namespaceId = `code:${digestOwnerReadContent(rootReal).slice(7)}`;
+    const policyEpoch = digestOwnerReadContent(JSON.stringify([identity, namespaceId]));
+    const revision = repositoryRevision(repoRoot);
+    const project = input.store.getProjectByRoot(repoRoot);
+    if (!project || revision !== expansion.repoRevision) throw new Error("code_owner_changed");
+    for (const source of expansion.sources) {
+      try {
+        const filePath = path.resolve(rootReal, source.subjectId);
+        if (
+          path.isAbsolute(source.subjectId) ||
+          source.subjectId.includes("\\") ||
+          !inside(rootReal, filePath)
+        )
+          throw new Error("outside_workspace");
+        if (
+          source.domain !== "code" ||
+          source.authorityId !== project.projectId ||
+          source.namespaceId !== namespaceId ||
+          source.policyEpoch !== policyEpoch
+        )
+          throw new Error("code_owner_changed");
+        const matchesRecord = (record: ReturnType<FactStore["getFileRecord"]>) =>
+          record?.status === "fresh" &&
+          record.file.projectId === project.projectId &&
+          record.file.contentHash === record.provenance.producedHash &&
+          source.sourceDigest === `sha256:${record.provenance.producedHash}` &&
+          source.revision === `${revision}:${record.generation}:${record.provenance.producedHash}`;
+        if (!matchesRecord(input.store.getFileRecord(repoRoot, source.subjectId)))
+          throw new Error("stale_edge");
+        const parents = {
+          rootDir: rootReal,
+          targetPath: path.dirname(filePath),
+          allowMissing: false,
+          requireDirectories: true,
+          allowRootChildSymlink: false,
+        };
+        assertNoSymlinkParentsSync(parents);
+        const before = statRegularFileSync(filePath);
+        if (before.missing || before.stat.nlink > 1) throw new Error("unsafe_code_file");
+        const bytes = readRegularFileSync({ filePath, maxBytes: MAX_FILE_BYTES });
+        assertNoSymlinkParentsSync(parents);
+        const after = statRegularFileSync(filePath);
+        if (
+          after.missing ||
+          bytes.stat.nlink > 1 ||
+          after.stat.nlink > 1 ||
+          after.stat.dev !== bytes.stat.dev ||
+          after.stat.ino !== bytes.stat.ino
+        )
+          throw new Error("unsafe_code_file");
+        if (
+          digestOwnerReadContent(bytes.buffer) !== source.sourceDigest ||
+          !matchesRecord(input.store.getFileRecord(repoRoot, source.subjectId))
+        )
+          throw new Error("stale_edge");
+      } catch (error) {
+        rejected.push({
+          filePath: source.subjectId,
+          reason: error instanceof Error ? error.message : "code_owner_denied",
+        });
+      }
+    }
+    if (rootIdentity(repoRoot) !== identity) throw new Error("workspace_changed");
+  } catch (error) {
+    rejected.push({
+      filePath: "",
+      reason: error instanceof Error ? error.message : "code_owner_unavailable",
+    });
+  }
+  if (!rejected.length) return true;
+  expansion.status = "unavailable";
+  expansion.sources = [];
+  expansion.edges = [];
+  expansion.rejected = [...rejected, ...expansion.rejected].slice(0, HARD_MAX_EDGES);
+  return false;
 }
 
 /** FactStore edges discover candidates; current filesystem and owner checks admit every endpoint. */
@@ -421,14 +516,13 @@ export async function expandCodeRelationships(input: {
         return result();
       }
     }
+    expansion.sources = [...visited].map((file) => files.get(file)!.source);
     await check("");
-    if (repositoryRevision(repoRoot) !== expansion.repoRevision)
-      throw new Error("repo_revision_changed");
+    if (!revalidateCodeRelationships({ store: input.store, repoRoot, expansion })) return result();
     const snippets: Array<ContextSnippet & { sourceRef: SourceRefV2 }> = [];
     let remaining = Math.min(24000, Math.max(0, Math.floor(input.budgetChars ?? 6000)));
     for (const file of visited) {
       const pinned = files.get(file)!;
-      expansion.sources.push(pinned.source);
       if (!remaining) {
         expansion.truncated = true;
         continue;

@@ -73,7 +73,10 @@ import {
 import { buildQueryContext } from "../../context-engine/views/retrieval/query-context.js";
 import { retrieveHybrid } from "../../context-engine/views/retrieval/hybrid-retriever.js";
 import { parseImpactTarget } from "../../context-engine/views/impact/impact-view.js";
-import { expandCodeRelationships } from "../../context-engine/views/retrieval/relationship-expansion.js";
+import {
+  expandCodeRelationships,
+  revalidateCodeRelationships,
+} from "../../context-engine/views/retrieval/relationship-expansion.js";
 import {
   readTaskContextHint,
   readTaskContextHintSnapshot,
@@ -506,6 +509,15 @@ async function relationshipToolResult(
     assertCurrent,
   });
   await assertCurrent("");
+  if (!revalidateCodeRelationships({ store: service.store, repoRoot: service.repoRoot, expansion }))
+    snippets.length = 0;
+  if (taskHint.status === "available")
+    taskHint = readTaskContextHintSnapshot({
+      workspaceRoot: ownerRoot,
+      sessionKey,
+      generation: initial?.sessionId || options.sessionId,
+      sourceRef: taskHint.sourceRef,
+    });
   if (seedReason) expansion.rejected.push({ filePath: "", reason: seedReason });
   codingObservability.recordFactStoreHit(snippets.length > 0);
   return {

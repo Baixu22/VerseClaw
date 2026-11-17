@@ -27,7 +27,7 @@ Task Ledger 的独立只读入口为 `hostApi.taskLedger.contextHint({ workspace
 - 未解析的包、路径别名或符号产生 `unresolved_module`／`unresolved_symbol` 缺口，返回已准入的关系。
 - 默认一跳，最多两跳；最多 32 个文件落点、128 条返回边，每轮边候选扫描有上限。每份源码最多读取 512 KiB。
 - 边的两端携带独立 `SourceRef/v2`，包含 project owner、namespace、实际文件路径、repository/file revision、源码 digest 与 policy epoch。调用边另带实际符号 ID、名称、源码行和深度。
-- 读取拒绝符号链接和多链接文件。源与目标文件都经过 owner 复验、当前字节/hash 比较，并在返回前再次检查；本轮拒绝的落点保持拒绝。
+- 读取拒绝符号链接和多链接文件。源与目标文件都经过 owner 复验、当前字节/hash 比较；末次异步校验后同步复读落点字节与 pin，拒绝期间新增的链接或内容变化。本轮拒绝的落点保持拒绝。
 - 代码片段从已复验的当前源码截取，优先包含调用目标的实际符号正文。片段保留 UTF-8 byte/line locator，并受字符预算控制；它们沿既有代码工具结果进入 DCS。
 
 `complete` 表示所选有界关系查询完成；`partial` 带已准入关系及拒绝／截断记录；`unavailable` 表示身份、来源或 seed 不能形成有效结果；普通 `lookup` 的关系扩展为 `disabled`。
