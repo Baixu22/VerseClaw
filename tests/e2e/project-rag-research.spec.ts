@@ -96,11 +96,16 @@ test('Project RAG discovers exact code relationships and reads the current task 
     steps.crossWorkspaceDenied = true;
     await page.reload();
     await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60000 });
+    await page.evaluate(() => { window.location.hash = '#/settings/models'; });
+    const providerCard = page.getByTestId(`provider-card-${account.id}`);
+    await expect(providerCard).toBeVisible({ timeout: 30000 });
+    await expect(providerCard.getByText('Configured', { exact: true })).toBeVisible({ timeout: 30000 });
+    receipt.providerUiReady = true;
     await page.evaluate(() => { window.location.hash = '#/'; });
     const composer = page.getByTestId('chat-composer-input'); await expect(composer).toBeVisible({ timeout: 30000 });
     await composer.fill('RAG15 inspect code relationships'); await page.getByTestId('chat-composer-send').click();
-    await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
     await expect(page.getByText('RAG15 exact relationships ready', { exact: true })).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
     const toolResult = (id: string) => {
       const value = llm.log.toReversed().find(entry => entry.toolResults[id])?.toolResults[id];
       expect(value, `Missing real tool result: ${id}`).toBeTruthy(); return JSON.parse(value!) as { relationships: RelationshipExpansionV1; taskHint: TaskContextHintV1; snippets: unknown[] };
@@ -114,6 +119,7 @@ test('Project RAG discovers exact code relationships and reads the current task 
     expect(JSON.stringify(graph)).not.toContain('RAG15_THIRD_HOP'); receipt.oneHop = graph; steps.normalChatExactGraph = true;
     await page.screenshot({ path: testInfo.outputPath('code-relationships-chat.png'), fullPage: true });
     await composer.fill('RAG15 two hops'); await page.getByTestId('chat-composer-send').click();
+    await expect(page.getByText('RAG15 two-hop relationship result recorded', { exact: true })).toBeVisible({ timeout: 120000 });
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
     const two = toolResult('rag15two');
     expect(two.relationships.sources.map(source => source.subjectId)).toContain('a/next.ts');
@@ -125,6 +131,7 @@ test('Project RAG discovers exact code relationships and reads the current task 
     steps.taskAbsentFromCodeChunks = true;
     await writeFile(join(workspace, 'src/entry.ts'), 'export function run() { return "RAG15_REPLACED_ENTRY"; }\n');
     await composer.fill('RAG15 stale'); await page.getByTestId('chat-composer-send').click();
+    await expect(page.getByText('RAG15 stale relationship result recorded', { exact: true })).toBeVisible({ timeout: 120000 });
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
     const stale = toolResult('rag15stale');
     expect(stale.relationships.status).toBe('unavailable'); expect(stale.relationships.edges).toEqual([]); expect(stale.snippets).toEqual([]);
