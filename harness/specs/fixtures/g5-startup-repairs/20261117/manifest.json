@@ -1,0 +1,16 @@
+{
+  "schema": "G5RepairEvidenceManifest/v1",
+  "driven_by": "agent",
+  "actor": "g5-relay-20261117",
+  "realHumanEvidence": false,
+  "files": [
+    {
+      "path": "REPORT.md",
+      "sha256": "2df0edbcf592d03702ef1e259f5cba21c8c0b5aaffb7b5b1faef4e5df3ccea4e"
+    },
+    {
+      "path": "report.json",
+      "sha256": "9144d16d208886967f6711401c6c590a1705be7fad3ef8219f1c474578f6c446"
+    }
+  ]
+}
