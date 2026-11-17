@@ -247,6 +247,22 @@ describe('Project RAG exact owner-admitted relationships', () => {
       activeFiles: ['b/model.ts'], sessionId: 'generation-a' })!.execute('exact', { query: 'src/entry.ts', intent: 'relationship' });
     expect(JSON.stringify(result)).toContain('RIGHT_MODEL'); expect(JSON.stringify(result)).not.toContain('WRONG_MODEL');
   });
+  it.each(['src/run.ts', 'inspect `src/run.ts`'])('keeps a missing explicit path as a gap: %s', async query => {
+    const service = index();
+    const result = await createContextUnderstandTool({ factService: service, workspaceRoot: root, sessionId: 'generation-a' })!
+      .execute('missing-explicit-path', { query, intent: 'relationship' });
+    const data = result.details as { relationships: { status: string; sources: unknown[]; rejected: Array<{ filePath: string; reason: string }> }; snippets: unknown[] };
+    expect(data.relationships.status).toBe('unavailable'); expect(data.snippets).toEqual([]); expect(data.relationships.sources).toEqual([]);
+    expect(data.relationships.rejected).toContainEqual({ filePath: 'src/run.ts', reason: 'missing_code_facts' });
+  });
+  it('does not substitute active files or impact symbols for a missing explicit path', async () => {
+    const service = index(), options = { factService: service, workspaceRoot: root, sessionId: 'generation-a', activeFiles: ['src/entry.ts'] };
+    const result = await createContextUnderstandTool(options)!.execute('missing-active-path',
+      { query: './src/run.ts', intent: 'relationship', activeFiles: ['src/entry.ts'] });
+    expect(result.details).toMatchObject({ relationships: { status: 'unavailable', sources: [] }, snippets: [] });
+    const impact = await createContextImpactTool(options)!.execute('missing-impact-path', { target: 'src/run.ts:run' });
+    expect(impact.details).toMatchObject({ relationships: { status: 'unavailable', sources: [] }, matchedSymbols: [], callers: [], callees: [] });
+  });
   it('reads the live session owner and rejects rotation or removal of its generation', async () => {
     const service = index(), sessionKey = 'agent:main:rag15', storePath = join(root, 'sessions.json');
     const cfg: OpenClawConfig = { agents: { defaults: { workspace: root } }, session: { store: storePath } };

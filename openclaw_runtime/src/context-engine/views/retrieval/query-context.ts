@@ -1,15 +1,14 @@
 // Adapted from ragcode-context-engine (MIT), https://github.com/MarshallEriksen-Neura/ragcode
-// Source: src/retrieval/query-context.ts (verbatim).
-import { categoriesFromLexiconMatches, matchDomainLexicon, type DomainLexiconCategory } from "./domain-lexicon.js";
+// Source: src/retrieval/query-context.ts.
+import {
+  categoriesFromLexiconMatches,
+  matchDomainLexicon,
+  type DomainLexiconCategory,
+} from "./domain-lexicon.js";
 
 export type DetectedQueryLanguage = "en" | "zh" | "mixed";
 
-export type QueryTermSource =
-  | "raw"
-  | "identifier"
-  | "path"
-  | "segmenter"
-  | "lexicon";
+export type QueryTermSource = "raw" | "identifier" | "path" | "segmenter" | "lexicon";
 
 export interface WeightedQueryTerm {
   term: string;
@@ -29,10 +28,29 @@ export interface QueryContext {
 
 const CJK_RE = /[\u3400-\u9fff]/;
 const CJK_SLICE_RE = /[\u3400-\u9fff]+/g;
-const CODE_TOKEN_RE = /`([^`]+)`|"([^"]+)"|'([^']+)'|(?:\.?\/)?[\w.-]+\/[\w./-]+\.[A-Za-z0-9]+|\b[A-Z][A-Z0-9_]{2,}\b|\b[A-Za-z_$][A-Za-z0-9_$]*(?:[A-Z][A-Za-z0-9_$]*)+\b/g;
-const CJK_STOPWORDS = new Set(["的", "了", "在", "是", "和", "或", "与", "哪个", "哪里", "什么", "怎么", "如何", "请", "给"]);
+const CODE_TOKEN_RE =
+  /`([^`]+)`|"([^"]+)"|'([^']+)'|(?:\.?\/)?[\w.-]+\/[\w./-]+\.[A-Za-z0-9]+|\b[A-Z][A-Z0-9_]{2,}\b|\b[A-Za-z_$][A-Za-z0-9_$]*(?:[A-Z][A-Za-z0-9_$]*)+\b/g;
+const CJK_STOPWORDS = new Set([
+  "的",
+  "了",
+  "在",
+  "是",
+  "和",
+  "或",
+  "与",
+  "哪个",
+  "哪里",
+  "什么",
+  "怎么",
+  "如何",
+  "请",
+  "给",
+]);
 
-type SegmenterConstructor = new (locale?: string | string[], options?: { granularity?: "grapheme" | "word" | "sentence" }) => {
+type SegmenterConstructor = new (
+  locale?: string | string[],
+  options?: { granularity?: "grapheme" | "word" | "sentence" },
+) => {
   segment(input: string): Iterable<{ segment: string; isWordLike?: boolean }>;
 };
 
@@ -72,7 +90,12 @@ export function buildQueryContext(query: string): QueryContext {
 
   const lexiconMatches = matchDomainLexicon(normalizedQuery);
   for (const match of lexiconMatches) {
-    terms.push({ term: match.term, weight: match.weight, source: "lexicon", category: match.category });
+    terms.push({
+      term: match.term,
+      weight: match.weight,
+      source: "lexicon",
+      category: match.category,
+    });
   }
 
   return {
@@ -81,7 +104,7 @@ export function buildQueryContext(query: string): QueryContext {
     detectedLanguage,
     codeTokens,
     lexicalTerms: mergeWeightedTerms(terms),
-    termCategories: categoriesFromLexiconMatches(lexiconMatches)
+    termCategories: categoriesFromLexiconMatches(lexiconMatches),
   };
 }
 
@@ -120,7 +143,8 @@ function cjkSlices(query: string): string[] {
 }
 
 function segmentCjkSlice(slice: string): string[] {
-  const segmenterConstructor = (Intl as typeof Intl & { Segmenter?: SegmenterConstructor }).Segmenter;
+  const segmenterConstructor = (Intl as typeof Intl & { Segmenter?: SegmenterConstructor })
+    .Segmenter;
   if (segmenterConstructor) {
     const segmenter = new segmenterConstructor("zh", { granularity: "word" });
     const segments: string[] = [];
@@ -158,7 +182,9 @@ function mergeWeightedTerms(terms: WeightedQueryTerm[]): WeightedQueryTerm[] {
       byTerm.set(normalized, { ...current, category: term.category });
     }
   }
-  return [...byTerm.values()].sort((a, b) => sourceOrder(a.source) - sourceOrder(b.source) || a.term.localeCompare(b.term));
+  return [...byTerm.values()].sort(
+    (a, b) => sourceOrder(a.source) - sourceOrder(b.source) || a.term.localeCompare(b.term),
+  );
 }
 
 function termWeightRank(term: WeightedQueryTerm): number {
@@ -180,7 +206,7 @@ function sourceOrder(source: QueryTermSource): number {
   }
 }
 
-function isPathLikeToken(value: string): boolean {
+export function isPathLikeToken(value: string): boolean {
   return /[\\/]/.test(value) || /\.[a-z0-9]+$/i.test(value);
 }
 

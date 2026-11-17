@@ -18,6 +18,8 @@
 
 `intent` 可选 `lookup`、`relationship` 或 `research`；默认 `lookup`。关系与研究请求复用同一有界扩展；`context_impact` 根据精确文件或 `path:symbol` 返回匹配符号和调用关系。符号在多个文件中重名时，需要提供实际路径。
 
+显式路径优先于活动文件和符号检索。路径未索引时返回 `missing_code_facts` 缺口，保持该路径，不改选其他文件中的同名符号；相对路径的 `./` 与分隔符会先规范化。
+
 Task Ledger 的独立只读入口为 `hostApi.taskLedger.contextHint({ workspaceId, sessionKey })`。Main 从当前工作区、会话 generation 和协调器绑定派生身份。调用者可带上上次返回的 `sourceRef`，把再次读取限定在同一任务版本。
 
 ## 关系解析与准入

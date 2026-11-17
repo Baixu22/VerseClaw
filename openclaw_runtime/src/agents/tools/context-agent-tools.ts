@@ -70,7 +70,10 @@ import {
   buildContextPack,
   DEFAULT_PACK_BUDGET_CHARS,
 } from "../../context-engine/views/pack/context-pack-view.js";
-import { buildQueryContext } from "../../context-engine/views/retrieval/query-context.js";
+import {
+  buildQueryContext,
+  isPathLikeToken,
+} from "../../context-engine/views/retrieval/query-context.js";
 import { retrieveHybrid } from "../../context-engine/views/retrieval/hybrid-retriever.js";
 import { parseImpactTarget } from "../../context-engine/views/impact/impact-view.js";
 import {
@@ -464,7 +467,18 @@ async function relationshipToolResult(
     ? params.activeFiles.filter((file): file is string => typeof file === "string")
     : [];
   const context = buildQueryContext(query);
-  let seeds = [...new Set(active)];
+  const queryFile = (token: string) =>
+    path.posix.normalize(token.replace(/[:#][^/\\:#]+$/, "").replaceAll("\\", "/"));
+  const wholeFile = queryFile(query.trim());
+  const tokenPaths = context.codeTokens.filter(isPathLikeToken).map(queryFile);
+  const explicitPaths = service.store.getFileRecord(service.repoRoot, wholeFile)
+    ? [wholeFile]
+    : tokenPaths.length
+      ? tokenPaths
+      : !/\s/.test(query.trim()) && isPathLikeToken(wholeFile)
+        ? [wholeFile]
+        : [];
+  let seeds = [...new Set(explicitPaths.length ? explicitPaths : active)];
   let seedReason: string | undefined;
   if (!seeds.length) {
     for (const token of [query.trim(), ...context.codeTokens]) {
