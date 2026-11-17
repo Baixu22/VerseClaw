@@ -3,6 +3,24 @@ import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+describe('source runtime startup parity', () => {
+  it('initializes session methods through the same startup path in ordinary and E2E windows', async () => {
+    const { buildSourceRuntimeIsolationEnv } = await import('@electron/gateway/config-sync');
+    const scope = { stateDir: '/source/state', homeDir: '/source/home', configPath: '/source/config.json' };
+    try {
+      vi.stubEnv('VERSE_CLAW_E2E', '0');
+      const ordinary = buildSourceRuntimeIsolationEnv(scope);
+      vi.stubEnv('VERSE_CLAW_E2E', '1');
+      const e2e = buildSourceRuntimeIsolationEnv(scope);
+      expect(ordinary).toEqual(e2e);
+      expect(ordinary.OPENCLAW_DEFER_STARTUP_SIDECARS).toBeUndefined();
+      expect(ordinary.OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS).toBeUndefined();
+      expect(ordinary).toMatchObject({ OPENCLAW_STATE_DIR: scope.stateDir, OPENCLAW_HOME: scope.homeDir,
+        OPENCLAW_CONFIG_PATH: scope.configPath, OPENCLAW_SKIP_LEGACY_STATE_MIGRATION: '1', OPENCLAW_NO_AUTO_UPDATE: '1' });
+    } finally { vi.unstubAllEnvs(); }
+  });
+});
+
 describe('TF-0772 source runtime MCP config', () => {
   it('writes the live source MCP namespace atomically and preserves other configuration', async () => {
     const { syncSourceRuntimeMcpConfig } = await import('@electron/utils/channel-config');

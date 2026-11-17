@@ -161,6 +161,8 @@ pnpm dev
 
 Queued configuration reloads already included in a successful Gateway launch are consumed at startup. Later changes and explicit restart requests run after the current startup or restart finishes. An explicit stop cancels pending restart work, including cooldown waits and startup recovery.
 
+Source launches initialize session services through the normal runtime startup path in both ordinary and test windows.
+
 Built Gateway startup tries native loading for resolved JavaScript doctor contracts before preparing SDK aliases. Mounted source overlays and external plugins keep their own contracts, and migration checks still run. After `pnpm run build:runtime`, use `node scripts/measure-gateway-startup.mjs` for an isolated, loopback-only comparison with fresh caches; every accepted sample must exercise the loader and complete an authenticated RPC.
 
 First session:

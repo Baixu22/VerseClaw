@@ -31,3 +31,7 @@ completion timestamps do not establish which configuration a process loaded.
 An explicit stop supersedes pending restart work at each asynchronous boundary.
 A superseded restart must not start a new process, re-enable reconnect, or record
 a successful restart after the stop.
+
+Source-runtime isolation must initialize startup-gated session methods through
+the same runtime startup path in ordinary and E2E windows. It must not inject a
+delay that makes a connected source Gateway unusable for session operations.
