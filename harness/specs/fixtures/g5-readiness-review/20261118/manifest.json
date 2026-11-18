@@ -1,0 +1,13 @@
+{
+  "schema": "G5ReadinessReviewManifest/v1",
+  "driven_by": "agent",
+  "actor": "codex/g5-readiness-relay",
+  "realHumanEvidence": false,
+  "hashScope": "Git blob bytes with LF line endings",
+  "files": [
+    {
+      "path": "report.json",
+      "sha256": "a7fa5c4251a10d495415ae801376c37e7af11f6b102c1c9b25d2c06870aef786"
+    }
+  ]
+}
