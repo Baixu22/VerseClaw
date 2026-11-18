@@ -1,0 +1,141 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-project-worker",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6",
+  "dispatch": {
+    "workspaceId": "worker-canary",
+    "sessionKey": "agent:main:session-1795018047408-workercanary",
+    "expectedSessionGeneration": "cded28fd-d6d2-41ad-8432-8e35edb5a6b2",
+    "planId": "98896fbd-cfbd-4584-ab9e-42c547016c94",
+    "expectedRevision": 1,
+    "expectedChildId": "e102ce1e-5d18-492d-8152-b87d6bd10521"
+  },
+  "noBudget": {
+    "success": false,
+    "status": "rejected",
+    "error": "TASK_PROJECT_BUDGET_UNAVAILABLE"
+  },
+  "admission": {
+    "success": true,
+    "status": "accepted",
+    "receipt": {
+      "schemaVersion": "clawx.session-delegation-receipt/v1",
+      "admissionId": "f1b5a77e-33b5-4647-b735-154488a38eaf",
+      "idempotencyKey": "project-dispatch:5a12134be5acc00d6f3f1a69f14de6e73b15416fa3cff738c4e97c991d239ff5",
+      "status": "accepted",
+      "orchestrationRunId": "orch_5ba04eca-752d-4eef-9bd7-0382b8053219",
+      "acceptedAt": "2026-11-18T16:08:30.535Z",
+      "coordinator": {
+        "workspaceId": "worker-canary",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1795018047408-workercanary",
+        "bindingRevision": 1,
+        "sessionGeneration": "cded28fd-d6d2-41ad-8432-8e35edb5a6b2"
+      },
+      "taskRef": "e102ce1e-5d18-492d-8152-b87d6bd10521",
+      "parentEnvironment": {
+        "kind": "local",
+        "canonicalRoot": "D:\\tmp\\p3-relay-1ef52\\fixed-e2e\\project-agent-loop-dispatc-61c13-and-reads-its-worker-effect\\project",
+        "backend": "git",
+        "branch": "main",
+        "detachedHead": false,
+        "setupProfile": null
+      },
+      "parentEnvironmentRevision": 1,
+      "authorization": {
+        "approvalId": null,
+        "grantState": "authorized",
+        "owner": "gateway-permission"
+      },
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 1,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "scheduler": {
+        "executionWaves": [
+          {
+            "wave": 1,
+            "taskNodeIds": [
+              "implementer-1"
+            ],
+            "roles": [
+              "implementer"
+            ],
+            "reason": "scheduled 1 ready node(s) within concurrency cap 1"
+          }
+        ],
+        "metrics": {
+          "queued": 0,
+          "running": 0,
+          "scheduled": 1,
+          "skipped": 0,
+          "concurrencyCap": 1,
+          "budgetEstimate": 2
+        }
+      },
+      "children": [
+        {
+          "roleName": "implementer",
+          "taskNodeId": "implementer-1",
+          "roleInstanceId": "orch_5ba04eca-752d-4eef-9bd7-0382b8053219:implementer-1:implementer:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:main:subagent:e07a7967-f37c-4157-b268-9ffdff8b2388",
+          "childRunId": "f578e0f7-a188-4a52-b8ed-1a20015eed80",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "implementer",
+            "effectiveRoleName": "implementer",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "write",
+              "edit",
+              "bash"
+            ],
+            "denylist": [
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ],
+            "permissionDecisionCount": 6
+          },
+          "isolation": {
+            "mode": "shared",
+            "backend": "shared-inprocess",
+            "canonicalRoot": "D:\\tmp\\p3-relay-1ef52\\fixed-e2e\\project-agent-loop-dispatc-61c13-and-reads-its-worker-effect\\project",
+            "branch": null,
+            "detachedHead": false,
+            "verifiedCheckout": false
+          },
+          "schedulerWave": 1,
+          "error": null
+        }
+      ],
+      "errors": [],
+      "completionObserved": false,
+      "recoveryRequired": false,
+      "replayed": true
+    },
+    "replayed": true
+  }
+}

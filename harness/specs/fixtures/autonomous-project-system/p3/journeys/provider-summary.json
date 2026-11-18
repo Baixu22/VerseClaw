@@ -1,0 +1,58 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-project-continuation",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6",
+  "requests": [
+    {
+      "model": "mock-coder",
+      "issued": "http:429",
+      "turnSha256": "bd258f8160180d31e5ce20f071b890f5b392d9eb7fc431fe4e073b0d8a315ac4",
+      "toolResultIds": []
+    },
+    {
+      "model": "mock-coder",
+      "issued": "http:429",
+      "turnSha256": "bd258f8160180d31e5ce20f071b890f5b392d9eb7fc431fe4e073b0d8a315ac4",
+      "toolResultIds": []
+    },
+    {
+      "model": "mock-coder",
+      "issued": "http:429",
+      "turnSha256": "bd258f8160180d31e5ce20f071b890f5b392d9eb7fc431fe4e073b0d8a315ac4",
+      "toolResultIds": []
+    },
+    {
+      "model": "mock-backup",
+      "issued": "workerwrite",
+      "turnSha256": "bd258f8160180d31e5ce20f071b890f5b392d9eb7fc431fe4e073b0d8a315ac4",
+      "toolResultIds": []
+    },
+    {
+      "model": "mock-backup",
+      "issued": "text:Worker turn finished.",
+      "turnSha256": "bd258f8160180d31e5ce20f071b890f5b392d9eb7fc431fe4e073b0d8a315ac4",
+      "toolResultIds": [
+        "workerwrite"
+      ]
+    },
+    {
+      "model": "mock-coder",
+      "issued": "continuationwrite",
+      "turnSha256": "5ad772a371f95ce6c71c760c626420e778c8609744632efa5c86406e0ce7918d",
+      "toolResultIds": []
+    },
+    {
+      "model": "mock-coder",
+      "issued": "text:Coordinator continuation finished.",
+      "turnSha256": "5ad772a371f95ce6c71c760c626420e778c8609744632efa5c86406e0ce7918d",
+      "toolResultIds": [
+        "continuationwrite"
+      ]
+    }
+  ],
+  "anomalies": [],
+  "rawArtifact": {
+    "path": "D:\\tmp\\p3-relay-1ef52\\fixed-e2e\\project-agent-loop-dispatc-61c13-and-reads-its-worker-effect\\provider-log.json",
+    "sha256": "8b8cb4304531cda7fd83bdc3187aaf8a2258246b05e4241b43dff831f8657928"
+  }
+}
