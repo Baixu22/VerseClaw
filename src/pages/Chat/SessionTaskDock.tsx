@@ -33,6 +33,8 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { toastUserError } from '@/lib/user-error';
+import { nextReadyPlanChild } from '@shared/task-system/types';
 import { useDismissOnOutside, usePopover } from "@/components/settings/primitives/usePopover";
 import { ToolUiPlanItemIcon, type ToolUiPlanTodoStatus } from "@/components/tool-ui/plan-view";
 import { useOverlayPortalContainer } from "@/components/ui/overlay-portal";
@@ -241,6 +243,21 @@ export function SessionTaskDock({
     hasConversation || projectEntry,
   );
   const projectPlan = projectEntry ? snapshot?.projectPlan : undefined;
+  const [dispatching, setDispatching] = useState(false);
+  const activeChild = projectPlan?.children.find(child => !['ready', 'done', 'cancelled'].includes(child.contract.state));
+  const nextChild = activeChild ? (activeChild.contract.state === 'doing' && activeChild.claim?.sessionKey === sessionKey ? activeChild : undefined)
+    : projectPlan && nextReadyPlanChild(projectPlan.children);
+  const dispatch = projectPlan && workspaceId && nextChild && !stale && !runActive && !dispatching ? async () => {
+      setDispatching(true);
+      try {
+        const result = await hostApi.sessions.dispatchPlanTask({ workspaceId, sessionKey,
+          expectedSessionGeneration:projectPlan.revisions[0].generation, planId:projectPlan.task.contract.taskNodeId,
+          expectedRevision:projectPlan.task.contract.revision, expectedChildId:nextChild.contract.taskNodeId });
+        if (!result.success) throw new Error(result.error ?? result.status);
+        toast.success(t('conversation.dispatchAccepted'));
+      } catch (error) { toastUserError(error); }
+      finally { setDispatching(false); retry(); }
+    } : undefined;
   const task = projectPlan?.task ?? snapshot?.task ?? null;
   const planTodos = plan?.todos ?? [];
   const planSettled = planTodos.length > 0 && planTodos.every((todo) => isSettled(todo.status));
@@ -255,6 +272,7 @@ export function SessionTaskDock({
       locale={i18n.language}
       childrenTasks={projectPlan?.children ?? snapshot?.children ?? []}
       projectPlan={projectPlan}
+      dispatch={dispatch}
     />
   );
 }
@@ -417,6 +435,7 @@ function TaskMenu({ t, items }: { t: Translate; items: MenuItem[] }) {
 }
 
 function TaskDockBody({
+  dispatch,
   scope,
   taskId,
   task,
@@ -430,6 +449,7 @@ function TaskDockBody({
   locale,
   t,
 }: {
+  dispatch?: () => Promise<void>;
   scope: string;
   taskId: string;
   task: TaskView | null;
@@ -497,6 +517,8 @@ function TaskDockBody({
   const updated = task ? formatRelativeTime(task.contract.updatedAt, locale) : "";
   const openTask = durableId && onOpenTask ? () => onOpenTask(durableId) : undefined;
   const menuItems: MenuItem[] = [
+    ...(dispatch ? [{key:'dispatch', testId:'project-plan-dispatch', label:t('conversation.dispatchNext'),
+      icon:<ListChecks className="h-3.5 w-3.5" />, run:() => void dispatch()}] : []),
     ...(durableId
       ? [
           {

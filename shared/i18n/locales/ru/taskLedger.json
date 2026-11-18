@@ -189,6 +189,8 @@
     "plan": "План",
     "current": "Сейчас",
     "next": "Далее",
+    "dispatchNext": "Передать следующую задачу плана",
+    "dispatchAccepted": "Исполнитель принял задачу",
     "planRevision": "Версия плана {{revision}}",
     "planAssumption": "Предположение",
     "planDecision": "Ожидает решения",

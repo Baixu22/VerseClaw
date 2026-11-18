@@ -3349,6 +3349,15 @@ export type WorkspaceSessionTaskSelectPayload = {
   expectedSessionGeneration?: string;
   expectedRevision?: number;
 };
+export type ProjectPlanDispatchPayload = {
+  workspaceId: string;
+  sessionKey: string;
+  expectedSessionGeneration: string;
+  planId: string;
+  expectedRevision: number;
+  expectedChildId: string;
+  approvalId?: string;
+};
 export type SessionCreateHandoffResult = HostSuccess & {
   operation?: SessionHandoffOperation;
   sessionKey?: string;
@@ -6196,6 +6205,7 @@ export type HostApiContract = {
   };
   sessions: {
     delegate: (payload: SessionDelegationPayload) => SessionDelegationResult;
+    dispatchPlanTask: (payload: ProjectPlanDispatchPayload) => SessionDelegationResult;
     delete: (payload: SessionDeletePayload) => SessionDeleteResult;
     rename: (payload: SessionRenamePayload) => HostSuccess;
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;

@@ -41,6 +41,7 @@ import type {
   SessionContextFoldingStatusResult,
   SessionDeleteResult,
   SessionDelegationPayload,
+  ProjectPlanDispatchPayload,
   SessionDelegationResult,
   SessionExpandSelectorResult,
   SessionHandoffSource,
@@ -48,7 +49,10 @@ import type {
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
-import { assertManagedTaskAdmission, persistentTaskChatContext } from './task-system-service';
+import { assertManagedTaskAdmission, openTaskSystem, persistentTaskChatContext } from './task-system-service';
+import { projectCoordinatorProfile, projectCoordinatorScope } from '../../shared/task-system/project-coordinator';
+import { routeRole } from '../../openclaw_runtime/src/agents/role-router';
+import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
 import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
   getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
@@ -1998,6 +2002,7 @@ export function createSessionsApi(ctx: {
   terminalManager?: TerminalSessionManager;
   coordinatorLifecycle?: (event: WorkspaceCoordinatorLifecycleEvent) => Promise<void>;
   resolveCoordinator?: CompleteHostServiceRegistry['workspaces']['resolveCoordinator'];
+  selectSessionTask?: CompleteHostServiceRegistry['workspaces']['selectSessionTask'];
   gatewayRpcForDelegation?: CompleteHostServiceRegistry['gateway']['rpc'];
   getActiveWorkspaceId?: () => Promise<string | null>;
   resolveTaskScope?: SessionDelegationDependencies['resolveTaskScope'];
@@ -2097,61 +2102,119 @@ export function createSessionsApi(ctx: {
     }
     return gate;
   };
-  return {
-    delegate: async (payload: SessionDelegationPayload): Promise<SessionDelegationResult> => {
-      const validated = validateSessionDelegationPayload(payload);
-      if (!validated.ok) return { success: false, status: 'rejected', error: validated.error };
-      if (!ctx.gatewayManager || !ctx.resolveCoordinator || !ctx.gatewayRpcForDelegation) {
+  const delegate = async (payload: SessionDelegationPayload): Promise<SessionDelegationResult> => {
+    const validated = validateSessionDelegationPayload(payload);
+    if (!validated.ok) return { success: false, status: 'rejected', error: validated.error };
+    if (!ctx.gatewayManager || !ctx.resolveCoordinator || !ctx.gatewayRpcForDelegation) {
+      return {
+        success: false,
+        status: 'rejected',
+        error: 'Delegation requires the active Gateway, Workspace owner, and permission owner',
+      };
+    }
+    const flightKey = `${validated.payload.idempotencyKey}:${hashDelegationRequest(validated.payload)}`;
+    const existingFlight = delegationFlights.get(flightKey);
+    if (existingFlight) return existingFlight;
+    const flight = executeSessionDelegation(validated.payload, {
+      readAdmission: delegationStore.readAdmission,
+      claimAdmission: delegationStore.claimAdmission,
+      commitAdmission: delegationStore.commitAdmission,
+      resolveCoordinator: ctx.resolveCoordinator,
+      getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getActiveWorkspaceProfile())?.id ?? null),
+      resolveTaskScope: ctx.resolveTaskScope ?? (async (input) => {
+        const snapshot = await loadTaskLedgerSnapshot(input.workspaceId);
+        const task = snapshot.nodes.find((node) => node.id === input.taskRef);
         return {
-          success: false,
-          status: 'rejected',
-          error: 'Delegation requires the active Gateway, Workspace owner, and permission owner',
-        };
-      }
-      const flightKey = `${validated.payload.idempotencyKey}:${hashDelegationRequest(validated.payload)}`;
-      const existingFlight = delegationFlights.get(flightKey);
-      if (existingFlight) return existingFlight;
-      const flight = executeSessionDelegation(validated.payload, {
-        readAdmission: delegationStore.readAdmission,
-        claimAdmission: delegationStore.claimAdmission,
-        commitAdmission: delegationStore.commitAdmission,
-        resolveCoordinator: ctx.resolveCoordinator,
-        getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getActiveWorkspaceProfile())?.id ?? null),
-        resolveTaskScope: ctx.resolveTaskScope ?? (async (input) => {
-          const snapshot = await loadTaskLedgerSnapshot(input.workspaceId);
-          const task = snapshot.nodes.find((node) => node.id === input.taskRef);
-          return {
-            sessionKey: input.sessionKey,
+          sessionKey: input.sessionKey,
+          workspaceId: input.workspaceId,
+          generation: input.sessionGeneration,
+          activeTaskNodeId: input.taskRef,
+          coordinatorSessionKey: input.sessionKey,
+          bindingRevision: input.bindingRevision,
+          bindingState: input.bindingState,
+          links: snapshot.sessionLinks,
+          task: task ? {
+            nodeId: task.id,
             workspaceId: input.workspaceId,
+            nodeKind: task.kind,
+            status: task.status,
             generation: input.sessionGeneration,
-            activeTaskNodeId: input.taskRef,
-            coordinatorSessionKey: input.sessionKey,
-            bindingRevision: input.bindingRevision,
-            bindingState: input.bindingState,
-            links: snapshot.sessionLinks,
-            task: task ? {
-              nodeId: task.id,
-              workspaceId: input.workspaceId,
-              nodeKind: task.kind,
-              status: task.status,
-              generation: input.sessionGeneration,
-            } : null,
-          };
-        }),
-        gatewayRpc: ctx.gatewayRpcForDelegation,
-        describeSessionGeneration: async (sessionKey) => {
-          const described = await ctx.gatewayManager!.rpc<{
-            session?: { sessionId?: string } | null;
-          }>('sessions.describe', { key: sessionKey }, 15_000);
-          const sessionId = described?.session?.sessionId;
-          return typeof sessionId === 'string' && sessionId.trim() ? sessionId.trim() : null;
-        },
-        assertTaskAdmission: assertManagedTaskAdmission,
-        stopEpoch: (sessionKey) => delegationStopEpochs.get(sessionKey) ?? 0,
-      }).finally(() => {
-        delegationFlights.delete(flightKey);
-      });
-      delegationFlights.set(flightKey, flight);
+          } : null,
+        };
+      }),
+      gatewayRpc: ctx.gatewayRpcForDelegation,
+      describeSessionGeneration: async (sessionKey) => {
+        const described = await ctx.gatewayManager!.rpc<{
+          session?: { sessionId?: string } | null;
+        }>('sessions.describe', { key: sessionKey }, 15_000);
+        const sessionId = described?.session?.sessionId;
+        return typeof sessionId === 'string' && sessionId.trim() ? sessionId.trim() : null;
+      },
+      assertTaskAdmission: assertManagedTaskAdmission,
+      stopEpoch: (sessionKey) => delegationStopEpochs.get(sessionKey) ?? 0,
+    }).finally(() => {
+      delegationFlights.delete(flightKey);
+    });
+    delegationFlights.set(flightKey, flight);
+    return flight;
+  };
+  const planFlights = new Map<string, Promise<SessionDelegationResult>>();
+  const dispatchPlanTask = async (p: ProjectPlanDispatchPayload, key: string): Promise<SessionDelegationResult> => {
+    try {
+      if (!ctx.gatewayManager || !ctx.selectSessionTask || !ctx.resolveCoordinator) throw new Error('TASK_SCOPE_OWNER_UNAVAILABLE');
+      const profile = await getActiveWorkspaceProfile();
+      if (!profile || profile.id !== p.workspaceId || !projectCoordinatorProfile([profile], p.sessionKey)) throw new Error('TASK_PROJECT_INACTIVE');
+      const described = await ctx.gatewayManager.rpc<{session?: {sessionId?: string; hasActiveRun?: boolean; status?: string}}>('sessions.describe', {key:p.sessionKey});
+      if (!p.expectedSessionGeneration || described.session?.sessionId !== p.expectedSessionGeneration) throw new Error('TASK_GENERATION_STALE');
+      const stored = await delegationStore.readAdmission(key);
+      if (stored && stored.phase !== 'approval-pending') {
+        const receipt = stored.receipt;
+        if (receipt.coordinator.workspaceId !== p.workspaceId || receipt.coordinator.sessionKey !== p.sessionKey ||
+            receipt.coordinator.sessionGeneration !== p.expectedSessionGeneration || receipt.taskRef !== p.expectedChildId)
+          throw new Error('TASK_DELEGATION_RECEIPT_SCOPE_MISMATCH');
+        if (stored.phase === 'in-flight') return { success:false, status:'outcome-unknown', error:'Dispatch is awaiting a receipt' };
+        return { success:['accepted','partial'].includes(stored.receipt.status), status:stored.receipt.status,
+          receipt:{ ...stored.receipt, replayed:true }, replayed:true, error:stored.receipt.errors[0] };
+      }
+      if (described.session.hasActiveRun || described.session.status === 'running') throw new Error('TASK_SCOPE_WRITER_BUSY');
+      const config = await ctx.gatewayManager.rpc<{config?: {runtime?: {providerBudget?: {project?: {maxTokens?: number; maxCostUsd?: number}}}}}>('config.get', {});
+      const limits = config.config?.runtime?.providerBudget?.project;
+      if (!(limits && [limits.maxTokens, limits.maxCostUsd].some(value => typeof value === 'number' && Number.isFinite(value) && value > 0)) || limits.maxTokens === 0 || limits.maxCostUsd === 0)
+        throw new Error('TASK_PROJECT_BUDGET_UNAVAILABLE');
+      const store = await openTaskSystem(p.workspaceId);
+      if (!store) throw new Error('TASK_PROJECT_PLAN_NOT_FOUND');
+      let task;
+      try {
+        const scope = projectCoordinatorScope(profile, p.sessionKey, p.expectedSessionGeneration, store.domain.worktree);
+        task = store.startNextPlanTask(scope, p.planId, p.expectedRevision, key, undefined, p.expectedChildId).contract;
+      } finally { store.close(); }
+      const previous = profile.coordinatorBindings?.[p.sessionKey];
+      const binding = previous?.activeTaskNodeId === task.taskNodeId ? previous : (await ctx.selectSessionTask({
+        workspaceId:p.workspaceId, sessionKey:p.sessionKey, taskNodeId:task.taskNodeId,
+        expectedSessionGeneration:p.expectedSessionGeneration, expectedRevision:previous?.bindingRevision ?? 0,
+      })).binding;
+      if (!binding || binding.state !== 'active' || binding.activeTaskNodeId !== task.taskNodeId) throw new Error('TASK_SCOPE_BINDING_NOT_READY');
+      const instruction = JSON.stringify({objective:task.objective,target:task.target,constraints:task.constraints,acceptance:task.acceptance});
+      const registry = await ctx.gatewayManager.rpc<{roles:RoleContract[]}>('roles.list',{});
+      if (!registry.roles?.length) throw new Error('TASK_PROJECT_ROLE_UNAVAILABLE');
+      const route = routeRole({task:task.objective,fileHints:[task.target],availableRoles:registry.roles}).primary;
+      return delegate({ workspaceId:p.workspaceId, sessionKey:p.sessionKey, agentId:binding.agentId, taskRef:task.taskNodeId,
+        task:task.objective, expectedBindingRevision:binding.bindingRevision, expectedSessionGeneration:p.expectedSessionGeneration,
+        idempotencyKey:key, backend:'subagent', worker:{ roleName:route.role.name, task:instruction, isolation:'shared',
+          ...(route.role.permissions.filesystem === 'read' ? {writeSet:[]} : {}) },
+        includeVerifier:false, approvalId:p.approvalId });
+    } catch (error) { return {success:false,status:'rejected',error:error instanceof Error ? error.message : String(error)}; }
+  };
+  return {
+    delegate,
+    dispatchPlanTask: async p => {
+      if (!p || ![p.workspaceId,p.sessionKey,p.expectedSessionGeneration,p.planId,p.expectedChildId].every(v => typeof v === 'string' && v.trim()) || !Number.isSafeInteger(p.expectedRevision) || p.expectedRevision < 1)
+        return {success:false,status:'rejected',error:'TASK_PROJECT_DISPATCH_INVALID'};
+      const key = 'project-dispatch:' + createHash('sha256').update(JSON.stringify([p.workspaceId,p.sessionKey,p.expectedSessionGeneration,p.planId,p.expectedRevision,p.expectedChildId])).digest('hex');
+      const current = planFlights.get(key);
+      if (current) return current;
+      const flight = dispatchPlanTask(p,key).finally(() => planFlights.delete(key));
+      planFlights.set(key,flight);
       return flight;
     },
     delete: async (payload) => {

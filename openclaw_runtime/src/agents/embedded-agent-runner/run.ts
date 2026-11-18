@@ -1724,6 +1724,7 @@ export async function runEmbeddedAgent(
             runTimeoutOverrideMs: params.runTimeoutOverrideMs,
             runId: params.runId,
             attemptIndex: (rc03AttemptBase ?? 0) + runLoopIterations - 1,
+            providerFallbackIndex: params.providerFallbackIndex,
             abortSignal: attemptAbortController.signal,
             replyOperation: params.replyOperation,
             shouldEmitToolResult: params.shouldEmitToolResult,

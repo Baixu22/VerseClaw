@@ -158,6 +158,7 @@ function registerTypedHostHandlers(
     terminalManager,
     coordinatorLifecycle: workspacesApi.coordinatorLifecycle,
     resolveCoordinator: workspacesApi.resolveCoordinator,
+    selectSessionTask: workspacesApi.selectSessionTask,
     gatewayRpcForDelegation: gatewayApi.rpc,
   });
 

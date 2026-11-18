@@ -441,6 +441,7 @@ export function runAgentAttempt(params: {
   cwd?: string;
   body: string;
   isFallbackRetry: boolean;
+  providerFallbackIndex?: number;
   resolvedThinkLevel: ThinkLevel;
   fastMode?: boolean;
   timeoutMs: number;
@@ -724,6 +725,7 @@ export function runAgentAttempt(params: {
     provider: embeddedAgentProvider,
     model: params.modelOverride,
     modelFallbacksOverride: params.modelFallbacksOverride,
+    providerFallbackIndex: params.providerFallbackIndex,
     authProfileId,
     authProfileIdSource: authProfileId ? harnessAuthSelection.authProfileIdSource : undefined,
     thinkLevel: params.resolvedThinkLevel,

@@ -346,6 +346,7 @@ import type {
   SessionHistoryPayload,
   SessionSendWorkerPayload,
   SessionDelegationPayload,
+  ProjectPlanDispatchPayload,
   SessionDelegationResult,
   SessionHandoffPayload,
   SessionHandoffResult,
@@ -1494,6 +1495,7 @@ export const hostApi = {
     ),
   },
   sessions: {
+    dispatchPlanTask: (input: ProjectPlanDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchPlanTask', input),
     delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (
       invokeHost('sessions', 'delegate', input)
     ),

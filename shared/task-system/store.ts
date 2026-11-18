@@ -27,7 +27,7 @@ import type {
   ProjectPlanSnapshot,
 } from "./types.js";
 import { taskSimilarity } from "./recognition.js";
-import { TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
+import { nextReadyPlanChild, TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
 import { retainTaskArtifact, readRetainedTaskArtifact, type TaskArtifactReference, type TaskArtifactRetentionReceipt } from './artifact-retention.js';
 
 const MAX_CONTEXT = 12_000;
@@ -522,7 +522,7 @@ export class TaskSystemStore {
       revisions: rows.map((row) => JSON.parse(row.json) as ProjectPlanRevision),
     };
   }
-  startNextPlanTask(scope: { workspaceId: string; sessionKey: string; generation: string }, planId: string, revision: number, requestId: string, pinned?: TaskCredential): TaskView {
+  startNextPlanTask(scope: { workspaceId: string; sessionKey: string; generation: string }, planId: string, revision: number, requestId: string, pinned?: TaskCredential, expectedChildId?: string): TaskView {
     const key = digest([scope.workspaceId, text(requestId, "REQUEST_ID", 200)]);
     return this.transaction(() => {
       const plan = this.projectPlan(scope.workspaceId);
@@ -536,11 +536,12 @@ export class TaskSystemStore {
           WHERE e.task_id=p.parent_id AND e.kind='project_plan_saved' AND json_extract(e.json,'$.workspaceId')=?) LIMIT 1`)
           .get(scope.workspaceId);
         if (busy) throw new Error("TASK_PROJECT_WRITER_BUSY");
-        const done = new Set<string>(plan.children.filter(c => c.contract.state === "done").map(c => c.contract.taskNodeId));
-        const next = plan.children.find(c => c.contract.state === "ready" && (c.contract.dependencies ?? []).every(id => done.has(id)));
+        const next = nextReadyPlanChild(plan.children);
         if (!next) throw new Error("TASK_PROJECT_NO_READY_CHILD");
+        if (expectedChildId && next.contract.taskNodeId !== expectedChildId) throw new Error("TASK_PROJECT_SELECTION_STALE");
         return this.claim(next.contract.taskNodeId, scope.sessionKey, scope.generation, `project-next:${key}`, pinned).claim!;
       });
+      if (expectedChildId && claim.taskNodeId !== expectedChildId) throw new Error("TASK_PROJECT_SELECTION_STALE");
       if (pinned && (pinned.taskNodeId !== claim.taskNodeId || pinned.epoch !== claim.epoch)) throw new Error("TASK_STALE_OWNER");
       return this.assertOwner(claim);
     });

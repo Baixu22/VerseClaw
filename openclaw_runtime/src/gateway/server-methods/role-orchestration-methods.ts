@@ -625,6 +625,14 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       return;
     }
     const delegationAdmission = readDelegationAdmission(params.delegationAdmission);
+    if (delegationAdmission?.idempotencyKey.startsWith('project-dispatch:')) {
+      const budget = cfg.runtime?.providerBudget?.project;
+      if (!requestedWorkspaceId || delegationAdmission.coordinator.workspaceId !== requestedWorkspaceId || !budget ||
+          (budget.maxTokens === undefined && budget.maxCostUsd === undefined) || budget.maxTokens === 0 || budget.maxCostUsd === 0) {
+        respond(true, { rejectedBeforeDispatch: true, error: 'TASK_PROJECT_BUDGET_UNAVAILABLE' });
+        return;
+      }
+    }
     if (params.delegationAdmission !== undefined && !delegationAdmission) {
       respond(
         false,

@@ -189,6 +189,8 @@
     "plan": "実行計画",
     "current": "実行中",
     "next": "次",
+    "dispatchNext": "次の計画タスクを割り当てる",
+    "dispatchAccepted": "実行セッションがタスクを受け付けました",
     "planRevision": "計画の第 {{revision}} 版",
     "planAssumption": "暫定の前提",
     "planDecision": "未決事項",

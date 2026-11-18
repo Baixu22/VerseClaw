@@ -167,6 +167,7 @@ export function providerSpendSnapshot(scope: ProviderSpendScope, options: Databa
 }
 
 export type ProviderSpendRunContext = {
+  providerFallbackIndex?: number;
   config?: BudgetConfig; workspaceId?: string; sessionKey?: string; sessionGeneration: string; runId?: string; attemptIndex?: number;
   sessionStorePath?: string;
 };
@@ -211,7 +212,8 @@ export function wrapProviderSpendStream(inner: StreamFn, run: ProviderSpendRunCo
     const reservedCostUsd = knownPrice(quotedModel) ? tokens * Math.max(...Object.values(quotedModel.cost)) / MICROS_PER_USD : null;
     const requestDigest = createHash('sha256').update(JSON.stringify({ scope, model: quotedModel.id, provider: quotedModel.provider, pricing: quotedModel.cost, inputBound, outputBound, context })).digest('hex');
     const callId = JSON.stringify([scope.workspaceId ?? null, scope.projectId ?? null,
-      scope.sessionKey, scope.sessionGeneration, run.runId, run.attemptIndex ?? 0, callIndex++]);
+      scope.sessionKey, scope.sessionGeneration, run.runId, run.attemptIndex ?? 0, callIndex++,
+      ...(run.providerFallbackIndex ? ['fallback', run.providerFallbackIndex] : [])]);
     const reservationInput = { callId, runId: run.runId, provider: model.provider, model: model.id,
       requestDigest, scope, reservedTokens: tokens, reservedCostUsd, config };
     type Attempt = { reservation: ProviderSpendReservation; sent: boolean; refused: boolean; cancelled: boolean };

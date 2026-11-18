@@ -1776,6 +1776,7 @@ async function agentCommandInternal(
               cwd,
               body,
               isFallbackRetry,
+              providerFallbackIndex: fallbackAttemptIndex - 1,
               resolvedThinkLevel,
               fastMode: resolveFastModeState({
                 cfg,

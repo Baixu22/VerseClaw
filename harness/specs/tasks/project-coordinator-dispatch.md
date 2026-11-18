@@ -21,6 +21,12 @@ touchedAreas:
   - harness/specs/scenarios/autonomy-session-task-scope.md
   - harness/specs/rules/durable-task-system-boundary.md
   - shared/task-system/**
+  - shared/host-api/contract.ts
+  - shared/i18n/locales/*/taskLedger.json
+  - src/lib/host-api.ts
+  - src/pages/Chat/SessionTaskDock.tsx
+  - electron/main/ipc-handlers.ts
+  - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
   - shared/types/session-delegation.ts
   - electron/services/session-delegation-admission.ts
   - electron/services/sessions-api.ts
@@ -28,6 +34,9 @@ touchedAreas:
   - openclaw_runtime/src/agents/**
   - tests/unit/**
   - tests/e2e/project-agent-loop.spec.ts
+  - tests/e2e/fixtures/fp-p1-harness.ts
+  - harness/specs/fixtures/autonomous-project-system/p2/**
+  - harness/specs/rules/autonomy-resource-owner-admission.md
   - docs/modules/multi-agent-and-tasks.md
   - README*.md
 expectedUserBehavior:

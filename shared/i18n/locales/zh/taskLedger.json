@@ -189,6 +189,8 @@
     "plan": "执行计划",
     "current": "当前",
     "next": "下一步",
+    "dispatchNext": "派发下一个计划任务",
+    "dispatchAccepted": "执行会话已接收任务",
     "planRevision": "计划第 {{revision}} 版",
     "planAssumption": "暂定假设",
     "planDecision": "待决事项",

@@ -123,6 +123,10 @@ export type ProjectPlanSnapshot = {
   children: TaskView[];
   revisions: ProjectPlanRevision[];
 };
+export function nextReadyPlanChild(children: TaskView[]): TaskView | undefined {
+  const done = new Set<string>(children.filter(child => child.contract.state === 'done').map(child => child.contract.taskNodeId));
+  return children.find(child => child.contract.state === 'ready' && (child.contract.dependencies ?? []).every(id => done.has(id)));
+}
 export type TaskWriterDelegation = {
   delegationId: string;
   taskNodeId: TaskId;

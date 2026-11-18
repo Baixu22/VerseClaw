@@ -189,6 +189,8 @@
     "plan": "Plan",
     "current": "Now",
     "next": "Next",
+    "dispatchNext": "Dispatch next plan task",
+    "dispatchAccepted": "Worker accepted the task",
     "planRevision": "Plan version {{revision}}",
     "planAssumption": "Assumption",
     "planDecision": "Decision pending",

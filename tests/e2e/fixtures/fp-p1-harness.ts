@@ -89,6 +89,7 @@ export async function startGateway(app: ElectronApplication, options: { port?: n
 export type ToolCallSpec = { id: string; name: string; args: Record<string, unknown> };
 
 export type LlmRequestLog = {
+  model?: string;
   turn: string;
   toolResults: Record<string, string>;
   issued: string | null;
@@ -109,12 +110,13 @@ export type ScriptedLlmRequest = {
   }>;
 };
 
+type ScriptedResponse = { toolCall?: ToolCallSpec; text?: string; rateLimited?: boolean };
 export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
   requestIndex: number,
   request: ScriptedLlmRequest,
-) => { toolCall?: ToolCallSpec; text?: string } | Promise<{ toolCall?: ToolCallSpec; text?: string }>;
+) => ScriptedResponse | Promise<ScriptedResponse>;
 
 /**
  * Scripted OpenAI-compatible chat/completions endpoint. The script decides the
@@ -195,7 +197,14 @@ export function startScriptedLlm(script: LlmScript): Promise<{
         // A filtered tool never produces a result frame. Let the scripted
         // control terminate from the request count in that case.
         const action = await script(userText, toolResults, log.length, parsed);
+        if (action.rateLimited) {
+          log.push({ model:parsed.model, turn:userText.slice(0,60), toolResults, issued:'http:429' });
+          res.writeHead(429, { 'content-type':'application/json', 'retry-after':'1' });
+          res.end(JSON.stringify({error:{type:'rate_limit_error',message:'Fixture rate limit'}}));
+          return;
+        }
         log.push({
+          model: parsed.model,
           turn: userText.slice(0, 60),
           toolResults,
           issued: action.toolCall ? action.toolCall.id : `text:${action.text?.slice(0, 40)}`,

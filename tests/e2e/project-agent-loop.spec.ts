@@ -1,11 +1,15 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, observeSessionUi } from './fixtures/session-task-chain';
 import type { ProjectPlanSnapshot, TaskEvidence, TaskSessionSnapshot } from '../../shared/task-system/types';
+import { TaskSystemStore } from '../../shared/task-system/store';
+import { resolveTaskDomain } from '../../shared/task-system/identity';
+import { getOpenClawProviderKeyForType } from '../../electron/utils/provider-keys';
+import type { SessionDelegationResult } from '../../shared/types/session-delegation';
 
 test('a project coordinator saves, revises and reopens its owner-backed plan', async ({ launchElectronApp, userDataDir }, info) => {
   test.setTimeout(240_000);
@@ -175,5 +179,99 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     await writeFile(info.outputPath('cleanup.json'), JSON.stringify({ driven_by: 'agent', actor: 'playwright-project-agent-loop', ...cleanup }, null, 2));
     llm.server.closeAllConnections();
     await new Promise<void>((done) => llm.server.close(() => done()));
+  }
+});
+
+
+test('dispatches the ready plan child through the project menu and reads its worker effect', async ({ launchElectronApp, userDataDir }, info) => {
+  test.setTimeout(240_000);
+  const sourceCandidate = execFileSync('git', ['rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
+  const llm = await startScriptedLlm((text, results, _index, request) => {
+    if (text.includes('Write the rollback checklist') && request.model === 'mock-coder') return {rateLimited:true};
+    if (text.includes('Write the rollback checklist') && !Object.hasOwn(results, 'workerwrite'))
+      return {toolCall:{id:'workerwrite',name:'write',args:{path:'checklist.txt',content:'rollback checklist'}}};
+    return {text:'Worker turn finished.'};
+  });
+  const app = await launchElectronApp({skipSetup:true});
+  const diagnose = await observeSessionUi(app);
+  const log: string[] = [];
+  app.process().stdout?.on('data', data => log.push(String(data)));
+  app.process().stderr?.on('data', data => log.push(String(data)));
+  try {
+    const page = await getStableWindow(app);
+    await configureSessionChainProvider(app,llm.port);
+    const secondary = `${getOpenClawProviderKeyForType('custom','custom-canarybackup')}/mock-backup`;
+    const primary = 'custom-sessionc/mock-coder';
+    const date = new Date().toISOString();
+    expect(await hostInvoke(app,'providers','createAccount',{account:{id:'custom-canarybackup',vendorId:'custom',label:'Canary backup',authMode:'api_key',
+      apiProtocol:'openai-completions',baseUrl:`http://127.0.0.1:${llm.port}/v1`,model:'mock-backup',enabled:true,isDefault:false,createdAt:date,updatedAt:date,
+      modelProfile:{supportsReasoning:true,supportsVision:false,contextWindow:128000,maxTokens:4096}},apiKey:'local-fixture'})).toMatchObject({success:true});
+    expect(await hostInvoke(app,'providers','updateAccount',{accountId:'custom-sessionc',updates:{fallbackAccountIds:['custom-canarybackup']}})).toMatchObject({success:true});
+    expect(await hostInvoke(app,'agents','updateModel',{id:'main',modelRef:null})).toMatchObject({success:true});
+    const root = info.outputPath('project');
+    await mkdir(root, {recursive:true});
+    execFileSync('git',['init','-b','main',root]);
+    execFileSync('git',['-C',root,'-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','--allow-empty','-m','Fixture base']);
+    const project = await createSessionChainProject(app,root,'Worker canary');
+    const store = new TaskSystemStore(resolveTaskDomain(project.rootPath));
+    const goal = {objective:'Write the rollback checklist',target:'checklist.txt',constraints:[],acceptance:[{
+      id:'file',description:'Read the written checklist',verification:{kind:'file-sha256' as const,path:'checklist.txt',sha256:createHash('sha256').update('rollback checklist').digest('hex')},
+    }]};
+    try { store.saveProjectPlan(project,{goal,requestId:'fixture-plan',nextAction:goal.objective,children:[{key:'write',contract:goal}]}); }
+    finally { store.close(); }
+    const read = () => hostInvoke<TaskSessionSnapshot>(app,'taskLedger','sessionTask',{workspaceId:project.workspaceId,sessionKey:project.sessionKey,expectedSessionGeneration:project.generation});
+    const revised = (await read()).projectPlan!;
+    const dock = page.getByTestId('session-task-dock');
+    const dispatch = { workspaceId:project.workspaceId,sessionKey:project.sessionKey,expectedSessionGeneration:project.generation,
+      planId:revised.task.contract.taskNodeId,expectedRevision:revised.task.contract.revision,expectedChildId:revised.children[0].contract.taskNodeId };
+    const noBudget = await hostInvoke<SessionDelegationResult>(app,'sessions','dispatchPlanTask',dispatch);
+    expect(noBudget).toMatchObject({success:false,status:'rejected',error:'TASK_PROJECT_BUDGET_UNAVAILABLE'});
+    expect((await read()).projectPlan?.children[0].claim).toBeNull();
+    const config = await hostInvoke<{hash:string}>(app,'gateway','rpc',{method:'config.get',params:{}});
+    await hostInvoke(app,'gateway','rpc',{method:'config.patch',params:{baseHash:config.hash,
+      raw:JSON.stringify({runtime:{providerBudget:{project:{maxTokens:4_000_000}}},agents:{defaults:{subagents:{model:{primary,fallbacks:[secondary]}}}}}),note:'Fixture project token budget and child model policy'}});
+    await hostInvoke(app,'gateway','stop');
+    await startGateway(app);
+    const effective = await hostInvoke<{config:{agents:{defaults:{model:{primary:string;fallbacks:string[]}}}}}>(app,'gateway','rpc',{method:'config.get',params:{}});
+    expect(effective.config.agents.defaults.model).toMatchObject({primary,fallbacks:[secondary]});
+    await page.reload();
+    await page.getByTestId(`sidebar-project-open-${project.workspaceId}`).click();
+    await dock.getByTestId('session-task-menu').click();
+    await page.getByTestId('project-plan-dispatch').click();
+    await expect.poll(async () => (await read()).projectPlan?.children[0].contract.state, {timeout:30_000}).toBe('doing');
+    await expect(page.getByText('Worker accepted the task',{exact:true})).toBeVisible({timeout:60_000});
+    const admission = await hostInvoke<SessionDelegationResult>(app,'sessions','dispatchPlanTask',dispatch);
+    await writeFile(info.outputPath('project-worker-admission.json'), JSON.stringify({driven_by:'agent',actor:'playwright-project-worker',sourceCandidate,dispatch,noBudget,admission},null,2));
+    expect(admission,admission.error).toMatchObject({success:true,replayed:true,receipt:{taskRef:dispatch.expectedChildId,completionObserved:false}});
+    const child = admission.receipt!.children[0];
+    expect(child.childSessionKey).toBeTruthy();
+    const described = await hostInvoke<{session?:{thinkingLevel?:string}}>(app,'gateway','rpc',{method:'sessions.describe',params:{key:child.childSessionKey}});
+    await expect.poll(() => readFile(join(project.rootPath, 'checklist.txt'), 'utf8').catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    }), {timeout:60_000}).toBe('rollback checklist');
+    const workerHistory = await hostInvoke<{messages:unknown[];model?:string;costUsd?:number}>(app,'sessions','history',{
+      sessionKey:child.childSessionKey,expectedParentSessionKey:project.sessionKey,agentId:'main'});
+    expect(workerHistory.model).toBe(secondary);
+    expect(JSON.stringify(workerHistory.messages)).toContain('workerwrite');
+    const {DatabaseSync} = await import('node:sqlite');
+    const usageDb = new DatabaseSync(join(userDataDir,'openclaw-source-state','state','openclaw.sqlite'), {readOnly:true});
+    let usage;
+    try { usage = usageDb.prepare(`SELECT provider,model,state,reserved_tokens,actual_tokens,actual_cost_micros,scope_json FROM provider_spend_calls
+      WHERE json_extract(scope_json,'$.sessionKey')=? ORDER BY created_at`).all(child.childSessionKey!); } finally { usageDb.close(); }
+    expect(usage.some(row=>row.model==='mock-backup' && Number(row.actual_tokens)>0)).toBe(true);
+    expect(usage.every(row=>row.actual_cost_micros===null && Number(row.reserved_tokens)>0)).toBe(true);
+    expect(llm.log.some(row=>row.model==='mock-coder' && row.issued==='http:429')).toBe(true);
+    expect(llm.log.filter(row=>row.issued==='workerwrite')).toHaveLength(1);
+    await writeFile(info.outputPath('project-worker-execution.json'),JSON.stringify({driven_by:'agent',actor:'playwright-project-worker',sourceCandidate,
+      childSessionKey:child.childSessionKey,childRunId:child.childRunId,thinkingLevel:described.session?.thinkingLevel??null,workerHistory,usage,allowedModels:[primary,secondary],fileSha256:createHash('sha256').update(await readFile(join(project.rootPath,'checklist.txt'))).digest('hex')},null,2));
+  } catch (error) { await diagnose(name=>info.outputPath(name)); throw error; }
+  finally {
+    await writeFile(info.outputPath('provider-log.json'),JSON.stringify({log:llm.log,anomalies:llm.anomalies},null,2));
+    await writeFile(info.outputPath('native-log.txt'),log.join(''));
+    await hostInvoke(app,'gateway','stop').catch(()=>undefined);
+    await closeElectronApp(app);
+    llm.server.closeAllConnections();
+    await new Promise<void>(resolve=>llm.server.close(()=>resolve()));
   }
 });

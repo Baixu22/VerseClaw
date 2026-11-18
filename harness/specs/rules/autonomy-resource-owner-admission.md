@@ -15,7 +15,8 @@ Runtime 资源等待保留原 AbortSignal，取消立即移除 waiter；grant �
 未知成本、未声明容量和模拟隔离均单列，不能用0、无限值或 caller bool 声称安全余量。
 
 Provider spend 扩展归既有 ProviderOutboundBudget：runtime.providerBudget 显式配置host、
-project或session token/USD上限，未配置时不启用。预算journal在原共享SQLite内，三层
+project 或 session 限额。模型降级尝试独立预留，沿用同一 run 和会话范围。重放同一次降级使用原调用身份，保留前次未知用量。
+未配置时保持原行为。预算 journal 在原共享 SQLite 内，三层
 预留同一事务检查并写入，原scope和随机owner token绑定；不得用shadow视图授予额度。
 每次model call按模型上下文/输出上界保守预留，最终usage按同call身份核销；缺usage、
 全零未定价模型或不明发送保留unknown liability，重启/取消/TTL不清账。历史transcript

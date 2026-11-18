@@ -46,6 +46,7 @@ export type CurrentInboundPromptContext = {
 };
 
 export type RunEmbeddedAgentParams = {
+  providerFallbackIndex?: number;
   sessionId: string;
   sessionKey?: string;
   /** Provider prompt-cache affinity key; distinct from transcript/session identity. */
