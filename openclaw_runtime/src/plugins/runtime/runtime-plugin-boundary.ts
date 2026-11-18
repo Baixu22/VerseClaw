@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { getRuntimeConfig } from "../../config/config.js";
-import { loadPluginManifestRegistry } from "../manifest-registry.js";
+import { loadPluginManifestRegistryForPluginRegistry } from "../plugin-registry.js";
 import {
   isJavaScriptModulePath,
   tryNativeRequireJavaScriptModule,
@@ -31,8 +31,9 @@ export function resolvePluginRuntimeRecord(
   pluginId: string,
   onMissing?: () => never,
 ): PluginRuntimeRecord | null {
-  const manifestRegistry = loadPluginManifestRegistry({
+  const manifestRegistry = loadPluginManifestRegistryForPluginRegistry({
     config: readPluginBoundaryConfigSafely(),
+    includeDisabled: true,
   });
   const record = manifestRegistry.plugins.find((plugin) => plugin.id === pluginId);
   if (!record?.source) {
@@ -52,8 +53,9 @@ export function resolvePluginRuntimeRecordByEntryBaseNames(
   entryBaseNames: string[],
   onMissing?: () => never,
 ): PluginRuntimeRecord | null {
-  const manifestRegistry = loadPluginManifestRegistry({
+  const manifestRegistry = loadPluginManifestRegistryForPluginRegistry({
     config: readPluginBoundaryConfigSafely(),
+    includeDisabled: true,
   });
   const matches = manifestRegistry.plugins.filter((plugin) => {
     if (!plugin?.source) {

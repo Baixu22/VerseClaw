@@ -22,6 +22,7 @@ import {
   type PluginRegistryIdNormalizerOptions,
 } from "./plugin-registry-id-normalizer.js";
 import {
+  canReuseCurrentPluginMetadataSnapshot,
   loadPluginRegistrySnapshot,
   type LoadPluginRegistryParams,
   type PluginRegistrySnapshot,
@@ -267,14 +268,7 @@ function filterContributionOwnerIds(params: {
 function canReuseCurrentManifestRegistry(params: LoadPluginRegistryManifestParams): boolean {
   return (
     params.bundledChannelConfigCollector === undefined &&
-    params.index === undefined &&
-    params.preferPersisted !== false &&
-    params.stateDir === undefined &&
-    params.filePath === undefined &&
-    params.pluginIndexFilePath === undefined &&
-    params.installRecords === undefined &&
-    params.candidates === undefined &&
-    params.diagnostics === undefined
+    canReuseCurrentPluginMetadataSnapshot(params)
   );
 }
 
@@ -284,14 +278,14 @@ function loadCurrentManifestRegistryForPluginRegistry(
   if (!canReuseCurrentManifestRegistry(params)) {
     return undefined;
   }
-  const env = params.env ?? process.env;
   const current = getCurrentPluginMetadataSnapshot({
     config: params.config,
-    env,
+    env: params.env,
     ...(params.workspaceDir ? { workspaceDir: params.workspaceDir } : {}),
     ...(params.workspaceDir === undefined ? { allowWorkspaceScopedSnapshot: true } : {}),
   });
-  if (!current || current.registryDiagnostics.length > 0) {
+  // Current manifests already include persisted-index repairs and owner scope checks.
+  if (!current) {
     return undefined;
   }
   const pluginIdSet = params.pluginIds === undefined ? undefined : new Set(params.pluginIds);

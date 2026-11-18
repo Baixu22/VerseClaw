@@ -73,6 +73,14 @@ export type GatewayRequestContextParams = {
 export function createGatewayRequestContext(
   params: GatewayRequestContextParams,
 ): GatewayRequestContext {
+  const deviceCredentialRevisions = new Map<string, number>();
+  const credentialKey = (deviceId: string, role?: string) =>
+    JSON.stringify([deviceId, role || null]);
+  const revision = (key: string) => deviceCredentialRevisions.get(key) ?? 0;
+  const invalidateDeviceCredential = (deviceId: string, role?: string) => {
+    const key = credentialKey(deviceId, role);
+    deviceCredentialRevisions.set(key, revision(key) + 1);
+  };
   const hasApprovalScope = (gatewayClient: GatewayClient): boolean => {
     const scopes = Array.isArray(gatewayClient.connect.scopes) ? gatewayClient.connect.scopes : [];
     return scopes.includes("operator.admin") || scopes.includes("operator.approvals");
@@ -136,7 +144,10 @@ export function createGatewayRequestContext(
       }
       return connIds;
     },
+    getDeviceCredentialRevision: (deviceId, role) =>
+      revision(credentialKey(deviceId)) + revision(credentialKey(deviceId, role)),
     invalidateClientsForDevice: (deviceId: string, opts?: { role?: string; reason?: string }) => {
+      invalidateDeviceCredential(deviceId, opts?.role);
       const reason = opts?.reason ?? "device-invalidated";
       for (const gatewayClient of params.clients) {
         if (gatewayClient.connect.device?.id !== deviceId) {
@@ -152,6 +163,7 @@ export function createGatewayRequestContext(
       }
     },
     disconnectClientsForDevice: (deviceId: string, opts?: { role?: string }) => {
+      invalidateDeviceCredential(deviceId, opts?.role);
       for (const gatewayClient of params.clients) {
         if (gatewayClient.connect.device?.id !== deviceId) {
           continue;

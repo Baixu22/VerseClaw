@@ -1,5 +1,7 @@
 /** Tracks control-plane plugin metadata context during registry and status operations. */
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { resolveIsNixMode } from "../config/paths.js";
+import { resolveCompatibilityHostVersion } from "../version.js";
 import { hashJson } from "./installed-plugin-index-hash.js";
 import { resolveInstalledPluginIndexPolicyHash } from "./installed-plugin-index-policy.js";
 import type { InstalledPluginIndex } from "./installed-plugin-index.js";
@@ -10,6 +12,11 @@ import { resolvePluginCacheInputs, type PluginSourceRoots } from "./roots.js";
 export type PluginDiscoveryContext = {
   roots: PluginSourceRoots;
   loadPaths: readonly string[];
+  environment: {
+    sourceOverlays: string;
+    nixMode: boolean;
+    compatibilityHostVersion: string;
+  };
 };
 
 /** Control-plane fingerprint inputs that affect installed plugin activation. */
@@ -47,11 +54,20 @@ function resolveConfiguredPluginLoadPaths(
 export function resolvePluginDiscoveryContext(
   params: ResolvePluginDiscoveryContextParams = {},
 ): PluginDiscoveryContext {
-  return resolvePluginCacheInputs({
-    env: params.env ?? process.env,
-    workspaceDir: params.workspaceDir,
-    loadPaths: [...(params.loadPaths ?? resolveConfiguredPluginLoadPaths(params.config) ?? [])],
-  });
+  const env = params.env ?? process.env;
+  return {
+    ...resolvePluginCacheInputs({
+      env,
+      workspaceDir: params.workspaceDir,
+      loadPaths: [...(params.loadPaths ?? resolveConfiguredPluginLoadPaths(params.config) ?? [])],
+    }),
+    // Equal roots can still discover different overlays or reject different plugins.
+    environment: {
+      sourceOverlays: env.OPENCLAW_DISABLE_BUNDLED_SOURCE_OVERLAYS ?? "",
+      nixMode: resolveIsNixMode(env),
+      compatibilityHostVersion: resolveCompatibilityHostVersion(env),
+    },
+  };
 }
 
 /** Resolves a stable fingerprint for plugin discovery inputs. */

@@ -16,7 +16,7 @@ import {
   isPackageProvenControlUiRootSync,
   resolveControlUiRootSync,
 } from "../infra/control-ui-assets.js";
-import { listDevicePairing, verifyDeviceToken } from "../infra/device-pairing.js";
+import { listPairedDevices, verifyDeviceToken } from "../infra/device-pairing.js";
 import { openLocalFileSafely, FsSafeError, readSecureFile } from "../infra/fs-safe.js";
 import { safeFileURLToPath } from "../infra/local-file-access.js";
 import { verifyPairingToken } from "../infra/pairing-token.js";
@@ -377,8 +377,8 @@ async function authorizeControlUiDeviceReadToken(
   token: string,
   opts: { requiredSharedGatewaySessionGeneration?: string },
 ): Promise<boolean> {
-  const pairing = await listDevicePairing();
-  for (const device of pairing.paired) {
+  const paired = await listPairedDevices();
+  for (const device of paired) {
     const operatorToken = device.tokens?.[CONTROL_UI_OPERATOR_ROLE];
     if (!operatorToken || operatorToken.revokedAtMs) {
       continue;

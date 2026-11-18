@@ -8,9 +8,47 @@ intent: Complete TF-0715 with owner-bound, durable recovery decisions and finite
 diffBase: 05d787213
 humanEvidence: not-required
 touchedAreas:
+  - openclaw_runtime/src/channels/config-presence.ts
+  - tests/unit/gateway-channel-presence-discovery.test.ts
+  - scripts/build-openclaw-runtime.mjs
+  - openclaw_runtime/scripts/runtime-postbuild.mjs
+  - tests/unit/sekb-runtime-build-contract.test.ts
+  - openclaw_runtime/src/infra/approval-handler-runtime.ts
+  - openclaw_runtime/src/infra/pairing-token.ts
+  - openclaw_runtime/src/gateway/server-request-context.ts
+  - openclaw_runtime/src/gateway/server-methods/shared-types.ts
+  - openclaw_runtime/src/gateway/server/ws-connection/auth-context.ts
+  - openclaw_runtime/src/gateway/server/ws-connection/message-handler.ts
+  - tests/unit/gateway-device-credential-invalidation.test.ts
+  - openclaw_runtime/src/gateway/control-ui.ts
+  - tests/e2e/gateway-startup-performance.spec.ts
+  - openclaw_runtime/src/infra/device-pairing.ts
+  - tests/unit/gateway-device-pairing-state.test.ts
+  - electron/gateway/manager.ts
+  - electron/gateway/process-launcher.ts
+  - openclaw_runtime/src/entry.ts
+  - openclaw_runtime/src/plugins/plugin-control-plane-context.ts
+  - openclaw_runtime/src/plugins/gateway-startup-plugin-ids.ts
+  - tests/unit/gateway-plugin-startup-scope.test.ts
+  - tests/unit/gateway-device-token-reuse.test.ts
+  - tests/unit/gateway-process-launcher-trace.test.ts
+  - tests/unit/gateway-process-launcher-env.test.ts
   - vite.config.ts
   - scripts/lib/consolidated-icons.mjs
   - scripts/lib/consolidated-icons.d.mts
+  - scripts/lib/parallel-desktop-build.mjs
+  - scripts/lib/parallel-desktop-build.d.mts
+  - scripts/parallel-desktop-build.test.mjs
+  - tests/unit/gateway-plugin-snapshot-reuse.test.ts
+  - tests/unit/gateway-plugin-derived-snapshot.test.ts
+  - tests/unit/gateway-plugin-env-contract.test.ts
+  - openclaw_runtime/src/plugins/current-plugin-metadata-snapshot.ts
+  - openclaw_runtime/src/plugins/current-plugin-metadata-state.ts
+  - openclaw_runtime/src/plugins/plugin-registry-snapshot.ts
+  - openclaw_runtime/src/plugins/plugin-registry-contributions.ts
+  - openclaw_runtime/src/agents/tools/image-tool.ts
+  - openclaw_runtime/src/plugins/runtime/runtime-plugin-boundary.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/model.static-catalog.ts
   - scripts/consolidated-icons.test.mjs
   - tests/unit/vite-config-openclaw-runtime.test.ts
   - harness/specs/tasks/recovery-authority-gated.md
@@ -31,6 +69,7 @@ touchedAreas:
   - tests/unit/session-task-scope-completion.test.ts
   - tests/unit/durable-task-system.test.ts
   - harness/specs/rules/durable-task-system-boundary.md
+  - harness/specs/rules/gateway-readiness-policy.md
   - openclaw_runtime/src/agents/recovery-authority/**
   - openclaw_runtime/src/agents/execution-phase/**
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
@@ -182,6 +221,7 @@ requiredProfiles:
   - comms
 requiredRules:
   - backend-communication-boundary
+  - gateway-readiness-policy
   - durable-task-system-boundary
   - comms-regression
   - docs-sync
@@ -197,6 +237,17 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-device-credential-invalidation.test.ts
+  - tests/e2e/gateway-startup-performance.spec.ts
+  - tests/unit/gateway-device-pairing-state.test.ts
+  - tests/unit/gateway-plugin-startup-scope.test.ts
+  - tests/unit/gateway-device-token-reuse.test.ts
+  - tests/unit/gateway-process-launcher-env.test.ts
+  - tests/unit/gateway-process-launcher-trace.test.ts
+  - tests/unit/gateway-plugin-env-contract.test.ts
+  - node --test scripts/parallel-desktop-build.test.mjs
+  - tests/unit/gateway-plugin-snapshot-reuse.test.ts
+  - tests/unit/gateway-plugin-derived-snapshot.test.ts
   - tests/unit/recovery-observation.test.ts
   - openclaw_runtime/src/agents/agent-hooks/compaction-summary-contract.test.ts
   - openclaw_runtime/packages/agent-core/src/harness/compaction/prepare-compaction.test.ts
@@ -224,6 +275,14 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - A device credential mutation invalidates both registered clients and pending handshakes for that device/role. Registration checks the original revision after asynchronous pairing work, and device-token reuse requires the credential that authenticated the connection. Explicit authorized rotation and shared-secret bootstrap retain their issuance path.
+  - Gateway paired-device authentication, Control UI token lookup, token rotation/revocation and presence updates do not read the pending pairing queue. The paired-device owner still rejects revoked tokens, unauthorized scopes and corrupt paired records; cross-table removal validates pending repair requests before mutation.
+  - Managed Gateway restarts reuse an authenticated device token only within its original device, endpoint and shared credential. A rejected cached token falls back once on a device-token mismatch; transport errors and startup unavailability retain it. Node bytecode cache controls are preserved, and the startup flush retains compilation across a real process kill.
+  - Current plugin snapshots retain discovery environment and model normalization registration across capture/restore. Changed roots, overlays, Nix mode or effective host version reject reuse with either a cached config object or an omitted config; the existing persisted-registry disable switch selects the derived path and returns its diagnostic in both lookup entry points.
+  - Runtime entry, static catalog and model alias lookups reuse the compatible Gateway-owned plugin snapshot, preserve disabled metadata and ambiguous identity handling, and use the existing installed-registry fallback when no compatible snapshot exists. Diagnostics about initial persisted-index repairs remain available while the resolved current snapshot is reused.
+  - Desktop builds overlap renderer compilation with embedded-browser and Electron preparation; success waits for all outputs and browser preparation failures fail the entire build.
+  - The full runtime build stages the bundled plugin overlay once and copies declared static assets into both package trees; the stable SEKB entry remains importable.
+  - Gateway channel presence checks share discovery across environment and stored-auth probes within one query. Subsequent queries use the current plugin roots and state.
   - First tool admission carries the prepared task ID and epoch. Main renews only that same idle owner; committed admission retries retain the original precondition, and only the admitted run can refresh its model context. Explicit handoff, prior runs, and unresolved effects remain fenced.
   - An expired idle task resumes only for the same session generation and worktree with a new fencing epoch; unresolved effects, changed identities, paused owners and clock rollback remain rejected.
   - The runtime Control UI build resolves the installed Lit decorator entry through its package exports and completes without externalizing it.

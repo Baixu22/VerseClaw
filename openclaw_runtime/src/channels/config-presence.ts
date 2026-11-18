@@ -14,7 +14,7 @@ import {
 import { resolveStateDir } from "../config/paths.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { hasNonEmptyString } from "../infra/outbound/channel-target.js";
-import type { PluginDiscoveryResult } from "../plugins/discovery.js";
+import { discoverOpenClawPlugins, type PluginDiscoveryResult } from "../plugins/discovery.js";
 import { isRecord } from "../utils.js";
 import { listBundledChannelIds } from "./plugins/bundled-ids.js";
 
@@ -78,22 +78,26 @@ function hasPersistedChannelState(env: NodeJS.ProcessEnv): boolean {
   return fs.existsSync(resolveStateDir(env, os.homedir));
 }
 
-let persistedAuthStateChannelIds: readonly string[] | null = null;
+// Environment and stored-auth probes in one query must see the same plugin roots.
+function scopePresenceDiscovery(
+  options: ChannelPresenceOptions,
+  env: NodeJS.ProcessEnv,
+): ChannelPresenceOptions {
+  let discovery = options.discovery;
+  return {
+    ...options,
+    get discovery() {
+      return (discovery ??= discoverOpenClawPlugins({ env }));
+    },
+  };
+}
 
 function listPersistedAuthStateChannelIds(options: ChannelPresenceOptions): readonly string[] {
   const override = options.persistedAuthStateProbe?.listChannelIds();
   if (override) {
     return override;
   }
-  if (options.discovery) {
-    return listBundledChannelIdsWithPersistedAuthState(options.discovery);
-  }
-  if (persistedAuthStateChannelIds) {
-    return persistedAuthStateChannelIds;
-  }
-  // Bundled plugin metadata is process-stable; cache the static persisted-auth id list.
-  persistedAuthStateChannelIds = listBundledChannelIdsWithPersistedAuthState();
-  return persistedAuthStateChannelIds;
+  return listBundledChannelIdsWithPersistedAuthState(options.discovery);
 }
 
 function hasPersistedAuthState(params: {
@@ -133,6 +137,7 @@ export function listPotentialConfiguredChannelPresenceSignals(
   env: NodeJS.ProcessEnv = process.env,
   options: ChannelPresenceOptions = {},
 ): ChannelPresenceSignal[] {
+  options = scopePresenceDiscovery(options, env);
   const signals: ChannelPresenceSignal[] = [];
   const seenSignals = new Set<string>();
   const addSignal = (channelId: string, source: ChannelPresenceSignalSource) => {
@@ -227,5 +232,5 @@ export function hasPotentialConfiguredChannels(
       }
     }
   }
-  return hasEnvConfiguredChannel(cfg ?? {}, env, options);
+  return hasEnvConfiguredChannel(cfg ?? {}, env, scopePresenceDiscovery(options, env));
 }

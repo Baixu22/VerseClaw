@@ -7,6 +7,7 @@ import { resolve } from 'path';
 import { existsSync, readFileSync } from 'fs';
 import { RENDERER_CSP, RENDERER_DEV_CSP } from './shared/security/url-policy';
 import { consolidatedIconsModuleId, consolidatedIconsPlugin } from './scripts/lib/consolidated-icons.mjs';
+import { parallelDesktopBuildPlugin } from './scripts/lib/parallel-desktop-build.mjs';
 
 function getExtensionPackages(): Set<string> {
   try {
@@ -162,7 +163,7 @@ export default defineConfig(({ command }) => ({
     consolidatedIconsPlugin(),
     rendererCspPlugin(command),
     react(),
-    electron([
+    (command === 'serve' ? electron : parallelDesktopBuildPlugin)([
       {
         // Main process entry file
         entry: 'electron/main/index.ts',

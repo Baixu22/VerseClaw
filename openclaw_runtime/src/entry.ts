@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import process from "node:process";
 import { parseArgs } from "node:util";
+import { flushCompileCache } from "node:module";
 import { VERSION } from "./version.js";
 
 const help = `Usage: openclaw <command> [options]
@@ -68,6 +69,13 @@ if (args.length === 1 && ["--version", "-V"].includes(args[0])) {
       auth: token ? { token } : undefined,
       deferStartupSidecars,
     });
+    // A crash bypasses Node's exit flush. Persist loaded bytecode after startup
+    // so the supervisor's next process can reuse it; cache writes are optional.
+    try {
+      flushCompileCache();
+    } catch {
+      // Gateway recovery remains available when the bytecode cache is unwritable.
+    }
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;

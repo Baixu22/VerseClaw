@@ -11,6 +11,7 @@ export const PRODUCT_SOURCE_SCOPE = [
   'scripts/lib/versebrowser-build-provenance.mjs',
   'scripts/build-versebrowser.mjs',
   'scripts/lib/consolidated-icons.mjs', 'scripts/lib/consolidated-icons.d.mts',
+  'scripts/lib/parallel-desktop-build.mjs', 'scripts/lib/parallel-desktop-build.d.mts',
 ];
 export const COMPILED_ROOTS = [
   { archive: 'app.asar', source: 'dist', prefix: 'dist/' },

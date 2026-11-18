@@ -735,6 +735,9 @@ function collectConfiguredStartupChannelIds(params: {
   config: OpenClawConfig;
   env: NodeJS.ProcessEnv;
 }): string[] {
+  if (params.config === params.activationSourceConfig) {
+    return sortUniquePluginIds(listPotentialEnabledChannelIds(params.config, params.env));
+  }
   return sortUniquePluginIds([
     ...listPotentialEnabledChannelIds(params.config, params.env),
     ...listPotentialEnabledChannelIds(params.activationSourceConfig, params.env),
@@ -780,11 +783,7 @@ function collectConfigValidationChannelIds(params: {
 }): string[] {
   return sortUniquePluginIds([
     ...collectValidationChannelConfigIds(params.config),
-    ...collectConfiguredStartupChannelIds({
-      config: params.config,
-      activationSourceConfig: params.config,
-      env: params.env,
-    }),
+    ...listPotentialEnabledChannelIds(params.config, params.env),
     ...collectValidationHeartbeatTargetChannelIds(params.config),
   ]);
 }
@@ -897,6 +896,7 @@ export function resolveGatewayStartupMetadataPluginIds(params: {
   env: NodeJS.ProcessEnv;
   index: InstalledPluginIndex;
   platform?: NodeJS.Platform;
+  configuredChannelIds?: readonly string[];
 }): string[] | undefined {
   const lookup = createInstalledPluginIndexScopeLookup(params.index);
   const activationSourceConfig = params.activationSourceConfig ?? params.config;
@@ -938,11 +938,9 @@ export function resolveGatewayStartupMetadataPluginIds(params: {
     index: params.index,
   });
 
-  const configuredChannelIds = collectConfiguredStartupChannelIds({
-    config: params.config,
-    activationSourceConfig,
-    env: params.env,
-  });
+  const configuredChannelIds =
+    params.configuredChannelIds ??
+    collectConfiguredStartupChannelIds({ ...params, activationSourceConfig });
   if (!lookup.hasDirectChannelOwners(configuredChannelIds)) {
     return undefined;
   }
@@ -1022,13 +1020,9 @@ export function createGatewayStartupMetadataPluginIdScope(params: {
     }),
     resolve: ({ index }) =>
       resolveGatewayStartupMetadataPluginIds({
-        config: params.config,
-        ...(params.activationSourceConfig !== undefined
-          ? { activationSourceConfig: params.activationSourceConfig }
-          : {}),
-        env: params.env,
+        ...params,
         index,
-        ...(params.platform !== undefined ? { platform: params.platform } : {}),
+        configuredChannelIds,
       }),
   };
 }
@@ -1070,6 +1064,7 @@ export function resolveConfigValidationMetadataPluginIds(params: {
   env: NodeJS.ProcessEnv;
   index: InstalledPluginIndex;
   platform?: NodeJS.Platform;
+  configuredChannelIds?: readonly string[];
 }): string[] | undefined {
   const lookup = createInstalledPluginIndexScopeLookup(params.index);
   const pluginsConfig = normalizePluginsConfigForInstalledIndex(params.config.plugins, lookup);
@@ -1091,10 +1086,8 @@ export function resolveConfigValidationMetadataPluginIds(params: {
     index: params.index,
   });
 
-  const configuredChannelIds = collectConfigValidationChannelIds({
-    config: params.config,
-    env: params.env,
-  });
+  const configuredChannelIds =
+    params.configuredChannelIds ?? collectConfigValidationChannelIds(params);
   if (!lookup.hasChannelContributionOwners(configuredChannelIds)) {
     return undefined;
   }
@@ -1153,10 +1146,9 @@ export function createConfigValidationMetadataPluginIdScope(params: {
     }),
     resolve: ({ index }) =>
       resolveConfigValidationMetadataPluginIds({
-        config: params.config,
-        env: params.env,
+        ...params,
         index,
-        ...(params.platform !== undefined ? { platform: params.platform } : {}),
+        configuredChannelIds,
       }),
   };
 }

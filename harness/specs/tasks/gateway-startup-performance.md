@@ -8,6 +8,18 @@ intent: Measure the managed Gateway startup path and remove verified startup bot
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - openclaw_runtime/src/infra/approval-handler-runtime.ts
+  - openclaw_runtime/src/infra/pairing-token.ts
+  - tests/unit/gateway-device-credential-invalidation.test.ts
+  - openclaw_runtime/src/gateway/control-ui.ts
+  - openclaw_runtime/src/infra/device-pairing.ts
+  - tests/unit/gateway-device-pairing-state.test.ts
+  - openclaw_runtime/src/entry.ts
+  - openclaw_runtime/src/plugins/plugin-control-plane-context.ts
+  - openclaw_runtime/src/plugins/gateway-startup-plugin-ids.ts
+  - tests/unit/gateway-device-token-reuse.test.ts
+  - tests/unit/gateway-process-launcher-trace.test.ts
+  - tests/unit/gateway-process-launcher-env.test.ts
   - electron/gateway/**
   - electron/utils/**
   - openclaw_runtime/src/entry.ts
@@ -21,6 +33,13 @@ touchedAreas:
   - openclaw_runtime/extensions/matrix/doctor-contract-api.ts
   - openclaw_runtime/extensions/reach-readers/src/index.ts
   - openclaw_runtime/src/plugins/registry.ts
+  - openclaw_runtime/src/plugins/runtime/runtime-plugin-boundary.ts
+  - openclaw_runtime/src/plugins/plugin-registry-snapshot.ts
+  - openclaw_runtime/src/plugins/plugin-registry-contributions.ts
+  - openclaw_runtime/src/plugins/current-plugin-metadata-snapshot.ts
+  - openclaw_runtime/src/plugins/current-plugin-metadata-state.ts
+  - openclaw_runtime/src/agents/tools/image-tool.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/model.static-catalog.ts
   - openclaw_runtime/scripts/profile-extension-memory.mjs
   - tests/unit/gateway-doctor-contract-loading.test.ts
   - scripts/measure-gateway-startup.mjs
@@ -39,7 +58,24 @@ requiredProfiles:
 requiredRules:
   - gateway-readiness-policy
   - repository-artifact-retention
+requiredTests:
+  - tests/unit/gateway-device-credential-invalidation.test.ts
+  - tests/e2e/gateway-startup-performance.spec.ts
+  - tests/unit/gateway-device-pairing-state.test.ts
+  - tests/unit/gateway-plugin-startup-scope.test.ts
+  - tests/unit/gateway-device-token-reuse.test.ts
+  - tests/unit/gateway-process-launcher-env.test.ts
+  - tests/unit/gateway-process-launcher-trace.test.ts
+  - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
+  - Token revocation, rotation and device removal invalidate pending handshakes before registration. Cached-token connections cannot issue a replacement for a changed credential; authorized rotation and shared-secret bootstrap retain the existing issuance contract.
+  - Paired-device authentication, Control UI token lookup, token rotation/revocation and access metadata updates read the approved device table independently of pending pairing requests. Approved scopes and corrupt paired-record failures retain their existing checks; cross-table pairing removal still validates the pending repair queue before mutation.
+  - Configuration validation and Gateway startup use the same captured channel signals for the plugin scope cache key and for owner selection. Creating a new scope reads current config and environment signals.
+  - Opt-in startup tracing forwards complete runtime phase lines from stdout while continuously draining ordinary output; authentication and readiness still use their original protocol signals.
+  - Reconnects reuse a successfully authenticated device token only for the same paired device, endpoint and shared credential. A device-token mismatch falls back once to shared-secret bootstrap in the same attempt; temporary transport and startup failures retain the token. Bootstrap completes device-token authentication before readiness.
+  - Managed Gateway processes use Node's temporary bytecode cache while preserving explicit cache and disable controls. The entrypoint flushes loaded bytecode after startup so a process kill retains compilation work; failed cache writes do not prevent recovery.
+  - Current snapshot reuse checks roots, configured load paths, source overlays, Nix mode and effective host compatibility version even for a cached config identity or an omitted config. Capture/restore retains the original discovery binding and model normalization registration; the existing persisted-registry disable switch selects the derived path in both lookup entry points.
+  - Runtime entry, static catalog and model alias lookups reuse the compatible current plugin snapshot after initial persisted-index repairs without repeating discovery or manifest reads; absent snapshots use the existing installed registry.
   - Before and after measurements use the same built runtime, isolated state, and real Electron utility processes; the baseline explicitly reconstructs the prior contract loader, and raw phase timings are retained and agent driven.
   - Startup optimizations reduce measured latency without treating socket listening as authenticated RPC readiness.
   - Compiled plugin file URLs reach the native loader on Windows; encoded names and cache invalidation preserve filesystem identity, and source/dependency fallback policies remain intact.

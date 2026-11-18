@@ -12,7 +12,7 @@ test('normal install, dev and build compile the embedded package before consumin
   for (const entry of ['predev', 'predev:mock']) {
     assert.ok(scripts[entry].startsWith('pnpm run versebrowser:build && '), entry);
   }
-  assert.ok(scripts['prebuild:vite'].startsWith('node scripts/versebrowser-build-provenance.mjs --capture && node scripts/build-versebrowser.mjs && '));
+  assert.ok(scripts['prebuild:vite'].startsWith('node scripts/versebrowser-build-provenance.mjs --capture && node scripts/generate-ext-bridge.mjs && '));
   assert.equal(scripts['postbuild:vite'], 'node scripts/versebrowser-build-provenance.mjs');
 });
 

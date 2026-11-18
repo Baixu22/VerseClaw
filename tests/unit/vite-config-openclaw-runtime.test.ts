@@ -4,6 +4,14 @@ import { existsSync } from 'fs';
 import { describe, expect, it } from 'vitest';
 
 describe('vite Electron OpenClaw runtime aliases', () => {
+  it('wires the parallel desktop build into production builds', async () => {
+    const { default: configure } = await import('../../vite.config');
+    const config = typeof configure === 'function' ? await configure({ command: 'build', mode: 'production' }) : configure;
+    const plugins = (await Promise.all(config.plugins ?? [])).flat(2);
+    expect(plugins).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'parallel-desktop-build', apply: 'build' }),
+    ]));
+  });
   it('keeps consolidated icon exports in the existing renderer chunk', async () => {
     const { default: configure } = await import('../../vite.config');
     const { consolidatedIconsModuleId } = await import('../../scripts/lib/consolidated-icons.mjs');

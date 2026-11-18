@@ -45,10 +45,9 @@ if (!isTargetedOnlyBuild) {
   // SEKB is a Verse Claw host/ops boundary rather than an upstream OpenClaw
   // entrypoint. Restore it after the full build's clean dist replacement.
   runNodeScript(SCRIPT_PATH, ['--sekb-only'], ROOT);
-  // The full runtime bundle rebuild replaces the dist tree after build-all's
-  // postbuild phase. Re-run the idempotent postbuild so declared plugin assets
-  // (WASM, workers, templates) are present in the final package tree.
-  runNodeScript(join(RUNTIME_ROOT, 'scripts', 'runtime-postbuild.mjs'), [], RUNTIME_ROOT);
+  // cliStartup has staged the plugin overlay; only its static assets were skipped.
+  const { copyRuntimeStaticExtensionAssets } = await import('../openclaw_runtime/scripts/runtime-postbuild.mjs');
+  copyRuntimeStaticExtensionAssets();
   runNodeScript(join(RUNTIME_ROOT, 'scripts', 'bundled-plugin-assets.mjs'), ['--phase', 'copy'], RUNTIME_ROOT);
   runNodeScript(join(ROOT, 'scripts', 'smoke-openclaw-runtime.mjs'), [], ROOT);
   process.exit(0);

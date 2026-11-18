@@ -6,6 +6,10 @@ import { app } from 'electron';
 import path from 'path';
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
+import {
+  ConnectErrorDetailCodes,
+  readConnectErrorDetailCode,
+} from '../../openclaw_runtime/packages/gateway-protocol/src/connect-error-details';
 import { PORTS } from '../utils/config';
 import { getSetting } from '../utils/store';
 import { GatewayRpcError, JsonRpcNotification, isNotification, isResponse } from './protocol';
@@ -293,6 +297,7 @@ export class GatewayManager extends EventEmitter {
   private gatewayReadyFallbackTimer: NodeJS.Timeout | null = null;
   private gatewayReadyFallbackAttempt = 0;
   private readonly capabilityMonitor = new GatewayCapabilityMonitor();
+  private deviceAuth: { deviceId: string; port: number; sharedToken: string; token: string } | undefined;
   private missingRequiredRuntimeMethods: string[] = [];
   private diagnostics: GatewayDiagnosticsSnapshot = {
     consecutiveHeartbeatMisses: 0,
@@ -1325,16 +1330,8 @@ export class GatewayManager extends EventEmitter {
           this.setStatus({ state: 'stopped' });
         }
 
-        // Always attempt reconnect from process exit.  scheduleReconnect()
-        // internally checks shouldReconnect and reconnect-timer guards, so
-        // calling it unconditionally is safe — intentional stop() calls set
-        // shouldReconnect=false which makes scheduleReconnect() no-op.
-        //
-        // On Windows, the WS close handler intentionally skips reconnect
-        // (to avoid racing with this exit handler).  However, WS close
-        // fires *before* process exit and sets state='stopped', which
-        // previously caused this handler to also skip reconnect — leaving
-        // the gateway permanently dead with no recovery path.
+        // Windows socket close precedes process exit. Reconnect from this owner;
+        // scheduleReconnect guards intentional stops and already scheduled attempts.
         this.scheduleReconnect();
       },
       onError: () => {
@@ -1355,16 +1352,29 @@ export class GatewayManager extends EventEmitter {
    * Connect WebSocket to Gateway
    */
   private async connect(port: number, _externalToken?: string): Promise<void> {
+    const epoch = this.lifecycleController.getCurrentEpoch();
     this.capabilityMonitor.reset();
     const isReconnect = this.status.connectedAt !== undefined || this.reconnectAttempts > 0;
-    this.ws = await connectGatewaySocket({
+    const sharedToken = await import('../utils/store').then(({ getSetting }) => getSetting('gatewayToken'));
+    const deviceIdentity = this.deviceIdentity;
+    // The server binds issued tokens to the shared-secret generation and paired device.
+    // Retain only a successfully authenticated token for this device and endpoint.
+    const cached = this.deviceAuth;
+    const deviceToken = cached && cached.deviceId === deviceIdentity?.deviceId &&
+      cached.port === port && cached.sharedToken === sharedToken ? cached.token : undefined;
+    const connect = (token?: string) => connectGatewaySocket({
       port,
-      deviceIdentity: this.deviceIdentity,
+      deviceToken: token,
+      deviceIdentity,
       isReconnect,
       platform: process.platform,
       pendingRequests: this.pendingRequests,
-      getToken: async () => await import('../utils/store').then(({ getSetting }) => getSetting('gatewayToken')),
+      getToken: async () => sharedToken,
       onHandshakeComplete: (ws, handshakePayload) => {
+        const auth = (handshakePayload as { auth?: { deviceToken?: unknown } } | null)?.auth;
+        if (deviceIdentity && typeof auth?.deviceToken === 'string' && auth.deviceToken.trim()) {
+          this.deviceAuth = { deviceId: deviceIdentity.deviceId, port, sharedToken, token: auth.deviceToken };
+        }
         this.ws = ws;
         ws.on('pong', () => {
           this.connectionMonitor.markAlive('pong');
@@ -1404,21 +1414,27 @@ export class GatewayManager extends EventEmitter {
         this.diagnostics.consecutiveHeartbeatMisses = 0;
         if (this.status.state === 'running') {
           this.setStatus({ state: 'stopped' });
-          // On Windows, skip reconnect from WS close.  The Gateway is a local
-          // child process; actual crashes are already caught by the process exit
-          // handler (`onExit`) which calls scheduleReconnect().  Triggering
-          // reconnect from WS close as well races with the exit handler and can
-          // cause double start() attempts or port conflicts during TCP TIME_WAIT.
-          //
-          // Exception: code=1012 means the Gateway is performing an in-process
-          // restart (e.g. config reload).  The UtilityProcess stays alive, so
-          // `onExit` will never fire — we MUST reconnect from the WS close path.
+          // The Windows process-exit owner reconnects after crashes. Code 1012
+          // keeps that process alive, so its socket-close owner must reconnect.
           if (process.platform !== 'win32' || closeCode === 1012) {
             this.scheduleReconnect();
           }
         }
       },
     });
+    try {
+      this.ws = await connect(deviceToken);
+    } catch (error) {
+      if (
+        !deviceToken || !(error instanceof GatewayRpcError) ||
+        readConnectErrorDetailCode(error.payload.details) !== ConnectErrorDetailCodes.AUTH_DEVICE_TOKEN_MISMATCH
+      ) {
+        throw error;
+      }
+      this.lifecycleController.assert(epoch, 'connect/device-token-bootstrap');
+      if (this.deviceAuth === cached) this.deviceAuth = undefined;
+      this.ws = await connect();
+    }
   }
 
   private handleSequenceGap(gap: { expected: number; received: number }): void {
