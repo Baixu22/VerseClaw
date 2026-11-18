@@ -8,6 +8,10 @@ intent: Complete TF-0715 with owner-bound, durable recovery decisions and finite
 diffBase: 05d787213
 humanEvidence: not-required
 touchedAreas:
+  - openclaw_runtime/patches/@openclaw__fs-safe@0.3.0.patch
+  - openclaw_runtime/pnpm-workspace.yaml
+  - openclaw_runtime/pnpm-lock.yaml
+  - tests/unit/fs-safe-append-mode.test.ts
   - tests/unit/gateway-ready-fallback.test.ts
   - electron/gateway/ws-client.ts
   - openclaw_runtime/src/gateway/server/ws-connection.ts
@@ -242,6 +246,7 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/fs-safe-append-mode.test.ts
   - tests/unit/gateway-ws-client.test.ts
   - tests/unit/gateway-loopback-connect.test.ts
   - tests/unit/gateway-channel-presence-discovery.test.ts
@@ -292,6 +297,7 @@ acceptance:
   - Desktop builds overlap renderer compilation with embedded-browser and Electron preparation; success waits for all outputs and browser preparation failures fail the entire build.
   - The full runtime build stages the bundled plugin overlay once and copies declared static assets into both package trees; the stable SEKB entry remains importable.
   - Gateway channel presence checks share discovery across environment and stored-auth probes within one query. Subsequent queries use the current plugin roots and state.
+  - Regular-file append checks the opened descriptor identity and current mode on every write. Matching modes avoid redundant chmod for the same POSIX owner; a different effective owner retains the original chmod authorization. POSIX mode comparison includes special bits, Windows mode comparison preserves the read-only attribute, and a required chmod failure stops the append.
   - First tool admission carries the prepared task ID and epoch. Main renews only that same idle owner; committed admission retries retain the original precondition, and only the admitted run can refresh its model context. Explicit handoff, prior runs, and unresolved effects remain fenced.
   - An expired idle task resumes only for the same session generation and worktree with a new fencing epoch; unresolved effects, changed identities, paused owners and clock rollback remain rejected.
   - The runtime Control UI build resolves the installed Lit decorator entry through its package exports and completes without externalizing it.

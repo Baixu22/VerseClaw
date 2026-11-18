@@ -1,0 +1,360 @@
+{
+  "schema": "RecoveryAppendDevelopment/v1",
+  "actor": "codex",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "decision": "NO_GO",
+  "sourceBase": "336cf1026001b8288e46e6726a7456c8645ca071",
+  "inputs": [
+    {
+      "file": "openclaw_runtime/patches/@openclaw__fs-safe@0.3.0.patch",
+      "sha256": "2b786baf32d269048dfb41cf315839272f2a50afeb711248f0847e6d71a6f440"
+    },
+    {
+      "file": "openclaw_runtime/pnpm-workspace.yaml",
+      "sha256": "9360686b26c1db104eea78719149287cab83c69636f945635018ee9cd1689e54"
+    },
+    {
+      "file": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "516c62b0d4dcf7cc80aa231da5fe3521217224753c8127b78192c31f1c5064fb"
+    },
+    {
+      "file": "tests/unit/fs-safe-append-mode.test.ts",
+      "sha256": "36e6730d125ea4c45bbb314289ca24aae6e2e5ff618f47ae2e3956006341fae4"
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "54ef96ab5421af2f32160c3f3b4584ce4769cfc1510da2e6a807b00655b617b2"
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "9c530876191c91f7966ef0127e517994ee39938f93f244b9c79fa78521f1a9fc"
+    }
+  ],
+  "stages": [
+    {
+      "name": "append-red",
+      "elapsedMs": 4553,
+      "source": {
+        "commit": "336cf1026001b8288e46e6726a7456c8645ca071",
+        "status": " M harness/specs/tasks/gateway-startup-performance.md\n M harness/specs/tasks/recovery-authority-gated.md\n?? tests/unit/fs-safe-append-mode.test.ts\n",
+        "changesSha256": "91400c235caca8cb08eb094b0fd693bd7a47cde9a0275f609e86e899da7e1d3c"
+      },
+      "sha256": "a00d6eb3e79f765ab1b1d7db6342d380a3a67933c3e31ec674b7192a091d428c",
+      "logSha256": "ec2b5d6b84e76c733ee38414374e3829fdefb221249d968a59f0a9af30c38df5"
+    },
+    {
+      "name": "append-owner-red",
+      "elapsedMs": 3433,
+      "source": {
+        "commit": "336cf1026001b8288e46e6726a7456c8645ca071",
+        "status": " M harness/specs/tasks/gateway-startup-performance.md\n M harness/specs/tasks/recovery-authority-gated.md\n M openclaw_runtime/pnpm-lock.yaml\n M openclaw_runtime/pnpm-workspace.yaml\n?? openclaw_runtime/patches/\n?? tests/unit/fs-safe-append-mode.test.ts\n",
+        "changesSha256": "25c77a4d066943a9ef9e7f4566fbff24f5a249a6ce0adaa29891d5306edd0a3c"
+      },
+      "sha256": "61140bef08cc417ea53fca456518d4662f14e7e66f5f92d7e0046df6264f94dc",
+      "logSha256": "58b75d49847a937199c8ca192b7dd49da0d0a74612699bdef9f6ce12fec89e43"
+    },
+    {
+      "name": "append-green",
+      "elapsedMs": 2825,
+      "source": {
+        "commit": "336cf1026001b8288e46e6726a7456c8645ca071",
+        "status": " M harness/specs/tasks/gateway-startup-performance.md\n M harness/specs/tasks/recovery-authority-gated.md\n M openclaw_runtime/pnpm-lock.yaml\n M openclaw_runtime/pnpm-workspace.yaml\n?? openclaw_runtime/patches/\n?? tests/unit/fs-safe-append-mode.test.ts\n",
+        "changesSha256": "0379df6e16d5b40e48b195e9abb84bfa5164cbf2e3f56e8db100bf68da123f18"
+      },
+      "sha256": "ab68b5734368177825064d9d94f2aebd3ec90f9228b69d0909fd01cef887604d",
+      "logSha256": "7b04af941b58ea98d64d009c471305cb301dbe1445d2e600145072a80815e79e"
+    },
+    {
+      "name": "append-benchmark",
+      "elapsedMs": 3264,
+      "source": {
+        "commit": "336cf1026001b8288e46e6726a7456c8645ca071",
+        "status": " M harness/specs/tasks/gateway-startup-performance.md\n M harness/specs/tasks/recovery-authority-gated.md\n M openclaw_runtime/pnpm-lock.yaml\n M openclaw_runtime/pnpm-workspace.yaml\n?? openclaw_runtime/patches/\n?? tests/unit/fs-safe-append-mode.test.ts\n",
+        "changesSha256": "0379df6e16d5b40e48b195e9abb84bfa5164cbf2e3f56e8db100bf68da123f18"
+      },
+      "sha256": "858dc427ef7ed7e75674efa6c1eae49bda7650c5e0cb9015c89f27d7d5c6ad6a",
+      "logSha256": "e683e717638d9898ec00def2de79aa962ef83790adf7856cc908634e37e02331"
+    },
+    {
+      "name": "append-types",
+      "elapsedMs": 34011,
+      "source": {
+        "commit": "336cf1026001b8288e46e6726a7456c8645ca071",
+        "status": " M harness/specs/tasks/gateway-startup-performance.md\n M harness/specs/tasks/recovery-authority-gated.md\n M openclaw_runtime/pnpm-lock.yaml\n M openclaw_runtime/pnpm-workspace.yaml\n?? openclaw_runtime/patches/\n?? tests/unit/fs-safe-append-mode.test.ts\n",
+        "changesSha256": "0379df6e16d5b40e48b195e9abb84bfa5164cbf2e3f56e8db100bf68da123f18"
+      },
+      "sha256": "e144c5139d7e14e8add004c9e9203f1a08a82544ca114a4ddc06f5303b6ff7a0",
+      "logSha256": "b6ed9ac5ea6ae454d11ab511d16b73e7dba1fdb5085fe1649ecd0ddc641e4c13"
+    },
+    {
+      "name": "append-runtime",
+      "elapsedMs": 50064,
+      "source": {
+        "commit": "336cf1026001b8288e46e6726a7456c8645ca071",
+        "status": " M harness/specs/tasks/gateway-startup-performance.md\n M harness/specs/tasks/recovery-authority-gated.md\n M openclaw_runtime/pnpm-lock.yaml\n M openclaw_runtime/pnpm-workspace.yaml\n?? openclaw_runtime/patches/\n?? tests/unit/fs-safe-append-mode.test.ts\n",
+        "changesSha256": "33a9d984b5701845cd347fe8b870f8db1d7c314a6fb6465f048915f2e6e3022f"
+      },
+      "sha256": "e3a5babf8307ffa5e9541c56e8b1f9c59a59aa75c171c434f07cb6c5b73584ba",
+      "logSha256": "9edc642cc85872791791fe8ea0e27ba0f4e62da65cf8cb6e4d46fd1a198e20f8"
+    },
+    {
+      "name": "append-harness",
+      "elapsedMs": 2190,
+      "source": {
+        "commit": "336cf1026001b8288e46e6726a7456c8645ca071",
+        "status": " M harness/specs/tasks/gateway-startup-performance.md\n M harness/specs/tasks/recovery-authority-gated.md\n M openclaw_runtime/pnpm-lock.yaml\n M openclaw_runtime/pnpm-workspace.yaml\n?? openclaw_runtime/patches/\n?? tests/unit/fs-safe-append-mode.test.ts\n",
+        "changesSha256": "33a9d984b5701845cd347fe8b870f8db1d7c314a6fb6465f048915f2e6e3022f"
+      },
+      "sha256": "c566cbc480f5fba6308923247103252e4da83b8256d2101ed46b3b15421a4aa3",
+      "logSha256": "66256961710d20cfeeb1d346b155f00f3b86be6c9d6e2c535fef89e4cb6b997f"
+    },
+    {
+      "name": "append-harness-plan",
+      "elapsedMs": 2315,
+      "source": {
+        "commit": "336cf1026001b8288e46e6726a7456c8645ca071",
+        "status": " M harness/specs/tasks/gateway-startup-performance.md\n M harness/specs/tasks/recovery-authority-gated.md\n M openclaw_runtime/pnpm-lock.yaml\n M openclaw_runtime/pnpm-workspace.yaml\n?? openclaw_runtime/patches/\n?? tests/unit/fs-safe-append-mode.test.ts\n",
+        "changesSha256": "33a9d984b5701845cd347fe8b870f8db1d7c314a6fb6465f048915f2e6e3022f"
+      },
+      "sha256": "9399ae749ff85d06e70717b6100f92c55c90b7fc50f124e804fae6237ad46e73",
+      "logSha256": "ed1a852c0010f75daa7c7b230d6cc967a3476c77e6c15facbdc2d2f44be6faf2"
+    }
+  ],
+  "unit": {
+    "passed": 12,
+    "failed": 0,
+    "posixNativeConditional": 2
+  },
+  "typecheck": {
+    "cacheEnabled": false,
+    "totalDurationMs": 32700
+  },
+  "benchmark": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "realHumanEvidence": false,
+    "method": "One Windows Node process, both implementations pre-imported, nine alternating pairs, 500 checked appends per batch; original permission, target identity and byte checks remain active.",
+    "platform": "win32",
+    "nodeVersion": "v24.22.1",
+    "inputs": [
+      {
+        "file": "D:\\tmp\\g3-recovery-path-20261118-01a1ee44\\fs-safe-baseline\\dist\\regular-file.js",
+        "sha256": "5985a0875b4d240399cfb3c8a34d4ba73dff7b0341c200a735b7494ddf7e4bc2"
+      },
+      {
+        "file": "D:\\tmp\\g3-recovery-path-20261118-01a1ee44\\fs-safe-edit-v2\\dist\\regular-file.js",
+        "sha256": "51799ad5f9b18569efc218695756eb9aa6295d7dd0fa6bb70385d74a830be9a0"
+      }
+    ],
+    "rows": [
+      {
+        "batch": 0,
+        "arm": "before",
+        "elapsedMs": 198.7389,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4514,
+        "freeAfterMiB": 4579,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 0,
+        "arm": "after",
+        "elapsedMs": 85.68379999999999,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4578,
+        "freeAfterMiB": 4529,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 1,
+        "arm": "after",
+        "elapsedMs": 68.53269999999998,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4530,
+        "freeAfterMiB": 4517,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 1,
+        "arm": "before",
+        "elapsedMs": 178.024,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4517,
+        "freeAfterMiB": 4501,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 2,
+        "arm": "before",
+        "elapsedMs": 181.47349999999994,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4501,
+        "freeAfterMiB": 4532,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 2,
+        "arm": "after",
+        "elapsedMs": 70.53560000000004,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4532,
+        "freeAfterMiB": 4535,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 3,
+        "arm": "after",
+        "elapsedMs": 78.2462999999999,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4534,
+        "freeAfterMiB": 4563,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 3,
+        "arm": "before",
+        "elapsedMs": 195.09370000000013,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4562,
+        "freeAfterMiB": 4567,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 4,
+        "arm": "before",
+        "elapsedMs": 201.8768,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4566,
+        "freeAfterMiB": 4511,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 4,
+        "arm": "after",
+        "elapsedMs": 83.21350000000007,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4511,
+        "freeAfterMiB": 4567,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 5,
+        "arm": "after",
+        "elapsedMs": 74.75729999999999,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4568,
+        "freeAfterMiB": 4541,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 5,
+        "arm": "before",
+        "elapsedMs": 186.4792,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4541,
+        "freeAfterMiB": 4519,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 6,
+        "arm": "before",
+        "elapsedMs": 203.71440000000007,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4519,
+        "freeAfterMiB": 4477,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 6,
+        "arm": "after",
+        "elapsedMs": 74.7659000000001,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4478,
+        "freeAfterMiB": 4470,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 7,
+        "arm": "after",
+        "elapsedMs": 74.1884,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4469,
+        "freeAfterMiB": 4459,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 7,
+        "arm": "before",
+        "elapsedMs": 169.9819,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4460,
+        "freeAfterMiB": 4444,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 8,
+        "arm": "before",
+        "elapsedMs": 165.99379999999974,
+        "count": 500,
+        "chmodCalls": 500,
+        "freeBeforeMiB": 4444,
+        "freeAfterMiB": 4417,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      },
+      {
+        "batch": 8,
+        "arm": "after",
+        "elapsedMs": 66.1572000000001,
+        "count": 500,
+        "chmodCalls": 0,
+        "freeBeforeMiB": 4416,
+        "freeAfterMiB": 4415,
+        "contentSha256": "ec99b375c3f794b411f195a4259155e07e99b7e8063cd968deb5818bcd3bdb35"
+      }
+    ],
+    "medians": [
+      {
+        "arm": "before",
+        "medianBatchMs": 186.4792
+      },
+      {
+        "arm": "after",
+        "medianBatchMs": 74.75729999999999
+      }
+    ],
+    "qualified": true
+  },
+  "review": {
+    "status": "pass",
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "inputSha256": {
+      "D:/tmp/g3-recovery-path-20261118-01a1ee44/fs-safe-edit-v2/dist/regular-file.js": "51799AD5F9B18569EFC218695756EB9AA6295D7DD0FA6BB70385D74A830BE9A0",
+      "D:/tmp/g3-recovery-path-20261118-01a1ee44/fs-safe-baseline/dist/regular-file.js": "5985A0875B4D240399CFB3C8A34D4BA73DFF7B0341C200A735B7494DDF7E4BC2",
+      "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/tests/unit/fs-safe-append-mode.test.ts": "36E6730D125EA4C45BBB314289CA24AAE6E2E5FF618F47AE2E3956006341FAE4"
+    },
+    "reportSha256": "833801403b9270ada426c2ee22d859ab3aa99cafd9988ace3ed8055ba6483c97"
+  },
+  "rawRoot": "D:/tmp/g3-recovery-path-20261118-01a1ee44",
+  "remaining": [
+    "same-candidate full frozen recovery metrics",
+    "legacy repeat consistency",
+    "required source and package gates"
+  ]
+}
