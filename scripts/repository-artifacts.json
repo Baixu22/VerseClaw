@@ -2598,7 +2598,22 @@
     "reports/role-first-runtime-implementation-analysis.md",
     "team/dcs/dcs-v1.6-spec.md",
     "team/dcs/dcs-v1.6.1-addendum.md",
-    "team/role-architecture-design/area-4-role-memory-completion.md"
+    "team/role-architecture-design/area-4-role-memory-completion.md",
+    "docs/dev/evidence/ui-hierarchy-20261112/README.zh-CN.md",
+    "docs/dev/evidence/ui-hierarchy-20261112/before-dark.png",
+    "docs/dev/evidence/ui-hierarchy-20261112/dark.png",
+    "docs/dev/evidence/ui-hierarchy-20261112/draft-navigation.json",
+    "docs/dev/evidence/ui-hierarchy-20261112/final-render.json",
+    "docs/dev/evidence/ui-hierarchy-20261112/graphite-surfaces.json",
+    "docs/dev/evidence/ui-hierarchy-20261112/layout-matrix.json",
+    "docs/dev/evidence/ui-hierarchy-20261112/light.png",
+    "docs/dev/evidence/ui-hierarchy-20261112/long-title-720.png",
+    "docs/dev/evidence/ui-hierarchy-20261112/migration-checks.json",
+    "docs/dev/evidence/ui-hierarchy-20261112/migration-recovery.png",
+    "docs/dev/evidence/ui-hierarchy-20261112/more.png",
+    "docs/dev/evidence/ui-hierarchy-20261112/navigation.png",
+    "docs/dev/evidence/ui-hierarchy-20261112/report.json",
+    "docs/dev/evidence/ui-hierarchy-20261112/sidebar-checks.json"
   ],
   "artifactBatches": {}
 }

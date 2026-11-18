@@ -18,6 +18,8 @@ requiredProfiles:
   - fast
   - comms
 touchedAreas:
+  - .gitignore
+  - scripts/repository-artifacts.json
   - harness/specs/tasks/project-coordinator-planning.md
   - harness/specs/rules/durable-task-system-boundary.md
   - harness/specs/scenarios/autonomy-session-task-scope.md
@@ -44,6 +46,7 @@ expectedUserBehavior:
   - A retried request reuses its result; a new goal has independent identity. Revisions preserve old tasks and evidence.
   - The project reads the same Ledger plan and revision history; ordinary discussion creates no plan.
 requiredTests:
+  - pnpm repo:artifacts:check
   - pnpm exec vitest run --config vitest.task-system.config.ts
   - pnpm run typecheck
   - pnpm run contract:check
