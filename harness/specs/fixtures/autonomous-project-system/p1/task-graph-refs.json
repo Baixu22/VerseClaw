@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex/tf0675-evidence-verifier",
+  "sourceCandidate": "95b7e3c247540a9136f4abf0921787d1fa8b941b",
+  "provider": "local-scripted",
+  "realHumanEvidence": false,
+  "parentTaskNodeId": "81420eb1-fdb9-4ab4-abcb-926f65fd6b1b",
+  "oldChildIds": [
+    "9e95d7c5-fb83-4838-b58b-9e84e560ad77",
+    "4ed5a8e8-2843-4202-b944-51734c56afe8"
+  ],
+  "newChildIds": [
+    "f9c1df2d-0ba6-4207-9e42-6a0f48fc07e6",
+    "27b92fae-ffb4-469f-8047-887e5adb1800"
+  ],
+  "dependencies": {
+    "f9c1df2d-0ba6-4207-9e42-6a0f48fc07e6": [],
+    "27b92fae-ffb4-469f-8047-887e5adb1800": [
+      "f9c1df2d-0ba6-4207-9e42-6a0f48fc07e6"
+    ]
+  },
+  "isolation": {
+    "otherProject": {
+      "workspaceId": "another-project",
+      "rootPath": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\e2e\\project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan\\other-project",
+      "sessionKey": "agent:main:session-1794996242697-anotherproject",
+      "generation": "2b661036-dcd7-4b5f-a3d0-d96b53717501"
+    },
+    "otherSnapshot": {
+      "success": true,
+      "task": null,
+      "children": []
+    },
+    "returnedPlan": {
+      "task": {
+        "contract": {
+          "objective": "Revise the checklist plan to include a rollback check; preserve the previous verification.",
+          "constraints": [],
+          "acceptance": [
+            {
+              "id": "checklist",
+              "description": "Check the checklist against the agreed fixture",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "checklist.txt",
+                "sha256": "2b19b6a8105debfcea31dc934499f3c288e5f0a80395ab4b147edd031bd572ae"
+              }
+            }
+          ],
+          "target": "checklist.txt",
+          "dependencies": [],
+          "businessKey": "project-plan:35a61187f424b18a548a3a1de17bde3f7a4f1ecd78872809959523c5f8c9b506",
+          "origin": {
+            "source": "project-planning",
+            "sessionKey": "agent:main:session-1794996119807-planningproject",
+            "requestId": "project:35a61187f424b18a548a3a1de17bde3f7a4f1ecd78872809959523c5f8c9b506"
+          },
+          "taskNodeId": "81420eb1-fdb9-4ab4-abcb-926f65fd6b1b",
+          "domain": "5df338b5ebad01246ce379725102db3742c3970befafdee9153e0b4b294382ed",
+          "revision": 2,
+          "digest": "f48894243e11407295d1f73ef0196fec244e84200f06cc2892829609fc86a62f",
+          "state": "ready",
+          "createdAt": 1794996166274,
+          "updatedAt": 1794996238487
+        },
+        "claim": null,
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": [
+          "f9c1df2d-0ba6-4207-9e42-6a0f48fc07e6",
+          "27b92fae-ffb4-469f-8047-887e5adb1800"
+        ]
+      },
+      "children": [
+        {
+          "contract": {
+            "objective": "Draft the rollback checklist",
+            "constraints": [],
+            "acceptance": [
+              {
+                "id": "checklist",
+                "description": "Check the checklist against the agreed fixture",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "checklist.txt",
+                  "sha256": "2b19b6a8105debfcea31dc934499f3c288e5f0a80395ab4b147edd031bd572ae"
+                }
+              }
+            ],
+            "target": "checklist.txt",
+            "dependencies": [],
+            "businessKey": "parent:81420eb1-fdb9-4ab4-abcb-926f65fd6b1b:draft",
+            "occurrenceKey": "2",
+            "origin": {
+              "source": "project-plan-child",
+              "sessionKey": "agent:main:session-1794996119807-planningproject",
+              "requestId": "project:6357ae2677e3e018f13aabb66eaf665c0c70905e43c6942e7e5ec058ef0f639f:draft"
+            },
+            "taskNodeId": "f9c1df2d-0ba6-4207-9e42-6a0f48fc07e6",
+            "domain": "5df338b5ebad01246ce379725102db3742c3970befafdee9153e0b4b294382ed",
+            "revision": 1,
+            "digest": "a3febb822559deae76f948a25b31c6d1965d324bb9f17de8f9c6cdae58ec0d3e",
+            "state": "ready",
+            "createdAt": 1794996238489,
+            "updatedAt": 1794996238489
+          },
+          "claim": null,
+          "checkpoint": null,
+          "pendingOperations": 0,
+          "pendingOperationDetails": [],
+          "parentTaskNodeId": "81420eb1-fdb9-4ab4-abcb-926f65fd6b1b",
+          "childTaskNodeIds": []
+        },
+        {
+          "contract": {
+            "objective": "Verify rollback readiness",
+            "constraints": [],
+            "acceptance": [
+              {
+                "id": "checklist",
+                "description": "Check the checklist against the agreed fixture",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "checklist.txt",
+                  "sha256": "2b19b6a8105debfcea31dc934499f3c288e5f0a80395ab4b147edd031bd572ae"
+                }
+              }
+            ],
+            "target": "checklist.txt",
+            "dependencies": [
+              "f9c1df2d-0ba6-4207-9e42-6a0f48fc07e6"
+            ],
+            "businessKey": "parent:81420eb1-fdb9-4ab4-abcb-926f65fd6b1b:verify",
+            "occurrenceKey": "2",
+            "origin": {
+              "source": "project-plan-child",
+              "sessionKey": "agent:main:session-1794996119807-planningproject",
+              "requestId": "project:6357ae2677e3e018f13aabb66eaf665c0c70905e43c6942e7e5ec058ef0f639f:verify"
+            },
+            "taskNodeId": "27b92fae-ffb4-469f-8047-887e5adb1800",
+            "domain": "5df338b5ebad01246ce379725102db3742c3970befafdee9153e0b4b294382ed",
+            "revision": 2,
+            "digest": "d0b92cca38c21869496d25e68ce3ad0bcac2dbf20dc96cd53e6783c852ec78ce",
+            "state": "ready",
+            "createdAt": 1794996238491,
+            "updatedAt": 1794996238493
+          },
+          "claim": null,
+          "checkpoint": null,
+          "pendingOperations": 0,
+          "pendingOperationDetails": [],
+          "parentTaskNodeId": "81420eb1-fdb9-4ab4-abcb-926f65fd6b1b",
+          "childTaskNodeIds": []
+        }
+      ],
+      "revisions": [
+        {
+          "workspaceId": "planning-project",
+          "sessionKey": "agent:main:session-1794996119807-planningproject",
+          "generation": "667bd1d2-8d61-46d7-ad0b-43c4eaee6bd6",
+          "requestId": "e2e-release-checklist-v2",
+          "taskNodeId": "81420eb1-fdb9-4ab4-abcb-926f65fd6b1b",
+          "revision": 2,
+          "objective": "Revise the checklist plan to include a rollback check; preserve the previous verification.",
+          "nextAction": "Draft the rollback checklist",
+          "assumptions": [
+            "Existing checklist format is suitable"
+          ],
+          "pendingDecisions": [
+            "Confirm deployment scope"
+          ],
+          "reason": "Add the rollback requirement",
+          "previousChildIds": [
+            "9e95d7c5-fb83-4838-b58b-9e84e560ad77",
+            "4ed5a8e8-2843-4202-b944-51734c56afe8"
+          ],
+          "childIds": [
+            "f9c1df2d-0ba6-4207-9e42-6a0f48fc07e6",
+            "27b92fae-ffb4-469f-8047-887e5adb1800"
+          ]
+        },
+        {
+          "workspaceId": "planning-project",
+          "sessionKey": "agent:main:session-1794996119807-planningproject",
+          "generation": "667bd1d2-8d61-46d7-ad0b-43c4eaee6bd6",
+          "requestId": "e2e-release-checklist-v1",
+          "taskNodeId": "81420eb1-fdb9-4ab4-abcb-926f65fd6b1b",
+          "revision": 1,
+          "objective": "Plan the release checklist and its verification without running either step.",
+          "nextAction": "Draft the release checklist",
+          "assumptions": [
+            "Existing checklist format is suitable"
+          ],
+          "pendingDecisions": [
+            "Confirm deployment scope"
+          ],
+          "previousChildIds": [],
+          "childIds": [
+            "9e95d7c5-fb83-4838-b58b-9e84e560ad77",
+            "4ed5a8e8-2843-4202-b944-51734c56afe8"
+          ]
+        }
+      ]
+    }
+  },
+  "cleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-project-agent-loop",
+    "mainExited": true,
+    "launcherExited": true,
+    "graceful": true,
+    "closeSettled": true,
+    "processes": [
+      {
+        "pid": 18100,
+        "creationTime": 1794996109619,
+        "status": "exited"
+      },
+      {
+        "pid": 7280,
+        "creationTime": 1794996118037,
+        "status": "exited"
+      },
+      {
+        "pid": 16960,
+        "creationTime": 1794996118591,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 18100,
+          "creationTime": 1794996109619,
+          "status": "exited"
+        },
+        {
+          "pid": 7280,
+          "creationTime": 1794996118037,
+          "status": "exited"
+        },
+        {
+          "pid": 16960,
+          "creationTime": 1794996118591,
+          "status": "exited"
+        }
+      ]
+    ],
+    "errors": []
+  }
+}
