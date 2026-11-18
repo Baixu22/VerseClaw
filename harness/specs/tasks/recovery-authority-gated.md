@@ -8,6 +8,11 @@ intent: Complete TF-0715 with owner-bound, durable recovery decisions and finite
 diffBase: 05d787213
 humanEvidence: not-required
 touchedAreas:
+  - tests/unit/gateway-ready-fallback.test.ts
+  - electron/gateway/ws-client.ts
+  - openclaw_runtime/src/gateway/server/ws-connection.ts
+  - tests/unit/gateway-ws-client.test.ts
+  - tests/unit/gateway-loopback-connect.test.ts
   - openclaw_runtime/src/channels/config-presence.ts
   - tests/unit/gateway-channel-presence-discovery.test.ts
   - scripts/build-openclaw-runtime.mjs
@@ -237,6 +242,10 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-ws-client.test.ts
+  - tests/unit/gateway-loopback-connect.test.ts
+  - tests/unit/gateway-channel-presence-discovery.test.ts
+  - tests/unit/sekb-runtime-build-contract.test.ts
   - tests/unit/gateway-device-credential-invalidation.test.ts
   - tests/e2e/gateway-startup-performance.spec.ts
   - tests/unit/gateway-device-pairing-state.test.ts

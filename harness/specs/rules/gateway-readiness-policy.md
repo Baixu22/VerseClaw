@@ -10,7 +10,7 @@ requiredTests:
   - tests/unit/gateway-ready-fallback.test.ts
 ---
 
-Gateway status handling must preserve `gatewayReady` semantics.
+A Gateway whose startup owner still rejects `connect` sets `startupPending: true` on its WebSocket challenge. The desktop readiness probe keeps polling until the owner accepts connections. Authenticated connection and capability checks still own the running transition.
 
 `gatewayReady: false` means runtime-dependent refreshes should wait. `gatewayReady: true` means the Gateway reported readiness. `gatewayReady: undefined` is backward-compatible with older Gateway versions and must be treated as ready when the Gateway state is running.
 

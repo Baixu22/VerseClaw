@@ -431,7 +431,7 @@ export function attachGatewayWsConnectionHandler(params: AttachGatewayWsConnecti
     send({
       type: "event",
       event: "connect.challenge",
-      payload: { nonce: connectNonce, ts: Date.now() },
+      payload: { nonce: connectNonce, ts: Date.now(), ...(isStartupPending?.() ? { startupPending: true } : {}) },
     });
 
     socket.once("error", (err) => {

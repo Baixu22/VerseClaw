@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import WebSocket from 'ws';
 
 vi.mock('electron', () => ({
   app: {
@@ -154,6 +155,7 @@ describe('GatewayManager gatewayReady fallback', () => {
     vi.resetModules();
     const { GatewayManager } = await import('@electron/gateway/manager');
     const manager = new GatewayManager();
+    Object.assign(manager, { ws: { readyState: WebSocket.OPEN } });
     const stateController = (manager as unknown as { stateController: { setStatus: (u: Record<string, unknown>) => void } }).stateController;
     stateController.setStatus({ state: 'running', connectedAt: Date.now(), gatewayReady: false });
 
@@ -213,6 +215,7 @@ describe('GatewayManager gatewayReady fallback', () => {
     vi.resetModules();
     const { GatewayManager } = await import('@electron/gateway/manager');
     const manager = new GatewayManager();
+    Object.assign(manager, { ws: { readyState: WebSocket.OPEN } });
     const stateController = (manager as unknown as { stateController: { setStatus: (u: Record<string, unknown>) => void } }).stateController;
     stateController.setStatus({ state: 'running', connectedAt: Date.now(), gatewayReady: false });
 
