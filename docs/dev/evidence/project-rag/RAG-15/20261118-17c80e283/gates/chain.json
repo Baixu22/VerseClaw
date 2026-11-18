@@ -1,0 +1,181 @@
+{
+  "schema": "ProjectRagFormalGateChain/v1",
+  "actor": "codex-g2-rag15-relay-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "platform": "win32",
+  "candidate": "17c80e283e4e7184791a7be0f168bd35309494bf",
+  "tree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+  "startedAt": "2026-11-18T04:25:34.148457+00:00",
+  "phases": [
+    {
+      "phase": "unit",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "unit",
+        "--out",
+        "formal-unit-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-unit-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "runtime-unit",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "runtime-unit",
+        "--out",
+        "formal-runtime-unit-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-runtime-unit-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "types",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "types",
+        "--out",
+        "formal-types-17c80e283-host2",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-types-17c80e283-host2\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "build",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "build",
+        "--out",
+        "formal-build-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-build-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "electron",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "electron",
+        "--out",
+        "formal-electron-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-electron-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "control-e2e",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "control-e2e",
+        "--out",
+        "formal-control-e2e-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-control-e2e-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "checks",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "checks",
+        "--out",
+        "formal-checks-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-checks-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "lint",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "lint",
+        "--out",
+        "formal-lint-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-lint-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "runtime-lint",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "runtime-lint",
+        "--out",
+        "formal-runtime-lint-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-runtime-lint-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "format",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "format",
+        "--out",
+        "formal-format-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-format-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    },
+    {
+      "phase": "ci",
+      "argv": [
+        "python",
+        "D:\\tmp\\project-rag-rag15-20261117\\run-rag15-scanfix.py",
+        "--phase",
+        "ci",
+        "--out",
+        "formal-ci-17c80e283",
+        "--formal"
+      ],
+      "exitCode": 0,
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-ci-17c80e283\\receipt.json",
+      "verifiedFromDisk": true
+    }
+  ],
+  "status": "pass",
+  "resumedAt": "2026-11-18T05:14:00.246969+00:00",
+  "resumeReason": "Execution host generation changed; reuse verified same-candidate gates and rerun the unfinished phase.",
+  "completedAt": "2026-11-18T05:20:31.324772+00:00"
+}

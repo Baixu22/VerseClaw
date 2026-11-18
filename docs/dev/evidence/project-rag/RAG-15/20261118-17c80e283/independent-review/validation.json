@@ -1,0 +1,203 @@
+{
+  "schema": "ProjectRagRag15Validation/v1",
+  "actor": "codex-g2-rag15-verifier-v7-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "modelRequested": "ccs-workbuddy/deepseek-v4.1-flash",
+  "modelObserved": "deepseek-v4.1-flash",
+  "candidate": "17c80e283e4e7184791a7be0f168bd35309494bf",
+  "tree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+  "status": "pass",
+  "inputBinding": "D:/tmp/project-rag-rag15-20261117/independent-review-v7/input-binding-end.json",
+  "sourceReview": "D:/tmp/project-rag-rag15-20261117/independent-review-v7/source-review.json",
+  "negativeProbes": "D:/tmp/project-rag-rag15-20261117/independent-review-v7/negative-probes/receipt.json",
+  "verifierGateChain": "D:/tmp/project-rag-rag15-20261117/independent-review-v7/verifier-gate-chain.json",
+  "mainChainCrosscheck": "D:/tmp/project-rag-rag15-20261117/independent-review-v7/main-chain-crosscheck.json",
+  "checks": [
+    {
+      "id": "manifest_52",
+      "status": "pass",
+      "evidence": {
+        "manifestSha256": "3231625adbaed1cb6ca9008f6c9a7af61861e4176aba05e3b2bc436efe6969f5"
+      }
+    },
+    {
+      "id": "source_end_unchanged",
+      "status": "pass"
+    },
+    {
+      "id": "verifier_11_gates",
+      "status": "pass"
+    },
+    {
+      "id": "unit130",
+      "status": "pass",
+      "counts": {
+        "total": 130,
+        "passed": 130,
+        "failed": 0,
+        "pending": 0
+      }
+    },
+    {
+      "id": "runtime66",
+      "status": "pass",
+      "counts": {
+        "total": 66,
+        "passed": 66,
+        "failed": 0,
+        "pending": 0
+      }
+    },
+    {
+      "id": "electron_10_steps_5_tools_3_required_screens",
+      "status": "pass",
+      "steps": 10,
+      "toolResultTurns": 9,
+      "requiredScreens": 3
+    },
+    {
+      "id": "control_4",
+      "status": "pass",
+      "stats": {
+        "startTime": "2026-11-18T05:36:05.068Z",
+        "duration": 48480.924,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "id": "required_tests_7",
+      "status": "pass",
+      "tests": {
+        "tests/unit/task-ledger-reference.test.ts": {
+          "present": true,
+          "evidence": [
+            {
+              "file": "task-ledger-reference.test.ts",
+              "total": 3,
+              "passed": 3,
+              "failed": 0
+            }
+          ]
+        },
+        "tests/unit/project-rag-graph-task-context.test.ts": {
+          "present": true,
+          "evidence": [
+            {
+              "file": "project-rag-graph-task-context.test.ts",
+              "total": 35,
+              "passed": 35,
+              "failed": 0
+            }
+          ]
+        },
+        "openclaw_runtime/src/context-engine/factstore/factstore.test.ts": {
+          "present": true,
+          "evidence": [
+            {
+              "file": "factstore.test.ts",
+              "total": 17,
+              "passed": 17,
+              "failed": 0
+            }
+          ]
+        },
+        "openclaw_runtime/src/context-engine/views/impact/impact-parity.test.ts": {
+          "present": true,
+          "evidence": [
+            {
+              "file": "impact-parity.test.ts",
+              "total": 16,
+              "passed": 16,
+              "failed": 0
+            }
+          ]
+        },
+        "tests/unit/component-disposition-catalog.test.ts": {
+          "present": true,
+          "evidence": [
+            {
+              "file": "component-disposition-catalog.test.ts",
+              "total": 13,
+              "passed": 13,
+              "failed": 0
+            }
+          ]
+        },
+        "tests/unit/dcs-prod-flags-catalog.test.ts": {
+          "present": true,
+          "evidence": [
+            {
+              "file": "dcs-prod-flags-catalog.test.ts",
+              "total": 3,
+              "passed": 3,
+              "failed": 0
+            }
+          ]
+        },
+        "tests/e2e/project-rag-research.spec.ts": {
+          "present": true,
+          "evidence": [
+            {
+              "file": "tests/e2e/project-rag-research.spec.ts",
+              "expected": 1,
+              "passed": 1,
+              "failed": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "contract_5",
+      "status": "pass",
+      "criteria": [
+        {
+          "id": 1,
+          "status": "pass"
+        },
+        {
+          "id": 2,
+          "status": "pass"
+        },
+        {
+          "id": 3,
+          "status": "pass"
+        },
+        {
+          "id": 4,
+          "status": "pass"
+        },
+        {
+          "id": 5,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "negative_probes",
+      "status": "pass",
+      "probes": [
+        {
+          "name": "incoming-513-scan-cap",
+          "status": "pass",
+          "exitCode": 0
+        },
+        {
+          "name": "impact-parity-frozen-inputs",
+          "status": "pass",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "id": "main_chain_11",
+      "status": "pass",
+      "sourceReceipt": "D:/tmp/project-rag-rag15-20261117/formal-chain-17c80e283/receipt.json"
+    }
+  ],
+  "validatedAt": "2026-11-18T05:43:24.163Z"
+}

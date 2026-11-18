@@ -1,0 +1,1120 @@
+{
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "schema + happy path"
+          ],
+          "fullName": "DCS Stage 5 context agent tools schema + happy path context_read returns full_content for task_state",
+          "status": "passed",
+          "title": "context_read returns full_content for task_state",
+          "duration": 11.03979999999865,
+          "failureMessages": [],
+          "location": {
+            "line": 114,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "schema + happy path"
+          ],
+          "fullName": "DCS Stage 5 context agent tools schema + happy path context_read exposes include_archived and persists explicit recall",
+          "status": "passed",
+          "title": "context_read exposes include_archived and persists explicit recall",
+          "duration": 1.7299999999995634,
+          "failureMessages": [],
+          "location": {
+            "line": 144,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "schema + happy path"
+          ],
+          "fullName": "DCS Stage 5 context agent tools schema + happy path context_search wraps searchContext",
+          "status": "passed",
+          "title": "context_search wraps searchContext",
+          "duration": 1.2079999999987194,
+          "failureMessages": [],
+          "location": {
+            "line": 187,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "schema + happy path"
+          ],
+          "fullName": "DCS Stage 5 context agent tools schema + happy path context_write appends notes with write_origin",
+          "status": "passed",
+          "title": "context_write appends notes with write_origin",
+          "duration": 7.504300000000512,
+          "failureMessages": [],
+          "location": {
+            "line": 209,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "auth / reject paths"
+          ],
+          "fullName": "DCS Stage 5 context agent tools auth / reject paths omits tools when blockStore or sessionId missing",
+          "status": "passed",
+          "title": "omits tools when blockStore or sessionId missing",
+          "duration": 1.253499999998894,
+          "failureMessages": [],
+          "location": {
+            "line": 236,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "auth / reject paths"
+          ],
+          "fullName": "DCS Stage 5 context agent tools auth / reject paths context_write rejects non-whitelisted role",
+          "status": "passed",
+          "title": "context_write rejects non-whitelisted role",
+          "duration": 0.3914999999979045,
+          "failureMessages": [],
+          "location": {
+            "line": 243,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "auth / reject paths"
+          ],
+          "fullName": "DCS Stage 5 context agent tools auth / reject paths context_read reports empty when store returns no blocks (auth empty set)",
+          "status": "passed",
+          "title": "context_read reports empty when store returns no blocks (auth empty set)",
+          "duration": 0.42989999999917927,
+          "failureMessages": [],
+          "location": {
+            "line": 260,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "production catalog registration"
+          ],
+          "fullName": "DCS Stage 5 context agent tools production catalog registration createOpenClawCodingTools includes three names when DCS deps present",
+          "status": "passed",
+          "title": "createOpenClawCodingTools includes three names when DCS deps present",
+          "duration": 1106.8526999999995,
+          "failureMessages": [],
+          "location": {
+            "line": 276,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "production catalog registration"
+          ],
+          "fullName": "DCS Stage 5 context agent tools production catalog registration createOpenClawCodingTools omits context tools without DCS deps",
+          "status": "passed",
+          "title": "createOpenClawCodingTools omits context tools without DCS deps",
+          "duration": 802.5002000000022,
+          "failureMessages": [],
+          "location": {
+            "line": 295,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS Stage 5 context agent tools",
+            "child instruction accuracy"
+          ],
+          "fullName": "DCS Stage 5 context agent tools child instruction accuracy CHILD_CONTEXT_READ_INSTRUCTION names a registered tool",
+          "status": "passed",
+          "title": "CHILD_CONTEXT_READ_INSTRUCTION names a registered tool",
+          "duration": 0.8369999999995343,
+          "failureMessages": [],
+          "location": {
+            "line": 311,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS FactStore view tools (C0-1')"
+          ],
+          "fullName": "DCS FactStore view tools (C0-1') RED: view tools invisible without factService (dep-gate like Block tools)",
+          "status": "passed",
+          "title": "RED: view tools invisible without factService (dep-gate like Block tools)",
+          "duration": 4.966499999998632,
+          "failureMessages": [],
+          "location": {
+            "line": 380,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS FactStore view tools (C0-1')"
+          ],
+          "fullName": "DCS FactStore view tools (C0-1') context_impact returns callers + radius evidence from real FactStore",
+          "status": "passed",
+          "title": "context_impact returns callers + radius evidence from real FactStore",
+          "duration": 184.20520000000033,
+          "failureMessages": [],
+          "location": {
+            "line": 396,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS FactStore view tools (C0-1')"
+          ],
+          "fullName": "DCS FactStore view tools (C0-1') createDcsContextAgentTools registers 4 view tools when factService present",
+          "status": "passed",
+          "title": "createDcsContextAgentTools registers 4 view tools when factService present",
+          "duration": 26.23189999999886,
+          "failureMessages": [],
+          "location": {
+            "line": 421,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS FactStore view tools (C0-1')"
+          ],
+          "fullName": "DCS FactStore view tools (C0-1') createOpenClawCodingTools includes view tools when factService provided",
+          "status": "passed",
+          "title": "createOpenClawCodingTools includes view tools when factService provided",
+          "duration": 847.268500000002,
+          "failureMessages": [],
+          "location": {
+            "line": 432,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS FactStore view tools (C0-1')"
+          ],
+          "fullName": "DCS FactStore view tools (C0-1') createOpenClawCodingTools omits view tools without factService (flag-off-equivalent)",
+          "status": "passed",
+          "title": "createOpenClawCodingTools omits view tools without factService (flag-off-equivalent)",
+          "duration": 789.0730000000003,
+          "failureMessages": [],
+          "location": {
+            "line": 451,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS FactStore view tools (C0-1')"
+          ],
+          "fullName": "DCS FactStore view tools (C0-1') context_verify with changedFiles includes relatedTests field",
+          "status": "passed",
+          "title": "context_verify with changedFiles includes relatedTests field",
+          "duration": 39.661700000000565,
+          "failureMessages": [],
+          "location": {
+            "line": 470,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DCS FactStore view tools (C0-1')"
+          ],
+          "fullName": "DCS FactStore view tools (C0-1') schema budget recorder records toolCount and schemaChars (W0-4)",
+          "status": "passed",
+          "title": "schema budget recorder records toolCount and schemaChars (W0-4)",
+          "duration": 31.896899999999732,
+          "failureMessages": [],
+          "location": {
+            "line": 484,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0495 standard context view tool surface"
+          ],
+          "fullName": "TF-0495 standard context view tool surface auto-discovers view tools from healthy workspace + FactService + permission",
+          "status": "passed",
+          "title": "auto-discovers view tools from healthy workspace + FactService + permission",
+          "duration": 29.514100000000326,
+          "failureMessages": [],
+          "location": {
+            "line": 532,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0495 standard context view tool surface"
+          ],
+          "fullName": "TF-0495 standard context view tool surface explicit false remains a rollback and keeps view tools out",
+          "status": "passed",
+          "title": "explicit false remains a rollback and keeps view tools out",
+          "duration": 33.82920000000013,
+          "failureMessages": [],
+          "location": {
+            "line": 554,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0495 standard context view tool surface"
+          ],
+          "fullName": "TF-0495 standard context view tool surface permission denial is visible and execution fails closed",
+          "status": "passed",
+          "title": "permission denial is visible and execution fails closed",
+          "duration": 26.706899999997404,
+          "failureMessages": [],
+          "location": {
+            "line": 568,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0495 standard context view tool surface"
+          ],
+          "fullName": "TF-0495 standard context view tool surface on_demand summary mode: default registry list has no full schema property dump",
+          "status": "passed",
+          "title": "on_demand summary mode: default registry list has no full schema property dump",
+          "duration": 33.53129999999874,
+          "failureMessages": [],
+          "location": {
+            "line": 597,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794975996955,
+      "endTime": 1794976000936.5312,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/src/agents/tools/context-agent-tools.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) round-trips one file's facts: write then read back identical (gate C-1)",
+          "status": "passed",
+          "title": "round-trips one file's facts: write then read back identical (gate C-1)",
+          "duration": 190.32640000000015,
+          "failureMessages": [],
+          "location": {
+            "line": 71,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) replaces rows on re-upsert instead of duplicating",
+          "status": "passed",
+          "title": "replaces rows on re-upsert instead of duplicating",
+          "duration": 32.284200000000055,
+          "failureMessages": [],
+          "location": {
+            "line": 105,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) bounds edge reads while preserving the full-query default",
+          "status": "passed",
+          "title": "bounds edge reads while preserving the full-query default",
+          "duration": 44.04359999999997,
+          "failureMessages": [],
+          "location": {
+            "line": 122,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) reports stale when the file content hash diverges from produced_hash (gate C-2)",
+          "status": "passed",
+          "title": "reports stale when the file content hash diverges from produced_hash (gate C-2)",
+          "duration": 38.8107,
+          "failureMessages": [],
+          "location": {
+            "line": 144,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) reports missing for paths that were never stored",
+          "status": "passed",
+          "title": "reports missing for paths that were never stored",
+          "duration": 27.9840999999999,
+          "failureMessages": [],
+          "location": {
+            "line": 175,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) answers provenance: symbol produced by treesitter at hash H (gate C-3)",
+          "status": "passed",
+          "title": "answers provenance: symbol produced by treesitter at hash H (gate C-3)",
+          "duration": 38.071100000000115,
+          "failureMessages": [],
+          "location": {
+            "line": 191,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) refuses ignored paths and records them in skipped_files (gate C-4)",
+          "status": "passed",
+          "title": "refuses ignored paths and records them in skipped_files (gate C-4)",
+          "duration": 37.93820000000005,
+          "failureMessages": [],
+          "location": {
+            "line": 213,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) accounts heat on touch and preserves it across re-upsert",
+          "status": "passed",
+          "title": "accounts heat on touch and preserves it across re-upsert",
+          "duration": 31.437799999999925,
+          "failureMessages": [],
+          "location": {
+            "line": 266,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) finds symbols by name substring",
+          "status": "passed",
+          "title": "finds symbols by name substring",
+          "duration": 71.98720000000003,
+          "failureMessages": [],
+          "location": {
+            "line": 287,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "factstore (gate C)"
+          ],
+          "fullName": "factstore (gate C) serves FTS chunk search from chunks_fts",
+          "status": "passed",
+          "title": "serves FTS chunk search from chunks_fts",
+          "duration": 56.53839999999991,
+          "failureMessages": [],
+          "location": {
+            "line": 302,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "freshness gate modes"
+          ],
+          "fullName": "freshness gate modes fast mode never refreshes",
+          "status": "passed",
+          "title": "fast mode never refreshes",
+          "duration": 0.2972999999997228,
+          "failureMessages": [],
+          "location": {
+            "line": 326,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "freshness gate modes"
+          ],
+          "fullName": "freshness gate modes balanced mode refreshes within the budget",
+          "status": "passed",
+          "title": "balanced mode refreshes within the budget",
+          "duration": 0.18429999999989377,
+          "failureMessages": [],
+          "location": {
+            "line": 333,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "freshness gate modes"
+          ],
+          "fullName": "freshness gate modes strict mode refreshes everything stale or missing",
+          "status": "passed",
+          "title": "strict mode refreshes everything stale or missing",
+          "duration": 0.12730000000010477,
+          "failureMessages": [],
+          "location": {
+            "line": 342,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "freshness gate modes"
+          ],
+          "fullName": "freshness gate modes maps ragcode env values onto the codegraph tiers",
+          "status": "passed",
+          "title": "maps ragcode env values onto the codegraph tiers",
+          "duration": 0.21210000000019136,
+          "failureMessages": [],
+          "location": {
+            "line": 347,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ignore policy"
+          ],
+          "fullName": "ignore policy flags ignored directories anywhere in the path",
+          "status": "passed",
+          "title": "flags ignored directories anywhere in the path",
+          "duration": 0.24119999999993524,
+          "failureMessages": [],
+          "location": {
+            "line": 355,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "openFactStore lifecycle"
+          ],
+          "fullName": "openFactStore lifecycle caches one store per workspace root (one .sqlite, one clock)",
+          "status": "passed",
+          "title": "caches one store per workspace root (one .sqlite, one clock)",
+          "duration": 23.781999999999698,
+          "failureMessages": [],
+          "location": {
+            "line": 373,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "neutral membrane artifact (gate C-5)"
+          ],
+          "fullName": "neutral membrane artifact (gate C-5) writes a real store for verseshell db.sqlite_query to read",
+          "status": "passed",
+          "title": "writes a real store for verseshell db.sqlite_query to read",
+          "duration": 30.400900000000092,
+          "failureMessages": [],
+          "location": {
+            "line": 394,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794976003641,
+      "endTime": 1794976004266.401,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/src/context-engine/factstore/factstore.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "WorkspaceFactService (C0-3)"
+          ],
+          "fullName": "WorkspaceFactService (C0-3) returns the same instance for the same workspace",
+          "status": "passed",
+          "title": "returns the same instance for the same workspace",
+          "duration": 25.323499999999967,
+          "failureMessages": [],
+          "location": {
+            "line": 33,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "WorkspaceFactService (C0-3)"
+          ],
+          "fullName": "WorkspaceFactService (C0-3) returns different instances for different workspaces",
+          "status": "passed",
+          "title": "returns different instances for different workspaces",
+          "duration": 49.58550000000014,
+          "failureMessages": [],
+          "location": {
+            "line": 43,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "WorkspaceFactService (C0-3)"
+          ],
+          "fullName": "WorkspaceFactService (C0-3) reconstructs after invalidate / reset",
+          "status": "passed",
+          "title": "reconstructs after invalidate / reset",
+          "duration": 26.71939999999995,
+          "failureMessages": [],
+          "location": {
+            "line": 51,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "WorkspaceFactService (C0-3)"
+          ],
+          "fullName": "WorkspaceFactService (C0-3) invalidates by fingerprint (session workspace switch)",
+          "status": "passed",
+          "title": "invalidates by fingerprint (session workspace switch)",
+          "duration": 20.61830000000009,
+          "failureMessages": [],
+          "location": {
+            "line": 61,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "WorkspaceFactService (C0-3)"
+          ],
+          "fullName": "WorkspaceFactService (C0-3) shares touch queue across resolvers for the same workspace",
+          "status": "passed",
+          "title": "shares touch queue across resolvers for the same workspace",
+          "duration": 42.78510000000006,
+          "failureMessages": [],
+          "location": {
+            "line": 68,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794976004901,
+      "endTime": 1794976005065.7852,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/src/context-engine/factstore/workspace-fact-service.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) resolves every golden query in the baseline graph",
+          "status": "passed",
+          "title": "resolves every golden query in the baseline graph",
+          "duration": 0.3281000000001768,
+          "failureMessages": [],
+          "location": {
+            "line": 114,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"openFactStore\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"openFactStore\" (gate G-2)",
+          "duration": 3.3553000000001703,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"factStorePathFor\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"factStorePathFor\" (gate G-2)",
+          "duration": 2.2312000000001717,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"closeAllFactStores\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"closeAllFactStores\" (gate G-2)",
+          "duration": 1.8441000000002532,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"upsertFileFacts\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"upsertFileFacts\" (gate G-2)",
+          "duration": 2.7420999999999367,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"normalizeFactPath\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"normalizeFactPath\" (gate G-2)",
+          "duration": 1.8546000000001186,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"factStoreIgnoreReason\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"factStoreIgnoreReason\" (gate G-2)",
+          "duration": 1.8103000000000975,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"sha256\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"sha256\" (gate G-2)",
+          "duration": 1.7692000000001826,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"stableId\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"stableId\" (gate G-2)",
+          "duration": 1.8921000000000276,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"projectIdForRoot\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"projectIdForRoot\" (gate G-2)",
+          "duration": 2.0911000000000968,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"checkFileFreshness\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"checkFileFreshness\" (gate G-2)",
+          "duration": 1.5538000000001375,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"gateFreshness\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"gateFreshness\" (gate G-2)",
+          "duration": 1.9115999999999076,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"migrateFactStoreSchema\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"migrateFactStoreSchema\" (gate G-2)",
+          "duration": 1.6340000000000146,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) recalls a superset for \"createMaterializer\" (gate G-2)",
+          "status": "passed",
+          "title": "recalls a superset for \"createMaterializer\" (gate G-2)",
+          "duration": 3.1804000000001906,
+          "failureMessages": [],
+          "location": {
+            "line": 120,
+            "column": 5
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) supports qualified file:symbol targets",
+          "status": "passed",
+          "title": "supports qualified file:symbol targets",
+          "duration": 1.956800000000385,
+          "failureMessages": [],
+          "location": {
+            "line": 178,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "impact view parity vs vendored codegraph (gate G)"
+          ],
+          "fullName": "impact view parity vs vendored codegraph (gate G) exposes the analysis through the shadow impact provider",
+          "status": "passed",
+          "title": "exposes the analysis through the shadow impact provider",
+          "duration": 2.335700000000088,
+          "failureMessages": [],
+          "location": {
+            "line": 185,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794976004826,
+      "endTime": 1794976004858.3357,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/src/context-engine/views/impact/impact-parity.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "context pack view (gate E)"
+          ],
+          "fullName": "context pack view (gate E) emits a valid ContextPack with the frozen field order (gate E-1)",
+          "status": "passed",
+          "title": "emits a valid ContextPack with the frozen field order (gate E-1)",
+          "duration": 49.1867000000002,
+          "failureMessages": [],
+          "location": {
+            "line": 82,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "context pack view (gate E)"
+          ],
+          "fullName": "context pack view (gate E) reproduces the edit-readiness tri-state (gate E-2)",
+          "status": "passed",
+          "title": "reproduces the edit-readiness tri-state (gate E-2)",
+          "duration": 108.27379999999994,
+          "failureMessages": [],
+          "location": {
+            "line": 110,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "context pack view (gate E)"
+          ],
+          "fullName": "context pack view (gate E) declares a ripgrep fallback failure instead of silently reporting an index miss",
+          "status": "passed",
+          "title": "declares a ripgrep fallback failure instead of silently reporting an index miss",
+          "duration": 25.789299999999912,
+          "failureMessages": [],
+          "location": {
+            "line": 141,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "context pack view (gate E)"
+          ],
+          "fullName": "context pack view (gate E) truncates to budget and declares it via context_budget_truncated (gate E-3)",
+          "status": "passed",
+          "title": "truncates to budget and declares it via context_budget_truncated (gate E-3)",
+          "duration": 40.14730000000009,
+          "failureMessages": [],
+          "location": {
+            "line": 162,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "context pack view (gate E)"
+          ],
+          "fullName": "context pack view (gate E) lands a Chinese query on the English implementation file (gate E-4)",
+          "status": "passed",
+          "title": "lands a Chinese query on the English implementation file (gate E-4)",
+          "duration": 30.982100000000173,
+          "failureMessages": [],
+          "location": {
+            "line": 176,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "context pack shadow provider (gate E registration)"
+          ],
+          "fullName": "context pack shadow provider (gate E registration) registers shadowOnly with the context.understand capability",
+          "status": "passed",
+          "title": "registers shadowOnly with the context.understand capability",
+          "duration": 40.13020000000006,
+          "failureMessages": [],
+          "location": {
+            "line": 207,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "context pack shadow provider (gate E registration)"
+          ],
+          "fullName": "context pack shadow provider (gate E registration) falls back when no workspace or goal is available",
+          "status": "passed",
+          "title": "falls back when no workspace or goal is available",
+          "duration": 4.019400000000132,
+          "failureMessages": [],
+          "location": {
+            "line": 227,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794976004407,
+      "endTime": 1794976004705.0193,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/src/context-engine/views/pack/context-pack.test.ts"
+    }
+  ],
+  "numTotalTests": 66,
+  "numPassedTests": 66,
+  "numFailedTests": 0,
+  "numPendingTests": 0
+}

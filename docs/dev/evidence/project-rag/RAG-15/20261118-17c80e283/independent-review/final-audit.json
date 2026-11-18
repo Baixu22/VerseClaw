@@ -1,0 +1,36 @@
+{
+  "schema": "ProjectRagRag15FinalAudit/v1",
+  "actor": "codex-g2-rag15-verifier-v7-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "pass",
+  "checks": {
+    "reviewStatus": "pass",
+    "findings": 0,
+    "overallCorrectness": "patch is correct",
+    "overallConfidence": 0.99,
+    "gateCount": 11,
+    "gatesOk": true,
+    "criteriaOk": true,
+    "modelOk": true,
+    "source": {
+      "head": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "tree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "clean": true
+    },
+    "clone": {
+      "head": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "tree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "clean": true
+    }
+  },
+  "hashes": {
+    "reviewJson": "bc16e83a114beedfd9386c4b5cf98992c28f6c77e3474d8accb5b2a4c48a2c63",
+    "reviewMd": "b06deebc3fb3748bef61b4e0bee05faae6878d274f7ec749a022d8574eb3efec",
+    "validation": "13aaa11460bc51b9b3d2b8a3de8847bf0a8d9fa8102c035c744da6eddc3866a7",
+    "inputBindingEnd": "40d56a89d42c6ec4f1f201e976e1ab55167ca4806079c2045b828c588a66769e",
+    "verifierGateChain": "d012a8dbe80a0efed97ded355c1e219856a5e36a8aaaf3e12c80d3c9d446168d",
+    "deepseekResponse": "46281e717dc3578b72505d4ffc4e1ccd0e0534f8f03f14512f15277d6b5e2cb1"
+  },
+  "auditedAt": "2026-11-18T05:45:50.640Z"
+}

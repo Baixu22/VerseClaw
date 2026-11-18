@@ -1,0 +1,52 @@
+{
+  "actor": "codex-g2-rag15-relay-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "17c80e283e4e7184791a7be0f168bd35309494bf",
+  "coverage": [
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "passed": 3,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/project-rag-graph-task-context.test.ts",
+      "passed": 35,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/factstore/factstore.test.ts",
+      "passed": 17,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/views/impact/impact-parity.test.ts",
+      "passed": 16,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/component-disposition-catalog.test.ts",
+      "passed": 13,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/dcs-prod-flags-catalog.test.ts",
+      "passed": 3,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/e2e/project-rag-research.spec.ts",
+      "passed": 1,
+      "failed": 0,
+      "pending": 0
+    }
+  ],
+  "unitTests": 130,
+  "runtimeTests": 66
+}

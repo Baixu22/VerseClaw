@@ -1,0 +1,108 @@
+{
+  "actor": "codex-g2-rag15-relay-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "schema": "ProjectRagCodeTaskAcceptance/v1",
+  "node": "TF-0892",
+  "programKey": "RAG-15",
+  "candidate": "17c80e283e4e7184791a7be0f168bd35309494bf",
+  "tree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+  "status": "pass",
+  "unitTests": 130,
+  "runtimeTests": 66,
+  "electronTests": 5,
+  "electronSteps": {
+    "missingTaskDegraded": true,
+    "taskHintReadOnly": true,
+    "crossWorkspaceDenied": true,
+    "normalChatExactGraph": true,
+    "twoHopBound": true,
+    "incomingScanBudget": true,
+    "taskAbsentFromCodeChunks": true,
+    "staleEdgeDenied": true,
+    "taskHintRollback": true,
+    "taskRevisionPinDenied": true
+  },
+  "scriptedProviderRequests": 9,
+  "ciStages": 12,
+  "independentReviewFindings": 0,
+  "acceptanceCriteria": [
+    {
+      "id": 1,
+      "status": "pass",
+      "summary": "FactStore 有可选 SQL LIMIT，默认 -1 返回全量；关系边绑定 project、sourceFile、当前 AST/type-checker 解析出的实际符号路径与 SourceRef/v2 revision。",
+      "sourceAnchors": [
+        "openclaw_runtime/src/context-engine/factstore/statements.ts:207-212",
+        "openclaw_runtime/src/context-engine/factstore/store.ts:265-283",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:274-441"
+      ],
+      "diskEvidence": [
+        "openclaw_runtime/src/context-engine/factstore/factstore.test.ts:122-141",
+        "tests/unit/project-rag-graph-task-context.test.ts:62-71"
+      ]
+    },
+    {
+      "id": 2,
+      "status": "pass",
+      "summary": "relationship/research 才进入图扩展；默认深度 1、硬上限 2、节点上限 32、边上限 128；每个落点读取与末尾复验均执行 owner/hash/revision 准入。",
+      "sourceAnchors": [
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:22-24",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:53-140",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:143-525",
+        "openclaw_runtime/src/agents/tools/context-agent-tools.ts:515-535"
+      ],
+      "diskEvidence": [
+        "tests/unit/project-rag-graph-task-context.test.ts:73-103",
+        "tests/unit/project-rag-graph-task-context.test.ts:110-235",
+        "tests/e2e/project-rag-research.spec.ts:120-155"
+      ]
+    },
+    {
+      "id": 3,
+      "status": "pass",
+      "summary": "TaskContextHint 仅调用 binding、evidence、checkpoint revision 读取；返回 revision/constraints/evidenceRefs 并 fencing 末次变化，不写入任务表，也不把任务目标送入 code chunks。",
+      "sourceAnchors": [
+        "openclaw_runtime/src/knowledge/retrieval/task-context-hint.ts:27-126",
+        "openclaw_runtime/src/knowledge/retrieval/task-context-hint.ts:129-149",
+        "openclaw_runtime/src/context-engine/views/pack/context-pack-view.ts:55-70"
+      ],
+      "diskEvidence": [
+        "tests/unit/project-rag-graph-task-context.test.ts:301-349",
+        "tests/e2e/project-rag-research.spec.ts:97-101",
+        "tests/e2e/project-rag-research.spec.ts:142-149"
+      ]
+    },
+    {
+      "id": 4,
+      "status": "pass",
+      "summary": "负例覆盖 cross-workspace、stale edge、同名文件/符号、缺 Ledger、lookup 无图读取、歧义符号、显式未知路径拒绝回退，以及拒绝 disabled/旧 pin 降级。",
+      "sourceAnchors": [
+        "openclaw_runtime/src/agents/tools/context-agent-tools.ts:466-507",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:178-180",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:212-272",
+        "tests/unit/project-rag-graph-task-context.test.ts:104-160",
+        "tests/unit/project-rag-graph-task-context.test.ts:253-296",
+        "tests/unit/project-rag-graph-task-context.test.ts:311-349"
+      ],
+      "diskEvidence": [
+        "tests/e2e/project-rag-research.spec.ts:80-103",
+        "tests/e2e/project-rag-research.spec.ts:150-165"
+      ]
+    },
+    {
+      "id": 5,
+      "status": "pass",
+      "summary": "plannedTests 与 plannedE2E 已在 task spec、manifest requiredTests 和磁盘实现中绑定同一候选；requiredTests 七项分别由 unit/runtime-unit/electron receipts 覆盖。",
+      "sourceAnchors": [
+        "harness/specs/tasks/project-rag-code-graph-task-context.md:59-83"
+      ],
+      "diskEvidence": [
+        "D:/tmp/project-rag-rag15-20261117/independent-review-v7/verifier-gates/formal-unit-v7/unit.json",
+        "D:/tmp/project-rag-rag15-20261117/independent-review-v7/verifier-gates/formal-runtime-unit-v7/runtime-unit.json",
+        "D:/tmp/project-rag-rag15-20261117/independent-review-v7/verifier-gates/formal-electron-v7/receipt.json"
+      ]
+    }
+  ],
+  "completedAt": "2026-11-18T05:59:58.825727+00:00",
+  "next": "RAG-16 / TF-0893"
+}

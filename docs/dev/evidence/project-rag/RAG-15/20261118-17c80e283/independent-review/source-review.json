@@ -1,0 +1,114 @@
+{
+  "schema": "ProjectRagRag15SourceReview/v1",
+  "actor": "codex-g2-rag15-verifier-v7-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "status": "pass",
+  "candidate": "17c80e283e4e7184791a7be0f168bd35309494bf",
+  "tree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+  "diffBase": "f2438fed1f3e041d1a669696e7af6657ceaac87f",
+  "reviewedAt": "2026-11-18T05:42:40.374Z",
+  "criteria": [
+    {
+      "id": 1,
+      "status": "pass",
+      "summary": "FactStore 有可选 SQL LIMIT，默认 -1 返回全量；关系边绑定 project、sourceFile、当前 AST/type-checker 解析出的实际符号路径与 SourceRef/v2 revision。",
+      "anchors": [
+        "openclaw_runtime/src/context-engine/factstore/statements.ts:207-212",
+        "openclaw_runtime/src/context-engine/factstore/store.ts:265-283",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:274-441"
+      ],
+      "evidence": [
+        "openclaw_runtime/src/context-engine/factstore/factstore.test.ts:122-141",
+        "tests/unit/project-rag-graph-task-context.test.ts:62-71"
+      ]
+    },
+    {
+      "id": 2,
+      "status": "pass",
+      "summary": "relationship/research 才进入图扩展；默认深度 1、硬上限 2、节点上限 32、边上限 128；每个落点读取与末尾复验均执行 owner/hash/revision 准入。",
+      "anchors": [
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:22-24",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:53-140",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:143-525",
+        "openclaw_runtime/src/agents/tools/context-agent-tools.ts:515-535"
+      ],
+      "evidence": [
+        "tests/unit/project-rag-graph-task-context.test.ts:73-103",
+        "tests/unit/project-rag-graph-task-context.test.ts:110-235",
+        "tests/e2e/project-rag-research.spec.ts:120-155"
+      ]
+    },
+    {
+      "id": 3,
+      "status": "pass",
+      "summary": "TaskContextHint 仅调用 binding、evidence、checkpoint revision 读取；返回 revision/constraints/evidenceRefs 并 fencing 末次变化，不写入任务表，也不把任务目标送入 code chunks。",
+      "anchors": [
+        "openclaw_runtime/src/knowledge/retrieval/task-context-hint.ts:27-126",
+        "openclaw_runtime/src/knowledge/retrieval/task-context-hint.ts:129-149",
+        "openclaw_runtime/src/context-engine/views/pack/context-pack-view.ts:55-70"
+      ],
+      "evidence": [
+        "tests/unit/project-rag-graph-task-context.test.ts:301-349",
+        "tests/e2e/project-rag-research.spec.ts:97-101",
+        "tests/e2e/project-rag-research.spec.ts:142-149"
+      ]
+    },
+    {
+      "id": 4,
+      "status": "pass",
+      "summary": "负例覆盖 cross-workspace、stale edge、同名文件/符号、缺 Ledger、lookup 无图读取、歧义符号、显式未知路径拒绝回退，以及拒绝 disabled/旧 pin 降级。",
+      "anchors": [
+        "openclaw_runtime/src/agents/tools/context-agent-tools.ts:466-507",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:178-180",
+        "openclaw_runtime/src/context-engine/views/retrieval/relationship-expansion.ts:212-272",
+        "tests/unit/project-rag-graph-task-context.test.ts:104-160",
+        "tests/unit/project-rag-graph-task-context.test.ts:253-296",
+        "tests/unit/project-rag-graph-task-context.test.ts:311-349"
+      ],
+      "evidence": [
+        "tests/e2e/project-rag-research.spec.ts:80-103",
+        "tests/e2e/project-rag-research.spec.ts:150-165"
+      ]
+    },
+    {
+      "id": 5,
+      "status": "pass",
+      "summary": "plannedTests 与 plannedE2E 已在 task spec、manifest requiredTests 和磁盘实现中绑定同一候选；requiredTests 七项分别由 unit/runtime-unit/electron receipts 覆盖。",
+      "anchors": [
+        "harness/specs/tasks/project-rag-code-graph-task-context.md:59-83"
+      ],
+      "evidence": [
+        "D:/tmp/project-rag-rag15-20261117/independent-review-v7/verifier-gates/formal-unit-v7/unit.json",
+        "D:/tmp/project-rag-rag15-20261117/independent-review-v7/verifier-gates/formal-runtime-unit-v7/runtime-unit.json",
+        "D:/tmp/project-rag-rag15-20261117/independent-review-v7/verifier-gates/formal-electron-v7/receipt.json"
+      ]
+    }
+  ],
+  "focusedProbes": {
+    "incomingScanCap": {
+      "status": "pass",
+      "sourceCallEdges": 513,
+      "statusValue": "partial",
+      "truncated": true,
+      "targetCallEdges": 0,
+      "log": "D:/tmp/project-rag-rag15-20261117/independent-review-v7/negative-probes/incoming-scan-cap.stdout.log"
+    },
+    "impactParityInputs": {
+      "status": "pass",
+      "sourceCommit": "6118a355b3a3cfa2d6818a3035a3d79b99634c4f",
+      "fileCount": 7,
+      "totalBytes": 58043,
+      "baselineLfSha256": "07d938ec153acdd3d3989776b119aa9781da2728135467797be2af6b492981e6",
+      "missingFailedClosed": true,
+      "tamperFailedClosed": true,
+      "log": "D:/tmp/project-rag-rag15-20261117/independent-review-v7/negative-probes/impact-parity-inputs.stdout.log"
+    },
+    "originalParityCriteria": {
+      "status": "pass",
+      "unchangedFromDiffBase": true,
+      "sha256": "07d938ec153acdd3d3989776b119aa9781da2728135467797be2af6b492981e6"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+[build-all] tsdown
+[build-all] tsdown done in 14.3s
+[build-all] check-cli-bootstrap-imports
+[build-all] check-cli-bootstrap-imports done in 965ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 3ms
+[bundled-plugin-metadata] skipping missing skill path D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 731ms
+runtime-postbuild: official channel catalog completed in 30ms
+runtime-postbuild: bundled plugin runtime overlay completed in 1703ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 449ms
+runtime-postbuild: stable root runtime aliases completed in 117ms
+runtime-postbuild: legacy root runtime compat aliases completed in 157ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
+[build-all] runtime-postbuild done in 3.66s
+[build-all] build-stamp
+[build-all] build-stamp done in 143ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 139ms
+[build-all] write-cli-startup-metadata
+[build-all] write-cli-startup-metadata done in 139ms
+[build-all] write-cli-compat
+[build-all] write-cli-compat done in 114ms
+[build-all] phase timings: total 19.5s; slowest tsdown 14.3s; runtime-postbuild 3.66s; check-cli-bootstrap-imports 965ms; build-stamp 143ms; write-cli-startup-metadata 139ms; runtime-postbuild-stamp 139ms; write-cli-compat 114ms
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  407.1kb
+
+Done in 51ms
+runtime-postbuild: plugin SDK root alias completed in 0ms
+[bundled-plugin-metadata] skipping missing skill path D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 505ms
+runtime-postbuild: official channel catalog completed in 21ms
+runtime-postbuild: bundled plugin runtime overlay completed in 1853ms
+runtime-postbuild: static extension assets completed in 245ms
+runtime-postbuild: stable root runtime imports completed in 333ms
+runtime-postbuild: stable root runtime aliases completed in 30ms
+runtime-postbuild: legacy root runtime compat aliases completed in 120ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 0ms

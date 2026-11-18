@@ -1,0 +1,446 @@
+{
+  "schema": "ProjectRagVerifierGateChain/v1",
+  "actor": "codex-g2-rag15-verifier-v7-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "modelRequested": "ccs-workbuddy/deepseek-v4.1-flash",
+  "modelObserved": "deepseek-v4.1-flash",
+  "candidate": "17c80e283e4e7184791a7be0f168bd35309494bf",
+  "tree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+  "diffBase": "f2438fed1f3e041d1a669696e7af6657ceaac87f",
+  "status": "pass",
+  "phases": [
+    {
+      "phase": "unit",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-unit-v7\\receipt.json",
+      "receiptSha256": "a7fede875ffcb1849da99e2dacf41f4fc0bf6b386b1391aaeeceaa2b55571333",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "success": true,
+        "numTotalTests": 130,
+        "numPassedTests": 130,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-unit-v7\\unit.stdout.log",
+          "sha256": "f9876e0d4ba9e5b92cb8491fc8e27619a09384d5baecb6f9bd3d313aa85d471c",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-unit-v7\\unit.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "runtime-unit",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-runtime-unit-v7\\receipt.json",
+      "receiptSha256": "43f04b4fe87f27b244170f8469cf8accefd3fb0c26bb4ebbbb569a2c38ad5b50",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "success": true,
+        "numTotalTests": 66,
+        "numPassedTests": 66,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-runtime-unit-v7\\agent-tools.stdout.log",
+          "sha256": "f6f44a99c70300bacbd8a0f3a971343c229bafd4c1a162eb0696657707be0cee",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-runtime-unit-v7\\agent-tools.stderr.log",
+          "sha256": "3db4df1d4a73482a3f201253459160b42572fe9accff0534e44a003d96127044",
+          "exists": true
+        },
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-runtime-unit-v7\\context-views.stdout.log",
+          "sha256": "06f112c4e79116eb68e459da8163cb2d5e1c878d37e08c4d3c873c79eb392469",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-runtime-unit-v7\\context-views.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "types",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-types-v7-r2\\receipt.json",
+      "receiptSha256": "2ac23c7d5aabfb51b263da2aea00097fd304c810a1accc54ca4c037a967182ee",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "cacheEnabled": false,
+        "results": [
+          "node scripts/generate-ext-bridge.mjs",
+          "pnpm run typecheck:node",
+          "pnpm run typecheck:web",
+          "pnpm run typecheck:test"
+        ],
+        "failed": 0,
+        "skipped": 0,
+        "cacheHits": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-types-v7-r2\\typecheck.stdout.log",
+          "sha256": "031c56b9c5d8c886dc156cb6b496e68914d935541a9bdf4a42f7ae2802c77cae",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-types-v7-r2\\typecheck.stderr.log",
+          "sha256": "1d89572ea3ee8e369dd8780e2d6128aa0652a1ebb8da32682509697ab0b8f8c1",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "build",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-build-v7\\receipt.json",
+      "receiptSha256": "4043b84aaaf480a6b16ec4a091f19956cd2a9ad6abbabcff4700bd4c40644c00",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "commands": 2,
+        "failed": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-build-v7\\runtime-build.stdout.log",
+          "sha256": "02385cb9ffcc8b64680f35e6f3adfe23354df19316ccffa5cde44cf220b588de",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-build-v7\\runtime-build.stderr.log",
+          "sha256": "fdf1b623db6746a4d0ff72e89eb5b767e055f5357d7181341477a6bcfb137777",
+          "exists": true
+        },
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-build-v7\\desktop-build.stdout.log",
+          "sha256": "b597e44104ceb54086b5a41203630cb4e40306e1efa3fe227547302cc78ef982",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-build-v7\\desktop-build.stderr.log",
+          "sha256": "758ed214c6ba94829d98f30d60858515882f41bade4621231e30829d7f207e45",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "electron",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-electron-v7\\receipt.json",
+      "receiptSha256": "d19dd42d7169fa9779853dde129010483750fc705715f76ada488ed76eb03633",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "startTime": "2026-11-18T05:33:29.116Z",
+        "duration": 123662.93500000001,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-electron-v7\\electron.stdout.log",
+          "sha256": "fa293630727518ec13e35c2878d0797f1f44f3e196ebbfce0a2f1404eff4ad73",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-electron-v7\\electron.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "control-e2e",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-control-e2e-v7\\receipt.json",
+      "receiptSha256": "756bedb728a9de0a5cef8d877678c56c3830340ee7858578730fdd7aac7e1b30",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "startTime": "2026-11-18T05:36:05.068Z",
+        "duration": 48480.924,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-control-e2e-v7\\electron.stdout.log",
+          "sha256": "0603a64880441f10ceebd4987d16f410c403c41f664613f379eea1e365186439",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-control-e2e-v7\\electron.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "checks",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\receipt.json",
+      "receiptSha256": "ad2feb4d0ab0c7a8848ffe292daf86ec19a4f13d8244133694484be743bdebf1",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "commands": 7,
+        "failed": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\contract.stdout.log",
+          "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\contract.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        },
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\i18n.stdout.log",
+          "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\i18n.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        },
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\catalogs.stdout.log",
+          "sha256": "7d3d6a0029c93a0a4d4be53e0a06c600d55151164283a0a40527fcb362061588",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\catalogs.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        },
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\comms-replay.stdout.log",
+          "sha256": "d30631b58b836a5bf91239adf32de72eee83c173044d215dbaf35e2a5566004f",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\comms-replay.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        },
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\comms-compare.stdout.log",
+          "sha256": "2eea132f3dd10c9e925de0d836c63a8e6ab6ccbf34db82ee642a23426443d693",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\comms-compare.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        },
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\harness-validate.stdout.log",
+          "sha256": "5f303bb9f45f02e6943e5998039765e99d0d867887c4f18ff125fe42b17824ec",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\harness-validate.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        },
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\harness-dry-run.stdout.log",
+          "sha256": "83eb8481abb8eee571b70563c259e50506486d1103d12815f13fef90ea9cd0ae",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-checks-v7\\harness-dry-run.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "lint",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-lint-v7\\receipt.json",
+      "receiptSha256": "44627bbef5c8e4349bde5f5f07146e7b741e0307dbb118089a34c080eb9fbc8f",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "commands": 1,
+        "failed": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-lint-v7\\lint.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-lint-v7\\lint.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "runtime-lint",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-runtime-lint-v7\\receipt.json",
+      "receiptSha256": "63919e1f239977420135538e91622664f45bca63b166310138d9253419fc1364",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "commands": 1,
+        "failed": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-runtime-lint-v7\\runtime-lint.stdout.log",
+          "sha256": "f56991e6dfc905f00919844dd516275d278d5b9a2834066385065444805bc056",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-runtime-lint-v7\\runtime-lint.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "format",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-format-v7\\receipt.json",
+      "receiptSha256": "a538ce02df49a3efb7b8cb290682f32b65d25f4cca6934c4145f6096a48780dc",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "commands": 1,
+        "failed": 0
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-format-v7\\format.stdout.log",
+          "sha256": "141a758a7b424a95030cdb4f41938be115ccefe32990cdd0068bd5a125326b1d",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-format-v7\\format.stderr.log",
+          "sha256": "01f25de219844d53f81b996d6b73e782203533bfc6eba81e44b98acc0039ad42",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "phase": "ci",
+      "status": "pass",
+      "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-ci-v7\\receipt.json",
+      "receiptSha256": "b3d0b624442b142512eb2cc9253fb52db82f7538e639159c376a944f317e41be",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidateHead": "17c80e283e4e7184791a7be0f168bd35309494bf",
+      "candidateTree": "38d5640dc2553f45283b73f908f7b9fe5a8651aa",
+      "counts": {
+        "results": 12,
+        "failed": 0,
+        "success": true
+      },
+      "logHashes": [
+        {
+          "kind": "stdout",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-ci-v7\\harness-ci.stdout.log",
+          "sha256": "ef37fd8087e5d72fcc5b11e048c14f6652317d599ae047bdde77e3267e64a72f",
+          "exists": true
+        },
+        {
+          "kind": "stderr",
+          "path": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-ci-v7\\harness-ci.stderr.log",
+          "sha256": "5014094be71029c4f41c04165f2c079faf078d16cd218bc33bfc981b4c6a18ce",
+          "exists": true
+        }
+      ]
+    }
+  ],
+  "typesSetupFailure": {
+    "status": "fail",
+    "receiptPath": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v7\\verifier-gates\\formal-types-v7\\receipt.json",
+    "reason": "initial clone lacked packages/versebrowser/dist; dependency setup failure, retained and retried after junction"
+  }
+}

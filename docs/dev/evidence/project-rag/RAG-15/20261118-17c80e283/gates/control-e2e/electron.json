@@ -1,0 +1,663 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\playwright.config.ts",
+    "rootDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-rag15-20261117/formal-control-e2e-17c80e283/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "agent-dev-quality.spec.ts",
+      "file": "agent-dev-quality.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "agent dev quality gates",
+          "file": "agent-dev-quality.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "produces an accessibility report for a seeded scenario",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 31031,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:18.330Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:18.330Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [11680:1118/131819.174:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:err] [11680:1118/131819.176:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:19.707Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:19.708Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:19.709Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:19.709Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:19.710Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:18:19.710Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:19.712Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:19.712Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:18:19.712Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:18:19.713Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:19.794Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:19.795Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:18:19.795Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:18:19.795Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:21.304Z] [INFO] Gateway stop requested\n[2026-11-18T05:18:21.305Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:56487/c1c2a8c0-343d-45ab-8690-cb2360094528\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:window-close] pid=31644\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:21.336Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:21.337Z] [INFO] [ResourceTracker] Stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:21.337Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-18T05:18:21.337Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:21.337Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        },
+                        {
+                          "text": "[app:exit] pid=31644 code=null signal=SIGKILL\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-18T05:18:02.822Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "agent-dev-a11y-report",
+                          "contentType": "application/json",
+                          "path": "D:\\tmp\\project-rag-rag15-20261117\\formal-control-e2e-17c80e283\\electron\\agent-dev-quality-agent-de-b3a30-eport-for-a-seeded-scenario\\attachments\\agent-dev-a11y-report-7902eab139c0317b86ad4819f5e1b61237b0e1c0.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "25c625a4fc6c4b09b841-fb9c6f5baee55d3f71a4",
+              "file": "agent-dev-quality.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "renders assistant-ui welcome suggestions with aligned card styling",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19641,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:42.628Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:42.629Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-18T05:18:42.629Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=9368, ppid=30092\n[2026-11-18T05:18:42.629Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:42.685Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:42.685Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-18T05:18:42.685Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-18T05:18:42.685Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:42.912Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:42.912Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [9368:1118/131842.955:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[9368:1118/131842.955:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:43.177Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:43.178Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:43.179Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:18:43.180Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:18:43.180Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:18:43.180Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n[2026-11-18T05:18:43.182Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:18:43.182Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:43.182Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:18:43.183Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:18:43.267Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:18:43.267Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:18:43.267Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:18:43.268Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:44.601Z] [INFO] Gateway stop requested\n[2026-11-18T05:18:44.602Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:50419/5914dbab-f574-46eb-98fe-8ce858e246f5\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:window-close] pid=30092\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:44.664Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:44.665Z] [INFO] [ResourceTracker] Stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:44.665Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:44.665Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:44.666Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        },
+                        {
+                          "text": "[app:exit] pid=30092 code=null signal=SIGKILL\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-18T05:18:33.894Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "chat-welcome-suggestions",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\project-rag-rag15-20261117\\formal-control-e2e-17c80e283\\electron\\agent-dev-quality-agent-de-bd8d6-s-with-aligned-card-styling\\attachments\\chat-welcome-suggestions-74607aafd52b87da6499ab5ba538f004973f0001.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "25c625a4fc6c4b09b841-f54796a6dce64b13ac6a",
+              "file": "agent-dev-quality.spec.ts",
+              "line": 24,
+              "column": 7
+            },
+            {
+              "title": "captures a stable visual artifact for a seeded scenario",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14413,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:59.966Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:18:59.966Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-18T05:18:59.966Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=20272, ppid=15796\n[2026-11-18T05:18:59.966Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.001Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.002Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-18T05:19:00.002Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-18T05:19:00.002Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:00.091Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:00.092Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [20272:1118/131900.149:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[20272:1118/131900.149:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:00.410Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:00.412Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.415Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:00.415Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.416Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:00.416Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.417Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.418Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:00.418Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.418Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.520Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:00.520Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:00.521Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:00.521Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.961Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.961Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:00.961Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:00.962Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.995Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:00.995Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:00.995Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:00.996Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.037Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.037Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.038Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.038Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.062Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.063Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.063Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.063Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.079Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.079Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.080Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.080Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.161Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.162Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.162Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.162Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.181Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.181Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.181Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.181Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.201Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.202Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.202Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.202Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.225Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.226Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.226Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.226Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.250Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.250Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.251Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.251Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.266Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.266Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.266Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.266Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.296Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.296Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.296Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.296Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.311Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.312Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.312Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.312Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.371Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.372Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.372Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.372Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.375Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.375Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.375Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.375Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.392Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.393Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.393Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.393Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.414Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.415Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.415Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.415Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.450Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.450Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.451Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.451Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.510Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.511Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.511Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.511Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.542Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.542Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.542Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.542Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.550Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.550Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.550Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.550Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.579Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.580Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.580Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.580Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.610Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.610Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.610Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.610Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.622Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.622Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.623Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.623Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.693Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.694Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.694Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.694Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.695Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.695Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.695Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.696Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.698Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.698Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.698Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.698Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.700Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.700Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.700Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.700Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.714Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:01.714Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:01.714Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:01.714Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:01.731Z] [INFO] Gateway stop requested\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:01.731Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:54173/91287062-46dc-45a6-b115-f3a3329fd724\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:window-close] pid=15796\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:01.759Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:01.760Z] [INFO] [ResourceTracker] Stopped\n[2026-11-18T05:19:01.760Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-18T05:19:01.760Z] [INFO] [efficiency-sampler] stopped\n[2026-11-18T05:19:01.761Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        },
+                        {
+                          "text": "[app:exit] pid=15796 code=4294967295 signal=null\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-18T05:18:53.555Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "agent-dev-visual-doctor-failed",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\project-rag-rag15-20261117\\formal-control-e2e-17c80e283\\electron\\agent-dev-quality-agent-de-3bbb0-ifact-for-a-seeded-scenario\\attachments\\agent-dev-visual-doctor-failed-a11a5c1c2b2ed0f36f73d54bf0a3b34c73e3cbe6.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "25c625a4fc6c4b09b841-80a55f994e600ae38666",
+              "file": "agent-dev-quality.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "loads the in-app Agent Dev Workbench through host-api and records a scenario",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15434,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:13.061Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:13.061Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-18T05:19:13.061Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=21908, ppid=18916\n[2026-11-18T05:19:13.061Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.093Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.094Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-18T05:19:13.094Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-18T05:19:13.094Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:13.177Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:13.177Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [21908:1118/131913.213:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[21908:1118/131913.213:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:13.392Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:13.393Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.395Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:13.395Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.395Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:13.395Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.397Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.397Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.397Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:13.397Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.485Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-18T05:19:13.485Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-18T05:19:13.486Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-18T05:19:13.486Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:14.928Z] [INFO] Gateway stop requested\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:14.928Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:50095/65c71ae6-8bef-48a2-a5ff-4c90574917ac\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:window-close] pid=18916\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:14.984Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:14.985Z] [INFO] [ResourceTracker] Stopped\n[2026-11-18T05:19:14.985Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:14.985Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-18T05:19:14.985Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        },
+                        {
+                          "text": "[app:exit] pid=18916 code=null signal=SIGKILL\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-18T05:19:07.991Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "25c625a4fc6c4b09b841-ddd89b2a90385a5a5b85",
+              "file": "agent-dev-quality.spec.ts",
+              "line": 74,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-18T05:18:01.795Z",
+    "duration": 82585.27399999999,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

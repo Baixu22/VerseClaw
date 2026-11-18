@@ -1,0 +1,257 @@
+{
+  "actor": "codex-g2-rag15-relay-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "17c80e283e4e7184791a7be0f168bd35309494bf",
+  "attempts": [
+    {
+      "folder": "control-refresh-v1",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\control-refresh-v1\\receipt.json",
+      "sha256": "43e36c05ef2bcfa8a270c8d1333efc14a937255b558d57ec177b71617a76446c"
+    },
+    {
+      "folder": "dev-electron-v1",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-electron-v1\\receipt.json",
+      "sha256": "50e5392b2c21c735312fcb29282875cf8bedf06ea1d2ac934c948c69cdd54c25"
+    },
+    {
+      "folder": "dev-electron-v2",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-electron-v2\\receipt.json",
+      "sha256": "28459f44acaeb1ab37b0d61d636eaf142c84515baed6c8b89883349a1de95fbc"
+    },
+    {
+      "folder": "dev-electron-v3",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-electron-v3\\receipt.json",
+      "sha256": "5728d5528fb1e464988cd8c9d6d6d15784f8e45ca0122859a90ad526e40f7e83"
+    },
+    {
+      "folder": "dev-electron-v4",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-electron-v4\\receipt.json",
+      "sha256": "1dc62910229032e4cc9debf23707d5bf87474f6715234571e1e8b55b32b15648"
+    },
+    {
+      "folder": "dev-format-v1",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-format-v1\\receipt.json",
+      "sha256": "9b3d79ec0243f5292b53d4c8ae7045b80025d191cc9fa3760c0a8f6ed8bcbdeb"
+    },
+    {
+      "folder": "dev-runtime-unit-v1",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-runtime-unit-v1\\receipt.json",
+      "sha256": "b4db1d28a19eef21f9905bf8b9071e80197a16d5379d90c3f502e7922fe3b1d2"
+    },
+    {
+      "folder": "dev-types-v1",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-types-v1\\receipt.json",
+      "sha256": "2b895ab356b734bc223f0456b0529820cfc3d3aa6ce132ebf6133dbaf3f2f1c1"
+    },
+    {
+      "folder": "dev-unit-v1",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-unit-v1\\receipt.json",
+      "sha256": "34a072e568d516104c605d10b9d8170d6193f1a03d1d5eca4f11621b22640ca4"
+    },
+    {
+      "folder": "dev-unit-v3",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-unit-v3\\receipt.json",
+      "sha256": "e7af1244d41b9ee8f26f0f4bdc1887bd5260b84551d132fee663517013e5919e"
+    },
+    {
+      "folder": "dev-unit-v5",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\dev-unit-v5\\receipt.json",
+      "sha256": "fa72c2a8ed6fde5868e7870fdcbdd9e4d6a8a95c69a31faa8a15000156256e10"
+    },
+    {
+      "folder": "formal-build-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-build-6118a355b\\receipt.json",
+      "sha256": "e81d12f4d7ab7d34076806ad912e59a533f6a7fa9c85135f4914dbb0624ae56d"
+    },
+    {
+      "folder": "formal-chain-0e8dbec54",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-chain-0e8dbec54\\receipt.json",
+      "sha256": "18292eb60079fd9029633c03180c2857641c0d4898fcbd7c9719499960f78970"
+    },
+    {
+      "folder": "formal-chain-1d474d1e9",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-chain-1d474d1e9\\receipt.json",
+      "sha256": "5a849d449e9ba62e94ee07eef8fdef681366dedc4b8c68390708bc1d952c6328"
+    },
+    {
+      "folder": "formal-chain-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-chain-6118a355b\\receipt.json",
+      "sha256": "42fe967031b550950a413cc26e1c66fc43dffe43fa10a65874c0b2b9251f96c7"
+    },
+    {
+      "folder": "formal-chain-beec660cb",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-chain-beec660cb\\receipt.json",
+      "sha256": "403da265c2b77405b254ca480651635a3351f63b19b329529be9acf09ebcb68d"
+    },
+    {
+      "folder": "formal-checks-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-checks-6118a355b\\receipt.json",
+      "sha256": "541fa5f9bd9d89a912cad02c213dfce50a789fbc6d8bbdbbbfa23965220a2a93"
+    },
+    {
+      "folder": "formal-ci-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-ci-6118a355b\\receipt.json",
+      "sha256": "ccd8bcf4ca76c7f1c2c29007a19e5b267fdd99a19013af80cd0b2bd0de4a02d0"
+    },
+    {
+      "folder": "formal-control-e2e-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-control-e2e-6118a355b\\receipt.json",
+      "sha256": "e661a12ecbb6f913f4a70782046668d5657c0fd2bff7259480e812b72bdb3503"
+    },
+    {
+      "folder": "formal-electron-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-electron-6118a355b\\receipt.json",
+      "sha256": "01f770cc18762b3bbd8429a05a95255efe7b824c4ead2e5cae8c534232490088"
+    },
+    {
+      "folder": "formal-electron-beec660cb",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-electron-beec660cb\\receipt.json",
+      "sha256": "b07159eacdfbbaf515b980526936ccb980c0961b5a0d6bcb34fcdc75f0f83df8"
+    },
+    {
+      "folder": "formal-format-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-format-6118a355b\\receipt.json",
+      "sha256": "6bb4c309a68188cbdc2f1659e414ce4fe1fe64af168036837832d22e98277932"
+    },
+    {
+      "folder": "formal-lint-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-lint-6118a355b\\receipt.json",
+      "sha256": "533f1b2bbfcce8f189fde1244bbedcd32fb6e2c42bc3c5fc9fa66504fbee0814"
+    },
+    {
+      "folder": "formal-runtime-lint-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-runtime-lint-6118a355b\\receipt.json",
+      "sha256": "533b833c887e4c411e7483ad6fa738b3b963b8e6f0f8dfea4febabd9a18ebec8"
+    },
+    {
+      "folder": "formal-runtime-unit-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-runtime-unit-6118a355b\\receipt.json",
+      "sha256": "2272d2e33cbabc7193d66aa4fb400454be43f564785d7197b122b0df5a439a33"
+    },
+    {
+      "folder": "formal-types-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-types-6118a355b\\receipt.json",
+      "sha256": "c4b57f0d6c17424ba1df0efa67e27926f3755a8b34ee31a8a1e730a350ec6797"
+    },
+    {
+      "folder": "formal-unit-6118a355b",
+      "status": "pass",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\formal-unit-6118a355b\\receipt.json",
+      "sha256": "d901deac5624d2066716e3b903585a2cba896cc42ec1682ca3e69348cf58c803"
+    },
+    {
+      "folder": "missing-path-probe-v1",
+      "status": "complete",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\missing-path-probe-v1\\receipt.json",
+      "sha256": "4b1dbfce06f8eba0250a75ed2afb21d54f8594df135184f23d3689213b9803a7"
+    },
+    {
+      "folder": "race-caller-probe-v1",
+      "status": "complete",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\race-caller-probe-v1\\receipt.json",
+      "sha256": "bb15bb18b28d44ee6ae826730e363cf75037203f0f49f75d16dc8554edd4b105"
+    },
+    {
+      "folder": "race-probe-v1",
+      "status": "complete",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\race-probe-v1\\receipt.json",
+      "sha256": "366f06031c51882c372274de2950b8d16bc5adb0183219ab625ed611762c29e1"
+    },
+    {
+      "folder": "scanfix-dev-runtime-unit-v1",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\scanfix-dev-runtime-unit-v1\\receipt.json",
+      "sha256": "1a88b21ed62149a4b0e22678def028d5f95d3bde08125bf1da8796fd9cc687c7"
+    },
+    {
+      "folder": "scanfix-dev-runtime-unit-v2",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\scanfix-dev-runtime-unit-v2\\receipt.json",
+      "sha256": "72ac43b63303a6c70ca2c227e2c91b9dc60f6e26ccc25eedbf61dc63ecf5e2e0"
+    },
+    {
+      "folder": "wait-fix-electron-v1",
+      "status": "fail",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\wait-fix-electron-v1\\receipt.json",
+      "sha256": "f6aff5ad1fe42c0fd5d1983130dd6e52392a420e61db309a10775dcd3c15dd70"
+    },
+    {
+      "folder": "independent-review-v1",
+      "status": "invalid",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v1\\review.json",
+      "sha256": "056086284e05eecaad213de35827ab7694968a98f61cdbad71c30791fd36fbda"
+    },
+    {
+      "folder": "independent-review-v2",
+      "status": "not-completed",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v2\\executor-gap-readback.json",
+      "sha256": "5fffa58a150ec9782bd176468c64283d2bd4c115440a16624b8c1c49be63b2fe"
+    },
+    {
+      "folder": "independent-review-v3",
+      "status": "finding-received",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v3\\finding-readback.json",
+      "sha256": "cb3fd5e25f49273c4785151e929d58e6f0c49cda940e1b467e9f02cba7756aee"
+    },
+    {
+      "folder": "independent-review-v4",
+      "status": "not-completed",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v4\\inputs.json",
+      "sha256": "14d70adbc758344b67cc645f8217434f65908f134b8dd8c0a553231e26efdf60"
+    },
+    {
+      "folder": "independent-review-v5",
+      "status": "finding-confirmed",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v5\\review.json",
+      "sha256": "c7ae20d75d0df4abe8dc59d07d2d0cde2c7f37ac3f6f39746fa96b4bb510ae33"
+    },
+    {
+      "folder": "independent-review-v6",
+      "status": "not-completed",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\independent-review-v6\\progress.json",
+      "sha256": "7f4b402895cdc9247bf6bdd9670bb85e3c90395d73ec0a30823be38244bc8906"
+    },
+    {
+      "folder": "scan-regression-before.json",
+      "status": "targeted-regressions-failed",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\scan-regression-before.json",
+      "sha256": "901ed48b92b348d1fa5d3ea8f9ec3824ee7d71e08546245c92163ea2260ba470"
+    },
+    {
+      "folder": "scanfix-runtime-timeout-cleanup.json",
+      "status": "owned-timeout-cleanup",
+      "receipt": "D:\\tmp\\project-rag-rag15-20261117\\scanfix-runtime-timeout-cleanup.json",
+      "sha256": "e603ce0c8f44b63a820b59363e6cb28eddab07e72366866a17a8e578add3fddb"
+    }
+  ],
+  "archive": "D:\\ClawX-acceptance\\project-rag-rag15-20261118\\raw-17c80e283.zip",
+  "archiveBytes": 2878207,
+  "archiveSha256": "eda5024b6a18c688f73edf62aaab8c6edd1e2c5d13d4ed557c209c804e43b166"
+}

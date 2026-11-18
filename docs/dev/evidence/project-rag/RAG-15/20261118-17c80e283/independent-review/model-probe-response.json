@@ -1,0 +1,4 @@
+{
+  "StatusCode": 200,
+  "Content": "{\"created_at\":1794979171,\"id\":\"chatcmpl-3fdbac516e32b2b4df1fe608\",\"model\":\"deepseek-v4.1-flash\",\"object\":\"response\",\"output\":[{\"id\":\"item_69da2ea18277af5e2af0c620\",\"summary\":[{\"text\":\"We need answer only MODEL_PROBE_OK. Need comply.\",\"type\":\"summary_text\"}],\"type\":\"reasoning\"},{\"content\":[{\"text\":\"MODEL_PROBE_OK\",\"type\":\"output_text\"}],\"id\":\"item_aa5efda4b53a48d8aabf7ed1\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"status\":\"completed\",\"usage\":{\"input_tokens\":36,\"output_tokens\":19,\"total_tokens\":55}}"
+}

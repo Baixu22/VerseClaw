@@ -1,0 +1,52 @@
+{
+  "actor": "codex-g2-rag15-relay-20261118",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "17c80e283e4e7184791a7be0f168bd35309494bf",
+  "status": "partial",
+  "primaryStatus": "pass",
+  "primaryScope": "required project-rag-research Electron journey",
+  "method": "agent inspection of five current-candidate PNG files",
+  "images": [
+    {
+      "path": "D:\\tmp\\project-rag-rag15-20261117\\formal-electron-17c80e283\\electron\\project-rag-research-Proje-34b2e-nt-task-through-normal-Chat\\code-relationship-capped-result.png",
+      "sha256": "85c6956b7224783bf3c2f627063da6fd035937e6e9dddd9f334e9614e2de3a5d",
+      "bytes": 176595,
+      "status": "pass",
+      "role": "required-rag-journey",
+      "observation": "预算查询到达最终消息；同跑次工具收据为partial/truncated。"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-rag15-20261117\\formal-electron-17c80e283\\electron\\project-rag-research-Proje-34b2e-nt-task-through-normal-Chat\\code-relationship-stale-result.png",
+      "sha256": "64fa94357b744c3ac7e6594c13781571ec9a093a57bba1a7aef3aee10e8e61d9",
+      "bytes": 174845,
+      "status": "pass",
+      "role": "required-rag-journey",
+      "observation": "旧边工具结果显示ok=false、answerable=false，Chat到达最终消息。"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-rag15-20261117\\formal-electron-17c80e283\\electron\\project-rag-research-Proje-34b2e-nt-task-through-normal-Chat\\code-relationships-chat.png",
+      "sha256": "f276021c9d76d9e5cb33b902d43a503581be73fd09eeecaaf01a7fb9cfdb81fa",
+      "bytes": 170075,
+      "status": "pass",
+      "role": "required-rag-journey",
+      "observation": "正常Chat显示代码工具调用、绑定任务与关系查询最终消息。"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-rag15-20261117\\formal-control-e2e-17c80e283\\electron\\agent-dev-quality-agent-de-3bbb0-ifact-for-a-seeded-scenario\\agent-dev-visual-doctor-failed.png",
+      "sha256": "389c08a5f419ff433dca7b4b3852748d083f7ad5936ed8b35482fe021c9e7c2c",
+      "bytes": 34247,
+      "status": "partial",
+      "role": "auxiliary-control-artifact",
+      "observation": "seeded visual截图显示设置导航，主体内容尚未显示。"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-rag15-20261117\\formal-control-e2e-17c80e283\\electron\\agent-dev-quality-agent-de-bd8d6-s-with-aligned-card-styling\\chat-welcome-suggestions.png",
+      "sha256": "f27ee43e52968629095cf6ee0184b95930ecda2b60dd2e9a2f8467c2dfd6b6f2",
+      "bytes": 6503,
+      "status": "pass",
+      "role": "auxiliary-control-artifact",
+      "observation": "三个欢迎建议按钮排列完整，文本与图标清晰。"
+    }
+  ]
+}
