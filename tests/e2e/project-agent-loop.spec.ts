@@ -90,6 +90,11 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     const read = () => hostInvoke<TaskSessionSnapshot>(app, 'taskLedger', 'sessionTask', {
       workspaceId: project.workspaceId, sessionKey: project.sessionKey, expectedSessionGeneration: project.generation,
     });
+    const readToolResult = async (callId: string) => {
+      const result = () => llm.log.find(entry => Object.hasOwn(entry.toolResults, callId))?.toolResults[callId];
+      await expect.poll(result, {timeout:60_000}).toBeTruthy();
+      return result()!;
+    };
     await send('What does a checklist usually cover? Just discuss it.');
     await expect(page.getByText('Discussion noted.', { exact: true })).toBeVisible({ timeout: 45_000 });
     expect((await read()).projectPlan).toBeUndefined();
@@ -102,7 +107,7 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     expect(plan.children[1].contract.dependencies).toEqual([plan.children[0].contract.taskNodeId]);
     expect(plan.children[0].contract.acceptance).toEqual(call.children[0].contract.acceptance);
     expect(plan.task.claim).toBeNull();
-    const toolResult = llm.log.find((entry) => Object.hasOwn(entry.toolResults, 'plansave'))?.toolResults.plansave;
+    const toolResult = await readToolResult('plansave');
     expect(toolResult).toContain(plan.task.contract.taskNodeId);
     expect(llm.log.filter((entry) => entry.issued === 'plansave')).toHaveLength(1);
     await page.reload();
@@ -124,9 +129,7 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     for (const [index, prompt] of completionPrompts.entries()) {
       await send(prompt);
       await expect.poll(async () => (await read()).projectPlan?.children[index].contract.state, {timeout:60_000}).toBe('done');
-      const result = llm.log.find((entry) => Object.hasOwn(entry.toolResults, `fixture${index}verify`))?.toolResults[`fixture${index}verify`];
-      expect(result).toBeTruthy();
-      setupReceipts.push(JSON.parse(result!) as TaskEvidence);
+      setupReceipts.push(JSON.parse(await readToolResult(`fixture${index}verify`)) as TaskEvidence);
     }
     await send(revisedGoal);
     await expect.poll(async () => (await read()).projectPlan?.task.contract.revision, {timeout:60_000}).toBe(2);
@@ -136,7 +139,7 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     expect(revised.revisions.map((entry) => entry.revision)).toEqual([2, 1]);
     expect(revised.revisions[0].previousChildIds).toEqual(plan.children.map((child) => child.contract.taskNodeId));
     expect(revised.children.every((child) => child.contract.state === 'ready' && !plan.revisions[0].childIds.includes(child.contract.taskNodeId))).toBe(true);
-    const revisionToolResult = llm.log.find((entry) => Object.hasOwn(entry.toolResults, 'planrevise'))?.toolResults.planrevise;
+    const revisionToolResult = await readToolResult('planrevise');
     expect(revisionToolResult).toContain(revised.task.contract.taskNodeId);
     await page.reload();
     await page.getByTestId(`sidebar-project-open-${project.workspaceId}`).click();
