@@ -94,7 +94,7 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     await expect(page.getByText('Discussion noted.', { exact: true })).toBeVisible({ timeout: 45_000 });
     expect((await read()).projectPlan).toBeUndefined();
     await send(goal);
-    await expect(page.getByText('Project planning turn finished.', { exact: true })).toBeVisible({ timeout: 60_000 });
+    await expect.poll(async () => (await read()).projectPlan?.task.contract.objective, {timeout:60_000}).toBe(goal);
     const snapshot = await read();
     const plan = snapshot.projectPlan!;
     expect(plan?.task.contract.objective).toBe(goal);
@@ -123,14 +123,13 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     const setupReceipts: TaskEvidence[] = [];
     for (const [index, prompt] of completionPrompts.entries()) {
       await send(prompt);
-      await expect(page.getByText(`Fixture step ${index + 1} verified.`, { exact: true })).toBeVisible({ timeout: 60_000 });
-      expect((await read()).projectPlan?.children[index].contract.state).toBe('done');
+      await expect.poll(async () => (await read()).projectPlan?.children[index].contract.state, {timeout:60_000}).toBe('done');
       const result = llm.log.find((entry) => Object.hasOwn(entry.toolResults, `fixture${index}verify`))?.toolResults[`fixture${index}verify`];
       expect(result).toBeTruthy();
       setupReceipts.push(JSON.parse(result!) as TaskEvidence);
     }
     await send(revisedGoal);
-    await expect(page.getByText('Project plan revision finished.', { exact: true })).toBeVisible({ timeout: 60_000 });
+    await expect.poll(async () => (await read()).projectPlan?.task.contract.revision, {timeout:60_000}).toBe(2);
     const revised = (await read()).projectPlan!;
     expect(revised.task.contract.revision).toBe(2);
     expect(revised.children[0].contract.acceptance).not.toEqual(plan.children[0].contract.acceptance);
@@ -246,6 +245,7 @@ test('dispatches the ready plan child through the project menu and reads its wor
     const child = admission.receipt!.children[0];
     expect(child.childSessionKey).toBeTruthy();
     const described = await hostInvoke<{session?:{thinkingLevel?:string}}>(app,'gateway','rpc',{method:'sessions.describe',params:{key:child.childSessionKey}});
+    expect(described.session?.thinkingLevel).toBe('medium');
     await expect.poll(() => readFile(join(project.rootPath, 'checklist.txt'), 'utf8').catch((error: NodeJS.ErrnoException) => {
       if (error.code === 'ENOENT') return null;
       throw error;

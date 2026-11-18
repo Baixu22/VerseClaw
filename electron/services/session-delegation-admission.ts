@@ -403,6 +403,7 @@ export async function executeSessionDelegation(
         agentId: payload.agentId,
         workspaceDir: binding.environment.canonicalRoot,
         backend: payload.backend,
+        ...(payload.idempotencyKey.startsWith('project-dispatch:') ? { maxWorkers: 1, allowAutoRepair: false } : {}),
         workers: [{
           roleName: payload.worker.roleName,
           task: payload.worker.task,
