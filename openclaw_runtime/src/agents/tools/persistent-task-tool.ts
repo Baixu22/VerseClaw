@@ -151,7 +151,7 @@ export function createPersistentTaskTool(input: {
         if (!ownerPath) throw new Error("TASK_PROJECT_COORDINATOR_REQUIRED");
         const entry = getSessionEntry({ sessionKey: input.sessionKey! });
         if (entry?.sessionId !== input.generation) throw new Error("TASK_GENERATION_STALE");
-        return readProjectCoordinator(ownerPath, input.sessionKey!, input.generation!, input.workspace);
+        return readProjectCoordinator(ownerPath, input.sessionKey!, input.generation!, input.workspace, p.action === "startNextPlanTask");
       })() : undefined;
       if (process.env.CLAWX_TASK_SCOPE_BRIDGE === '1' && !['list','current','status','changes','history','readRetainedArtifact','suggest'].includes(String(p.action))) {
         const session=getSessionEntry({sessionKey:input.sessionKey});

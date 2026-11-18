@@ -60,6 +60,26 @@ describe('project coordinator planning', () => {
     expect(store.list()).toHaveLength(3);
   });
 
+  it('checks the active Workspace and live generation before claiming, including on replay', async () => {
+    const path = join(root, 'workspaces.json');
+    const profiles = [{ id: scope.workspaceId, rootPath: root, projectCoordinatorSessionKey: scope.sessionKey }];
+    const activate = (activeWorkspaceId: string) => writeFileSync(path, JSON.stringify({ activeWorkspaceId, profiles }));
+    vi.stubEnv('CLAWX_WORKSPACE_OWNER_PATH', path);
+    const plan = store.saveProjectPlan(scope, initial);
+    const tool = createPersistentTaskTool({ workspace: root, sessionKey: scope.sessionKey, generation: scope.generation });
+    const next = () => tool.execute('next', { action: 'startNextPlanTask', taskNodeId: plan.taskNodeId, expectedRevision: 1, requestId: 'next', workspaceId: scope.workspaceId });
+    activate('other-project');
+    await expect(next()).rejects.toThrow('TASK_PROJECT_INACTIVE');
+    expect(store.get(plan.childIds[0]).claim).toBeNull();
+    activate(scope.workspaceId);
+    runtime.generation = 'replaced';
+    await expect(next()).rejects.toThrow('TASK_GENERATION_STALE');
+    runtime.generation = scope.generation;
+    expect((await next()).details).toMatchObject({ contract: { taskNodeId: plan.childIds[0] } });
+    activate('other-project');
+    await expect(next()).rejects.toThrow('TASK_PROJECT_INACTIVE');
+  });
+
   it('persists the plan, provisional facts and dependencies across reopen and idempotent retries', () => {
     const revision = store.saveProjectPlan(scope, initial);
     store.close();

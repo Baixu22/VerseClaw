@@ -21,7 +21,9 @@ export function projectCoordinatorScope(profile: WorkspaceProfile | undefined, s
 }
 
 /** Read the Workspace owner's persisted binding; tool arguments cannot supply scope. */
-export function readProjectCoordinator(path: string, sessionKey: string, generation: string, workspace: string) {
-  const { profiles } = JSON.parse(readFileSync(path, "utf8")) as { profiles: WorkspaceProfile[] };
-  return projectCoordinatorScope(projectCoordinatorProfile(profiles, sessionKey), sessionKey, generation, workspace);
+export function readProjectCoordinator(path: string, sessionKey: string, generation: string, workspace: string, requireActiveProject = false) {
+  const { profiles, activeWorkspaceId } = JSON.parse(readFileSync(path, "utf8")) as { profiles: WorkspaceProfile[]; activeWorkspaceId?: string };
+  const scope = projectCoordinatorScope(projectCoordinatorProfile(profiles, sessionKey), sessionKey, generation, workspace);
+  if (requireActiveProject && scope.workspaceId !== activeWorkspaceId) throw new Error("TASK_PROJECT_INACTIVE");
+  return scope;
 }
