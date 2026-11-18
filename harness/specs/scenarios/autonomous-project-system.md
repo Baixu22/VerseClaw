@@ -23,3 +23,5 @@ requiredRules:
 6. 总控汇总至少两个项目，处理资源争用和全局暂停；可逆配置经preview/apply/reload/readback/rollback，重大决策呈现具体选项。
 7. 已完成任务提炼记忆candidate，经既有接受/评估路径使用并可撤销；跨项目摘要不泄漏私有原文，资源回收不删除唯一证据。
 8. Agent在同一候选上执行UI、故障、真实provider和源码/冻结包验证，保留各自边界、命令、退出码、计数、hash与actor；所有自动产物标agent，不声称real-human或产品发布批准。
+
+项目完成通知的代次验收见 `harness/specs/tasks/project-coordinator-continuation.md`：agent 驱动 worker 写入，等待负责人自动续行，重启后检查重放次数，重置负责人后拒绝旧代结果。

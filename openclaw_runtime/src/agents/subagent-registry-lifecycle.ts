@@ -229,6 +229,13 @@ export function createSubagentRegistryLifecycleController(params: {
       deliveryState.deliveredAt = deliveredAt;
       deliveryState.lastDropReason = undefined;
     }
+    if (!delivery.delivered && delivery.terminal) {
+      deliveryState.status = "failed";
+      deliveryState.lastError = formatAnnounceDeliveryError(delivery);
+      deliveryState.lastDropReason = delivery.reason === "requester_generation_stale"
+        ? "requester_generation_stale" : "sink_unavailable";
+      params.persist();
+    }
   };
 
   const hasPriorRequesterDeliveryMirror = async (entry: SubagentRunRecord): Promise<boolean> => {
@@ -984,6 +991,16 @@ export function createSubagentRegistryLifecycleController(params: {
     }
 
     const now = Date.now();
+    if (entry.delivery?.status === "failed") {
+      const reason = getDeliveryLastError(entry) ?? "terminal completion delivery failure";
+      safeSetSubagentTaskDeliveryStatus({ runId, childSessionKey: entry.childSessionKey,
+        deliveryStatus: "failed", deliveryError: reason });
+      safeMarkRequiredCompletionDeliveryBlocked({ entry, reason });
+      if (!(await runTerminalCleanup({ runId, entry, cleanup }))) return;
+      completeCleanupBookkeeping({ runId, entry, cleanup, completedAt: now });
+      await emitCompletionEndedHookIfNeeded(entry, resolveCleanupCompletionReason(entry));
+      return;
+    }
     const deferredDecision = resolveDeferredCleanupDecision({
       entry,
       now,
@@ -1111,7 +1128,7 @@ export function createSubagentRegistryLifecycleController(params: {
     let latestDeliveryError = getDeliveryLastError(entry);
     const finalizeAnnounceCleanup = async (didAnnounce: boolean) => {
       const shouldCreditPriorDelivery =
-        !didAnnounce && (await hasPriorRequesterDeliveryMirror(entry));
+        !didAnnounce && entry.delivery?.status !== "failed" && (await hasPriorRequesterDeliveryMirror(entry));
       if (shouldCreditPriorDelivery) {
         latestDeliveryError = undefined;
       }
@@ -1138,6 +1155,7 @@ export function createSubagentRegistryLifecycleController(params: {
         childSessionKey: pendingPayload.childSessionKey,
         childRunId: pendingPayload.childRunId,
         requesterSessionKey: pendingPayload.requesterSessionKey,
+        expectedRequesterSessionId: entry.requesterSessionId,
         requesterOrigin,
         requesterDisplayKey: pendingPayload.requesterDisplayKey,
         task: pendingPayload.task,
@@ -1164,7 +1182,7 @@ export function createSubagentRegistryLifecycleController(params: {
             latestDeliveryError = undefined;
             return;
           }
-          if (delivery.path === "none") {
+          if (delivery.path === "none" && !delivery.terminal) {
             ensureDeliveryState(entry).lastDropReason = "sink_unavailable";
           }
           latestDeliveryError = formatAnnounceDeliveryError(delivery);

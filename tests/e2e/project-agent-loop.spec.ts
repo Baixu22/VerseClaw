@@ -186,9 +186,14 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
 
 
 test('dispatches the ready plan child through the project menu and reads its worker effect', async ({ launchElectronApp, userDataDir }, info) => {
-  test.setTimeout(240_000);
+  test.setTimeout(360_000);
   const sourceCandidate = execFileSync('git', ['rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
   const llm = await startScriptedLlm((text, results, _index, request) => {
+    if (text.includes('A background task completed.') || text.includes('[Internal task completion event]')) {
+      if (!Object.hasOwn(results, 'continuationwrite')) return {toolCall:{id:'continuationwrite',name:'write',
+        args:{path:'continuation.txt',content:'Coordinator resumed from the worker result'}}};
+      return {text:'Coordinator continuation finished.'};
+    }
     if (text.includes('Write the rollback checklist') && request.model === 'mock-coder') return {rateLimited:true};
     if (text.includes('Write the rollback checklist') && !Object.hasOwn(results, 'workerwrite'))
       return {toolCall:{id:'workerwrite',name:'write',args:{path:'checklist.txt',content:'rollback checklist'}}};
@@ -266,6 +271,44 @@ test('dispatches the ready plan child through the project menu and reads its wor
     expect(usage.every(row=>row.actual_cost_micros===null && Number(row.reserved_tokens)>0)).toBe(true);
     expect(llm.log.some(row=>row.model==='mock-coder' && row.issued==='http:429')).toBe(true);
     expect(llm.log.filter(row=>row.issued==='workerwrite')).toHaveLength(1);
+    await expect.poll(() => readFile(join(project.rootPath,'continuation.txt'),'utf8').catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    }), {timeout:90_000}).toBe('Coordinator resumed from the worker result');
+    await expect.poll(async () => {
+      const activity = await hostInvoke<{session?:{hasActiveRun?:boolean}}>(app,'gateway','rpc',{
+        method:'sessions.describe',params:{key:project.sessionKey}});
+      return activity.session?.hasActiveRun;
+    },{timeout:30_000}).toBe(false);
+    const ownerHistory = await hostInvoke<{messages:unknown[]}>(app,'sessions','history',{sessionKey:project.sessionKey});
+    expect(JSON.stringify(ownerHistory.messages)).toContain('continuationwrite');
+    const callsBeforeRestart = llm.log.length;
+    await hostInvoke(app,'gateway','stop');
+    await startGateway(app);
+    expect(await hostInvoke(app,'sessions','dispatchPlanTask',dispatch)).toMatchObject({success:true,replayed:true});
+    const callsAfterRestart = llm.log.length;
+    expect(callsAfterRestart).toBe(callsBeforeRestart);
+    expect(llm.log.filter(row=>row.issued==='continuationwrite')).toHaveLength(1);
+    const reset = await hostInvoke<{entry:{sessionId:string}}>(app,'gateway','rpc',{
+      method:'sessions.reset',params:{key:project.sessionKey,reason:'reset'}});
+    expect(reset.entry.sessionId).not.toBe(project.generation);
+    await expect(hostInvoke(app,'gateway','rpc',{method:'agent',params:{
+      sessionKey:project.sessionKey,sessionId:project.generation,expectedSessionId:project.generation,
+      message:'A background task completed. Replay the old worker result.',deliver:false,
+      idempotencyKey:'late-completion-after-reset',
+    }})).rejects.toThrow(/AGENT_SESSION_GENERATION_STALE/);
+    expect(llm.log.length).toBe(callsAfterRestart);
+    const current = await hostInvoke<{session?:{sessionId?:string}}>(app,'gateway','rpc',{
+      method:'sessions.describe',params:{key:project.sessionKey}});
+    expect(current.session?.sessionId).toBe(reset.entry.sessionId);
+    await writeFile(info.outputPath('project-continuation.json'),JSON.stringify({
+      driven_by:'agent',actor:'playwright-project-continuation',sourceCandidate,
+      coordinator:project.sessionKey,originalGeneration:project.generation,replacementGeneration:reset.entry.sessionId,
+      callsBeforeRestart,callsAfterRestart,callsAfterLateCompletion:llm.log.length,
+      coordinatorWriteCalls:llm.log.filter(row=>row.issued==='continuationwrite').length,
+      continuationSha256:createHash('sha256').update(await readFile(join(project.rootPath,'continuation.txt'))).digest('hex'),
+      ownerHistory,
+    },null,2));
     await writeFile(info.outputPath('project-worker-execution.json'),JSON.stringify({driven_by:'agent',actor:'playwright-project-worker',sourceCandidate,
       childSessionKey:child.childSessionKey,childRunId:child.childRunId,thinkingLevel:described.session?.thinkingLevel??null,workerHistory,usage,allowedModels:[primary,secondary],fileSha256:createHash('sha256').update(await readFile(join(project.rootPath,'checklist.txt'))).digest('hex')},null,2));
   } catch (error) { await diagnose(name=>info.outputPath(name)); throw error; }

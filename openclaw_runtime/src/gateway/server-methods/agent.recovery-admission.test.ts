@@ -160,6 +160,58 @@ afterEach(async () => {
   rmSync(dir, { recursive: true, force: true });
 });
 
+describe("agent continuation generation against the real session store", () => {
+  beforeEach(() => {
+    delete params.recoveryAdmission;
+    params.expectedSessionId = sessionId;
+    params.idempotencyKey = "completion-generation-pin";
+    mutateSqliteSessionStoreAtomic(storePath, (store) => {
+      store[sessionKey].subagentRecovery = undefined;
+      store[sessionKey].abortedLastRun = false;
+    });
+  });
+
+  it("resumes an idle expired generation without rotating the transcript", async () => {
+    const call = invocation();
+    await call.run();
+    await vi.waitFor(() => expect(mocks.ingress).toHaveBeenCalledTimes(1));
+    expect(mocks.ingress.mock.calls[0][0]).toMatchObject({ sessionId, sessionKey });
+    expect(loadSqliteSessionStore(storePath)[sessionKey].sessionId).toBe(sessionId);
+  });
+
+  it.each(["replace", "delete"])("rejects a %s before ingress", async (action) => {
+    mutateSqliteSessionStoreAtomic(storePath, (store) => {
+      if (action === "delete") delete store[sessionKey];
+      else store[sessionKey].sessionId = "replacement-generation";
+    });
+    const before = loadSqliteSessionStore(storePath);
+    await expect(invocation().run()).rejects.toThrow("AGENT_SESSION_GENERATION_STALE");
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    expect(loadSqliteSessionStore(storePath)).toEqual(before);
+  });
+
+  it("rejects a reset racing the atomic session patch", async () => {
+    mocks.beforeWrite = () => mutateSqliteSessionStoreAtomic(storePath, (store) => {
+      store[sessionKey].sessionId = "concurrent-generation";
+      store[sessionKey].lifecycleRunId = "concurrent-run";
+    });
+    await expect(invocation().run()).rejects.toThrow("AGENT_SESSION_GENERATION_STALE");
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    expect(loadSqliteSessionStore(storePath)[sessionKey]).toMatchObject({
+      sessionId: "concurrent-generation", lifecycleRunId: "concurrent-run",
+    });
+  });
+
+  it.each(["key", "id"])("rejects a conflicting %s", async (field) => {
+    if (field === "key") delete params.sessionKey;
+    else params.sessionId = "foreign-generation";
+    const before = loadSqliteSessionStore(storePath);
+    await expect(invocation().run()).rejects.toThrow("AGENT_SESSION_GENERATION_STALE");
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    expect(loadSqliteSessionStore(storePath)).toEqual(before);
+  });
+});
+
 describe("agent receiver recovery admission against the real session store", () => {
   it("continues an expired admitted session without rotating its transcript generation", async () => {
     const call = invocation();

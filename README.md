@@ -330,6 +330,7 @@ Task Ledger → Persistent tasks saves objectives, constraints and acceptance ch
 Ask the project coordinator to plan a goal. The task panel shows the saved tasks and plan versions, including the next action, assumptions, and pending decisions. A revision preserves prior tasks and acceptance records.
 Ask the coordinator to take the next step in that plan. It claims the first task whose dependencies have passed acceptance and waits if another plan task in the project is still being worked on.
 Open the plan’s task menu and choose **Dispatch next plan task** to start one worker. Dispatch requires a project token or cost budget. The worker uses the configured role and model policy.
+Completed workers resume the coordinator that started them. Completion retries preserve that session generation; results from a replaced coordinator generation are rejected before a model call.
 
 Managed worktree cleanup preserves historical task artifacts under verified Git references and records the retained bytes in the original task history. Agents can trace acceptance and read those artifacts after the checkout is removed. Active tasks, unresolved effects and artifacts without a matching retained snapshot keep the checkout available.
 

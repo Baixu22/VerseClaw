@@ -87,6 +87,42 @@ function fixture(effect: "unknown" | "not_applied") {
 }
 
 describe("reserved owners in real registry lifecycle and restore helpers", () => {
+  it("persists a terminal stale completion without retrying after duplicate delivery or restore", async () => {
+    const { original, runs } = fixture("not_applied");
+    state.store = {};
+    original.requesterSessionId = "original-parent-generation";
+    original.expectsCompletionMessage = true;
+    original.endedAt = Date.now();
+    original.outcome = { status: "ok" };
+    original.execution = { status: "terminal", endedAt: original.endedAt, outcome: original.outcome };
+    const saved: SubagentRunRecord[] = [];
+    const resume = vi.fn();
+    const announce = vi.fn(async (input: Parameters<typeof import("./subagent-announce.js").runSubagentAnnounceFlow>[0]) => {
+      expect(input.expectedRequesterSessionId).toBe("original-parent-generation");
+      input.onDeliveryResult?.({ delivered: false, path: "none", terminal: true,
+        reason: "requester_generation_stale", error: "AGENT_SESSION_GENERATION_STALE" });
+      return false;
+    });
+    const controller = createSubagentRegistryLifecycleController({
+      runs, resumedRuns: new Set(), subagentAnnounceTimeoutMs: 1000,
+      persist: () => saved.push(structuredClone(runs.get(original.runId)!)),
+      clearPendingLifecycleError: vi.fn(), countPendingDescendantRuns: () => 0,
+      suppressAnnounceForSteerRestart: () => false, shouldEmitEndedHookForRun: () => false,
+      emitSubagentEndedHookForRun: vi.fn(), notifyContextEngineSubagentEnded: vi.fn(),
+      resumeSubagentRun: resume, callGateway: vi.fn(), captureSubagentCompletionReply: vi.fn(),
+      runSubagentAnnounceFlow: announce, warn: vi.fn(),
+    });
+    expect(controller.startSubagentAnnounceCleanupFlow(original.runId, original)).toBe(true);
+    expect(controller.startSubagentAnnounceCleanupFlow(original.runId, original)).toBe(false);
+    await vi.waitFor(() => expect(original.cleanupCompletedAt).toEqual(expect.any(Number)));
+    const restored = structuredClone(saved.at(-1)!);
+    expect(restored.delivery).toMatchObject({ status: "failed", lastDropReason: "requester_generation_stale" });
+    runs.set(restored.runId, restored);
+    expect(controller.startSubagentAnnounceCleanupFlow(restored.runId, restored)).toBe(false);
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(resume).not.toHaveBeenCalled();
+  });
+
   it("retains an admitted run before cold-start stale orphan pruning", () => {
     const { original, runs } = fixture("not_applied");
     expect(reconcileOrphanedRestoredRuns({ runs, resumedRuns: new Set() })).toBe(false);

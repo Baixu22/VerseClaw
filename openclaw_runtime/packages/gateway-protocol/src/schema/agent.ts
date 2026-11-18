@@ -189,6 +189,8 @@ export const AgentParamsSchema = Type.Object(
     replyTo: Type.Optional(Type.String()),
     sessionId: Type.Optional(Type.String()),
     sessionKey: Type.Optional(Type.String()),
+    /** Compare the current generation before dispatching a continuation. */
+    expectedSessionId: Type.Optional(NonEmptyString),
     thinking: Type.Optional(Type.String()),
     /** Backend recovery pins a session to an already committed owner admission. */
     recoveryAdmission: Type.Optional(

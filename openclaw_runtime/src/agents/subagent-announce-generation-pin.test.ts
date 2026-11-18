@@ -95,10 +95,10 @@ describe("subagent announce generation pin", () => {
       buildParams({ expectedRequesterSessionId: "session-generation-1" }),
     );
 
-    // Both the completion wake and the fallback steer must be pinned out; the
-    // requester-agent handoff may still deliver without waking generation 2.
     expect(mocks.queueEmbeddedAgentMessageWithOutcome).not.toHaveBeenCalled();
-    expect(result.path).not.toBe("steered");
+    expect(mocks.dispatchGatewayMethodInProcess).not.toHaveBeenCalled();
+    expect(mocks.sendMessage).not.toHaveBeenCalled();
+    expect(result).toMatchObject({ delivered: false, terminal: true, reason: "requester_generation_stale" });
   });
 
   it("steers when the pinned generation matches the current session", async () => {
@@ -136,10 +136,31 @@ describe("subagent announce generation pin", () => {
     mocks.currentActivity.sessionId = undefined;
     mocks.currentActivity.isActive = false;
 
-    await deliverSubagentAnnouncement(
+    const result = await deliverSubagentAnnouncement(
       buildParams({ expectedRequesterSessionId: "session-generation-1" }),
     );
 
+    expect(mocks.queueEmbeddedAgentMessageWithOutcome).not.toHaveBeenCalled();
+    expect(mocks.dispatchGatewayMethodInProcess).not.toHaveBeenCalled();
+    expect(result).toMatchObject({ delivered: false, terminal: true, reason: "requester_generation_stale" });
+  });
+
+  it("passes the generation to the Gateway when waking an idle requester", async () => {
+    mocks.currentActivity.sessionId = "session-generation-1";
+    mocks.currentActivity.isActive = false;
+    await deliverSubagentAnnouncement(buildParams({ expectedRequesterSessionId: "session-generation-1" }));
+    expect(mocks.dispatchGatewayMethodInProcess).toHaveBeenCalledWith("agent", expect.objectContaining({
+        sessionKey: "agent:main:main", sessionId: "session-generation-1", expectedSessionId: "session-generation-1",
+    }), expect.anything());
+  });
+
+  it("stops fallback and retries when Gateway observes a reset during delivery", async () => {
+    mocks.currentActivity.sessionId = "session-generation-1";
+    mocks.currentActivity.isActive = false;
+    mocks.dispatchGatewayMethodInProcess.mockRejectedValue(new Error("AGENT_SESSION_GENERATION_STALE: reset raced delivery"));
+    const result = await deliverSubagentAnnouncement(buildParams({ expectedRequesterSessionId: "session-generation-1" }));
+    expect(result).toMatchObject({ delivered: false, terminal: true, reason: "requester_generation_stale" });
+    expect(mocks.dispatchGatewayMethodInProcess).toHaveBeenCalledTimes(1);
     expect(mocks.queueEmbeddedAgentMessageWithOutcome).not.toHaveBeenCalled();
   });
 });

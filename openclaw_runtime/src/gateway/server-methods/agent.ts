@@ -1042,6 +1042,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       replyTo?: string;
       sessionId?: string;
       sessionKey?: string;
+      expectedSessionId?: string;
       thinking?: string;
       deliver?: boolean;
       attachments?: Array<{
@@ -1373,6 +1374,18 @@ export const agentHandlers: GatewayRequestHandlers = {
       }
     }
     const requestedSessionId = normalizeOptionalString(request.sessionId);
+    const expectedSessionId = normalizeOptionalString(request.expectedSessionId);
+    const checkContinuationGeneration = (entry: SessionEntry | undefined) => {
+      if (expectedSessionId && entry?.sessionId !== expectedSessionId) {
+        throw new Error("AGENT_SESSION_GENERATION_STALE: continuation no longer owns the session");
+      }
+    };
+    if (expectedSessionId) {
+      if (!requestedSessionKeyRaw || (requestedSessionId && requestedSessionId !== expectedSessionId)) {
+        throw new Error("AGENT_SESSION_GENERATION_STALE: continuation requires its original session key and generation");
+      }
+      checkContinuationGeneration(loadSessionEntry(requestedSessionKeyRaw).entry);
+    }
     let requestedSessionKey =
       requestedSessionKeyRaw ??
       (!requestedSessionId
@@ -1685,6 +1698,7 @@ export const agentHandlers: GatewayRequestHandlers = {
           canonicalKey,
         } = loadSessionEntry(requestedSessionKey, sessionLoadOptions);
         cfgForAgent = cfgLocal;
+        checkContinuationGeneration(entry);
         const sessionMaintenanceConfig = resolveMaintenanceConfigFromInput(
           cfgLocal.session?.maintenance,
         );
@@ -1784,9 +1798,11 @@ export const agentHandlers: GatewayRequestHandlers = {
           : false;
         const canReuseSession =
           Boolean(entry?.sessionId) &&
-          (recoverySession || (freshness?.fresh ?? false)) &&
+          (Boolean(expectedSessionId) || recoverySession || (freshness?.fresh ?? false)) &&
           !failedSessionTranscriptMissing &&
           !terminalMainTranscriptNewerThanRegistry;
+        if (expectedSessionId && !canReuseSession)
+          throw new Error("AGENT_SESSION_GENERATION_STALE: original transcript cannot be reused");
         if (recoverySession && !canReuseSession)
           throw new Error("recovery admission cannot replace its durable transcript");
         let usableRequestedSessionId =
@@ -1826,6 +1842,9 @@ export const agentHandlers: GatewayRequestHandlers = {
         const buildSessionPatch = (
           freshEntry: SessionEntry | undefined,
         ): AgentSessionPatchBuild => {
+          // The store updater calls this inside its transaction. A reset racing
+          // completion delivery must fail before patching the replacement row.
+          checkContinuationGeneration(freshEntry);
           const freshSpawnedBy = canonicalizeSpawnedByForAgent(
             cfgLocal,
             sessionAgent,
@@ -1939,9 +1958,11 @@ export const agentHandlers: GatewayRequestHandlers = {
             resolveFailedSessionTranscriptMissingForEntry(freshEntry);
           const freshCanReuseSession =
             Boolean(freshEntry?.sessionId) &&
-            (checkRecoverySession(freshEntry) || (freshFreshness?.fresh ?? false)) &&
+            (Boolean(expectedSessionId) || checkRecoverySession(freshEntry) || (freshFreshness?.fresh ?? false)) &&
             !freshFailedSessionTranscriptMissing &&
             !freshTerminalMainTranscriptNewerThanRegistry;
+          if (expectedSessionId && !freshCanReuseSession)
+            throw new Error("AGENT_SESSION_GENERATION_STALE: original transcript cannot be reused");
           if (request.recoveryAdmission && !freshCanReuseSession)
             throw new Error("recovery admission cannot replace its durable transcript");
           const freshUsableRequestedSessionId =

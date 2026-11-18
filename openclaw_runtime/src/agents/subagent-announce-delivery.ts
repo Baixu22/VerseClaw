@@ -369,6 +369,7 @@ const TRANSIENT_ANNOUNCE_DELIVERY_ERROR_PATTERNS: readonly RegExp[] = [
 ];
 
 const PERMANENT_ANNOUNCE_DELIVERY_ERROR_PATTERNS: readonly RegExp[] = [
+  /AGENT_SESSION_GENERATION_STALE/,
   /unsupported channel/i,
   /unknown channel/i,
   /chat not found/i,
@@ -1317,6 +1318,18 @@ async function sendSubagentAnnounceDirectly(params: {
       subagentDirectMessageCompletionRequiresMessageTool;
     const requesterActivity = resolveRequesterSessionActivity(canonicalRequesterSessionKey);
     if (
+      params.expectedRequesterSessionId &&
+      requesterActivity.sessionId !== params.expectedRequesterSessionId
+    ) {
+      return {
+        delivered: false,
+        path: "none",
+        reason: "requester_generation_stale",
+        terminal: true,
+        error: "AGENT_SESSION_GENERATION_STALE: requester was replaced or removed",
+      };
+    }
+    if (
       params.expectsCompletionMessage &&
       subagentAnnounceDeliveryDeps.isRequesterSessionAbandoned(
         canonicalRequesterSessionKey,
@@ -1450,6 +1463,9 @@ async function sendSubagentAnnounceDirectly(params: {
         : undefined;
     const directAgentParams: Record<string, unknown> = {
       sessionKey: canonicalRequesterSessionKey,
+      ...(params.expectedRequesterSessionId
+        ? { sessionId: params.expectedRequesterSessionId, expectedSessionId: params.expectedRequesterSessionId }
+        : {}),
       message: params.triggerMessage,
       deliver: shouldDeliverAgentFinal,
       bestEffortDeliver: params.bestEffortDeliver,
@@ -1702,10 +1718,14 @@ async function sendSubagentAnnounceDirectly(params: {
       path: "direct",
     };
   } catch (err) {
+    const error = summarizeDeliveryError(err);
     return {
       delivered: false,
       path: "direct",
-      error: summarizeDeliveryError(err),
+      error,
+      ...(error?.includes("AGENT_SESSION_GENERATION_STALE")
+        ? { reason: "requester_generation_stale" as const, terminal: true }
+        : {}),
     };
   }
 }
