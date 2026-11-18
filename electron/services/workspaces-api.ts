@@ -671,6 +671,10 @@ export async function getPersistedCoordinatorBinding(
   return binding?.workspaceId === workspaceId && binding.sessionKey === sessionKey ? binding : null;
 }
 
+export async function getProjectCoordinatorProfiles(): Promise<WorkspaceProfile[]> {
+  return (await readDocument()).profiles;
+}
+
 export async function readWorkspaceHandoffOperation(input: {
   workspaceId: string; sessionKey: string; operationId?: string;
 }): Promise<SessionHandoffOperation | null> {

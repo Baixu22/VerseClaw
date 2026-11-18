@@ -3938,10 +3938,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       {/* Task tray: the running task stays docked beside the input until it
         * finishes (then folds to a one-line receipt); nothing renders while the
         * session has neither a durable task nor a live plan. */}
-      {!isEmpty && (
+      {(!isEmpty || projectWorkspaceId) && (
         <div className="relative mx-auto w-full max-w-[768px] px-4" data-testid="chat-task-tray">
           <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
-            plan={sessionActivityPlan} runActive={inputRunActive} onOpenTask={handleOpenSessionTask} />
+            projectEntry={Boolean(projectWorkspaceId)} plan={sessionActivityPlan} runActive={inputRunActive} onOpenTask={handleOpenSessionTask} />
         </div>
       )}
       <ChatInput

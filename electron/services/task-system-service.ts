@@ -6,6 +6,7 @@ import type { GitOperationResult } from '../../shared/types/git';
 import { checkoutWriterSnapshot } from '../../openclaw_runtime/src/agents/worktree-writer';
 import { resolveExecutionDomain } from '../../openclaw_runtime/src/agents/execution-domain';
 import { TaskSystemStore } from "../../shared/task-system/store";
+import { projectCoordinatorProfile, projectCoordinatorScope } from "../../shared/task-system/project-coordinator";
 import { createExecutionTaskAccess, openExecutionTaskStore, inheritExecutionTaskReference, type ExecutionTaskAuthorityBasis } from "../../openclaw_runtime/src/agents/execution-task-authority";
 import type {
   TaskSystemCommand,
@@ -14,7 +15,7 @@ import type {
   TaskPage,
   TaskSessionSnapshot,
 } from "../../shared/task-system/types";
-import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from "./workspaces-api";
+import { getPersistedCoordinatorBinding, getProjectCoordinatorProfiles, getWorkspaceRootPathById } from "./workspaces-api";
 import type { GatewayManager } from "../gateway/manager";
 
 type UiWorktreeRemovalRead = { blocked: true; reason: string } | { blocked: false; identity: string };
@@ -142,11 +143,15 @@ export async function readSessionTask(workspaceId:string,sessionKey:string,gatew
     if (!generation) return {task:null,children:[]};
     const snapshot=store.sessionSnapshot(sessionKey,generation);
     const verificationReceipts=snapshot.task?store.getTaskEvidence(snapshot.task.contract.taskNodeId):[];
+    const profile = projectCoordinatorProfile(await getProjectCoordinatorProfiles(), sessionKey);
+    const projectPlan = profile?.id === workspaceId
+      ? store.projectPlan(projectCoordinatorScope(profile, sessionKey, generation, store.domain.worktree).workspaceId)
+      : undefined;
     if (expectedGeneration) {
       const after=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey});
       if (after.session?.sessionId !== generation) throw new Error('TASK_GENERATION_STALE');
     }
-    return {...snapshot,verificationReceipts};
+    return {...snapshot,verificationReceipts,...(projectPlan ? {projectPlan} : {})};
   } finally {store.close();}
 }
 

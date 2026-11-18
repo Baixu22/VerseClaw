@@ -1,4 +1,4 @@
-import type { TaskId, SessionKey } from "../types/identity-scope.js";
+import type { TaskId, SessionKey, WorkspaceId } from "../types/identity-scope.js";
 import type { TaskAuthorityBasis } from './identity.js';
 
 export const TASK_DELEGATION_DISPATCH_TOOLS: readonly string[] = ['sessions_spawn', 'team_orchestrate', 'mission_loop', 'task_loop'];
@@ -87,8 +87,42 @@ export type TaskQuery = {
   sessionKey?: string;
 };
 export type TaskPage = { tasks: TaskView[]; nextCursor?: string };
-export type TaskSessionSnapshot = { task: TaskView | null; children: TaskView[]; verificationReceipts?: TaskEvidence[] };
+export type TaskSessionSnapshot = {
+  task: TaskView | null;
+  children: TaskView[];
+  verificationReceipts?: TaskEvidence[];
+  projectPlan?: ProjectPlanSnapshot;
+};
 export type TaskPlanItem = { key: string; contract: TaskContractInput; dependsOn?: string[] };
+export type ProjectPlanInput = {
+  requestId: string;
+  goal: TaskContractInput;
+  children: TaskPlanItem[];
+  nextAction: string;
+  assumptions?: string[];
+  decisions?: string[];
+  revise?: { taskNodeId: string; expectedRevision: number; reason: string };
+};
+export type ProjectPlanRevision = {
+  taskNodeId: TaskId;
+  revision: number;
+  workspaceId: WorkspaceId;
+  sessionKey: SessionKey;
+  generation: string;
+  requestId: string;
+  objective: string;
+  nextAction: string;
+  assumptions: string[];
+  pendingDecisions: string[];
+  reason?: string;
+  previousChildIds: TaskId[];
+  childIds: TaskId[];
+};
+export type ProjectPlanSnapshot = {
+  task: TaskView;
+  children: TaskView[];
+  revisions: ProjectPlanRevision[];
+};
 export type TaskWriterDelegation = {
   delegationId: string;
   taskNodeId: TaskId;

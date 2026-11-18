@@ -237,6 +237,7 @@ export async function launchGatewayProcess(options: {
   const lastSpawnSummary = `mode=${mode}, runtime=${runtimeMode}, entry="${entryScript}", args="${sanitizedArgs.join(' ')}", execArgv="${execArgv.join(' ')}", cwd="${openclawDir}"`;
 
   const runtimeEnv = buildGatewayRuntimeEnv(forkEnv);
+  runtimeEnv.CLAWX_WORKSPACE_OWNER_PATH = path.join(app.getPath('userData'), 'workspaces.json');
   // FP-P0-04: stamp the generation so a runtime acknowledgement can be matched to
   // *this* child. An ack carrying an older generation is discarded by the control
   // plane instead of being read as proof that a flag applied.

@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import type { SessionKey, TaskId } from "../types/identity-scope.js";
+import type { SessionKey, TaskId, WorkspaceId } from "../types/identity-scope.js";
 import {
   canonicalPath,
   resolveTaskDomain,
@@ -22,6 +22,9 @@ import type {
   TaskQuery,
   TaskPage,
   TaskPlanItem,
+  ProjectPlanInput,
+  ProjectPlanRevision,
+  ProjectPlanSnapshot,
 } from "./types.js";
 import { taskSimilarity } from "./recognition.js";
 import { TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
@@ -402,58 +405,122 @@ export class TaskSystemStore {
         automaticIdentity: false,
       }));
   }
-  decompose(credential: TaskCredential, items: TaskPlanItem[], requestId: string): TaskView[] {
+  private planKeys(items: TaskPlanItem[]): string[] {
     if (!Array.isArray(items) || !items.length || items.length > 30)
       throw new Error("TASK_PLAN_SIZE_INVALID");
     const keys = items.map((i) => text(i.key, "PLAN_KEY", 80));
     if (new Set(keys).size !== keys.length) throw new Error("TASK_PLAN_DUPLICATE_KEY");
+    return keys;
+  }
+  private addPlanChildren(parent: TaskContract, items: TaskPlanItem[], keys: string[], requestId: string, sessionKey: string): TaskView[] {
+    const project = parent.origin.source === "project-planning";
+    const ids = new Map<string, string>();
+    for (const [ordinal, item] of items.entries()) {
+      const child = this.create(
+        {
+          ...item.contract,
+          constraints: [...new Set([...parent.constraints, ...item.contract.constraints])],
+          businessKey: `parent:${parent.taskNodeId}:${keys[ordinal]}`,
+          occurrenceKey: project ? `${parent.revision}` : item.contract.occurrenceKey,
+        },
+        `${requestId}:${keys[ordinal]}`,
+        undefined,
+        { source: project ? "project-plan-child" : "task-decomposition", sessionKey },
+      ).task;
+      ids.set(keys[ordinal], child.contract.taskNodeId);
+      this.db.prepare("INSERT INTO task_plan_children VALUES(?,?,?)")
+        .run(parent.taskNodeId, child.contract.taskNodeId, ordinal);
+    }
+    for (const [ordinal, item] of items.entries()) {
+      const deps = strings(item.dependsOn ?? [], "PLAN_DEPENDENCY").map((key) => {
+        const id = ids.get(key);
+        if (!id) throw new Error("TASK_PLAN_DEPENDENCY_MISSING");
+        return id;
+      });
+      if (deps.length || !project) {
+        const child = this.get(ids.get(keys[ordinal])!).contract;
+        this.reviseContract(child.taskNodeId, child.revision, {
+          ...child, dependencies: [...new Set([...(child.dependencies ?? []), ...deps])],
+        });
+      }
+    }
+    return [...ids.values()].map((id) => this.get(id));
+  }
+  decompose(credential: TaskCredential, items: TaskPlanItem[], requestId: string): TaskView[] {
+    const keys = this.planKeys(items);
     return this.transaction(() =>
       this.request(`plan:${requestId}`, { credential, items }, () => {
         const parent = this.assertOwner(credential);
-        if (parent.pendingOperations || parent.childTaskNodeIds?.length)
+        if (parent.pendingOperations || parent.childTaskNodeIds?.length || this.projectPlanOrigin(parent.contract))
           throw new Error("TASK_PLAN_NOT_EDITABLE");
-        const ids = new Map<string, string>();
-        for (const [ordinal, item] of items.entries()) {
-          const child = this.create(
-            {
-              ...item.contract,
-              constraints: [
-                ...new Set([...parent.contract.constraints, ...item.contract.constraints]),
-              ],
-              businessKey: `parent:${credential.taskNodeId}:${keys[ordinal]}`,
-            },
-            `${requestId}:${keys[ordinal]}`,
-            undefined,
-            { source: "task-decomposition", sessionKey: credential.sessionKey },
-          ).task;
-          ids.set(keys[ordinal], child.contract.taskNodeId);
-          this.db
-            .prepare("INSERT INTO task_plan_children VALUES(?,?,?)")
-            .run(credential.taskNodeId, child.contract.taskNodeId, ordinal);
-        }
-        for (const [ordinal, item] of items.entries()) {
-          const deps = (item.dependsOn ?? []).map((key) => {
-            const id = ids.get(key);
-            if (!id) throw new Error("TASK_PLAN_DEPENDENCY_MISSING");
-            return id;
-          });
-          const id = ids.get(keys[ordinal])!,
-            child = this.get(id).contract;
-          this.revise(id, child.revision, {
-            ...child,
-            dependencies: [...new Set([...(child.dependencies ?? []), ...deps])],
-          });
-        }
+        const children = this.addPlanChildren(parent.contract, items, keys, requestId, credential.sessionKey);
         this.saveClaim({ ...parent.claim!, epoch: parent.claim!.epoch + 1, state: "released" });
         this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(credential.taskNodeId);
         this.db
           .prepare("INSERT OR REPLACE INTO task_references VALUES(?,?,?,?)")
           .run(credential.sessionKey, credential.taskNodeId, credential.generation, "coordinator");
         this.saveContract({ ...parent.contract, state: "ready", updatedAt: this.now() });
-        this.event(credential.taskNodeId, "decomposed", { children: [...ids.values()] });
-        return [...ids.values()].map((id) => this.get(id));
+        this.event(credential.taskNodeId, "decomposed", { children: children.map((child) => child.contract.taskNodeId) });
+        return children;
       }),
     );
+  }
+  private projectPlanOrigin(contract: TaskContract): boolean {
+    return contract.origin.source === "project-planning" || contract.origin.source === "project-plan-child";
+  }
+  saveProjectPlan(scope: { workspaceId: string; sessionKey: string; generation: string }, input: ProjectPlanInput): ProjectPlanRevision {
+    const workspaceId = text(scope.workspaceId, "WORKSPACE", 200) as WorkspaceId;
+    const sessionKey = text(scope.sessionKey, "SESSION", 300) as SessionKey;
+    const generation = text(scope.generation, "GENERATION", 200);
+    const requestId = text(input.requestId, "REQUEST_ID", 200);
+    const keys = this.planKeys(input.children);
+    if (input.goal?.dependencies?.length || input.children.some((item) => item.contract.dependencies?.length))
+      throw new Error("TASK_PROJECT_PLAN_USE_LOCAL_DEPENDENCIES");
+    const nextAction = text(input.nextAction, "NEXT_ACTION", 500);
+    const assumptions = strings(input.assumptions ?? [], "ASSUMPTION");
+    const pendingDecisions = strings(input.decisions ?? [], "DECISION");
+    const key = digest([workspaceId, requestId]);
+    return this.transaction(() => this.request(`project-plan:${key}`, { ...input, workspaceId }, () => {
+      let parent: TaskContract;
+      let previousChildIds: TaskId[] = [];
+      let reason: string | undefined;
+      if (input.revise) {
+        const { taskNodeId, expectedRevision } = input.revise;
+        const current = this.projectPlan(workspaceId, text(taskNodeId, "NODE_ID", 200))?.task;
+        if (!current) throw new Error("TASK_PROJECT_PLAN_NOT_FOUND");
+        if (current.claim && current.claim.state !== "released") throw new Error("TASK_PLAN_NOT_EDITABLE");
+        reason = text(input.revise.reason, "PLAN_REASON", 500);
+        previousChildIds = (current.childTaskNodeIds ?? []).map((id) => this.get(id).contract.taskNodeId);
+        parent = this.reviseContract(taskNodeId, expectedRevision, {
+          ...input.goal, businessKey: current.contract.businessKey, occurrenceKey: current.contract.occurrenceKey,
+        }).contract;
+      } else {
+        parent = this.create({ ...input.goal, businessKey: `project-plan:${key}`, occurrenceKey: undefined },
+          `project:${key}`, undefined, { source: "project-planning", sessionKey }).task.contract;
+      }
+      const childIds = this.addPlanChildren(parent, input.children, keys, `project:${key}`, sessionKey)
+        .map((child) => child.contract.taskNodeId);
+      const revision: ProjectPlanRevision = {
+        workspaceId, sessionKey, generation, requestId, taskNodeId: parent.taskNodeId, revision: parent.revision,
+        objective: parent.objective, nextAction, assumptions, pendingDecisions, reason, previousChildIds, childIds,
+      };
+      this.event(parent.taskNodeId, "project_plan_saved", revision);
+      return revision;
+    }));
+  }
+  projectPlan(workspaceId: string, taskNodeId?: string): ProjectPlanSnapshot | undefined {
+    this.assertReadCurrent();
+    const latest = this.db.prepare(`SELECT task_id FROM task_events WHERE kind='project_plan_saved'
+      AND json_extract(json,'$.workspaceId')=? AND (? IS NULL OR task_id=?) ORDER BY seq DESC LIMIT 1`)
+      .get(workspaceId, taskNodeId ?? null, taskNodeId ?? null) as { task_id: string } | undefined;
+    if (!latest) return undefined;
+    const task = this.get(latest.task_id);
+    const rows = this.db.prepare("SELECT json FROM task_events WHERE task_id=? AND kind='project_plan_saved' ORDER BY seq DESC LIMIT 20")
+      .all(latest.task_id) as Row[];
+    return {
+      task, children: (task.childTaskNodeIds ?? []).map((id) => this.get(id)),
+      revisions: rows.map((row) => JSON.parse(row.json) as ProjectPlanRevision),
+    };
   }
   history(
     taskNodeId: string,
@@ -628,6 +695,12 @@ export class TaskSystemStore {
     );
   }
   revise(taskNodeId: string, expectedRevision: number, input: TaskContractInput): TaskView {
+    return this.transaction(() => {
+      if (this.projectPlanOrigin(this.get(taskNodeId).contract)) throw new Error("TASK_PROJECT_PLAN_REVISION_REQUIRED");
+      return this.reviseContract(taskNodeId, expectedRevision, input);
+    });
+  }
+  private reviseContract(taskNodeId: string, expectedRevision: number, input: TaskContractInput): TaskView {
     const normalized = normalizeTaskContract(input);
     return this.transaction(() => {
       const view = this.get(taskNodeId);

@@ -1,6 +1,7 @@
 import { Type } from "typebox";
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../../../shared/task-system/store.js";
+import { readProjectCoordinator } from "../../../../shared/task-system/project-coordinator.js";
 import { createExecutionTaskAccess } from "../execution-task-authority.js";
 import { getSessionEntry } from '../../config/sessions/store.js';
 import type {
@@ -8,6 +9,7 @@ import type {
   TaskContractInput,
   TaskCredential,
   TaskPlanItem,
+  ProjectPlanInput,
   TaskQuery,
 } from "../../../../shared/task-system/types.js";
 import type { AnyAgentTool } from "./common.js";
@@ -72,13 +74,15 @@ export function createPersistentTaskTool(input: {
     label: "Task control",
     risk: "write",
     description:
-      "Manage execution tasks quietly within ordinary conversation. Before implementation, read current and identify an existing task by ID or business key; use start with either taskNodeId or a complete contract to resolve and claim atomically. Derive the goal and concrete verification criteria from the user's request and repository; do not ask the user to fill a task form, provide internal IDs, or claim a task. Ordinary discussion creates no task. Report progress and genuine blockers in plain language, without narrating bookkeeping. The app displays the current task automatically. Use stable request IDs for retries; suggestions never grant identity. Checkpoint progress and submit candidate-bound evidence for acceptance. Use history to trace candidate checks and retention receipts; readRetainedArtifact returns verified bytes in bounded base64 pages after source cleanup. Task ownership does not grant tool permissions. Never replace the goal with a status question.",
+      "Manage execution tasks quietly in conversation. For explicit project planning requests in a project coordinator session, read planStatus and relevant project facts first, then use savePlan with goal contract, a bounded list of children with concrete verification, local dependsOn keys, and nextAction. Record uncertain facts as assumptions and unresolved major scope choices as decisions; scope those tasks to work that is safe under those uncertainties. Change an existing plan explicitly with taskNodeId, expectedRevision, and revisionReason; keep the requestId stable across retries and use a new ID for a new goal. Planning does not start execution. Before implementation, read current and use start with either taskNodeId or a complete contract to resolve and claim atomically. Derive goals and verifiable checks from the user request and repository; do not ask for task forms, internal IDs, or manual claims. Ordinary discussion creates no task. Report progress and genuine blockers plainly, checkpoint progress, and submit candidate-bound evidence for acceptance. Use stable request IDs across retries; suggestions do not grant identity. Use history to trace candidate checks and retention receipts; readRetainedArtifact returns verified bytes in bounded base64 pages after source cleanup. Task ownership does not grant tool permissions. Never replace the goal with a status question.",
     parameters: Type.Object({
       action: Type.Union(
         [
           "list",
           "suggest",
           "decompose",
+          "planStatus",
+          "savePlan",
           "reconcile",
           "changes",
           "history",
@@ -125,6 +129,10 @@ export function createPersistentTaskTool(input: {
       throughSequence: Type.Optional(Type.Integer({ minimum: 0 })),
       requestId: Type.Optional(Type.String()),
       expectedRevision: Type.Optional(Type.Integer({minimum:1})),
+      revisionReason: Type.Optional(Type.String({ maxLength: 500 })),
+      nextAction: Type.Optional(Type.String({ maxLength: 500 })),
+      assumptions: Type.Optional(Type.Array(Type.String({ maxLength: 500 }), { maxItems: 30 })),
+      decisions: Type.Optional(Type.Array(Type.String({ maxLength: 500 }), { maxItems: 30 })),
       contract: Type.Optional(taskContractSchema),
       checkpoint: Type.Optional(Type.Unknown()),
       candidate: Type.Optional(Type.String()),
@@ -135,6 +143,14 @@ export function createPersistentTaskTool(input: {
     execute: async (_toolCallId, raw) => {
       if (!input.sessionKey || !input.generation) throw new Error("TASK_SESSION_IDENTITY_REQUIRED");
       const p = raw as Record<string, unknown>;
+      const planning = p.action === "planStatus" || p.action === "savePlan";
+      const scope = planning ? (() => {
+        const ownerPath = process.env.CLAWX_WORKSPACE_OWNER_PATH;
+        if (!ownerPath) throw new Error("TASK_PROJECT_COORDINATOR_REQUIRED");
+        const entry = getSessionEntry({ sessionKey: input.sessionKey! });
+        if (entry?.sessionId !== input.generation) throw new Error("TASK_GENERATION_STALE");
+        return readProjectCoordinator(ownerPath, input.sessionKey!, input.generation!, input.workspace);
+      })() : undefined;
       if (process.env.CLAWX_TASK_SCOPE_BRIDGE === '1' && !['list','current','status','changes','history','readRetainedArtifact','suggest'].includes(String(p.action))) {
         const session=getSessionEntry({sessionKey:input.sessionKey});
         if ((session as {executionMigration?:{state?:string}}|undefined)?.executionMigration?.state==='prepared')throw new Error('TASK_EXECUTION_MIGRATION_PENDING');
@@ -142,19 +158,32 @@ export function createPersistentTaskTool(input: {
       access.assertCurrent();
       const domain = access.domain;
       if (!existsSync(domain.database) && ['history', 'readRetainedArtifact'].includes(String(p.action))) throw new Error('TASK_STORE_UNAVAILABLE');
-      if (!existsSync(domain.database) && (p.action === "list" || p.action === "current"))
+      if (!existsSync(domain.database) && (p.action === "list" || p.action === "current" || p.action === "planStatus"))
         return {
           content: [{ type: "text", text: p.action === "list" ? '{"tasks":[]}' : "null" }],
           details: p.action === "list" ? { tasks: [] } : null,
         };
       const store = new TaskSystemStore(domain, undefined, access);
       try {
-        const current = store.binding(input.sessionKey, input.generation);
         const str = (key: string) => {
           if (typeof p[key] !== "string" || !(p[key] as string).trim())
             throw new Error(`TASK_REQUIRED_${key}`);
           return p[key] as string;
         };
+        if (scope) {
+          const result = p.action === "planStatus"
+            ? store.projectPlan(scope.workspaceId, typeof p.taskNodeId === "string" ? p.taskNodeId : undefined) ?? null
+            : store.saveProjectPlan(scope, {
+                requestId: str("requestId"), goal: p.contract as ProjectPlanInput["goal"],
+                children: p.children as TaskPlanItem[], nextAction: str("nextAction"),
+                assumptions: p.assumptions as string[] | undefined, decisions: p.decisions as string[] | undefined,
+                revise: p.taskNodeId !== undefined || p.expectedRevision !== undefined || p.revisionReason !== undefined
+                  ? { taskNodeId: str("taskNodeId"), expectedRevision: Number(p.expectedRevision), reason: str("revisionReason") }
+                  : undefined,
+              });
+          return { content: [{ type: "text", text: JSON.stringify(result) }], details: result };
+        }
+        const current = store.binding(input.sessionKey, input.generation);
         let result: unknown;
         if (p.action === "accept" && !current?.claim) {
           const id = typeof p.taskNodeId === "string" ? p.taskNodeId : pinned?.taskNodeId;

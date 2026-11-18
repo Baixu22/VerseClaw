@@ -9,9 +9,10 @@ import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import type { TaskContractInput } from '../../shared/task-system/types';
 import type { GatewayManager } from '../../electron/gateway/manager';
-import { getWorkspaceRootPathById } from '../../electron/services/workspaces-api';
+import type { WorkspaceCoordinatorBinding, WorkspaceProfile } from '../../shared/types/workspace';
+import { getProjectCoordinatorProfiles, getWorkspaceRootPathById } from '../../electron/services/workspaces-api';
 
-vi.mock('../../electron/services/workspaces-api', () => ({ getPersistedCoordinatorBinding: vi.fn(), getWorkspaceRootPathById: vi.fn() }));
+vi.mock('../../electron/services/workspaces-api', () => ({ getPersistedCoordinatorBinding: vi.fn(), getWorkspaceRootPathById: vi.fn(), getProjectCoordinatorProfiles: vi.fn().mockResolvedValue([]) }));
 import { handoffManagedSessionTask, readSessionTask, selectManagedSessionTask, startManagedSessionEffect } from '../../electron/services/task-system-service';
 
 let root: string;
@@ -27,10 +28,33 @@ const owner = () => {
   const task = store.create(contract, 'create').task;
   return effect(task.contract.taskNodeId);
 };
-beforeEach(() => { root = mkdtempSync(join(tmpdir(), 'session-contract-')); });
+beforeEach(() => { root = mkdtempSync(join(tmpdir(), 'session-contract-')); vi.mocked(getProjectCoordinatorProfiles).mockResolvedValue([]); });
 afterEach(() => { store?.close(); store = undefined; rmSync(root, { recursive: true, force: true }); });
 
 describe('session bridge consumes the persistent task owner', () => {
+  it('reads project plans only through the current Workspace coordinator binding', async () => {
+    owner();
+    const plan = store!.saveProjectPlan({ workspaceId: 'workspace', sessionKey: 'source', generation: 'generation-source' }, {
+      requestId: 'project-goal', goal: contract, nextAction: 'Record the result', children: [{ key: 'record', contract }],
+    });
+    const binding: WorkspaceCoordinatorBinding = { schemaVersion: 1, workspaceId: 'workspace', agentId: 'main',
+      sessionKey: 'source', sessionGeneration: 'generation-source', state: 'active', taskLedgerReferences: [],
+      environment: { kind: 'local', canonicalRoot: root, backend: 'local-workspace', branch: null, detachedHead: false, setupProfile: null },
+      archiveRestorePolicy: 'none', bindingRevision: 1, invalidationReason: null, createdAt: new Date(0).toISOString(), updatedAt: new Date(0).toISOString() };
+    const profile: WorkspaceProfile = { id: 'workspace', name: 'Project', rootPath: root, agentId: 'main',
+      activeSessionKey: 'source', permissionMode: 'fullAccess', createdAt: 0, updatedAt: 0, lastOpenedAt: 0, state: {},
+      projectCoordinatorSessionKey: 'source', coordinatorBindings: { source: binding } };
+    vi.mocked(getWorkspaceRootPathById).mockResolvedValue(root);
+    vi.mocked(getProjectCoordinatorProfiles).mockResolvedValue([profile]);
+    const gateway = { rpc: vi.fn().mockResolvedValue({ session: { sessionId: 'generation-source' } }) } as unknown as GatewayManager;
+    expect((await readSessionTask('workspace', 'source', gateway)).projectPlan?.task.contract.taskNodeId).toBe(plan.taskNodeId);
+    expect((await readSessionTask('foreign-project', 'source', gateway)).projectPlan).toBeUndefined();
+    binding.sessionGeneration = 'old-generation';
+    await expect(readSessionTask('workspace', 'source', gateway)).rejects.toThrow('TASK_GENERATION_STALE');
+    binding.sessionGeneration = 'generation-source';
+    binding.state = 'invalid';
+    await expect(readSessionTask('workspace', 'source', gateway)).rejects.toThrow('TASK_PROJECT_COORDINATOR_REQUIRED');
+  });
   it('reads actual verifier receipts without promoting a doing task to accepted', async () => {
     const task = owner();
     writeFileSync(join(root, 'result.txt'), bytes);
