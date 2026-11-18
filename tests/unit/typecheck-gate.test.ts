@@ -22,7 +22,9 @@ it('fails on test type errors and invalidates cached checks when tests or runtim
       cwd: root, encoding: 'utf8', windowsHide: true, timeout: 20_000,
     });
     expect(result.error).toBeUndefined();
-    return { exitCode: result.status, report: JSON.parse(result.stdout) };
+    const reportStart = result.stdout.search(/^\{\r?\n {2}"success":/m);
+    expect(reportStart).toBeGreaterThanOrEqual(0);
+    return { exitCode: result.status, report: JSON.parse(result.stdout.slice(reportStart)) };
   };
   try {
     write('scripts/generate-ext-bridge.mjs', '');
@@ -35,8 +37,11 @@ process.exit(result.status ?? 1);`);
       'typecheck:test': 'node scripts/check-test.mjs',
     } }));
     write('tsconfig.test.json', JSON.stringify({ compilerOptions: { strict: true, types: [] }, include: ['tests/**/*.ts'] }));
+    write('pnpm-workspace.yaml', 'packages:\n  - .\nshamefullyHoist: false\n');
+    write('openclaw_runtime/pnpm-workspace.yaml', 'packages:\n  - .\n');
     write('tests/check.ts', 'export const value: number = "wrong";');
     const broken = run();
+    expect(broken.report.cache).toMatchObject({ enabled: false, status: 'disabled', key: null, inputCount: 0 });
     expect(broken.report.testTypes.errorCount).toBe(1);
     expect(broken.exitCode).not.toBe(0);
     expect(broken.report.success).toBe(false);
@@ -47,6 +52,15 @@ process.exit(result.status ?? 1);`);
     expect(clean.exitCode).toBe(0);
     expect(clean.report.cache.status).toBe('miss');
     expect(run('--cache').report.cache.status).toBe('hit');
+
+    write('pnpm-workspace.yaml', 'packages:\n  - .\nshamefullyHoist: true\n');
+    const changedWorkspace = run('--cache');
+    expect(changedWorkspace.report.cache.status).toBe('miss');
+    expect(changedWorkspace.report.cache.key).not.toBe(clean.report.cache.key);
+    write('openclaw_runtime/pnpm-workspace.yaml', 'packages:\n  - .\nshamefullyHoist: true\n');
+    const changedRuntimeWorkspace = run('--cache');
+    expect(changedRuntimeWorkspace.report.cache.status).toBe('miss');
+    expect(changedRuntimeWorkspace.report.cache.key).not.toBe(changedWorkspace.report.cache.key);
 
     write('tests/check.ts', 'export const value: number = "regression";');
     const changedTest = run('--cache');
@@ -60,6 +74,14 @@ process.exit(result.status ?? 1);`);
     const changedRuntime = run('--cache');
     expect(changedRuntime.exitCode).not.toBe(0);
     expect(changedRuntime.report.cache.status).toBe('miss');
+
+    write('packages/versebrowser/dist/index.d.ts', 'export const value: number;');
+    write('tests/check.ts', 'import { value } from "../packages/versebrowser/dist"; export const check: number = value;');
+    expect(run('--cache').exitCode).toBe(0);
+    write('packages/versebrowser/dist/index.d.ts', 'export const value: string;');
+    const changedPackage = run('--cache');
+    expect(changedPackage.exitCode).not.toBe(0);
+    expect(changedPackage.report.cache.status).toBe('miss');
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

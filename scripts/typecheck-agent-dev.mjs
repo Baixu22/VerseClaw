@@ -14,6 +14,7 @@ const CACHE_SCHEMA = 'clawx.typecheck-cache.v2';
 const CACHE_INPUTS = [
   'package.json',
   'pnpm-lock.yaml',
+  'pnpm-workspace.yaml',
   'tsconfig.json',
   'tsconfig.node.json',
   'tsconfig.web.json',
@@ -26,8 +27,12 @@ const CACHE_INPUTS = [
   'tests',
   'extensions',
   'resources/openclaw-plugins',
+  'packages/versebrowser/package.json',
+  'packages/versebrowser/src',
+  'packages/versebrowser/dist',
   'openclaw_runtime/package.json',
   'openclaw_runtime/pnpm-lock.yaml',
+  'openclaw_runtime/pnpm-workspace.yaml',
   'openclaw_runtime/src',
   'openclaw_runtime/packages',
   'openclaw_runtime/extensions',
@@ -65,7 +70,7 @@ const bridge = await run('node', ['scripts/generate-ext-bridge.mjs']);
 if (bridge.exitCode !== 0) {
   process.exitCode = bridge.exitCode;
 } else {
-  const fingerprint = await createTypecheckFingerprint();
+  const fingerprint = cacheEnabled ? await createTypecheckFingerprint() : { key: null, files: [] };
   const cached = cacheEnabled && !force
     ? await readUsableCache(fingerprint.key)
     : null;
@@ -74,11 +79,12 @@ if (bridge.exitCode !== 0) {
     const report = createCacheHitReport({ bridge, cached, fingerprint, startedAt });
     console.log(JSON.stringify(report, null, 2));
   } else {
-    const [nodeCheck, webCheck, testCheck] = await Promise.all([
+    const [nodeCheck, webCheck] = await Promise.all([
       run('pnpm', ['run', 'typecheck:node']),
       run('pnpm', ['run', 'typecheck:web']),
-      runTestCheck('pnpm', ['run', 'typecheck:test']),
     ]);
+    // Avoid loading the app and test compiler graphs into memory together.
+    const testCheck = await runTestCheck('pnpm', ['run', 'typecheck:test']);
     const results = [bridge, nodeCheck, webCheck, testCheck];
     const success = results.every((result) => result.exitCode === 0);
     const report = {
@@ -247,7 +253,7 @@ function shouldSkipDirectory(name) {
 
 function shouldHashFile(path) {
   const normalized = normalizePath(path);
-  if (normalized.endsWith('pnpm-lock.yaml')) return true;
+  if (normalized.endsWith('pnpm-lock.yaml') || normalized.endsWith('pnpm-workspace.yaml')) return true;
   const match = normalized.match(/(\.[^.\/]+)$/u);
   return match ? SOURCE_EXTENSIONS.has(match[1]) : false;
 }
