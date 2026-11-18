@@ -64,6 +64,15 @@
         "bench/aci/tasks/python_fix_pytest_fail.json"
       ],
       "reason": "The target upstream still resolves the optional verifier through the bare pytest executable, which cannot import the fixture module; resolve {current_python} -m pytest instead. Regenerated against c06f406; the old patch no longer applies."
+    },
+    {
+      "id": "binary-test-targets",
+      "path": "resources/verseshell/patches/binary-test-targets.patch",
+      "sha256_lf": "036a2c8cead0b33b39cd5718b0b54b1c2eb4d0576fd6fbeee4680e2ea5766d8e",
+      "changed_paths": [
+        "Cargo.toml"
+      ],
+      "reason": "Both CLI entrypoints contain no unit tests. Disable their empty binary test harnesses; the locked library, integration, CLI and documentation tests retain every effective test."
     }
   ],
   "files": [
@@ -85,8 +94,8 @@
       "path": "Cargo.toml",
       "git_blob": "e177b2cbbee66993c3a4333c068f461a4679efb5",
       "upstream_sha256_lf": "d49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d",
-      "effective_sha256_lf": "d49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d",
-      "residual_patch": null
+      "effective_sha256_lf": "ce56a1cb9842dac912d509673d7ab9238b42e044812101c24df8deaa4e68c63c",
+      "residual_patch": "binary-test-targets"
     },
     {
       "path": "src/artifact.rs",

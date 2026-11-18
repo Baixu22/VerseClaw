@@ -1,0 +1,17 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index e177b2c..bff703f 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -33,10 +33,12 @@ path = "src/lib.rs"
+ [[bin]]
+ name = "ae"
+ path = "src/main.rs"
++test = false
+ 
+ [[bin]]
+ name = "ae-mcp"
+ path = "src/bin/ae-mcp.rs"
++test = false
+ 
+ [dependencies]
+ anyhow = "1"

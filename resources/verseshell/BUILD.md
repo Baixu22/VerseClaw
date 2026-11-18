@@ -25,6 +25,9 @@ The script creates a fresh detached worktree for qualification and two more inde
 and target directories for release builds. It applies every tracked patch in order, checks the
 allowlisted ignored inputs and final assertions, runs complete locked Rust tests plus `--no-run`,
 and runs the optional Python fixtures through the current interpreter as `python -m pytest -q`.
+The binary-test-target patch sets `test=false` for `ae` and `ae-mcp`, whose entrypoint sources
+contain no unit tests. Library, integration and documentation tests still run through the full
+locked Cargo command; integration tests build and launch the real CLI binaries.
 Each release binary must pass the typed `runtime.handshake` and catalog checks. The two binaries
 must have identical byte length and SHA-256 before the existing binary or manifest is replaced.
 
@@ -39,7 +42,7 @@ node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode p
 node scripts/verseshell-bundle.mjs verify-package --resources release\win-unpacked\resources --platform win32 --arch x64
 ```
 
-Package validation requires the binary, v2 manifest, source-input manifest, both patches,
+Package validation requires the binary, v2 manifest, source-input manifest, every declared patch,
 official AGPL text, notice, source instructions, and build instructions. It verifies source digest
 and identity, patch order/size/hash, recovered-input inventory, Rust/Python qualification proof,
 reproducibility proof, handshake/catalog identity, exact artifact size, and binary SHA-256.

@@ -157,18 +157,21 @@ VerseShell 是 ClawX 的受控 typed ACI / governed execution foundation：
 以 `resources/verseshell/manifest.json` 与 `SOURCE.md` 为准：
 
 - upstream commit：`c06f406e83566bb968448222d9c8caf429e580a0`
-- 两个 residual patches：
+- 三个 residual patches：
   - `p0-runtime-startup.patch`
   - `python-current-interpreter.patch`
+  - `binary-test-targets.patch`：取消两个没有单测的 bin 测试入口，完整库、集成和文档测试保留。
 - source identity：
-  `sha256:b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0`
+  `sha256:a9eb8940dd4f6509fdec8abebfc6351933266494387b3ae1e7e5e0445a00e0d5`
 - manifest 声明 binary `resources/bin/win32-x64/ae.exe`（由资源准备/重建流程生成，干净检出可能暂不存在）：
-  `3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2`
+  `b7b4ec9878459aca22a93606033ce66d9a2722c1d624bc9f28eaeac83dc40e8f`
 - operation catalog：32 个 operation。
 
 ### 3.3 验证覆盖
 
-agent-driven reintegration evidence 记录过：
+2026-11-19 当前源码身份通过完整锁定的 Cargo 资格测试、两项 Python 可选验证和两次字节一致的独立发行构建。
+
+2026-10-15 的 agent-driven reintegration evidence 记录过：
 
 - source checker：154 protected files / 32 operations / no issues；
 - Rust module：16 targets，302 passed / 0 failed / 1 ignored；

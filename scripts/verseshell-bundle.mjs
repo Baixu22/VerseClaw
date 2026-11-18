@@ -55,6 +55,7 @@ const SOURCE_IDENTITY_PREFIX = 'verseshell.source-identity/v1\n';
 const EXPECTED_PATCHES = Object.freeze([
   ['runtime-startup', 'resources/verseshell/patches/p0-runtime-startup.patch'],
   ['python-current-interpreter', 'resources/verseshell/patches/python-current-interpreter.patch'],
+  ['binary-test-targets', 'resources/verseshell/patches/binary-test-targets.patch'],
 ]);
 // The target upstream tracks every ACI-Bench python input, so the recovered-ignored-input
 // mechanism is retired; the allowlist stays empty and the inventory check asserts that.

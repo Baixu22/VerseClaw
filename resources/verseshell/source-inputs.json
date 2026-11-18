@@ -26,6 +26,16 @@
         "bench/aci/tasks/python_edit_and_retest.json",
         "bench/aci/tasks/python_fix_pytest_fail.json"
       ]
+    },
+    {
+      "order": 3,
+      "role": "binary-test-targets",
+      "path": "resources/verseshell/patches/binary-test-targets.patch",
+      "bytes": 301,
+      "sha256": "036a2c8cead0b33b39cd5718b0b54b1c2eb4d0576fd6fbeee4680e2ea5766d8e",
+      "changed_paths": [
+        "Cargo.toml"
+      ]
     }
   ],
   "recovered_inputs": {
@@ -54,8 +64,8 @@
     },
     {
       "path": "Cargo.toml",
-      "bytes": 2836,
-      "sha256": "d49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d"
+      "bytes": 2862,
+      "sha256": "ce56a1cb9842dac912d509673d7ab9238b42e044812101c24df8deaa4e68c63c"
     },
     {
       "path": "Cargo.lock",
@@ -176,6 +186,16 @@
       "path": "bench/aci/fixtures/python_fix_pytest_fail/tests/test_math.py",
       "bytes": 67,
       "sha256": "a8a48514048ab1e8543f3d7626fc9f40d322009f679deb1e441b38b0daecfe8f"
+    },
+    {
+      "path": "src/main.rs",
+      "bytes": 8791,
+      "sha256": "d6e295c0cad0c4b352c71a36fefa670af8a8e437955249d8bf6c2799aa69e72a"
+    },
+    {
+      "path": "src/bin/ae-mcp.rs",
+      "bytes": 1049,
+      "sha256": "2bf05c475637a022621ba62036851989dcac1bf19317c84676f8eb3a9e7e0f90"
     }
   ],
   "test_contract": {
@@ -244,8 +264,8 @@
   },
   "identity": {
     "algorithm": "sha256(canonical-json-without-identity)",
-    "payload_sha256": "3525026288c64aa0add393f8096df682d862e969154429c9eab3bcc05ce3582f",
+    "payload_sha256": "7072c7168130aa11ab49db40f10700de813faaaa0aaa55736429d63ebc136016",
     "combined_algorithm": "sha256(verseshell.source-identity/v1\\n + payload_sha256)",
-    "combined_sha256": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0"
+    "combined_sha256": "a9eb8940dd4f6509fdec8abebfc6351933266494387b3ae1e7e5e0445a00e0d5"
   }
 }

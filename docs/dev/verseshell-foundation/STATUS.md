@@ -2,6 +2,21 @@
 
 Status: default-off controlled canary foundation. The strict typed ACI route is wired, but no VerseShell capability is enabled by default and this is not GA or release approval.
 
+## Current source bundle (2026-11-19)
+
+The source bundle applies three ordered residual patches to
+`c06f406e83566bb968448222d9c8caf429e580a0`: runtime startup, the current Python interpreter,
+and binary test targets. The last patch sets `test=false` for the two CLI entrypoints that
+contain no unit tests. Library, integration and documentation tests retain the full locked
+Cargo command and real CLI execution.
+
+- Source identity: `a9eb8940dd4f6509fdec8abebfc6351933266494387b3ae1e7e5e0445a00e0d5`.
+- Source inputs: `26c152fde20a87545a0b5544b998f3cb59e672338ed6110a2f18a79e6aca5f2f`.
+- Binary: `b7b4ec9878459aca22a93606033ce66d9a2722c1d624bc9f28eaeac83dc40e8f`, 15,144,448 bytes.
+- Qualification: locked Rust tests and `--no-run`, both current-interpreter Python fixtures,
+  and two independent release builds passed. Both release files and the synchronized bundle
+  were read back with the same SHA-256.
+
 ## VS-RI-01..06 upstream capability reintegration (2026-10-15)
 
 `TF-0322`..`TF-0328` absorbed the frozen upstream `c06f406e83566bb968448222d9c8caf429e580a0`
@@ -9,7 +24,7 @@ into ClawX through the existing typed ACI / governed-exec / read-only-facade own
 sections below this one record earlier P0-P3 work at the older pin `c398369...` + four patches and
 are retained as history; where they state a bundle identity they describe that earlier pin.**
 
-Current pinned identity (authoritative in `resources/verseshell/manifest.json`):
+Identity bound to the 2026-10-15 reintegration receipts:
 
 - source: commit `c06f406e83566bb968448222d9c8caf429e580a0` plus two registered residual patches
   (`p0-runtime-startup.patch`, `python-current-interpreter.patch`); the retired

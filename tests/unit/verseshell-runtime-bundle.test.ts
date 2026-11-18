@@ -16,14 +16,15 @@ import { isVerseShellRuntimeRequestedByRollout } from '@electron/utils/verseshel
 const roots: string[] = [];
 const LICENSE = 'GNU AFFERO GENERAL PUBLIC LICENSE\nVersion 3, 19 November 2007\n';
 const PROJECT_ROOT = resolve(__dirname, '../..');
-const SOURCE_INPUTS_SHA256 = 'd1d3cd4cd004d6a545a9e2e7a8cf48a3564e8cf467f70882e45fa736d2b388c6';
-const SOURCE_IDENTITY_SHA256 = 'b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0';
+const SOURCE_INPUTS_SHA256 = '26c152fde20a87545a0b5544b998f3cb59e672338ed6110a2f18a79e6aca5f2f';
+const SOURCE_IDENTITY_SHA256 = 'a9eb8940dd4f6509fdec8abebfc6351933266494387b3ae1e7e5e0445a00e0d5';
 const SOURCE_REPOSITORY = 'https://github.com/Baixu22/VerseShell.git';
 const SOURCE_COMMIT = 'c06f406e83566bb968448222d9c8caf429e580a0';
 const SOURCE_LOCATOR = `${SOURCE_REPOSITORY}@${SOURCE_COMMIT}+resources/verseshell/source-inputs.json#sha256:${SOURCE_IDENTITY_SHA256}`;
 const PATCHES = [
   'resources/verseshell/patches/p0-runtime-startup.patch',
   'resources/verseshell/patches/python-current-interpreter.patch',
+  'resources/verseshell/patches/binary-test-targets.patch',
 ];
 
 function digest(content: Buffer | string): string {
@@ -90,7 +91,7 @@ function manifestFor(binary: Buffer, overrides: Record<string, unknown> = {}) {
         package_version: '1.0.0',
         target_directory: '[independent-build-root]/target',
       },
-      cargo_toml_sha256: 'd49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d',
+      cargo_toml_sha256: 'ce56a1cb9842dac912d509673d7ab9238b42e044812101c24df8deaa4e68c63c',
       cargo_lock_sha256: '2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2',
       source_inputs_sha256: SOURCE_INPUTS_SHA256,
       source_identity_sha256: SOURCE_IDENTITY_SHA256,
@@ -132,7 +133,7 @@ function manifestFor(binary: Buffer, overrides: Record<string, unknown> = {}) {
       unrecorded_changes: false,
       source_inputs: {
         path: 'resources/verseshell/source-inputs.json', sha256: SOURCE_INPUTS_SHA256,
-        identity_sha256: SOURCE_IDENTITY_SHA256, patch_count: 2, recovered_input_count: 0,
+        identity_sha256: SOURCE_IDENTITY_SHA256, patch_count: 3, recovered_input_count: 0,
       },
       corresponding_source: {
         locator: SOURCE_LOCATOR,

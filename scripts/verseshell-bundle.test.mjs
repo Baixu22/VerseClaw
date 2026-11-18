@@ -164,6 +164,13 @@ test('package validator rejects patch byte-size drift', async (t) => {
   await assert.rejects(validatePackagedBundle({ resourcesPath: bundle.root }), /byte size mismatch/);
 });
 
+test('package validator rejects an omitted binary test-target patch', async (t) => {
+  const bundle = await makeBundle();
+  t.after(() => rm(bundle.root, { recursive: true, force: true }));
+  await rewriteSourceInputs(bundle, (sourceInputs) => { sourceInputs.patches.pop(); });
+  await assert.rejects(validatePackagedBundle({ resourcesPath: bundle.root }), /Source patch stack must contain 3 entries/u);
+});
+
 test('package validator rejects source-input digest drift in the package manifest', async (t) => {
   const bundle = await makeBundle();
   t.after(() => rm(bundle.root, { recursive: true, force: true }));

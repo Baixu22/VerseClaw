@@ -19,6 +19,7 @@ async function fixtureRoot(): Promise<string> {
     'resources/verseshell/BUILD.md',
     'resources/verseshell/patches/p0-runtime-startup.patch',
     'resources/verseshell/patches/python-current-interpreter.patch',
+    'resources/verseshell/patches/binary-test-targets.patch',
     'resources/bin/win32-x64/ae.exe',
     'shared/verseshell/facade.ts',
   ]) {
@@ -66,6 +67,13 @@ describe('VerseShell v2 manifest validation', () => {
     await writeFile(patchPath, `${await readFile(patchPath, 'utf8')}\n# tampered\n`);
     const result = await validateVerseShellManifest({ root: fixture, mode: 'package' });
     expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/Patch .* (?:byte size|checksum) mismatch/u)]));
+  });
+
+  it('rejects a bundle missing the binary test-target patch', async () => {
+    const fixture = await fixtureRoot();
+    await rm(join(fixture, 'resources/verseshell/patches/binary-test-targets.patch'));
+    const result = await validateVerseShellManifest({ root: fixture, mode: 'package' });
+    expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/binary-test-targets\.patch/u)]));
   });
 
   it('rejects source-input manifest digest drift', async () => {

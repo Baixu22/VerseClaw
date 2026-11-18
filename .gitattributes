@@ -13,6 +13,8 @@ resources/verseshell/patches/uas-05-process-lifecycle.patch -text
 # artifacts/unblock-pack/tf0020-h01-nogo.md). Pin all ordered patches to LF bytes
 # on every checkout.
 resources/verseshell/patches/*.patch -text
+# Empty Git patch context lines contain one space; source validation checks these exact bytes.
+resources/verseshell/patches/binary-test-targets.patch whitespace=-blank-at-eol
 
 # RC-01 acceptance uses this generated inventory as a candidate-bound input.
 # Keep the JSON byte-stable across Windows and POSIX checkouts so rerunning its

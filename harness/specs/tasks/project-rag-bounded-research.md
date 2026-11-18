@@ -1,6 +1,6 @@
 ---
 lifecycleStatus: active
-implementationStatus: in_progress
+implementationStatus: implemented
 id: project-rag-bounded-research
 title: 实现有预算、能停止的 Research 检索
 scenario: gateway-backend-communication
@@ -25,6 +25,11 @@ touchedAreas:
   - "electron/services/knowledge-api.ts"
   - "electron/services/knowledge-research.ts"
   - "electron/services/knowledge-evidence-qa.ts"
+  - "electron/utils/verseshell-runtime-bundle.ts"
+  - "resources/verseshell/**"
+  - "scripts/verseshell-bundle.mjs"
+  - "scripts/verseshell-bundle.test.mjs"
+  - "harness/specs/fixtures/verseshell-reintegration/source-lock.json"
   - "src/lib/knowledge-research.ts"
   - "src/lib/host-api/knowledge/routing.ts"
   - "shared/knowledge/research.ts"
@@ -40,6 +45,8 @@ touchedAreas:
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"
   - "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md"
   - "docs/modules/knowledge-base.md"
+  - "docs/modules/verse-tools.md"
+  - "docs/dev/verseshell-foundation/STATUS.md"
   - "docs/enhancements/knowledge-persistence/*.md"
   - "docs/clawx-design-overview.md"
   - "docs/dev/runtime-control-planes.md"
@@ -48,6 +55,7 @@ touchedAreas:
   - "harness/specs/scenarios/gateway-backend-communication.md"
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
+  - ".gitattributes"
   - "scripts/repository-artifacts.json"
   - "README*.md"
   - "tests/unit/knowledge-evidence-qa.test.ts"
@@ -55,6 +63,8 @@ touchedAreas:
   - "tests/unit/component-authority-manifest.test.ts"
   - "tests/unit/component-disposition-catalog.test.ts"
   - "tests/unit/project-rag-research-controller.test.ts"
+  - "tests/unit/verseshell-runtime-bundle.test.ts"
+  - "tests/unit/verseshell-manifest.test.ts"
   - "tests/e2e/project-rag-research.spec.ts"
 requiredProfiles:
   - "fast"
@@ -65,9 +75,12 @@ requiredRules:
   - "backend-communication-boundary"
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
+  - "verseshell-upstream-preservation"
 requiredTests:
   - "pnpm exec vitest run tests/unit/knowledge-evidence-qa.test.ts tests/unit/project-rag-research-controller.test.ts tests/unit/autonomy-provider-spend.test.ts tests/unit/component-authority-manifest.test.ts tests/unit/component-disposition-catalog.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec playwright test tests/e2e/project-rag-research.spec.ts --workers=1 --retries=0"
+  - "node --test scripts/verseshell-bundle.test.mjs scripts/verseshell-reintegration-check.test.mjs"
+  - "pnpm exec vitest run tests/unit/verseshell-runtime-bundle.test.ts tests/unit/verseshell-manifest.test.ts --maxWorkers=1 --cache=false"
 plannedTests:
   - "tests/unit/project-rag-research-controller.test.ts"
 plannedE2E:
@@ -98,5 +111,10 @@ docs:
 本文件冻结实现合同。当前规划不代表产品实现已通过；执行该叶前复核绑定的工作树、前置证据与实际 HEAD，刷新 diffBase。新增测试必须实现并加入 requiredTests；plannedE2E 指定的是必须补齐的产品旅程。
 
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
+
+工程验收的 VerseShell 资格构建应用 `binary-test-targets.patch`：两个 CLI 入口没有单测，
+Cargo 为其设置 `test=false`。完整锁定的库、12 个集成目标和文档测试继续执行，集成测试
+仍构建并调用真实 CLI。源码锁登记该 Cargo 残留补丁，Main 和打包校验器绑定新的源码身份；
+当前上游测试源码和锁定测试命令保持原字节。重建后按新候选刷新双角色工程验收。
 
 回滚：停止research controller，已选scope保留，恢复单query local/quality路径。

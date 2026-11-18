@@ -6,8 +6,8 @@ patch stack in `source-inputs.json`. The pinned commit by itself is not the ship
 - Repository: `https://github.com/Baixu22/VerseShell.git`
 - Commit: `c06f406e83566bb968448222d9c8caf429e580a0`
 - Commit epoch: `1791974123`
-- Source identity: `sha256:b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0`
-- Patch stack: two entries, applied in manifest order with `git apply`
+- Source identity: `sha256:a9eb8940dd4f6509fdec8abebfc6351933266494387b3ae1e7e5e0445a00e0d5`
+- Patch stack: three entries, applied in manifest order with `git apply`
 - Recovered ignored inputs: none; the pinned commit tracks every referenced Python input
 
 `source-inputs.json` records every patch path, byte count, SHA-256, recovered input, final source
@@ -24,7 +24,7 @@ node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode p
 ```
 
 For an explicit source checkout, clone the repository, check out the pinned commit, then apply all
-four paths in `source-inputs.json` in ascending `order` with `git apply --check` followed by
+declared patches in `source-inputs.json` in ascending `order` with `git apply --check` followed by
 `git apply`. Do not copy an ignored `ae.exe`, `target`, `.ae`, Python cache, log, PDB, or result file
 into the corresponding source.
 
