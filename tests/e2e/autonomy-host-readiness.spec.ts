@@ -1,54 +1,45 @@
-import electronBinaryPath from 'electron';
-import { resolveE2EElectronExecutable } from './fixtures/electron-executable';
-import { _electron as electron, type ElectronApplication } from '@playwright/test';
+import type { ElectronApplication } from '@playwright/test';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { allocatePort, buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
-import { recordElectronProcesses } from './fixtures/electron-process-cleanup';
 
-test('TF-0674 actual host probes, production close-to-tray continuation and restart recovery', async ({ homeDir, userDataDir }, testInfo) => {
+test('TF-0674 actual host probes, production close-to-tray continuation and restart recovery', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
   test.setTimeout(900_000);
   const llm = await startScriptedLlm((text) => ({ text: text.includes('A5-AFTER-APP') ? 'A5-AFTER-APP-RECEIPT' : text.includes('A5-AFTER-GATEWAY') ? 'A5-AFTER-GATEWAY-RECEIPT' : text.includes('A5-CLOSED') ? 'A5-CLOSED-RECEIPT' : 'A5-FIRST-RECEIPT' }));
-  const workspaceDir = join(homeDir, 'a5-workspace');
-  const openclawDir = join(homeDir, '.openclaw');
-  const sourceStateDir = join(userDataDir, 'openclaw-source-state');
-  await mkdir(workspaceDir, { recursive: true });
-  await mkdir(sourceStateDir, { recursive: true });
-  const config = buildMockProviderConfig(llm.port, workspaceDir);
-  const configText = JSON.stringify(config, null, 2);
-  await writeFile(join(openclawDir, 'openclaw.json'), configText);
-  await writeFile(join(sourceStateDir, 'openclaw.json'), configText);
-  await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en', gatewayPort: await allocatePort(), gatewayAutoStart: false, autoUpdate: false }));
-
-  // This test deliberately runs the production window lifecycle: the normal
-  // E2E fixture sets VERSE_CLAW_E2E=1, where close quits instead of hiding.
-  async function launchProductionLifecycle(): Promise<ElectronApplication> {
-    const port = await allocatePort();
-    const env = Object.fromEntries(Object.entries({
-      ...process.env,
-      HOME: homeDir, USERPROFILE: homeDir,
-      APPDATA: join(homeDir, 'AppData', 'Roaming'), LOCALAPPDATA: join(homeDir, 'AppData', 'Local'),
-      OPENCLAW_CONFIG_DIR: openclawDir,
-      OPENCLAW_CONFIG_PATH: join(sourceStateDir, 'openclaw.json'), OPENCLAW_STATE_DIR: sourceStateDir,
-      VERSE_CLAW_USER_DATA_DIR: userDataDir,
-      VERSE_CLAW_E2E: '0', VERSE_CLAW_E2E_SKIP_SETUP: '1',
-      VERSE_CLAW_PORT_CLAWX_HOST_API: String(port),
-      VITE_DEV_SERVER_URL: undefined,
-    }).filter((entry): entry is [string, string] => entry[1] !== undefined));
-    const app = await electron.launch({ executablePath: resolveE2EElectronExecutable(String(electronBinaryPath)), args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--disable-gpu', '--in-process-gpu', resolve('dist-electron/main/index.js')], env, timeout: 90_000 });
-    await recordElectronProcesses(userDataDir, await app.evaluate(({ app: electronApp }) =>
-      electronApp.getAppMetrics().map(({ pid, creationTime }) => ({ pid, creationTime }))));
-    await getStableWindow(app);
-    await startGateway(app);
-    return app;
-  }
-  type Ack = { childPid: number; gatewayGeneration: string };
-  const ack = (app: ElectronApplication) => hostInvoke<Ack>(app, 'gateway', 'rpc', { method: 'runtime.flags.ack', params: {}, timeoutMs: 30_000 });
   let app: ElectronApplication | null = null;
   try {
+    const workspaceDir = join(homeDir, 'a5-workspace');
+    const openclawDir = join(homeDir, '.openclaw');
+    const sourceStateDir = join(userDataDir, 'openclaw-source-state');
+    await mkdir(workspaceDir, { recursive: true });
+    await mkdir(sourceStateDir, { recursive: true });
+    const config = buildMockProviderConfig(llm.port, workspaceDir);
+    const configText = JSON.stringify(config, null, 2);
+    await writeFile(join(openclawDir, 'openclaw.json'), configText);
+    await writeFile(join(sourceStateDir, 'openclaw.json'), configText);
+    await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en', gatewayPort: await allocatePort(), gatewayAutoStart: false, autoUpdate: false }));
+
+    // This test deliberately runs the production window lifecycle: the normal
+    // E2E fixture sets VERSE_CLAW_E2E=1, where close quits instead of hiding.
+    async function launchProductionLifecycle(): Promise<ElectronApplication> {
+      const current = await launchElectronApp({
+        productionWindowLifecycle: true, skipSetup: true, skipSeed: true,
+        env: {
+          OPENCLAW_CONFIG_DIR: openclawDir,
+          OPENCLAW_CONFIG_PATH: join(sourceStateDir, 'openclaw.json'), OPENCLAW_STATE_DIR: sourceStateDir,
+          VITE_DEV_SERVER_URL: '',
+        },
+      });
+      app = current;
+      await getStableWindow(current);
+      await startGateway(current);
+      return current;
+    }
+    type Ack = { childPid: number; gatewayGeneration: string };
+    const ack = (app: ElectronApplication) => hostInvoke<Ack>(app, 'gateway', 'rpc', { method: 'runtime.flags.ack', params: {}, timeoutMs: 30_000 });
     app = await launchProductionLifecycle();
     const active = await hostInvoke<{ activeWorkspace: { id: string } }>(app, 'workspaces', 'getActive');
     const workspaceId = active.activeWorkspace.id;
@@ -81,6 +72,12 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
       await expect.poll(() => history(current, `${marker}-RECEIPT`), { timeout: 150_000 }).toBe(true);
     }
     const firstApp = app;
+    const mainIdentity = (current: ElectronApplication) => current.evaluate(({ app: electronApp }) => {
+      const identity = electronApp.getAppMetrics().find(({ pid }) => pid === process.pid);
+      if (!identity) throw new Error('Main process identity is unavailable');
+      return { pid: identity.pid, creationTime: identity.creationTime };
+    });
+    const firstMain = await mainIdentity(firstApp);
     const before = await activity(firstApp);
     expect(before.policy?.host?.runtime.state).toBe('unknown');
     expect(before.policy?.host?.budget.state).toBe('unknown');
@@ -104,6 +101,7 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
     const closedAck = await ack(firstApp);
     expect(closedAck.gatewayGeneration).toBe(initialAck.gatewayGeneration);
     expect(afterClose.policy?.host?.runtime.state).toBe('supported');
+    expect(await firstApp.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.isVisible())).toBe(false);
     await firstApp.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.show());
 
     await hostInvoke(firstApp, 'gateway', 'restart');
@@ -120,10 +118,15 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
     expect((await activity(firstApp)).policy?.host?.runtime.state).toBe('supported');
 
     await hostInvoke(firstApp, 'gateway', 'stop');
-    await closeElectronApp(firstApp);
+    const firstExit = await closeElectronApp(firstApp);
+    expect(firstExit.mainExited).toBe(true);
+    expect(firstExit.launcherExited).toBe(true);
+    expect(firstExit.processes.every(({ status }) => ['exited', 'replaced', 'terminated'].includes(status))).toBe(true);
     app = null;
     app = await launchProductionLifecycle();
     const secondApp = app;
+    const secondMain = await mainIdentity(secondApp);
+    expect(secondMain).not.toEqual(firstMain);
     expect(await history(secondApp, 'A5-CLOSED-RECEIPT')).toBe(true);
     expect(await history(secondApp, 'A5-AFTER-GATEWAY-RECEIPT')).toBe(true);
     expect((await activity(secondApp)).policy?.host?.runtime.state).toBe('unknown');
@@ -136,19 +139,22 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
     expect(storedConfig.runtime?.contextBlock).toEqual((config.runtime as { contextBlock?: unknown }).contextBlock);
     const output = testInfo.outputPath('host-readiness.json');
     await writeFile(output, JSON.stringify({
-      schema: 'clawx.autonomy-host-readiness/v1', driven_by: 'agent', actor: 'codex-a5-playwright',
+      schema: 'clawx.autonomy-host-readiness/v1', driven_by: 'agent', actor: 'codex-a5-playwright', realHumanEvidence: false,
       candidate: process.env.CLAWX_E2E_CANDIDATE ?? null,
       transport: 'built Electron production-window lifecycle -> actual Main/Gateway/runner -> scripted local provider',
       scope: { workspaceId, sessionKey }, inputConfigSha256: createHash('sha256').update(configText).digest('hex'),
       probes: { before: before.policy?.host, afterRun: afterRun.policy?.host, afterClose: afterClose.policy?.host, afterGatewayRestart: afterGatewayRestart.policy?.host, afterAppRestart: afterAppRestart.policy?.host },
-      journeys: { isolatedRun: true, controlledContinuation: true, productionWindowClose: closedWindow, gatewayRestart: { before: initialAck, after: restartedAck }, appRestart: { transcriptReadback: true, newRunReadback: true }, configPreserved: true },
+      journeys: { isolatedRun: true, controlledContinuation: true, productionWindowClose: closedWindow, gatewayRestart: { before: initialAck, after: restartedAck }, appRestart: { before: firstMain, after: secondMain, firstExit, transcriptReadback: true, newRunReadback: true }, configPreserved: true },
       providerRequests: llm.log.length, anomalies: llm.anomalies,
       limitations: ['scripted provider is not model quality evidence', 'no installed service or app-exit execution claim', 'no budget measurement', 'no configuration defect observed; no migration or rollback applied', 'source only; installer not tested'],
     }, null, 2));
     await testInfo.attach('host-readiness', { path: output, contentType: 'application/json' });
   } finally {
-    if (app) { await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app); }
-    llm.server.closeAllConnections();
-    await new Promise<void>((done) => llm.server.close(() => done()));
+    try {
+      if (app) { await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app); }
+    } finally {
+      llm.server.closeAllConnections();
+      await new Promise<void>((done) => llm.server.close(() => done()));
+    }
   }
 });

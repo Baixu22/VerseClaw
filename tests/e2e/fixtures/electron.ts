@@ -24,6 +24,7 @@ type LaunchElectronOptions = {
   profileDir?: string;
   packaged?: boolean;
   executablePath?: string;
+  productionWindowLifecycle?: boolean;
 };
 
 type IpcMockConfig = {
@@ -469,8 +470,8 @@ async function launchVerseClawElectron(
       LANG: 'en_US.UTF-8',
       LC_ALL: 'en_US.UTF-8',
       LANGUAGE: 'en',
-      VERSE_CLAW_E2E: '1',
-      CLAWX_AGENT_DEV: '1',
+      VERSE_CLAW_E2E: options.productionWindowLifecycle ? '0' : '1',
+      CLAWX_AGENT_DEV: options.productionWindowLifecycle ? (options.env?.CLAWX_AGENT_DEV ?? process.env.CLAWX_AGENT_DEV) : '1',
       ...(options.flags?.length ? { CLAWX_FLAGS: options.flags.join(',') } : {}),
       ...(options.visualMode ? { CLAWX_VISUAL_MODE: '1' } : {}),
       ...(options.devScenario ? { CLAWX_DEV_SCENARIO: options.devScenario } : {}),

@@ -109,7 +109,7 @@ test('reads actual Gateway tool exposure and continues the same isolated session
     expect(continued.policy?.tools?.status).toBe('effective');
     expect(llm.anomalies).toEqual([]);
     if (process.env.CLAWX_A5_RUNTIME_RECEIPT) {
-      await writeFile(process.env.CLAWX_A5_RUNTIME_RECEIPT, JSON.stringify({ schema: 'AutonomyA5RuntimeIntegration/v1', driven_by: 'agent', actor: 'codex-a5-runtime-integration', candidate: process.env.CLAWX_TEST_CANDIDATE ?? null, firstAck, secondAck, firstPolicy: first.policy, continuedPolicy: continued.policy, cronEnabled: cron.enabled, providerRequests: llm.log.length, transcriptReadback: true, limitations: ['Node Gateway integration; native Electron host and production close-to-tray not exercised', 'scripted local provider; no model quality or installed-service claim'] }, null, 2));
+      await writeFile(process.env.CLAWX_A5_RUNTIME_RECEIPT, JSON.stringify({ schema: 'AutonomyA5RuntimeIntegration/v1', driven_by: 'agent', actor: 'codex-a5-runtime-integration', realHumanEvidence: false, candidate: process.env.CLAWX_TEST_CANDIDATE ?? null, firstAck, secondAck, firstPolicy: first.policy, continuedPolicy: continued.policy, cronEnabled: cron.enabled, providerRequests: llm.log.length, transcriptReadback: true, limitations: ['Node Gateway integration; native Electron host and production close-to-tray not exercised', 'scripted local provider; no model quality or installed-service claim'] }, null, 2));
       await testInfo.attach('reads actual Gateway tool exposure', { path: process.env.CLAWX_A5_RUNTIME_RECEIPT, contentType: 'application/json' });
     }
   } finally {

@@ -26,35 +26,18 @@ touchedAreas:
   - tests/unit/dcs-preview-switch.test.ts
   - tests/e2e/autonomy-host-readiness.spec.ts
   - tests/e2e/autonomy-runtime-readiness.spec.ts
+  - tests/e2e/fixtures/electron.ts
   - harness/specs/tasks/autonomy-host-readiness.md
   - harness/specs/rules/autonomy-host-readiness-boundary.md
   - harness/specs/scenarios/autonomy-host-readiness.md
   - harness/specs/fixtures/autonomous-project-system/a5/**
 residualPaths:
-  - docs/dev/architecture-skeleton/ADMISSION-GATE.md
-  - electron/main/ipc-handlers.ts
-  - electron/main/ipc/request-helpers.ts
-  - electron/preload/index.ts
-  - electron/services/system-notifications-api.ts
-  - electron/services/window-api.ts
-  - harness/specs/guides/admission-seam-migration.md
-  - harness/specs/tasks/architecture-skeleton-admission-regression.md
-  - harness/specs/tasks/architecture-skeleton-admission-retirement.md
-  - scripts/contract-check-flat-ipc.json
-  - scripts/contract-check.mjs
-  - src/types/electron.d.ts
-  - tests/fixtures/contract-check/flat-ipc-allowlist-dangling.json
-  - tests/fixtures/contract-check/flat-ipc-preload-direct-invoke.json
-  - tests/fixtures/contract-check/flat-ipc-preload-mismatch.json
-  - tests/fixtures/contract-check/flat-ipc-removal-plan-missing.json
-  - tests/fixtures/contract-check/flat-ipc-retired-channel-live.json
-  - tests/unit/contract-check.test.ts
-  - tests/unit/system-notifications-api.test.ts
   - harness/specs/tasks/autonomy-object-owner-contract.md
   - harness/specs/tasks/autonomy-task-completion.md
   - harness/specs/tasks/autonomy-session-task-scope.md
   - harness/specs/tasks/durable-task-owner-acceptance.md
   - harness/specs/tasks/g5-foundation-current-acceptance.md
+  - harness/specs/tasks/g5-readiness-test-lifecycle.md
   - tests/e2e/u6-interaction-metrics.final.spec.ts
 requiredRules:
   - identity-scope-boundary
