@@ -96,4 +96,8 @@ Goal-wake 在原 `task_runs.progress_summary` 中保存统一对账决定。原 
 
 收尾分支已收紧候选恢复扫描与 Gateway 崩溃重连：taskflow 首轮恢复扫描从 1 秒改为 0 秒，失败重试固定 250 ms；Gateway 重启冷却从 5 秒改为 1 秒，重连退避上限从 30 秒改为 1 秒。deep-test 的 Windows pnpm 调用增加隐藏窗口，避免隐藏 cmd.exe 的控制台句柄延长步骤计时。冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。所有原生样本启动前须满足 2500 MiB 可用内存，candidate 同时启用 authority 与两种 taskflow writer。发布候选还需通过完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
 
+2026-11-18 就绪探针候选 `bd672c7c94df82930a7de4fde6fb17578497d345` 在 Gateway 仍拒绝认证时继续等待，连续重启中因过早认证而被拒的重试降为零。70 项定向测试、真实 Electron 启动重连、源码全门禁、打包 helper 两轮、goal canary 十轮、通信、Agent Dev 完整检查与 Harness CI 通过。无缓存类型检查 33.744 秒；单独构建 79.535 秒，后续完整开发检查中的同候选构建 47.325 秒。
+
+该候选五窗口各三次全部达到正确终态，重复效果与丢失任务为零。连续三次中断到终态为 104.588、93.327、126.770 秒。尚未采集该候选的 30 对真实模型长会话，完整冻结评测返回 `EVIDENCE_INSUFFICIENT`；将缺少的 30 项耗时置零后，P95 下界仍为 90.593 秒。TF-0818 保持 `in_progress`，GA 为 **NO_GO**。逐槽结果、源码绑定与检查证据见[就绪探针验证报告](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/ready-probe-20261118/README.md)。
+
 此前实测见 [恢复评测](FINAL-20261105.zh-CN.md) 与 [后续验证](FOLLOWUP-20261106.zh-CN.md)。最新节点证据完成后收录在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/`。
