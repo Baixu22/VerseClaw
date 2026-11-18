@@ -160,7 +160,9 @@ export class FactStoreStatements {
     );
 
     this.selectFile = db.prepare("SELECT * FROM files WHERE project_id = ? AND path = ?");
-    this.selectFilesByProject = db.prepare("SELECT * FROM files WHERE project_id = ? ORDER BY path");
+    this.selectFilesByProject = db.prepare(
+      "SELECT * FROM files WHERE project_id = ? ORDER BY path",
+    );
     this.insertFile = db.prepare(
       `INSERT INTO files(
         project_id, path, absolute_path, language, size_bytes, content_hash,
@@ -197,14 +199,16 @@ export class FactStoreStatements {
     this.insertSymbol = db.prepare(
       "INSERT INTO symbols(project_id, id, file_path, name, kind, language, start_line, end_line, signature, exported, generation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     );
-    this.deleteSymbolsByFile = db.prepare("DELETE FROM symbols WHERE project_id = ? AND file_path = ?");
+    this.deleteSymbolsByFile = db.prepare(
+      "DELETE FROM symbols WHERE project_id = ? AND file_path = ?",
+    );
     this.countSymbols = db.prepare("SELECT COUNT(*) AS count FROM symbols WHERE project_id = ?");
 
     this.selectEdgesByFile = db.prepare(
-      "SELECT * FROM edges WHERE project_id = ? AND file_path = ? ORDER BY id",
+      "SELECT * FROM edges WHERE project_id = ? AND file_path = ? ORDER BY id LIMIT ?",
     );
     this.selectEdgesByKind = db.prepare(
-      "SELECT * FROM edges WHERE project_id = ? AND kind = ? ORDER BY id",
+      "SELECT * FROM edges WHERE project_id = ? AND kind = ? ORDER BY id LIMIT ?",
     );
     this.insertEdge = db.prepare(
       "INSERT INTO edges(project_id, source_id, target_id, kind, metadata_json, file_path, generation) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -217,7 +221,9 @@ export class FactStoreStatements {
     this.insertChunk = db.prepare(
       "INSERT INTO chunks(project_id, id, repo_root, file_path, language, kind, symbol_name, start_line, end_line, content, content_hash, generation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     );
-    this.deleteChunksByFile = db.prepare("DELETE FROM chunks WHERE project_id = ? AND file_path = ?");
+    this.deleteChunksByFile = db.prepare(
+      "DELETE FROM chunks WHERE project_id = ? AND file_path = ?",
+    );
 
     this.searchFts = db.prepare(
       `SELECT c.*, bm25(chunks_fts) AS rank
@@ -230,7 +236,9 @@ export class FactStoreStatements {
     this.insertFts = db.prepare(
       "INSERT INTO chunks_fts(project_id, id, file_path, symbol_name, content) VALUES (?, ?, ?, ?, ?)",
     );
-    this.deleteFtsByFile = db.prepare("DELETE FROM chunks_fts WHERE project_id = ? AND file_path = ?");
+    this.deleteFtsByFile = db.prepare(
+      "DELETE FROM chunks_fts WHERE project_id = ? AND file_path = ?",
+    );
 
     this.selectSkippedFiles = db.prepare(
       "SELECT file_path, reason FROM skipped_files WHERE project_id = ? ORDER BY file_path",
@@ -239,6 +247,8 @@ export class FactStoreStatements {
       `INSERT INTO skipped_files(project_id, file_path, reason) VALUES (?, ?, ?)
        ON CONFLICT(project_id, file_path) DO UPDATE SET reason = excluded.reason`,
     );
-    this.deleteSkippedFile = db.prepare("DELETE FROM skipped_files WHERE project_id = ? AND file_path = ?");
+    this.deleteSkippedFile = db.prepare(
+      "DELETE FROM skipped_files WHERE project_id = ? AND file_path = ?",
+    );
   }
 }

@@ -449,16 +449,20 @@ export async function expandCodeRelationships(input: {
       }
     }
     if (input.seeds.length > maxNodes) expansion.truncated = true;
-    const imports = input.store.getEdgesByKind(repoRoot, "imports");
+    const imports = input.store.getEdgesByKind(repoRoot, "imports", MAX_SCANNED_EDGES + 1);
     if (imports.length > MAX_SCANNED_EDGES) expansion.truncated = true;
     const seenEdges = new Set<string>();
     for (let depth = 1; depth <= maxDepth && frontier.length; depth++) {
       const next = new Set<string>();
+      let scanned = 0;
       for (const file of frontier) {
-        const outgoing = input.store
-          .getEdgesByFile(repoRoot, file)
-          .filter((edge) => edge.kind === "imports" || edge.kind === "calls");
-        if (outgoing.length > MAX_SCANNED_EDGES) expansion.truncated = true;
+        if (scanned >= MAX_SCANNED_EDGES) {
+          expansion.truncated = true;
+          break;
+        }
+        const remaining = MAX_SCANNED_EDGES - scanned;
+        const outgoing = input.store.getEdgesByFile(repoRoot, file, remaining + 1);
+        if (outgoing.length > remaining) expansion.truncated = true;
         const incoming = imports
           .slice(0, MAX_SCANNED_EDGES)
           .filter(
@@ -467,23 +471,34 @@ export async function expandCodeRelationships(input: {
               typeof edge.metadata?.source === "string" &&
               resolveModule(edge.metadata.sourceFile, edge.metadata.source) === file,
           );
-        const incomingCalls = incoming.flatMap((edge) => {
-          const sourceFile = edge.metadata!.sourceFile as string;
-          return input.store
-            .getEdgesByFile(repoRoot, sourceFile)
-            .filter((candidate) => candidate.kind === "calls")
-            .slice(0, MAX_SCANNED_EDGES);
-        });
-        const candidates = [
-          ...outgoing.slice(0, MAX_SCANNED_EDGES).map((edge) => ({ edge, incoming: false })),
-          ...[...incoming, ...incomingCalls].map((edge) => ({ edge, incoming: true })),
-        ];
-        for (const candidate of candidates) {
+        function* candidates(): Generator<{ edge: GraphEdge; incoming: boolean }> {
+          for (const edge of outgoing.slice(0, remaining)) {
+            if (edge.kind === "imports" || edge.kind === "calls") yield { edge, incoming: false };
+          }
+          for (const edge of incoming) yield { edge, incoming: true };
+          for (const sourceFile of new Set(
+            incoming.map((edge) => edge.metadata!.sourceFile as string),
+          )) {
+            if (sourceFile === file) continue;
+            if (scanned >= MAX_SCANNED_EDGES) {
+              expansion.truncated = true;
+              return;
+            }
+            const available = MAX_SCANNED_EDGES - scanned;
+            const calls = input.store.getEdgesByFile(repoRoot, sourceFile, available + 1);
+            if (calls.length > available) expansion.truncated = true;
+            for (const edge of calls.slice(0, available)) {
+              if (edge.kind === "calls") yield { edge, incoming: true };
+            }
+          }
+        }
+        for (const candidate of candidates()) {
           const edge = candidate.edge;
-          if (expansion.edges.length >= HARD_MAX_EDGES) {
+          if (scanned >= MAX_SCANNED_EDGES || expansion.edges.length >= HARD_MAX_EDGES) {
             expansion.truncated = true;
             break;
           }
+          scanned++;
           const sourceFile = edge.metadata?.sourceFile;
           if (typeof sourceFile !== "string") continue;
           const resolved = await resolveEdge(edge, sourceFile);

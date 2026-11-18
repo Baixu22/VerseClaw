@@ -2,7 +2,8 @@
 // tracked fixture generated from real repo files (callers depth 2, impact depth 3,
 // search top-1). The new FactStore impact view must recall a SUPERSET of its callers
 // and impacted files. No loadable CodeGraph plugin is required.
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,7 +20,7 @@ const FROZEN_FIXTURE_PATH = path.join(
   "harness/specs/fixtures/codegraph-retirement/impact-parity-v1.json",
 );
 
-type FrozenFixtureFile = { source: string; fixturePath: string; sha256: string };
+type FrozenFixtureFile = { source: string; fixturePath: string; sha256: string; bytes: number };
 type FrozenQuery = {
   query: string;
   found: boolean;
@@ -27,13 +28,32 @@ type FrozenQuery = {
   impactFiles: string[];
 };
 type FrozenParityFixture = {
-  provenance: { license: string; vendoredVersion: string; sourcePath: string; sourceSha256: string };
+  provenance: {
+    license: string;
+    vendoredVersion: string;
+    sourcePath: string;
+    sourceSha256: string;
+  };
   fixtureFiles: FrozenFixtureFile[];
   queryParams: { callersDepth: number; impactDepth: number; searchLimit: number };
   queries: FrozenQuery[];
 };
 
-const frozen: FrozenParityFixture = JSON.parse(readFileSync(FROZEN_FIXTURE_PATH, "utf8"));
+const baselineText = readFileSync(FROZEN_FIXTURE_PATH, "utf8");
+const frozen: FrozenParityFixture = JSON.parse(baselineText);
+const inputs: {
+  sourceCommit: string;
+  baselineSha256: string;
+  files: Array<FrozenFixtureFile & { contentBase64: string }>;
+} = JSON.parse(
+  readFileSync(
+    path.join(
+      REPO_ROOT,
+      "harness/specs/fixtures/codegraph-retirement/impact-parity-inputs-v1.json",
+    ),
+    "utf8",
+  ),
+);
 const GOLDEN_QUERIES = frozen.queries.map((entry) => entry.query);
 
 let fixtureRoot: string;
@@ -47,28 +67,38 @@ beforeAll(async () => {
   expect(frozen.queryParams).toEqual({ callersDepth: 2, impactDepth: 3, searchLimit: 1 });
   expect(frozen.queries).toHaveLength(13);
   expect(frozen.fixtureFiles).toHaveLength(7);
+  expect(inputs.sourceCommit).toBe("6118a355b3a3cfa2d6818a3035a3d79b99634c4f");
+  expect(createHash("sha256").update(baselineText.replaceAll("\r\n", "\n")).digest("hex")).toBe(
+    inputs.baselineSha256,
+  );
+  expect(inputs.files).toHaveLength(frozen.fixtureFiles.length);
 
   fixtureRoot = mkdtempSync(path.join(tmpdir(), "impact-parity-"));
   mkdirSync(path.join(fixtureRoot, "src"), { recursive: true });
   for (const file of frozen.fixtureFiles) {
-    const sourcePath = path.join(REPO_ROOT, file.source);
-    // The fixture hash records the source snapshot used for the one-time
-    // CodeGraph measurement. Later comment-only edits must not invalidate the
-    // evidence; fixture files themselves are hash-checked in the tracked JSON.
-    expect(file.sha256, `missing frozen fixture hash: ${file.fixturePath}`).toMatch(/^[a-f0-9]{64}$/u);
-    cpSync(sourcePath, path.join(fixtureRoot, file.fixturePath));
+    const snapshot = inputs.files.find((entry) => entry.fixturePath === file.fixturePath)!;
+    expect(snapshot?.source).toBe(file.source);
+    expect(snapshot.sha256).toBe(file.sha256);
+    const bytes = Buffer.from(snapshot.contentBase64, "base64");
+    expect(bytes.length).toBe(file.bytes);
+    expect(createHash("sha256").update(bytes).digest("hex")).toBe(file.sha256);
+    writeFileSync(path.join(fixtureRoot, file.fixturePath), bytes);
   }
 
   baseline = new Map(frozen.queries.map((entry) => [entry.query, entry]));
   store = new FactStore(path.join(fixtureRoot, "factstore.sqlite"));
   const materializer = createMaterializer(store, fixtureRoot);
-  const ensure = materializer.ensureFacts({ paths: frozen.fixtureFiles.map((file) => file.fixturePath) });
+  const ensure = materializer.ensureFacts({
+    paths: frozen.fixtureFiles.map((file) => file.fixturePath),
+  });
   expect(ensure.parsed).toHaveLength(frozen.fixtureFiles.length);
 }, 120_000);
 
 afterAll(() => {
   if (diffReport.length > 0) {
-    console.log(`[gate G-3] recall diff (new impact view minus codegraph baseline):\n${diffReport.join("\n")}`);
+    console.log(
+      `[gate G-3] recall diff (new impact view minus codegraph baseline):\n${diffReport.join("\n")}`,
+    );
   }
   store?.close();
   // Best-effort: the vendored codegraph keeps a workspace watcher + sqlite handle
@@ -79,7 +109,6 @@ afterAll(() => {
     // leave the temp fixture behind
   }
 });
-
 
 describe("impact view parity vs vendored codegraph (gate G)", () => {
   it("resolves every golden query in the baseline graph", () => {
@@ -105,7 +134,8 @@ describe("impact view parity vs vendored codegraph (gate G)", () => {
           return !(
             analysis.callers.some((caller) => caller.filePath === baselineCaller.filePath) ||
             analysis.references.some(
-              (reference) => reference.edge === "calls" && reference.sourceFile === baselineCaller.filePath,
+              (reference) =>
+                reference.edge === "calls" && reference.sourceFile === baselineCaller.filePath,
             )
           );
         }
@@ -113,7 +143,8 @@ describe("impact view parity vs vendored codegraph (gate G)", () => {
           (caller) =>
             caller.filePath === baselineCaller.filePath &&
             (caller.name === baselineCaller.name ||
-              (baselineCaller.startLine >= caller.startLine && baselineCaller.startLine <= caller.endLine)),
+              (baselineCaller.startLine >= caller.startLine &&
+                baselineCaller.startLine <= caller.endLine)),
         );
       });
       expect(uncovered, `baseline callers not recalled: ${JSON.stringify(uncovered)}`).toEqual([]);
@@ -121,14 +152,21 @@ describe("impact view parity vs vendored codegraph (gate G)", () => {
       // Impacted-file superset.
       const newFiles = new Set(analysis.impactedFiles);
       const missingFiles = base.impactFiles.filter((filePath) => !newFiles.has(filePath));
-      expect(missingFiles, `baseline impact files not recalled: ${missingFiles.join(", ")}`).toEqual([]);
+      expect(
+        missingFiles,
+        `baseline impact files not recalled: ${missingFiles.join(", ")}`,
+      ).toEqual([]);
 
       // Gate G-3 evidence: record the extra recall for human review.
-      const baseCallerKeys = new Set(base.callers.map((caller) => `${caller.name}@${caller.filePath}`));
+      const baseCallerKeys = new Set(
+        base.callers.map((caller) => `${caller.name}@${caller.filePath}`),
+      );
       const extraCallers = analysis.callers
         .map((caller) => `${caller.name}@${caller.filePath}`)
         .filter((key) => !baseCallerKeys.has(key));
-      const extraFiles = analysis.impactedFiles.filter((filePath) => !base.impactFiles.includes(filePath));
+      const extraFiles = analysis.impactedFiles.filter(
+        (filePath) => !base.impactFiles.includes(filePath),
+      );
       diffReport.push(
         `${query}: baseline callers=${base.callers.length} impactFiles=${base.impactFiles.length} | ` +
           `new callers=${analysis.callers.length} impactFiles=${analysis.impactedFiles.length} | ` +

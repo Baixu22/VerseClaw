@@ -83,6 +83,24 @@ describe('Project RAG exact owner-admitted relationships', () => {
     expect(result.expansion.sources.length).toBeLessThanOrEqual(2);
     expect(result.expansion.status).toBe('partial'); expect(result.expansion.truncated).toBe(true);
   });
+  it('reports a partial result when a target call follows 512 unrelated incoming calls', async () => {
+    const caller = 'import { a } from "./helper.js";\nimport { target } from "./target.js";\nexport function run() {\n' + 'a();'.repeat(512) + '\ntarget();\n}\n';
+    index({ 'budget/target.ts': 'export function target() { return "SCAN_TARGET"; }\n',
+      'budget/helper.ts': 'export function a() { return 1; }\n', 'budget/caller.ts': caller });
+    const calls = facts.getEdgesByFile(root, 'budget/caller.ts').filter(edge => edge.kind === 'calls');
+    expect(calls).toHaveLength(513);
+    expect(calls.at(-1)!.metadata?.position).toBe(caller.lastIndexOf('target();'));
+    const result = await expand({ seeds: ['budget/target.ts'], budgetChars: 24000 });
+    expect(result.expansion.status).toBe('partial'); expect(result.expansion.truncated).toBe(true);
+  });
+  it('shares one hop scan budget across incoming callers', async () => {
+    const caller = 'import { a } from "./helper.js";\nimport { target } from "./target.js";\nexport function run() {\n' + 'a();'.repeat(300) + '\ntarget();\n}\n';
+    index({ 'budget/target.ts': 'export function target() { return "SCAN_TARGET"; }\n',
+      'budget/helper.ts': 'export function a() { return 1; }\n',
+      'budget/caller-a.ts': caller, 'budget/caller-b.ts': caller });
+    const result = await expand({ seeds: ['budget/target.ts'], budgetChars: 24000 });
+    expect(result.expansion.status).toBe('partial'); expect(result.expansion.truncated).toBe(true);
+  });
   it('does no graph read for lookup and preserves hybrid lookup ordering', async () => {
     index(); const owner = vi.fn(); const result = await expand({ intent: 'lookup', assertCurrent: owner });
     expect(result.expansion.status).toBe('disabled'); expect(result.snippets).toEqual([]); expect(owner).not.toHaveBeenCalled();

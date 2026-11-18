@@ -26,6 +26,9 @@ test('Project RAG discovers exact code relationships and reads the current task 
     'a/next.ts': 'import { last } from "./last.js";\nexport function next() { return last(); }\n',
     'a/last.ts': 'export function last() { return "RAG15_THIRD_HOP"; }\n',
     'b/model.ts': 'export function calculate() { return "RAG15_WRONG_MODEL"; }\n',
+    'budget/target.ts': 'export function target() { return "RAG15_SCAN_TARGET"; }\n',
+    'budget/helper.ts': 'export function a() { return 1; }\n',
+    'budget/caller.ts': 'import { a } from "./helper.js";\nimport { target } from "./target.js";\nexport function run() {\n' + 'a();'.repeat(512) + '\ntarget();\n}\n',
   };
   for (const [file, content] of Object.entries(files)) {
     await mkdir(join(workspace, file, '..'), { recursive: true }); await writeFile(join(workspace, file), content);
@@ -38,6 +41,10 @@ test('Project RAG discovers exact code relationships and reads the current task 
     if (text.includes('RAG15 stale')) {
       if (!toolResults['rag15stale']) return { toolCall: { id: 'rag15stale', name: 'context_understand', args: { query: 'src/entry.ts', intent: 'relationship', includeTaskHint: false } } };
       return { text: 'RAG15 stale relationship result recorded' };
+    }
+    if (text.includes('RAG15 capped incoming')) {
+      if (!toolResults['rag15capped']) return { toolCall: { id: 'rag15capped', name: 'context_understand', args: { query: 'budget/target.ts', intent: 'relationship', includeTaskHint: false } } };
+      return { text: 'RAG15 capped incoming result recorded' };
     }
     if (text.includes('RAG15 two hops')) {
       if (!toolResults['rag15two']) return { toolCall: { id: 'rag15two', name: 'context_understand', args: { query: 'src/entry.ts', intent: 'research', depth: 2 } } };
@@ -125,9 +132,20 @@ test('Project RAG discovers exact code relationships and reads the current task 
     expect(two.relationships.sources.map(source => source.subjectId)).toContain('a/next.ts');
     expect(two.relationships.sources.map(source => source.subjectId)).not.toContain('a/last.ts');
     expect(two.relationships.edges.every(edge => edge.depth <= 2)).toBe(true); receipt.twoHop = two; steps.twoHopBound = true;
+    await composer.fill('RAG15 capped incoming'); await page.getByTestId('chat-composer-send').click();
+    await expect(page.getByText('RAG15 capped incoming result recorded', { exact: true })).toBeVisible({ timeout: 120000 });
+    await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
+    const capped = toolResult('rag15capped');
+    expect(capped.relationships).toMatchObject({ status: 'partial', truncated: true, maxDepth: 1 });
+    expect(capped.relationships.edges.length).toBeLessThanOrEqual(128); receipt.cappedIncoming = capped;
+    await page.screenshot({ path: testInfo.outputPath('code-relationship-capped-result.png'), fullPage: true });
     const db = new DatabaseSync(join(workspace, '.openclaw', 'factstore.sqlite'), { readOnly: true });
-    try { expect((db.prepare("SELECT count(*) AS n FROM chunks WHERE content LIKE '%RAG15_TASK_OBJECTIVE%'").get() as { n: number }).n).toBe(0); }
+    try {
+      expect((db.prepare("SELECT count(*) AS n FROM edges WHERE file_path='budget/caller.ts' AND kind='calls'").get() as { n: number }).n).toBe(513);
+      expect((db.prepare("SELECT count(*) AS n FROM chunks WHERE content LIKE '%RAG15_TASK_OBJECTIVE%'").get() as { n: number }).n).toBe(0);
+    }
     finally { db.close(); }
+    steps.incomingScanBudget = true;
     steps.taskAbsentFromCodeChunks = true;
     await writeFile(join(workspace, 'src/entry.ts'), 'export function run() { return "RAG15_REPLACED_ENTRY"; }\n');
     await composer.fill('RAG15 stale'); await page.getByTestId('chat-composer-send').click();

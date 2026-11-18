@@ -8,10 +8,25 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { requireNodeSqlite } from "../../infra/node-sqlite.js";
 import { runSqliteImmediateTransactionWithRetrySync } from "../../infra/sqlite-transaction.js";
-import { configureSqliteWalMaintenance, type SqliteWalMaintenance } from "../../infra/sqlite-wal.js";
-import type { CodeChunk, CodeFile, EdgeKind, GraphEdge, ProjectIdentity, SymbolNode } from "../fact-types.js";
+import {
+  configureSqliteWalMaintenance,
+  type SqliteWalMaintenance,
+} from "../../infra/sqlite-wal.js";
+import type {
+  CodeChunk,
+  CodeFile,
+  EdgeKind,
+  GraphEdge,
+  ProjectIdentity,
+  SymbolNode,
+} from "../fact-types.js";
 import { projectIdForRoot } from "../producers/hash.js";
-import { checkFileFreshness, gateFreshness, type FreshnessGateOptions, type FreshnessReport } from "./freshness.js";
+import {
+  checkFileFreshness,
+  gateFreshness,
+  type FreshnessGateOptions,
+  type FreshnessReport,
+} from "./freshness.js";
 import { factStoreIgnoreReason, normalizeFactPath } from "./ignore.js";
 import { FactStoreStatements, migrateFactStoreSchema } from "./statements.js";
 
@@ -29,7 +44,12 @@ export interface UpsertFileFactsInput {
 }
 
 export type UpsertFileFactsResult =
-  | { stored: true; projectId: string; path: string; counts: { symbols: number; edges: number; chunks: number } }
+  | {
+      stored: true;
+      projectId: string;
+      path: string;
+      counts: { symbols: number; edges: number; chunks: number };
+    }
   | { stored: false; projectId: string; path: string; reason: string };
 
 export interface FileFactRecord {
@@ -198,7 +218,13 @@ export class FactStore {
           chunk.contentHash,
           generation,
         );
-        this.sql.insertFts.run(projectId, chunk.id, relPath, chunk.symbolName ?? null, chunk.content);
+        this.sql.insertFts.run(
+          projectId,
+          chunk.id,
+          relPath,
+          chunk.symbolName ?? null,
+          chunk.content,
+        );
       }
     });
 
@@ -229,31 +255,42 @@ export class FactStore {
     this.assertOpen();
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return [];
-    return (this.sql.selectSymbolsByFile.all(projectId, normalizeFactPath(relPath)) as Array<Record<string, unknown>>)
-      .map(symbolFromRow);
+    return (
+      this.sql.selectSymbolsByFile.all(projectId, normalizeFactPath(relPath)) as Array<
+        Record<string, unknown>
+      >
+    ).map(symbolFromRow);
   }
 
-  getEdgesByFile(repoRoot: string, relPath: string): GraphEdge[] {
+  getEdgesByFile(repoRoot: string, relPath: string, limit?: number): GraphEdge[] {
     this.assertOpen();
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return [];
-    return (this.sql.selectEdgesByFile.all(projectId, normalizeFactPath(relPath)) as Array<Record<string, unknown>>)
-      .map(edgeFromRow);
+    return (
+      this.sql.selectEdgesByFile.all(projectId, normalizeFactPath(relPath), limit ?? -1) as Array<
+        Record<string, unknown>
+      >
+    ).map(edgeFromRow);
   }
 
-  getEdgesByKind(repoRoot: string, kind: EdgeKind): GraphEdge[] {
+  getEdgesByKind(repoRoot: string, kind: EdgeKind, limit?: number): GraphEdge[] {
     this.assertOpen();
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return [];
-    return (this.sql.selectEdgesByKind.all(projectId, kind) as Array<Record<string, unknown>>).map(edgeFromRow);
+    return (
+      this.sql.selectEdgesByKind.all(projectId, kind, limit ?? -1) as Array<Record<string, unknown>>
+    ).map(edgeFromRow);
   }
 
   getChunksByFile(repoRoot: string, relPath: string): CodeChunk[] {
     this.assertOpen();
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return [];
-    return (this.sql.selectChunksByFile.all(projectId, normalizeFactPath(relPath)) as Array<Record<string, unknown>>)
-      .map(chunkFromRow);
+    return (
+      this.sql.selectChunksByFile.all(projectId, normalizeFactPath(relPath)) as Array<
+        Record<string, unknown>
+      >
+    ).map(chunkFromRow);
   }
 
   findSymbolByNameLike(repoRoot: string, name: string): SymbolNode[] {
@@ -261,7 +298,9 @@ export class FactStore {
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return [];
     const needle = `%${escapeLike(name.toLowerCase())}%`;
-    return (this.sql.selectSymbolByNameLike.all(projectId, needle) as Array<Record<string, unknown>>).map(symbolFromRow);
+    return (
+      this.sql.selectSymbolByNameLike.all(projectId, needle) as Array<Record<string, unknown>>
+    ).map(symbolFromRow);
   }
 
   /** Gate ③: "symbol X was produced by <producer> at hash H" — file-level provenance joined per symbol. */
@@ -269,7 +308,9 @@ export class FactStore {
     this.assertOpen();
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return undefined;
-    const row = this.sql.selectSymbolProvenance.get(projectId, symbolId) as Record<string, unknown> | undefined;
+    const row = this.sql.selectSymbolProvenance.get(projectId, symbolId) as
+      | Record<string, unknown>
+      | undefined;
     if (!row) return undefined;
     return {
       symbolId: String(row.symbol_id),
@@ -299,7 +340,12 @@ export class FactStore {
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return;
     runSqliteImmediateTransactionWithRetrySync(this.db, () => {
-      this.sql.observeContentHash.run(currentHash, currentHash, projectId, normalizeFactPath(relPath));
+      this.sql.observeContentHash.run(
+        currentHash,
+        currentHash,
+        projectId,
+        normalizeFactPath(relPath),
+      );
     });
   }
 
@@ -336,16 +382,21 @@ export class FactStore {
     this.assertOpen();
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return [];
-    return (this.sql.selectSkippedFiles.all(projectId) as Array<Record<string, unknown>>).map((row) => ({
-      filePath: String(row.file_path),
-      reason: String(row.reason),
-    }));
+    return (this.sql.selectSkippedFiles.all(projectId) as Array<Record<string, unknown>>).map(
+      (row) => ({
+        filePath: String(row.file_path),
+        reason: String(row.reason),
+      }),
+    );
   }
 
   countSymbols(repoRoot?: string): number {
     this.assertOpen();
     if (repoRoot === undefined) {
-      const row = this.db.prepare("SELECT COUNT(*) AS count FROM symbols").get() as Record<string, unknown>;
+      const row = this.db.prepare("SELECT COUNT(*) AS count FROM symbols").get() as Record<
+        string,
+        unknown
+      >;
       return Number(row.count);
     }
     const projectId = this.projectIdFor(repoRoot);
@@ -354,13 +405,19 @@ export class FactStore {
     return Number(row.count);
   }
 
-  searchChunks(repoRoot: string, terms: string[], limit = 20): Array<{ chunk: CodeChunk; rank: number }> {
+  searchChunks(
+    repoRoot: string,
+    terms: string[],
+    limit = 20,
+  ): Array<{ chunk: CodeChunk; rank: number }> {
     this.assertOpen();
     const projectId = this.projectIdFor(repoRoot);
     if (!projectId) return [];
     const ftsQuery = ftsQueryForTerms(terms);
     if (!ftsQuery) return [];
-    return (this.sql.searchFts.all(projectId, ftsQuery, limit) as Array<Record<string, unknown>>).map((row) => ({
+    return (
+      this.sql.searchFts.all(projectId, ftsQuery, limit) as Array<Record<string, unknown>>
+    ).map((row) => ({
       chunk: chunkFromRow(row),
       rank: Number(row.rank),
     }));
@@ -371,13 +428,22 @@ export class FactStore {
   }
 
   private upsertProjectRow(projectId: string, repoRoot: string, nowMs: number): void {
-    this.sql.upsertProject.run(projectId, repoRoot, repoRoot, path.basename(repoRoot), nowMs, nowMs, 1, nowMs);
+    this.sql.upsertProject.run(
+      projectId,
+      repoRoot,
+      repoRoot,
+      path.basename(repoRoot),
+      nowMs,
+      nowMs,
+      1,
+      nowMs,
+    );
   }
 
   private projectGeneration(projectId: string): number {
-    const row = this.db.prepare("SELECT index_generation FROM projects WHERE project_id = ?").get(projectId) as
-      | Record<string, unknown>
-      | undefined;
+    const row = this.db
+      .prepare("SELECT index_generation FROM projects WHERE project_id = ?")
+      .get(projectId) as Record<string, unknown> | undefined;
     return Number(row?.index_generation ?? 1);
   }
 
@@ -408,15 +474,27 @@ function dedupeById<T extends { id: string }>(items: T[]): T[] {
 
 function projectFromRow(row: Record<string, unknown>): ProjectIdentity {
   const repoRoot = String(row.repo_root);
-  const canonicalRoot = row.canonical_root === null || row.canonical_root === undefined ? repoRoot : String(row.canonical_root);
+  const canonicalRoot =
+    row.canonical_root === null || row.canonical_root === undefined
+      ? repoRoot
+      : String(row.canonical_root);
   const indexedAtMs = Number(row.indexed_at_ms);
   return {
     projectId: String(row.project_id),
     repoRoot,
     canonicalRoot,
-    displayName: row.display_name === null || row.display_name === undefined ? path.basename(canonicalRoot) : String(row.display_name),
-    createdAtMs: row.created_at_ms === null || row.created_at_ms === undefined ? indexedAtMs : Number(row.created_at_ms),
-    lastIndexedAtMs: row.last_indexed_at_ms === null || row.last_indexed_at_ms === undefined ? indexedAtMs : Number(row.last_indexed_at_ms),
+    displayName:
+      row.display_name === null || row.display_name === undefined
+        ? path.basename(canonicalRoot)
+        : String(row.display_name),
+    createdAtMs:
+      row.created_at_ms === null || row.created_at_ms === undefined
+        ? indexedAtMs
+        : Number(row.created_at_ms),
+    lastIndexedAtMs:
+      row.last_indexed_at_ms === null || row.last_indexed_at_ms === undefined
+        ? indexedAtMs
+        : Number(row.last_indexed_at_ms),
   };
 }
 
@@ -455,7 +533,8 @@ function symbolFromRow(row: Record<string, unknown>): SymbolNode {
     language: String(row.language) as SymbolNode["language"],
     startLine: Number(row.start_line),
     endLine: Number(row.end_line),
-    signature: row.signature === null || row.signature === undefined ? undefined : String(row.signature),
+    signature:
+      row.signature === null || row.signature === undefined ? undefined : String(row.signature),
     exported: Boolean(row.exported),
   };
 }
@@ -478,7 +557,10 @@ function chunkFromRow(row: Record<string, unknown>): CodeChunk {
     filePath: String(row.file_path),
     language: String(row.language) as CodeChunk["language"],
     kind: String(row.kind) as CodeChunk["kind"],
-    symbolName: row.symbol_name === null || row.symbol_name === undefined ? undefined : String(row.symbol_name),
+    symbolName:
+      row.symbol_name === null || row.symbol_name === undefined
+        ? undefined
+        : String(row.symbol_name),
     startLine: Number(row.start_line),
     endLine: Number(row.end_line),
     content: String(row.content),

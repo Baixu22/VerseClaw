@@ -26,6 +26,8 @@ touchedAreas:
   - "harness/specs/scenarios/gateway-backend-communication.md"
   - "openclaw_runtime/src/context-engine/views/retrieval/**"
   - "openclaw_runtime/src/context-engine/factstore/**"
+  - "openclaw_runtime/src/context-engine/views/impact/impact-parity.test.ts"
+  - "harness/specs/fixtures/codegraph-retirement/impact-parity-inputs-v1.json"
   - "electron/services/task-ledger-api.ts"
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "shared/dcs/prod-flags-catalog.ts"
@@ -61,6 +63,8 @@ requiredRules:
 requiredTests:
   - "tests/unit/task-ledger-reference.test.ts"
   - "tests/unit/project-rag-graph-task-context.test.ts"
+  - "openclaw_runtime/src/context-engine/factstore/factstore.test.ts"
+  - "openclaw_runtime/src/context-engine/views/impact/impact-parity.test.ts"
   - "tests/unit/component-disposition-catalog.test.ts"
   - "tests/unit/dcs-prod-flags-catalog.test.ts"
   - "tests/e2e/project-rag-research.spec.ts"
