@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0676-evidence-verifier",
+  "sourceCandidate": "2f20d5715270f4dd3f450580cdaf6e07fdccfb0b",
+  "allowedModels": [
+    "custom-sessionc/mock-coder",
+    "custom-customca/mock-backup"
+  ],
+  "observedModel": "custom-customca/mock-backup",
+  "effectiveEffort": "medium",
+  "workerRunId": "cbd4f11b-dae9-466d-8085-0f971b3d3745",
+  "requests": [
+    {
+      "model": "mock-coder",
+      "issued": "http:429"
+    },
+    {
+      "model": "mock-coder",
+      "issued": "http:429"
+    },
+    {
+      "model": "mock-coder",
+      "issued": "http:429"
+    },
+    {
+      "model": "mock-backup",
+      "issued": "workerwrite"
+    }
+  ]
+}

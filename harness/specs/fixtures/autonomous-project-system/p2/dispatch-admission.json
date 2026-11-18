@@ -1,0 +1,56 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0676-evidence-verifier",
+  "sourceCandidate": "2f20d5715270f4dd3f450580cdaf6e07fdccfb0b",
+  "scopedRequest": {
+    "workspaceId": "worker-canary",
+    "sessionKey": "agent:main:session-1795013873111-workercanary",
+    "expectedSessionGeneration": "45f07da8-621e-4054-ba5b-173b48598cea",
+    "planId": "d18f278c-f55d-49d3-8144-68713d8800cc",
+    "expectedRevision": 1,
+    "expectedChildId": "d8f0e797-d718-432c-89fa-8187a9152a9b"
+  },
+  "budgetRejection": {
+    "success": false,
+    "status": "rejected",
+    "error": "TASK_PROJECT_BUDGET_UNAVAILABLE"
+  },
+  "role": "implementer",
+  "runId": "cbd4f11b-dae9-466d-8085-0f971b3d3745",
+  "sessionKey": "agent:main:subagent:ba64004d-c8a0-443b-beea-e9e551be6418",
+  "isolation": {
+    "mode": "shared",
+    "backend": "shared-inprocess",
+    "canonicalRoot": "D:\\tmp\\p2verified-1ee44\\e2e\\project-agent-loop-dispatc-61c13-and-reads-its-worker-effect\\project",
+    "branch": null,
+    "detachedHead": false,
+    "verifiedCheckout": false
+  },
+  "authorization": {
+    "status": "effective",
+    "source": "role-contract+parent-clamp",
+    "roleName": "implementer",
+    "effectiveRoleName": "implementer",
+    "parentRoleName": null,
+    "allowlist": [
+      "read",
+      "write",
+      "edit",
+      "bash"
+    ],
+    "denylist": [
+      "web_search",
+      "web_fetch",
+      "x_search",
+      "code_execution",
+      "browser",
+      "__role_capability:mcp_network"
+    ],
+    "permissionDecisionCount": 6
+  },
+  "replayed": true,
+  "admissionState": "accepted-not-completed",
+  "fileSha256": "2b19b6a8105debfcea31dc934499f3c288e5f0a80395ab4b147edd031bd572ae",
+  "fileWrites": 1,
+  "restartReplayRun": "orch_ac4b8f06-028e-42de-a55d-36b13b911d29"
+}
