@@ -1,14 +1,14 @@
 import type { ElectronApplication } from '@playwright/test';
 import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { allocatePort, buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { checkWindowsProcesses, type WindowsProcessIdentity } from './fixtures/windows-process';
 
-const { captureCreationTime } = createRequire(import.meta.url)('../../scripts/g5/node-gateway-process-evidence.cjs') as {
+const { captureCreationTime } = createRequire(resolve('package.json'))('./scripts/g5/node-gateway-process-evidence.cjs') as {
   captureCreationTime: (pid: number) => number;
 };
 

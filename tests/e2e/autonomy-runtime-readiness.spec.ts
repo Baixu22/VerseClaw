@@ -142,9 +142,10 @@ test('reads actual Gateway tool exposure and continues the same isolated session
       }
     } finally {
       try {
-        if (llm) {
-          llm.server.closeAllConnections();
-          await new Promise<void>((done) => llm.server.close(() => done()));
+        const server = llm?.server;
+        if (server) {
+          server.closeAllConnections();
+          await new Promise<void>((done) => server.close(() => done()));
         }
       } finally {
         if (root) await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });

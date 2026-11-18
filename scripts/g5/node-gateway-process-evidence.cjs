@@ -140,7 +140,7 @@ async function runRuntimeReadiness(output) {
   const before = source();
   assert.equal(before.dirty, '', 'Freeze the test candidate before running');
   const outputDir = path.resolve(output || path.join('D:/tmp', 'g5-node-runtime-' + crypto.randomUUID()));
-  assert.equal(path.parse(outputDir).root.toLowerCase(), path.parse('D:/tmp').root.toLowerCase(), 'Runtime output must be on D:');
+  assert.equal(path.parse(outputDir).root.toLowerCase(), path.parse(path.resolve('D:/tmp')).root.toLowerCase(), 'Runtime output must be on D:');
   assert(!fs.existsSync(outputDir), 'Fresh Runtime evidence directory required');
   fs.mkdirSync(outputDir, { recursive: true });
   const actor = 'codex/g5-node-process-observer';
