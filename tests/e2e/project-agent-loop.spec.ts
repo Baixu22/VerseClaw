@@ -49,7 +49,7 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
       if (!Object.hasOwn(results, `${key}read`)) return { toolCall: { id: `${key}read`, name: 'task_control', args: { action: 'planStatus' } } };
       const current = JSON.parse(results[`${key}read`]) as ProjectPlanSnapshot;
       if (!Object.hasOwn(results, `${key}start`)) return { toolCall: { id: `${key}start`, name: 'task_control', args: {
-        action: 'start', taskNodeId: current.children[fixtureIndex].contract.taskNodeId, requestId: `${key}-complete`,
+        action: 'startNextPlanTask', taskNodeId: current.task.contract.taskNodeId, expectedRevision: current.task.contract.revision, requestId: `${key}-complete`,
       } } };
       if (!Object.hasOwn(results, `${key}verify`)) return { toolCall: { id: `${key}verify`, name: 'task_control', args: {
         action: 'verifyFile', criterionId: 'checklist', path: 'checklist.txt',

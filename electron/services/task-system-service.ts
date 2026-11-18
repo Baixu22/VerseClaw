@@ -161,7 +161,7 @@ export async function assertManagedTaskAdmission(input: {
   sessionKey: string;
   generation: string;
   requestId: string;
-}): Promise<void> {
+}): Promise<'reserved' | 'existing' | void> {
   if (!existsSync(input.workspaceRoot)) return;
   const access = createExecutionTaskAccess(input.workspaceRoot);
   const domain = access.domain;
@@ -178,7 +178,7 @@ export async function assertManagedTaskAdmission(input: {
     store.assertOwner(task.claim);
     // One logical dispatch per task epoch. A repair or another writer needs a
     // new task/attempt instead of another request key for the same work.
-    store.reserveDelegation(task.claim, input.requestId);
+    return store.reserveDelegation(task.claim, input.requestId);
   } finally {
     store.close();
   }

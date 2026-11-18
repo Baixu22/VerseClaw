@@ -78,6 +78,34 @@ describe('project coordinator planning', () => {
     expect(store.projectPlan('project-b')).toBeUndefined();
   });
 
+  it('selects a dependency-ready child in plan order and fences replays after handoff or completion', () => {
+    const plan = store.saveProjectPlan(scope, { ...initial, children: [...initial.children].reverse() });
+    const start = (key: string) => store.startNextPlanTask(scope, plan.taskNodeId, plan.revision, key);
+    expect(() => store.startNextPlanTask(scope, plan.taskNodeId, 2, 'bad-revision')).toThrow('TASK_PROJECT_PLAN_STALE');
+    expect(() => store.startNextPlanTask({ ...scope, workspaceId: 'other' }, plan.taskNodeId, 1, 'bad-project')).toThrow('TASK_PROJECT_PLAN_STALE');
+    const first = start('next-1').claim!;
+    expect(first.taskNodeId).toBe(plan.childIds[1]);
+    store.close();
+    store = new TaskSystemStore(resolveTaskDomain(root));
+    expect(start('next-1').claim).toEqual(first);
+    expect(() => start('next-2')).toThrow('TASK_PROJECT_WRITER_BUSY');
+    store.verifyFile(first, 'proof', 'proof.txt', sha256, 'candidate');
+    store.submit(first, 'candidate');
+    expect(() => start('next-2')).toThrow('TASK_PROJECT_WRITER_BUSY');
+    store.accept(first, 'candidate');
+    expect(() => start('next-1')).toThrow();
+    expect(start('next-2').claim?.taskNodeId).toBe(plan.childIds[0]);
+  });
+
+  it('does not admit work in a new plan while a previous plan child has a writer', () => {
+    const old = store.saveProjectPlan(scope, initial);
+    store.claim(old.childIds[0], 'worker', 'generation-worker', 'working');
+    const fresh = store.saveProjectPlan(scope, { ...initial, requestId: 'new-goal' });
+    expect(() => store.startNextPlanTask(scope, old.taskNodeId, 1, 'outdated')).toThrow('TASK_PROJECT_PLAN_STALE');
+    expect(() => store.startNextPlanTask(scope, fresh.taskNodeId, 1, 'next')).toThrow('TASK_PROJECT_WRITER_BUSY');
+    expect(store.get(fresh.childIds[0]).claim).toBeNull();
+  });
+
   it('keeps settled tasks and evidence when replacing a revision without recycling child identities', () => {
     const first = store.saveProjectPlan(scope, initial);
     const next = { ...initial, requestId: 'revise', revise: { taskNodeId: first.taskNodeId, expectedRevision: 1, reason: 'Change rollout requirements' } };

@@ -522,6 +522,29 @@ export class TaskSystemStore {
       revisions: rows.map((row) => JSON.parse(row.json) as ProjectPlanRevision),
     };
   }
+  startNextPlanTask(scope: { workspaceId: string; sessionKey: string; generation: string }, planId: string, revision: number, requestId: string, pinned?: TaskCredential): TaskView {
+    const key = digest([scope.workspaceId, text(requestId, "REQUEST_ID", 200)]);
+    return this.transaction(() => {
+      const plan = this.projectPlan(scope.workspaceId);
+      if (!plan || plan.task.contract.taskNodeId !== planId || plan.task.contract.revision !== revision)
+        throw new Error("TASK_PROJECT_PLAN_STALE");
+      const claim = this.request(`project-next:${key}`, { ...scope, planId, revision }, () => {
+        if (plan.task.contract.state !== "ready") throw new Error("TASK_PLAN_NOT_EXECUTABLE");
+        // A previous goal can still have a delegated writer after a newer plan is saved.
+        const busy = this.db.prepare(`SELECT 1 FROM task_plan_children p JOIN task_contracts c ON c.id=p.child_id
+          WHERE c.state NOT IN ('ready','done','cancelled') AND EXISTS (SELECT 1 FROM task_events e
+          WHERE e.task_id=p.parent_id AND e.kind='project_plan_saved' AND json_extract(e.json,'$.workspaceId')=?) LIMIT 1`)
+          .get(scope.workspaceId);
+        if (busy) throw new Error("TASK_PROJECT_WRITER_BUSY");
+        const done = new Set<string>(plan.children.filter(c => c.contract.state === "done").map(c => c.contract.taskNodeId));
+        const next = plan.children.find(c => c.contract.state === "ready" && (c.contract.dependencies ?? []).every(id => done.has(id)));
+        if (!next) throw new Error("TASK_PROJECT_NO_READY_CHILD");
+        return this.claim(next.contract.taskNodeId, scope.sessionKey, scope.generation, `project-next:${key}`, pinned).claim!;
+      });
+      if (pinned && (pinned.taskNodeId !== claim.taskNodeId || pinned.epoch !== claim.epoch)) throw new Error("TASK_STALE_OWNER");
+      return this.assertOwner(claim);
+    });
+  }
   history(
     taskNodeId: string,
     afterSequence = 0,
@@ -1524,23 +1547,20 @@ export class TaskSystemStore {
         .run(credential.taskNodeId, credential.epoch, runId);
     });
   }
-  reserveDelegation(credential: TaskCredential, requestId: string): void {
-    this.transaction(() => {
+  reserveDelegation(credential: TaskCredential, requestId: string): 'reserved' | 'existing' {
+    return this.transaction(() => {
       this.assertOwner(credential);
       const existing = this.db
         .prepare("SELECT request_id FROM task_delegations WHERE task_id=? AND epoch=?")
         .get(credential.taskNodeId, credential.epoch) as { request_id: string } | undefined;
       if (existing && existing.request_id !== requestId)
         throw new Error("TASK_DELEGATION_ALREADY_RESERVED");
-      if (!existing) {
-        this.db
-          .prepare("INSERT INTO task_delegations VALUES(?,?,?)")
-          .run(credential.taskNodeId, credential.epoch, requestId);
-        this.event(credential.taskNodeId, "delegation_reserved", {
-          requestId,
-          epoch: credential.epoch,
-        });
-      }
+      if (existing) return 'existing';
+      if (this.db.prepare('SELECT 1 FROM task_delegations WHERE request_id=? LIMIT 1').get(requestId))
+        throw new Error('TASK_DELEGATION_REQUEST_REUSED');
+      this.db.prepare("INSERT INTO task_delegations VALUES(?,?,?)").run(credential.taskNodeId, credential.epoch, requestId);
+      this.event(credential.taskNodeId, "delegation_reserved", { requestId, epoch: credential.epoch });
+      return 'reserved';
     });
   }
   endRun(credential: TaskCredential, runId: string): void {

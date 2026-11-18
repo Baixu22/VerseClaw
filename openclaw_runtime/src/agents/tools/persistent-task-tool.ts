@@ -74,6 +74,7 @@ export function createPersistentTaskTool(input: {
     label: "Task control",
     risk: "write",
     description:
+      "When explicitly asked to execute the next project plan task, read planStatus, then use startNextPlanTask with the parent taskNodeId, expectedRevision and a stable requestId. This claims one dependency-ready task; worker admission is separate. " +
       "Manage execution tasks quietly in conversation. For explicit project planning requests in a project coordinator session, read planStatus and relevant project facts first, then use savePlan with goal contract, a bounded list of children with concrete verification, local dependsOn keys, and nextAction. Record uncertain facts as assumptions and unresolved major scope choices as decisions; scope those tasks to work that is safe under those uncertainties. Change an existing plan explicitly with taskNodeId, expectedRevision, and revisionReason; keep the requestId stable across retries and use a new ID for a new goal. Planning does not start execution. Before implementation, read current and use start with either taskNodeId or a complete contract to resolve and claim atomically. Derive goals and verifiable checks from the user request and repository; do not ask for task forms, internal IDs, or manual claims. Ordinary discussion creates no task. Report progress and genuine blockers plainly, checkpoint progress, and submit candidate-bound evidence for acceptance. Use stable request IDs across retries; suggestions do not grant identity. Use history to trace candidate checks and retention receipts; readRetainedArtifact returns verified bytes in bounded base64 pages after source cleanup. Task ownership does not grant tool permissions. Never replace the goal with a status question.",
     parameters: Type.Object({
       action: Type.Union(
@@ -83,6 +84,7 @@ export function createPersistentTaskTool(input: {
           "decompose",
           "planStatus",
           "savePlan",
+          "startNextPlanTask",
           "reconcile",
           "changes",
           "history",
@@ -143,7 +145,7 @@ export function createPersistentTaskTool(input: {
     execute: async (_toolCallId, raw) => {
       if (!input.sessionKey || !input.generation) throw new Error("TASK_SESSION_IDENTITY_REQUIRED");
       const p = raw as Record<string, unknown>;
-      const planning = p.action === "planStatus" || p.action === "savePlan";
+      const planning = p.action === "planStatus" || p.action === "savePlan" || p.action === "startNextPlanTask";
       const scope = planning ? (() => {
         const ownerPath = process.env.CLAWX_WORKSPACE_OWNER_PATH;
         if (!ownerPath) throw new Error("TASK_PROJECT_COORDINATOR_REQUIRED");
@@ -171,6 +173,11 @@ export function createPersistentTaskTool(input: {
           return p[key] as string;
         };
         if (scope) {
+          if (p.action === "startNextPlanTask") {
+            const result = store.startNextPlanTask(scope, str("taskNodeId"), Number(p.expectedRevision), str("requestId"), pinned ?? undefined);
+            pinned = result.claim;
+            return { content: [{ type: "text", text: JSON.stringify(result) }], details: result };
+          }
           const result = p.action === "planStatus"
             ? store.projectPlan(scope.workspaceId, typeof p.taskNodeId === "string" ? p.taskNodeId : undefined) ?? null
             : store.saveProjectPlan(scope, {

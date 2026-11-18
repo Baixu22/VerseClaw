@@ -1,6 +1,8 @@
 import { execFileSync } from 'node:child_process';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import { TaskSystemStore } from '../../shared/task-system/store';
+import { resolveTaskDomain } from '../../shared/task-system/identity';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type {
@@ -25,6 +27,7 @@ import {
   type StoredSessionDelegationAdmission,
 } from '../../electron/services/session-delegation-admission';
 import { createSessionsApi } from '../../electron/services/sessions-api';
+import { assertManagedTaskAdmission } from '../../electron/services/task-system-service';
 import { scheduleResourceAwareWaves } from '../../openclaw_runtime/src/agents/orchestration-resource-scheduler';
 import { buildDelegationReceipt } from '../../openclaw_runtime/src/agents/long-session-delegation-receipt';
 import { spawnRoleSubagent, type RoleSpawnContext, type RoleSpawnParams } from '../../openclaw_runtime/src/agents/role-spawn';
@@ -341,6 +344,31 @@ describe('A4 delegation task-scope gate', () => {
 });
 
 describe('long-session delegation admission', () => {
+  it('does not respawn a managed task when Main loses the receipt but SQLite retained the reservation', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'project-dispatch-'));
+    temporaryRoots.push(root);
+    const ledger = new TaskSystemStore(resolveTaskDomain(root));
+    let taskRef: string;
+    try {
+      taskRef = ledger.start({ contract: { objective: 'Check the fixture', target: 'proof.txt', constraints: [],
+        acceptance: [{ id: 'check', description: 'Check proof.txt', verification: { kind: 'owner-receipt', owner: 'fixture' } }] } },
+      SESSION_KEY, SESSION_GENERATION, 'start').contract.taskNodeId;
+    } finally { ledger.close(); }
+    const scoped = binding({ environment: { ...binding().environment, canonicalRoot: root },
+      taskLedgerReferences: [{ ...binding().taskLedgerReferences[0], taskLedgerNodeId: taskRef }] });
+    const rpc = acceptedGatewayRpc();
+    const deps = () => dependencies(memoryStore(), { resolveCoordinator: async () => bindingResult(scoped),
+      gatewayRpc: rpc, assertTaskAdmission: assertManagedTaskAdmission });
+    const request = payload({ taskRef });
+    const original = deps();
+    expect((await executeSessionDelegation(request, original)).status).toBe('accepted');
+    expect(await executeSessionDelegation(request, original)).toMatchObject({ status: 'accepted', replayed: true });
+    expect(await executeSessionDelegation(request, deps())).toMatchObject({ success: false, status: 'outcome-unknown' });
+    expect(await executeSessionDelegation({ ...request, idempotencyKey: 'different' }, deps())).toMatchObject({
+      success: false, status: 'rejected', error: 'TASK_DELEGATION_ALREADY_RESERVED',
+    });
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
   it('rejects task ownership before issuing a worker dispatch',async()=>{
     const deps=dependencies(undefined,{assertTaskAdmission:async()=>{throw new Error('TASK_DELEGATION_OWNER_MISMATCH');}});
     const dispatch=vi.spyOn(deps,'gatewayRpc');

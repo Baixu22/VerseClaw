@@ -44,7 +44,7 @@ export type SessionDelegationDependencies = {
   getActiveWorkspaceId: () => Promise<string | null>;
   gatewayRpc: (payload: GatewayRpcPayload) => unknown | Promise<unknown>;
   describeSessionGeneration: (sessionKey: string) => Promise<string | null>;
-  assertTaskAdmission?: (input: { workspaceRoot: string; taskRef: string; sessionKey: string; generation: string; requestId: string }) => Promise<void>;
+  assertTaskAdmission?: (input: { workspaceRoot: string; taskRef: string; sessionKey: string; generation: string; requestId: string }) => Promise<'reserved' | 'existing' | void>;
   resolveTaskScope: (input: {
     workspaceId: string;
     sessionKey: string;
@@ -357,7 +357,11 @@ export async function executeSessionDelegation(
     };
   }
   try {
-    await deps.assertTaskAdmission?.({workspaceRoot:binding.environment.canonicalRoot,taskRef:payload.taskRef,sessionKey:payload.sessionKey,generation:generationBefore,requestId:payload.idempotencyKey});
+    const reservation = await deps.assertTaskAdmission?.({ workspaceRoot: binding.environment.canonicalRoot, taskRef: payload.taskRef,
+      sessionKey: payload.sessionKey, generation: generationBefore, requestId: payload.idempotencyKey });
+    if (reservation === 'existing' && !existing) {
+      return { success: false, status: 'outcome-unknown', error: 'Task Ledger already reserved this dispatch; reconcile the missing Main receipt before continuing' };
+    }
   } catch(error) {
     return {success:false,status:'rejected',error:error instanceof Error?error.message:String(error)};
   }
