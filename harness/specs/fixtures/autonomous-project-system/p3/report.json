@@ -112,63 +112,63 @@
   "assets": [
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/gates/fixed-agent-tests.json",
-      "sha256": "b8b6f6dd8b9742c98f930237649561fb2b2654d6f52bb3a5f1bafcd4b7dbc400",
-      "bytes": 6518
+      "sha256": "760f097dadf39b6dbcbc9cfa56889afb4f9f7bb7589e13b6e176d2990c2b0982",
+      "bytes": 8919
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/gates/fixed-gateway-tests.json",
-      "sha256": "15a9a361d4ac22b67fb04de531f1fdcd451eb4fb84a5bcc162ac97c95d405d2f",
-      "bytes": 6721
+      "sha256": "32b8a8bc70630bc202ee1f260c86007f16554a7b34f2a62f30fad0e49cd99ca8",
+      "bytes": 9406
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/gates/batch-tests.json",
-      "sha256": "ad2f67f0cdbcb49b668ac3e45c30eaff44510719a390c441ef30aa33ad5fbb4f",
-      "bytes": 3267
+      "sha256": "3badfe6c2bd2004c382d81a724e74163312985112144f8412e811f62dacc65cd",
+      "bytes": 4572
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/gates/fixed-e2e.json",
-      "sha256": "5e8065142d93a827c9c503c38ae61e57c11af0d8e365a881e7845aae241c5d21",
-      "bytes": 3544
+      "sha256": "52c75762238598b60fa9bbe4750a0f2afea3f2a6e21db8c6eacff71ea9f714bb",
+      "bytes": 3675
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/gates/batch-e2e.json",
-      "sha256": "3adad7c1c8cdb9cceefe16bc0f2563fde5f03d5db7342fec1f59be8fbbe61da3",
-      "bytes": 3619
+      "sha256": "00a6b54166756488ca5dc71bf7bcc04daab31f9be98b1aeea54f5f35e1d5826c",
+      "bytes": 3750
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/journeys/project-continuation.json",
-      "sha256": "8d7fecec17cd9e7cfa1786ae53feb290ff7563eb674c5791d8843995f40da719",
-      "bytes": 5033
+      "sha256": "33df413c016a83afd321410c90ab5ae41ef9a4c2d5f024f715a53be5f8d7dcb6",
+      "bytes": 5034
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/journeys/project-worker-admission.json",
-      "sha256": "cb9a0f1975b23ac6543ac329b645ecc0f8fbc9b9a60408c760ccd5bb56cd3f03",
-      "bytes": 4590
+      "sha256": "b5bdee298c3d41d4ea5e6d508b6b23392d9e38d80f47a8b3d1f7a7781cbcf86c",
+      "bytes": 4591
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/journeys/project-worker-execution.json",
-      "sha256": "422026abfecfa68278af890b3ffcd3ca013b494f006e0ef33d1e78d91cc21e6c",
-      "bytes": 8133
+      "sha256": "ae903a9efad82b9d475ef3039976a77703af8f4b249d942e29218c5cd9696e8d",
+      "bytes": 8134
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/journeys/completion-continuation-e2e.json",
-      "sha256": "8322a125804c8132bd55393655609db74bbb0c900e486185bbf85dacadcf3747",
-      "bytes": 5923
+      "sha256": "047fb437b7bff0759d84fffeced1836cd1f77e4138dcefd7f5d0faa4d8874b01",
+      "bytes": 5988
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/gates/typecheck.json",
-      "sha256": "42962e7c48b8f8326075f5801b1394e318906ce37371e194d73b95f38a55cf5f",
-      "bytes": 1335
+      "sha256": "dab42a8fd4b325e22c0e36e9809499fbf5959e8f55c309d52681cb53aec0d1cd",
+      "bytes": 1466
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/gates/comms-compare.json",
-      "sha256": "7914d8ab0ac69e4ff067bc8bb8276344346f31f988879ca0324347c885cec791",
-      "bytes": 3812
+      "sha256": "c2dbb61fc0fa856bf0ae338f6ccdd39d6f24416987bf9de2b1952c718aac8000",
+      "bytes": 3943
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/gates/ci-audit.json",
-      "sha256": "a9f9bca588282178467f0d710f7f87d4306ea189b8660e87d513e03f79830ccd",
-      "bytes": 1835
+      "sha256": "af344fedbf6ca324b90f12dc3d8726df998d42933fbd65a3e5e4e9a498388d59",
+      "bytes": 1966
     },
     {
       "path": "harness/specs/fixtures/autonomous-project-system/p3/journeys/provider-summary.json",
@@ -180,5 +180,78 @@
     "fixture": "tests/e2e/project-agent-loop.spec.ts",
     "sha256": "ef5779f5bba2c7ba6f53b36dc68d8a1fd9071f46a563fb9a1953dcde3424c8a7",
     "gitBlobSha256": "ef5779f5bba2c7ba6f53b36dc68d8a1fd9071f46a563fb9a1953dcde3424c8a7"
+  },
+  "commands": [
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118\\openclaw_runtime",
+      "command": "node node_modules/vitest/vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/subagent-announce-generation-pin.test.ts src/agents/subagent-registry-owners.recovery.test.ts src/agents/agent-steering-queue.l03.test.ts src/agents/subagent-announce-delivery.visible-reply.test.ts --reporter=json --outputFile=D:/tmp/p3-relay-1ef52/fixed-agent-tests.json",
+      "exitCode": 0,
+      "passed": 14
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118\\openclaw_runtime",
+      "command": "node node_modules/vitest/vitest.mjs run --config test/vitest/vitest.gateway-methods.config.ts src/gateway/server-methods/agent.recovery-admission.test.ts --reporter=json --outputFile=D:/tmp/p3-relay-1ef52/fixed-gateway-tests.json",
+      "exitCode": 0,
+      "passed": 17
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "node node_modules/vitest/vitest.mjs run tests/unit/long-session-completion-continuation.test.ts --environment=node --reporter=json --outputFile=D:/tmp/p3-relay-1ef52/batch-tests.json",
+      "exitCode": 0,
+      "passed": 7
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "node node_modules/@playwright/test/cli.js test tests/e2e/project-agent-loop.spec.ts -g 'project menu' --workers=1 --reporter=line,json --output=D:/tmp/p3-relay-1ef52/fixed-e2e",
+      "exitCode": 0,
+      "passed": 1
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "node node_modules/@playwright/test/cli.js test tests/e2e/long-session-completion-continuation.spec.ts --workers=1 --reporter=line,json --output=D:/tmp/p3-relay-1ef52/batch-e2e",
+      "exitCode": 0,
+      "passed": 1
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "node scripts/typecheck-agent-dev.mjs",
+      "exitCode": 0
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "pnpm run build:runtime",
+      "exitCode": 0
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "node scripts/comms/replay.mjs",
+      "exitCode": 0
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "node scripts/comms/compare.mjs",
+      "exitCode": 0
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/project-coordinator-continuation.md",
+      "exitCode": 0
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "node harness/src/cli.mjs run --spec harness/specs/tasks/project-coordinator-continuation.md --dry-run",
+      "exitCode": 0
+    },
+    {
+      "cwd": "D:\\ClawX-work\\g5-test-review-20261118",
+      "command": "pnpm run harness:ci",
+      "exitCode": 1,
+      "baselineTestsPassed": 59
+    }
+  ],
+  "commandEnvironment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "false"
   }
 }

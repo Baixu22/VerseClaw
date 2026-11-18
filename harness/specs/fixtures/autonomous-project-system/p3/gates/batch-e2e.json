@@ -122,5 +122,8 @@
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
-  }
+  },
+  "driven_by": "agent",
+  "actor": "codex-project-continuation",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6"
 }

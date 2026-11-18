@@ -42,5 +42,8 @@
       "errorCount": 0,
       "errorLog": "D:\\ClawX-work\\g5-test-review-20261118\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
     }
-  ]
+  ],
+  "driven_by": "agent",
+  "actor": "codex-project-continuation",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6"
 }

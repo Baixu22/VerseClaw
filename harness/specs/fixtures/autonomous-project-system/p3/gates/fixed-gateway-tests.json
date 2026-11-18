@@ -1,1 +1,247 @@
-{"numTotalTestSuites":3,"numPassedTestSuites":3,"numFailedTestSuites":0,"numPendingTestSuites":0,"numTotalTests":17,"numPassedTests":17,"numFailedTests":0,"numPendingTests":0,"numTodoTests":0,"snapshot":{"added":0,"failure":false,"filesAdded":0,"filesRemoved":0,"filesRemovedList":[],"filesUnmatched":0,"filesUpdated":0,"matched":0,"total":0,"unchecked":0,"uncheckedKeysByFile":[],"unmatched":0,"updated":0,"didUpdate":false},"startTime":1795017926986,"success":true,"testResults":[{"assertionResults":[{"ancestorTitles":["agent continuation generation against the real session store"],"fullName":"agent continuation generation against the real session store resumes an idle expired generation without rotating the transcript","status":"passed","title":"resumes an idle expired generation without rotating the transcript","duration":2759.5202000000063,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent continuation generation against the real session store"],"fullName":"agent continuation generation against the real session store rejects a replace before ingress","status":"passed","title":"rejects a replace before ingress","duration":237.1301999999996,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent continuation generation against the real session store"],"fullName":"agent continuation generation against the real session store rejects a delete before ingress","status":"passed","title":"rejects a delete before ingress","duration":234.40649999999732,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent continuation generation against the real session store"],"fullName":"agent continuation generation against the real session store rejects a reset racing the atomic session patch","status":"passed","title":"rejects a reset racing the atomic session patch","duration":247.9858000000022,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent continuation generation against the real session store"],"fullName":"agent continuation generation against the real session store rejects a conflicting key","status":"passed","title":"rejects a conflicting key","duration":129.66380000000208,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent continuation generation against the real session store"],"fullName":"agent continuation generation against the real session store rejects a conflicting id","status":"passed","title":"rejects a conflicting id","duration":140.18180000000575,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store continues an expired admitted session without rotating its transcript generation","status":"passed","title":"continues an expired admitted session without rotating its transcript generation","duration":768.2756999999983,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store rejects a replaced generation before dispatch","status":"passed","title":"rejects a replaced generation before dispatch","duration":153.70590000000084,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store rejects a replaced attempt before dispatch","status":"passed","title":"rejects a replaced attempt before dispatch","duration":209.8451999999961,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store rejects a replaced epoch before dispatch","status":"passed","title":"rejects a replaced epoch before dispatch","duration":460.51550000000134,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store rejects a replaced lifecycle before dispatch","status":"passed","title":"rejects a replaced lifecycle before dispatch","duration":184.88809999999648,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store rejects a replaced state before dispatch","status":"passed","title":"rejects a replaced state before dispatch","duration":125.86669999999867,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store checks the owner again when it changes before the fresh-store patch","status":"passed","title":"checks the owner again when it changes before the fresh-store patch","duration":130.99959999999555,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store rejects recovery admission from a non-backend caller","status":"passed","title":"rejects recovery admission from a non-backend caller","duration":197.59180000000197,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store requires the admitted sessionKey","status":"passed","title":"requires the admitted sessionKey","duration":97.62090000000171,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store requires the admitted sessionId","status":"passed","title":"requires the admitted sessionId","duration":89.3550000000032,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["agent receiver recovery admission against the real session store"],"fullName":"agent receiver recovery admission against the real session store requires visible lifecycle effects for an admitted continuation","status":"passed","title":"requires visible lifecycle effects for an admitted continuation","duration":187.30920000000333,"failureMessages":[],"meta":{},"tags":[]}],"startTime":1795017964559,"endTime":1795017970915.309,"status":"passed","message":"","name":"D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts"}]}
+{
+  "numTotalTestSuites": 3,
+  "numPassedTestSuites": 3,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 17,
+  "numPassedTests": 17,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795017926986,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "agent continuation generation against the real session store"
+          ],
+          "fullName": "agent continuation generation against the real session store resumes an idle expired generation without rotating the transcript",
+          "status": "passed",
+          "title": "resumes an idle expired generation without rotating the transcript",
+          "duration": 2759.5202000000063,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent continuation generation against the real session store"
+          ],
+          "fullName": "agent continuation generation against the real session store rejects a replace before ingress",
+          "status": "passed",
+          "title": "rejects a replace before ingress",
+          "duration": 237.1301999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent continuation generation against the real session store"
+          ],
+          "fullName": "agent continuation generation against the real session store rejects a delete before ingress",
+          "status": "passed",
+          "title": "rejects a delete before ingress",
+          "duration": 234.40649999999732,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent continuation generation against the real session store"
+          ],
+          "fullName": "agent continuation generation against the real session store rejects a reset racing the atomic session patch",
+          "status": "passed",
+          "title": "rejects a reset racing the atomic session patch",
+          "duration": 247.9858000000022,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent continuation generation against the real session store"
+          ],
+          "fullName": "agent continuation generation against the real session store rejects a conflicting key",
+          "status": "passed",
+          "title": "rejects a conflicting key",
+          "duration": 129.66380000000208,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent continuation generation against the real session store"
+          ],
+          "fullName": "agent continuation generation against the real session store rejects a conflicting id",
+          "status": "passed",
+          "title": "rejects a conflicting id",
+          "duration": 140.18180000000575,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store continues an expired admitted session without rotating its transcript generation",
+          "status": "passed",
+          "title": "continues an expired admitted session without rotating its transcript generation",
+          "duration": 768.2756999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store rejects a replaced generation before dispatch",
+          "status": "passed",
+          "title": "rejects a replaced generation before dispatch",
+          "duration": 153.70590000000084,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store rejects a replaced attempt before dispatch",
+          "status": "passed",
+          "title": "rejects a replaced attempt before dispatch",
+          "duration": 209.8451999999961,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store rejects a replaced epoch before dispatch",
+          "status": "passed",
+          "title": "rejects a replaced epoch before dispatch",
+          "duration": 460.51550000000134,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store rejects a replaced lifecycle before dispatch",
+          "status": "passed",
+          "title": "rejects a replaced lifecycle before dispatch",
+          "duration": 184.88809999999648,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store rejects a replaced state before dispatch",
+          "status": "passed",
+          "title": "rejects a replaced state before dispatch",
+          "duration": 125.86669999999867,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store checks the owner again when it changes before the fresh-store patch",
+          "status": "passed",
+          "title": "checks the owner again when it changes before the fresh-store patch",
+          "duration": 130.99959999999555,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store rejects recovery admission from a non-backend caller",
+          "status": "passed",
+          "title": "rejects recovery admission from a non-backend caller",
+          "duration": 197.59180000000197,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store requires the admitted sessionKey",
+          "status": "passed",
+          "title": "requires the admitted sessionKey",
+          "duration": 97.62090000000171,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store requires the admitted sessionId",
+          "status": "passed",
+          "title": "requires the admitted sessionId",
+          "duration": 89.3550000000032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "agent receiver recovery admission against the real session store"
+          ],
+          "fullName": "agent receiver recovery admission against the real session store requires visible lifecycle effects for an admitted continuation",
+          "status": "passed",
+          "title": "requires visible lifecycle effects for an admitted continuation",
+          "duration": 187.30920000000333,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795017964559,
+      "endTime": 1795017970915.309,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts"
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "codex-project-continuation",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6"
+}

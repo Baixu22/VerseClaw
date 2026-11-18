@@ -56,5 +56,8 @@
     "| message_order_violation_count | 0.0000 | <= 0 | PASS |",
     "| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |",
     "| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |"
-  ]
+  ],
+  "driven_by": "agent",
+  "actor": "codex-project-continuation",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6"
 }

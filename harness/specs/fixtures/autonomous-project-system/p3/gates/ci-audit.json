@@ -38,5 +38,8 @@
       "message": "contract exceeded hard limit: 3388ms > 3000ms.",
       "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
     }
-  ]
+  ],
+  "driven_by": "agent",
+  "actor": "codex-project-continuation",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6"
 }

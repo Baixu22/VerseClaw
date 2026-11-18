@@ -167,5 +167,6 @@
     "generationState": "mismatch",
     "consolidatedReceiptId": null
   },
-  "transport": "built Electron session.activitySnapshot -> persisted subagent registry batches -> existing generation-pinned delivery owner"
+  "transport": "built Electron session.activitySnapshot -> persisted subagent registry batches -> existing generation-pinned delivery owner",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6"
 }
