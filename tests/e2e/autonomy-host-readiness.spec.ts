@@ -1,15 +1,23 @@
 import type { ElectronApplication } from '@playwright/test';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { allocatePort, buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { checkWindowsProcesses, type WindowsProcessIdentity } from './fixtures/windows-process';
+
+const { captureCreationTime } = createRequire(import.meta.url)('../../scripts/g5/node-gateway-process-evidence.cjs') as {
+  captureCreationTime: (pid: number) => number;
+};
 
 test('TF-0674 actual host probes, production close-to-tray continuation and restart recovery', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
   test.setTimeout(900_000);
   const llm = await startScriptedLlm((text) => ({ text: text.includes('A5-AFTER-APP') ? 'A5-AFTER-APP-RECEIPT' : text.includes('A5-AFTER-GATEWAY') ? 'A5-AFTER-GATEWAY-RECEIPT' : text.includes('A5-CLOSED') ? 'A5-CLOSED-RECEIPT' : 'A5-FIRST-RECEIPT' }));
   let app: ElectronApplication | null = null;
+  const gatewayIdentities = new Map<string, WindowsProcessIdentity & { gatewayGeneration: string }>();
+  const gatewayLedger = testInfo.outputPath('host-gateway-pids.jsonl');
   try {
     const workspaceDir = join(homeDir, 'a5-workspace');
     const openclawDir = join(homeDir, '.openclaw');
@@ -39,7 +47,21 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
       return current;
     }
     type Ack = { childPid: number; gatewayGeneration: string };
-    const ack = (app: ElectronApplication) => hostInvoke<Ack>(app, 'gateway', 'rpc', { method: 'runtime.flags.ack', params: {}, timeoutMs: 30_000 });
+    const ack = async (current: ElectronApplication) => {
+      const value = await hostInvoke<Ack>(current, 'gateway', 'rpc', { method: 'runtime.flags.ack', params: {}, timeoutMs: 30_000 });
+      if (process.platform === 'win32') {
+        const identity = { pid: value.childPid, creationTime: captureCreationTime(value.childPid), gatewayGeneration: value.gatewayGeneration };
+        const key = `${identity.pid}:${identity.creationTime}`;
+        const existing = gatewayIdentities.get(key);
+        if (existing) expect(existing.gatewayGeneration).toBe(identity.gatewayGeneration);
+        else {
+          gatewayIdentities.set(key, identity);
+          await appendFile(gatewayLedger, JSON.stringify({ ...identity, driven_by: 'agent', actor: 'codex-a5-playwright',
+            realHumanEvidence: false, candidate: process.env.CLAWX_E2E_CANDIDATE, userDataDir, at: new Date().toISOString() }) + '\n');
+        }
+      }
+      return value;
+    };
     app = await launchProductionLifecycle();
     const active = await hostInvoke<{ activeWorkspace: { id: string } }>(app, 'workspaces', 'getActive');
     const workspaceId = active.activeWorkspace.id;
@@ -127,6 +149,8 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
     const secondApp = app;
     const secondMain = await mainIdentity(secondApp);
     expect(secondMain).not.toEqual(firstMain);
+    const secondAppAck = await ack(secondApp);
+    expect(secondAppAck.gatewayGeneration).not.toBe(restartedAck.gatewayGeneration);
     expect(await history(secondApp, 'A5-CLOSED-RECEIPT')).toBe(true);
     expect(await history(secondApp, 'A5-AFTER-GATEWAY-RECEIPT')).toBe(true);
     expect((await activity(secondApp)).policy?.host?.runtime.state).toBe('unknown');
@@ -138,6 +162,7 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
     const storedConfig = JSON.parse(await readFile(join(openclawDir, 'openclaw.json'), 'utf8')) as { runtime?: { contextBlock?: unknown } };
     expect(storedConfig.runtime?.contextBlock).toEqual((config.runtime as { contextBlock?: unknown }).contextBlock);
     const output = testInfo.outputPath('host-readiness.json');
+    if (process.platform === 'win32') expect(gatewayIdentities.size).toBe(3);
     await writeFile(output, JSON.stringify({
       schema: 'clawx.autonomy-host-readiness/v1', driven_by: 'agent', actor: 'codex-a5-playwright', realHumanEvidence: false,
       candidate: process.env.CLAWX_E2E_CANDIDATE ?? null,
@@ -146,12 +171,26 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
       probes: { before: before.policy?.host, afterRun: afterRun.policy?.host, afterClose: afterClose.policy?.host, afterGatewayRestart: afterGatewayRestart.policy?.host, afterAppRestart: afterAppRestart.policy?.host },
       journeys: { isolatedRun: true, controlledContinuation: true, productionWindowClose: closedWindow, gatewayRestart: { before: initialAck, after: restartedAck }, appRestart: { before: firstMain, after: secondMain, firstExit, transcriptReadback: true, newRunReadback: true }, configPreserved: true },
       providerRequests: llm.log.length, anomalies: llm.anomalies,
+      gatewayProcessIdentities: [...gatewayIdentities.values()],
       limitations: ['scripted provider is not model quality evidence', 'no installed service or app-exit execution claim', 'no budget measurement', 'no configuration defect observed; no migration or rollback applied', 'source only; installer not tested'],
     }, null, 2));
     await testInfo.attach('host-readiness', { path: output, contentType: 'application/json' });
   } finally {
     try {
-      if (app) { await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app); }
+      try {
+        if (app) { await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app); }
+      } finally {
+        if (process.platform === 'win32' && gatewayIdentities.size) {
+          const checks = await checkWindowsProcesses([...gatewayIdentities.values()]);
+          const cleanup = testInfo.outputPath('host-gateway-cleanup.json');
+          await writeFile(cleanup, JSON.stringify({ driven_by: 'agent', actor: 'codex-a5-playwright', realHumanEvidence: false,
+            candidate: process.env.CLAWX_E2E_CANDIDATE, identities: [...gatewayIdentities.values()], checks,
+            ledger: gatewayLedger, checkedAt: new Date().toISOString(),
+            status: checks.every(({ status }) => ['exited', 'replaced'].includes(status)) ? 'passed' : 'failed' }, null, 2));
+          await testInfo.attach('host-gateway-cleanup', { path: cleanup, contentType: 'application/json' });
+          expect(checks.every(({ status }) => ['exited', 'replaced'].includes(status))).toBe(true);
+        }
+      }
     } finally {
       llm.server.closeAllConnections();
       await new Promise<void>((done) => llm.server.close(() => done()));

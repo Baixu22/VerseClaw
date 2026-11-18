@@ -41,7 +41,8 @@ requiredTests:
   - pnpm typecheck:test
   - pnpm comms:replay
   - pnpm comms:compare
-  - pnpm test:e2e:run tests/e2e/autonomy-runtime-readiness.spec.ts tests/e2e/autonomy-host-readiness.spec.ts --workers=1 --retries=0
+  - node scripts/g5/node-gateway-process-evidence.cjs --run
+  - pnpm test:e2e:run tests/e2e/autonomy-host-readiness.spec.ts --workers=1 --retries=0
   - pnpm harness validate --spec harness/specs/tasks/g5-readiness-test-lifecycle.md
   - pnpm harness run --spec harness/specs/tasks/g5-readiness-test-lifecycle.md --dry-run
   - git diff --check
@@ -58,6 +59,10 @@ docs:
 
 Node 观察器记录实际启动时的进程身份与输入摘要，退出检查复用 Windows 原生
 PID 与创建时间校验。缺失、重复、冲突或过期记录使对应检查失败。
+
+`node scripts/g5/node-gateway-process-evidence.cjs --run [输出目录]` 在新的 D 盘
+目录中执行 Runtime 就绪用例，设置候选与 owner 回执，加载观察器，并收集
+独立原生退出检查。`receipt.json` 记录真实命令、测试结果、输入摘要和账本引用。
 
 冻结产品候选与测试工具修订分别记录。接续已有跑次时保留原命令、回执和
 哈希；新增步骤使用新的输出目录。原始失败、运行器中止和后续复测各自保存。

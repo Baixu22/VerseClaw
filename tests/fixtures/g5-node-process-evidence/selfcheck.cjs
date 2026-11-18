@@ -48,6 +48,7 @@ for (const [name, mutate] of [
  ['foreign run root', rows => rows[0].runRoot = 'D:/tmp/another-run'],
  ['missing exit', rows => rows.splice(rows.findIndex(row => row.event === 'exit'), 1)],
  ['duplicate launch', rows => rows.push(rows[0])],
+ ['out-of-order exits', rows => [rows[1], rows[2]] = [rows[2], rows[1]]],
  ['native capture failure', rows => rows.push({ event: 'observation-error' })],
  ['wrong input digest', rows => rows[0].configSha256 = '0'.repeat(64)],
  ['stale build digest', rows => rows[0].entrySha256 = '0'.repeat(64)],
@@ -57,6 +58,8 @@ for (const [name, mutate] of [
  assert.throws(() => observer.validateLedger(invalid, owner, expected), name);
  checks.push({ name, passed: true });
 }
+assert.throws(() => observer.validateLedger(events, { ...owner, firstAck: owner.secondAck, secondAck: owner.firstAck }, expected), /acknowledgement/);
+checks.push({ name: 'reversed Runtime acknowledgements', passed: true });
 const helper = path.join(repoRoot, 'tests/e2e/fixtures/windows-process.ts');
 require(helper).checkWindowsProcesses(launches.map(({ pid, creationTime }) => ({ pid, creationTime }))).then(native => {
  assert(native.every(row => ['exited', 'replaced'].includes(row.status)));
