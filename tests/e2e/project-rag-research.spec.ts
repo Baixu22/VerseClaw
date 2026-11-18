@@ -7,6 +7,7 @@ import { closeElectronApp, expect, getStableWindow, test } from './fixtures/elec
 import { allocatePort, buildMockProviderConfig, MOCK_MODEL_ID, startScriptedLlm } from './fixtures/fp-p1-harness';
 import type { TaskContextHintV1, RelationshipExpansionV1 } from '../../shared/knowledge/code-task-context';
 import type { TaskView, TaskContractInput } from '../../shared/task-system/types';
+import type { ResearchResultV1 } from '../../shared/knowledge/research';
 
 type Json = Record<string, unknown>;
 async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {
@@ -176,5 +177,199 @@ test('Project RAG discovers exact code relationships and reads the current task 
     try { await host(await getStableWindow(app), 'gateway', 'stop'); } catch (error) { receipt.stopError = String(error); }
     await closeElectronApp(app);
     llm.server.closeAllConnections(); await new Promise<void>(resolve => llm.server.close(() => resolve()));
+  }
+});
+
+test('Project RAG Research follows evidence gaps and shows bounded progress, cancellation and partial results', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
+  test.setTimeout(480000);
+  const workspace = join(homeDir, 'rag16-workspace'), vault = join(homeDir, 'rag16-vault');
+  await mkdir(workspace, { recursive: true }); await mkdir(join(vault, 'concepts'), { recursive: true });
+  const receipt: Json = { schema: 'ProjectRagResearchElectron/v1', actor: process.env.PROJECT_RAG_ACTOR ?? 'rag16-electron',
+    driven_by: 'agent', realHumanEvidence: false, providerKind: 'scripted-local-fixture', status: 'fail', steps: {} };
+  const steps = receipt.steps as Record<string, boolean>;
+  let releaseHeld!: () => void;
+  const held = new Promise<void>(resolve => { releaseHeld = resolve; });
+  const planningCalls: Array<{ query: string; round: number; references: string[] }> = [];
+  const llm = await startScriptedLlm(async text => {
+    const line = text.split('\n').map(line => line.trim()).find(line => line.startsWith('{"researchPlanning":true'));
+    if (!line) return { text: 'RAG16 ordinary reply' };
+    const input = JSON.parse(line) as { query: string; round: number; questions: string[]; evidence: Array<{ sourceId: string; lookup: string }> };
+    planningCalls.push({ query: input.query, round: input.round, references: input.evidence.map(source => source.sourceId) });
+    const find = (path: string) => input.evidence.find(source => source.lookup.endsWith(path))?.sourceId;
+    const port = find('gateway.md'), archive = find('archive.md'), other = find('other-port.md');
+    if (input.query.includes('cancellation')) await held;
+    const coverage = port && text.includes('Gateway port is 8080.')
+      ? [{ question: input.questions[0], sourceId: port, quote: 'port is 8080' }] : [];
+    if (input.query.includes('conflicting')) return { text: JSON.stringify({
+      queries: port && other ? [] : [port ? 'concepts/other-port.md' : 'concepts/gateway.md'],
+      coverage, inferences: [], gaps: [port && other ? 'The gateway ports conflict.' : 'The second gateway source is missing.'],
+      conflicts: port && other && text.includes('Gateway port is 9090.') ? [{ description: 'RAG16_CONFLICT: gateway ports 8080 and 9090 disagree.',
+        citations: [{ sourceId: port, quote: 'port is 8080' }, { sourceId: other, quote: 'port is 9090' }] }] : [],
+    }) };
+    if (input.query.includes('giant policy')) return { text: JSON.stringify({ queries: [], coverage,
+      inferences: [], conflicts: [], gaps: ['RAG16_DCS_GAP: giant policy was not available in the retained context.'] }) };
+    if (archive && text.includes('Archive destination is /archive.')) coverage.push({ question: input.questions[1], sourceId: archive, quote: 'destination is /archive' });
+    return { text: JSON.stringify({ queries: input.round === 1 && !archive ? ['Archive destination'] : [], coverage,
+      inferences: archive ? ['RAG16_INFERENCE: the two sources describe runtime and archival settings.'] : [], conflicts: [],
+      gaps: archive ? [] : ['Archive destination evidence is missing.'] }) };
+  });
+  const app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
+  let page: Page | undefined;
+  type Entry = { action: string; payload: Json; response: { data?: { success?: boolean; research?: ResearchResultV1 } } };
+  try {
+    page = await getStableWindow(app); await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60000 });
+    const created = await host<{ activeWorkspace: { id: string; activeSessionKey: string } }>(page, 'workspaces', 'create',
+      { name: 'RAG16 bounded Research', rootPath: workspace, agentId: 'main', permissionMode: 'fullAccess' });
+    const owner = created.activeWorkspace, now = new Date().toISOString();
+    const cfg = buildMockProviderConfig(llm.port, workspace, { contextBlock: { injectionBudget: { totalChars: 2000 } } });
+    (cfg.models as { providers: { openai: { models: Array<{ cost: Json }> } } }).providers.openai.models[0].cost = { input: 0.1, output: 0.1, cacheRead: 0.1, cacheWrite: 0.1 };
+    cfg.channels = {}; cfg.update = { checkOnStart: false };
+    cfg.plugins = { enabled: true, entries: { 'memory-wiki': { enabled: true, config: {
+      vaultMode: 'isolated', vault: { path: vault }, search: { backend: 'local', corpus: 'wiki' },
+    } } } };
+    const account = { id: 'rag16-provider', vendorId: 'openai', label: 'RAG16 fixture', authMode: 'api_key',
+      baseUrl: `http://127.0.0.1:${llm.port}/v1`, model: MOCK_MODEL_ID, enabled: true, isDefault: true, createdAt: now, updatedAt: now };
+    expect((await host(page, 'providers', 'createAccount', { account, apiKey: 'test-key-ok' })).success).toBe(true);
+    await host(page, 'providers', 'setDefaultAccount', { accountId: account.id });
+    await host(page, 'gateway', 'stop').catch(error => { if (!String(error).includes('Owned Gateway process did not exit')) throw error; });
+    await expect.poll(async () => (await host(page!, 'gateway', 'status')).state, { timeout: 30000 }).toBe('stopped');
+    for (const directory of [join(homeDir, '.openclaw'), join(userDataDir, 'openclaw-source-state')]) {
+      await mkdir(directory, { recursive: true }); await writeFile(join(directory, 'openclaw.json'), JSON.stringify(cfg));
+    }
+    const raw = (title: string, body: string, revision = 1) => `---\ntitle: ${title}\nrevision: ${revision}\nstatus: active\ntrust: confirmed\nupdatedAt: "${now}"\nscope:\n  workspaceId: ${owner.id}\n---\n${body}\n`;
+    await writeFile(join(vault, 'concepts/gateway.md'), raw('Gateway port', 'Gateway port is 8080.'));
+    await writeFile(join(vault, 'concepts/archive.md'), raw('Archive destination', 'Archive destination is /archive.'));
+    await writeFile(join(vault, 'concepts/giant.md'), raw('Giant policy', 'Giant policy: ' + 'Giant retention policy. '.repeat(120)));
+    await host(page, 'settings', 'set', { key: 'gatewayPort', value: await allocatePort() });
+    await host(page, 'gateway', 'start').catch(error => { if (!String(error).includes('timed out')) throw error; });
+    await expect.poll(async () => (await host(page!, 'gateway', 'status')).state, { timeout: 120000 }).toBe('running');
+    await host(page, 'gateway', 'rpc', { method: 'sessions.create', params: { key: owner.activeSessionKey, agentId: 'main' } });
+    const configState = await host<{ hash: string }>(page, 'gateway', 'rpc', { method: 'config.get' });
+    await host(page, 'gateway', 'rpc', { method: 'config.patch', params: { baseHash: configState.hash,
+      raw: JSON.stringify({ models: cfg.models }) } });
+    await expect.poll(async () => {
+      const current = await host<{ config: { models: { providers: { openai: { models: Array<{ id: string; cost: { input: number } }> } } } } }>(page!, 'gateway', 'rpc', { method: 'config.get' });
+      return current.config.models.providers.openai.models.find(model => model.id === MOCK_MODEL_ID)?.cost.input;
+    }, { timeout: 30000 }).toBe(0.1);
+    receipt.pricing = { source: 'runtime-config-owner', input: 0.1, output: 0.1, cacheRead: 0.1, cacheWrite: 0.1 };
+    await expect(host(page, 'gateway', 'rpc', { method: 'agent', params: { sessionKey: owner.activeSessionKey, message: 'RAG16 invalid normal-turn budget',
+      modelBudget: { maxInputTokens: 1000, maxOutputTokens: 100, maxCostUsd: 0.01, maxCalls: 1 }, idempotencyKey: 'rag16-invalid-budget' } })).rejects.toThrow(/model.only|budget/i);
+    steps.normalTurnCannotAcquirePlanningBudget = true;
+    await app.evaluate(({ ipcMain }) => {
+      const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: Json) => Promise<Json>> })._invokeHandlers;
+      const original = handlers.get('host:invoke')!;
+      const entries: Entry[] = [];
+      (globalThis as unknown as { rag16Entries: Entry[] }).rag16Entries = entries;
+      ipcMain.removeHandler('host:invoke');
+      ipcMain.handle('host:invoke', async (event, request: Json) => {
+        const response = await original(event, request);
+        if (request.module === 'knowledge') entries.push({ action: String(request.action), payload: request.payload as Json, response });
+        return response;
+      });
+    });
+    await page.reload(); await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60000 });
+    await page.evaluate(() => { window.location.hash = '#/settings/models'; });
+    await expect(page.getByTestId(`provider-card-${account.id}`).getByText('Configured', { exact: true })).toBeVisible({ timeout: 30000 });
+    await page.evaluate(() => { window.location.hash = '#/'; });
+    const composer = page.getByTestId('chat-composer-input'), profile = page.getByTestId('chat-knowledge-profile'), mode = page.getByTestId('chat-knowledge-interaction');
+    await expect(composer).toBeVisible({ timeout: 30000 });
+    await composer.fill('RAG16 draft survives research'); await mode.selectOption('manual'); await profile.selectOption('research');
+    await page.getByTestId('chat-knowledge-scope-button').click();
+    const queryInput = page.getByTestId('chat-knowledge-search-input');
+    const entries = () => app.evaluate(() => (globalThis as unknown as { rag16Entries: Entry[] }).rag16Entries);
+    const final = async (query: string) => {
+      const values = await entries();
+      const research = values.toReversed().find(entry => entry.action === 'researchStatus' && entry.response.data?.research?.plan.query === query
+        && entry.response.data.research.phase === 'finished')?.response.data?.research;
+      expect(research, 'Missing terminal Research owner receipt').toBeTruthy(); return research!;
+    };
+    const execute = async (query: string) => {
+      await queryInput.fill(query); await page!.getByTestId('chat-knowledge-search-submit').click();
+      await expect(page!.getByTestId('chat-research-progress')).toHaveAttribute('data-phase', 'finished', { timeout: 45000 });
+      await expect(page!.getByTestId('chat-research-status')).toHaveText(/Partial research|Research complete|Research unavailable/, { timeout: 45000 });
+      return final(query);
+    };
+    const multi = await execute('Gateway port and backup location');
+    expect(multi).toMatchObject({ stopReason: 'covered', usage: { rounds: 2, queries: 4, planningModelCalls: 2 } });
+    expect(multi.evidence.map(source => source.lookup)).toEqual(expect.arrayContaining(['concepts/gateway.md', 'concepts/archive.md']));
+    expect(multi.retainedEvidence).toHaveLength(2); expect(multi.usage.actualCostUsd).not.toBeNull();
+    expect(multi.usage.reservedCostUsd).toBeLessThanOrEqual(0.05); expect(multi.usage.reservedPlanningTokens).toBeLessThanOrEqual(16000);
+    await expect(page.getByTestId('chat-research-inferences')).toContainText('RAG16_INFERENCE');
+    await expect(composer).toHaveValue('RAG16 draft survives research');
+    receipt.multi = multi; steps.realMultiRoundEvidence = true; steps.frozenTotalBudget = true;
+    await page.getByTestId('chat-research-inferences').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('research-result.png'), fullPage: true });
+    await page.getByTestId('chat-knowledge-search-result').filter({ hasText: 'concepts/archive.md' }).first().scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('research-source-evidence.png'), fullPage: true });
+
+    const dcs = await execute('Gateway port and giant policy');
+    const retained = dcs.retainedEvidence.at(-1)!;
+    expect(retained).toBeTruthy();
+    const retainedIds = retained.units.flatMap(unit => unit.citations.map(citation => citation.intentId ?? citation.refId));
+    expect(dcs.evidence).toHaveLength(1); expect(dcs.evidence.every(source => retainedIds.includes(source.id))).toBe(true);
+    expect(dcs.evidence.some(source => source.lookup.endsWith('giant.md'))).toBe(false);
+    expect(dcs.gaps.some(gap => gap.reason === 'dcs-evidence-not-retained')).toBe(true);
+    await expect(page.getByTestId('chat-knowledge-search-result').filter({ hasText: 'concepts/giant.md' })).toHaveCount(0);
+    receipt.dcs = dcs; steps.realDcsBudgetReadback = true;
+    await page.getByTestId('chat-research-gaps').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('research-dcs-partial.png'), fullPage: true });
+
+    await writeFile(join(vault, 'concepts/cancel.md'), raw('Gateway port cancellation', 'Gateway port is 8080. Cancellation evidence remains available before model completion.'));
+    await queryInput.fill('Gateway port cancellation'); await page.getByTestId('chat-knowledge-search-submit').click();
+    await expect.poll(() => planningCalls.some(call => call.query.includes('cancellation')), { timeout: 30000 }).toBe(true);
+    await expect(page.getByTestId('chat-research-cancel')).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('research-progress.png'), fullPage: true });
+    await page.getByTestId('chat-research-cancel').click();
+    await expect(page.getByTestId('chat-research-status')).toHaveText('Research cancelled', { timeout: 10000 });
+    const cancelled = await final('Gateway port cancellation'); expect(cancelled.stopReason).toBe('cancelled'); expect(cancelled.evidence.length).toBeGreaterThan(0);
+    const beforeLate = planningCalls.length; releaseHeld(); await page.waitForTimeout(700);
+    await expect(page.getByTestId('chat-research-status')).toHaveText('Research cancelled'); expect(planningCalls.length).toBe(beforeLate);
+    await expect(composer).toHaveValue('RAG16 draft survives research');
+    receipt.cancelled = cancelled; steps.ownerCancellationWithPartialEvidence = true; steps.lateModelCannotResume = true; steps.draftPreserved = true;
+    await page.screenshot({ path: testInfo.outputPath('research-cancelled.png'), fullPage: true });
+
+    await writeFile(join(vault, 'concepts/other-port.md'), raw('Conflicting Gateway port', 'Gateway port is 9090.'));
+    const conflict = await execute('conflicting Gateway port');
+    expect(conflict.status).toBe('partial'); expect(conflict.conflicts.length).toBeGreaterThan(0);
+    await expect(page.getByTestId('chat-research-conflicts')).toContainText('RAG16_CONFLICT');
+    receipt.conflict = conflict; steps.realConflictingSources = true;
+    await page.getByTestId('chat-research-conflicts').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('research-conflict.png'), fullPage: true });
+    const selected = { requestId: multi.plan.requestId, sessionKey: owner.activeSessionKey, workspaceId: owner.id };
+    expect((await host(page, 'knowledge', 'researchStatus', { ...selected, workspaceId: 'foreign-project' })).success).toBe(false);
+    expect((await host(page, 'knowledge', 'researchStart', { requestId: 'rag16-scope-forgery', query: 'Gateway port', sessionKey: owner.activeSessionKey,
+      workspaceId: owner.id, scope: { workspaceId: 'foreign-project' }, tools: ['write'] })).success).toBe(false);
+    steps.scopeAndPermissionForgeryDenied = true;
+    await writeFile(join(vault, 'concepts/gateway.md'), raw('Gateway port', 'Gateway port is 8181.', 2));
+    const stale = await host<{ success: boolean; research?: ResearchResultV1 }>(page, 'knowledge', 'researchStatus', selected);
+    expect(stale.research?.evidence ?? []).toEqual([]); expect(JSON.stringify(stale)).not.toContain('port is 8080');
+    await writeFile(join(vault, 'concepts/gateway.md'), raw('Gateway port', 'Gateway port is 8080.'));
+    const restored = await host<{ success: boolean; research?: ResearchResultV1 }>(page, 'knowledge', 'researchStatus', selected);
+    expect(restored.research).toMatchObject({ stopReason: 'scope-changed', evidence: [], retainedEvidence: [] });
+    receipt.stale = stale; steps.ownerRevisionRecheckedOnDelivery = true;
+
+    const callsBeforeLocal = (await entries()).filter(entry => entry.action === 'researchStart').length;
+    await profile.selectOption('local'); await expect(mode).toHaveValue('manual');
+    await queryInput.fill('concepts/archive.md'); await page.getByTestId('chat-knowledge-search-submit').click();
+    const archiveRow = page.getByTestId('chat-knowledge-search-result').filter({ hasText: 'concepts/archive.md' }).first();
+    await expect(archiveRow).toBeVisible({ timeout: 15000 }); await archiveRow.click(); await composer.press('Escape');
+    expect((await entries()).filter(entry => entry.action === 'researchStart').length).toBe(callsBeforeLocal);
+    await composer.fill('RAG16 explicit evidence send'); await page.getByTestId('chat-composer-send').click();
+    await expect(page.getByText('RAG16 ordinary reply', { exact: true })).toBeVisible({ timeout: 90000 });
+    await expect(page.getByTestId('chat-used-knowledge-sources').last()).toContainText('Archive destination', { timeout: 30000 });
+    steps.localRollbackPreservesScope = true; steps.normalChatUsesOwnerEvidence = true;
+    receipt.entries = await entries(); receipt.status = 'pass';
+    await page.screenshot({ path: testInfo.outputPath('research-local-rollback.png'), fullPage: true });
+  } catch (error) {
+    receipt.failure = String(error);
+    if (page) await page.screenshot({ path: testInfo.outputPath('research-failure.png'), fullPage: true });
+    throw error;
+  } finally {
+    releaseHeld(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
+    if (page && receipt.status !== 'pass') { try { receipt.logs = await host(page, 'logs', 'recent'); receipt.entries = await app.evaluate(() => (globalThis as unknown as { rag16Entries?: Entry[] }).rag16Entries ?? []); } catch (error) { receipt.logReadError = String(error); } }
+    await writeFile(testInfo.outputPath('research-receipt.json'), JSON.stringify(receipt, null, 2));
+    await testInfo.attach('research-receipt', { body: await readFile(testInfo.outputPath('research-receipt.json')), contentType: 'application/json' });
+    try { await host(await getStableWindow(app), 'gateway', 'stop'); } catch (error) { receipt.stopError = String(error); }
+    await closeElectronApp(app); llm.server.closeAllConnections(); await new Promise<void>(resolve => llm.server.close(() => resolve()));
   }
 });

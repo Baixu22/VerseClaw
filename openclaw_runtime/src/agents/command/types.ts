@@ -145,6 +145,7 @@ export type AgentCommandOpts = {
   onActiveModelSelected?: (ctx: { provider: string; model: string }) => void;
   /** Internal one-shot model probe mode: no tools, no workspace/chat prompt policy. */
   modelRun?: boolean;
+  modelBudget?: import("./shared-types.js").ModelRequestBudget;
   /** Untrusted pins; the selected source owners resolve these before DCS packing. */
   knowledgeReferences?: ChatKnowledgeReferenceIntent[];
   /** Internal prompt-mode override for trusted local/gateway callsites. */

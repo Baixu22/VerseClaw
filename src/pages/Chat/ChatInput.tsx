@@ -59,6 +59,9 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeRouteCandidateGroupKey, type KnowledgeSearchResult } from '@/lib/host-api';
+import { readKnowledgeResearch } from '@/lib/knowledge-research';
+import { KnowledgeResearchProgress } from './KnowledgeResearchProgress';
+import type { ResearchResultV1 } from '@shared/knowledge/research';
 import { errorMessageFrom, toastUserError } from '@/lib/user-error';
 import { boundedKnowledgeRead, knowledgeRequestKey } from '@/lib/knowledge-interaction';
 import type { RetrievalProfile } from '@shared/knowledge/retrieval';
@@ -1018,6 +1021,7 @@ export function ChatInput({
   const [knowledgeSearchResult, setKnowledgeSearchResult] = useState<KnowledgeSearchResult | null>(null);
   const [knowledgeSearching, setKnowledgeSearching] = useState(false);
   const [knowledgeSearchError, setKnowledgeSearchError] = useState<string | null>(null);
+  const [knowledgeResearch, setKnowledgeResearch] = useState<ResearchResultV1 | null>(null);
   const [inspectedKnowledge, setInspectedKnowledge] = useState<{ candidate: KnowledgeRouteCandidate; content: string } | null>(null);
   const knowledgeReadSerialRef = useRef(0);
   const knowledgeWorkspaceId = useWorkspacesStore(state => workspace?.id ?? state.activeWorkspace?.id);
@@ -1122,6 +1126,7 @@ export function ChatInput({
     setSuggestedKnowledgeRefs([]);
     setKnowledgePreflightExpanded(false);
     setKnowledgeSearchResult(null);
+    setKnowledgeResearch(null);
     setKnowledgeSearchError(null);
     setInspectedKnowledge(null);
   }, []);
@@ -1633,6 +1638,29 @@ export function ChatInput({
     setKnowledgeSearching(true);
     setKnowledgeSearchError(null);
     try {
+      if (knowledgeProfile === 'research') {
+        setKnowledgeResearch(null);
+        setKnowledgeSearchResult(null);
+        setInspectedKnowledge(null);
+        const read = await readKnowledgeResearch({ query, corpus, sessionKey: currentSessionKey, workspaceId: knowledgeWorkspaceId }, controller.signal, result => {
+          if (serial !== knowledgeReadSerialRef.current || identity !== knowledgeIdentityRef.current) return;
+          setKnowledgeResearch(result);
+          setKnowledgeSearchResult({ success: true, results: result.evidence.map(source => ({
+            id: source.id, lookup: source.lookup, pagePath: source.lookup, title: source.title, snippet: source.content,
+            corpus: source.sourceRef.domain === 'wiki' ? 'wiki' : source.sourceRef.domain === 'experience' ? 'all' : 'memory',
+            sourceRef: source.sourceRef, revision: source.sourceRef.revision, contentDigest: source.contentDigest,
+          })) });
+        }, t('composer.knowledgeAttach.searchFailed'));
+        if (serial === knowledgeReadSerialRef.current && identity === knowledgeIdentityRef.current) {
+          if (!read.result) {
+            setKnowledgeResearch(null);
+            setKnowledgeSearchResult(null);
+            setInspectedKnowledge(null);
+          }
+          setKnowledgeReadReason(read.reason === 'complete' && read.result?.status === 'complete' ? '' : read.reason === 'complete' ? 'partial' : read.reason);
+        }
+        return;
+      }
       const read = await boundedKnowledgeRead(hostApi.knowledge.search({
         query,
         profile: knowledgeProfile,
@@ -1650,6 +1678,11 @@ export function ChatInput({
       setKnowledgeSearchResult(result);
     } catch (error) {
       if (serial !== knowledgeReadSerialRef.current) return;
+      if (knowledgeProfile === 'research') {
+        setKnowledgeResearch(null);
+        setKnowledgeSearchResult(null);
+        setInspectedKnowledge(null);
+      }
       const message = errorMessageFrom(error);
       setKnowledgeSearchError(message);
       toastUserError(error);
@@ -4058,7 +4091,7 @@ export function ChatInput({
                 className="ml-1 rounded-md border border-border bg-surface-input px-1 py-1 text-tiny text-foreground">
                 {(['local','quality','research'] as const).map(profile => <option key={profile} value={profile}>{t(`composer.knowledgeProfile.${profile}`)}</option>)}
               </select>
-              {(knowledgeRoutingBusy || knowledgeSearching) && <button type="button" data-testid="chat-knowledge-cancel" onClick={() => { cancelKnowledgeRead(); setKnowledgeReadReason('cancelled'); }} className="ml-1 text-tiny text-muted-foreground">{t('composer.knowledgeRead.cancel')}</button>}
+              {(knowledgeRoutingBusy || knowledgeSearching) && <button type="button" data-testid="chat-knowledge-cancel" onClick={() => { if (knowledgeResearch?.phase !== 'finished' && knowledgeSearching && knowledgeProfile === 'research') knowledgeReadController.current?.abort(); else cancelKnowledgeRead(); setKnowledgeReadReason('cancelled'); }} className="ml-1 text-tiny text-muted-foreground">{t('composer.knowledgeRead.cancel')}</button>}
               {knowledgeReadReason && <span role="status" data-testid="chat-knowledge-read-status" className="ml-1 text-tiny text-muted-foreground">{t(`composer.knowledgeRead.${knowledgeReadReason}`)}</span>}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -4214,6 +4247,7 @@ export function ChatInput({
                     </div>
                   </div>
                   <div className="max-h-64 overflow-y-auto px-1 pb-1">
+                    {knowledgeResearch && <KnowledgeResearchProgress result={knowledgeResearch} onCancel={() => knowledgeReadController.current?.abort()} />}
                     {knowledgeSearchError ? (
                       <div className="rounded-xl px-3 py-3 text-xs text-destructive">
                         {knowledgeSearchError}

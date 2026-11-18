@@ -340,6 +340,8 @@ strict/open：
 
 Research 只在用户显式选择时进入。它根据证据缺口继续，遇到覆盖充分、无新增证据、重复查询、预算/时间用尽或取消就停止。所有子查询继承同一个 scope；没有外网/跨项目/工具权限的隐式升级。
 
+显式 Chat 来源搜索由 `knowledge.researchStart/status/cancel` 执行 `ResearchPlan/v1`。开始时冻结 30 秒、3 轮/8 query/2 次规划及证据/关系预算；规划 token 和费用复用 Provider Spend owner 预留，物理重试经过同一准入。DCS 预算丢弃后，最终 retained manifest 可重新计算覆盖与缺口。使用方式、费用合同和降级条件见 [Research 检索合同](../project-rag/RESEARCH-CONTRACT.md)。
+
 ## 8. 长期有效配置
 
 这是 RAG-12 要实现的目标配置，不是当前解析器已经支持的新键。新入口统一为 `runtime.knowledge.projectRag`；下面是展开后的有效配置，正常 UI 只暴露用户能作出有意义选择的项，算法细节随 policy version 管理。

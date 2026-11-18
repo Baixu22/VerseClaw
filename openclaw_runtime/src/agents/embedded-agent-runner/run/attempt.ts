@@ -3104,14 +3104,18 @@ export async function runEmbeddedAttempt(
         cfg: params.config,
         spend: {
           config: params.config?.runtime?.providerBudget,
+          requestBudget: isRawModelRun ? params.modelBudget : undefined,
           workspaceId: params.workspaceId,
           sessionKey: params.sessionKey,
           sessionGeneration: params.sessionId,
           runId: params.runId,
           attemptIndex: params.attemptIndex,
-          sessionStorePath: params.sessionKey
-            ? resolveStorePath(params.config?.session?.store, { agentId: sessionAgentId })
-            : undefined,
+          // Budgeted one-shot model sessions have no persistent transcript/store row.
+          // Their trusted execution owner supplies workspace and physical generation.
+          sessionStorePath:
+            params.sessionKey && !(isRawModelRun && params.modelBudget)
+              ? resolveStorePath(params.config?.session?.store, { agentId: sessionAgentId })
+              : undefined,
         },
         currentStreamFn: defaultSessionStreamFn,
         providerStreamFn,

@@ -3,11 +3,25 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-11-08T11:13:56.681Z
+Generated at: 2026-11-18T10:12:53.804Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
 This file is generated — edit the source of truth instead.
+
+## project-rag-bounded-research
+
+- wave: RAG-16
+- kind: request
+- key: `knowledge.researchStart`
+- default: false
+- defaultDisplay: explicit request only
+- risk: request-only
+- enable: Select Research in the Chat knowledge picker and run an explicit source search.
+- rollback: Cancel the current research and select Local or Quality; the selected source scope is retained.
+- executor: wired — `electron/services/knowledge-research.ts:56`
+
+> One owner scope and deadline cover at most three rounds, eight queries and two budgeted planning calls. Missing pricing, discarded evidence and cancellation return partial results.
 
 ## project-rag-code-relationships
 

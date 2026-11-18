@@ -45,6 +45,8 @@ export async function retrieveMemoryWiki(input: {
   mode?: RetrievalMode;
   explicitRefs?: SourceRefV2[];
   deadlineAtMs?: number;
+  /** A caller may tighten the owner policy when no remote retrieval tariff is available. */
+  allowRemote?: boolean;
   signal?: AbortSignal;
   projection?: MemoryWikiProjectionService;
   embedding?: MemoryWikiEmbeddingService;
@@ -59,8 +61,9 @@ export async function retrieveMemoryWiki(input: {
       identity: input.identity,
     });
   const initialRerankStatus = input.rerank?.status(input.identity);
+  const remoteRerankDenied = input.allowRemote === false && initialRerankStatus?.mode === "remote";
   const initialContext =
-    initialRerankStatus?.mode === "remote" && initialRerankStatus.providerRef
+    !remoteRerankDenied && initialRerankStatus?.mode === "remote" && initialRerankStatus.providerRef
       ? createMemoryWikiReadContext({
           config: input.config,
           appConfig: input.appConfig,
@@ -126,7 +129,9 @@ export async function retrieveMemoryWiki(input: {
     generations: initialGenerations,
   });
   const rerankProviderRef =
-    initialRerankStatus?.mode === "remote" ? initialRerankStatus.providerRef : undefined;
+    !remoteRerankDenied && initialRerankStatus?.mode === "remote"
+      ? initialRerankStatus.providerRef
+      : undefined;
   const read = (lookup: string, signal: AbortSignal, sourceRef?: SourceRefV2) =>
     getMemoryWikiPage({
       config: input.config,
@@ -144,8 +149,10 @@ export async function retrieveMemoryWiki(input: {
         candidates: (hit: RetrievalHit<WikiCandidate>) => { id: string; text: string };
       }
     | undefined;
-  let rerankUnavailable: string | undefined;
-  if (input.rerank && !plan.explicitRefs.length && plan.budget.rerankK) {
+  let rerankUnavailable: string | undefined = remoteRerankDenied
+    ? "remote-retrieval-cost-unquoted"
+    : undefined;
+  if (input.rerank && !remoteRerankDenied && !plan.explicitRefs.length && plan.budget.rerankK) {
     try {
       rerank = {
         provider: await input.rerank.provider(input.identity),
@@ -254,6 +261,8 @@ export async function retrieveMemoryWiki(input: {
       }
       if (!input.vector)
         return { status: "unavailable", reason: "vector-index-unavailable", hits: [] };
+      if (input.allowRemote === false && input.embedding?.status(input.identity).mode === "remote")
+        return { status: "unavailable", reason: "remote-retrieval-cost-unquoted", hits: [] };
       if (plan.profile === "local" && input.embedding?.status(input.identity).mode === "remote")
         return { status: "unavailable", reason: "remote-provider-not-in-local-profile", hits: [] };
       const found = await input.vector.search(input.identity, query.text, plan.budget.candidateK, {

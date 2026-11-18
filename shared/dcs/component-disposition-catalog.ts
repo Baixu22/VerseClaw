@@ -229,8 +229,8 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'component.knowledge-retrieval-source', label: 'Knowledge retrieval source', disposition: 'default', owner: 'knowledge-retrieval-source', implementationNodeId: 'TF-0499', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('model knowledge context in ordinary Chat and Knowledge review'),
-    currentConsumers: ['Knowledge retrieval', 'DCS knowledge candidate source', 'source sets', 'Knowledge operations'], evidenceRefs: [...KNOWLEDGE_EVIDENCE, 'docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md'],
-    coverage: { authorityComponentIds: ['knowledge-retrieval-source'], dcsFlagIds: ['project-rag-default-profile', 'project-rag-answer-strategy', 'project-rag-index-storage-budget'], settingsPanelIds: ['KnowledgeOperationsSettings', 'KnowledgeEmbeddingSettings', 'KnowledgeVectorSettings', 'KnowledgeRerankSettings'] },
+    currentConsumers: ['Knowledge retrieval', 'DCS knowledge candidate source', 'source sets', 'Knowledge operations', 'Bounded Research'], evidenceRefs: [...KNOWLEDGE_EVIDENCE, 'docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md', 'docs/dev/project-rag/RESEARCH-CONTRACT.md'],
+    coverage: { authorityComponentIds: ['knowledge-retrieval-source'], dcsFlagIds: ['project-rag-default-profile', 'project-rag-answer-strategy', 'project-rag-index-storage-budget', 'project-rag-bounded-research'], settingsPanelIds: ['KnowledgeOperationsSettings', 'KnowledgeEmbeddingSettings', 'KnowledgeVectorSettings', 'KnowledgeRerankSettings'] },
   }),
   entry({
     id: 'component.sekb-candidate-provider', label: 'Knowledge engineering-principle adapter', disposition: 'internal', owner: 'TF-0499', implementationNodeId: 'TF-0499', currentMode: 'mixed', targetDefaultMode: 'internal',

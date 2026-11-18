@@ -1,4 +1,50 @@
 {
+  "research": {
+    "cancel": "取消研究",
+    "progress": "第 {{round}}/{{maxRounds}} 轮 · 查询 {{queries}}/{{maxQueries}} 次",
+    "conflicts": "证据冲突",
+    "inferences": "模型推断",
+    "gaps": "证据缺口（{{count}}）",
+    "status": {
+      "running": "正在研究",
+      "complete": "研究完成",
+      "partial": "部分研究结果",
+      "cancelled": "研究已取消",
+      "unavailable": "研究暂不可用"
+    },
+    "stop": {
+      "covered": "已找到请求所需的证据。",
+      "no-new-evidence": "未找到新增证据，研究已停止。",
+      "repeated-query": "重复查询已停止。",
+      "queries-exhausted": "暂无可继续检索的来源查询。",
+      "round-budget": "已达到研究轮次上限。",
+      "query-budget": "已达到查询次数上限。",
+      "evidence-budget": "已达到证据容量上限。",
+      "deadline": "已达到研究时间上限。",
+      "cancelled": "研究已按请求停止。",
+      "scope-changed": "来源 owner 或工作区发生变化。",
+      "unavailable": "研究无法继续。"
+    },
+    "gapReasons": {
+      "not-covered": "尚缺少回答此问题的证据。",
+      "owner-evidence-changed": "来源已变化或不再可读。",
+      "evidence-budget": "新增证据超出容量上限。",
+      "graph-budget": "已检查上限内的关联来源。",
+      "planning-unavailable": "规划模型未能在预算内完成。",
+      "planning-usage-unknown": "模型用量未能确认。",
+      "dcs-reference-limit": "部分完整来源组超出引用数量上限。",
+      "dcs-evidence-not-retained": "此证据未保留在模型上下文中。",
+      "conflict-group-not-retained": "完整的冲突来源组未能保留。",
+      "retrieval-partial": "部分检索路径暂不可用。",
+      "multi-owner-lexical-retrieval": "各来源使用本地文本检索。",
+      "owner-read-rejected": "来源 owner 拒绝了读取。",
+      "source-freshness-unknown": "来源更新时间未能确认。",
+      "source-range-partial": "已读取引用所对应的来源片段。",
+      "deadline": "已达到时间上限。",
+      "cancelled": "研究已取消。",
+      "scope-changed": "工作区或会话发生变化。"
+    }
+  },
   "nav": "知识",
   "title": "知识",
   "subtitle": "管理有来源支撑的 wiki 上下文、待审草稿和按角色治理的知识变更。",

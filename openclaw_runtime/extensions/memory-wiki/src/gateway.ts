@@ -234,6 +234,8 @@ export function registerMemoryWikiGatewayMethods(params: {
           (typeof request.deadlineAtMs !== "number" || !Number.isFinite(request.deadlineAtMs))
         )
           throw new Error("Invalid retrieval deadline");
+        if (request.allowRemote !== undefined && typeof request.allowRemote !== "boolean")
+          throw new Error("Invalid retrieval egress restriction");
         const profile = readEnumParam(request, "profile", [
           "local",
           "quality",
@@ -256,6 +258,7 @@ export function registerMemoryWikiGatewayMethods(params: {
             mode,
             explicitRefs: refs.filter((ref) => ref !== undefined),
             deadlineAtMs: request.deadlineAtMs as number | undefined,
+            allowRemote: request.allowRemote as boolean | undefined,
             requestId: readStringParam(request, "requestId"),
             projection: params.projection,
             embedding: params.embedding,

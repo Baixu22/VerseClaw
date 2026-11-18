@@ -421,7 +421,7 @@ export const AUTHORITY_COMPONENTS: readonly ComponentAuthorityDefinition[] = [
     runtimeAvailabilitySource: 'static:knowledge-retrieval-source',
     defaultMode: 'read-only',
     authorizationRole: 'none',
-    catalogFlagIds: catalog('project-rag-default-profile', 'project-rag-answer-strategy', 'project-rag-index-storage-budget'),
+    catalogFlagIds: catalog('project-rag-default-profile', 'project-rag-answer-strategy', 'project-rag-index-storage-budget', 'project-rag-bounded-research'),
     sourceAnchors: [
       anchor('shared/knowledge/governance-contract.ts', 'export interface ContextSourceAdapter'),
       anchor('shared/knowledge/operations.ts', 'export function normalizeProjectRagConfig'),

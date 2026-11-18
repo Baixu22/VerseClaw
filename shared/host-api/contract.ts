@@ -5,6 +5,7 @@ import type { ProjectRagConfigInput, KnowledgeOperationsResult, KnowledgeOperati
 import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../knowledge/rerank';
 import type { RetainedEvidenceManifestV1 } from '../knowledge/packing';
 import type { AnswerClaimV1, KnowledgeAnswerMode } from '../knowledge/answer';
+import type { KnowledgeResearchPayload, KnowledgeResearchRequestPayload, KnowledgeResearchResult } from '../knowledge/research';
 import type { RankSignalsV2, RetrievalMode, RetrievalProfile, RetrievalResultV2 } from '../knowledge/retrieval';
 import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
@@ -6326,6 +6327,9 @@ export type HostApiContract = {
     validateOkfBundle: (payload: KnowledgeValidateOkfBundlePayload) => KnowledgeOkfValidationResult;
     importOkfBundle: (payload: KnowledgeImportOkfBundlePayload) => KnowledgeOkfImportResult;
     search: (payload: KnowledgeSearchPayload) => KnowledgeSearchResult;
+    researchStart: (payload: KnowledgeResearchPayload) => KnowledgeResearchResult;
+    researchStatus: (payload: KnowledgeResearchRequestPayload) => KnowledgeResearchResult;
+    researchCancel: (payload: KnowledgeResearchRequestPayload) => HostSuccess;
     get: (payload: KnowledgeGetPayload) => KnowledgeGetResult;
     compile: () => KnowledgeCompileResult;
     lint: () => KnowledgeLintResult;

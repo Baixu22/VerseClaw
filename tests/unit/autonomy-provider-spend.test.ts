@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { reserveProviderSpend, markProviderSpendSent, cancelUnsentProviderSpend, reconcileProviderSpend,
-  providerSpendSnapshot, wrapProviderSpendStream, type ProviderSpendScope } from '../../openclaw_runtime/src/agents/provider-spend-budget';
+  providerSpendSnapshot, providerSpendForRun, wrapProviderSpendStream, type ProviderSpendScope } from '../../openclaw_runtime/src/agents/provider-spend-budget';
 import { closeOpenClawStateDatabase, openOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { normalizeRunScope } from '../../shared/types/identity-scope';
 import type { AssistantMessage, Model, StreamFn } from '../../openclaw_runtime/packages/llm-core/src/types';
@@ -169,6 +169,33 @@ describe('provider owner layered spend reservation', () => {
       raw: openOpenClawStateDatabase().db.prepare('SELECT call_id, state, actual_tokens, actual_cost_micros FROM provider_spend_calls').all() }, null, 2) + '\n');
   });
 
+  it('enables a one-shot request budget without changing the configured provider limits', async () => {
+    const inner = vi.fn<StreamFn>(() => { const stream = createAssistantMessageEventStream(); stream.push({ type: 'done', reason: 'stop', message: message(10) }); return stream; });
+    const boundedModel = { ...model, contextWindow: 20000, maxTokens: 4096 };
+    const requestBudget = { maxInputTokens: 2000, maxOutputTokens: 512, maxCostUsd: 0.01, maxCalls: 1 as const };
+    const run = { workspaceId: 'project-a', sessionKey: 'session-a', sessionGeneration: 'generation-one', runId: 'research-request', requestBudget };
+    const stream = await resolveEmbeddedAgentStreamFn({ currentStreamFn: inner, providerStreamFn: inner, sessionId: run.sessionGeneration,
+      runId: run.runId, model: boundedModel, spend: run })(boundedModel, { messages: [] });
+    await stream.result();
+    expect(inner.mock.calls[0][2]?.maxTokens).toBe(512);
+    expect(providerSpendForRun(run.runId)).toMatchObject({ calls: 1, reservedTokens: 2512, actualTokens: 10, actualCostUsd: 0.00001 });
+    await expect(wrapProviderSpendStream(inner, { ...run, runId: 'research-fallback' })(boundedModel, { messages: [] })).rejects.toThrow(/calls/);
+    expect(inner).toHaveBeenCalledTimes(1);
+    expect(requestBudget).toEqual({ maxInputTokens: 2000, maxOutputTokens: 512, maxCostUsd: 0.01, maxCalls: 1 });
+  });
+
+  it('refuses an oversized or unpriced planning request before dispatch', async () => {
+    const inner = vi.fn<StreamFn>(() => createAssistantMessageEventStream());
+    const run = { sessionKey: 'session-a', sessionGeneration: 'generation-one', runId: 'research-too-large',
+      requestBudget: { maxInputTokens: 1000, maxOutputTokens: 100, maxCostUsd: 0.01, maxCalls: 1 as const } };
+    const boundedModel = { ...model, contextWindow: 20000 };
+    await expect(wrapProviderSpendStream(inner, run)(boundedModel, { systemPrompt: 'x'.repeat(2000), messages: [] })).rejects.toThrow(/tokens/);
+    await expect(wrapProviderSpendStream(inner, { ...run, runId: 'research-unpriced' })({ ...boundedModel,
+      cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 } }, { messages: [] })).rejects.toThrow(/unknown-cost/);
+    expect(inner).not.toHaveBeenCalled();
+    expect(providerSpendForRun(run.runId).calls).toBe(0);
+  });
+
   it('keeps the disabled stream unchanged and never treats unpriced usage as zero USD', async () => {
     const inner: StreamFn = () => { const stream = createAssistantMessageEventStream(); stream.push({ type: 'done', reason: 'stop', message: message(10) }); return stream; };
     const run = { workspaceId: 'project-a', sessionKey: 'session-a', sessionGeneration: 'generation-one', runId: 'unpriced' };
@@ -248,6 +275,28 @@ describe('provider owner layered spend reservation', () => {
       runId: 'normalized-zero-cost', config: { host: { maxCostUsd: 1 } } })(pricedModel, { messages: [] })).result();
     expect(providerSpendSnapshot(scope())[0]).toMatchObject({ spentTokens: 10, spentCostMicros: 10, unknownCostCalls: 0 });
     expect(result.usage.cost.total).toBe(0);
+  });
+
+  it('rejects a second physical HTTP attempt at the one-shot request call limit', async () => {
+    let arrivals = 0;
+    const server = createServer((request, response) => { request.resume(); arrivals++; response.writeHead(500, { 'content-type': 'application/json' }); response.end('{"error":"retry"}'); });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const address = server.address(); if (!address || typeof address === 'string') throw new Error('No fixture port');
+    const httpModel = attachModelProviderRequestTransport({ ...model, baseUrl: `http://127.0.0.1:${address.port}/v1` }, { allowPrivateNetwork: true });
+    const guarded = buildGuardedModelFetch(httpModel, 30000, { sanitizeSse: false });
+    const transport: StreamFn = async () => {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const response = await guarded(httpModel.baseUrl + '/chat/completions', { method: 'POST', body: '{}' }); await response.text();
+      }
+      throw new Error('Unexpected second send');
+    };
+    const wrapper = resolveEmbeddedAgentStreamFn({ currentStreamFn: transport, providerStreamFn: transport, sessionId: 'generation-one', runId: 'request-http-retry', model: httpModel,
+      spend: { sessionKey: 'session-a', sessionGeneration: 'generation-one', workspaceId: 'project-a', runId: 'request-http-retry',
+        requestBudget: { maxInputTokens: 1000, maxOutputTokens: 20, maxCostUsd: 0.01, maxCalls: 1 } } });
+    try {
+      await expect(wrapper(httpModel, { messages: [] })).rejects.toThrow(/calls \(session\)/);
+      expect(arrivals).toBe(1); expect(providerSpendForRun('request-http-retry')).toMatchObject({ calls: 1, actualTokens: null, actualCostUsd: null });
+    } finally { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); }
   });
 
   it('does not price an incomplete usage breakdown as a free request', async () => {

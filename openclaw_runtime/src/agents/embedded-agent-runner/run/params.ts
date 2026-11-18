@@ -104,6 +104,7 @@ export type RunEmbeddedAgentParams = {
   disableMessageTool?: boolean;
   /** Internal one-shot model probe mode: no tools, no workspace/chat prompt policy. */
   modelRun?: boolean;
+  modelBudget?: import("../../command/shared-types.js").ModelRequestBudget;
   /** Explicit system prompt mode override for trusted callers. */
   promptMode?: PromptMode;
   /** Keep the message tool available even when a narrow profile would omit it. */

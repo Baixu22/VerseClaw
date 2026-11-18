@@ -1,20 +1,39 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: in_progress
 id: project-rag-bounded-research
 title: 实现有预算、能停止的 Research 检索
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-16
 intent: 完成跨来源研究、证据缺口追查与关系分析。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: 159d7d2450e3776814e0ea83e03e2db1698dceb7
 touchedAreas:
   - "openclaw_runtime/src/knowledge/retrieval/**"
+  - "openclaw_runtime/src/agents/provider-spend-budget.ts"
+  - "openclaw_runtime/src/agents/command/shared-types.ts"
+  - "openclaw_runtime/src/agents/command/types.ts"
+  - "openclaw_runtime/src/agents/command/attempt-execution.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/run.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"
+  - "openclaw_runtime/src/gateway/server-methods/agent.ts"
+  - "openclaw_runtime/packages/gateway-protocol/src/schema/agent.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/gateway.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts"
   - "electron/services/knowledge-api.ts"
+  - "electron/services/knowledge-research.ts"
+  - "electron/services/knowledge-evidence-qa.ts"
+  - "src/lib/knowledge-research.ts"
+  - "src/lib/host-api/knowledge/routing.ts"
+  - "shared/knowledge/research.ts"
   - "src/pages/Chat/**"
   - "shared/host-api/contract.ts"
   - "shared/i18n/locales/*/knowledge.json"
   - "shared/dcs/prod-flags-catalog.ts"
+  - "shared/component-authority-manifest.ts"
+  - "shared/dcs/component-disposition-catalog.ts"
   - "docs/generated/catalogs/prod-flags.md"
   - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/dev/project-rag/**"
@@ -26,23 +45,29 @@ touchedAreas:
   - "docs/dev/runtime-control-planes.md"
   - "docs/dev/evidence/project-rag-longterm-20261109/**"
   - "harness/specs/tasks/project-rag-*.md"
+  - "harness/specs/scenarios/gateway-backend-communication.md"
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
   - "scripts/repository-artifacts.json"
   - "README*.md"
   - "tests/unit/knowledge-evidence-qa.test.ts"
+  - "tests/unit/autonomy-provider-spend.test.ts"
+  - "tests/unit/component-authority-manifest.test.ts"
+  - "tests/unit/component-disposition-catalog.test.ts"
   - "tests/unit/project-rag-research-controller.test.ts"
   - "tests/e2e/project-rag-research.spec.ts"
 requiredProfiles:
   - "fast"
   - "comms"
+  - "e2e"
 requiredRules:
   - "contract-first-boundary"
   - "backend-communication-boundary"
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
-  - "tests/unit/knowledge-evidence-qa.test.ts"
+  - "pnpm exec vitest run tests/unit/knowledge-evidence-qa.test.ts tests/unit/project-rag-research-controller.test.ts tests/unit/autonomy-provider-spend.test.ts tests/unit/component-authority-manifest.test.ts tests/unit/component-disposition-catalog.test.ts --maxWorkers=1 --cache=false"
+  - "pnpm exec playwright test tests/e2e/project-rag-research.spec.ts --workers=1 --retries=0"
 plannedTests:
   - "tests/unit/project-rag-research-controller.test.ts"
 plannedE2E:
@@ -61,6 +86,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/RESEARCH-CONTRACT.md
 ---
 
 # 实现有预算、能停止的 Research 检索

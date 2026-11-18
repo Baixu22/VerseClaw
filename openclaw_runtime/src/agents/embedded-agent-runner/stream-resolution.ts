@@ -33,7 +33,7 @@ import { SUMMARIZATION_SYSTEM_PROMPT } from "../../../packages/agent-core/src/ha
 import type { StreamFn } from "../runtime/index.js";
 import { stripSystemPromptCacheBoundary } from "../system-prompt-cache-boundary.js";
 import type { EmbeddedRunAttemptParams } from "./run/types.js";
-import type { ProviderSpendRunContext } from '../provider-spend-budget.js';
+import type { ProviderSpendRunContext } from "../provider-spend-budget.js";
 
 let embeddedAgentBaseStreamFnCache = new WeakMap<object, StreamFn | undefined>();
 let openClawNativeCodexResponsesStreamFnForTest: StreamFn | undefined;
@@ -160,13 +160,22 @@ type EmbeddedStreamResolutionParams = {
 export function resolveEmbeddedAgentStreamFn(params: EmbeddedStreamResolutionParams): StreamFn {
   const inner = resolveUnbudgetedEmbeddedAgentStreamFn(params);
   const spend = params.spend;
-  if (!spend?.config || !Object.values(spend.config).some(limit => limit && (limit.maxTokens !== undefined || limit.maxCostUsd !== undefined))) return inner;
+  if (
+    !spend?.requestBudget &&
+    (!spend?.config ||
+      !Object.values(spend.config).some(
+        (limit) => limit && (limit.maxTokens !== undefined || limit.maxCostUsd !== undefined),
+      ))
+  )
+    return inner;
   const ownerSpend = structuredClone(spend);
   // Opt-in only: disabled budgets do not load SQLite or change transport behavior.
   let wrapped: Promise<StreamFn> | undefined;
   return (model, context, options) => {
-    wrapped ??= import('../provider-spend-budget.js').then(({ wrapProviderSpendStream }) => wrapProviderSpendStream(inner, ownerSpend));
-    return wrapped.then(stream => stream(model, context, options));
+    wrapped ??= import("../provider-spend-budget.js").then(({ wrapProviderSpendStream }) =>
+      wrapProviderSpendStream(inner, ownerSpend),
+    );
+    return wrapped.then((stream) => stream(model, context, options));
   };
 }
 
@@ -306,7 +315,7 @@ function sealBoundaryModelCall(
 ): CompilePlan | undefined {
   if (context.systemPrompt !== SUMMARIZATION_SYSTEM_PROMPT) {
     recordShadowCensusFailure("context-write", "unsealed-model-call");
-    throw new SealMutationError('provider-context', 'post-seal', 'unsealed-model-call');
+    throw new SealMutationError("provider-context", "post-seal", "unsealed-model-call");
   }
   const chars = context.systemPrompt.length + JSON.stringify(context.messages ?? []).length;
   return runRc03SealHook(
@@ -369,31 +378,44 @@ function wrapEmbeddedAgentStreamFn(
     observation?: ModelCallObservation;
   } => {
     const optionRecord = options as Record<string, unknown> | undefined;
-    const runId =
-      typeof optionRecord?.runId === "string" ? optionRecord.runId : params.runId;
-    const attemptIndex = typeof optionRecord?.attemptIndex === "number" ? optionRecord.attemptIndex : params.attemptIndex ?? 0;
+    const runId = typeof optionRecord?.runId === "string" ? optionRecord.runId : params.runId;
+    const attemptIndex =
+      typeof optionRecord?.attemptIndex === "number"
+        ? optionRecord.attemptIndex
+        : (params.attemptIndex ?? 0);
     const sealState = resolveCurrentRc03SealState(params.cfg);
     if (sealState.killed || (sealState.configured && !sealState.enabled)) clearRc03SealPlan(runId);
     const latestPlan = getRc03SealPlan(runId, undefined, attemptIndex);
     const sealEnabled = !sealState.killed && (sealState.enabled || latestPlan !== undefined);
-    const explicitIndex = typeof optionRecord?.modelCallIndex === "number" ? optionRecord.modelCallIndex : undefined;
+    const explicitIndex =
+      typeof optionRecord?.modelCallIndex === "number" ? optionRecord.modelCallIndex : undefined;
     const summarizing = context.systemPrompt === SUMMARIZATION_SYSTEM_PROMPT;
     // Explicit identities are never silently renamed, including summary retries.
-    const modelCallIndex = explicitIndex ?? (sealEnabled && summarizing
-      ? nextRc03ModelCallIndex(runId, attemptIndex, nextModelCallIndex)
-      : sealEnabled ? Math.max(nextModelCallIndex, latestPlan?.callIndex.modelCallIndex ?? 0) : nextModelCallIndex);
+    const modelCallIndex =
+      explicitIndex ??
+      (sealEnabled && summarizing
+        ? nextRc03ModelCallIndex(runId, attemptIndex, nextModelCallIndex)
+        : sealEnabled
+          ? Math.max(nextModelCallIndex, latestPlan?.callIndex.modelCallIndex ?? 0)
+          : nextModelCallIndex);
     const callContext = {
       providerId: model.provider,
       adapterId: model.api,
       modelId: model.id,
-      sessionKey: typeof optionRecord?.sessionId === "string" ? optionRecord.sessionId : params.sessionId,
+      sessionKey:
+        typeof optionRecord?.sessionId === "string" ? optionRecord.sessionId : params.sessionId,
       runId,
       traceId: typeof optionRecord?.traceId === "string" ? optionRecord.traceId : undefined,
       attemptIndex,
       modelCallIndex,
-      wireAttemptIndex: typeof optionRecord?.wireAttemptIndex === "number" ? optionRecord.wireAttemptIndex : undefined,
+      wireAttemptIndex:
+        typeof optionRecord?.wireAttemptIndex === "number"
+          ? optionRecord.wireAttemptIndex
+          : undefined,
     };
-    const existingPlan = sealEnabled ? getRc03SealPlan(runId, modelCallIndex, attemptIndex) : undefined;
+    const existingPlan = sealEnabled
+      ? getRc03SealPlan(runId, modelCallIndex, attemptIndex)
+      : undefined;
     const shadowCall = beginShadowModelCall(context, callContext, options);
     if (!shadowCall.active && !sealEnabled) {
       nextModelCallIndex = Math.max(nextModelCallIndex, modelCallIndex + 1);
@@ -428,14 +450,14 @@ function wrapEmbeddedAgentStreamFn(
       (plan && shadowCall.active
         ? resolveRc03WireCorrelationDigest(shadowCall.options, plan)
         : undefined);
-    const shadowOptions = plan && shadowCall.active
-      ? {
-          ...shadowCall.options,
-          rc03Plan: plan,
-          correlationDigest:
-            contextReceiptCorrelation ?? shadowCall.options.correlationDigest,
-        }
-      : shadowCall.options;
+    const shadowOptions =
+      plan && shadowCall.active
+        ? {
+            ...shadowCall.options,
+            rc03Plan: plan,
+            correlationDigest: contextReceiptCorrelation ?? shadowCall.options.correlationDigest,
+          }
+        : shadowCall.options;
     const observation: ModelCallObservation = {
       ...callContext,
       attemptIndex: callContext.attemptIndex ?? params.attemptIndex ?? 0,

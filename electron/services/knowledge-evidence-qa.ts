@@ -5,6 +5,11 @@ import type { KnowledgeSourceSetAnswerSource } from '../../shared/host-api/contr
 import type { ChatKnowledgeReference } from '../../shared/host-api/contract';
 import type { RetainedEvidenceManifestV1 } from '../../shared/knowledge/packing';
 import type { AnswerClaimV1, CitationV2, KnowledgeAnswerMode } from '../../shared/knowledge/answer';
+import { waitForRetrievalOperation } from '../../openclaw_runtime/src/knowledge/retrieval/embedding-session';
+import type { ModelRequestBudget } from '../../openclaw_runtime/src/agents/command/shared-types';
+import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
+
+export type KnowledgeModelSpend = { calls: number; reservedTokens: number; reservedCostUsd: number | null; actualTokens: number | null; actualCostUsd: number | null };
 
 export type KnowledgeConversationTurn = { role: 'user' | 'assistant'; content: string };
 export type KnowledgeQaClaim = { kind: 'source' | 'general' | 'inference'; text: string; citations: Array<{ sourceId: string; quote: string }> };
@@ -157,7 +162,8 @@ export function applyKnowledgeSupportReview(claims: AnswerClaimV1[], review: Kno
 export async function runKnowledgeModel(
   gateway: GatewayManager, prompt: string, label: string, timeoutMs = 60_000,
   knowledge?: { sessionKey: string; workspaceId?: string; workspaceDir?: string; references: ChatKnowledgeReference[] },
-): Promise<{ text: string; runId: string; retainedEvidence?: RetainedEvidenceManifestV1 }> {
+  options?: { signal: AbortSignal; budget: ModelRequestBudget },
+): Promise<{ text: string; runId: string; retainedEvidence?: RetainedEvidenceManifestV1; providerSpend?: KnowledgeModelSpend }> {
   const requestId = randomUUID();
   const deadline = Date.now() + timeoutMs;
   const remaining = () => Math.max(1, deadline - Date.now());
@@ -165,6 +171,8 @@ export async function runKnowledgeModel(
   const agentId = knowledge?.sessionKey.startsWith('agent:') ? knowledge.sessionKey.split(':')[1] : 'main';
   const sessionKey = `agent:${agentId}:knowledge-${requestId}`;
   let runId: string | undefined;
+  const abortRun = () => { void gateway.rpc('chat.abort', { sessionKey, ...(runId ? { runId } : {}) }, 5000).catch(() => undefined); };
+  options?.signal.addEventListener('abort', abortRun, { once: true });
   const early = new Map<string, string[]>();
   const chunks: string[] = [];
   let chars = 0;
@@ -176,18 +184,29 @@ export async function runKnowledgeModel(
   };
   gateway.on('chat:runtime-event', listener);
   try {
-    const accepted = await gateway.rpc<Record<string, unknown>>('agent', {
+    options?.signal.throwIfAborted();
+    const acceptance = gateway.rpc<Record<string, unknown>>('agent', {
       sessionKey, message: prompt, deliver: false, modelRun: true, promptMode: 'none',
       disableMessageTool: true, bestEffortDeliver: false, idempotencyKey: `knowledge:${requestId}`,
       label, timeout: Math.ceil(remaining() / 1000), sessionEffects: 'internal', suppressPromptPersistence: true,
+      ...(options ? { modelBudget: options.budget } : {}),
       ...(knowledge ? { knowledgeReferences: knowledge.references, workspaceId: knowledge.workspaceId, workspaceDir: knowledge.workspaceDir } : {}),
     }, remaining());
+    // An acceptance that arrives after local cancellation must still be stopped by its owner.
+    if (options) void acceptance.then(value => { if (options.signal.aborted) {
+      if (typeof value.runId === 'string') runId = value.runId;
+      abortRun();
+    } }, () => undefined);
+    const accepted = options ? await waitForRetrievalOperation(acceptance, options.signal) : await acceptance;
     runId = typeof accepted.runId === 'string' ? accepted.runId : undefined;
     if (!runId) throw Error('Knowledge model did not accept the run');
     chunks.push(...early.get(runId) ?? []); early.clear();
     const waitMs = remaining();
-    const wait = await gateway.rpc<Record<string, unknown>>('agent.wait', { runId, timeoutMs: waitMs }, waitMs + 5000);
-    if (wait.status !== 'completed' && wait.status !== 'ok') throw Error('Knowledge model did not complete');
+    const waiting = gateway.rpc<Record<string, unknown>>('agent.wait', { runId, timeoutMs: waitMs,
+      ...(options ? { includeProviderSpend: true } : {}) }, waitMs + 5000);
+    const wait = options ? await waitForRetrievalOperation(waiting, options.signal) : await waiting;
+    if (wait.status !== 'completed' && wait.status !== 'ok') throw Error('Knowledge model did not complete: ' + sanitizeUiErrorText(
+      JSON.stringify({ status: wait.status, error: wait.error, reason: wait.reason })));
     const retainedEvidence = wait.retainedEvidence as RetainedEvidenceManifestV1 | undefined;
     if (knowledge?.references.length && (!retainedEvidence || retainedEvidence.schema !== 'RetainedEvidenceManifest/v1' || !Array.isArray(retainedEvidence.units))) {
       throw Error('Knowledge model did not return a DCS retained evidence receipt');
@@ -200,6 +219,11 @@ export async function runKnowledgeModel(
       text = typeof last?.content === 'string' ? last.content : Array.isArray(last?.content) ? last.content.filter(p => p?.type === 'text').map(p => p.text ?? '').join('') : '';
     }
     if (!text.trim() || text.length > 100_000) throw Error('Knowledge model returned no bounded answer');
-    return { text, runId, ...(retainedEvidence ? { retainedEvidence } : {}) };
-  } finally { gateway.off('chat:runtime-event', listener); }
+    return { text, runId, ...(retainedEvidence ? { retainedEvidence } : {}),
+      ...(wait.providerSpend ? { providerSpend: wait.providerSpend as KnowledgeModelSpend } : {}) };
+  } finally {
+    options?.signal.removeEventListener('abort', abortRun);
+    if (options?.signal.aborted) abortRun();
+    gateway.off('chat:runtime-event', listener);
+  }
 }

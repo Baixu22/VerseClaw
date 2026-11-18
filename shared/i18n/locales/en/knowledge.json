@@ -1,4 +1,50 @@
 {
+  "research": {
+    "cancel": "Cancel research",
+    "progress": "Round {{round}}/{{maxRounds}} · Queries {{queries}}/{{maxQueries}}",
+    "conflicts": "Conflicting evidence",
+    "inferences": "Model inference",
+    "gaps": "Evidence gaps ({{count}})",
+    "status": {
+      "running": "Researching",
+      "complete": "Research complete",
+      "partial": "Partial research",
+      "cancelled": "Research cancelled",
+      "unavailable": "Research unavailable"
+    },
+    "stop": {
+      "covered": "The requested evidence is covered.",
+      "no-new-evidence": "No new evidence was found.",
+      "repeated-query": "Repeated queries stopped.",
+      "queries-exhausted": "No further source query is available.",
+      "round-budget": "The research round limit was reached.",
+      "query-budget": "The query limit was reached.",
+      "evidence-budget": "The evidence limit was reached.",
+      "deadline": "The research time limit was reached.",
+      "cancelled": "Research stopped at your request.",
+      "scope-changed": "The source owner or workspace changed.",
+      "unavailable": "Research could not continue."
+    },
+    "gapReasons": {
+      "not-covered": "Evidence for this question is missing.",
+      "owner-evidence-changed": "A source changed or became unavailable.",
+      "evidence-budget": "Additional evidence did not fit the limit.",
+      "graph-budget": "Only the bounded set of related sources was inspected.",
+      "planning-unavailable": "The planning model was unavailable within the budget.",
+      "planning-usage-unknown": "Model usage could not be confirmed.",
+      "dcs-reference-limit": "Some complete source groups did not fit the reference limit.",
+      "dcs-evidence-not-retained": "This evidence was not retained in the model context.",
+      "conflict-group-not-retained": "The complete conflicting source group was not retained.",
+      "retrieval-partial": "Some retrieval paths were unavailable.",
+      "multi-owner-lexical-retrieval": "The source owners used local text search.",
+      "owner-read-rejected": "A source owner rejected a read.",
+      "source-freshness-unknown": "Source freshness could not be confirmed.",
+      "source-range-partial": "Only the cited part of the source was read.",
+      "deadline": "The time limit was reached.",
+      "cancelled": "Research was cancelled.",
+      "scope-changed": "The workspace or session changed."
+    }
+  },
   "nav": "Knowledge",
   "title": "Knowledge",
   "subtitle": "Manage source-backed wiki context, reviewed drafts, and role-governed knowledge changes.",

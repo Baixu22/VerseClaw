@@ -378,6 +378,8 @@
 
 完成跨来源研究、证据缺口追查与关系分析。
 
+实现入口和预算/证据合同见 [Research 检索合同](RESEARCH-CONTRACT.md)。Main 的 `knowledge.researchStart/status/cancel` 连接同一 owner scope、检索控制器、Provider Spend 和 DCS；Chat 来源选择器显示进度、取消与部分结果。
+
 - Owner：research retrieval planner / DCS / UI。
 - 契约：ResearchPlan/v1、ResearchStep/v1、EvidenceGap/v1。
 - 落点：`openclaw_runtime/src/knowledge/retrieval/**`、`electron/services/knowledge-api.ts`、`src/pages/Chat/**`、`shared/host-api/contract.ts`、`shared/i18n/locales/*/knowledge.json`。

@@ -53,6 +53,7 @@ import { createKnowledgeSourceSync } from './knowledge-source-sync';
 import { createKnowledgeGithubConnector, validateGithubConnector } from './knowledge-github-connector';
 import { applyKnowledgeSupportReview, bindKnowledgeQaClaims, boundedKnowledgeHistory, buildKnowledgeQaPrompt, buildKnowledgeSupportPrompt, runKnowledgeModel, selectKnowledgeModelSources, validateKnowledgeQaOutput, validateKnowledgeSupportOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
 import type { KnowledgeAnswerMode } from '../../shared/knowledge/answer';
+import { createKnowledgeResearchApi } from './knowledge-research';
 
 const knowledgeSourceWatchDisposers = new Map<string, () => void>();
 export function stopAllKnowledgeSourceWatches(): void {
@@ -3397,6 +3398,19 @@ export function createKnowledgeApi({
       fromLine: snapshot.source.locator!.startLine, totalLines: snapshot.totalLines, truncated: snapshot.truncated };
   }
 
+  const researchApi = createKnowledgeResearchApi({ gatewayManager, rows: getRouteSearchRows,
+    read: async (sourceRef, scope, signal) => {
+      signal.throwIfAborted();
+      await waitForRetrievalOperation(assertKnowledgeReadScopeCurrent(gatewayManager, scope), signal);
+      const page = isMemorySourceRef(sourceRef) || isExperienceSourceRef(sourceRef)
+        ? await waitForRetrievalOperation(readPinnedOwnerSource(sourceRef, scope), signal)
+        : await waitForRetrievalOperation(rpc<Record<string, unknown>>('wiki.get', {
+          lookup: sourceRef.subjectId, sourceRef, readIdentity: scope.identity,
+        }, Math.max(1, 30000)), signal);
+      await waitForRetrievalOperation(assertKnowledgeReadScopeCurrent(gatewayManager, scope), signal);
+      return page;
+    } });
+
   async function buildAnswerFromSourceSet(input: {
     answerMode?: KnowledgeAnswerMode;
     question: string;
@@ -3855,6 +3869,7 @@ export function createKnowledgeApi({
   };
 
   return {
+    ...researchApi,
     operationsStatus: async () => {
       try {
         const scope = await prepareKnowledgeReadScope(gatewayManager, {});

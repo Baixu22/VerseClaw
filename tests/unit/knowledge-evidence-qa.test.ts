@@ -100,4 +100,23 @@ describe('evidence QA', () => {
     await expect(runKnowledgeModel(gateway, 'prompt', 'Librarian')).rejects.toThrow('did not complete');
     expect(listeners.size).toBe(0);
   });
+
+  it('passes a planning budget and stops a model accepted after local cancellation', async () => {
+    let accept!: (value: { runId: string }) => void;
+    const listeners = new Set();
+    const rpc = vi.fn((method: string) => method === 'agent' ? new Promise(resolve => { accept = resolve; }) : Promise.resolve({ success: true }));
+    const gateway = { rpc, on: vi.fn((_e, cb) => listeners.add(cb)), off: vi.fn((_e, cb) => listeners.delete(cb)) } as unknown as GatewayManager;
+    const controller = new AbortController();
+    const budget = { maxInputTokens: 7000, maxOutputTokens: 1000, maxCostUsd: 0.025, maxCalls: 1 as const };
+    const running = runKnowledgeModel(gateway, 'bounded planning', 'Research', 30000,
+      { sessionKey: 'agent:main:owner', references: [] }, { signal: controller.signal, budget });
+    controller.abort();
+    await expect(running).rejects.toThrow();
+    accept({ runId: 'late-acceptance' });
+    await new Promise(resolve => setImmediate(resolve));
+    expect(rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelBudget: budget, modelRun: true }), expect.any(Number));
+    expect(rpc).toHaveBeenCalledWith('chat.abort', expect.objectContaining({ runId: 'late-acceptance' }), 5000);
+    expect(rpc.mock.calls.some(([method]) => method === 'agent.wait')).toBe(false);
+    expect(listeners.size).toBe(0);
+  });
 });

@@ -36,6 +36,14 @@ export type DcsProdFlagEntry = {
 
 export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
   {
+    id: 'project-rag-bounded-research', wave: 'RAG-16', kind: 'request',
+    key: 'knowledge.researchStart', defaultDisplay: 'explicit request only', defaultValue: false, risk: 'request-only',
+    enable: 'Select Research in the Chat knowledge picker and run an explicit source search.',
+    rollback: 'Cancel the current research and select Local or Quality; the selected source scope is retained.',
+    riskNote: 'One owner scope and deadline cover at most three rounds, eight queries and two budgeted planning calls. Missing pricing, discarded evidence and cancellation return partial results.',
+    executor: { status: 'wired', sites: ['electron/services/knowledge-research.ts:56'] },
+  },
+  {
     id: 'project-rag-code-relationships', wave: 'RAG-15', kind: 'request',
     key: 'context_understand.intent', defaultDisplay: 'lookup', defaultValue: 'lookup', risk: 'request-only',
     enable: 'Request relationship or research in the normal coding context tool; context_impact explicitly requests the same exact relationship discovery.',

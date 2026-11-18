@@ -208,6 +208,17 @@ export const AgentParamsSchema = Type.Object(
     // agent requests; the gateway accepts but intentionally ignores it.
     cleanupBundleMcpOnRunEnd: Type.Optional(Type.Boolean()),
     modelRun: Type.Optional(Type.Boolean()),
+    modelBudget: Type.Optional(
+      Type.Object(
+        {
+          maxInputTokens: Type.Integer({ minimum: 1, maximum: 20000 }),
+          maxOutputTokens: Type.Integer({ minimum: 1, maximum: 4096 }),
+          maxCostUsd: Type.Number({ minimum: 0, maximum: 1 }),
+          maxCalls: Type.Literal(1),
+        },
+        { additionalProperties: false },
+      ),
+    ),
     knowledgeReferences: Type.Optional(Type.Array(ChatKnowledgeReferenceSchema, { maxItems: 8 })),
     promptMode: Type.Optional(
       Type.Union([Type.Literal("full"), Type.Literal("minimal"), Type.Literal("none")]),
@@ -268,6 +279,7 @@ export const AgentWaitParamsSchema = Type.Object(
   {
     runId: NonEmptyString,
     timeoutMs: Type.Optional(Type.Integer({ minimum: 0 })),
+    includeProviderSpend: Type.Optional(Type.Boolean()),
   },
   { additionalProperties: false },
 );

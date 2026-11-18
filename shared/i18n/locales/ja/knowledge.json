@@ -1,4 +1,50 @@
 {
+  "research": {
+    "cancel": "調査をキャンセル",
+    "progress": "ラウンド {{round}}/{{maxRounds}} · 検索 {{queries}}/{{maxQueries}}",
+    "conflicts": "証拠の矛盾",
+    "inferences": "モデルの推論",
+    "gaps": "不足する証拠（{{count}}）",
+    "status": {
+      "running": "調査中",
+      "complete": "調査完了",
+      "partial": "部分的な調査結果",
+      "cancelled": "調査をキャンセルしました",
+      "unavailable": "調査を利用できません"
+    },
+    "stop": {
+      "covered": "必要な証拠が見つかりました。",
+      "no-new-evidence": "新しい証拠が見つからず、調査を停止しました。",
+      "repeated-query": "重複する検索を停止しました。",
+      "queries-exhausted": "追加で検索できる情報源がありません。",
+      "round-budget": "調査ラウンドの上限に達しました。",
+      "query-budget": "検索回数の上限に達しました。",
+      "evidence-budget": "証拠量の上限に達しました。",
+      "deadline": "調査時間の上限に達しました。",
+      "cancelled": "要求に従って調査を停止しました。",
+      "scope-changed": "情報源の所有者またはワークスペースが変わりました。",
+      "unavailable": "調査を続行できません。"
+    },
+    "gapReasons": {
+      "not-covered": "この質問に必要な証拠が不足しています。",
+      "owner-evidence-changed": "情報源が変更されたか、読み取れなくなりました。",
+      "evidence-budget": "追加の証拠が容量の上限を超えました。",
+      "graph-budget": "上限内の関連情報源を調査しました。",
+      "planning-unavailable": "計画モデルが予算内に完了しませんでした。",
+      "planning-usage-unknown": "モデルの使用量を確認できませんでした。",
+      "dcs-reference-limit": "一部の情報源グループが参照数の上限を超えました。",
+      "dcs-evidence-not-retained": "この証拠はモデルのコンテキストに保持されませんでした。",
+      "conflict-group-not-retained": "矛盾する情報源グループ全体を保持できませんでした。",
+      "retrieval-partial": "一部の検索経路を利用できません。",
+      "multi-owner-lexical-retrieval": "情報源はローカルのテキスト検索を使用しました。",
+      "owner-read-rejected": "情報源の所有者が読み取りを拒否しました。",
+      "source-freshness-unknown": "情報源の更新時刻を確認できませんでした。",
+      "source-range-partial": "引用に対応する情報源の部分を読み取りました。",
+      "deadline": "時間の上限に達しました。",
+      "cancelled": "調査をキャンセルしました。",
+      "scope-changed": "ワークスペースまたはセッションが変わりました。"
+    }
+  },
   "nav": "Knowledge",
   "title": "Knowledge",
   "assistant": {

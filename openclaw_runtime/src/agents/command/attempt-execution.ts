@@ -798,6 +798,7 @@ export async function runAgentAttempt(params: {
       allowTransientCooldownProbe: params.allowTransientCooldownProbe,
       cleanupBundleMcpOnRunEnd: params.opts.cleanupBundleMcpOnRunEnd,
       modelRun: params.opts.modelRun,
+      modelBudget: params.opts.modelBudget,
       promptMode: params.opts.promptMode,
       disableTools: params.opts.modelRun === true,
       onAgentEvent: params.onAgentEvent,

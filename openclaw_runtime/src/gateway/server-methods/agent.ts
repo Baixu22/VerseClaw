@@ -1060,6 +1060,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       lane?: string;
       extraSystemPrompt?: string;
       modelRun?: boolean;
+      modelBudget?: import("../../agents/command/shared-types.js").ModelRequestBudget;
       knowledgeReferences?: import("../../context-engine/chat-knowledge-intent.js").ChatKnowledgeReferenceIntent[];
       promptMode?: "full" | "minimal" | "none";
       bootstrapContextMode?: "full" | "lightweight";
@@ -1084,6 +1085,17 @@ export const agentHandlers: GatewayRequestHandlers = {
     };
     const allowModelOverride = resolveAllowModelOverrideFromClient(client);
     const canUseInternalRuntimeHandoff = resolveCanUseInternalRuntimeHandoff(client);
+    if (request.modelBudget && (!canUseInternalRuntimeHandoff || request.modelRun !== true)) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "Model budget requires a trusted model-only caller.",
+        ),
+      );
+      return;
+    }
     if (
       request.knowledgeReferences?.length &&
       !clientHasAdminScope(client) &&
@@ -2595,6 +2607,7 @@ export const agentHandlers: GatewayRequestHandlers = {
               runId,
               lane: request.lane,
               modelRun: request.modelRun === true,
+              modelBudget: request.modelBudget,
               knowledgeReferences: request.knowledgeReferences,
               workspaceId: canUseInternalRuntimeHandoff
                 ? normalizeOptionalString(request.workspaceId)
@@ -2794,8 +2807,13 @@ export const agentHandlers: GatewayRequestHandlers = {
       const retainedEvidence = canRead
         ? listContextFinalSnapshots(runId).at(-1)?.budget.retainedEvidence
         : undefined;
+      const providerSpend =
+        canRead && p.includeProviderSpend === true
+          ? (await import("../../agents/provider-spend-budget.js")).providerSpendForRun(runId)
+          : undefined;
       respond(true, {
         ...payload,
+        ...(providerSpend ? { providerSpend } : {}),
         ...(retainedEvidence ? { retainedEvidence } : {}),
         ...(text ? { text } : {}),
       });
