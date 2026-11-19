@@ -1,0 +1,1088 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0678",
+  "realHumanEvidence": false,
+  "candidate": "acb6869d46a5ce44815d33d35ee256bea5218cbc",
+  "source": {
+    "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/closeout-readback.json",
+    "bytes": 292872,
+    "sha256": "72965dfe8c0c6248596cf20f975d0be2141c97782401f277e3a91d9516cd03cd"
+  },
+  "task": {
+    "contract": {
+      "objective": "Repair and independently review the project result",
+      "constraints": [
+        "Change result.txt only"
+      ],
+      "acceptance": [
+        {
+          "id": "test",
+          "description": "The integrated result passes the check",
+          "verification": {
+            "kind": "tool-result",
+            "tool": "exec",
+            "command": "node check.cjs",
+            "files": [
+              "result.txt",
+              "check.cjs"
+            ],
+            "exitCode": 0
+          }
+        },
+        {
+          "id": "review",
+          "description": "An independent reviewer reads the candidate",
+          "verification": {
+            "kind": "owner-receipt",
+            "owner": "subagent-verifier",
+            "files": [
+              "result.txt",
+              "check.cjs"
+            ]
+          }
+        }
+      ],
+      "target": "result.txt",
+      "dependencies": [],
+      "maxRepairAttempts": 1,
+      "origin": {
+        "source": "runtime-task-tool",
+        "sessionKey": "agent:main:session-1795109895600-closeoutproject",
+        "requestId": "p4task:create"
+      },
+      "taskNodeId": "2990dccd-bd7b-4ddf-9087-815b3a6bb449",
+      "domain": "1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882",
+      "revision": 1,
+      "digest": "9c2a634df8c70a10bb8d78a4e9c1226bbe6322a0ab43da86ebcff28ce714c212",
+      "state": "done",
+      "createdAt": 1795109930476,
+      "updatedAt": 1795110099698
+    },
+    "claim": {
+      "taskNodeId": "2990dccd-bd7b-4ddf-9087-815b3a6bb449",
+      "sessionKey": "agent:main:session-1795109895600-closeoutproject",
+      "generation": "cc4a3355-e4c5-49af-9259-b5392e97b08d",
+      "epoch": 6,
+      "attemptId": "f41e3b84-e31a-4f11-8b32-76e2b193e43c",
+      "worktree": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project",
+      "contractRevision": 1,
+      "expiresAt": 1795110179546,
+      "state": "released"
+    },
+    "checkpoint": null,
+    "pendingOperations": 0,
+    "pendingOperationDetails": [],
+    "childTaskNodeIds": []
+  },
+  "receipts": [
+    {
+      "receiptId": "fb666456-656a-45df-934d-5516e5aa080d",
+      "taskNodeId": "2990dccd-bd7b-4ddf-9087-815b3a6bb449",
+      "revision": 1,
+      "epoch": 5,
+      "candidate": "tool-inputs",
+      "criterionId": "test",
+      "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt",
+      "sha256": "963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2",
+      "inputArtifacts": [
+        {
+          "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt",
+          "sha256": "963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2"
+        },
+        {
+          "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs",
+          "sha256": "427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc"
+        }
+      ],
+      "verifier": "runtime-tool-owner",
+      "repairAttempt": 1,
+      "createdAt": 1795110061521
+    },
+    {
+      "receiptId": "task-verifier:3175c014fbf39e213e2dae32eef6584125b037cc1cccd3a40db35ce161d624dd",
+      "taskNodeId": "2990dccd-bd7b-4ddf-9087-815b3a6bb449",
+      "revision": 1,
+      "epoch": 5,
+      "candidate": "p4fixed",
+      "criterionId": "review",
+      "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs",
+      "sha256": "427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc",
+      "inputArtifacts": [
+        {
+          "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs",
+          "sha256": "427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc"
+        },
+        {
+          "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt",
+          "sha256": "963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2"
+        }
+      ],
+      "verifier": "owner:subagent-verifier",
+      "repairAttempt": 1,
+      "submissionSequence": 31,
+      "ownerProof": {
+        "verifierReceiptId": "task-verifier:3175c014fbf39e213e2dae32eef6584125b037cc1cccd3a40db35ce161d624dd",
+        "effectReceiptId": "efx_76e03ee0-6a1a-4cb6-838f-68e5544615d2",
+        "evidenceDigest": "689c878d297895701fe0830f5f459ec989274f57d89e64943a5e4d1143e122f3",
+        "proposalDigest": "8bcb25471d4e3ec2a4df97f0c22510998a266314e78452bc3b8965282d1d924d"
+      },
+      "createdAt": 1795110099680
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "kind": "created",
+      "at": 1795109930476,
+      "json": "{\"objective\":\"Repair and independently review the project result\",\"constraints\":[\"Change result.txt only\"],\"acceptance\":[{\"id\":\"test\",\"description\":\"The integrated result passes the check\",\"verification\":{\"kind\":\"tool-result\",\"tool\":\"exec\",\"command\":\"node check.cjs\",\"files\":[\"result.txt\",\"check.cjs\"],\"exitCode\":0}},{\"id\":\"review\",\"description\":\"An independent reviewer reads the candidate\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"subagent-verifier\",\"files\":[\"result.txt\",\"check.cjs\"]}}],\"target\":\"result.txt\",\"dependencies\":[],\"maxRepairAttempts\":1,\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"requestId\":\"p4task:create\"},\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"domain\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"revision\":1,\"digest\":\"9c2a634df8c70a10bb8d78a4e9c1226bbe6322a0ab43da86ebcff28ce714c212\",\"state\":\"ready\",\"createdAt\":1795109930476,\"updatedAt\":1795109930476}"
+    },
+    {
+      "seq": 2,
+      "kind": "claimed",
+      "at": 1795109930480,
+      "json": "{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":1,\"attemptId\":\"5273701a-2cea-4f5c-877d-45e17e5d6197\",\"worktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"contractRevision\":1,\"expiresAt\":1795110050480,\"state\":\"active\"}"
+    },
+    {
+      "seq": 3,
+      "kind": "context_rehydrated",
+      "at": 1795109931489,
+      "json": "{\"receiptId\":\"context:8a07b141ba206928a8b16cc3986185e945b9e60d7e3b7626ff186fc46bf70d2c\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"8f0995d2-fbb1-4968-a824-8432d46f972b\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":1,\"contextDigest\":\"862f7410bd021e869ab7fdc1212c83afbacb7a893b4093534b6b9e69be6ed5c4\",\"characters\":877,\"at\":1795109931489,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 4,
+      "kind": "delegation_prepared",
+      "at": 1795109935440,
+      "json": "{\"delegationId\":\"6e4a70bc-4e25-4e31-93c3-2085d772d303\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"parent\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":1},\"parentWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"child\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:subagent:cafc8abb-8cbd-4984-a504-df4a6718c587\",\"generation\":\"728a816d-2631-4e91-a41a-f5b61fe93179\",\"epoch\":2},\"childWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/.openclaw/worktrees/orch_ad419edc-2a7a-4f8b-93c9-f51b6ebb9b8e-implemen-865445cebc\",\"childRunId\":\"6e4a70bc-4e25-4e31-93c3-2085d772d303\",\"mode\":\"writer\",\"phase\":\"prepared\",\"dispatchOperationIds\":[],\"contractRevision\":1,\"authorityBasis\":{\"localDomainId\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"authorityId\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"authorityDatabase\":\"d:\\\\tmp\\\\tf0678-20261119-01a1f347\\\\final-r2\\\\electron\\\\project-closeout-a-project-0d40c-without-another-user-prompt\\\\project\\\\.git\\\\verse-claw\\\\task-ledger.sqlite3\",\"executionWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"registrationRevision\":null,\"projectRevision\":null,\"identityDigest\":\"09574413cb27be37ba3bd27edda3334d7c6f89fab141a834a19f85bcf3931162\",\"databaseIdentity\":\"3325120695:281475012961625:1795109930434722200\"},\"verifier\":false}"
+    },
+    {
+      "seq": 5,
+      "kind": "delegation_dispatch",
+      "at": 1795109936336,
+      "json": "{\"delegationId\":\"6e4a70bc-4e25-4e31-93c3-2085d772d303\",\"phase\":\"dispatched\",\"runId\":\"6e4a70bc-4e25-4e31-93c3-2085d772d303\"}"
+    },
+    {
+      "seq": 6,
+      "kind": "context_rehydrated",
+      "at": 1795109940419,
+      "json": "{\"receiptId\":\"context:02504589f89f9ad9ececcbc6792c81446a73f90d8e27b0f67da5d3abc140953f\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"8f0995d2-fbb1-4968-a824-8432d46f972b\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":2,\"contextDigest\":\"727638228089a1b4b677cd3427c1519198796bd1e1609a835bc90a7ade73a0a3\",\"characters\":879,\"at\":1795109940419,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 7,
+      "kind": "context_rehydrated",
+      "at": 1795109950821,
+      "json": "{\"receiptId\":\"context:8a73ca9da358b4710f54064f2a3e0a2fcbc41056f58e943ca9d6606b5e663c0f\",\"sessionKey\":\"agent:main:subagent:cafc8abb-8cbd-4984-a504-df4a6718c587\",\"generation\":\"728a816d-2631-4e91-a41a-f5b61fe93179\",\"runId\":\"6e4a70bc-4e25-4e31-93c3-2085d772d303\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":2,\"contextDigest\":\"862f7410bd021e869ab7fdc1212c83afbacb7a893b4093534b6b9e69be6ed5c4\",\"characters\":877,\"at\":1795109950821,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 8,
+      "kind": "writer_returned",
+      "at": 1795109964241,
+      "json": "{\"from\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:subagent:cafc8abb-8cbd-4984-a504-df4a6718c587\",\"generation\":\"728a816d-2631-4e91-a41a-f5b61fe93179\",\"epoch\":2},\"to\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":3,\"attemptId\":\"da4fc3c6-b600-484c-b0cb-d5c7fd48c8e5\",\"worktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"contractRevision\":1,\"expiresAt\":1795110084240,\"state\":\"active\"},\"receipt\":{\"runId\":\"6e4a70bc-4e25-4e31-93c3-2085d772d303\",\"endedAt\":1795109957349,\"outcome\":\"ok\",\"parentGeneration\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\"}}"
+    },
+    {
+      "seq": 9,
+      "kind": "context_rehydrated",
+      "at": 1795109977395,
+      "json": "{\"receiptId\":\"context:597a4a0a0d29a02db27d47ab773e7cd559188b7d3df9226fe00ff650e587773e\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"announce:v1:agent:main:subagent:cafc8abb-8cbd-4984-a504-df4a6718c587:6e4a70bc-4e25-4e31-93c3-2085d772d303\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":3,\"contextDigest\":\"862f7410bd021e869ab7fdc1212c83afbacb7a893b4093534b6b9e69be6ed5c4\",\"characters\":877,\"at\":1795109977395,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 10,
+      "kind": "submitted",
+      "at": 1795109983220,
+      "json": "{\"candidate\":\"p4broken\",\"revision\":1,\"epoch\":3,\"artifacts\":[{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\"},{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"bbd402e8059e52037e795f47b600b4dbf240358450f7d7c3f0194f194aec326c\"}]}"
+    },
+    {
+      "seq": 11,
+      "kind": "context_rehydrated",
+      "at": 1795109983867,
+      "json": "{\"receiptId\":\"context:739c3a5145a14d69609457e049a572198feecd302bed49aa915a85fc7f6ab8fa\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"announce:v1:agent:main:subagent:cafc8abb-8cbd-4984-a504-df4a6718c587:6e4a70bc-4e25-4e31-93c3-2085d772d303\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":3,\"contextDigest\":\"881dd447c821ffbd7b823df1c37cb2f0ecbc31ceb214be9a896d0bfe495a0395\",\"characters\":878,\"at\":1795109983867,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 12,
+      "kind": "review_reserved",
+      "at": 1795109984898,
+      "json": "{\"id\":\"review:fefd179c38329c299150015c3e61ec81079decc06fd7641a14398488ddeb01e3\",\"candidate\":\"p4broken\",\"requestId\":\"p4reviewbroken\",\"sequence\":10,\"credential\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":3}}"
+    },
+    {
+      "seq": 13,
+      "kind": "delegation_prepared",
+      "at": 1795109985381,
+      "json": "{\"delegationId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"parent\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":3},\"parentWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"child\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1\",\"generation\":\"f3ad39ce-751f-4ee1-bb07-caa0fc8ebee6\",\"epoch\":4},\"childWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"childRunId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"mode\":\"observer\",\"phase\":\"prepared\",\"dispatchOperationIds\":[],\"contractRevision\":1,\"authorityBasis\":{\"localDomainId\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"authorityId\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"authorityDatabase\":\"d:\\\\tmp\\\\tf0678-20261119-01a1f347\\\\final-r2\\\\electron\\\\project-closeout-a-project-0d40c-without-another-user-prompt\\\\project\\\\.git\\\\verse-claw\\\\task-ledger.sqlite3\",\"executionWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"registrationRevision\":null,\"projectRevision\":null,\"identityDigest\":\"09574413cb27be37ba3bd27edda3334d7c6f89fab141a834a19f85bcf3931162\",\"databaseIdentity\":\"3325120695:281475012961625:1795109930434722200\"},\"candidateArtifacts\":[{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\"},{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"bbd402e8059e52037e795f47b600b4dbf240358450f7d7c3f0194f194aec326c\"}],\"submissionSequence\":10,\"reviewReservationId\":\"review:fefd179c38329c299150015c3e61ec81079decc06fd7641a14398488ddeb01e3\",\"verifier\":true}"
+    },
+    {
+      "seq": 14,
+      "kind": "delegation_dispatch",
+      "at": 1795109985445,
+      "json": "{\"delegationId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"phase\":\"dispatched\",\"runId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\"}"
+    },
+    {
+      "seq": 15,
+      "kind": "review_dispatched",
+      "at": 1795109985980,
+      "json": "{\"id\":\"review:fefd179c38329c299150015c3e61ec81079decc06fd7641a14398488ddeb01e3\",\"sequence\":10,\"result\":{\"status\":\"accepted\",\"runId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"childSessionKey\":\"agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1\"}}"
+    },
+    {
+      "seq": 16,
+      "kind": "context_rehydrated",
+      "at": 1795109998997,
+      "json": "{\"receiptId\":\"context:682ca24dd476bebbc431eb1f8419115d76e7f0d00e1ae6c5b48e10cd23aa1336\",\"sessionKey\":\"agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1\",\"generation\":\"f3ad39ce-751f-4ee1-bb07-caa0fc8ebee6\",\"runId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":3,\"contextDigest\":\"5c037a919a5a9a51d6a346789ce8ae308638be3591dd1ddc01799419d17c8829\",\"characters\":880,\"at\":1795109998997,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 17,
+      "kind": "review_file_read",
+      "at": 1795110000418,
+      "json": "{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"bbd402e8059e52037e795f47b600b4dbf240358450f7d7c3f0194f194aec326c\",\"start\":1,\"end\":1,\"lines\":1,\"kind\":\"text\",\"startChar\":0,\"endChar\":14,\"characters\":14,\"runId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"sessionKey\":\"agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1\",\"generation\":\"f3ad39ce-751f-4ee1-bb07-caa0fc8ebee6\",\"submissionSequence\":10,\"operationId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68:reviewbrokenread\",\"contentDigest\":\"9f90fba93c5dbcce0ce9654fab2d417eb94f9133ffa0ab4727ce2d0dbdcf92c8\"}"
+    },
+    {
+      "seq": 18,
+      "kind": "review_read_delivered",
+      "at": 1795110001180,
+      "json": "{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"bbd402e8059e52037e795f47b600b4dbf240358450f7d7c3f0194f194aec326c\",\"start\":1,\"end\":1,\"lines\":1,\"kind\":\"text\",\"startChar\":0,\"endChar\":14,\"characters\":14,\"runId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"sessionKey\":\"agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1\",\"generation\":\"f3ad39ce-751f-4ee1-bb07-caa0fc8ebee6\",\"submissionSequence\":10,\"operationId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68:reviewbrokenread\",\"contentDigest\":\"9f90fba93c5dbcce0ce9654fab2d417eb94f9133ffa0ab4727ce2d0dbdcf92c8\"}"
+    },
+    {
+      "seq": 19,
+      "kind": "review_file_read",
+      "at": 1795110003091,
+      "json": "{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\",\"start\":1,\"end\":1,\"lines\":1,\"kind\":\"text\",\"startChar\":0,\"endChar\":174,\"characters\":174,\"runId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"sessionKey\":\"agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1\",\"generation\":\"f3ad39ce-751f-4ee1-bb07-caa0fc8ebee6\",\"submissionSequence\":10,\"operationId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68:reviewbrokenreadcheck\",\"contentDigest\":\"eb88cdc25e5604f94eda38d4cf9cd57921fd717b17b445f648f320b75d9dde7b\"}"
+    },
+    {
+      "seq": 20,
+      "kind": "review_read_delivered",
+      "at": 1795110004490,
+      "json": "{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\",\"start\":1,\"end\":1,\"lines\":1,\"kind\":\"text\",\"startChar\":0,\"endChar\":174,\"characters\":174,\"runId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68\",\"sessionKey\":\"agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1\",\"generation\":\"f3ad39ce-751f-4ee1-bb07-caa0fc8ebee6\",\"submissionSequence\":10,\"operationId\":\"d018a4c7-15f8-4040-8e19-53212c5cef68:reviewbrokenreadcheck\",\"contentDigest\":\"eb88cdc25e5604f94eda38d4cf9cd57921fd717b17b445f648f320b75d9dde7b\"}"
+    },
+    {
+      "seq": 21,
+      "kind": "context_rehydrated",
+      "at": 1795110019175,
+      "json": "{\"receiptId\":\"context:034d22c10cc64abc341bd49fcac6ec30e7747aa35aaf169a214ceb47bd1c39e4\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"announce:v1:agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1:d018a4c7-15f8-4040-8e19-53212c5cef68\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":3,\"contextDigest\":\"881dd447c821ffbd7b823df1c37cb2f0ecbc31ceb214be9a896d0bfe495a0395\",\"characters\":878,\"at\":1795110019175,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 22,
+      "kind": "repair_started",
+      "at": 1795110021867,
+      "json": "{\"candidate\":\"p4broken\",\"reason\":\"The check failed and reviewer requested repair\",\"attempt\":1,\"limit\":1,\"submissionSequence\":10,\"revision\":1,\"epoch\":3}"
+    },
+    {
+      "seq": 23,
+      "kind": "context_rehydrated",
+      "at": 1795110022583,
+      "json": "{\"receiptId\":\"context:2da7910bcc9f974b6222b6f4a29c17b38eb562476c98752a2501b77eeb56e680\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"announce:v1:agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1:d018a4c7-15f8-4040-8e19-53212c5cef68\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":3,\"contextDigest\":\"146d9c2d864fe413d0abeabceec9dfd3f0c470a8a982f24e243e8b921534b0dd\",\"characters\":877,\"at\":1795110022583,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 24,
+      "kind": "delegation_prepared",
+      "at": 1795110023906,
+      "json": "{\"delegationId\":\"ba41e66a-77b0-4efb-bd27-b477722744eb\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"parent\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":3},\"parentWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"child\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:subagent:c68feb12-ce8a-4da7-bf10-678c96f2a983\",\"generation\":\"65fbc48c-3a0b-4e74-8f4a-2082fd1e17ac\",\"epoch\":4},\"childWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/.openclaw/worktrees/orch_e146edc6-60cb-4e86-a142-a496afbfbdb1-implemen-314eb41d1a\",\"childRunId\":\"ba41e66a-77b0-4efb-bd27-b477722744eb\",\"mode\":\"writer\",\"phase\":\"prepared\",\"dispatchOperationIds\":[],\"contractRevision\":1,\"authorityBasis\":{\"localDomainId\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"authorityId\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"authorityDatabase\":\"d:\\\\tmp\\\\tf0678-20261119-01a1f347\\\\final-r2\\\\electron\\\\project-closeout-a-project-0d40c-without-another-user-prompt\\\\project\\\\.git\\\\verse-claw\\\\task-ledger.sqlite3\",\"executionWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"registrationRevision\":null,\"projectRevision\":null,\"identityDigest\":\"09574413cb27be37ba3bd27edda3334d7c6f89fab141a834a19f85bcf3931162\",\"databaseIdentity\":\"3325120695:281475012961625:1795109930434722200\"},\"verifier\":false}"
+    },
+    {
+      "seq": 25,
+      "kind": "delegation_dispatch",
+      "at": 1795110023975,
+      "json": "{\"delegationId\":\"ba41e66a-77b0-4efb-bd27-b477722744eb\",\"phase\":\"dispatched\",\"runId\":\"ba41e66a-77b0-4efb-bd27-b477722744eb\"}"
+    },
+    {
+      "seq": 26,
+      "kind": "context_rehydrated",
+      "at": 1795110028623,
+      "json": "{\"receiptId\":\"context:12a19de2dc357ffb3c51d55470a0e598580e0fa2963bfeb959ba8ef474aa9b06\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"announce:v1:agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1:d018a4c7-15f8-4040-8e19-53212c5cef68\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":4,\"contextDigest\":\"0d9ea6423b0c9a0c6e609fe6bca5917832c8ae76115c5b1395c0deaeda6794a1\",\"characters\":879,\"at\":1795110028623,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 27,
+      "kind": "context_rehydrated",
+      "at": 1795110037905,
+      "json": "{\"receiptId\":\"context:44ca0c1599867f341895605b812f4ea09e61175bbc214f63a05f4b987159ec46\",\"sessionKey\":\"agent:main:subagent:c68feb12-ce8a-4da7-bf10-678c96f2a983\",\"generation\":\"65fbc48c-3a0b-4e74-8f4a-2082fd1e17ac\",\"runId\":\"ba41e66a-77b0-4efb-bd27-b477722744eb\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":4,\"contextDigest\":\"146d9c2d864fe413d0abeabceec9dfd3f0c470a8a982f24e243e8b921534b0dd\",\"characters\":877,\"at\":1795110037905,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 28,
+      "kind": "writer_returned",
+      "at": 1795110048239,
+      "json": "{\"from\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:subagent:c68feb12-ce8a-4da7-bf10-678c96f2a983\",\"generation\":\"65fbc48c-3a0b-4e74-8f4a-2082fd1e17ac\",\"epoch\":4},\"to\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":5,\"attemptId\":\"f41e3b84-e31a-4f11-8b32-76e2b193e43c\",\"worktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"contractRevision\":1,\"expiresAt\":1795110168239,\"state\":\"active\"},\"receipt\":{\"runId\":\"ba41e66a-77b0-4efb-bd27-b477722744eb\",\"endedAt\":1795110042758,\"outcome\":\"ok\",\"parentGeneration\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\"}}"
+    },
+    {
+      "seq": 29,
+      "kind": "context_rehydrated",
+      "at": 1795110057893,
+      "json": "{\"receiptId\":\"context:c18bfc5fce25a5309027f36a8318632f804399af2e5b4646b6279bfa1be51f25\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"announce:v1:agent:main:subagent:c68feb12-ce8a-4da7-bf10-678c96f2a983:ba41e66a-77b0-4efb-bd27-b477722744eb\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":5,\"contextDigest\":\"146d9c2d864fe413d0abeabceec9dfd3f0c470a8a982f24e243e8b921534b0dd\",\"characters\":877,\"at\":1795110057893,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 30,
+      "kind": "evidence",
+      "at": 1795110061521,
+      "json": "{\"receiptId\":\"fb666456-656a-45df-934d-5516e5aa080d\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":5,\"candidate\":\"tool-inputs\",\"criterionId\":\"test\",\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2\",\"inputArtifacts\":[{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2\"},{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\"}],\"verifier\":\"runtime-tool-owner\",\"repairAttempt\":1,\"createdAt\":1795110061521}"
+    },
+    {
+      "seq": 31,
+      "kind": "submitted",
+      "at": 1795110063138,
+      "json": "{\"candidate\":\"p4fixed\",\"revision\":1,\"epoch\":5,\"artifacts\":[{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\"},{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2\"}]}"
+    },
+    {
+      "seq": 32,
+      "kind": "context_rehydrated",
+      "at": 1795110063840,
+      "json": "{\"receiptId\":\"context:463677725a03aceefbea077ef98528fb1c613bcb5986a3786d260152cd8142b3\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"announce:v1:agent:main:subagent:c68feb12-ce8a-4da7-bf10-678c96f2a983:ba41e66a-77b0-4efb-bd27-b477722744eb\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":5,\"contextDigest\":\"564739110fe53ea46425fc791eba417959d478c913bb3e3549ba3f5033ecc3f6\",\"characters\":878,\"at\":1795110063840,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 33,
+      "kind": "review_reserved",
+      "at": 1795110066066,
+      "json": "{\"id\":\"review:43f350a68749530cd0557147c83bb3e2dd5d73dc49995610de739bff8de40406\",\"candidate\":\"p4fixed\",\"requestId\":\"p4reviewfixed\",\"sequence\":31,\"credential\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":5}}"
+    },
+    {
+      "seq": 34,
+      "kind": "delegation_prepared",
+      "at": 1795110066406,
+      "json": "{\"delegationId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"parent\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"epoch\":5},\"parentWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"child\":{\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"sessionKey\":\"agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2\",\"generation\":\"433595c2-5ace-4dfb-9222-69053c19148c\",\"epoch\":6},\"childWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"childRunId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"mode\":\"observer\",\"phase\":\"prepared\",\"dispatchOperationIds\":[],\"contractRevision\":1,\"authorityBasis\":{\"localDomainId\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"authorityId\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"authorityDatabase\":\"d:\\\\tmp\\\\tf0678-20261119-01a1f347\\\\final-r2\\\\electron\\\\project-closeout-a-project-0d40c-without-another-user-prompt\\\\project\\\\.git\\\\verse-claw\\\\task-ledger.sqlite3\",\"executionWorktree\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project\",\"registrationRevision\":null,\"projectRevision\":null,\"identityDigest\":\"09574413cb27be37ba3bd27edda3334d7c6f89fab141a834a19f85bcf3931162\",\"databaseIdentity\":\"3325120695:281475012961625:1795109930434722200\"},\"candidateArtifacts\":[{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\"},{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2\"}],\"submissionSequence\":31,\"reviewReservationId\":\"review:43f350a68749530cd0557147c83bb3e2dd5d73dc49995610de739bff8de40406\",\"verifier\":true}"
+    },
+    {
+      "seq": 35,
+      "kind": "delegation_dispatch",
+      "at": 1795110066486,
+      "json": "{\"delegationId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"phase\":\"dispatched\",\"runId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\"}"
+    },
+    {
+      "seq": 36,
+      "kind": "review_dispatched",
+      "at": 1795110066904,
+      "json": "{\"id\":\"review:43f350a68749530cd0557147c83bb3e2dd5d73dc49995610de739bff8de40406\",\"sequence\":31,\"result\":{\"status\":\"accepted\",\"runId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"childSessionKey\":\"agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2\"}}"
+    },
+    {
+      "seq": 37,
+      "kind": "context_rehydrated",
+      "at": 1795110079191,
+      "json": "{\"receiptId\":\"context:6e7cbcca8f89c16711dc39d920545fed3219d48cddea52dd459075c005017e73\",\"sessionKey\":\"agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2\",\"generation\":\"433595c2-5ace-4dfb-9222-69053c19148c\",\"runId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":5,\"contextDigest\":\"cb1cb76cb9195daa90956bf81978da8bf884a1cc73099a0a4683ec005b68a2f1\",\"characters\":880,\"at\":1795110079191,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 38,
+      "kind": "review_file_read",
+      "at": 1795110080457,
+      "json": "{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2\",\"start\":1,\"end\":1,\"lines\":1,\"kind\":\"text\",\"startChar\":0,\"endChar\":16,\"characters\":16,\"runId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"sessionKey\":\"agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2\",\"generation\":\"433595c2-5ace-4dfb-9222-69053c19148c\",\"submissionSequence\":31,\"operationId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50:reviewfixedread\",\"contentDigest\":\"48a89091ead34c2b3c22b1baf41b7c5272f7103ccf6f54f314606b9d0cebb913\"}"
+    },
+    {
+      "seq": 39,
+      "kind": "review_read_delivered",
+      "at": 1795110081198,
+      "json": "{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2\",\"start\":1,\"end\":1,\"lines\":1,\"kind\":\"text\",\"startChar\":0,\"endChar\":16,\"characters\":16,\"runId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"sessionKey\":\"agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2\",\"generation\":\"433595c2-5ace-4dfb-9222-69053c19148c\",\"submissionSequence\":31,\"operationId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50:reviewfixedread\",\"contentDigest\":\"48a89091ead34c2b3c22b1baf41b7c5272f7103ccf6f54f314606b9d0cebb913\"}"
+    },
+    {
+      "seq": 40,
+      "kind": "review_file_read",
+      "at": 1795110082898,
+      "json": "{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\",\"start\":1,\"end\":1,\"lines\":1,\"kind\":\"text\",\"startChar\":0,\"endChar\":174,\"characters\":174,\"runId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"sessionKey\":\"agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2\",\"generation\":\"433595c2-5ace-4dfb-9222-69053c19148c\",\"submissionSequence\":31,\"operationId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50:reviewfixedreadcheck\",\"contentDigest\":\"eb88cdc25e5604f94eda38d4cf9cd57921fd717b17b445f648f320b75d9dde7b\"}"
+    },
+    {
+      "seq": 41,
+      "kind": "review_read_delivered",
+      "at": 1795110084180,
+      "json": "{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\",\"start\":1,\"end\":1,\"lines\":1,\"kind\":\"text\",\"startChar\":0,\"endChar\":174,\"characters\":174,\"runId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"sessionKey\":\"agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2\",\"generation\":\"433595c2-5ace-4dfb-9222-69053c19148c\",\"submissionSequence\":31,\"operationId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50:reviewfixedreadcheck\",\"contentDigest\":\"eb88cdc25e5604f94eda38d4cf9cd57921fd717b17b445f648f320b75d9dde7b\"}"
+    },
+    {
+      "seq": 42,
+      "kind": "context_rehydrated",
+      "at": 1795110098638,
+      "json": "{\"receiptId\":\"context:fe66cdad95ecf884bec0433413199be4844a4ba0c3132d88fb546ffc225296cb\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"generation\":\"cc4a3355-e4c5-49af-9259-b5392e97b08d\",\"runId\":\"announce:v1:agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2:bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":5,\"contextDigest\":\"564739110fe53ea46425fc791eba417959d478c913bb3e3549ba3f5033ecc3f6\",\"characters\":878,\"at\":1795110098638,\"source\":\"runtime-context-restoration\"}"
+    },
+    {
+      "seq": 43,
+      "kind": "owner_verified",
+      "at": 1795110099680,
+      "json": "{\"receiptId\":\"task-verifier:3175c014fbf39e213e2dae32eef6584125b037cc1cccd3a40db35ce161d624dd\",\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"revision\":1,\"epoch\":5,\"candidate\":\"p4fixed\",\"criterionId\":\"review\",\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\",\"inputArtifacts\":[{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\"},{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2\"}],\"verifier\":\"owner:subagent-verifier\",\"repairAttempt\":1,\"submissionSequence\":31,\"ownerProof\":{\"verifierReceiptId\":\"task-verifier:3175c014fbf39e213e2dae32eef6584125b037cc1cccd3a40db35ce161d624dd\",\"effectReceiptId\":\"efx_76e03ee0-6a1a-4cb6-838f-68e5544615d2\",\"evidenceDigest\":\"689c878d297895701fe0830f5f459ec989274f57d89e64943a5e4d1143e122f3\",\"proposalDigest\":\"8bcb25471d4e3ec2a4df97f0c22510998a266314e78452bc3b8965282d1d924d\"},\"createdAt\":1795110099680}"
+    },
+    {
+      "seq": 44,
+      "kind": "accepted",
+      "at": 1795110099699,
+      "json": "{\"candidate\":\"p4fixed\",\"revision\":1}"
+    }
+  ],
+  "acceptanceCount": 1,
+  "repairCount": 1,
+  "reviewerCount": 2,
+  "providerCalls": 27,
+  "negativeCases": [
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners does not fall back to an old pass while a new reviewer is pending",
+      "status": "passed",
+      "duration": 79.47569999999996
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects a pass without candidate reads and accepts only complete matching read ranges",
+      "status": "passed",
+      "duration": 57.4371000000001
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects another generic observer for the same submitted candidate",
+      "status": "passed",
+      "duration": 87.7487000000001
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners requires an explicit repair budget when creating an independent review contract",
+      "status": "passed",
+      "duration": 36.252500000000055
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects an independent review contract without input files: undefined",
+      "status": "passed",
+      "duration": 45.13639999999987
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects an independent review contract without input files: undefined",
+      "status": "passed",
+      "duration": 38.18100000000004
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects a verifier receipt from an earlier repaired submission even after acceptance",
+      "status": "passed",
+      "duration": 185.9780999999998
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners keeps the new submitted reviewer selected when an older completion replays late",
+      "status": "passed",
+      "duration": 246.28510000000006
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners cannot reroll a zero-budget review through candidate renaming, revision or handoff",
+      "status": "passed",
+      "duration": 180.80470000000014
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners allows a current successor to consume the retained review budget after handoff",
+      "status": "passed",
+      "duration": 341.7626
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners allows a current successor to consume the retained review budget after pause-resume",
+      "status": "passed",
+      "duration": 329.5135
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners preserves review provenance after an idle zero-budget lease expires via accept",
+      "status": "passed",
+      "duration": 267.59289999999964
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners preserves review provenance after an idle zero-budget lease expires via recover",
+      "status": "passed",
+      "duration": 285.27720000000045
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners does not restore a review lease while its old run is still registered",
+      "status": "passed",
+      "duration": 92.32330000000002
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects wrong-run verifier provenance",
+      "status": "passed",
+      "duration": 113.23540000000048
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects wrong-generation verifier provenance",
+      "status": "passed",
+      "duration": 115.17849999999999
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects implementer verifier provenance",
+      "status": "passed",
+      "duration": 78.31869999999981
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects a candidate changed before reviewer dispatch as well as missing files",
+      "status": "passed",
+      "duration": 291.48349999999937
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners retains review admission and refuses an unknown dispatch retry after reopening",
+      "status": "passed",
+      "duration": 94.6893
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners does not bypass the repair budget by resuming or removing it from the contract",
+      "status": "passed",
+      "duration": 84.07600000000002
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners retries a known dispatch refusal without spending a repair: undefined",
+      "status": "passed",
+      "duration": 98.04749999999967
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners retries a known dispatch refusal without spending a repair: allocated-but-never-dispatched",
+      "status": "passed",
+      "duration": 80.41479999999956
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners only lets the reservation owner attach a reviewer and retains a late immutable refusal",
+      "status": "passed",
+      "duration": 82.35729999999967
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners records a known refusal after cancellation without changing task state",
+      "status": "passed",
+      "duration": 67.70489999999972
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners reconciles an unknown effect only from a matching terminal receipt owned by the runtime",
+      "status": "passed",
+      "duration": 219.28210000000036
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects artifacts changed after the requirement was checked",
+      "status": "passed",
+      "duration": 173.01919999999973
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners does not accept caller-chosen unknown owners",
+      "status": "passed",
+      "duration": 81.17340000000058
+    },
+    {
+      "file": "tests/unit/durable-task-acceptance.test.ts",
+      "name": "existing verifier and effect owners rejects new generations and unresolved operations before completing",
+      "status": "passed",
+      "duration": 99.7538999999988
+    },
+    {
+      "file": "tests/unit/durable-task-authority-access.test.ts",
+      "name": "TaskSystemStore authority access rejects stale authority on construction, reads, and writes without changing the ledger",
+      "status": "passed",
+      "duration": 71.82040000000006
+    },
+    {
+      "file": "tests/unit/durable-task-authority-access.test.ts",
+      "name": "TaskSystemStore authority access rejects an access domain mismatch before opening the database",
+      "status": "passed",
+      "duration": 2.089800000000082
+    },
+    {
+      "file": "tests/unit/durable-task-authority-access.test.ts",
+      "name": "TaskSystemStore authority access rejects an execution worktree mismatch before opening the database",
+      "status": "passed",
+      "duration": 2.8197999999999865
+    },
+    {
+      "file": "tests/unit/durable-task-authority-access.test.ts",
+      "name": "TaskSystemStore authority access rejects other authorities and allows one authority across physical checkouts",
+      "status": "passed",
+      "duration": 91.33230000000003
+    },
+    {
+      "file": "tests/unit/durable-task-delegation.test.ts",
+      "name": "durable production delegation protocol does not transfer queued work until dispatch and rejects changed parent ownership",
+      "status": "passed",
+      "duration": 1850.3668
+    },
+    {
+      "file": "tests/unit/durable-task-delegation.test.ts",
+      "name": "durable production delegation protocol retains ownership after lost dispatch acknowledgement and rejects a second writer",
+      "status": "passed",
+      "duration": 839.4135000000006
+    },
+    {
+      "file": "tests/unit/durable-task-delegation.test.ts",
+      "name": "durable production delegation protocol restores the delegation from disk and keeps unknown effects as a return barrier",
+      "status": "passed",
+      "duration": 837.4107000000004
+    },
+    {
+      "file": "tests/unit/durable-task-delegation.test.ts",
+      "name": "durable production delegation protocol rejects reservation-backed review after the parent task is cancelled",
+      "status": "passed",
+      "duration": 580.7241000000004
+    },
+    {
+      "file": "tests/unit/durable-task-event-store.test.ts",
+      "name": "existing Task Ledger transactional migration imports old IDs, leaves original bytes intact, and appends in one owner store",
+      "status": "passed",
+      "duration": 110.86170000000004
+    },
+    {
+      "file": "tests/unit/durable-task-event-store.test.ts",
+      "name": "existing Task Ledger transactional migration rejects corrupt legacy history instead of presenting an empty task graph",
+      "status": "passed",
+      "duration": 78.49660000000006
+    },
+    {
+      "file": "tests/unit/durable-task-faults.test.ts",
+      "name": "task owner fault boundaries rejects a busy claim transaction then resumes the same request without a partial owner",
+      "status": "passed",
+      "duration": 3398.9100000000003
+    },
+    {
+      "file": "tests/unit/durable-task-planning.test.ts",
+      "name": "task discovery and goal decomposition replays committed changes after a missed acknowledgement and rejects a stale consumer cursor",
+      "status": "passed",
+      "duration": 69.54930000000002
+    },
+    {
+      "file": "tests/unit/durable-task-planning.test.ts",
+      "name": "task discovery and goal decomposition paginates a frozen insertion window without hiding old tasks behind new arrivals",
+      "status": "passed",
+      "duration": 60.11559999999997
+    },
+    {
+      "file": "tests/unit/durable-task-planning.test.ts",
+      "name": "task discovery and goal decomposition rejects cycles that cross a parent-child plan edge",
+      "status": "passed",
+      "duration": 38.09659999999997
+    },
+    {
+      "file": "tests/unit/durable-task-project-planning.test.ts",
+      "name": "project coordinator planning takes planning scope from the Workspace owner and fences stale Runtime calls",
+      "status": "passed",
+      "duration": 621.6492999999999
+    },
+    {
+      "file": "tests/unit/durable-task-project-planning.test.ts",
+      "name": "project coordinator planning holds a cancelling project writer until its worker and effects both settle",
+      "status": "passed",
+      "duration": 67.36030000000005
+    },
+    {
+      "file": "tests/unit/durable-task-project-planning.test.ts",
+      "name": "project coordinator planning uses the Workspace owner binding and rejects another checkout, generation or duplicate coordinator",
+      "status": "passed",
+      "duration": 40.0628999999999
+    },
+    {
+      "file": "tests/unit/durable-task-review.test.ts",
+      "name": "rejects a parent without both read and delegation authority: undefined",
+      "status": "passed",
+      "duration": 84.27709999999979
+    },
+    {
+      "file": "tests/unit/durable-task-review.test.ts",
+      "name": "rejects a parent without both read and delegation authority: \"read\"",
+      "status": "passed",
+      "duration": 79.19259999999986
+    },
+    {
+      "file": "tests/unit/durable-task-review.test.ts",
+      "name": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+      "status": "passed",
+      "duration": 68.96150000000034
+    },
+    {
+      "file": "tests/unit/durable-task-review.test.ts",
+      "name": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+      "status": "passed",
+      "duration": 99.16039999999975
+    },
+    {
+      "file": "tests/unit/durable-task-review.test.ts",
+      "name": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+      "status": "passed",
+      "duration": 73.88030000000026
+    },
+    {
+      "file": "tests/unit/durable-task-runtime.test.ts",
+      "name": "production task runtime guard credits a delivered base64 image and rejects an image removed by provider serialization",
+      "status": "passed",
+      "duration": 69.9305000000004
+    },
+    {
+      "file": "tests/unit/durable-task-runtime.test.ts",
+      "name": "production task runtime guard credits a delivered binary image and rejects an image removed by provider serialization",
+      "status": "passed",
+      "duration": 58.766999999999825
+    },
+    {
+      "file": "tests/unit/durable-task-runtime.test.ts",
+      "name": "production task runtime guard captures the old epoch and refuses execution after handoff",
+      "status": "passed",
+      "duration": 57.31049999999959
+    },
+    {
+      "file": "tests/unit/durable-task-session-scope.test.ts",
+      "name": "session bridge consumes the persistent task owner rejects effects without a contract without creating a database",
+      "status": "passed",
+      "duration": 4.104699999999866
+    },
+    {
+      "file": "tests/unit/durable-task-session-scope.test.ts",
+      "name": "session bridge consumes the persistent task owner rejects a legacy reference without inventing a contract or upgrading its state",
+      "status": "passed",
+      "duration": 86.75859999999966
+    },
+    {
+      "file": "tests/unit/durable-task-session-scope.test.ts",
+      "name": "session bridge consumes the persistent task owner rejects a second writer and a stale generation at the new entry point",
+      "status": "passed",
+      "duration": 134.29849999999988
+    },
+    {
+      "file": "tests/unit/durable-task-session-scope.test.ts",
+      "name": "session bridge consumes the persistent task owner retains the old owner while an effect is still unresolved",
+      "status": "passed",
+      "duration": 128.15999999999985
+    },
+    {
+      "file": "tests/unit/durable-task-session-scope.test.ts",
+      "name": "session bridge consumes the persistent task owner rejects conflicting stores after repository initialization",
+      "status": "passed",
+      "duration": 176.6624999999999
+    },
+    {
+      "file": "tests/unit/durable-task-session-scope.test.ts",
+      "name": "session bridge consumes the persistent task owner rejects a conflicting explicit task instead of reverting the selection",
+      "status": "passed",
+      "duration": 85.80069999999978
+    },
+    {
+      "file": "tests/unit/durable-task-session-scope.test.ts",
+      "name": "session bridge consumes the persistent task owner retains the current task when an execution or an unknown operation blocks selection",
+      "status": "passed",
+      "duration": 148.4417000000003
+    },
+    {
+      "file": "tests/unit/durable-task-start.test.ts",
+      "name": "rejects a duplicate writer through the automatic start path and preserves the first claim",
+      "status": "passed",
+      "duration": 96.24530000000004
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+      "status": "passed",
+      "duration": 134.21089999999998
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership retains the old run after process exit while an effect is started",
+      "status": "passed",
+      "duration": 140.7405000000001
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership retains the old run after process exit while an effect is unknown",
+      "status": "passed",
+      "duration": 136.48779999999988
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership refuses a changed contract for the same business key",
+      "status": "passed",
+      "duration": 74.74789999999985
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership rejects a second owner and a stale revision",
+      "status": "passed",
+      "duration": 81.32270000000017
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+      "status": "passed",
+      "duration": 83.82589999999982
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership enforces dependencies and rejects cycles",
+      "status": "passed",
+      "duration": 87.5607
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+      "status": "passed",
+      "duration": 135.75390000000016
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+      "status": "passed",
+      "duration": 149.7192
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+      "status": "passed",
+      "duration": 127.05880000000025
+    },
+    {
+      "file": "tests/unit/durable-task-tool.test.ts",
+      "name": "agent-facing production task tool does not let an old task tool take control of a newer epoch",
+      "status": "passed",
+      "duration": 89.44200000000001
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 bounded task completion admission rejects task_mismatch without a done transition",
+      "status": "passed",
+      "duration": 2.3588000000004286
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 bounded task completion admission rejects candidate_mismatch without a done transition",
+      "status": "passed",
+      "duration": 1.679200000000037
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 bounded task completion admission rejects generation_mismatch without a done transition",
+      "status": "passed",
+      "duration": 1.522399999999834
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 bounded task completion admission rejects verifier_not_approved without a done transition",
+      "status": "passed",
+      "duration": 1.066200000000208
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 bounded task completion admission rejects effect_not_applied without a done transition",
+      "status": "passed",
+      "duration": 1.4543000000003303
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 bounded task completion admission rejects evidence_mismatch without a done transition",
+      "status": "passed",
+      "duration": 1.700199999999768
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 bounded task completion admission rejects already_done without a done transition",
+      "status": "passed",
+      "duration": 1.4130999999997584
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 bounded task completion admission rejects stale candidate and task evidence before a completion claim can be submitted",
+      "status": "passed",
+      "duration": 1.3453999999996995
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 Task Ledger owner-backed completion rejects caller-authored coherent digests when no owner receipt exists",
+      "status": "passed",
+      "duration": 162.48619999999983
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "A3 Task Ledger owner-backed completion rejects malformed owner references without writing done",
+      "status": "passed",
+      "duration": 156.65959999999995
+    },
+    {
+      "file": "tests/unit/autonomy-worktree-integration.test.ts",
+      "name": "R4 durable worktree integration verifies two real worker results on the newly frozen candidate instead of the old base",
+      "status": "passed",
+      "duration": 15022.418300000001
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+      "name": "B-3 v3 buildDirectChildSessionPatch writeSet rejects parent-reset during preparation before dispatching the child",
+      "status": "passed",
+      "duration": 888.4880000000012
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+      "name": "B-3 v3 buildDirectChildSessionPatch writeSet rejects context-error during preparation before dispatching the child",
+      "status": "passed",
+      "duration": 104.6257000000005
+    },
+    {
+      "file": "tests/unit/role-spawn.test.ts",
+      "name": "role permissions policy denies write/edit/exec/bash when filesystem is read",
+      "status": "passed",
+      "duration": 2.152299999999741
+    },
+    {
+      "file": "tests/unit/role-spawn.test.ts",
+      "name": "role permissions policy denies all fs tools + shell when filesystem is none",
+      "status": "passed",
+      "duration": 1.9063000000001011
+    },
+    {
+      "file": "tests/unit/role-spawn.test.ts",
+      "name": "role permissions policy denies network tools when network is none",
+      "status": "passed",
+      "duration": 1.3521999999998116
+    },
+    {
+      "file": "tests/unit/role-spawn.test.ts",
+      "name": "role-driven spawn mapping #183 counts the role-spawn memory injection it cannot charge to a turn budget",
+      "status": "passed",
+      "duration": 331.10030000000006
+    },
+    {
+      "file": "tests/unit/role-spawn.test.ts",
+      "name": "role-driven spawn mapping sets a hard tool allowlist from the role tools + permission-derived deny",
+      "status": "passed",
+      "duration": 2.1619000000000597
+    },
+    {
+      "file": "tests/unit/role-spawn.test.ts",
+      "name": "orchestrator run bridge records failures when a spawn is rejected",
+      "status": "passed",
+      "duration": 441.08399999999983
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects missing and incomplete contracts without creating a Legacy business task",
+      "status": "passed",
+      "duration": 391.3600999999999
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects a missing scheduled coordinator before claiming another task",
+      "status": "passed",
+      "duration": 457.1275999999998
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects a stale scheduled coordinator before claiming another task",
+      "status": "passed",
+      "duration": 369.4964
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects a paused scheduled coordinator before claiming another task",
+      "status": "passed",
+      "duration": 414.54849999999897
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects an isolated schedule from another workspace or agent before creating a task",
+      "status": "passed",
+      "duration": 224.0645999999997
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects effects on a completed canonical task, including after owner reconstruction",
+      "status": "passed",
+      "duration": 584.2489000000005
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects a Legacy done node without creating a canonical replacement or changing it to doing",
+      "status": "passed",
+      "duration": 534.3582000000024
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token",
+      "status": "passed",
+      "duration": 764.4418000000005
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects an old claim after canonical epoch rotation even when the Workspace cache still has it",
+      "status": "passed",
+      "duration": 382.22969999999987
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects unknown session before writing a task",
+      "status": "passed",
+      "duration": 262.3736000000026
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects wrong root before writing a task",
+      "status": "passed",
+      "duration": 234.1965999999993
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects stale generation before writing a task",
+      "status": "passed",
+      "duration": 175.43119999999908
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects forged claim before writing a task",
+      "status": "passed",
+      "duration": 243.938900000001
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects foreign workspace identity and a changed session generation without manufacturing a replacement",
+      "status": "passed",
+      "duration": 646.5378000000019
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract rejects a contract revision changed after resolution without claiming the revised task",
+      "status": "passed",
+      "duration": 260.0903999999973
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract requires explicit canonical selection for multiple links and rejects an external reference as a task",
+      "status": "passed",
+      "duration": 695.453300000001
+    },
+    {
+      "file": "tests/unit/session-task-scope-completion.test.ts",
+      "name": "first effect consumes the canonical execution contract requires admission for unknown MCP effects and checks cancellation before execution",
+      "status": "passed",
+      "duration": 30.283300000002782
+    },
+    {
+      "file": "tests/unit/unified-effect-admission.test.ts",
+      "name": "joint task and checkout effect boundary retains one writer between tool calls and refuses another task before touching its file",
+      "status": "passed",
+      "duration": 1677.622800000001
+    },
+    {
+      "file": "tests/unit/unified-effect-admission.test.ts",
+      "name": "joint task and checkout effect boundary retains unknown writes until the exact task owner receipt reconciles them",
+      "status": "passed",
+      "duration": 529.073699999999
+    },
+    {
+      "file": "tests/unit/unified-effect-admission.test.ts",
+      "name": "joint task and checkout effect boundary rotates a recovered same-run writer without reviving its old token",
+      "status": "passed",
+      "duration": 763.1068999999989
+    },
+    {
+      "file": "tests/unit/unified-effect-admission.test.ts",
+      "name": "joint task and checkout effect boundary rejects stale captured task credentials at the raw effect boundary",
+      "status": "passed",
+      "duration": 310.04320000000007
+    }
+  ],
+  "resultFiles": [
+    {
+      "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs",
+      "bytes": 174,
+      "sha256": "427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc"
+    },
+    {
+      "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt",
+      "bytes": 16,
+      "sha256": "963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2"
+    }
+  ]
+}

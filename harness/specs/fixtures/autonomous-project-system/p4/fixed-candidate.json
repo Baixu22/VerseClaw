@@ -1,0 +1,273 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0678",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "acb6869d46a5ce44815d33d35ee256bea5218cbc",
+    "tree": "b8a78ca602fd61661a3832b56f8e55773742982f",
+    "dirty": false
+  },
+  "inputs": [
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/AGENTS.md",
+      "bytes": 23575,
+      "sha256": "d3637e172b1455b5e583c7ffc845de480df386ac17b104943f88837baaf7caab"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/README.ja-JP.md",
+      "bytes": 43021,
+      "sha256": "a91e00897f26b215aa39d55fc7d095b35e972156632db8e6b3873174af03d968"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/README.md",
+      "bytes": 36885,
+      "sha256": "c041ecfa56876137aef5ea9a2d66c0dbed2088dca013e1a8c2231c9aaa09ed46"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/README.ru-RU.md",
+      "bytes": 45929,
+      "sha256": "61f09929af8735a283292c8cbbb71c12f481e64eee53f67f21fd65006d1fd3a1"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/README.zh-CN.md",
+      "bytes": 32989,
+      "sha256": "ea83ec5f3eaac55f0c4f0a6d94f85deb8ce58c32b9ae98d89c58a7e16fb1ddb2"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/docs/modules/multi-agent-and-tasks.md",
+      "bytes": 34182,
+      "sha256": "748b062aef02910ffb645f2501aa08142fd52e701dfdb874748f703831a29b3d"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/electron/services/task-system-service.ts",
+      "bytes": 24945,
+      "sha256": "30cc2470692f122425b0a2639b54ab5df4de860b42c9a5d9535c35342fb1c385"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/electron/services/workspaces-api.ts",
+      "bytes": 110291,
+      "sha256": "a8a8c4e8123b040f03fdb8f26b557979a3572fb5aebce72b25a2ffada2ec9817"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/rules/durable-task-system-boundary.md",
+      "bytes": 5899,
+      "sha256": "1cf4ffdd6d9d27996c1d444c6b50cd941f3ade48bf7a3184959ac3b7d88994fa"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/scenarios/autonomous-project-system.md",
+      "bytes": 3554,
+      "sha256": "2d668ec3ca211498d16f09adecb60db7a37d046676e1d15d8d1518623ca47ed5"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/project-coordinator-closeout.md",
+      "bytes": 5529,
+      "sha256": "bc885443995d68b5919cda7ad83ef799187bd4b3c7f215d6f19f2d878f5295ab"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/agent-tools.read.ts",
+      "bytes": 39917,
+      "sha256": "83e3945b9381d9055608deb3ba9419036b02254d51c645c79a6f11e17b52431d"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/agent-tools.ts",
+      "bytes": 65135,
+      "sha256": "dc479b7fa9d30e0fb8091e93b9f799e69f2b6aa045e02c86585bba7754a7202d"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "bytes": 270643,
+      "sha256": "7aaae2ab48424bbc1fc2a62acb8e3de3a5a0dea4778cde694b3d5bc4d3cf748c"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/execution-checkout-tools.ts",
+      "bytes": 10989,
+      "sha256": "1809fe7062fcc82df303e93454905d1ddb08e8a66b70aa991b20bffab3b4ae0f"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/execution-task-guard.ts",
+      "bytes": 3463,
+      "sha256": "dce194855b32e85fe75b8b040acce1bf2dc3e2db817cf9e321d8664c38098810"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "bytes": 49693,
+      "sha256": "e2ad73f0b7f617b655abbafc649904e81793cc86ee6fef959fa4f3d972ba6f1f"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/persistent-task-acceptance.ts",
+      "bytes": 12223,
+      "sha256": "630ddbd8cfb8c5a27fbb6b131c72abdd930e67da807a32f061a1f30f547d1178"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/persistent-task-delegation.ts",
+      "bytes": 9669,
+      "sha256": "1fff42bbf4cc3400a10833eefdfbe7135faf52a3fa41ead3d68beb83dbe239e8"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/role-spawn.ts",
+      "bytes": 15593,
+      "sha256": "cd761ac6425539cfb4a78782f027f009cdcb175e1fd249f61505abd4289acb27"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/sessions/tools/read.ts",
+      "bytes": 24352,
+      "sha256": "f76781e24fe3d86483e4388ada5c44eefb2476c92881406185d1aefb426e5985"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/sessions/tools/tool-contracts.ts",
+      "bytes": 3532,
+      "sha256": "4651739abf16b76528c236848cdfa1609182e821508a5bed95d558dd1b4357e8"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/subagent-registry.ts",
+      "bytes": 81026,
+      "sha256": "5d90c5a321c066bffe7b203b0b554a5461fafc1a0033a139240028f3a2a3b8e6"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/subagent-spawn.test.ts",
+      "bytes": 5514,
+      "sha256": "bb1f0756d28759552e2b865b3efe0cf6ec365343aa92e909e85d3743129f788c"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/subagent-spawn.ts",
+      "bytes": 72865,
+      "sha256": "cad9ff692d51bec16da9a7c5cbe079341e7ea6a83f2ef8421a98f760e2de71cd"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/tool-mutation.test.ts",
+      "bytes": 4570,
+      "sha256": "697eb6466b5ae3892e08d9baafa4b8427c367f030d19c0e38a79c5794fb3452f"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/tool-mutation.ts",
+      "bytes": 19087,
+      "sha256": "9b9a48d993c7c58c78dc718b3a25e4dec58c3991dacdb94ae4ee99c39f17a829"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+      "bytes": 20936,
+      "sha256": "e8dea0df24d97d4c65d45cc2179f05d2c8d73c97b1877dc3c9f0bf2b7153e780"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/workspace.ts",
+      "bytes": 40332,
+      "sha256": "2cf786efa535833caa80f480ef0409f4e18a98376483b3485c0bc9e808873dde"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/shared/task-system/runtime.ts",
+      "bytes": 11559,
+      "sha256": "f6de136f3e3bca90cc102e2ff419b11317294961f0afd9a2eb7e8afb364c74b6"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/shared/task-system/store.ts",
+      "bytes": 127543,
+      "sha256": "9c5313702ebf2fd946d4606939c970ee0142a487427744dbad02d0f59ef8f05c"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/shared/task-system/types.ts",
+      "bytes": 7418,
+      "sha256": "3d83c143e3773da0324710a6ef8b34326b00608099f7b3cf8a8a5ea184b580ac"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/shared/types/workspace.ts",
+      "bytes": 15976,
+      "sha256": "1c8f210da0d3291495d548e7fd04f701e600e810ddfb035db7831752afc4eb68"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/e2e/project-closeout.spec.ts",
+      "bytes": 17473,
+      "sha256": "73762f0f7852e30186592d3833b4d2fbd48945bf1bff9a45bbd5f08214984d92"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/autonomy-worktree-integration.test.ts",
+      "bytes": 119842,
+      "sha256": "2f6b978b6b731fcc9d46c5a50dd52b9d991991c45a7a784e63ac4a2f59e2daf1"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-acceptance.test.ts",
+      "bytes": 37251,
+      "sha256": "c47936800b89fa450af9be937dcfafe1811ca146da02165c81f92e42ebc3e4b5"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-delegation.test.ts",
+      "bytes": 9436,
+      "sha256": "91c0847ab06cfa6a6f8bd9b7b418c323698643f37803594a2c1830a31627466f"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-review-wiring.test.ts",
+      "bytes": 4258,
+      "sha256": "809831d8b2d3cc59d26fa5ae6bc457b61152fa56ac1d8b27c7ff212d6a82502e"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-review.test.ts",
+      "bytes": 4395,
+      "sha256": "5c538c91cb48beb82686142562d00c1fd339b8ca773b8c8dbec9c1a5fae877be"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-runtime.test.ts",
+      "bytes": 24038,
+      "sha256": "b85f100aa848ec222e582a16e9eb9bd49ae19fb728911ca8b5cf475b1b9d29c3"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/role-spawn.test.ts",
+      "bytes": 25361,
+      "sha256": "b59e3a7f74903c69a98d3740961f2488bbab58349abc61d8f8a46c7f869acf5f"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/session-task-scope-completion.test.ts",
+      "bytes": 49330,
+      "sha256": "7a718c1018833a9d24cd4dd929d72a9ba4f8a23e10581cd92b6b18d792e1cc0b"
+    }
+  ],
+  "dependencyReuse": "Existing installed node_modules; no fresh install.",
+  "runner": {
+    "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/run-final.ps1",
+    "bytes": 4294,
+    "sha256": "c6b41fdb3b5356e58738f233b9d0b4b855559fc740fa5266053ddded6eccf313"
+  },
+  "collector": {
+    "path": "D:/tmp/tf0678-20261119-01a1f347/collect-final.mjs",
+    "bytes": 8093,
+    "sha256": "a3f15499448106c2dcbaa96cb1fd4b78f8e98450cacd8812290a26acff644c3e"
+  },
+  "scope": "Windows source Electron/Gateway, deterministic local provider and native Git integration",
+  "configurationInputs": [
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "9a36ae57be4028d929b42b1461c67f3913fccdfb8e30c0bfe24b9379afab1ac4"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "663afb8ca136834971505684403b8c98a0665e20b20d6ba9eec4a69abbfa9b0e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "07ec23b416fb92c5c3a9d311dbcf71719e6e3670dc8f1370979a151c5a32df16"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "2cd607585ca31082af882c3a55f4edb11842c4a81e275f391dc7773c949ee804"
+    },
+    {
+      "path": "vitest.task-system.config.ts",
+      "sha256": "a0401b337b78e43f480043a6142b2104e4eccee1f6e5832406bf85146a7e1a2b"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+    },
+    {
+      "path": "tsconfig.test.json",
+      "sha256": "c4953d93389d317eb2746b3fe6334e7a99cb109142e4dcef63ee779f3fc6f97d"
+    }
+  ],
+  "environment": {
+    "platform": "win32",
+    "node": "v24.22.1",
+    "timezone": "Asia/Shanghai",
+    "runtime": "source",
+    "provider": "local deterministic OpenAI-compatible fixture",
+    "temporaryRoot": "D:/tmp",
+    "dependencies": "reused installed dependencies"
+  }
+}

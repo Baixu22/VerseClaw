@@ -1,0 +1,115 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0678",
+  "realHumanEvidence": false,
+  "schema": "clawx.project-closeout/v1",
+  "node": "TF-0678",
+  "candidate": {
+    "commit": "acb6869d46a5ce44815d33d35ee256bea5218cbc",
+    "tree": "b8a78ca602fd61661a3832b56f8e55773742982f",
+    "dirty": false
+  },
+  "verdict": {
+    "functional": "passed",
+    "repositoryHarnessCi": "failed"
+  },
+  "counts": {
+    "unit": 271,
+    "electron": 1,
+    "failures": 0,
+    "requiredSkips": 0,
+    "integrationCasesNotSelected": 103
+  },
+  "facts": {
+    "repairs": 1,
+    "workerSessions": 2,
+    "reviewerSessions": 2,
+    "acceptedEvents": 1,
+    "oldCandidateCheckExit": 1,
+    "newCandidateCheckExit": 0,
+    "integratedCheckExit": 0
+  },
+  "unmeasured": [
+    "Live-provider task quality",
+    "Installed distribution and other operating systems",
+    "Whole-repository performance acceptance"
+  ],
+  "rawRun": "D:/tmp/tf0678-20261119-01a1f347/final-r2",
+  "generatedAt": "2026-11-19T17:46:56.237Z",
+  "repositoryHarnessCi": {
+    "exitCode": 1,
+    "baselineTestsPassed": 59,
+    "disqualifiers": [
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:workbench",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-workbench/evidence.json is 26.66h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/report.json is 26.66h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test-history",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/history.json is 26.66h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:quality",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-quality/report.json is 26.66h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "latest-decision-blocked",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "Latest deep-test decision is blocked: typecheck, playwright-agent-dev, contract exceeded hard performance limits.",
+        "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:typecheck",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "typecheck exceeded hard limit: 68533ms > 45000ms.",
+        "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:playwright-agent-dev",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "playwright-agent-dev exceeded hard limit: 46635ms > 40000ms.",
+        "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:contract",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "contract exceeded hard limit: 3388ms > 3000ms.",
+        "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+      }
+    ],
+    "log": {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/harness-ci.log",
+      "sha256": "69bcb6c26f0ab32586aecdf6744840738661beb8af5b3083bb4d7d42cd8b0eff",
+      "bytes": 25530
+    }
+  },
+  "reviewSourceBinding": "All reviewed source SHA-256 values match the delivered candidate files."
+}

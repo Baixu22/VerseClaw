@@ -1,0 +1,2062 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0678",
+  "realHumanEvidence": false,
+  "candidate": "acb6869d46a5ce44815d33d35ee256bea5218cbc",
+  "product": {
+    "driven_by": "agent",
+    "tree": "b8a78ca602fd61661a3832b56f8e55773742982f",
+    "candidate": "acb6869d46a5ce44815d33d35ee256bea5218cbc",
+    "actor": "codex-tf0678",
+    "steps": [
+      {
+        "elapsedMs": 35636,
+        "exit": 0,
+        "name": "build-runtime",
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "command": [
+          "pnpm",
+          "run",
+          "build:runtime"
+        ]
+      },
+      {
+        "elapsedMs": 77559,
+        "exit": 0,
+        "name": "build-vite",
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "command": [
+          "pnpm",
+          "run",
+          "build:vite"
+        ]
+      },
+      {
+        "elapsedMs": 227312,
+        "exit": 0,
+        "name": "electron",
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "command": [
+          "node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "tests/e2e/project-closeout.spec.ts",
+          "--workers=1",
+          "--retries=0",
+          "--output=D:/tmp/tf0678-20261119-01a1f347/final-r2/electron",
+          "--reporter=line,json"
+        ]
+      }
+    ],
+    "dirty": false
+  },
+  "support": {
+    "driven_by": "agent",
+    "actor": "codex-tf0678",
+    "candidate": "acb6869d46a5ce44815d33d35ee256bea5218cbc",
+    "tree": "b8a78ca602fd61661a3832b56f8e55773742982f",
+    "dirty": false,
+    "steps": [
+      {
+        "elapsedMs": 27077,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "typecheck",
+        "command": [
+          "node",
+          "scripts/typecheck-agent-dev.mjs"
+        ]
+      },
+      {
+        "elapsedMs": 43514,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "task-units",
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.task-system.config.ts",
+          "--reporter=json",
+          "--outputFile=D:/tmp/tf0678-20261119-01a1f347/final-r2/task-units.json"
+        ]
+      },
+      {
+        "elapsedMs": 5416,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "completion-gates",
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/autonomy-task-completion.test.ts",
+          "tests/unit/orchestration-gates.test.ts",
+          "--reporter=json",
+          "--outputFile=D:/tmp/tf0678-20261119-01a1f347/final-r2/completion-gates.json"
+        ]
+      },
+      {
+        "elapsedMs": 37876,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "integration",
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/autonomy-worktree-integration.test.ts",
+          "--testNamePattern=repairs a failed worker check|verifies two real worker results|keeps an in-process worker in its original task domain|releases only a settled isolated child writer",
+          "--reporter=json",
+          "--outputFile=D:/tmp/tf0678-20261119-01a1f347/final-r2/integration.json"
+        ]
+      },
+      {
+        "elapsedMs": 14315,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "runtime-spawn",
+        "command": [
+          "pnpm",
+          "--dir",
+          "openclaw_runtime",
+          "exec",
+          "vitest",
+          "run",
+          "--config",
+          "test/vitest/vitest.agents-core.config.ts",
+          "src/agents/subagent-spawn.test.ts",
+          "src/agents/tool-mutation.test.ts",
+          "--reporter=json",
+          "--outputFile=D:/tmp/tf0678-20261119-01a1f347/final-r2/runtime-spawn.json"
+        ]
+      },
+      {
+        "elapsedMs": 25443,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "worker-bridge",
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/unified-effect-admission.test.ts",
+          "tests/unit/role-spawn.test.ts",
+          "tests/unit/session-task-scope-completion.test.ts",
+          "--reporter=json",
+          "--outputFile=D:/tmp/tf0678-20261119-01a1f347/final-r2/worker-bridge.json"
+        ]
+      },
+      {
+        "elapsedMs": 3049,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "contract",
+        "command": [
+          "pnpm",
+          "run",
+          "contract:check"
+        ]
+      },
+      {
+        "elapsedMs": 1356,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "comms-replay",
+        "command": [
+          "pnpm",
+          "run",
+          "comms:replay"
+        ]
+      },
+      {
+        "elapsedMs": 1247,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "comms-compare",
+        "command": [
+          "pnpm",
+          "run",
+          "comms:compare"
+        ]
+      },
+      {
+        "elapsedMs": 1247,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "harness-validate",
+        "command": [
+          "node",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/project-coordinator-closeout.md"
+        ]
+      },
+      {
+        "elapsedMs": 1071,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "harness-dry-run",
+        "command": [
+          "node",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/project-coordinator-closeout.md",
+          "--dry-run"
+        ]
+      },
+      {
+        "elapsedMs": 32458,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 1,
+        "name": "harness-ci",
+        "command": [
+          "pnpm",
+          "run",
+          "harness:ci"
+        ]
+      },
+      {
+        "elapsedMs": 1346,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "evidence-links",
+        "command": [
+          "pnpm",
+          "run",
+          "repo:evidence:check"
+        ]
+      },
+      {
+        "elapsedMs": 1655,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "coverage-baseline",
+        "command": [
+          "pnpm",
+          "run",
+          "repo:test-coverage:check"
+        ]
+      },
+      {
+        "elapsedMs": 4960,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "exit": 0,
+        "name": "retention",
+        "command": [
+          "pnpm",
+          "run",
+          "repo:artifacts:check"
+        ]
+      }
+    ]
+  },
+  "suites": [
+    {
+      "name": "task-units",
+      "source": {
+        "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/task-units.json",
+        "bytes": 60289,
+        "sha256": "0a85b6bd99f012966d0d3f7cbc91429b1da44d5ef04a5a21e6056b8516632077"
+      },
+      "total": 163,
+      "passed": 163,
+      "failed": 0,
+      "notSelected": 0,
+      "cases": [
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners preserves ordinary task resubmission and revision after a generic observer",
+          "status": "passed",
+          "duration": 73.97069999999985
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners binds a review to the submitted candidate even when the files are identical",
+          "status": "passed",
+          "duration": 74.91349999999989
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners does not fall back to an old pass while a new reviewer is pending",
+          "status": "passed",
+          "duration": 79.47569999999996
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects a pass without candidate reads and accepts only complete matching read ranges",
+          "status": "passed",
+          "duration": 57.4371000000001
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects another generic observer for the same submitted candidate",
+          "status": "passed",
+          "duration": 87.7487000000001
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners requires an explicit repair budget when creating an independent review contract",
+          "status": "passed",
+          "duration": 36.252500000000055
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects an independent review contract without input files: undefined",
+          "status": "passed",
+          "duration": 45.13639999999987
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects an independent review contract without input files: undefined",
+          "status": "passed",
+          "duration": 38.18100000000004
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners keeps the original failing check and scope after entering repair",
+          "status": "passed",
+          "duration": 82.48180000000002
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects a verifier receipt from an earlier repaired submission even after acceptance",
+          "status": "passed",
+          "duration": 185.9780999999998
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners recovers a missing dispatch response from the terminal reservation-bound reviewer",
+          "status": "passed",
+          "duration": 74.58649999999989
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners recovers a error dispatch response from the terminal reservation-bound reviewer",
+          "status": "passed",
+          "duration": 108.17349999999988
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners preserves the independent review requirement during a repair revision: remove",
+          "status": "passed",
+          "duration": 65.48010000000022
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners preserves the independent review requirement during a repair revision: replace-files",
+          "status": "passed",
+          "duration": 72.48210000000017
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners keeps the new submitted reviewer selected when an older completion replays late",
+          "status": "passed",
+          "duration": 246.28510000000006
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners cannot reroll a zero-budget review through candidate renaming, revision or handoff",
+          "status": "passed",
+          "duration": 180.80470000000014
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners allows a current successor to consume the retained review budget after handoff",
+          "status": "passed",
+          "duration": 341.7626
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners allows a current successor to consume the retained review budget after pause-resume",
+          "status": "passed",
+          "duration": 329.5135
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners preserves review provenance after an idle zero-budget lease expires via accept",
+          "status": "passed",
+          "duration": 267.59289999999964
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners preserves review provenance after an idle zero-budget lease expires via recover",
+          "status": "passed",
+          "duration": 285.27720000000045
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners does not restore a review lease while its old run is still registered",
+          "status": "passed",
+          "duration": 92.32330000000002
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners reconciles the exited process of an interrupted review without changing candidate provenance",
+          "status": "passed",
+          "duration": 476.14150000000063
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners replays repair after lease renewal using only stable writer identity",
+          "status": "passed",
+          "duration": 92.32300000000032
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects wrong-run verifier provenance",
+          "status": "passed",
+          "duration": 113.23540000000048
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects wrong-generation verifier provenance",
+          "status": "passed",
+          "duration": 115.17849999999999
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects implementer verifier provenance",
+          "status": "passed",
+          "duration": 78.31869999999981
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects a candidate changed before reviewer dispatch as well as missing files",
+          "status": "passed",
+          "duration": 291.48349999999937
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners allows observer dispatch during review while retaining the writer fence",
+          "status": "passed",
+          "duration": 289.34290000000055
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners persists a single repair across restart and invalidates checks even for unchanged files",
+          "status": "passed",
+          "duration": 141.57930000000033
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners retains review admission and refuses an unknown dispatch retry after reopening",
+          "status": "passed",
+          "duration": 94.6893
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners does not bypass the repair budget by resuming or removing it from the contract",
+          "status": "passed",
+          "duration": 84.07600000000002
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners retries a known dispatch refusal without spending a repair: undefined",
+          "status": "passed",
+          "duration": 98.04749999999967
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners retries a known dispatch refusal without spending a repair: allocated-but-never-dispatched",
+          "status": "passed",
+          "duration": 80.41479999999956
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners keeps an error dispatch fenced across a renamed candidate: {}",
+          "status": "passed",
+          "duration": 66.14630000000034
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners keeps an error dispatch fenced across a renamed candidate: {\"runId\":\"unconfirmed\",\"childSessionKey\":\"unconfirmed-child\"}",
+          "status": "passed",
+          "duration": 66.85560000000078
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners only lets the reservation owner attach a reviewer and retains a late immutable refusal",
+          "status": "passed",
+          "duration": 82.35729999999967
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners records a known refusal after cancellation without changing task state",
+          "status": "passed",
+          "duration": 67.70489999999972
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners leaves the verifier slot free after a normal read-only observer",
+          "status": "passed",
+          "duration": 225.41480000000047
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners permits a trusted pre-dispatch error to retry without relaxing an ambiguous error",
+          "status": "passed",
+          "duration": 74.8132999999998
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners reads an existing accepted receipt without submission metadata only for a single unambiguous submission",
+          "status": "passed",
+          "duration": 235.29770000000008
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners reconciles an unknown effect only from a matching terminal receipt owned by the runtime",
+          "status": "passed",
+          "duration": 219.28210000000036
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners requires an independent verifier run bound to the unchanged input snapshot",
+          "status": "passed",
+          "duration": 265.09570000000076
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners reads actual evidence, records an existing effect receipt, and accepts only the current candidate",
+          "status": "passed",
+          "duration": 210.5005000000001
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects artifacts changed after the requirement was checked",
+          "status": "passed",
+          "duration": 173.01919999999973
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners does not accept caller-chosen unknown owners",
+          "status": "passed",
+          "duration": 81.17340000000058
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects new generations and unresolved operations before completing",
+          "status": "passed",
+          "duration": 99.7538999999988
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "TaskSystemStore authority access rejects stale authority on construction, reads, and writes without changing the ledger",
+          "status": "passed",
+          "duration": 71.82040000000006
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "TaskSystemStore authority access rejects an access domain mismatch before opening the database",
+          "status": "passed",
+          "duration": 2.089800000000082
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "TaskSystemStore authority access rejects an execution worktree mismatch before opening the database",
+          "status": "passed",
+          "duration": 2.8197999999999865
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "TaskSystemStore authority access rejects other authorities and allows one authority across physical checkouts",
+          "status": "passed",
+          "duration": 91.33230000000003
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "rechecks real authority after another process releases SQLite (unchanged)",
+          "status": "passed",
+          "duration": 1789.5397
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "rechecks real authority after another process releases SQLite (removed)",
+          "status": "passed",
+          "duration": 1134.6019999999999
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "rechecks real authority after another process releases SQLite (replaced)",
+          "status": "passed",
+          "duration": 1371.6733
+        },
+        {
+          "file": "tests/unit/durable-task-coordinator-context.test.ts",
+          "name": "recovers a fork's read reference from owner lineage without copying its parent's writer",
+          "status": "passed",
+          "duration": 640.9868000000001
+        },
+        {
+          "file": "tests/unit/durable-task-coordinator-context.test.ts",
+          "name": "rehydrates a coordinator read reference using the parent generation while a child owns the writer",
+          "status": "passed",
+          "duration": 98.24059999999986
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol does not transfer queued work until dispatch and rejects changed parent ownership",
+          "status": "passed",
+          "duration": 1850.3668
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence",
+          "status": "passed",
+          "duration": 1233.3799
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol retains ownership after lost dispatch acknowledgement and rejects a second writer",
+          "status": "passed",
+          "duration": 839.4135000000006
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol restores the delegation from disk and keeps unknown effects as a return barrier",
+          "status": "passed",
+          "duration": 837.4107000000004
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol rejects reservation-backed review after the parent task is cancelled",
+          "status": "passed",
+          "duration": 580.7241000000004
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol gives a verifier a read reference without transferring writer or blocking the parent",
+          "status": "passed",
+          "duration": 741.3592000000008
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol does not return writing authority to a reset parent generation",
+          "status": "passed",
+          "duration": 660.6861000000008
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration reuses the current projection and invalidates it after an appended event",
+          "status": "passed",
+          "duration": 137.2314
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration deduplicates event-level keys while preserving new logical requests",
+          "status": "passed",
+          "duration": 87.1508
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration imports old IDs, leaves original bytes intact, and appends in one owner store",
+          "status": "passed",
+          "duration": 110.86170000000004
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration replays a single session-link batch using the original generated ID",
+          "status": "passed",
+          "duration": 120.57839999999999
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration rejects corrupt legacy history instead of presenting an empty task graph",
+          "status": "passed",
+          "duration": 78.49660000000006
+        },
+        {
+          "file": "tests/unit/durable-task-faults.test.ts",
+          "name": "task owner fault boundaries rejects a busy claim transaction then resumes the same request without a partial owner",
+          "status": "passed",
+          "duration": 3398.9100000000003
+        },
+        {
+          "file": "tests/unit/durable-task-faults.test.ts",
+          "name": "task owner fault boundaries blocks writes on a corrupt database while preserving its bytes for recovery",
+          "status": "passed",
+          "duration": 82.41460000000006
+        },
+        {
+          "file": "tests/unit/durable-task-faults.test.ts",
+          "name": "task owner fault boundaries handles clock rollback conservatively without losing the task or admitting a second owner",
+          "status": "passed",
+          "duration": 71.28639999999996
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition replays committed changes after a missed acknowledgement and rejects a stale consumer cursor",
+          "status": "passed",
+          "duration": 69.54930000000002
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition paginates a frozen insertion window without hiding old tasks behind new arrivals",
+          "status": "passed",
+          "duration": 60.11559999999997
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition suggests overlapping goals without merging their identities",
+          "status": "passed",
+          "duration": 51.887
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition decomposes atomically, retains the original goal and gates the parent on accepted children",
+          "status": "passed",
+          "duration": 104.97399999999993
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition rolls back every child when the plan contains an invalid dependency",
+          "status": "passed",
+          "duration": 35.55680000000007
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition rehydrates the root goal through multiple decompositions and retains valid progress JSON",
+          "status": "passed",
+          "duration": 57.11900000000003
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition cancels a whole plan only after child effects settle and replays the final effect receipt",
+          "status": "passed",
+          "duration": 61.646400000000085
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition retires settled children explicitly before revising a parent plan",
+          "status": "passed",
+          "duration": 54.92399999999998
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition rejects cycles that cross a parent-child plan edge",
+          "status": "passed",
+          "duration": 38.09659999999997
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning takes planning scope from the Workspace owner and fences stale Runtime calls",
+          "status": "passed",
+          "duration": 621.6492999999999
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning releases a settled failed writer without accepting its task or unlocking its dependents",
+          "status": "passed",
+          "duration": 96.89449999999988
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning holds a cancelling project writer until its worker and effects both settle",
+          "status": "passed",
+          "duration": 67.36030000000005
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning checks the active Workspace and live generation before claiming, including on replay",
+          "status": "passed",
+          "duration": 81.9683
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning persists the plan, provisional facts and dependencies across reopen and idempotent retries",
+          "status": "passed",
+          "duration": 51.62950000000001
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning selects a dependency-ready child in plan order and fences replays after handoff or completion",
+          "status": "passed",
+          "duration": 96.28480000000013
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning does not admit work in a new plan while a previous plan child has a writer",
+          "status": "passed",
+          "duration": 45.77300000000014
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning keeps settled tasks and evidence when replacing a revision without recycling child identities",
+          "status": "passed",
+          "duration": 81.26909999999998
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning rolls back cyclic, missing and foreign dependencies without leaving any tasks",
+          "status": "passed",
+          "duration": 43.4686999999999
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning uses the Workspace owner binding and rejects another checkout, generation or duplicate coordinator",
+          "status": "passed",
+          "duration": 40.0628999999999
+        },
+        {
+          "file": "tests/unit/durable-task-review-wiring.test.ts",
+          "name": "denies review dispatch when deny-only policy removes both delegation tools",
+          "status": "passed",
+          "duration": 794.1499999999996
+        },
+        {
+          "file": "tests/unit/durable-task-review-wiring.test.ts",
+          "name": "dispatches review through the existing spawn path with the final read-only allowlist",
+          "status": "passed",
+          "duration": 177.29899999999907
+        },
+        {
+          "file": "tests/unit/durable-task-review.test.ts",
+          "name": "dispatches a read-only role using the submitted files and replays one durable receipt",
+          "status": "passed",
+          "duration": 556.7281000000003
+        },
+        {
+          "file": "tests/unit/durable-task-review.test.ts",
+          "name": "rejects a parent without both read and delegation authority: undefined",
+          "status": "passed",
+          "duration": 84.27709999999979
+        },
+        {
+          "file": "tests/unit/durable-task-review.test.ts",
+          "name": "rejects a parent without both read and delegation authority: \"read\"",
+          "status": "passed",
+          "duration": 79.19259999999986
+        },
+        {
+          "file": "tests/unit/durable-task-review.test.ts",
+          "name": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+          "status": "passed",
+          "duration": 68.96150000000034
+        },
+        {
+          "file": "tests/unit/durable-task-review.test.ts",
+          "name": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+          "status": "passed",
+          "duration": 99.16039999999975
+        },
+        {
+          "file": "tests/unit/durable-task-review.test.ts",
+          "name": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+          "status": "passed",
+          "duration": 73.88030000000026
+        },
+        {
+          "file": "tests/unit/durable-task-review.test.ts",
+          "name": "honors an explicit delegation denylist before reserving or spawning",
+          "status": "passed",
+          "duration": 75.35279999999966
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard credits read coverage only after an untruncated provider request returns successfully",
+          "status": "passed",
+          "duration": 163.89059999999972
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard credits a delivered base64 image and rejects an image removed by provider serialization",
+          "status": "passed",
+          "duration": 69.9305000000004
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard credits a delivered binary image and rejects an image removed by provider serialization",
+          "status": "passed",
+          "duration": 58.766999999999825
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard records actual read-tool evidence for utf8-bom candidates",
+          "status": "passed",
+          "duration": 59.552700000000186
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard records actual read-tool evidence for utf16-bom candidates",
+          "status": "passed",
+          "duration": 88.34079999999994
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard records actual read-tool evidence for image candidates",
+          "status": "passed",
+          "duration": 70.78970000000027
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard records actual read-tool evidence for paged candidates",
+          "status": "passed",
+          "duration": 90.90460000000076
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard records actual read-tool evidence for cr-lines candidates",
+          "status": "passed",
+          "duration": 63.406599999999344
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard records the actual read output of an observer across all candidate line ranges",
+          "status": "passed",
+          "duration": 82.13709999999992
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard executes the yield callback while a submitted candidate waits for independent review",
+          "status": "passed",
+          "duration": 107.82819999999992
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard requires a task before the first write even when no task database exists yet",
+          "status": "passed",
+          "duration": 3.912199999999757
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard records cancellation immediately and waits for the in-flight owner before releasing the task",
+          "status": "passed",
+          "duration": 64.50500000000011
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard blocks retries after a background effect until the real process owner reports completion",
+          "status": "passed",
+          "duration": 59.309299999999894
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard restores a goal created during the run after ten compacted contexts without duplicating it",
+          "status": "passed",
+          "duration": 165.53699999999935
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard does not grant a fork or unbound session write access in a managed repository",
+          "status": "passed",
+          "duration": 37.120200000000295
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard adopts only a new initial binding, then keeps its epoch pinned",
+          "status": "passed",
+          "duration": 89.40200000000004
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard captures the old epoch and refuses execution after handoff",
+          "status": "passed",
+          "duration": 57.31049999999959
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard binds a real tool result to unchanged verification inputs",
+          "status": "passed",
+          "duration": 80.3159999999998
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner reads project plans only through the current Workspace coordinator binding",
+          "status": "passed",
+          "duration": 660.8391999999999
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner reads actual verifier receipts without promoting a doing task to accepted",
+          "status": "passed",
+          "duration": 156.23580000000015
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner fences worker acceptance reads before and after a session generation changes",
+          "status": "passed",
+          "duration": 218.3554999999999
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner keeps the task owner readable when generation check 1 takes twelve seconds",
+          "status": "passed",
+          "duration": 293.7039999999997
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner keeps the task owner readable when generation check 2 takes twelve seconds",
+          "status": "passed",
+          "duration": 149.6230999999998
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects effects without a contract without creating a database",
+          "status": "passed",
+          "duration": 4.104699999999866
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner reuses the canonical TaskID and writer attempt across admission retries",
+          "status": "passed",
+          "duration": 154.83979999999974
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects a legacy reference without inventing a contract or upgrading its state",
+          "status": "passed",
+          "duration": 86.75859999999966
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects a second writer and a stale generation at the new entry point",
+          "status": "passed",
+          "duration": 134.29849999999988
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner keeps fork references read only until an explicit new owner is granted",
+          "status": "passed",
+          "duration": 130.09299999999985
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner uses the existing handoff epoch and fences the previous credential",
+          "status": "passed",
+          "duration": 199.33899999999994
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner retains the old owner while an effect is still unresolved",
+          "status": "passed",
+          "duration": 128.15999999999985
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner keeps an accepted task closed when selected for another effect",
+          "status": "passed",
+          "duration": 134.23319999999967
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner retains task identity and writer exclusivity when runtime bootstrap initializes Git",
+          "status": "passed",
+          "duration": 623.6826000000001
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects conflicting stores after repository initialization",
+          "status": "passed",
+          "duration": 176.6624999999999
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects a conflicting explicit task instead of reverting the selection",
+          "status": "passed",
+          "duration": 85.80069999999978
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner selects another canonical task without changing its state and grants only its next execution",
+          "status": "passed",
+          "duration": 149.04329999999936
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner retains the current task when an execution or an unknown operation blocks selection",
+          "status": "passed",
+          "duration": 148.4417000000003
+        },
+        {
+          "file": "tests/unit/durable-task-start.test.ts",
+          "name": "starts and binds an execution task in one tool call and reuses the original attempt on retry",
+          "status": "passed",
+          "duration": 533.0820000000001
+        },
+        {
+          "file": "tests/unit/durable-task-start.test.ts",
+          "name": "rolls back a proposed task if the session is already implementing another task",
+          "status": "passed",
+          "duration": 39.24409999999989
+        },
+        {
+          "file": "tests/unit/durable-task-start.test.ts",
+          "name": "rejects a duplicate writer through the automatic start path and preserves the first claim",
+          "status": "passed",
+          "duration": 96.24530000000004
+        },
+        {
+          "file": "tests/unit/durable-task-start.test.ts",
+          "name": "reads only the owning session generation, including its cancelled task",
+          "status": "passed",
+          "duration": 139.45080000000007
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+          "status": "passed",
+          "duration": 134.21089999999998
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+          "status": "passed",
+          "duration": 207.16500000000002
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership replaces an exited process's run without replacing its task owner or checkpoint",
+          "status": "passed",
+          "duration": 891.1723
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (undefined)",
+          "status": "passed",
+          "duration": 135.62019999999984
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (EPERM)",
+          "status": "passed",
+          "duration": 147.37300000000005
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership retains the old run after process exit while an effect is started",
+          "status": "passed",
+          "duration": 140.7405000000001
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership retains the old run after process exit while an effect is unknown",
+          "status": "passed",
+          "duration": 136.48779999999988
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+          "status": "passed",
+          "duration": 87.71569999999974
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership refuses a changed contract for the same business key",
+          "status": "passed",
+          "duration": 74.74789999999985
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+          "status": "passed",
+          "duration": 86.66499999999996
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership rejects a second owner and a stale revision",
+          "status": "passed",
+          "duration": 81.32270000000017
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership does not convert lease expiration into automatic reassignment",
+          "status": "passed",
+          "duration": 98.47119999999995
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+          "status": "passed",
+          "duration": 83.82589999999982
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership enforces dependencies and rejects cycles",
+          "status": "passed",
+          "duration": 87.5607
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+          "status": "passed",
+          "duration": 111.83200000000033
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership does not let a file hash satisfy a business verification requirement",
+          "status": "passed",
+          "duration": 152.8376000000003
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership uses one task domain for two real Git worktrees",
+          "status": "passed",
+          "duration": 520.6589000000004
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+          "status": "passed",
+          "duration": 135.75390000000016
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+          "status": "passed",
+          "duration": 111.13329999999996
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+          "status": "passed",
+          "duration": 149.7192
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+          "status": "passed",
+          "duration": 102.97850000000017
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+          "status": "passed",
+          "duration": 127.05880000000025
+        },
+        {
+          "file": "tests/unit/durable-task-tool.test.ts",
+          "name": "agent-facing production task tool creates, claims, executes a real check, and accepts its owner-produced receipt",
+          "status": "passed",
+          "duration": 1062.1594000000005
+        },
+        {
+          "file": "tests/unit/durable-task-tool.test.ts",
+          "name": "agent-facing production task tool does not let an old task tool take control of a newer epoch",
+          "status": "passed",
+          "duration": 89.44200000000001
+        },
+        {
+          "file": "tests/unit/durable-task-tool.test.ts",
+          "name": "agent-facing production task tool revises an explicitly changed goal with optimistic versioning and fences the previous run",
+          "status": "passed",
+          "duration": 139.9973
+        }
+      ]
+    },
+    {
+      "name": "completion-gates",
+      "source": {
+        "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/completion-gates.json",
+        "bytes": 7891,
+        "sha256": "6a2b4b3ae621d41606dc2ded20049716b811f4399b3c2c96427d3b3c9236d87b"
+      },
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "notSelected": 0,
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission admits only a same-task, same-candidate, same-generation approved verifier plus applied effect",
+          "status": "passed",
+          "duration": 6.361499999999978
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission rejects task_mismatch without a done transition",
+          "status": "passed",
+          "duration": 2.3588000000004286
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission rejects candidate_mismatch without a done transition",
+          "status": "passed",
+          "duration": 1.679200000000037
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission rejects generation_mismatch without a done transition",
+          "status": "passed",
+          "duration": 1.522399999999834
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission rejects verifier_not_approved without a done transition",
+          "status": "passed",
+          "duration": 1.066200000000208
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission rejects effect_not_applied without a done transition",
+          "status": "passed",
+          "duration": 1.4543000000003303
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission rejects evidence_mismatch without a done transition",
+          "status": "passed",
+          "duration": 1.700199999999768
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission rejects already_done without a done transition",
+          "status": "passed",
+          "duration": 1.4130999999997584
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission does not treat a completed status label or exit code as evidence",
+          "status": "passed",
+          "duration": 1.5222999999996318
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission rejects stale candidate and task evidence before a completion claim can be submitted",
+          "status": "passed",
+          "duration": 1.3453999999996995
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 bounded task completion admission never grants publish or product-lock authority in the admitted shape",
+          "status": "passed",
+          "duration": 2.0022000000003572
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 Task Ledger owner-backed completion rejects caller-authored coherent digests when no owner receipt exists",
+          "status": "passed",
+          "duration": 162.48619999999983
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 Task Ledger owner-backed completion rejects malformed owner references without writing done",
+          "status": "passed",
+          "duration": 156.65959999999995
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 Task Ledger owner-backed completion projects digest-only completion metadata when a valid owner-backed claim is supplied by the owner seam",
+          "status": "passed",
+          "duration": 2.26279999999997
+        },
+        {
+          "file": "tests/unit/autonomy-task-completion.test.ts",
+          "name": "A3 contract and evidence boundary keeps the completion contract, boundary rule, and evidence manifest bound on disk",
+          "status": "passed",
+          "duration": 6.992999999999938
+        },
+        {
+          "file": "tests/unit/orchestration-gates.test.ts",
+          "name": "orchestration gates passes a well-formed verified bundle",
+          "status": "passed",
+          "duration": 3.083799999999883
+        },
+        {
+          "file": "tests/unit/orchestration-gates.test.ts",
+          "name": "orchestration gates fails a successful worker outcome without evidence",
+          "status": "passed",
+          "duration": 1.309900000000198
+        },
+        {
+          "file": "tests/unit/orchestration-gates.test.ts",
+          "name": "orchestration gates fails a bundle without required ids",
+          "status": "passed",
+          "duration": 1.0182999999997264
+        },
+        {
+          "file": "tests/unit/orchestration-gates.test.ts",
+          "name": "orchestration gates normalizes verifier fail decisions",
+          "status": "passed",
+          "duration": 0.6300999999998567
+        },
+        {
+          "file": "tests/unit/orchestration-gates.test.ts",
+          "name": "orchestration gates normalizes verifier repair_required and allows only attempt 1 repair",
+          "status": "passed",
+          "duration": 1.567199999999957
+        },
+        {
+          "file": "tests/unit/orchestration-gates.test.ts",
+          "name": "orchestration gates blocks a second automatic repair decision",
+          "status": "passed",
+          "duration": 0.4453000000003158
+        },
+        {
+          "file": "tests/unit/orchestration-gates.test.ts",
+          "name": "orchestration gates keeps first repair allowed and second repair exhausted under the P0 cap",
+          "status": "passed",
+          "duration": 0.5460000000002765
+        }
+      ]
+    },
+    {
+      "name": "integration",
+      "source": {
+        "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/integration.json",
+        "bytes": 36087,
+        "sha256": "212dd71341c57d1ee51fdd52d0a3d207f5f66fa654f289741d89726a260de6c0"
+      },
+      "total": 107,
+      "passed": 4,
+      "failed": 0,
+      "notSelected": 103,
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-worktree-integration.test.ts",
+          "name": "R4 durable worktree integration keeps an in-process worker in its original task domain during workspace bootstrap",
+          "status": "passed",
+          "duration": 1085.2019
+        },
+        {
+          "file": "tests/unit/autonomy-worktree-integration.test.ts",
+          "name": "R4 durable worktree integration releases only a settled isolated child writer after task return so integration can acquire it",
+          "status": "passed",
+          "duration": 1122.0984999999991
+        },
+        {
+          "file": "tests/unit/autonomy-worktree-integration.test.ts",
+          "name": "R4 durable worktree integration verifies two real worker results on the newly frozen candidate instead of the old base",
+          "status": "passed",
+          "duration": 15022.418300000001
+        },
+        {
+          "file": "tests/unit/autonomy-worktree-integration.test.ts",
+          "name": "R4 durable worktree integration repairs a failed worker check and rechecks the exact integrated candidate",
+          "status": "passed",
+          "duration": 12494.748
+        }
+      ]
+    },
+    {
+      "name": "runtime-spawn",
+      "source": {
+        "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/runtime-spawn.json",
+        "bytes": 2357,
+        "sha256": "b4034f356c22b6c78b0d71143d04442181deb6a112dfc61a6cb76734941665bc"
+      },
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "notSelected": 0,
+      "cases": [
+        {
+          "file": "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+          "name": "B-3 v3 buildDirectChildSessionPatch writeSet persists a normalized spawnedWriteSet when provided",
+          "status": "passed",
+          "duration": 8.3770999999997
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+          "name": "B-3 v3 buildDirectChildSessionPatch writeSet omits spawnedWriteSet when absent or empty",
+          "status": "passed",
+          "duration": 0.530800000000454
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+          "name": "B-3 v3 buildDirectChildSessionPatch writeSet keeps non-writeSet spawn metadata intact",
+          "status": "passed",
+          "duration": 0.5285000000003492
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+          "name": "B-3 v3 buildDirectChildSessionPatch writeSet rejects parent-reset during preparation before dispatching the child",
+          "status": "passed",
+          "duration": 888.4880000000012
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+          "name": "B-3 v3 buildDirectChildSessionPatch writeSet rejects context-error during preparation before dispatching the child",
+          "status": "passed",
+          "duration": 104.6257000000005
+        }
+      ]
+    },
+    {
+      "name": "worker-bridge",
+      "source": {
+        "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/worker-bridge.json",
+        "bytes": 29358,
+        "sha256": "775f5cfedef932dfcb201436d30a8c95b70954dc394e0f89b07335de1a589f48"
+      },
+      "total": 77,
+      "passed": 77,
+      "failed": 0,
+      "notSelected": 0,
+      "cases": [
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role registry exposes built-in roles when no config roles are present",
+          "status": "passed",
+          "duration": 5.078199999999924
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role registry merges config roles and lets config override a built-in by name",
+          "status": "passed",
+          "duration": 2.1963000000000648
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role registry skips invalid config roles and records issues without throwing",
+          "status": "passed",
+          "duration": 1.9157000000000153
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role effort mapping maps role effort to a thinking level, with auto -> adaptive",
+          "status": "passed",
+          "duration": 1.3575999999998203
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role permissions policy denies write/edit/exec/bash when filesystem is read",
+          "status": "passed",
+          "duration": 2.152299999999741
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role permissions policy denies all fs tools + shell when filesystem is none",
+          "status": "passed",
+          "duration": 1.9063000000001011
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role permissions policy denies network tools when network is none",
+          "status": "passed",
+          "duration": 1.3521999999998116
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping compiles SOUL into the role system prompt",
+          "status": "passed",
+          "duration": 1.6817999999998392
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping maps model/effort/SOUL into spawn params",
+          "status": "passed",
+          "duration": 418.5934000000002
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping injects role memory through a context pack and records an explain entry",
+          "status": "passed",
+          "duration": 435.69639999999936
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping #183 counts the role-spawn memory injection it cannot charge to a turn budget",
+          "status": "passed",
+          "duration": 331.10030000000006
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping does not inject or record role memory when Role Memory is disabled",
+          "status": "passed",
+          "duration": 359.7358000000004
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping #183 skips the role-spawn memory block when the DCS projection owns it",
+          "status": "passed",
+          "duration": 348.0648000000001
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping #183 keeps the role-spawn memory block when the projection is off",
+          "status": "passed",
+          "duration": 337.2506000000003
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping sets a hard tool allowlist from the role tools + permission-derived deny",
+          "status": "passed",
+          "duration": 2.1619000000000597
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping spawns through an injected spawn fn and reports role-not-found",
+          "status": "passed",
+          "duration": 367.1184000000003
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "role-driven spawn mapping rechecks the authorized workspace immediately before the injected spawn",
+          "status": "passed",
+          "duration": 354.9450000000006
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "orchestrator run bridge spawns initial workers and defers verifier through orchestration metadata",
+          "status": "passed",
+          "duration": 952.2660000000005
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "orchestrator run bridge records failures when a spawn is rejected",
+          "status": "passed",
+          "duration": 441.08399999999983
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "orchestrator run bridge honors template roles and maxWorkers before spawning",
+          "status": "passed",
+          "duration": 405.1873999999998
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "orchestrator run bridge keeps production execution waves aligned with the plan write-set contract",
+          "status": "passed",
+          "duration": 496.7682999999997
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "orchestrator run bridge creates a worktree and passes its cwd to isolated workers",
+          "status": "passed",
+          "duration": 1401.9027000000006
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "orchestrator run bridge checks actual Git isolation after async preparation (tampered=false)",
+          "status": "passed",
+          "duration": 4915.276399999999
+        },
+        {
+          "file": "tests/unit/role-spawn.test.ts",
+          "name": "orchestrator run bridge checks actual Git isolation after async preparation (tampered=true)",
+          "status": "passed",
+          "duration": 1717.0039000000015
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract binds an in-process worker through its persisted worktree owner",
+          "status": "passed",
+          "duration": 1045.1527999999998
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract uses the canonical parent reference after transfer even before its navigation link was persisted",
+          "status": "passed",
+          "duration": 643.2991999999995
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract admits an owned child while the fenced parent run remains active",
+          "status": "passed",
+          "duration": 625.1936999999998
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects missing and incomplete contracts without creating a Legacy business task",
+          "status": "passed",
+          "duration": 391.3600999999999
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract starts a complete canonical contract through task_control without requiring a session bridge",
+          "status": "passed",
+          "duration": 573.2079000000012
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract associates a live isolated scheduled run with its canonical contract without replacing the project coordinator",
+          "status": "passed",
+          "duration": 597.7528000000002
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract uses a decomposed scheduled child contract under the recorded parent TaskRef",
+          "status": "passed",
+          "duration": 766.0275999999994
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a missing scheduled coordinator before claiming another task",
+          "status": "passed",
+          "duration": 457.1275999999998
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a stale scheduled coordinator before claiming another task",
+          "status": "passed",
+          "duration": 369.4964
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a paused scheduled coordinator before claiming another task",
+          "status": "passed",
+          "duration": 414.54849999999897
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects an isolated schedule from another workspace or agent before creating a task",
+          "status": "passed",
+          "duration": 224.0645999999997
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract consumes a canonical business contract after a failed turn left a diagnostic deviation link",
+          "status": "passed",
+          "duration": 652.8210999999992
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract selects an existing completed task and preserves its status and historical links",
+          "status": "passed",
+          "duration": 978.8774000000012
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract uses the captured worker parent TaskRef with a real child contract despite a later parent selection",
+          "status": "passed",
+          "duration": 724.4129999999986
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract pauses new dispatch while retaining the already admitted writer and workgroup ownership",
+          "status": "passed",
+          "duration": 539.1687999999995
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary",
+          "status": "passed",
+          "duration": 973.7358999999997
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract captures checkout execution revision while allowing the admitted run through coordinator pause",
+          "status": "passed",
+          "duration": 513.584499999999
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects effects on a completed canonical task, including after owner reconstruction",
+          "status": "passed",
+          "duration": 584.2489000000005
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a Legacy done node without creating a canonical replacement or changing it to doing",
+          "status": "passed",
+          "duration": 534.3582000000024
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token",
+          "status": "passed",
+          "duration": 764.4418000000005
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract does not release a live canonical claim because a new API instance or response settled",
+          "status": "passed",
+          "duration": 692.9435000000012
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects an old claim after canonical epoch rotation even when the Workspace cache still has it",
+          "status": "passed",
+          "duration": 382.22969999999987
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface",
+          "status": "passed",
+          "duration": 759.6906000000017
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects unknown session before writing a task",
+          "status": "passed",
+          "duration": 262.3736000000026
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects wrong root before writing a task",
+          "status": "passed",
+          "duration": 234.1965999999993
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects stale generation before writing a task",
+          "status": "passed",
+          "duration": 175.43119999999908
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects forged claim before writing a task",
+          "status": "passed",
+          "duration": 243.938900000001
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects foreign workspace identity and a changed session generation without manufacturing a replacement",
+          "status": "passed",
+          "duration": 646.5378000000019
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract fences a generation change while admission is awaiting its final live owner read",
+          "status": "passed",
+          "duration": 197.2969000000012
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract leaves a selected task unclaimed when the final run check fails",
+          "status": "passed",
+          "duration": 273.94910000000164
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a contract revision changed after resolution without claiming the revised task",
+          "status": "passed",
+          "duration": 260.0903999999973
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract blocks task selection and rebinding on session resources even without a Workspace writer",
+          "status": "passed",
+          "duration": 396.29369999999835
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract requires explicit canonical selection for multiple links and rejects an external reference as a task",
+          "status": "passed",
+          "duration": 695.453300000001
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract does not silently switch a running canonical task through coordinator rebinding",
+          "status": "passed",
+          "duration": 276.15669999999955
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract requires admission for unknown MCP effects and checks cancellation before execution",
+          "status": "passed",
+          "duration": 30.283300000002782
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract cancels an effect after Main admission without releasing or upgrading its canonical claim",
+          "status": "passed",
+          "duration": 312.1679000000004
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary retains one writer between tool calls and refuses another task before touching its file",
+          "status": "passed",
+          "duration": 1677.622800000001
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary retains unknown writes until the exact task owner receipt reconciles them",
+          "status": "passed",
+          "duration": 529.073699999999
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary transfers to a canonical child while the parent sessions_spawn call is still active",
+          "status": "passed",
+          "duration": 810.2947999999997
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary transfers to a canonical child while the parent mission_loop call is still active",
+          "status": "passed",
+          "duration": 884.2782000000007
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary transfers to a canonical child while the parent task_loop call is still active",
+          "status": "passed",
+          "duration": 908.1281000000017
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary retains a returned child checkout for the canonical parent rather than a third task",
+          "status": "passed",
+          "duration": 1171.6952999999994
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary permits reuse after the returned parent explicitly releases its task ownership",
+          "status": "passed",
+          "duration": 1140.0905000000002
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary retries deferred canonical return after the original process owner settles",
+          "status": "passed",
+          "duration": 856.5684000000019
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary compensates both permits when cancellation happens before the raw effect",
+          "status": "passed",
+          "duration": 465.23249999999825
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary keeps background ownership until the process and task owners have both settled",
+          "status": "passed",
+          "duration": 490.78700000000026
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary rotates a recovered same-run writer without reviving its old token",
+          "status": "passed",
+          "duration": 763.1068999999989
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary settles the exact completed process receipt after task cancellation advances the epoch",
+          "status": "passed",
+          "duration": 491.47879999999714
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary settles a process owner signal receipt without inventing a successful exit code",
+          "status": "passed",
+          "duration": 430.28579999999783
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary rejects stale captured task credentials at the raw effect boundary",
+          "status": "passed",
+          "duration": 310.04320000000007
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary settles an unused grant from durable writer state when the run terminates before receiving its reply",
+          "status": "passed",
+          "duration": 242.75340000000142
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary guards the actual adapter path (hook wrapped: false) exactly once",
+          "status": "passed",
+          "duration": 712.9378999999972
+        },
+        {
+          "file": "tests/unit/unified-effect-admission.test.ts",
+          "name": "joint task and checkout effect boundary guards the actual adapter path (hook wrapped: true) exactly once",
+          "status": "passed",
+          "duration": 549.931700000001
+        }
+      ]
+    }
+  ],
+  "electron": {
+    "source": {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/electron.json",
+      "bytes": 4844,
+      "sha256": "547bcade6f6f63d294a283001dfdd964cf8f9588b05705820985f8ccd6a62579"
+    },
+    "stats": {
+      "startTime": "2026-11-19T17:38:01.432Z",
+      "duration": 225610.04700000002,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "logs": [
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/build-runtime.log",
+      "bytes": 3172,
+      "sha256": "cf6009a46376248053af9185318dfbf44ab46994206ad22a4e08febe7952babd"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/build-vite.log",
+      "bytes": 56536,
+      "sha256": "d413a442d2674e77b59ee75e9bb44dcc4fd34512a0a83f074bb17f61cd578eaf"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/electron.log",
+      "bytes": 1429,
+      "sha256": "7454c00526155799f0b27d8ed321499942b81e04e952ded77325cdb6df745ca5"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/typecheck.log",
+      "bytes": 1569,
+      "sha256": "9df8f269cb5e004b3d702da98a8691629e2544dcaa5d14006699f59538e98508"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/task-units.log",
+      "bytes": 81,
+      "sha256": "77d23b957a333353947e3e93976f422458200a274855bf7ea59d34243f3403f5"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/completion-gates.log",
+      "bytes": 87,
+      "sha256": "2767c424b28d462eb2487af278867079b21a4893e06337bef18396a1bfae86f5"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/integration.log",
+      "bytes": 82,
+      "sha256": "693f18ea5c9a11a42bbade1723c867fea0d66c8931b4271c630d4c30ce15d3cd"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/runtime-spawn.log",
+      "bytes": 84,
+      "sha256": "c9ad11f60f79d88b9861fb4a5351aef77cd4dbb7df6f537bbf981c43c70ecf69"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/worker-bridge.log",
+      "bytes": 84,
+      "sha256": "27b8b79e19cfbb7207d1a7dc96d35dfdedd73b39788c5dfdcb1ba5225d11ac5b"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/contract.log",
+      "bytes": 59,
+      "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/comms-replay.log",
+      "bytes": 139,
+      "sha256": "83b65d036f2a6604331e1efa3b379129f2feb883e4b31b53e837c05edaaa28f7"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/comms-compare.log",
+      "bytes": 3519,
+      "sha256": "7900f7a449825bc7ca41acbca5a7729d97f7239c8bc116a6a637d878513f38e0"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/harness-validate.log",
+      "bytes": 68,
+      "sha256": "a04a8a24ff1480976cf2a6b849c125d5e1d32d7bb700aaa4861f4db720b1b68f"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/harness-dry-run.log",
+      "bytes": 105,
+      "sha256": "3add79118a2a35cda1d2cd1f754962edebfa70ffea9200df5a7573b89c0147ab"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/harness-ci.log",
+      "bytes": 25530,
+      "sha256": "69bcb6c26f0ab32586aecdf6744840738661beb8af5b3083bb4d7d42cd8b0eff"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/evidence-links.log",
+      "bytes": 85,
+      "sha256": "9a6f9f65f81c216293c205632b85231968a65cb983e0d6b303c256f7e728e561"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/coverage-baseline.log",
+      "bytes": 104,
+      "sha256": "6a6d543fd7467a6204fabec24ba8df27c7ddd54b7b76c2ccb3ad64ab5a8b2b2d"
+    },
+    {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/retention.log",
+      "bytes": 108,
+      "sha256": "fdf755b691b8148c7ae146dce5e30f4618ee251a58e830de971b6c5be1ed1c67"
+    }
+  ]
+}

@@ -1,0 +1,420 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0678",
+  "realHumanEvidence": false,
+  "candidate": "acb6869d46a5ce44815d33d35ee256bea5218cbc",
+  "codeReview": {
+    "engine": "codex",
+    "requestedModel": "ccs-ai/gpt-6.1-sol",
+    "source": {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/review-binary-final.json",
+      "bytes": 453,
+      "sha256": "9879a09a8261758191416ddbdbbde04fffdb40eb5c688935147ef3e32247c90c"
+    },
+    "report": {
+      "findings": [],
+      "overall_confidence": 0.86,
+      "overall_correctness": "patch is correct",
+      "overall_explanation": "No concrete actionable defects found in the current change bundle. The payload walker handles base64 strings and Uint8Array image bytes while retaining text and omitted-image checks. Candidate binding, read confirmation, dispatch recovery and repair-budget paths were inspected read-only; tests were not run, as requested."
+    },
+    "sourceInputs": {
+      "driven_by": "agent",
+      "actor": "codex-tf0678",
+      "base": "bb66845040deb94d6207dff9dc3c4aeaed7ff4fa",
+      "files": [
+        {
+          "path": "README.ja-JP.md",
+          "sha256": "a91e00897f26b215aa39d55fc7d095b35e972156632db8e6b3873174af03d968"
+        },
+        {
+          "path": "README.md",
+          "sha256": "c041ecfa56876137aef5ea9a2d66c0dbed2088dca013e1a8c2231c9aaa09ed46"
+        },
+        {
+          "path": "README.ru-RU.md",
+          "sha256": "61f09929af8735a283292c8cbbb71c12f481e64eee53f67f21fd65006d1fd3a1"
+        },
+        {
+          "path": "README.zh-CN.md",
+          "sha256": "ea83ec5f3eaac55f0c4f0a6d94f85deb8ce58c32b9ae98d89c58a7e16fb1ddb2"
+        },
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "sha256": "748b062aef02910ffb645f2501aa08142fd52e701dfdb874748f703831a29b3d"
+        },
+        {
+          "path": "electron/services/task-system-service.ts",
+          "sha256": "30cc2470692f122425b0a2639b54ab5df4de860b42c9a5d9535c35342fb1c385"
+        },
+        {
+          "path": "electron/services/workspaces-api.ts",
+          "sha256": "a8a8c4e8123b040f03fdb8f26b557979a3572fb5aebce72b25a2ffada2ec9817"
+        },
+        {
+          "path": "harness/specs/rules/durable-task-system-boundary.md",
+          "sha256": "1cf4ffdd6d9d27996c1d444c6b50cd941f3ade48bf7a3184959ac3b7d88994fa"
+        },
+        {
+          "path": "harness/specs/scenarios/autonomous-project-system.md",
+          "sha256": "2d668ec3ca211498d16f09adecb60db7a37d046676e1d15d8d1518623ca47ed5"
+        },
+        {
+          "path": "harness/specs/tasks/project-coordinator-closeout.md",
+          "sha256": "bc885443995d68b5919cda7ad83ef799187bd4b3c7f215d6f19f2d878f5295ab"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.read.ts",
+          "sha256": "83e3945b9381d9055608deb3ba9419036b02254d51c645c79a6f11e17b52431d"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.ts",
+          "sha256": "dc479b7fa9d30e0fb8091e93b9f799e69f2b6aa045e02c86585bba7754a7202d"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+          "sha256": "7aaae2ab48424bbc1fc2a62acb8e3de3a5a0dea4778cde694b3d5bc4d3cf748c"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/execution-checkout-tools.ts",
+          "sha256": "1809fe7062fcc82df303e93454905d1ddb08e8a66b70aa991b20bffab3b4ae0f"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/execution-task-guard.ts",
+          "sha256": "dce194855b32e85fe75b8b040acce1bf2dc3e2db817cf9e321d8664c38098810"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+          "sha256": "e2ad73f0b7f617b655abbafc649904e81793cc86ee6fef959fa4f3d972ba6f1f"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/persistent-task-acceptance.ts",
+          "sha256": "630ddbd8cfb8c5a27fbb6b131c72abdd930e67da807a32f061a1f30f547d1178"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/persistent-task-delegation.ts",
+          "sha256": "1fff42bbf4cc3400a10833eefdfbe7135faf52a3fa41ead3d68beb83dbe239e8"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/role-spawn.ts",
+          "sha256": "cd761ac6425539cfb4a78782f027f009cdcb175e1fd249f61505abd4289acb27"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/read.ts",
+          "sha256": "f76781e24fe3d86483e4388ada5c44eefb2476c92881406185d1aefb426e5985"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/tool-contracts.ts",
+          "sha256": "4651739abf16b76528c236848cdfa1609182e821508a5bed95d558dd1b4357e8"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/subagent-registry.ts",
+          "sha256": "5d90c5a321c066bffe7b203b0b554a5461fafc1a0033a139240028f3a2a3b8e6"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+          "sha256": "bb1f0756d28759552e2b865b3efe0cf6ec365343aa92e909e85d3743129f788c"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/subagent-spawn.ts",
+          "sha256": "cad9ff692d51bec16da9a7c5cbe079341e7ea6a83f2ef8421a98f760e2de71cd"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tool-mutation.test.ts",
+          "sha256": "697eb6466b5ae3892e08d9baafa4b8427c367f030d19c0e38a79c5794fb3452f"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tool-mutation.ts",
+          "sha256": "9b9a48d993c7c58c78dc718b3a25e4dec58c3991dacdb94ae4ee99c39f17a829"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+          "sha256": "e8dea0df24d97d4c65d45cc2179f05d2c8d73c97b1877dc3c9f0bf2b7153e780"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/workspace.ts",
+          "sha256": "2cf786efa535833caa80f480ef0409f4e18a98376483b3485c0bc9e808873dde"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "sha256": "f6de136f3e3bca90cc102e2ff419b11317294961f0afd9a2eb7e8afb364c74b6"
+        },
+        {
+          "path": "shared/task-system/store.ts",
+          "sha256": "9c5313702ebf2fd946d4606939c970ee0142a487427744dbad02d0f59ef8f05c"
+        },
+        {
+          "path": "shared/task-system/types.ts",
+          "sha256": "3d83c143e3773da0324710a6ef8b34326b00608099f7b3cf8a8a5ea184b580ac"
+        },
+        {
+          "path": "shared/types/workspace.ts",
+          "sha256": "1c8f210da0d3291495d548e7fd04f701e600e810ddfb035db7831752afc4eb68"
+        },
+        {
+          "path": "tests/e2e/project-closeout.spec.ts",
+          "sha256": "73762f0f7852e30186592d3833b4d2fbd48945bf1bff9a45bbd5f08214984d92"
+        },
+        {
+          "path": "tests/unit/autonomy-worktree-integration.test.ts",
+          "sha256": "2f6b978b6b731fcc9d46c5a50dd52b9d991991c45a7a784e63ac4a2f59e2daf1"
+        },
+        {
+          "path": "tests/unit/durable-task-acceptance.test.ts",
+          "sha256": "c47936800b89fa450af9be937dcfafe1811ca146da02165c81f92e42ebc3e4b5"
+        },
+        {
+          "path": "tests/unit/durable-task-delegation.test.ts",
+          "sha256": "91c0847ab06cfa6a6f8bd9b7b418c323698643f37803594a2c1830a31627466f"
+        },
+        {
+          "path": "tests/unit/durable-task-review-wiring.test.ts",
+          "sha256": "809831d8b2d3cc59d26fa5ae6bc457b61152fa56ac1d8b27c7ff212d6a82502e"
+        },
+        {
+          "path": "tests/unit/durable-task-review.test.ts",
+          "sha256": "5c538c91cb48beb82686142562d00c1fd339b8ca773b8c8dbec9c1a5fae877be"
+        },
+        {
+          "path": "tests/unit/durable-task-runtime.test.ts",
+          "sha256": "b85f100aa848ec222e582a16e9eb9bd49ae19fb728911ca8b5cf475b1b9d29c3"
+        },
+        {
+          "path": "tests/unit/role-spawn.test.ts",
+          "sha256": "b59e3a7f74903c69a98d3740961f2488bbab58349abc61d8f8a46c7f869acf5f"
+        },
+        {
+          "path": "tests/unit/session-task-scope-completion.test.ts",
+          "sha256": "7a718c1018833a9d24cd4dd929d72a9ba4f8a23e10581cd92b6b18d792e1cc0b"
+        }
+      ]
+    },
+    "sourceInputsManifest": {
+      "path": "D:/tmp/tf0678-20261119-01a1f347/pre-review-inputs.json",
+      "sha256": "ab652f94118c73165974bbe9f0626c5e511139ff944164219b0267a2c2e2ac1a",
+      "bytes": 6505
+    },
+    "matchesDeliveredSource": true
+  },
+  "source": {
+    "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/closeout-readback.json",
+    "bytes": 292872,
+    "sha256": "72965dfe8c0c6248596cf20f975d0be2141c97782401f277e3a91d9516cd03cd"
+  },
+  "reviewers": [
+    {
+      "runId": "bf3fd865-70c8-4704-93a0-dc62187f1f50",
+      "sessionKey": "agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2",
+      "requesterSessionKey": "agent:main:session-1795109895600-closeoutproject",
+      "outcome": {
+        "status": "ok",
+        "startedAt": 1795110076701,
+        "endedAt": 1795110084577,
+        "elapsedMs": 7876
+      },
+      "record": {
+        "runId": "bf3fd865-70c8-4704-93a0-dc62187f1f50",
+        "childSessionKey": "agent:main:subagent:39b2c21e-0a19-40b4-a780-bf16e277bff2",
+        "controllerSessionKey": "agent:main:session-1795109895600-closeoutproject",
+        "requesterSessionKey": "agent:main:session-1795109895600-closeoutproject",
+        "requesterSessionId": "cc4a3355-e4c5-49af-9259-b5392e97b08d",
+        "requesterTaskReference": {
+          "taskRef": "2990dccd-bd7b-4ddf-9087-815b3a6bb449",
+          "coordinator": {
+            "workspaceId": "closeout-project",
+            "sessionKey": "agent:main:session-1795109895600-closeoutproject",
+            "sessionGeneration": "cc4a3355-e4c5-49af-9259-b5392e97b08d",
+            "bindingRevision": 1
+          }
+        },
+        "requesterDisplayKey": "agent:main:session-1795109895600-closeoutproject",
+        "task": "Independently review this submitted project candidate. Read the listed files from disk, check the task criteria and report concrete findings. Do not modify files. Return verificationVerdict=pass|fail|repair_required.\n{\"contract\":{\"objective\":\"Repair and independently review the project result\",\"constraints\":[\"Change result.txt only\"],\"acceptance\":[{\"id\":\"test\",\"description\":\"The integrated result passes the check\",\"verification\":{\"kind\":\"tool-result\",\"tool\":\"exec\",\"command\":\"node check.cjs\",\"files\":[\"result.txt\",\"check.cjs\"],\"exitCode\":0}},{\"id\":\"review\",\"description\":\"An independent reviewer reads the candidate\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"subagent-verifier\",\"files\":[\"result.txt\",\"check.cjs\"]}}],\"target\":\"result.txt\",\"dependencies\":[],\"maxRepairAttempts\":1,\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"requestId\":\"p4task:create\"},\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"domain\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"revision\":1,\"digest\":\"9c2a634df8c70a10bb8d78a4e9c1226bbe6322a0ab43da86ebcff28ce714c212\",\"state\":\"review\",\"createdAt\":1795109930476,\"updatedAt\":1795110063138},\"candidate\":\"p4fixed\",\"artifacts\":[{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\"},{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2\"}]}",
+        "cleanup": "keep",
+        "expectsCompletionMessage": true,
+        "spawnMode": "run",
+        "label": "Reviewer",
+        "model": "custom-sessionc/mock-coder",
+        "agentDir": "D:\\tmp\\tf0678-20261119-01a1f347\\final-r2\\temp\\verse-claw-e2e-run-Upz9oH\\verse-claw-e2e-user-data-eZDK4X\\openclaw-source-home\\.openclaw\\agents\\main\\agent",
+        "workspaceDir": "D:\\tmp\\tf0678-20261119-01a1f347\\final-r2\\electron\\project-closeout-a-project-0d40c-without-another-user-prompt\\project",
+        "runTimeoutSeconds": 0,
+        "createdAt": 1795110066378,
+        "startedAt": 1795110076701,
+        "execution": {
+          "status": "terminal",
+          "startedAt": 1795110076701,
+          "endedAt": 1795110084577,
+          "outcome": {
+            "status": "ok",
+            "startedAt": 1795110076701,
+            "endedAt": 1795110084577,
+            "elapsedMs": 7876
+          }
+        },
+        "completion": {
+          "required": true,
+          "resultText": "Read the repaired bytes from disk. verificationVerdict=pass",
+          "capturedAt": 1795110089647
+        },
+        "delivery": {
+          "status": "pending",
+          "lastError": null
+        },
+        "sessionStartedAt": 1795110066488,
+        "accumulatedRuntimeMs": 0,
+        "cleanupHandled": false,
+        "orchestration": {
+          "orchestrationRunId": "review:43f350a68749530cd0557147c83bb3e2dd5d73dc49995610de739bff8de40406",
+          "roleName": "reviewer",
+          "isVerifier": true,
+          "phase": "verifier",
+          "leadRole": "planner",
+          "originalTask": "Repair and independently review the project result",
+          "verifierNoSelfRepair": true,
+          "taskNodeId": "2990dccd-bd7b-4ddf-9087-815b3a6bb449"
+        },
+        "endedAt": 1795110084577,
+        "outcome": {
+          "status": "ok",
+          "startedAt": 1795110076701,
+          "endedAt": 1795110084577,
+          "elapsedMs": 7876
+        },
+        "endedReason": "subagent-complete",
+        "browserCleanupDispatchedAt": 1795110089715
+      }
+    },
+    {
+      "runId": "d018a4c7-15f8-4040-8e19-53212c5cef68",
+      "sessionKey": "agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1",
+      "requesterSessionKey": "agent:main:session-1795109895600-closeoutproject",
+      "outcome": {
+        "status": "ok",
+        "startedAt": 1795109996018,
+        "endedAt": 1795110004955,
+        "elapsedMs": 8937
+      },
+      "record": {
+        "runId": "d018a4c7-15f8-4040-8e19-53212c5cef68",
+        "childSessionKey": "agent:main:subagent:d33e7a26-9148-44b6-b8bf-3a391ac1fce1",
+        "controllerSessionKey": "agent:main:session-1795109895600-closeoutproject",
+        "requesterSessionKey": "agent:main:session-1795109895600-closeoutproject",
+        "requesterSessionId": "cc4a3355-e4c5-49af-9259-b5392e97b08d",
+        "requesterTaskReference": {
+          "taskRef": "2990dccd-bd7b-4ddf-9087-815b3a6bb449",
+          "coordinator": {
+            "workspaceId": "closeout-project",
+            "sessionKey": "agent:main:session-1795109895600-closeoutproject",
+            "sessionGeneration": "cc4a3355-e4c5-49af-9259-b5392e97b08d",
+            "bindingRevision": 1
+          }
+        },
+        "requesterDisplayKey": "agent:main:session-1795109895600-closeoutproject",
+        "task": "Independently review this submitted project candidate. Read the listed files from disk, check the task criteria and report concrete findings. Do not modify files. Return verificationVerdict=pass|fail|repair_required.\n{\"contract\":{\"objective\":\"Repair and independently review the project result\",\"constraints\":[\"Change result.txt only\"],\"acceptance\":[{\"id\":\"test\",\"description\":\"The integrated result passes the check\",\"verification\":{\"kind\":\"tool-result\",\"tool\":\"exec\",\"command\":\"node check.cjs\",\"files\":[\"result.txt\",\"check.cjs\"],\"exitCode\":0}},{\"id\":\"review\",\"description\":\"An independent reviewer reads the candidate\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"subagent-verifier\",\"files\":[\"result.txt\",\"check.cjs\"]}}],\"target\":\"result.txt\",\"dependencies\":[],\"maxRepairAttempts\":1,\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"requestId\":\"p4task:create\"},\"taskNodeId\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"domain\":\"1d3e9066d9a9c2cc6294be3e6cec91b2b0e83b624fe4c0a26523b4a2f274e882\",\"revision\":1,\"digest\":\"9c2a634df8c70a10bb8d78a4e9c1226bbe6322a0ab43da86ebcff28ce714c212\",\"state\":\"review\",\"createdAt\":1795109930476,\"updatedAt\":1795109983220},\"candidate\":\"p4broken\",\"artifacts\":[{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs\",\"sha256\":\"427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc\"},{\"path\":\"d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt\",\"sha256\":\"bbd402e8059e52037e795f47b600b4dbf240358450f7d7c3f0194f194aec326c\"}]}",
+        "cleanup": "keep",
+        "expectsCompletionMessage": true,
+        "spawnMode": "run",
+        "label": "Reviewer",
+        "model": "custom-sessionc/mock-coder",
+        "agentDir": "D:\\tmp\\tf0678-20261119-01a1f347\\final-r2\\temp\\verse-claw-e2e-run-Upz9oH\\verse-claw-e2e-user-data-eZDK4X\\openclaw-source-home\\.openclaw\\agents\\main\\agent",
+        "workspaceDir": "D:\\tmp\\tf0678-20261119-01a1f347\\final-r2\\electron\\project-closeout-a-project-0d40c-without-another-user-prompt\\project",
+        "runTimeoutSeconds": 0,
+        "createdAt": 1795109985343,
+        "startedAt": 1795109996018,
+        "execution": {
+          "status": "terminal",
+          "startedAt": 1795109996018,
+          "endedAt": 1795110004955,
+          "outcome": {
+            "status": "ok",
+            "startedAt": 1795109996018,
+            "endedAt": 1795110004955,
+            "elapsedMs": 8937
+          }
+        },
+        "completion": {
+          "required": true,
+          "resultText": "The result does not satisfy check.cjs. verificationVerdict=repair_required",
+          "capturedAt": 1795110009461
+        },
+        "delivery": {
+          "status": "delivered",
+          "deliveredAt": 1795110038440,
+          "lastError": null,
+          "announcedAt": 1795110038440
+        },
+        "sessionStartedAt": 1795109985448,
+        "accumulatedRuntimeMs": 0,
+        "cleanupHandled": true,
+        "orchestration": {
+          "orchestrationRunId": "review:fefd179c38329c299150015c3e61ec81079decc06fd7641a14398488ddeb01e3",
+          "roleName": "reviewer",
+          "isVerifier": true,
+          "phase": "verifier",
+          "leadRole": "planner",
+          "originalTask": "Repair and independently review the project result",
+          "verifierNoSelfRepair": true,
+          "taskNodeId": "2990dccd-bd7b-4ddf-9087-815b3a6bb449"
+        },
+        "endedAt": 1795110004955,
+        "outcome": {
+          "status": "ok",
+          "startedAt": 1795109996018,
+          "endedAt": 1795110004955,
+          "elapsedMs": 8937
+        },
+        "endedReason": "subagent-complete",
+        "browserCleanupDispatchedAt": 1795110009511,
+        "cleanupCompletedAt": 1795110039654
+      }
+    }
+  ],
+  "verificationReceipt": {
+    "receiptId": "task-verifier:3175c014fbf39e213e2dae32eef6584125b037cc1cccd3a40db35ce161d624dd",
+    "taskNodeId": "2990dccd-bd7b-4ddf-9087-815b3a6bb449",
+    "revision": 1,
+    "epoch": 5,
+    "candidate": "p4fixed",
+    "criterionId": "review",
+    "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs",
+    "sha256": "427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc",
+    "inputArtifacts": [
+      {
+        "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/check.cjs",
+        "sha256": "427067e0b7163eb3ce286e21b04336c8e67a73d36a3a523b8fb48c96a8a287dc"
+      },
+      {
+        "path": "d:/tmp/tf0678-20261119-01a1f347/final-r2/electron/project-closeout-a-project-0d40c-without-another-user-prompt/project/result.txt",
+        "sha256": "963ad41a5f5490a4a4fdb1cd97baec5c68168b8926fa2eea568c4f93620a7fb2"
+      }
+    ],
+    "verifier": "owner:subagent-verifier",
+    "repairAttempt": 1,
+    "submissionSequence": 31,
+    "ownerProof": {
+      "verifierReceiptId": "task-verifier:3175c014fbf39e213e2dae32eef6584125b037cc1cccd3a40db35ce161d624dd",
+      "effectReceiptId": "efx_76e03ee0-6a1a-4cb6-838f-68e5544615d2",
+      "evidenceDigest": "689c878d297895701fe0830f5f459ec989274f57d89e64943a5e4d1143e122f3",
+      "proposalDigest": "8bcb25471d4e3ec2a4df97f0c22510998a266314e78452bc3b8965282d1d924d"
+    },
+    "createdAt": 1795110099680
+  },
+  "effect": {
+    "effect_receipt_id": "efx_76e03ee0-6a1a-4cb6-838f-68e5544615d2",
+    "idempotency_key": "task-verifier:3175c014fbf39e213e2dae32eef6584125b037cc1cccd3a40db35ce161d624dd",
+    "approval_id": null,
+    "proposal_digest": "8bcb25471d4e3ec2a4df97f0c22510998a266314e78452bc3b8965282d1d924d",
+    "approval_decision": null,
+    "domain_executor": "task-verification-journal",
+    "outcome": "applied",
+    "artifact_ref": null,
+    "journal_ref": "task-ledger:2990dccd-bd7b-4ddf-9087-815b3a6bb449:evidence:689c878d297895701fe0830f5f459ec989274f57d89e64943a5e4d1143e122f3",
+    "recoverability": "read-and-revalidate-candidate",
+    "effect_context_json": "{\"actor\":{\"sessionKey\":\"agent:main:session-1795109895600-closeoutproject\",\"runId\":\"bf3fd865-70c8-4704-93a0-dc62187f1f50\",\"attemptIndex\":5,\"modelCallIndex\":0,\"actorKind\":\"principal\"},\"effect\":{\"toolCallId\":\"task-verifier:3175c014fbf39e213e2dae32eef6584125b037cc1cccd3a40db35ce161d624dd\",\"toolName\":\"task_control\",\"resource\":\"2990dccd-bd7b-4ddf-9087-815b3a6bb449\",\"action\":\"record-verification\"}}",
+    "schema_version": "2",
+    "created_at": 1795110099669
+  },
+  "runtimeDatabase": {
+    "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/temp/verse-claw-e2e-run-Upz9oH/verse-claw-e2e-user-data-eZDK4X/openclaw-source-state/state/openclaw.sqlite",
+    "bytes": 1458176,
+    "sha256": "54e7c2421c081e7a687cbef16b539af9e52685d554526421019b76b9932954e3"
+  }
+}
