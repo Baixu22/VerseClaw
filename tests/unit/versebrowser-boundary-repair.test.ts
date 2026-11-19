@@ -182,14 +182,14 @@ describe('Verse browser authority through the production Main API', () => {
 
   it('consumes an opening grant exactly once and transfers it to the created session before navigation', async () => {
     const f = hostFixture();
-    approveBrowserPrivateNetwork({ sessionId: 'opening-owner', origin: 'http://127.0.0.1:8767' });
-    const payload = { sessionKey: 'opening-owner', url: 'http://127.0.0.1:8767/' };
+    approveBrowserPrivateNetwork({ sessionId: 'opening-owner', origin: 'http://192.168.1.2:8767' });
+    const payload = { sessionKey: 'opening-owner', url: 'http://192.168.1.2:8767/' };
     const results = await Promise.allSettled([f.api.open({ ...payload }), f.api.open({ ...payload })]);
     expect(results.filter(result => result.status === 'fulfilled')).toHaveLength(1);
     expect(f.windows).toHaveLength(1);
     const id = f.host.list()[0].id;
     expect(await f.windows[0].request(payload.url)).toEqual({ cancel: false });
-    f.host.close(id);
+    await f.host.close(id);
     await expect(assertBrowserRequestAllowed(payload.url, { sessionId: id })).rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
   });
 
@@ -232,11 +232,13 @@ describe('Verse browser authority through the production Main API', () => {
     const f = hostFixture();
     const opened = await f.api.open({ sessionKey: 'native-close' });
     await f.host.newPage({ sessionId: opened.session.id, background: true });
-    approveBrowserPrivateNetwork({ sessionId: opened.session.id, origin: 'http://127.0.0.1:9966' });
+    approveBrowserPrivateNetwork({ sessionId: opened.session.id, origin: 'http://192.168.1.2:9966' });
     f.windows[0].destroy();
     expect(f.host.list()).toHaveLength(0);
     expect(f.windows[1].isDestroyed()).toBe(true);
-    await expect(assertBrowserRequestAllowed('http://127.0.0.1:9966/', { sessionId: opened.session.id })).rejects.toThrow();
+    await vi.waitFor(async () => {
+      await expect(assertBrowserRequestAllowed('http://192.168.1.2:9966/', { sessionId: opened.session.id })).rejects.toThrow();
+    });
   });
 
   it('preserves long runtime owners and disables direct WebRTC UDP on every managed window', async () => {

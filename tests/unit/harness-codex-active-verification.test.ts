@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -8,12 +8,14 @@ import {
   EVIDENCE_LEVELS,
   REQUIRED_SCENARIO_IDS,
   buildAcceptance,
+  fingerprintPath,
   validateMatrixStructure,
   verifyActiveMatrix,
   verifyActiveMatrixArtifacts,
 } from "../../scripts/verify-harness-active-matrix.mjs";
 import type { VerificationMatrix, VerificationAcceptance, VerificationScenario } from "../../scripts/verify-harness-active-matrix.mjs";
 import { collectTaskSpecLifecycleErrors } from "../../scripts/check-spec-lifecycle.mjs";
+import { initializeFrozenGitReplay } from "../helpers/frozen-source-replay";
 
 const ROOT = resolve(process.cwd());
 const roots: string[] = [];
@@ -158,17 +160,52 @@ describe("TF-0570 active verification matrix", () => {
     expect(validateMatrixStructure(credential, { root }).issues.join("\n")).toContain("credential-like content retained");
   });
 
-  it("checks the tracked matrix receipt and every retained evidence path", { timeout: 120_000 }, () => {
+  it("replays the tracked matrix at its source revision and rejects absent historical binaries", { timeout: 120_000 }, () => {
     const matrix = JSON.parse(readFileSync(join(ROOT, DEFAULT_MATRIX_PATH), "utf8")) as VerificationMatrix;
+    const acceptance = JSON.parse(readFileSync(join(ROOT, "harness/specs/fixtures/harness-codex-active-verification/acceptance.json"), "utf8")) as VerificationAcceptance;
     expect(matrix.scenarios).toHaveLength(11);
     expect(matrix.scenarios.filter((entry) => entry.id === "S11")).toHaveLength(1);
-    expect(validateMatrixStructure(matrix, { root: ROOT }).ok).toBe(true);
-    const result = verifyActiveMatrixArtifacts({ root: ROOT });
-    expect(result.issues, result.issues.join("\n")).toEqual([]);
+    const root = mkdtempSync(join(tmpdir(), "active-matrix-source-replay-"));
+    roots.push(root);
+    initializeFrozenGitReplay(ROOT, root, acceptance.source.commit, [
+      ...matrix.sourceFiles, ...matrix.packageFiles,
+      ...matrix.scenarios.flatMap((entry) => [entry.readback, ...entry.evidence]),
+      matrix.scenarioSource!, "harness/specs/fixtures/harness-codex-active-verification",
+    ]);
+    cpSync(join(ROOT, "harness/specs/fixtures/harness-codex-active-verification"), join(root, "harness/specs/fixtures/harness-codex-active-verification"), { recursive: true });
+    mkdirSync(join(root, "resources/bin/win32-x64"), { recursive: true });
+    cpSync(join(ROOT, "resources/bin/win32-x64/vg.exe"), join(root, "resources/bin/win32-x64/vg.exe"));
+    const missing = [
+      "resources/bin/win32-x64/ae.exe",
+      "release/win-unpacked/Verse Claw.exe",
+      "release/win-unpacked/resources/openclaw-runtime/extensions/codex/package.json",
+      "release/win-unpacked/resources/openclaw-runtime/extensions/codex/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe",
+    ];
+    for (const input of acceptance.sourceInputs.filter((entry) => !missing.includes(entry.path) && entry.path !== 'harness/src')) {
+      expect(fingerprintPath(root, input.path), input.path).toEqual(input);
+    }
+    // The retained directory digest also differs from its declared Git revision.
+    expect(fingerprintPath(root, 'harness/src')).toMatchObject({
+      sha256: 'c50d4bea343bcd199a3a6651449df7a1f9cb8d5ef87c980b1e5a95d05fbd4e64', bytes: 43170, files: 14,
+    });
+    expect(acceptance.sourceInputs.find((entry) => entry.path === 'harness/src')).toMatchObject({
+      sha256: '6d8a7edaa3ea1fd1c4e9cd0081745f2757fe81b0b8961d610177539764b01e51', bytes: 43234, files: 14,
+    });
+    const result = verifyActiveMatrixArtifacts({ root });
+    // Package payloads are not tracked source. Missing original bytes must stay stale.
+    expect(result.ok).toBe(false);
+    expect(result.issues.sort(), result.issues.join("\n")).toEqual([
+      ...missing.map((path) => `matrix input missing: ${path}`),
+      "acceptance source input digest mismatch",
+      "acceptance source input hash mismatch: harness/src",
+      ...missing.map((path) => `acceptance source input hash mismatch: ${path}`),
+    ].sort());
     expect(result.acceptance).not.toBeNull();
     for (const entry of result.acceptance!.scenarios) {
       expect(entry.evidence.length).toBeGreaterThan(0);
-      expect(entry.evidence.every((evidence) => evidence.exists && typeof evidence.sha256 === "string" && /^[a-f0-9]{64}$/.test(evidence.sha256))).toBe(true);
+      for (const evidence of entry.evidence) {
+        expect(fingerprintPath(root, evidence.path), evidence.path).toEqual(evidence);
+      }
     }
   });
 

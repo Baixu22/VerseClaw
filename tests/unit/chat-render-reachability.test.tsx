@@ -15,6 +15,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+// Collect the UI dependency graph before measuring each render; resetModules below isolates state.
+import '@/pages/Chat/index';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
   gatewayState: { status: { state: 'running', port: 18789 } },
@@ -95,6 +97,7 @@ vi.mock('@/lib/host-api', () => ({
       recordPromptCacheRiskEvent: vi.fn().mockResolvedValue({ success: true, event: null }),
     },
     sessions: {
+      handoffOperation: vi.fn().mockResolvedValue({ success: true, operation: null }),
       history: vi.fn().mockResolvedValue({ success: true, messages: [], hasMore: false }),
       compactionStatus: vi.fn().mockResolvedValue({
         success: true, available: true, canCompact: false, inProgress: false,
@@ -178,7 +181,6 @@ async function mountChat() {
 
 describe('Run-log replay provenance badge', () => {
   beforeEach(() => {
-    vi.resetModules();
     approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
   });
 

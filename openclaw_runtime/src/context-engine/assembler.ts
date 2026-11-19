@@ -389,7 +389,7 @@ export class Assembler {
     }
 
     let ladderBlocks: readonly LifecycleBlock[] | undefined;
-    if (request.contextLadder?.enabled === true) {
+    if (!killed && request.contextLadder?.enabled === true) {
       const store = this.#dependencies.workingMemoryStore;
       if (store && Array.isArray(inputs.existing_output)) {
         try {

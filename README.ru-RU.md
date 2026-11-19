@@ -26,7 +26,7 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 
 Репозиторий не является тонкой оболочкой renderer. Он содержит React UI, Electron Main Host, типизированные межпроцессные контракты, vendored OpenClaw Runtime, VerseBrowser, основу управляемого выполнения VerseShell, исходники выведенного из эксплуатации VToken, исполняемые Harness-спецификации и build/evidence/release pipeline.
 
-> **Текущий статус:** `0.4.9-alpha.0`, controlled preview. Основная цель локальной приёмки — Windows x64 workflows. Для macOS/Linux есть build targets, но проверка их runtime — отдельная работа. Component graduation и agent-driven evidence не означают release, GA, liveReady или productApproved.
+> **Текущий статус:** `0.4.9-alpha.0`, controlled preview. Основная цель локальной приёмки — Windows x64 workflows. Для macOS/Linux есть build targets; их runtime проверяется отдельно.
 
 ## Модули продукта
 
@@ -55,7 +55,7 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 
 | Label | Значение |
 |---|---|
-| `default` / `advanced` | Текущая продуктовая поверхность в заявленной controlled-preview границе. Не GA. |
+| `default` / `advanced` | Текущая продуктовая поверхность в заявленной controlled-preview границе. |
 | `internal` | Есть реализация или внутренний API, но нет отдельного пользовательского product entry. |
 | `shadow` / `experiment` | Наблюдение или ограниченный эксперимент; не владеет routing, записью или approval. |
 | `retired` | Сохранено только для compatibility, provenance или rollback inspection. |
@@ -67,7 +67,7 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 
 - Workspace Context и read-only DCS context tools включены при заявленных health/permission gates.
 - DCS сохраняет порядок допущенных знаний, включает целые chunk или группы конфликтов в общий бюджет и записывает ссылки и байты, сохранённые Chat и model-only Knowledge QA. См. [контракт сборки доказательств](docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md).
-- Runtime Memory injection, SEKB automatic writeback и Browser private network не default-on.
+- Runtime Memory injection и SEKB automatic writeback отключены по умолчанию. Browser private network требует явного разрешения.
 - SEKB записывает явное применение принципа с его версией и запуском, отдельно сохраняя результат выполнения и независимую оценку задачи. Обратная связь используется для диагностики и не меняет поиск или сохранение памяти. См. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md).
 - Управляемые эксперименты RSI с prompt сохраняют родительские версии, атрибуцию тренировочных данных и решения по фиксированным проверкам. Кандидаты связываются с отдельным зафиксированным планом оценки.
 - VToken retired; старые env/config имена не могут снова включить production assembly или sidecar.

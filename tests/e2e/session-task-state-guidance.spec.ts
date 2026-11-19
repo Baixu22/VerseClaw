@@ -107,6 +107,7 @@ async function holdLedgerRead(app: ElectronApplication, workspaceId: string) {
 
 test('AC8: an owner-created project without a coordinator names the missing association', async ({ launchElectronApp }, info) => {
   const app = await launchElectronApp({ skipSetup: true });
+  await expect((await getStableWindow(app)).getByTestId('task-ledger-summary')).toHaveCount(0);
   const facts = attach(app, info);
   const page = await getStableWindow(app);
   await expect(page.getByTestId('main-layout')).toBeVisible();

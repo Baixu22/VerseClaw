@@ -19,7 +19,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { performance } from 'node:perf_hooks';
 
 const REPO = process.cwd();
@@ -331,7 +331,7 @@ async function main() {
   }
 }
 
-if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.stack : String(error));
     process.exitCode = 1;

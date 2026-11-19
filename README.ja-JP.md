@@ -40,7 +40,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 
 このリポジトリは renderer の薄いラッパーではありません。React UI、Electron Main Host、型付きプロセス間 contract、vendored OpenClaw Runtime、VerseBrowser、VerseShell 実行基盤、退役済み VToken source、実行可能な Harness 仕様、build/evidence/release pipeline を含みます。
 
-> **現在の状態：**`0.4.9-alpha.0`、controlled preview。Windows x64 のローカル workflow が主な検証対象です。macOS/Linux には build target がありますが、platform runtime の検証は別です。component graduation や agent-driven evidence は、release、GA、liveReady、productApproved を意味しません。
+> **現在の状態：**`0.4.9-alpha.0`、controlled preview。Windows x64 のローカル workflow が主な検証対象です。macOS/Linux には build target があり、platform runtime は個別に検証します。
 
 ## 製品を構成するモジュール
 
@@ -69,7 +69,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 
 | Label | 意味 |
 |---|---|
-| `default` / `advanced` | 宣言された controlled-preview 範囲内の製品 surface。GA ではありません。 |
+| `default` / `advanced` | 宣言された controlled-preview 範囲内の製品 surface。 |
 | `internal` | 実装または内部 API はあるが、独立した user product entry はありません。 |
 | `shadow` / `experiment` | 観測または限定的 experiment。routing、write、approval authority は持ちません。 |
 | `retired` | compatibility、provenance、rollback inspection のためだけに保持。 |
@@ -80,7 +80,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 重要な default：
 
 - Workspace Context と read-only DCS context tools は宣言された health / permission gate 下で有効です。
-- Runtime Memory injection、SEKB automatic writeback、Browser private network は default-on ではありません。
+- Runtime Memory injection と SEKB automatic writeback は既定で無効です。Browser private network には明示的な許可が必要です。
 - SEKB は原則のバージョンと実行に紐づく明示的な採用を記録し、実行結果と独立したタスク評価を分けて保存します。メモリのフィードバックは診断に使用し、検索順位や保持判断には影響しません。[RSI の証拠と境界](docs/dev/rsi-capability-and-boundaries.md) を参照してください。
 - 制御された RSI prompt 研究では親バージョン、学習証拠の帰属、固定した検証の判断を記録します。候補は独立して封印した評価計画に紐づけます。
 - VToken は retired。旧 env/config では production assembly / sidecar を再有効化できません。

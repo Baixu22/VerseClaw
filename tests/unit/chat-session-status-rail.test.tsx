@@ -24,6 +24,7 @@ const SESSION_KEY = 'main:test';
 const planState = vi.hoisted(() => ({ hasPlan: true }));
 
 vi.mock('react-router-dom', () => ({
+  Link: ({ to, children }: { to: string; children: import('react').ReactNode }) => <a href={to}>{children}</a>,
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
 }));
@@ -84,6 +85,9 @@ const chatState = {
   streamingTools: [],
   pendingFinal: false,
   activeRunId: null,
+  handoffOperation: null,
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: true,
   runtimeRuns: {
     'run-1': {
       runId: 'run-1',
@@ -140,11 +144,12 @@ vi.mock('@/stores/artifact-panel', () => ({
 }));
 
 const activityState = vi.hoisted(() => ({
-  snapshots: {} as Record<string, unknown>,
+  scopedSnapshots: {} as Record<string, unknown>,
   load: vi.fn(),
 }));
 
-vi.mock('@/stores/session-activity', () => ({
+vi.mock('@/stores/session-activity', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/stores/session-activity')>(),
   useSessionActivityStore: Object.assign(
     (selector: (state: typeof activityState) => unknown) => selector(activityState),
     { getState: () => activityState },
@@ -217,7 +222,7 @@ function seedSnapshotWithGitRepo() {
     untrackedCount: 0,
     conflictedCount: 0,
   };
-  activityState.snapshots = { [SESSION_KEY]: snapshot };
+  activityState.scopedSnapshots = { [JSON.stringify([null, SESSION_KEY])]: snapshot };
 }
 
 function railElement() {

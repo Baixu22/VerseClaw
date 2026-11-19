@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { evaluateAblation } from './paired-ablation.mjs';
 
 const digest = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
@@ -12,7 +14,7 @@ const TYPES = ['plan', 'attempt', 'candidate', 'decision'];
 const entryId = (runId, kind, generation = 0) => `rsi-evolution:${runId}:${kind}:${generation}`;
 
 function frozenPolicy() {
-  const source = JSON.parse(readFileSync(new URL('../../harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json', import.meta.url), 'utf8'));
+  const source = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../../harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json'), 'utf8'));
   assert.equal(source.schemaVersion, 'RsiPromotionPolicy/v2');
   const policy = { sourceDigest: digest(source), k: source.taskSet.k, minCases: source.taskSet.minimumCompleteCases,
     minimumImprovement: source.promotion.thresholds.passKAbsoluteImprovement.minimum,

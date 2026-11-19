@@ -3,13 +3,19 @@
 // reproducible: the decisions file is the source of truth, bound blobs are
 // re-hashed against disk, and files declared as non-judged registries produce a
 // warning instead of a failure.
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
+import { copyFrozenSourceInputs } from '../helpers/frozen-source-replay';
 
 import { PATHS, validateDecisionAcceptance } from '../../scripts/rsi-decision-check.mjs';
 
-const ROOT = process.cwd();
+const SOURCE_ROOT = process.cwd();
+const ROOT = mkdtempSync('D:/tmp/rsi-decision-source-replay-');
+const sourceAcceptance = JSON.parse(readFileSync(join(SOURCE_ROOT, PATHS.acceptance), 'utf8'));
+const sourceSnapshot = JSON.parse(readFileSync(join(SOURCE_ROOT, 'harness/specs/fixtures/rsi-evidence-loop/decision-source-inputs.json'), 'utf8'));
+copyFrozenSourceInputs(SOURCE_ROOT, ROOT, [PATHS.acceptance, ...Object.keys(sourceAcceptance.source.gitBlobHashes), sourceAcceptance.historicalAcceptance.path], sourceSnapshot.files);
+afterAll(() => rmSync(ROOT, { recursive: true, force: true }));
 const readAcceptance = () => JSON.parse(readFileSync(join(ROOT, PATHS.acceptance), 'utf8'));
 const codes = (result: { errors: Array<{ code: string }> }) => result.errors.map((entry) => entry.code);
 

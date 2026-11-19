@@ -47,7 +47,7 @@ pnpm install --offline --prefer-offline
 
 ## 2. 登记节点（Task Forest）
 
-脚本：`python C:\Users\27933\.codex\skills\task-forest\scripts\task_forest.py`（`--workspace D:\ClawX`，路径是**仓库根**，不是 forest 目录）。
+脚本：`python %USERPROFILE%/.codex/skills/task-forest/scripts/task_forest.py`（`--workspace <repo-root>`，路径是**仓库根**，不是 forest 目录）。
 
 先设 UTF-8，否则中文会炸：
 

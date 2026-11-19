@@ -269,6 +269,7 @@ export const SessionsPreviewParamsSchema = Type.Object(
 export const SessionsDescribeParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    identityOnly: Type.Optional(Type.Boolean()),
     includeDerivedTitles: Type.Optional(Type.Boolean()),
     includeLastMessage: Type.Optional(Type.Boolean()),
   },

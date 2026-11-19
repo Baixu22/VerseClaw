@@ -76,6 +76,7 @@ export function TaskLedgerSummaryPanel({
   const selectingTaskRef = useRef<object | null>(null);
   const requestVersion = useRef(0);
   const scopeKey = JSON.stringify([workspaceId, session?.key, session?.sessionId]);
+  const scopeAvailable = Boolean(workspaceId && session);
   const viewScope = useMemo(() => ({ key: scopeKey }), [scopeKey]);
   const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
   const selectingTask = selection?.scope === viewScope ? selection.task : null;
@@ -84,6 +85,7 @@ export function TaskLedgerSummaryPanel({
   const unavailableText = t(loadError === 'PERMISSION' ? 'summary.permissionDenied' : 'summary.scope.unavailable');
 
   const load = useCallback(async () => {
+    if (mode === 'bar' && !scopeAvailable) return;
     const version = ++requestVersion.current;
     setLoading(true);
     try {
@@ -95,7 +97,7 @@ export function TaskLedgerSummaryPanel({
     } finally {
       if (version === requestVersion.current) setLoading(false);
     }
-  }, [workspaceId, scopeKey]);
+  }, [workspaceId, scopeKey, mode, scopeAvailable]);
 
   useEffect(() => {
     void load();
@@ -112,7 +114,7 @@ export function TaskLedgerSummaryPanel({
   }, [snapshot]);
 
   const hasContent = !!snapshot && snapshot.nodes.length > 0;
-  const visible = !hideWhenEmpty || hasContent || Boolean(loadError);
+  const visible = (!hideWhenEmpty || hasContent || Boolean(loadError)) && (mode !== 'bar' || scopeAvailable);
   useEffect(() => {
     onVisibilityChange?.(visible);
   }, [onVisibilityChange, visible]);

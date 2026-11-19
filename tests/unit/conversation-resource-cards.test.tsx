@@ -10,6 +10,15 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ChatMessage } from '@/pages/Chat/ChatMessage';
 import type { AttachedFileMeta, RawMessage } from '@/stores/chat';
 
+vi.mock('react-i18next', () => ({
+  initReactI18next: { type: '3rdParty', init: vi.fn() },
+  useTranslation: () => ({
+    t: (key: string, options?: { defaultValue?: string }) => key.startsWith('resources.')
+      ? key : options?.defaultValue ?? key,
+    i18n: { language: 'en' },
+  }),
+}));
+
 const { readBinaryFile, statFile, thumbnails, openExternal, showItemInFolder, openPath, openWorkspacePanel } = vi.hoisted(() => ({
   readBinaryFile: vi.fn(),
   statFile: vi.fn(),

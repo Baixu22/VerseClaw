@@ -34,7 +34,7 @@ export async function captureKnowledgeReadScope(
   }
   const root = await realpath(expandPath(binding?.environment.canonicalRoot || workspace.rootPath));
   const described = await gateway.rpc<{ session?: { key?: string; sessionId?: string; status?: string } | null }>(
-    'sessions.describe', { key: sessionKey }, 15_000,
+    'sessions.describe', { key: sessionKey, identityOnly: true }, 15_000,
   );
   const session = described?.session;
   if (session?.status === 'archived' || (binding?.sessionGeneration && binding.sessionGeneration !== session?.sessionId)) {

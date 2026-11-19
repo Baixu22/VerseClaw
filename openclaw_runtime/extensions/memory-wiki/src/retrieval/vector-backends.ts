@@ -83,7 +83,7 @@ const dist = filename.replaceAll(path.sep, "/").lastIndexOf("/dist/");
 const pluginRoot =
   dist >= 0
     ? path.join(filename.slice(0, dist), "extensions/memory-wiki")
-    : fileURLToPath(new URL("../../", import.meta.url));
+    : path.resolve(path.dirname(filename), "../..");
 function loadNative(): typeof import("@lancedb/lancedb") {
   let cursor = pluginRoot;
   while (true) {

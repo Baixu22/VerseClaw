@@ -1,7 +1,8 @@
 // KE-P1-1: proposeFacts wiring (candidates -> shadow, never auto-persisted)
 import { describe, expect, it } from "vitest";
 import { assertRuntimeMemoryOwnerConvergence } from "../../openclaw_runtime/src/agents/slot-convergence";
-import { runKeCandidateGeneration } from "../../openclaw_runtime/src/runtime-core/ke-candidate-generation";
+import { buildKeFactProposalInputs, runKeCandidateGeneration } from "../../openclaw_runtime/src/runtime-core/ke-candidate-generation";
+import { sanitizeRuntimeMemoryFactProposalInput } from "../../openclaw_runtime/src/runtime-core/memory-proposal-shadow";
 
 const ENABLED = {
   runtime: { memory: { candidateGeneration: true, shadow: true, proposeFacts: true } },
@@ -34,14 +35,16 @@ describe("KE-P1-1 proposeFacts wiring", () => {
     expect(run.proposalShadow.acceptedFacts).toHaveLength(0);
   });
 
-  it("flag on => fact evidence flows through the proposeFacts shadow as proposalOnly/readonly candidates", () => {
+  it("flag on stages candidates while the retired proposeFacts shadow stays readonly and disabled", () => {
     const run = runKeCandidateGeneration(ENABLED, evidence());
     expect(run.enabled).toBe(true);
-    expect(run.proposalShadow.enabled).toBe(true);
+    expect(run.proposalShadow.enabled).toBe(false);
+    expect(run.proposalShadow.disabledReason).toBe("runtime_memory_flags_disabled");
     expect(run.proposalShadow.proposalOnly).toBe(true);
     expect(run.proposalShadow.readonly).toBe(true);
-    expect(run.proposalShadow.candidates.length).toBeGreaterThan(0);
-    expect(run.proposalShadow.candidates[0]!.verificationStatus).toBe("candidate");
+    expect(run.factCandidates.length).toBeGreaterThan(0);
+    expect(run.factCandidates[0]!.verificationStatus).toBe("candidate");
+    expect(run.proposalShadow.candidates).toHaveLength(0);
     // Never auto-persisted: acceptedFacts is always empty.
     expect(run.proposalShadow.acceptedFacts).toHaveLength(0);
   });
@@ -53,7 +56,8 @@ describe("KE-P1-1 proposeFacts wiring", () => {
         { subject: "User", predicate: "uses", objectSummary: "pnpm", source: "tool_result" },
       ],
     }));
-    expect(run.proposalShadow.candidates.length).toBeGreaterThan(0);
+    expect(run.factCandidates.length).toBeGreaterThan(0);
+    expect(run.proposalShadow.candidates).toHaveLength(0);
     // The single write authority (appendFact) is only reachable after human
     // promotion; the shadow must never surface an accepted fact by itself.
     expect(run.proposalShadow.acceptedFacts).toHaveLength(0);
@@ -79,7 +83,9 @@ describe("KE-P1-1 proposeFacts wiring", () => {
       ],
     }));
     expect(run.proposalShadow.candidates).toHaveLength(0);
-    expect(run.proposalShadow.rejectedInputs.length).toBeGreaterThan(0);
-    expect(run.proposalShadow.rejectedInputs[0]!.reason).toBe("unsupported_source");
+    const rejected = sanitizeRuntimeMemoryFactProposalInput(buildKeFactProposalInputs(evidence({
+      facts: [{ subject: "User", predicate: "prefers", objectSummary: "dark mode", source: "not_a_source" }],
+    }))[0]);
+    expect(rejected).toMatchObject({ accepted: false, reason: "unsupported_source" });
   });
 });

@@ -19,6 +19,7 @@ import { createProductionChatKnowledgeSourceAdapters, NativeMemoryChatKnowledgeS
   RoleMemoryChatKnowledgeSourceAdapter, revalidateChatKnowledgeRefs } from '../../openclaw_runtime/src/context-engine/chat-knowledge-source-adapters';
 import { resolveChatKnowledgeIntent } from '../../openclaw_runtime/src/context-engine/chat-knowledge-intent';
 import type { MemoryPluginRuntime } from '../../openclaw_runtime/src/plugins/memory-state';
+import { runAgentAttempt } from '../../openclaw_runtime/src/agents/command/attempt-execution';
 
 vi.mock('../../openclaw_runtime/src/agents/embedded-agent', () => ({ runEmbeddedAgent: vi.fn() }));
 
@@ -154,7 +155,6 @@ describe('Project RAG independent memory owners', () => {
     const internalIdentity = { ...identity(), agentSessionKey: 'agent:main:knowledge-attempt', sessionId: '33333333-3333-4333-8333-333333333333' };
     const runId = 'knowledge:rag13-attempt';
     const { runEmbeddedAgent } = await import('../../openclaw_runtime/src/agents/embedded-agent');
-    const { runAgentAttempt } = await import('../../openclaw_runtime/src/agents/command/attempt-execution');
     const read = () => readNativeMemorySource({ cfg, identity: internalIdentity, internalRunId: runId, lookup: 'memory/source.md' });
     registerAgentRunContext(runId, { sessionId: internalIdentity.sessionId, sessionKey: internalIdentity.agentSessionKey });
     vi.mocked(runEmbeddedAgent).mockImplementationOnce(async input => {

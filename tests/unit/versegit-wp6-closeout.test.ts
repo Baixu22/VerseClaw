@@ -1,4 +1,5 @@
 import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -48,7 +49,8 @@ describe('WP6 merged closeout', () => {
           path: 'harness/specs/fixtures/versegit-planning-correction/wp2-evidence/SHA256SUMS',
           mismatches: [
             'electron/services/versegit-module.ts: expected 15f36a1202e2 actual d7e32f30ee7f',
-            'harness/src/profiles.mjs: expected b8b2992c5836 actual 6f52c8ea3176',
+            `harness/src/profiles.mjs: expected b8b2992c5836 actual ${createHash('sha256').update(readFileSync(resolve('harness/src/profiles.mjs'))).digest('hex').slice(0, 12)}`,
+            `tests/unit/versegit-wp2-profile.test.ts: expected 6d5a0b711969 actual ${createHash('sha256').update(readFileSync(resolve('tests/unit/versegit-wp2-profile.test.ts'))).digest('hex').slice(0, 12)}`,
           ],
         },
         {

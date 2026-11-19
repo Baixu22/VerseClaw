@@ -342,6 +342,7 @@ describe('P4-001 agent browser first-response binding', () => {
       params: {
         requestId: 'req-1',
         action: 'open',
+        correlation: { sessionKey: 'agent:main:bridge-owner', agentId: 'main' },
         payload: { url: 'https://example.com', profile: 'work' },
       },
     });

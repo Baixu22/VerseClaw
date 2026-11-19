@@ -241,7 +241,7 @@ describe('semantic authority check: current registries with the TF-0631 rulings 
 
   it('passes with the expected counts and every rule evaluated', () => {
     expect(result.issues).toEqual([]);
-    expect(result.report.counts).toEqual({ components: 35, authorities: 44, dispositions: 54, claims: 45, reliability: 7, sensitive: 7, concepts: 7, relations: 6, flags: 22 });
+    expect(result.report.counts).toEqual({ components: 35, authorities: 44, dispositions: 54, claims: 45, reliability: 7, sensitive: 7, concepts: 7, relations: 6, flags: 28 });
     expect(result.report.rulesEvaluated).toEqual(EXPECTED_RULES);
     expect(result.report.adjudicated).toEqual([]);
     expect(result.report.notComparable).toHaveLength(21);
@@ -620,7 +620,7 @@ describe('semantic authority check: real gate entry (node scripts/check-semantic
     expect(result.code).toBe(0);
     const [verdict, summary] = result.stdout.trim().split(/\r?\n/);
     expect(verdict).toBe('Semantic authority check passed.');
-    expect(summary).toContain('components=35 authorities=44 dispositions=54 claims=45 reliability=7 sensitive=7 concepts=7 relations=6 flags=22');
+    expect(summary).toContain('components=35 authorities=44 dispositions=54 claims=45 reliability=7 sensitive=7 concepts=7 relations=6 flags=28');
     expect(summary).toContain(`rules=${RULES.length} diagnostics=0 adjudicated=0 structural=55/55 gaps=35/35 aliases=1 bindings=3 not-comparable=21 matrix-unmapped=5`);
     const report = JSON.parse(readFileSync(reportPath, 'utf8'));
     expect(report.schema).toBe(REPORT_SCHEMA);

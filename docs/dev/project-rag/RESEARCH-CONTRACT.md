@@ -24,9 +24,13 @@
 
 规划调用复用模型专用 Gateway 路径与 Provider Spend owner。输入使用保守的 UTF-8 token 上界，输出上限传到 provider。预算在发送前预留；物理重试重新准入，同一规划会话的调用数上限拒绝第二次发送。费用按冻结模型费率和终态用量计算，缺少用量的预留继续占用；缺少费率时不发送规划请求。
 
+规划等待连接出错或超时时，Main 对尚未确认完成的内部 run 发出 owner 取消请求，再移除本地监听；迟到的接受回执仍保留取消补偿。
+
 一次性内部模型会话使用执行 owner 提供的 workspace、会话 key 和实际 generation 建立预算记录；这类会话没有持久 transcript 行。普通会话仍通过持久 session owner 复读身份。
 
 Research 的来源检索允许本地 embedding、向量和重排路径。当前远端 embedding/rerank 没有可供本次请求预留的费用合同，因此本控制器收紧其 egress，使用可用的本地路径并返回检索退化状态。普通 Local/Quality/Research 单次检索继续遵循既有 provider 选择。
+
+上下文增强关闭时，DCS 内部 Context Ladder 同时停止读取 BlockStore；配置开关与环境变量开关均执行这一约束。
 
 ## 证据与停止
 
@@ -46,3 +50,5 @@ Research 的来源检索允许本地 embedding、向量和重排路径。当前�
 - `tests/e2e/project-rag-research.spec.ts`：保留代码关系旅程，新增真实 Electron/Gateway 的多轮 Research、DCS 预算丢弃、取消、冲突、版本复验和 Local 回滚。
 
 自动化结果标记 `actor: knowledge-research`、`driven_by: agent`、`realHumanEvidence: false`。
+
+身份复验通过同一 session owner 的 `sessions.describe(identityOnly=true)` 重新读取会话 key、generation 和状态，省略完整会话列表所需的模型与转录元数据解析。状态查询仍受5秒上限约束，证据读取前后和交付前继续复验。

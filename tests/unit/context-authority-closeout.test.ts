@@ -65,10 +65,10 @@ describe('TF-0493 context authority closeout', () => {
     expect(violations).toEqual([]);
     expect(() => read('src/components/settings/VtokenBridgePanel.tsx')).toThrow();
     expect(disposition('component.vtoken-bridge')).toMatchObject({
-      disposition: 'internal',
-      visibility: 'internal',
+      disposition: 'retired',
+      visibility: 'retired',
       userEntry: null,
-      currentConsumers: ['internal diagnostics', 'vtoken package tests'],
+      currentConsumers: ['retired compatibility API', 'vtoken package tests'],
     });
   });
 

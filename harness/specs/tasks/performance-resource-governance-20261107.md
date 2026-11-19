@@ -28,8 +28,7 @@ touchedAreas:
 开发使用独立 Git 工作树；Task Forest 使用 `D:/ClawX` 的既有权威图。
 状态与执行顺序由 Task Forest 管理；本文件定义缺口、交付与验收，供实现者和验收者使用。
 总目标为 `TF-0822`，阶段节点为 `TF-0823`–`TF-0827`，开发包 A–L 对应
-`TF-0828`–`TF-0839`。当前开发树：
-`C:/Users/27933/.codex/worktrees/performance-resource-lifecycle/ClawX`。
+`TF-0828`–`TF-0839`。执行工作树使用节点的 `execution_binding`，当前跑次记录在本地交接中。
 
 旧资源 Fabric 与 Electron 性能阶段的通过记录保留其原候选和范围。当前任务图中的
 `TF-0010` 已废止，后续工作关联仍在使用的资源 owner 和当前验收合同。

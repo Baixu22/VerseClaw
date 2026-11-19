@@ -366,9 +366,15 @@ function gitChangedPaths(root, since) {
     .sort(comparePath);
 }
 
-function gitBlobIdentity(root, relativePath, ref = 'HEAD') {
-  const result = runGit(root, ['rev-parse', '--verify', `${ref}:${relativePath}`], { allowFailure: true });
-  return result.status === 0 && /^[a-f0-9]{40}$/u.test(result.stdout) ? result.stdout : null;
+function gitBlobIdentities(root, paths, ref) {
+  const result = runGit(root, ['--literal-pathspecs', 'ls-tree', '-r', '-z', ref, '--', ...paths], { allowFailure: true });
+  const identities = new Map();
+  if (result.status !== 0) return identities;
+  for (const row of result.stdout.split('\0')) {
+    const match = /^\d+ blob ([a-f0-9]{40})\t([\s\S]+)$/u.exec(row);
+    if (match) identities.set(match[2], match[1]);
+  }
+  return identities;
 }
 
 export function resolveChangedPaths(root = REPOSITORY_ROOT, options = {}) {
@@ -412,7 +418,7 @@ export function inferCoverage(changedPaths = []) {
   return coverage;
 }
 
-function readRelativeFile(root, relativePath, ref = 'HEAD') {
+function readRelativeFile(root, relativePath, blobs) {
   const normalized = normalizePath(relativePath);
   if (!normalized) return { path: relativePath, exists: false, sha256: null };
   const fullPath = resolve(root, normalized);
@@ -427,7 +433,7 @@ function readRelativeFile(root, relativePath, ref = 'HEAD') {
     // sha256 is retained for diagnostics; formal manifests use the Git blob
     // identity below so CRLF/LF checkout policy cannot change source identity.
     sha256: sha256File(fullPath),
-    gitBlob: gitBlobIdentity(root, normalized, ref),
+    gitBlob: blobs.get(normalized) ?? null,
   };
 }
 
@@ -585,6 +591,7 @@ function buildGates(profiles, options = {}) {
     args: [
       '--manifest', 'resources/verseshell/manifest.json',
       '--binary', 'resources/bin/win32-x64/ae.exe',
+      '--copy', 'resources/bin/win32-x64/vg.exe',
       '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
       '--copy', 'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
       '--copy', 'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json',
@@ -660,7 +667,8 @@ export function createAcceptancePlan(options = {}) {
   const { profiles, deferredProfiles } = inferProfiles(spec, coverage, mode);
   const rulePaths = collectRulePaths(spec);
   const sourceFiles = [specPath, ...rulePaths, ...REQUIRED_LOCK_FILES, ...GATE_POLICY_FILES];
-  const source = sourceFiles.map((path) => readRelativeFile(root, path, identity.commit));
+  const sourceBlobs = gitBlobIdentities(root, sourceFiles, identity.commit);
+  const source = sourceFiles.map((path) => readRelativeFile(root, path, sourceBlobs));
   const missingSource = source.filter((entry) => !entry.exists).map((entry) => entry.path);
   const taskId = String(spec.data?.id ?? '');
   const humanEvidenceRequired = hasHumanEvidenceRequirement(spec);
@@ -949,8 +957,14 @@ export function validateAcceptanceManifest(manifest, options = {}) {
       if (options.requireRef && manifest.candidate.ref && identity.ref !== manifest.candidate.ref) {
         errors.push('candidate ref does not match source ref');
       }
+      const sourcePaths = (manifest.source?.files ?? []).map((entry) => entry.path);
+      const sourceBlobs = gitBlobIdentities(options.root, sourcePaths, manifest.candidate.commit);
+      const sourceDiff = runGit(options.root,
+        ['--literal-pathspecs', 'diff', '--no-renames', '--name-only', '-z', manifest.candidate.commit, '--', ...sourcePaths],
+      );
+      const changedSourcePaths = new Set(String(sourceDiff.result.stdout ?? '').split('\0'));
       for (const expected of manifest.source?.files ?? []) {
-        const actual = readRelativeFile(options.root, expected.path, manifest.candidate?.commit);
+        const actual = readRelativeFile(options.root, expected.path, sourceBlobs);
         if (!expected?.path || !expected.gitBlob || !actual.gitBlob) {
           errors.push(`source input Git blob identity unavailable: ${expected?.path ?? '<unknown>'}`);
           continue;
@@ -958,12 +972,7 @@ export function validateAcceptanceManifest(manifest, options = {}) {
         if (actual.exists !== expected.exists || actual.gitBlob !== expected.gitBlob) {
           errors.push(`source input Git blob identity mismatch: ${expected.path}`);
         }
-        const worktreeDiff = runGit(
-          options.root,
-          ['diff', '--quiet', manifest.candidate?.commit ?? 'HEAD', '--', expected.path],
-          { allowFailure: true },
-        );
-        if (worktreeDiff.status !== 0) errors.push(`source input differs from candidate Git blob: ${expected.path}`);
+        if (changedSourcePaths.has(expected.path)) errors.push(`source input differs from candidate Git blob: ${expected.path}`);
       }
     } catch (error) {
       errors.push(`cannot inspect source repository: ${error.message}`);

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createHash } from 'node:crypto';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -12,6 +13,7 @@ import { parseArgs } from 'node:util';
 import { monitorEventLoopDelay, performance } from 'node:perf_hooks';
 import { createServer } from 'vite';
 
+async function main() {
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const { values } = parseArgs({ options: { output: { type: 'string' }, base: { type: 'string' }, development: { type: 'boolean', default: false } } });
 assert(values.output && values.base, '--output and --base are required');
@@ -136,4 +138,9 @@ try {
 } finally {
   service.closeAllConnections(); await new Promise(resolve => service.close(resolve));
   for (const server of servers) await server.close();
+}
+}
+
+if (isMainEntrypoint(import.meta.url)) {
+  main().catch((error) => { console.error(error); process.exitCode = 1; });
 }

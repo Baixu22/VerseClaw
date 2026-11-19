@@ -7,7 +7,7 @@ const hostApiMock = vi.hoisted(() => ({
   applyDraft: vi.fn(),
   createDraft: vi.fn(),
   proposeChange: vi.fn(),
-  saveWorkspaceState: vi.fn(),
+  saveWorkspaceState: vi.fn(async () => undefined),
 }));
 
 const chatState = vi.hoisted(() => ({
@@ -33,6 +33,9 @@ const chatState = vi.hoisted(() => ({
   streamingTools: [],
   pendingFinal: false,
   activeRunId: null,
+  handoffOperation: null,
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: true,
   runtimeRuns: {},
   sendMessage: vi.fn(),
   abortRun: vi.fn(),
@@ -73,8 +76,8 @@ vi.mock('@/stores/providers', () => ({
   }),
 }));
 
-vi.mock('@/stores/workspaces', () => ({
-  useWorkspacesStore: (selector: (state: Record<string, unknown>) => unknown) => selector({
+vi.mock('@/stores/workspaces', () => {
+  const state = {
     profiles: [],
     activeWorkspace: {
       id: 'workspace-1',
@@ -88,8 +91,14 @@ vi.mock('@/stores/workspaces', () => ({
     createWorkspace: vi.fn(),
     saveWorkspaceState: hostApiMock.saveWorkspaceState,
     setPermissionMode: vi.fn(),
-  }),
-}));
+  };
+  return {
+    useWorkspacesStore: Object.assign(
+      (selector: (snapshot: typeof state) => unknown) => selector(state),
+      { getState: () => state },
+    ),
+  };
+});
 
 // Chat reads this store both as a hook and imperatively via `.getState()`
 // (index.tsx:972, 1529, 1550). A selector-only mock made the component throw
@@ -158,6 +167,7 @@ vi.mock('@/lib/host-api', () => ({
       proposeChange: hostApiMock.proposeChange,
     },
     sessions: {
+      handoffOperation: vi.fn(async () => ({ operation: null })),
       compactionStatus: vi.fn(async () => ({ success: true, status: null })),
       compactionHistory: vi.fn(async () => ({ success: true, entries: [] })),
       compact: vi.fn(async () => ({ success: true })),

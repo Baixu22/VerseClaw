@@ -2,7 +2,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import { resolveStateDbPath } from './rsi-feedback-export.mjs';
 
@@ -101,7 +101,7 @@ export function validateAdoptionExport(report) {
   return { passed: errors.length === 0, errors };
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMainEntrypoint(import.meta.url)) {
   const args = process.argv.slice(2);
   const value = (flag) => args.includes(flag) ? args[args.indexOf(flag) + 1] : undefined;
   const input = value('--input');

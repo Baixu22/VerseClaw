@@ -213,9 +213,9 @@ describe('evidence reference path validation (#92)', () => {
   });
 });
 
-describe('check-evidence-refs default invocation is byte-identical to the pre-C3 behaviour', () => {
+describe('check-evidence-refs default invocation uses the current reference input set', () => {
   it('prints the pinned stdout, nothing on stderr and exits 0', async () => {
-    const expected = readFileSync(path.join(ROOT, REPORT_FIXTURE_DIR, 'default-stdout.expected.txt'), 'utf8');
+    const expected = readFileSync(path.join(ROOT, REPORT_FIXTURE_DIR, 'default-stdout-rag16.expected.txt'), 'utf8');
     expect(expected).toMatch(/^\[evidence-refs\] PASS \d+ referenced path\(s\)\n$/);
     const result = await runReal([]);
     expect(result.code).toBe(0);

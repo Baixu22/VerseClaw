@@ -87,7 +87,8 @@ describe("runbook to task graph conversion", () => {
     });
 
     expect(schedule.skipped).toEqual([]);
-    expect(schedule.metrics.completed).toBe(result.graph.nodes.length);
+    expect(schedule.metrics.scheduled).toBe(result.graph.nodes.length);
+    expect(schedule.metrics.completed).toBe(0);
     expect(schedule.metrics.concurrencyCap).toBe(2);
     expect(schedule.waves.at(-1)?.roles).toContain("skeptic");
   });

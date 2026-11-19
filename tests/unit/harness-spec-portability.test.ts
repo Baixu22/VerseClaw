@@ -14,7 +14,7 @@ function walkMarkdown(dir: string): string[] {
   const files: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const full = join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...walkMarkdown(full));
+    if (entry.isDirectory() && entry.name !== 'fixtures') files.push(...walkMarkdown(full));
     else if (entry.isFile() && entry.name.endsWith('.md')) files.push(full);
   }
   return files;

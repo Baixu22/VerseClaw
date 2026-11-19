@@ -262,7 +262,7 @@ describe('flag-off byte parity against the clean-HEAD baseline', () => {
     }
   });
 
-  it('keeps the tool-name constants, coding navigation prompt bytes and the core tool catalog unchanged', () => {
+  it('keeps frozen coding navigation bytes and the Task System catalog registration', () => {
     expect([...DCS_ALL_CONTEXT_TOOL_NAMES]).toEqual(baseline.dcsToolNameConstants.all);
     expect([...DCS_CONTEXT_AGENT_TOOL_NAMES]).toEqual(baseline.dcsToolNameConstants.agent);
     expect([...DCS_CONTEXT_VIEW_TOOL_NAMES]).toEqual(baseline.dcsToolNameConstants.view);
@@ -274,7 +274,8 @@ describe('flag-off byte parity against the clean-HEAD baseline', () => {
     expect(CODING_NAV_PROMPT_MAX_CHARS).toBe(baseline.codingToolNavigation.navPromptMaxChars);
     expect(buildCodingToolNavigationPrompt()).toBe(baseline.codingToolNavigation.defaultNavPrompt);
     const catalogIds = listCoreToolSections().flatMap((section) => (section as { tools?: Array<{ id: string }> }).tools?.map((tool) => tool.id) ?? []).sort();
-    expect(catalogIds).toEqual(baseline.toolCatalogIds);
+    // Task System registered task_control after the frozen folding baseline.
+    expect(catalogIds).toEqual([...baseline.toolCatalogIds, 'task_control'].sort());
   });
 
   it('keeps the full OpenClaw tool list byte-identical with the flag off and never exposes a folding tool', () => {

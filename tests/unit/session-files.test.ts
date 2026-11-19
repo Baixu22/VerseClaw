@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { execFileSync } from 'node:child_process';
 import { cleanupContextArchiveArtifacts, upsertArchiveEntry } from '../../electron/utils/session-files';
 
 let tempRoot: string | null = null;
@@ -14,7 +15,7 @@ afterEach(async () => {
 });
 
 describe('session file helpers', () => {
-  it.skipIf(process.platform === 'win32')('writes the shared archive index with owner-only permissions', async () => {
+  it('writes the shared archive index with owner-only permissions', async () => {
     tempRoot = await mkTempRoot();
     const indexPath = path.join(tempRoot, 'sessions.archives.json');
     await upsertArchiveEntry(indexPath, {
@@ -27,7 +28,17 @@ describe('session file helpers', () => {
       originalFolderId: null,
       sessionsJsonSnapshot: { key: 'agent:main:main' },
     });
-    expect((await stat(indexPath)).mode & 0o077).toBe(0);
+    if (process.platform === 'win32') {
+      const script = `$acl = [System.IO.File]::GetAccessControl($env:CLAWX_PRIVATE_FILE_PATH); $owner = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value; @{ protected = $acl.AreAccessRulesProtected; owner = $owner; rules = @($acl.GetAccessRules($true, $false, [System.Security.Principal.SecurityIdentifier]) | ForEach-Object { @{ sid = $_.IdentityReference.Value; inherited = $_.IsInherited; type = [string]$_.AccessControlType } }) } | ConvertTo-Json -Depth 4 -Compress`;
+      const raw = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], {
+        encoding: 'utf8', windowsHide: true, env: { ...process.env, CLAWX_PRIVATE_FILE_PATH: indexPath },
+      });
+      const acl = JSON.parse(raw) as { protected: boolean; owner: string; rules: Array<{ sid: string; inherited: boolean; type: string }> };
+      expect(acl.protected).toBe(true);
+      expect(acl.rules).toEqual([{ sid: acl.owner, inherited: false, type: 'Allow' }]);
+    } else {
+      expect((await stat(indexPath)).mode & 0o077).toBe(0);
+    }
   });
 
   it('removes context archive artifacts for deleted sessions without deleting unrelated files', async () => {

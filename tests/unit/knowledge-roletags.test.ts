@@ -15,6 +15,10 @@ vi.mock('electron', () => ({
   shell: { openPath: vi.fn(async () => '') },
 }));
 
+vi.mock('@electron/services/workspaces-api', () => ({
+  getActiveWorkspaceProfile: vi.fn(async () => null),
+}));
+
 const root = join(tmpdir(), `clawx-kb-roletags-test-${Date.now()}`);
 
 vi.mock('@electron/utils/paths', () => ({

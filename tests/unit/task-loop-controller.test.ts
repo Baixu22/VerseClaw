@@ -1,7 +1,7 @@
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   clearTaskLoopRunsForTests,
   getTaskLoopRun,
@@ -41,6 +41,7 @@ import {
 } from '../../openclaw_runtime/src/runtime-core';
 import { createRuntimeMemoryRuntimeIntegration } from '../../openclaw_runtime/src/runtime-core/memory-runtime-integration';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { closeOpenClawAgentDatabasesForTest } from '../../openclaw_runtime/src/state/openclaw-agent-db';
 
 type FakePlan = {
   mode: 'router' | 'lead-workers' | 'adversarial-review';
@@ -306,14 +307,22 @@ function createTaskLoopRuntimeMemoryDbPath(): string {
   return path.join(dir, 'openclaw-state.sqlite');
 }
 
+beforeEach(() => {
+  const stateDir = mkdtempSync(path.join(os.tmpdir(), 'task-loop-controller-'));
+  taskLoopRuntimeMemoryTempDirs.push(stateDir);
+  vi.stubEnv('OPENCLAW_STATE_DIR', stateDir);
+});
+
 afterEach(() => {
   clearTaskLoopRunsForTests();
   clearTaskStateHandlerConfig();
   resetAllGuardianCircuitBreakersForTests();
+  closeOpenClawAgentDatabasesForTest();
   closeOpenClawStateDatabaseForTest();
   for (const dir of taskLoopRuntimeMemoryTempDirs.splice(0)) {
     rmSync(dir, { recursive: true, force: true });
   }
+  vi.unstubAllEnvs();
 });
 
 describe('task-loop context and self-check', () => {
@@ -2336,11 +2345,12 @@ describe('runTaskLoop', () => {
   it('runs a scoped repair iteration before completing', async () => {
     const tasks: string[] = [];
     let checks = 0;
+    let nextId = 0;
     const result = await runTaskLoop(
       { task: 'add dashboard', sessionKey: 'agent:main:abc' },
       {},
       {
-        idFactory: (prefix) => `${prefix}_${tasks.length}`,
+        idFactory: (prefix) => `${prefix}_${nextId++}`,
         runObserved: (async (request: ObservedOrchestrationRunRequest) => {
           tasks.push(request.task);
           return fakeResult(request.templateId);

@@ -1,6 +1,5 @@
 // @vitest-environment node
 import v8 from "node:v8";
-import { spawnSync } from "node:child_process";
 import { afterEach, describe, expect, it } from "vitest";
 
 import {
@@ -96,25 +95,6 @@ async function waitForPidDeath(pid: number, timeoutMs = 10_000): Promise<void> {
   }
   throw new Error(`pid ${pid} survived drain`);
 }
-
-function canAuditWindowsProcessTrees(): boolean {
-  if (process.platform !== "win32") {
-    return true;
-  }
-  const probe = spawnSync(
-    "powershell",
-    [
-      "-NoProfile",
-      "-NonInteractive",
-      "-Command",
-      "Get-CimInstance -ClassName Win32_Process -Filter \"ProcessId = $PID\" | Out-Null",
-    ],
-    { timeout: 1_000, windowsHide: true, stdio: "ignore" },
-  );
-  return !probe.error && probe.status === 0;
-}
-
-const windowsProcessTreeAuditAvailable = canAuditWindowsProcessTrees();
 
 async function startLeakFixtureTree(
   identity: SessionAdmissionIdentity,
@@ -230,7 +210,7 @@ describe("Runtime Lifecycle Governance — Phase 0 lifecycle safety contract", (
 });
 
 describe("Runtime Lifecycle Governance — Phase 1 50-cycle leak fixture", () => {
-  it.skipIf(!windowsProcessTreeAuditAvailable)(
+  it(
     "drains 50 create/stop process-tree cycles without registry, timer, or heap leaks",
     async () => {
     process.stdout.write("[runtime-lifecycle-audit] leak50CycleHeapMethod=gc+used_heap_size\n");

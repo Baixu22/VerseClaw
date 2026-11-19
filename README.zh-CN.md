@@ -40,7 +40,7 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 
 这个仓库不只是 Renderer 外壳，还包含 React UI、Electron Main Host、类型化跨进程契约、vendored OpenClaw Runtime、VerseBrowser、VerseShell 执行基础、已退役但仍保留的 VToken 源码、可执行 Harness 规格，以及构建/证据/发布流水线。
 
-> **当前状态：**`0.4.9-alpha.0`，controlled preview。Windows x64 本地工作流是主要验收目标；macOS/Linux 有构建目标，但平台级运行时验证是另一件事。组件毕业或 agent-driven 证据都不代表公开发布、GA、liveReady 或 productApproved。
+> **当前状态：**`0.4.9-alpha.0`，controlled preview。Windows x64 本地工作流是主要验收目标；macOS/Linux 有构建目标，平台级运行时分别验收。
 
 ## 产品包含什么
 
@@ -69,7 +69,7 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 
 | 标签 | 含义 |
 |---|---|
-| `default` / `advanced` | 在声明范围内属于当前产品表面；不是 GA 承诺 |
+| `default` / `advanced` | 在声明的 controlled-preview 范围内属于当前产品表面 |
 | `internal` | 有实现或内部接口，但没有独立用户产品入口 |
 | `shadow` / `experiment` | 观测或有限实验，不拥有路由、写回或审批权威 |
 | `retired` | 仅为兼容、来源追溯或回滚检查保留 |

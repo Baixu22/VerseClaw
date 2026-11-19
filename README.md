@@ -40,7 +40,7 @@ Verse Claw is an Electron desktop application built on an embedded OpenClaw runt
 
 This repository is more than a renderer wrapper. It contains the React UI, Electron Main host, typed cross-process contracts, the vendored OpenClaw runtime, VerseBrowser, the VerseShell execution foundation, retired VToken source, executable Harness specifications and the build/evidence/release pipeline.
 
-> **Current status:** `0.4.9-alpha.0`, controlled preview. Windows x64 local workflows are the primary acceptance target. macOS/Linux have build targets, but platform-specific runtime validation is separate. Release, GA, live readiness and product approval are not implied by component graduation or agent-driven evidence.
+> **Current status:** `0.4.9-alpha.0`, controlled preview. Windows x64 local workflows are the primary acceptance target. macOS/Linux have build targets, with separate platform runtime validation.
 
 ## What is in the product
 
@@ -69,7 +69,7 @@ Conversations show what a turn produced, whichever tool produced it. Audio and v
 
 | Label | Meaning |
 |---|---|
-| `default` / `advanced` | A current product surface, within the stated controlled-preview boundary. Not a GA claim. |
+| `default` / `advanced` | A current product surface, within the stated controlled-preview boundary. |
 | `internal` | Implemented or exposed internally without an independent user product entry. |
 | `shadow` / `experiment` | Observation or bounded experiment; it does not own routing, writes or approval. |
 | `retired` | Kept only for compatibility, provenance or rollback inspection. |
@@ -80,7 +80,7 @@ The current machine-readable component catalog contains 54 rows: 13 default, 12 
 Important current defaults:
 
 - Workspace Context and read-only DCS context tools are on under their declared health and permission gates.
-- Runtime Memory injection, SEKB automatic writeback and browser private-network access are not default-on.
+- Runtime Memory injection and SEKB automatic writeback are disabled by default. Browser private-network access requires an explicit grant.
 - SEKB records explicit use of a principle by its version and run, with operational and independently graded outcomes kept separate. Memory feedback remains diagnostic and does not affect retrieval ranking or retention. See [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md).
 - Controlled RSI prompt research records parent versions, training attribution and frozen validation decisions. Staged candidates bind to a separately sealed evaluation plan.
 - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.

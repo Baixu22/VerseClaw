@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { Chat } from '@/pages/Chat';
 
 vi.mock('react-router-dom', () => ({
+  Link: ({ to, children }: { to: string; children: import('react').ReactNode }) => <a href={to}>{children}</a>,
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
 }));
@@ -13,7 +14,7 @@ vi.mock('react-i18next', () => ({
     init: vi.fn(),
   },
   useTranslation: () => ({
-    t: (_key: string, defaultValue?: string) => defaultValue ?? '',
+    t: (key: string, defaultValue?: unknown) => typeof defaultValue === 'string' ? defaultValue : key,
   }),
 }));
 
@@ -39,6 +40,9 @@ const chatState = {
   streamingTools: [],
   pendingFinal: false,
   activeRunId: null,
+  handoffOperation: null,
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: true,
   sendMessage: vi.fn(),
   abortRun: vi.fn(),
   clearError: vi.fn(),

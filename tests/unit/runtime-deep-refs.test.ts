@@ -50,6 +50,15 @@ describe('runtime deep reference guard (#93)', () => {
     expect(normalizeSpecifier('./local', 'electron/services/y.ts')).toBe('electron/services/local');
   });
 
+  it('resolves relative runtime paths quoted by parent tooling', () => {
+    const { root, write } = fixtureRepo();
+    write('openclaw_runtime/package.json', '{}\n');
+    write('scripts/lib/example.mjs', "const manifest = '../../openclaw_runtime/package.json';\n");
+    const result = checkRuntimeDeepRefs({ root, files: ['scripts/lib/example.mjs'] });
+    expect(result.dangling).toEqual([]);
+    expect(collectReferences(root, ['scripts/lib/example.mjs'])[0].target).toBe('openclaw_runtime/package.json');
+  });
+
   it('collects imports, strings and package scripts while skipping non-path patterns', () => {
     const { root, write } = fixtureRepo();
     write(

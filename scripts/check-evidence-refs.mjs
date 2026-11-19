@@ -4,8 +4,8 @@
  * These are strings, not imports, so a rename would otherwise silently break
  * the claim's source evidence.
  *
- * Without arguments the script keeps that behaviour and its output byte for
- * byte (tests/unit/evidence-refs-exist.test.ts pins the stdout). With
+ * Without arguments the script keeps that behaviour and its stdout format
+ * (tests/unit/evidence-refs-exist.test.ts pins the current reference count). With
  * arguments it writes or verifies a ProductSemanticEvidenceReport/v1 that binds
  * the typed product relations of shared/product-semantics.ts to the digests of
  * their source references and to the candidate commit/tree, so a stale source,

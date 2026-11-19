@@ -1,6 +1,7 @@
 import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Models } from '@/pages/Models/index';
+import { MemoryRouter } from 'react-router-dom';
 
 const hostApiFetchMock = vi.fn();
 const trackUiEventMock = vi.fn();
@@ -37,6 +38,14 @@ vi.mock('@/lib/telemetry', () => ({
 
 vi.mock('@/components/settings/ProvidersSettings', () => ({
   ProvidersSettings: () => null,
+}));
+
+vi.mock('@/components/settings/KnowledgeEmbeddingSettings', () => ({
+  KnowledgeEmbeddingSettings: () => null,
+}));
+
+vi.mock('@/components/settings/KnowledgeRerankSettings', () => ({
+  KnowledgeRerankSettings: () => null,
 }));
 
 vi.mock('@/components/common/FeedbackState', () => ({
@@ -84,7 +93,7 @@ describe('Models page auto refresh', () => {
   });
 
   it('refreshes token usage while the page stays open', async () => {
-    render(<Models />);
+    render(<MemoryRouter><Models /></MemoryRouter>);
 
     await act(async () => {
       await Promise.resolve();

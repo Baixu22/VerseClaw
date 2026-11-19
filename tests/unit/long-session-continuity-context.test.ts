@@ -30,6 +30,7 @@ vi.mock('@electron/services/task-ledger-working-context', () => ({
   readTaskLedgerWorkingContext: (...args: unknown[]) => readTaskLedgerWorkingContextMock(...args),
 }));
 vi.mock('@electron/services/workspaces-api', () => ({
+  getActiveWorkspaceProfile: vi.fn(() => ({ id: 'workspace-a', rootPath: '/repo', permissionMode: 'readOnly' })),
   getPersistedCoordinatorBinding: (...args: unknown[]) => getPersistedCoordinatorBindingMock(...args),
   getWorkspaceRootPathById: (...args: unknown[]) => getWorkspaceRootPathByIdMock(...args),
 }));
@@ -616,7 +617,7 @@ describe('long-session continuity context', () => {
     const { createChatApi } = await import('@electron/services/chat-api');
     const api = createChatApi({ gatewayManager: gatewayManager as never });
 
-    await api.sendWithMedia({
+    const sent = await api.sendWithMedia({
       sessionKey: SESSION_KEY,
       workspaceId: WORKSPACE_ID,
       message: 'Continue the task',
@@ -624,6 +625,7 @@ describe('long-session continuity context', () => {
       knowledgeReferences: [{ id: 'wiki:decision-1', title: 'Knowledge decision', lookup: 'notes/decision.md', corpus: 'wiki', freshnessLevel: 'fresh' }],
     });
 
+    expect(sent, JSON.stringify(sent)).toMatchObject({ success: true });
     expect(gatewayManager.rpc.mock.calls.map((call) => call[0])).toEqual(expect.arrayContaining([
       'sessions.compressionArtifact', 'memory.surface', 'chat.send',
     ]));

@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { performance } from 'node:perf_hooks';
-import { pathToFileURL } from 'node:url';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { buildKnowledgeQaPrompt, validateKnowledgeQaOutput, type KnowledgeConversationTurn } from '../electron/services/knowledge-evidence-qa';
 import { readBoundedKnowledgePage, retrieveSelectedSourceSetEvidence } from '../electron/services/knowledge-source-set-answer';
 import { lexicalOverlapScore } from '../openclaw_runtime/src/context-engine/source-set';
@@ -112,7 +112,7 @@ export async function runKnowledgeQualityEval(options: {
   return summary;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMainEntrypoint(import.meta.url)) {
   const output = process.argv[2]; if (!output || !/^[dD]:[\\/]/.test(resolve(output))) throw Error('Evaluation output must be on D:');
   const { createResponsesProvider } = await import('./lib/rsi-responses-provider.mjs');
   const apiKey = process.env.CLAWX_SPACE_BUNNY_API_KEY;

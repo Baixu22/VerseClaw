@@ -35,7 +35,8 @@ describe('app version rollback protection', () => {
     expect(getConfigPathValue(next, 'runtime.contextBlock.working-memory.enabled')).toBe(false);
     expect(getConfigPathValue(next, 'runtime.contextBlock.tool-registry.enabled')).toBe(false);
     expect(getConfigPathValue(next, 'runtime.coding.staleWriteGuard.enabled')).toBe(false);
-    expect(getConfigPathValue(next, 'runtime.coding.symbolLease.enabled')).toBe(false);
+    // Symbol leases are request-owned and have no writable DCS config binding.
+    expect(getConfigPathValue(next, 'runtime.coding.symbolLease.enabled')).toBe(true);
     expect(getConfigPathValue(next, 'runtime.coding.routingMemo.shadow')).toBe(false);
     // TF-0137: this leaf is API-only and is not a rollback surface.
     expect(getConfigPathValue(next, 'runtime.coding.sekb.experienceShadow')).toBe(true);

@@ -27,6 +27,7 @@ describe('evidence QA', () => {
       { sessionKey: 'agent:main:owner', references: [] });
     expect(result.text).toBe(JSON.stringify(valid));
     expect(rpc.mock.calls.some(call => call[0] === 'chat.history')).toBe(false);
+    expect(rpc.mock.calls.some(call => call[0] === 'chat.abort')).toBe(false);
     const emptyGateway = { rpc: vi.fn(async method => method === 'agent' ? { runId: 'current' }
       : method === 'agent.wait' ? { status: 'completed', retainedEvidence: receipt }
       : { messages: [{ role: 'assistant', content: JSON.stringify(valid) }] }), on: vi.fn(), off: vi.fn() } as unknown as GatewayManager;
@@ -117,6 +118,34 @@ describe('evidence QA', () => {
     expect(rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelBudget: budget, modelRun: true }), expect.any(Number));
     expect(rpc).toHaveBeenCalledWith('chat.abort', expect.objectContaining({ runId: 'late-acceptance' }), 5000);
     expect(rpc.mock.calls.some(([method]) => method === 'agent.wait')).toBe(false);
+    expect(listeners.size).toBe(0);
+  });
+
+  it.each(['connection-error', 'timeout'] as const)('stops an accepted planning run when wait ends with %s before cancellation', async failure => {
+    const controller = new AbortController();
+    const listeners = new Set();
+    const rpc = vi.fn(async (method: string) => {
+      if (method === 'agent') return { runId: 'accepted-research-run' };
+      if (method === 'agent.wait') {
+        if (failure === 'connection-error') throw new Error('Gateway connection closed');
+        return { status: 'timeout' };
+      }
+      if (method === 'chat.abort') return { success: true };
+      throw new Error('Unexpected RPC');
+    });
+    const gateway = { rpc, on: vi.fn((_e, cb) => listeners.add(cb)), off: vi.fn((_e, cb) => listeners.delete(cb)) } as unknown as GatewayManager;
+    await expect(runKnowledgeModel(gateway, 'bounded planning', 'Research', 30000,
+      { sessionKey: 'agent:main:owner', references: [] },
+      { signal: controller.signal, budget: { maxInputTokens: 7000, maxOutputTokens: 1000, maxCostUsd: 0.025, maxCalls: 1 } },
+    )).rejects.toThrow(failure === 'connection-error' ? 'Gateway connection closed' : 'did not complete');
+    expect(controller.signal.aborted).toBe(false);
+    expect(rpc).toHaveBeenCalledWith('chat.abort', expect.objectContaining({
+      sessionKey: expect.stringMatching(/^agent:main:knowledge-/), runId: 'accepted-research-run',
+    }), 5000);
+    const aborts = rpc.mock.calls.filter(([method]) => method === 'chat.abort').length;
+    expect(aborts).toBe(1);
+    controller.abort();
+    expect(rpc.mock.calls.filter(([method]) => method === 'chat.abort')).toHaveLength(aborts);
     expect(listeners.size).toBe(0);
   });
 });

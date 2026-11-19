@@ -1,16 +1,18 @@
 // @vitest-environment node
-// KE Integration (三单合流): full-chain candidate -> confirm -> persist -> shadow retrieval.
-import { mkdtempSync, rmSync } from "node:fs";
+// KE Integration: staged candidates, retired persistence and diagnostic retrieval.
+import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { assertRuntimeMemoryOwnerConvergence } from "../../openclaw_runtime/src/agents/slot-convergence";
-import { runKeCandidateGeneration } from "../../openclaw_runtime/src/runtime-core/ke-candidate-generation";
+import { buildKeFactProposalInputs, runKeCandidateGeneration } from "../../openclaw_runtime/src/runtime-core/ke-candidate-generation";
 import {
   runKeRetrievalShadow,
   type KeRetrievalCandidate,
 } from "../../openclaw_runtime/src/runtime-core/ke-retrieval-shadow";
-import { promoteRuntimeMemoryFactCandidate } from "../../openclaw_runtime/src/runtime-core/memory-proposal-shadow";
+import { promoteRuntimeMemoryFactCandidate, sanitizeRuntimeMemoryFactProposalInput } from "../../openclaw_runtime/src/runtime-core/memory-proposal-shadow";
+import { createRuntimeMemoryPersistenceStore } from "../../openclaw_runtime/src/runtime-core/memory-persistence";
+import { RUNTIME_MEMORY_EVAL_CONFIG } from "./helpers/runtime-memory-eval-helpers";
 import { buildRuntimeMemoryTemporalFactFixture } from "../../openclaw_runtime/src/runtime-core/memory-context";
 import { createRuntimeMemoryRuntimeIntegration } from "../../openclaw_runtime/src/runtime-core/memory-runtime-integration";
 import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/state/openclaw-state-db";
@@ -45,40 +47,47 @@ function factEvidence() {
 }
 
 describe("KE integration: full chain", () => {
-  it("① candidate -> confirm -> persist (SQLite) -> shadow retrieval hit -> receipt", () => {
+  it("① staged candidate -> agent-simulated confirmation -> retired persistence guard -> retrieval receipt", () => {
     // 1. task terminal -> candidate generation
     const gen = runKeCandidateGeneration(GEN_ON, factEvidence());
     expect(gen.enabled).toBe(true);
-    expect(gen.proposalShadow.candidates.length).toBeGreaterThan(0);
-    const candidate = gen.proposalShadow.candidates[0]!;
+    expect(gen.factCandidates.length).toBeGreaterThan(0);
+    expect(gen.proposalShadow).toMatchObject({ enabled: false, readonly: true, candidates: [], acceptedFacts: [] });
+    const parsed = sanitizeRuntimeMemoryFactProposalInput(buildKeFactProposalInputs(factEvidence())[0]);
+    if (!parsed.accepted) throw new Error(parsed.reason);
+    const candidate = parsed.value;
     expect(candidate.verificationStatus).toBe("candidate");
 
-    // 2. human confirm -> promotion (candidate -> human_approved fact)
+    // Agent-simulated confirmation exercises the existing legacy approval schema.
     const fact = promoteRuntimeMemoryFactCandidate(candidate, {
       acceptedAt: 1000,
-      approvedBy: "operator",
+      approvedBy: "agent:ke-diagnostic-fixture",
       evidenceRefs: candidate.evidenceRefs,
     });
     expect(fact.verificationStatus).toBe("human_approved");
     expect(fact.promotion.promotedBy).toBe("human");
 
-    // 3. persist -> real SQLite (runtime_memory facts)
-    const integration = createRuntimeMemoryRuntimeIntegration({
-      config: { runtime: { memory: { persist: true } } },
-      database: { path: createTempDbPath() },
+    // Retired persistence requests must leave the staged fact out of SQLite.
+    const dbPath = createTempDbPath();
+    let openCalls = 0;
+    const integration = createRuntimeMemoryPersistenceStore({
+      config: RUNTIME_MEMORY_EVAL_CONFIG,
+      database: { path: dbPath },
       now: () => 1000,
+      openDatabase: () => { openCalls += 1; throw new Error("retired persistence must not open SQLite"); },
     });
-    expect(integration.migrate()).toMatchObject({ status: "migrated" });
-    expect(integration.appendFact(fact)).toMatchObject({ status: "persisted", stored: true });
+    expect(integration.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled", migrated: false });
+    expect(integration.appendFact(fact)).toMatchObject({ status: "skipped", reason: "flag_disabled", persisted: false });
 
-    // 4. re-read the persisted fact (external re-read, not self-report)
     const loaded = integration.loadStore();
-    expect(loaded.status).toBe("loaded");
+    expect(loaded.status).toBe("skipped");
     const persisted = loaded.store.getFactById(fact.factId);
-    expect(persisted).toBeDefined();
-    expect(persisted!.verificationStatus).toBe("human_approved");
+    expect(persisted).toBeUndefined();
+    expect(loaded.store.stats()).toMatchObject({ facts: 0, episodes: 0, invalidations: 0 });
+    expect(openCalls).toBe(0);
+    expect(existsSync(dbPath)).toBe(false);
 
-    // 5. next task -> shadow retrieval would_retrieve hits the persisted fact -> receipt
+    // The diagnostic retrieval fixture reads the staged fact directly.
     const retrievalCandidate: KeRetrievalCandidate = {
       envelopeId: fact.factId,
       contentVersion: `sha256:${fact.factId}`,

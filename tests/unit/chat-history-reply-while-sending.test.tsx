@@ -1,6 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Chat } from '@/pages/Chat';
+import { useChatStore } from '@/stores/chat';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
   gatewayState: { status: { state: 'running', port: 18789 } },
@@ -96,12 +98,7 @@ vi.mock('@/pages/Chat/ChatToolbar', () => ({ ChatToolbar: () => null }));
 vi.mock('@/pages/Chat/ChatInput', () => ({ ChatInput: () => null }));
 
 describe('Chat history reply while sending', () => {
-  beforeEach(() => {
-    vi.resetModules();
-  });
-
   it('shows assistant reply from history even when sending is still true', async () => {
-    const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
         { role: 'user', id: 'u1', content: '你好' },
@@ -121,7 +118,6 @@ describe('Chat history reply while sending', () => {
       currentAgentId: 'main',
     });
 
-    const { Chat } = await import('@/pages/Chat');
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
     await waitFor(() => {

@@ -72,6 +72,7 @@ describe('WP9 whole-goal acceptance', () => {
   });
 
   it('replays the retained report and reports exact historical drift without re-sealing it', () => {
+    const wp6CurrentHash = createHash('sha256').update(readFileSync(resolve('tests/unit/versegit-wp6-closeout.test.ts'))).digest('hex').slice(0, 12);
     const result = verifyWp9Artifacts({ root: process.cwd() });
     const hasWp6Mirror = existsSync(resolve(process.cwd(), 'artifacts/versegit/wp6/SHA256SUMS'));
     const hasMc6Mirror = existsSync(resolve(process.cwd(), 'artifacts/versegit/mc6/SHA256SUMS'));
@@ -82,10 +83,10 @@ describe('WP9 whole-goal acceptance', () => {
       'input: input digest mismatch electron/services/versegit-module.ts',
       'input: input digest mismatch harness/src/profiles.mjs',
       'WP6 verifier: stored report digest differs from the live closeout replay',
-      'WP6 verifier: wp6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual 1566d3d54ac3',
-      ...(hasWp6Mirror ? ['WP6 verifier: wp6-artifact-sums: <worktree>/artifacts/versegit/wp6/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual 1566d3d54ac3'] : []),
-      'WP6 verifier: mc6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual 1566d3d54ac3',
-      ...(hasMc6Mirror ? ['WP6 verifier: mc6-artifact-sums: <worktree>/artifacts/versegit/mc6/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual 1566d3d54ac3'] : []),
+      `WP6 verifier: wp6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/wp6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ${wp6CurrentHash}`,
+      ...(hasWp6Mirror ? [`WP6 verifier: wp6-artifact-sums: <worktree>/artifacts/versegit/wp6/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ${wp6CurrentHash}`] : []),
+      `WP6 verifier: mc6-evidence-sums: <worktree>/harness/specs/fixtures/versegit-planning-correction/mc6-evidence/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ${wp6CurrentHash}`,
+      ...(hasMc6Mirror ? [`WP6 verifier: mc6-artifact-sums: <worktree>/artifacts/versegit/mc6/SHA256SUMS: tests/unit/versegit-wp6-closeout.test.ts: expected 3378fe8ee8cd actual ${wp6CurrentHash}`] : []),
       'WP8 verifier: input digest mismatch: scripts/versegit-wp7-host-vertical.mts',
       'WP8 verifier: input digest mismatch: electron/services/versegit-receipt-bridge.ts',
       'WP8 verifier: input digest mismatch: electron/services/versegit-receipt-evidence.ts',

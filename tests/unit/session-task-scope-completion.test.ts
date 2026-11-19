@@ -35,6 +35,7 @@ import { createTaskRuntimeGuard, executeTaskGuarded, finishPersistentTaskRun } f
 import { createPersistentTaskTool } from '../../openclaw_runtime/src/agents/tools/persistent-task-tool';
 import { withSessionTaskScope, clearSessionTaskScopeRun } from '../../openclaw_runtime/src/agents/session-task-scope';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { closeOpenClawAgentDatabasesForTest } from '../../openclaw_runtime/src/state/openclaw-agent-db';
 
 const parent = 'agent:main:parent';
 const child = 'agent:main:child';
@@ -124,6 +125,7 @@ afterEach(async () => {
   clearSessionTaskScopeRun('run-parent'); clearSessionTaskScopeRun('run-child');
   finishPersistentTaskRun(state.root, parent, 'run-parent');
   finishPersistentTaskRun(state.root, child, 'run-child');
+  closeOpenClawAgentDatabasesForTest();
   closeOpenClawStateDatabaseForTest();
   tasks?.close();
   vi.unstubAllEnvs(); state.invoke.mockReset();

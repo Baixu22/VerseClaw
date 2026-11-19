@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { createServer } from 'node:http';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createMemoryWikiRerankService } from '../../openclaw_runtime/extensions/memory-wiki/src/retrieval-rerank';
@@ -93,16 +94,26 @@ describe('Project RAG RerankProvider/v1', () => {
     }
   });
 
-  it('runs the real multilingual fixed-pool ablation and writes metrics and costs', { timeout: 120000 }, async ({ skip }) => {
-    const output = process.env.PROJECT_RAG_RERANK_EVAL_OUT, key = process.env.SILICONFLOW_API_KEY;
-    if (!output || !key) return skip('Set PROJECT_RAG_RERANK_EVAL_OUT and SILICONFLOW_API_KEY for live ablation');
+  it('runs the multilingual fixed-pool ablation with explicit fixture or live provenance', { timeout: 120000 }, async () => {
+    const liveOutput = process.env.PROJECT_RAG_RERANK_EVAL_OUT, key = process.env.SILICONFLOW_API_KEY;
+    if (liveOutput && !key) throw new Error('Live ablation requires SILICONFLOW_API_KEY');
+    const fixtureRoot = liveOutput ? undefined : await mkdtemp(resolve(tmpdir(), 'rerank-ablation-'));
+    const output = liveOutput ?? resolve(fixtureRoot!, 'report.json');
+    try {
     const cases = [
       { query: 'Which port does the gateway use?', documents: ['Bread needs flour and water.', 'The gateway listens on port 18789.', 'Archive retention is thirty days.'], relevant: 1 },
       { query: '网关监听哪个端口？', documents: ['归档保留三十天。', '面包需要面粉和水。', '网关监听端口是 18789。'], relevant: 2 },
       { query: 'どのポートでゲートウェイが待ち受けますか？', documents: ['ゲートウェイのポートは18789です。', 'パンには小麦粉と水が必要です。', 'アーカイブの保持期間は30日です。'], relevant: 0 },
       { query: 'Какой порт использует шлюз?', documents: ['Архив хранится тридцать дней.', 'Для хлеба нужны мука и вода.', 'Шлюз использует порт 18789.'], relevant: 2 },
     ];
-    const provider = createEndpointRerankProvider({ providerRef: 'siliconflow', model: 'Qwen/Qwen3-Reranker-0.6B', endpoint: 'https://api.siliconflow.cn/v1/rerank', request: async (body, signal) => {
+    const fixtureScores = [[0.1, 0.9, 0.2], [0.2, 0.1, 0.95], [0.92, 0.3, 0.1], [0.1, 0.3, 0.9]];
+    const provider = createEndpointRerankProvider({ providerRef: liveOutput ? 'siliconflow' : 'fixture:fixed-pool', model: liveOutput ? 'Qwen/Qwen3-Reranker-0.6B' : 'fixture-ranking', endpoint: 'https://api.siliconflow.cn/v1/rerank', request: async (body, signal) => {
+      if (!liveOutput) {
+        const caseIndex = cases.findIndex(test => test.query === body.query);
+        expect(caseIndex).toBeGreaterThanOrEqual(0);
+        expect(body.documents).toEqual(cases[caseIndex].documents);
+        return { results: fixtureScores[caseIndex].map((relevance_score, index) => ({ index, relevance_score })) };
+      }
       const response = await fetch('https://api.siliconflow.cn/v1/rerank', { method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal });
       if (!response.ok) throw new Error(`Live rerank HTTP ${response.status}`); return await response.json();
     } });
@@ -121,10 +132,17 @@ describe('Project RAG RerankProvider/v1', () => {
       modelOrders.push([...test.documents.keys()].sort((a, b) => scoresById.get(b)! - scoresById.get(a)!).map(index => index === test.relevant ? 1 : 0));
     }
     const report = { schema: 'ProjectRagRerankAblation/v1', driven_by: 'agent', actor: 'codex/project-rag-g1', realHumanEvidence: false,
-      model: provider.model, fixedCandidatePool: true, caseCount: cases.length, baseline: scores(baselineOrders), modelArm: scores(modelOrders),
+      model: provider.model, evidenceSource: liveOutput ? 'live-provider' : 'scripted-fixture', fixedCandidatePool: true, caseCount: cases.length, baseline: scores(baselineOrders), modelArm: scores(modelOrders),
       costs: { elapsedMs: receipts.reduce((sum, receipt) => sum + receipt.elapsedMs, 0), inputTokens: receipts.every(receipt => receipt.inputTokens !== undefined) ? receipts.reduce((sum, receipt) => sum + receipt.inputTokens!, 0) : null,
         providerReportsTokenUsage: receipts.some(receipt => receipt.inputTokens !== undefined), providerMonetaryCost: null },
       promotionDecision: 'measured-only-no-policy-promotion' };
     await mkdir(dirname(resolve(output)), { recursive: true }); await writeFile(resolve(output), JSON.stringify(report, null, 2));
+    const retained = JSON.parse(await readFile(output, 'utf8'));
+    expect(retained).toMatchObject({ evidenceSource: liveOutput ? 'live-provider' : 'scripted-fixture', caseCount: 4, fixedCandidatePool: true });
+    expect(retained.baseline.ndcgAt5).toBeCloseTo(0.6577324383928644);
+    if (!liveOutput) expect(retained.modelArm).toEqual({ ndcgAt5: 1, precisionAt5: 0.2 });
+    } finally {
+      if (fixtureRoot) await rm(fixtureRoot, { recursive: true, force: true });
+    }
   });
 });

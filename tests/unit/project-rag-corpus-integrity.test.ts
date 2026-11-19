@@ -59,11 +59,12 @@ describe('Project RAG frozen evaluation corpus', () => {
       const context = createMemoryWikiReadContext({ config, identity: { workspaceId: b.corpus.owner.workspaceId } });
       const page = toWikiPageSummary({ raw, absolutePath: join(b.root, source.path), relativePath: source.ref.subjectId })!;
       for (const gold of [...b.gold.flatMap(q => q.facts), ...b.taskGold.flatMap(t => t.facts)].filter(f => f.sourceId === source.id)) {
-        const result = readMemoryWikiOwnerSnapshot({ page: { ...page, raw }, config, context, pin: gold.sourceRef });
+        const pin = { ...gold.sourceRef, namespaceId: memoryWikiNamespaceId(config) };
+        const result = readMemoryWikiOwnerSnapshot({ page: { ...page, raw }, config, context, pin });
         expect(result.status).toBe('admitted');
         if (result.status !== 'admitted') throw new Error(result.reason);
         expect(result.snapshot.content).toBe(gold.quote);
-        expect(result.snapshot.source).toEqual(gold.sourceRef);
+        expect(result.snapshot.source).toEqual(pin);
       }
     }
   });
@@ -206,7 +207,7 @@ describe('Project RAG frozen evaluation corpus', () => {
     const b = bundle(), source = b.corpus.sources[0]; let raw = readFileSync(join(b.root, source.path), 'utf8');
     const config = resolveMemoryWikiConfig({ vault: { path: resolve(b.root, 'owner/vault') } });
     const context = createMemoryWikiReadContext({ config, identity: { workspaceId: b.corpus.owner.workspaceId } });
-    let pin = structuredClone(source.ref); const controller = new AbortController();
+    let pin = { ...structuredClone(source.ref), namespaceId: memoryWikiNamespaceId(config) }; const controller = new AbortController();
     if (kind === 'acl') raw = raw.replace('read: [operator]', 'read: [another-principal]');
     if (kind === 'scope') raw = raw.replace('workspaceId: rag-corpus-workspace', 'workspaceId: forbidden');
     if (kind === 'revoked') raw = raw.replace('status: active', 'status: revoked');

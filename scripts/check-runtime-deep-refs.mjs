@@ -99,19 +99,17 @@ export function resolvesToExistingPath(root, target) {
 /** Files under the scanned roots, tracked or not, excluding generated output. */
 export function listScannedFiles(root = ROOT) {
   const out = [];
-  for (const dir of SCAN_DIRS) {
-    const absolute = join(root, dir);
-    if (!existsSync(absolute)) continue;
-    const list = execFileSync('git', ['-C', root, 'ls-files', '--cached', '--others', '--exclude-standard', '--', dir], {
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    });
-    for (const relative of list.split('\n').map((line) => line.trim()).filter(Boolean)) {
-      if (!SCANNED_FILE_RE.test(relative)) continue;
-      if (EXCLUDED_FILES.has(relative)) continue;
-      if (IGNORED_PATH_PARTS.some((part) => `/${relative}`.includes(part))) continue;
-      out.push(relative);
-    }
+  const dirs = SCAN_DIRS.filter((dir) => existsSync(join(root, dir)));
+  if (dirs.length === 0) return out;
+  const list = execFileSync('git', ['-C', root, 'ls-files', '--cached', '--others', '--exclude-standard', '--', ...dirs], {
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  for (const relative of list.split('\n').map((line) => line.trim()).filter(Boolean)) {
+    if (!SCANNED_FILE_RE.test(relative)) continue;
+    if (EXCLUDED_FILES.has(relative)) continue;
+    if (IGNORED_PATH_PARTS.some((part) => `/${relative}`.includes(part))) continue;
+    out.push(relative);
   }
   return [...new Set(out)].sort();
 }
@@ -131,8 +129,10 @@ export function collectReferences(root = ROOT, files = listScannedFiles(root)) {
   const references = [];
   for (const file of files) {
     const text = readFileSync(join(root, file), 'utf8');
+    if (!text.includes(VENDOR_PREFIX)) continue;
     const lines = text.split(/\r?\n/);
     for (const [index, line] of lines.entries()) {
+      if (!line.includes(VENDOR_PREFIX)) continue;
       // Import specifiers first, so a quoted import path is not also reported as a
       // bare string reference on the same line.
       const imported = new Set();
@@ -149,7 +149,7 @@ export function collectReferences(root = ROOT, files = listScannedFiles(root)) {
         // negations, and strings that span escaped newlines.
         if (raw.includes('${') || raw.includes('*') || /[{}]/.test(raw) || raw.includes('\\')) continue;
         if (raw.startsWith('!')) continue;
-        const target = raw.startsWith('/') ? raw.slice(1) : raw;
+        const target = raw.startsWith('.') ? normalizeSpecifier(raw, file) : raw.startsWith('/') ? raw.slice(1) : raw;
         if (!target.includes(VENDOR_PREFIX)) continue;
         // A bare string may cite a repository file with its line number. Resolve
         // the file itself; the line number is checked by the owning gate.

@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join, resolve, sep } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
@@ -36,11 +37,25 @@ function copyPack(): string {
   const temp = mkdtempSync(join(TEMP_ROOT, 'rsi-tf0592-test-'));
   temporaryRoots.push(temp);
   const report: Tf0592Report = JSON.parse(readFileSync(join(ROOT, TF0592_PACK_DIR, 'statistical-report.v1.json'), 'utf8'));
+  const pinned: { referenceCommit: string; files: Record<string, { sha256: string; rawSha256: string; base64: string }> } =
+    JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/rsi-evidence-loop/tf0592-source-inputs.json'), 'utf8'));
+  if (pinned.referenceCommit !== report.resourceFingerprint.candidate.commit) throw new Error('historical source revision changed');
   const paths = [...Object.keys(report.resourceFingerprint.candidate.sourceHashes), report.inputs.corpusPath, report.inputs.rawTrialsPath, report.inputs.policyPath,
     ...['resource-fingerprint.v1.json', 'statistical-report.v1.json', 'negative-controls.v1.json', 'negative-control-results.v1.json', 'validation-report.v1.json', 'SHA256SUMS'].map((file) => `${TF0592_PACK_DIR}/${file}`)];
   for (const path of paths) {
     mkdirSync(dirname(join(temp, path)), { recursive: true });
-    copyFileSync(join(ROOT, path), join(temp, path));
+    const expected = report.resourceFingerprint.candidate.sourceHashes[path];
+    if (expected) {
+      // Replaying the sealed report uses its historical source inputs, not today's files.
+      const source = pinned.files[path];
+      if (!source || source.sha256 !== expected) throw new Error(`missing historical source: ${path}`);
+      const bytes = Buffer.from(source.base64, 'base64');
+      if (createHash('sha256').update(bytes).digest('hex') !== source.rawSha256) throw new Error(`changed historical source: ${path}`);
+      writeFileSync(join(temp, path), bytes);
+      if (sha256File(join(temp, path)) !== expected) throw new Error(`historical source digest differs: ${path}`);
+    } else {
+      copyFileSync(join(ROOT, path), join(temp, path));
+    }
   }
   return temp;
 }

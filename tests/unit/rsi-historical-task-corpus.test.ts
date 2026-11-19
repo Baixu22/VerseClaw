@@ -1,5 +1,8 @@
 // @vitest-environment node
-import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { copyFrozenSourceInputs } from '../helpers/frozen-source-replay';
 import { describe, it, expect } from 'vitest';
 import { buildTaskCorpus, validateTaskCorpus, buildCalibrationSamples, replayCalibration, TF0590_PACK_DIR } from '../../scripts/lib/rsi-historical-task-corpus.mjs';
 import { NON_JUDGED_SOURCE_FILES, validateTaskCorpusPack } from '../../scripts/rsi-historical-task-corpus.mjs';
@@ -51,7 +54,26 @@ describe('TF-0590 real task corpus and grader calibration', () => {
     expect(readback.errors.some((entry) => entry.includes('docs/dev/rsi-capability-and-boundaries.md'))).toBe(false);
   });
   it('validates every retained pack checksum and raw calibration outcome from disk', () => {
-    expect(validateTaskCorpusPack(process.cwd(), { allowDraft: true })).toMatchObject({ passed: true, taskCount: 24, calibratedRows: 16 });
+    const root = mkdtempSync('D:/tmp/rsi-task-corpus-source-replay-');
+    try {
+      const sourceRoot = process.cwd();
+      const validation = JSON.parse(readFileSync(join(sourceRoot, TF0590_PACK_DIR, 'validation-report.v1.json'), 'utf8'));
+      const snapshot = JSON.parse(readFileSync(join(sourceRoot, 'harness/specs/fixtures/rsi-evidence-loop/task-corpus-source-inputs.json'), 'utf8'));
+      execFileSync('git', ['clone', '--shared', '--no-checkout', '--quiet', sourceRoot, root], { windowsHide: true });
+      execFileSync('git', ['update-ref', '--no-deref', 'HEAD', snapshot.referenceCommit], { cwd: root, windowsHide: true });
+      const registry = JSON.parse(readFileSync(join(sourceRoot, TF0590_PACK_DIR, 'registry-extension.v1.json'), 'utf8'));
+      const corpus = JSON.parse(readFileSync(join(sourceRoot, TF0590_PACK_DIR, 'task-corpus.v1.json'), 'utf8'));
+      const historical = JSON.parse(readFileSync(join(sourceRoot, corpus.sourceCorpusPath), 'utf8'));
+      mkdirSync(join(root, TF0590_PACK_DIR), { recursive: true });
+      cpSync(join(sourceRoot, TF0590_PACK_DIR), join(root, TF0590_PACK_DIR), { recursive: true });
+      copyFrozenSourceInputs(sourceRoot, root, [...Object.keys(validation.candidate.sourceHashes), registry.baseRegistry,
+        corpus.sourceCorpusPath, ...historical.cases.flatMap((task: { sourceRefs: string[] }) => task.sourceRefs),
+        ...corpus.tasks.flatMap((task: { oracle: { inputDigests: Record<string, string> } }) => Object.keys(task.oracle.inputDigests))], snapshot.files);
+      const readback = validateTaskCorpusPack(root, { allowDraft: true });
+      expect(readback, readback.errors.join('\n')).toMatchObject({ passed: true, taskCount: 24, calibratedRows: 16 });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
   it('composes both frozen corpora without replacing the base acceptance suite', () => {
     const system = loadCorpus();

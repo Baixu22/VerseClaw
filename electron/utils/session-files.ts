@@ -40,10 +40,12 @@
  */
 
 import { promises as fsP } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import type { SessionArchiveEntry, SessionArchiveIndex } from '@shared/types/workspace';
 import { withFileLock } from './atomic-write';
+import { writeOwnerOnlyFile } from './private-file-permissions';
 
 export type SessionResolutionFailure =
   | { kind: 'not-found' }
@@ -492,13 +494,9 @@ async function writeArchiveIndexUnlocked(
   archiveIndexPath: string,
   index: SessionArchiveIndex,
 ): Promise<void> {
-  const tmpPath = `${archiveIndexPath}.tmp`;
+  const tmpPath = `${archiveIndexPath}.${randomUUID()}.tmp`;
   await fsP.mkdir(path.dirname(archiveIndexPath), { recursive: true, mode: 0o700 });
-  await fsP.writeFile(tmpPath, JSON.stringify(index, null, 2), {
-    encoding: 'utf8',
-    mode: 0o600,
-  });
-  await fsP.chmod(tmpPath, 0o600);
+  await writeOwnerOnlyFile(tmpPath, JSON.stringify(index, null, 2));
   await fsP.rename(tmpPath, archiveIndexPath);
 }
 

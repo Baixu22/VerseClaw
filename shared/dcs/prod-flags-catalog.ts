@@ -4,7 +4,7 @@
  * Must stay aligned with openclaw_runtime coding-runtime-flags / dcs-context-tools-flags.
  * Does NOT flip any production defaults.
  */
-import { PROJECT_RAG_DEFAULTS } from '../knowledge/operations';
+import { PROJECT_RAG_DEFAULTS } from '../knowledge/operations.js';
 
 export type DcsProdFlagRisk =
   | 'baseline-on'

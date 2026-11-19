@@ -95,7 +95,7 @@ describe("V01 cross-layer closed loop", () => {
     for (let i = 0; i < 20; i++) {
       for (let r = 0; r < 3; r++) {
         baseline.push({ caseId: `c${i}`, repeat: r, success: false, retention: 0, latencyMs: 1, tokens: 10 });
-        treatment.push({ caseId: `c${i}`, repeat: r, success: true, retention: 1, latencyMs: 1, tokens: 10 });
+        treatment.push({ caseId: `c${i}`, repeat: r, success: true, retention: 0.62 + (i % 5) * 0.04, latencyMs: 1, tokens: 10 });
       }
     }
     const result = evaluateAblation({
@@ -104,7 +104,7 @@ describe("V01 cross-layer closed loop", () => {
       preRegistered: { primaryMetric: "retention", k: 3, minCases: 20, degradationBudget: 0 },
     });
     expect(result.verdict).toBe("component-helps");
-    expect(result.effect.meanDiff).toBe(1);
+    expect(result.effect.meanDiff).toBeCloseTo(0.7, 12);
     expect(result.treatment.falseBlocks).toBe(0);
     expect(result.treatment.safetyViolations).toBe(0);
   });

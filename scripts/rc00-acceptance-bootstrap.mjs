@@ -32,6 +32,7 @@ writeFileSync(join(fixtureRoot, 'harness', 'specs', 'tasks', 'fixture.md'), '---
 mkdirSync(join(fixtureRoot, 'harness', 'src'), { recursive: true });
 writeFileSync(join(fixtureRoot, 'harness', 'src', 'profiles.mjs'), readFileSync(join(repoRoot, 'harness/src/profiles.mjs')));
 for (const path of [
+  'resources/bin/win32-x64/vg.exe',
   'artifacts/uas-06-single-local-exec-canary/live-observations.json',
   'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
   'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json',

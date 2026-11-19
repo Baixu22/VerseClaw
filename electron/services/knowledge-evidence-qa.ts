@@ -171,6 +171,7 @@ export async function runKnowledgeModel(
   const agentId = knowledge?.sessionKey.startsWith('agent:') ? knowledge.sessionKey.split(':')[1] : 'main';
   const sessionKey = `agent:${agentId}:knowledge-${requestId}`;
   let runId: string | undefined;
+  let completed = false;
   const abortRun = () => { void gateway.rpc('chat.abort', { sessionKey, ...(runId ? { runId } : {}) }, 5000).catch(() => undefined); };
   options?.signal.addEventListener('abort', abortRun, { once: true });
   const early = new Map<string, string[]>();
@@ -207,6 +208,7 @@ export async function runKnowledgeModel(
     const wait = options ? await waitForRetrievalOperation(waiting, options.signal) : await waiting;
     if (wait.status !== 'completed' && wait.status !== 'ok') throw Error('Knowledge model did not complete: ' + sanitizeUiErrorText(
       JSON.stringify({ status: wait.status, error: wait.error, reason: wait.reason })));
+    completed = true;
     const retainedEvidence = wait.retainedEvidence as RetainedEvidenceManifestV1 | undefined;
     if (knowledge?.references.length && (!retainedEvidence || retainedEvidence.schema !== 'RetainedEvidenceManifest/v1' || !Array.isArray(retainedEvidence.units))) {
       throw Error('Knowledge model did not return a DCS retained evidence receipt');
@@ -222,8 +224,8 @@ export async function runKnowledgeModel(
     return { text, runId, ...(retainedEvidence ? { retainedEvidence } : {}),
       ...(wait.providerSpend ? { providerSpend: wait.providerSpend as KnowledgeModelSpend } : {}) };
   } finally {
+    if (!completed || options?.signal.aborted) abortRun();
     options?.signal.removeEventListener('abort', abortRun);
-    if (options?.signal.aborted) abortRun();
     gateway.off('chat:runtime-event', listener);
   }
 }

@@ -64,7 +64,6 @@ const COMBO_STORE_KEYS = [
   'dcsContextViewToolsEnabled',
   'dcsWorkingMemoryEnabled',
   'dcsToolRegistryEnabled',
-  'dcsStaleWriteGuardEnabled',
 ];
 
 function completeAck(overrides: Record<string, unknown> = {}): Record<string, unknown> {
@@ -118,9 +117,8 @@ describe('FP-P1-03 combo definition', () => {
       'context-view-tools',
       'working-memory',
       'tool-registry',
-      'stale-write-guard',
     ]);
-    for (const excluded of ['routing-memo-shadow', 'sekb-experience-shadow', 'symbol-lease']) {
+    for (const excluded of ['routing-memo-shadow', 'sekb-experience-shadow', 'symbol-lease', 'stale-write-guard']) {
       expect(DCS_PREVIEW_COMBO_FLAG_IDS).not.toContain(excluded);
     }
   });
@@ -165,17 +163,17 @@ describe('FP-P1-03 setDcsPreview', () => {
     expect(state.configWrites).toHaveLength(0);
   });
 
-  it('enable writes all four combo flags (store + config + env) and nothing else', async () => {
+  it('enable writes all three combo flags (store + config + env) and nothing else', async () => {
     satisfyPrereqs();
     const result = await setDcsPreview({ enabled: true, restartGateway: false }, gatewayManager());
     expect(result.success).toBe(true);
     expect(result.status).toBe('pending-restart'); // no restart requested ⇒ honest state
     expect(state.settingWrites.map(([key]) => key).sort()).toEqual([...COMBO_STORE_KEYS].sort());
-    // Config leaves for the three config-kind flags:
+    // Config leaves for the two config-kind flags:
     const written = JSON.stringify(state.config);
     expect(written).toContain('working-memory');
     expect(written).toContain('tool-registry');
-    expect(written).toContain('staleWriteGuard');
+    expect(written).not.toContain('staleWriteGuard');
     // Env mirror for the env-kind flag:
     expect(process.env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS).toBe('1');
     // Exclusions untouched:
@@ -212,7 +210,6 @@ describe('FP-P1-03 setDcsPreview', () => {
     // One ack covers every combo flag:
     expect(Object.keys(requested ?? {}).sort()).toEqual([
       'OPENCLAW_DCS_CONTEXT_VIEW_TOOLS',
-      'runtime.coding.staleWriteGuard.enabled',
       'runtime.contextBlock.tool-registry.enabled',
       'runtime.contextBlock.working-memory.enabled',
     ].sort());
@@ -256,6 +253,8 @@ describe('R3-1 unavailable flag boundary', () => {
 
 describe('FP-P1-03 getDcsPreviewState', () => {
   it('off / partial / on are derived from the combo store keys', async () => {
+    for (const key of COMBO_STORE_KEYS) state.settings[key] = false;
+    state.settings.dcsStaleWriteGuardEnabled = true;
     expect((await getDcsPreviewState()).enabled).toBe(false);
     state.settings.dcsContextViewToolsEnabled = true;
     const partial = await getDcsPreviewState();

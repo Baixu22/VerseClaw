@@ -129,7 +129,11 @@
     "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stderr-1.log",
     "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stdout-1.log",
     "harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stderr.log",
-    "harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stdout.log"
+    "harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stdout.log",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/report/default-stdout-rag16.expected.txt",
+    "harness/specs/fixtures/rsi-evidence-loop/decision-source-inputs.json",
+    "harness/specs/fixtures/rsi-evidence-loop/task-corpus-source-inputs.json",
+    "harness/specs/fixtures/rsi-evidence-loop/tf0592-source-inputs.json"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",

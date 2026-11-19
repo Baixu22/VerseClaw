@@ -112,7 +112,7 @@ test('Project RAG discovers exact code relationships and reads the current task 
     await page.evaluate(() => { window.location.hash = '#/'; });
     const composer = page.getByTestId('chat-composer-input'); await expect(composer).toBeVisible({ timeout: 30000 });
     await composer.fill('RAG15 inspect code relationships'); await page.getByTestId('chat-composer-send').click();
-    await expect(page.getByText('RAG15 exact relationships ready', { exact: true })).toBeVisible({ timeout: 30000 });
+    await expect(page.locator('[data-testid^="chat-message-"] p').filter({ hasText: /^RAG15 exact relationships ready$/ })).toBeVisible({ timeout: 30000 });
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
     const toolResult = (id: string) => {
       const value = llm.log.toReversed().find(entry => entry.toolResults[id])?.toolResults[id];
@@ -127,14 +127,14 @@ test('Project RAG discovers exact code relationships and reads the current task 
     expect(JSON.stringify(graph)).not.toContain('RAG15_THIRD_HOP'); receipt.oneHop = graph; steps.normalChatExactGraph = true;
     await page.screenshot({ path: testInfo.outputPath('code-relationships-chat.png'), fullPage: true });
     await composer.fill('RAG15 two hops'); await page.getByTestId('chat-composer-send').click();
-    await expect(page.getByText('RAG15 two-hop relationship result recorded', { exact: true })).toBeVisible({ timeout: 120000 });
+    await expect(page.locator('[data-testid^="chat-message-"] p').filter({ hasText: /^RAG15 two-hop relationship result recorded$/ })).toBeVisible({ timeout: 120000 });
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
     const two = toolResult('rag15two');
     expect(two.relationships.sources.map(source => source.subjectId)).toContain('a/next.ts');
     expect(two.relationships.sources.map(source => source.subjectId)).not.toContain('a/last.ts');
     expect(two.relationships.edges.every(edge => edge.depth <= 2)).toBe(true); receipt.twoHop = two; steps.twoHopBound = true;
     await composer.fill('RAG15 capped incoming'); await page.getByTestId('chat-composer-send').click();
-    await expect(page.getByText('RAG15 capped incoming result recorded', { exact: true })).toBeVisible({ timeout: 120000 });
+    await expect(page.locator('[data-testid^="chat-message-"] p').filter({ hasText: /^RAG15 capped incoming result recorded$/ })).toBeVisible({ timeout: 120000 });
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
     const capped = toolResult('rag15capped');
     expect(capped.relationships).toMatchObject({ status: 'partial', truncated: true, maxDepth: 1 });
@@ -150,7 +150,7 @@ test('Project RAG discovers exact code relationships and reads the current task 
     steps.taskAbsentFromCodeChunks = true;
     await writeFile(join(workspace, 'src/entry.ts'), 'export function run() { return "RAG15_REPLACED_ENTRY"; }\n');
     await composer.fill('RAG15 stale'); await page.getByTestId('chat-composer-send').click();
-    await expect(page.getByText('RAG15 stale relationship result recorded', { exact: true })).toBeVisible({ timeout: 120000 });
+    await expect(page.locator('[data-testid^="chat-message-"] p').filter({ hasText: /^RAG15 stale relationship result recorded$/ })).toBeVisible({ timeout: 120000 });
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 120000 });
     const stale = toolResult('rag15stale');
     expect(stale.relationships.status).toBe('unavailable'); expect(stale.relationships.edges).toEqual([]); expect(stale.snippets).toEqual([]);
@@ -355,7 +355,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await expect(archiveRow).toBeVisible({ timeout: 15000 }); await archiveRow.click(); await composer.press('Escape');
     expect((await entries()).filter(entry => entry.action === 'researchStart').length).toBe(callsBeforeLocal);
     await composer.fill('RAG16 explicit evidence send'); await page.getByTestId('chat-composer-send').click();
-    await expect(page.getByText('RAG16 ordinary reply', { exact: true })).toBeVisible({ timeout: 90000 });
+    await expect(page.locator('[data-testid^="chat-message-"] p').filter({ hasText: /^RAG16 ordinary reply$/ })).toBeVisible({ timeout: 90000 });
     await expect(page.getByTestId('chat-used-knowledge-sources').last()).toContainText('Archive destination', { timeout: 30000 });
     steps.localRollbackPreservesScope = true; steps.normalChatUsesOwnerEvidence = true;
     receipt.entries = await entries(); receipt.status = 'pass';

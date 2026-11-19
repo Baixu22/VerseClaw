@@ -7,7 +7,9 @@ import { createRequire } from 'node:module';
 import { createServer } from 'node:net';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
+async function main() {
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const require = createRequire(import.meta.url);
 const desktopEnvKeys = new Set([
@@ -249,4 +251,9 @@ function electronProbe() {
     };
     connect();
   });
+}
+}
+
+if (isMainEntrypoint(import.meta.url)) {
+  main().catch((error) => { console.error(error); process.exitCode = 1; });
 }

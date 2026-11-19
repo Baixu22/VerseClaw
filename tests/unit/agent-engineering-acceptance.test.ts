@@ -1,9 +1,10 @@
+// @vitest-environment node
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   ACCEPTANCE_SCHEMA,
@@ -42,6 +43,8 @@ import {
 } from '../../scripts/validate-runtime-authority-convergence.mjs';
 
 const temporaryPaths: string[] = [];
+let fixtureTemplate: string | undefined;
+afterAll(() => { if (fixtureTemplate) rmSync(fixtureTemplate, { recursive: true, force: true }); });
 const fixturePolicy = vi.hoisted(() => ({ steps: null as AcceptanceGate[] | null }));
 const fixtureGateIds = new Set<string>();
 
@@ -98,8 +101,16 @@ function directoryFingerprint(directory: string) {
 }
 
 function createFixtureRepository() {
+  fixtureTemplate ??= createFixtureTemplate();
   const root = mkdtempSync(join(tmpdir(), 'agent-acceptance-fixture-'));
   temporaryPaths.push(root);
+  // Each test owns a full .git copy; commits, dirty inputs and linked worktrees remain isolated.
+  cpSync(fixtureTemplate, root, { recursive: true });
+  return root;
+}
+
+function createFixtureTemplate() {
+  const root = mkdtempSync(join(tmpdir(), 'agent-acceptance-template-'));
   mkdirSync(join(root, 'harness', 'specs', 'tasks'), { recursive: true });
   writeFileSync(join(root, 'package.json'), '{"name":"fixture","version":"1.0.0"}\n', 'utf8');
   writeFileSync(join(root, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n', 'utf8');
@@ -111,6 +122,7 @@ function createFixtureRepository() {
   writeFileSync(join(root, 'harness', 'src', 'profiles.mjs'), readFileSync('harness/src/profiles.mjs'));
   const fixtureFiles = {
     'resources/verseshell/manifest.json': JSON.stringify({ artifacts: { 'win32-x64': { sha256: sha256('fixture'), bytes: 7 } } }),
+    'resources/bin/win32-x64/vg.exe': 'fixture-vg',
     'artifacts/uas-06-single-local-exec-canary/live-observations.json': '{}',
     'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json': '{}',
     'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json': '{}',
@@ -510,6 +522,40 @@ describe('Agent Engineering Acceptance', () => {
     expect(manifest.source.files.find((entry) => entry.path.endsWith('fixture.md'))?.gitBlob).toBe(
       gitText(crlfCheckout, ['rev-parse', '--verify', 'HEAD:harness/specs/tasks/fixture.md']),
     );
+  });
+
+  it('binds literal source paths containing spaces and brackets and rejects their removal', () => {
+    const root = createFixtureRepository();
+    const rule = 'harness/specs/rules/rule [case].md';
+    mkdirSync(join(root, 'harness/specs/rules'), { recursive: true });
+    writeFileSync(join(root, rule), '# pinned rule\n');
+    writeFileSync(join(root, 'harness/specs/tasks/fixture.md'),
+      '---\nid: fixture-task\ntitle: Fixture\nrequiredRules:\n  - "rule [case]"\n---\n# Fixture\n');
+    git(root, ['add', 'harness']);
+    git(root, ['commit', '--quiet', '-m', 'literal rule source']);
+    const plan = createAcceptancePlan({ root, specPath: 'harness/specs/tasks/fixture.md', since: 'HEAD^' });
+    expect(plan.source.files.find((entry) => entry.path === rule)?.gitBlob).toBe(gitText(root, ['rev-parse', `HEAD:${rule}`]));
+    expect(validateAcceptanceManifest(plan, { root, requireClean: true, requireFull: true }).ok).toBe(true);
+    writeFileSync(join(root, 'harness/specs/rules/replacement.md'), readFileSync(join(root, rule)));
+    rmSync(join(root, rule));
+    git(root, ['add', 'harness']);
+    const invalid = validateAcceptanceManifest(plan, { root, requireClean: true, requireFull: true });
+    expect(invalid.ok).toBe(false);
+    expect(invalid.errors).toContain(`source input Git blob identity unavailable: ${rule}`);
+  });
+
+  it('rejects body drift in a source path starting with whitespace when unrelated dirt is allowed', () => {
+    const root = createFixtureRepository();
+    const specPath = ' task.md';
+    writeFileSync(join(root, specPath), '---\nid: fixture-task\ntitle: Fixture\n---\n# Fixture\n');
+    git(root, ['add', '--', specPath]);
+    git(root, ['commit', '--quiet', '-m', 'leading-space task']);
+    const plan = createAcceptancePlan({ root, specPath, since: 'HEAD^' });
+    expect(validateAcceptanceManifest(plan, { root, requireClean: false }).ok).toBe(true);
+    writeFileSync(join(root, specPath), readFileSync(join(root, specPath), 'utf8') + '\nchanged body\n');
+    const invalid = validateAcceptanceManifest(plan, { root, requireClean: false });
+    expect(invalid.ok).toBe(false);
+    expect(invalid.errors).toContain(`source input differs from candidate Git blob: ${specPath}`);
   });
 
   it('requires a separate verifier before engineering acceptance and retains human residuals', () => {
@@ -2201,6 +2247,12 @@ requiredTests:
     });
     expect(plan.gates.find((gate) => gate.id === 'provision-verseshell-resources')?.copyInputs).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({
+          path: 'resources/bin/win32-x64/vg.exe',
+          exists: true,
+          bytes: 10,
+          sha256: sha256('fixture-vg'),
+        }),
         expect.objectContaining({
           path: 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
           exists: true,
