@@ -9,6 +9,7 @@ import {
   normalizeStringEntries,
   uniqueStrings,
 } from "@openclaw/normalization-core/string-normalization";
+import { isHandedOffCoordinator } from "../../../shared/task-system/project-coordinator.js";
 import { completionRequiresMessageToolDelivery } from "../auto-reply/reply/completion-delivery-policy.js";
 import { isSilentReplyPayloadText, SILENT_REPLY_TOKEN } from "../auto-reply/tokens.js";
 import { getLoadedChannelPluginForRead } from "../channels/plugins/registry-loaded-read.js";
@@ -242,6 +243,7 @@ function resolveCompactionSteerRetryDelaysMs() {
 // outcomes. Both active-wake call sites use one loop so delivery deadlines and
 // best-effort transcript retry stay consistent.
 async function resolveActiveWakeWithRetries(
+  requesterSessionKey: string,
   sessionId: string,
   message: string,
   wakeOptions: EmbeddedAgentQueueMessageOptions,
@@ -272,7 +274,7 @@ async function resolveActiveWakeWithRetries(
   const compactionRetryDelaysMs = resolveCompactionSteerRetryDelaysMs();
   let compactionRetryIndex = 0;
   for (;;) {
-    if (outcome.queued || signal?.aborted) {
+    if (outcome.queued || signal?.aborted || isHandedOffCoordinator(requesterSessionKey)) {
       break;
     }
     if (
@@ -312,7 +314,7 @@ async function resolveActiveWakeWithRetries(
         break;
       }
       await waitForAnnounceRetryDelay(delayMs, signal);
-      if (signal?.aborted) {
+      if (signal?.aborted || isHandedOffCoordinator(requesterSessionKey)) {
         break;
       }
       compactionRetryIndex += 1;
@@ -615,6 +617,9 @@ async function maybeSteerSubagentAnnounce(params: {
   }
   const { cfg, entry } = loadRequesterSessionEntry(params.requesterSessionKey);
   const canonicalKey = resolveRequesterStoreKey(cfg, params.requesterSessionKey);
+  if (isHandedOffCoordinator(canonicalKey)) {
+    return { status: "none" };
+  }
   const { sessionId, isActive } = resolveRequesterSessionActivity(canonicalKey);
   if (subagentAnnounceDeliveryDeps.isRequesterSessionAbandoned(canonicalKey, sessionId)) {
     return { status: "none" };
@@ -645,6 +650,7 @@ async function maybeSteerSubagentAnnounce(params: {
     waitForTranscriptCommit: true,
   };
   const queueOutcome = await resolveActiveWakeWithRetries(
+    canonicalKey,
     sessionId,
     params.steerMessage,
     queueOptions,
@@ -1317,6 +1323,15 @@ async function sendSubagentAnnounceDirectly(params: {
       completionRouteRequiresMessageToolDelivery ||
       subagentDirectMessageCompletionRequiresMessageTool;
     const requesterActivity = resolveRequesterSessionActivity(canonicalRequesterSessionKey);
+    if (isHandedOffCoordinator(canonicalRequesterSessionKey)) {
+      return {
+        delivered: false,
+        path: "none",
+        reason: "requester_owner_retired",
+        terminal: true,
+        error: "AGENT_CONTINUATION_OWNER_RETIRED: requester handed off its coordinator role",
+      };
+    }
     if (
       params.expectedRequesterSessionId &&
       requesterActivity.sessionId !== params.expectedRequesterSessionId
@@ -1413,6 +1428,7 @@ async function sendSubagentAnnounceDirectly(params: {
       // wake also waits through compaction (and best-effort transcript retry)
       // instead of treating a compacting run as a terminal wake failure.
       const wakeOutcome = await resolveActiveWakeWithRetries(
+        canonicalRequesterSessionKey,
         requesterActivity.sessionId,
         params.triggerMessage,
         wakeOptions,
@@ -1719,13 +1735,16 @@ async function sendSubagentAnnounceDirectly(params: {
     };
   } catch (err) {
     const error = summarizeDeliveryError(err);
+    const terminalReason = error?.includes("AGENT_CONTINUATION_OWNER_RETIRED")
+      ? "requester_owner_retired"
+      : error?.includes("AGENT_SESSION_GENERATION_STALE")
+        ? "requester_generation_stale"
+        : undefined;
     return {
       delivered: false,
       path: "direct",
       error,
-      ...(error?.includes("AGENT_SESSION_GENERATION_STALE")
-        ? { reason: "requester_generation_stale" as const, terminal: true }
-        : {}),
+      ...(terminalReason ? { reason: terminalReason, terminal: true } : {}),
     };
   }
 }

@@ -5,11 +5,12 @@ import { join } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, observeSessionUi } from './fixtures/session-task-chain';
-import type { ProjectPlanSnapshot, TaskEvidence, TaskSessionSnapshot } from '../../shared/task-system/types';
+import type { ProjectPlanSnapshot, TaskEvidence, TaskSessionSnapshot, TaskView } from '../../shared/task-system/types';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import { getOpenClawProviderKeyForType } from '../../electron/utils/provider-keys';
 import type { SessionDelegationResult } from '../../shared/types/session-delegation';
+import type { SessionHandoffOperation } from '../../shared/types/session-handoff';
 
 test('a project coordinator saves, revises and reopens its owner-backed plan', async ({ launchElectronApp, userDataDir }, info) => {
   test.setTimeout(240_000);
@@ -181,6 +182,108 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     await writeFile(info.outputPath('cleanup.json'), JSON.stringify({ driven_by: 'agent', actor: 'playwright-project-agent-loop', ...cleanup }, null, 2));
     llm.server.closeAllConnections();
     await new Promise<void>((done) => llm.server.close(() => done()));
+  }
+});
+
+test('hands a project checkpoint to the new coordinator and rejects a late completion for the old one', async ({ launchElectronApp }, info) => {
+  test.setTimeout(240_000);
+  const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', windowsHide: true }).trim();
+  const sourceCandidate = git('rev-parse', 'HEAD');
+  const expectedHead = process.env.CLAWX_P3_EXPECTED_HEAD;
+  if (expectedHead) {
+    expect(sourceCandidate).toBe(expectedHead);
+    expect(git('status', '--porcelain')).toBe('');
+  }
+  const draft = 'Resume the handed-off project task from its checkpoint.';
+  const checkpoint = { nextAction: 'Read the confirmed handoff checkpoint', completed: ['Prepared fixture work'], unresolved: [], artifacts: [] };
+  const continued = { ...checkpoint, nextAction: 'Continue with the replacement coordinator' };
+  const llm = await startScriptedLlm((text, results) => {
+    if (!text.includes(draft)) return { text: 'Fixture ready.' };
+    if (!Object.hasOwn(results, 'currenttask')) return { toolCall: { id: 'currenttask', name: 'task_control', args: { action: 'current' } } };
+    if ((JSON.parse(results.currenttask) as TaskView | null)?.checkpoint?.nextAction !== checkpoint.nextAction) {
+      return { text: 'Checkpoint not found.' };
+    }
+    if (!Object.hasOwn(results, 'newcheckpoint')) return { toolCall: { id: 'newcheckpoint', name: 'task_control', args: { action: 'checkpoint', checkpoint: continued } } };
+    return { text: 'Resumed the confirmed project checkpoint.' };
+  });
+  const app = await launchElectronApp({ skipSetup: true });
+  try {
+    await getStableWindow(app);
+    await configureSessionChainProvider(app, llm.port);
+    const root = info.outputPath('project');
+    await mkdir(root, { recursive: true });
+    git('init', '-b', 'main', root);
+    git('-C', root, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'Fixture base');
+    const project = await createSessionChainProject(app, root, 'Checkpoint handoff');
+    const binding = await hostInvoke(app, 'workspaces', 'bindCoordinator', {
+      ...project, agentId: 'main', expectedRevision: 0, taskLedgerNodeIds: [],
+      environment: { kind: 'local', rootPath: root }, archiveRestorePolicy: 'restore',
+    });
+    expect(binding).toMatchObject({ recovery: { state: 'ready' }, binding: { sessionGeneration: project.generation } });
+    const store = new TaskSystemStore(resolveTaskDomain(root));
+    try {
+      const goal = { objective: 'Continue a checkpointed project task', target: '.', constraints: [], acceptance: [{
+        id: 'proof', description: 'Verify the replacement owner checkpoint', verification: { kind: 'owner-receipt' as const, owner: 'fixture' },
+      }] };
+      const plan = store.saveProjectPlan(project, { goal, requestId: 'handoff-plan', nextAction: goal.objective, children: [{ key: 'continue', contract: goal }] });
+      const original = store.startNextPlanTask(project, plan.taskNodeId, plan.revision, 'claim-for-handoff').claim!;
+      store.checkpoint(original, checkpoint);
+      const create = () => hostInvoke<{ success: boolean; operation: SessionHandoffOperation }>(app, 'sessions', 'createHandoff', {
+        sessionKey: project.sessionKey, workspaceId: project.workspaceId, agentId: 'main', draftInput: draft,
+        operationId: 'project-checkpoint-handoff',
+      });
+      store.beginOperation(original, 'fixture-operation', 'write');
+      await expect(create()).rejects.toThrow('TASK_OPERATIONS_PENDING');
+      expect(store.get(original.taskNodeId)).toMatchObject({ claim: original, checkpoint, pendingOperations: 1 });
+      store.finishOperation(original, 'fixture-operation', 'completed', 'Fixture operation settled');
+      const { success, operation } = await create();
+      expect(success).toBe(true);
+      expect(operation.phase).toBe('ready');
+      expect(operation.sessionGeneration).toBeTruthy();
+      const transferred = store.get(original.taskNodeId);
+      expect(transferred).toMatchObject({ checkpoint, pendingOperations: 0, claim: {
+        taskNodeId: original.taskNodeId, sessionKey: operation.sessionKey, generation: operation.sessionGeneration,
+        epoch: original.epoch + 1,
+      } });
+      const old = await hostInvoke<{ session?: { sessionId?: string } }>(app, 'gateway', 'rpc', {
+        method: 'sessions.describe', params: { key: project.sessionKey },
+      });
+      expect(old.session?.sessionId).toBe(project.generation);
+      expect(() => store.checkpoint(original, continued)).toThrow('TASK_STALE_OWNER');
+      const beforeLate = llm.log.length;
+      await expect(hostInvoke(app, 'gateway', 'rpc', { method: 'agent', params: {
+        sessionKey: project.sessionKey, sessionId: project.generation, expectedSessionId: project.generation,
+        message: 'A worker completed after the original coordinator handed off.', deliver: false, idempotencyKey: 'late-after-project-handoff',
+      } })).rejects.toThrow('AGENT_CONTINUATION_OWNER_RETIRED');
+      expect(llm.log).toHaveLength(beforeLate);
+      expect(await hostInvoke(app, 'chat', 'sendWithMedia', {
+        workspaceId: project.workspaceId, sessionKey: operation.sessionKey, message: draft,
+        handoffOperationId: operation.id, idempotencyKey: operation.firstSendIdempotencyKey,
+      })).toMatchObject({ success: true });
+      await expect.poll(() => store.get(original.taskNodeId).checkpoint, { timeout: 60_000 }).toEqual(continued);
+      await expect.poll(() => llm.log.find(row => row.toolResults.newcheckpoint)?.issued, { timeout: 30_000 })
+        .toBe('text:Resumed the confirmed project checkpoint.');
+      const observed = llm.log.find(row => row.toolResults.currenttask)!.toolResults.currenttask;
+      expect(JSON.parse(observed)).toMatchObject({ checkpoint, claim: {
+        taskNodeId: original.taskNodeId, sessionKey: operation.sessionKey, generation: operation.sessionGeneration,
+        epoch: original.epoch + 1,
+      } });
+      expect(llm.log.filter(row => row.issued === 'newcheckpoint')).toHaveLength(1);
+      await writeFile(info.outputPath('project-handoff-checkpoint.json'), `${JSON.stringify({
+        driven_by: 'agent', actor: 'playwright-project-handoff', sourceCandidate, original, operation,
+        transferred, observed: JSON.parse(observed), resumed: store.get(original.taskNodeId),
+        originalGenerationRetained: old.session?.sessionId === original.generation,
+        lateCompletionProviderCalls: 0, handoffRefusedWhileOperationPending: true,
+      }, null, 2)}\n`);
+    } finally {
+      store.close();
+    }
+  } finally {
+    await writeFile(info.outputPath('handoff-provider.json'), JSON.stringify({ log: llm.log, anomalies: llm.anomalies }, null, 2));
+    await hostInvoke(app, 'gateway', 'stop').catch(() => undefined);
+    await closeElectronApp(app);
+    llm.server.closeAllConnections();
+    await new Promise<void>(resolve => llm.server.close(() => resolve()));
   }
 });
 

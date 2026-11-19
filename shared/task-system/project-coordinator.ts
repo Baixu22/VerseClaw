@@ -20,6 +20,25 @@ export function projectCoordinatorScope(profile: WorkspaceProfile | undefined, s
   return { workspaceId: profile.id as WorkspaceId, sessionKey: sessionKey as SessionKey, generation };
 }
 
+/** A completed handoff retires automatic work even though the source transcript still exists. */
+export function isHandedOffCoordinator(sessionKey: string): boolean {
+  const path = process.env.CLAWX_WORKSPACE_OWNER_PATH;
+  if (!path) return false;
+  let document: string;
+  try {
+    document = readFileSync(path, "utf8");
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return false;
+    throw error;
+  }
+  const { profiles = [] } = JSON.parse(document) as { profiles?: WorkspaceProfile[] };
+  return profiles.some((profile) => {
+    const binding = profile.coordinatorBindings?.[sessionKey];
+    return binding?.workspaceId === profile.id && binding.sessionKey === sessionKey &&
+      binding.state === "paused" && binding.invalidationReason === "handoff-to-new-session";
+  });
+}
+
 /** Read the Workspace owner's persisted binding; tool arguments cannot supply scope. */
 export function readProjectCoordinator(path: string, sessionKey: string, generation: string, workspace: string, requireActiveProject = false) {
   const { profiles, activeWorkspaceId } = JSON.parse(readFileSync(path, "utf8")) as { profiles: WorkspaceProfile[]; activeWorkspaceId?: string };

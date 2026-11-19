@@ -34,6 +34,7 @@ import {
 import { clearAllCliSessions } from "../../agents/cli-session.js";
 import { isCurrentRecoverySession } from "../../agents/recovery-authority/owner-admission.js";
 import type { RecoveryAdmissionIdentity } from "../../../../shared/recovery-authority/contract.js";
+import { isHandedOffCoordinator } from "../../../../shared/task-system/project-coordinator.js";
 import type { AgentCommandOpts } from "../../agents/command/types.js";
 import { isTimeoutError } from "../../agents/failover-error.js";
 import {
@@ -1375,16 +1376,21 @@ export const agentHandlers: GatewayRequestHandlers = {
     }
     const requestedSessionId = normalizeOptionalString(request.sessionId);
     const expectedSessionId = normalizeOptionalString(request.expectedSessionId);
-    const checkContinuationGeneration = (entry: SessionEntry | undefined) => {
-      if (expectedSessionId && entry?.sessionId !== expectedSessionId) {
+    const checkContinuationOwner = (entry: SessionEntry | undefined, sessionKey: string) => {
+      if (!expectedSessionId) return;
+      if (entry?.sessionId !== expectedSessionId) {
         throw new Error("AGENT_SESSION_GENERATION_STALE: continuation no longer owns the session");
+      }
+      if (isHandedOffCoordinator(sessionKey)) {
+        throw new Error("AGENT_CONTINUATION_OWNER_RETIRED: requester handed off its coordinator role");
       }
     };
     if (expectedSessionId) {
       if (!requestedSessionKeyRaw || (requestedSessionId && requestedSessionId !== expectedSessionId)) {
         throw new Error("AGENT_SESSION_GENERATION_STALE: continuation requires its original session key and generation");
       }
-      checkContinuationGeneration(loadSessionEntry(requestedSessionKeyRaw).entry);
+      const { entry, canonicalKey } = loadSessionEntry(requestedSessionKeyRaw);
+      checkContinuationOwner(entry, canonicalKey);
     }
     let requestedSessionKey =
       requestedSessionKeyRaw ??
@@ -1698,7 +1704,7 @@ export const agentHandlers: GatewayRequestHandlers = {
           canonicalKey,
         } = loadSessionEntry(requestedSessionKey, sessionLoadOptions);
         cfgForAgent = cfgLocal;
-        checkContinuationGeneration(entry);
+        checkContinuationOwner(entry, canonicalKey);
         const sessionMaintenanceConfig = resolveMaintenanceConfigFromInput(
           cfgLocal.session?.maintenance,
         );
@@ -1842,9 +1848,8 @@ export const agentHandlers: GatewayRequestHandlers = {
         const buildSessionPatch = (
           freshEntry: SessionEntry | undefined,
         ): AgentSessionPatchBuild => {
-          // The store updater calls this inside its transaction. A reset racing
-          // completion delivery must fail before patching the replacement row.
-          checkContinuationGeneration(freshEntry);
+          // Reject a reset or completed handoff racing the initial delivery check.
+          checkContinuationOwner(freshEntry, canonicalKey);
           const freshSpawnedBy = canonicalizeSpawnedByForAgent(
             cfgLocal,
             sessionAgent,
@@ -2599,6 +2604,9 @@ export const agentHandlers: GatewayRequestHandlers = {
           // TF-0002: Context Orchestrator (memory + VToken) runs on embedded attempt.
           // Gateway passes base extraSystemPrompt through unchanged (flag-off parity).
           const memoryExtraSystemPrompt = request.extraSystemPrompt;
+          if (expectedSessionId && resolvedSessionKey) {
+            checkContinuationOwner(loadSessionEntry(resolvedSessionKey).entry, resolvedSessionKey);
+          }
           dispatchAgentRunFromGateway({
             ingressOpts: {
               message,

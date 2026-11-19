@@ -16,7 +16,12 @@ const mocks = vi.hoisted(() => ({
   getRuntimeConfig: vi.fn(),
   queueEmbeddedAgentMessageWithOutcome: vi.fn(),
   sendMessage: vi.fn(),
+  isHandedOffCoordinator: vi.fn(),
   currentActivity: { sessionId: undefined as string | undefined, isActive: false },
+}));
+
+vi.mock("../../../shared/task-system/project-coordinator.js", () => ({
+  isHandedOffCoordinator: mocks.isHandedOffCoordinator,
 }));
 
 vi.mock("./subagent-announce-delivery.runtime.js", () => ({
@@ -67,6 +72,7 @@ function buildParams(overrides?: { expectedRequesterSessionId?: string }) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.isHandedOffCoordinator.mockReturnValue(false);
   mocks.getRuntimeConfig.mockReturnValue({});
   mocks.dispatchGatewayMethodInProcess.mockResolvedValue({ result: {} });
   mocks.queueEmbeddedAgentMessageWithOutcome.mockReturnValue({
@@ -154,12 +160,28 @@ describe("subagent announce generation pin", () => {
     }), expect.anything());
   });
 
-  it("stops fallback and retries when Gateway observes a reset during delivery", async () => {
+  it("does not steer a handed-off coordinator even if its transcript generation still matches", async () => {
+    mocks.currentActivity.sessionId = "session-generation-1";
+    mocks.currentActivity.isActive = true;
+    mocks.isHandedOffCoordinator.mockImplementation((key) => key === "agent:main:main");
+    const result = await deliverSubagentAnnouncement(
+      buildParams({ expectedRequesterSessionId: "session-generation-1" }),
+    );
+    expect(result).toMatchObject({ delivered: false, terminal: true, reason: "requester_owner_retired" });
+    expect(mocks.queueEmbeddedAgentMessageWithOutcome).not.toHaveBeenCalled();
+    expect(mocks.dispatchGatewayMethodInProcess).not.toHaveBeenCalled();
+    expect(mocks.sendMessage).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["AGENT_SESSION_GENERATION_STALE", "requester_generation_stale"],
+    ["AGENT_CONTINUATION_OWNER_RETIRED", "requester_owner_retired"],
+  ])("stops fallback and retries when Gateway rejects ownership with %s", async (code, reason) => {
     mocks.currentActivity.sessionId = "session-generation-1";
     mocks.currentActivity.isActive = false;
-    mocks.dispatchGatewayMethodInProcess.mockRejectedValue(new Error("AGENT_SESSION_GENERATION_STALE: reset raced delivery"));
+    mocks.dispatchGatewayMethodInProcess.mockRejectedValue(new Error(code));
     const result = await deliverSubagentAnnouncement(buildParams({ expectedRequesterSessionId: "session-generation-1" }));
-    expect(result).toMatchObject({ delivered: false, terminal: true, reason: "requester_generation_stale" });
+    expect(result).toMatchObject({ delivered: false, terminal: true, reason });
     expect(mocks.dispatchGatewayMethodInProcess).toHaveBeenCalledTimes(1);
     expect(mocks.queueEmbeddedAgentMessageWithOutcome).not.toHaveBeenCalled();
   });

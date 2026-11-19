@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -155,6 +155,7 @@ beforeEach(() => {
   };
 });
 afterEach(async () => {
+  vi.unstubAllEnvs();
   await new Promise<void>((resolve) => setTimeout(resolve, 20));
   closeOpenClawAgentDatabasesForTest();
   rmSync(dir, { recursive: true, force: true });
@@ -201,6 +202,35 @@ describe("agent continuation generation against the real session store", () => {
       sessionId: "concurrent-generation", lifecycleRunId: "concurrent-run",
     });
   });
+
+  it.each(["before delivery", "during the session update", "after acceptance"])(
+    "refuses ingress when a handoff retires the requester %s",
+    async (timing) => {
+      const ownerPath = join(dir, "workspaces.json");
+      vi.stubEnv("CLAWX_WORKSPACE_OWNER_PATH", ownerPath);
+      const retire = () => writeFileSync(ownerPath, JSON.stringify({ profiles: [{
+        id: "project",
+        coordinatorBindings: { [sessionKey]: {
+          workspaceId: "project", sessionKey, sessionGeneration: sessionId,
+          state: "paused", invalidationReason: "handoff-to-new-session",
+        } },
+      }] }));
+      const call = invocation();
+      if (timing === "before delivery") retire();
+      else if (timing === "during the session update") mocks.beforeWrite = retire;
+      else call.respond.mockImplementationOnce(retire);
+      const before = loadSqliteSessionStore(storePath);
+      if (timing === "after acceptance") {
+        await call.run();
+        await vi.waitFor(() => expect(call.respond.mock.calls[1]?.[2]?.message).toContain("AGENT_CONTINUATION_OWNER_RETIRED"));
+      } else {
+        await expect(call.run()).rejects.toThrow("AGENT_CONTINUATION_OWNER_RETIRED");
+        expect(loadSqliteSessionStore(storePath)).toEqual(before);
+      }
+      expect(mocks.ingress).not.toHaveBeenCalled();
+      expect(loadSqliteSessionStore(storePath)[sessionKey].sessionId).toBe(sessionId);
+    },
+  );
 
   it.each(["key", "id"])("rejects a conflicting %s", async (field) => {
     if (field === "key") delete params.sessionKey;

@@ -87,7 +87,10 @@ function fixture(effect: "unknown" | "not_applied") {
 }
 
 describe("reserved owners in real registry lifecycle and restore helpers", () => {
-  it("persists a terminal stale completion without retrying after duplicate delivery or restore", async () => {
+  it.each([
+    ["requester_generation_stale", "AGENT_SESSION_GENERATION_STALE"],
+    ["requester_owner_retired", "AGENT_CONTINUATION_OWNER_RETIRED"],
+  ] as const)("persists terminal %s without retrying after duplicate delivery or restore", async (reason, error) => {
     const { original, runs } = fixture("not_applied");
     state.store = {};
     original.requesterSessionId = "original-parent-generation";
@@ -99,8 +102,7 @@ describe("reserved owners in real registry lifecycle and restore helpers", () =>
     const resume = vi.fn();
     const announce = vi.fn(async (input: Parameters<typeof import("./subagent-announce.js").runSubagentAnnounceFlow>[0]) => {
       expect(input.expectedRequesterSessionId).toBe("original-parent-generation");
-      input.onDeliveryResult?.({ delivered: false, path: "none", terminal: true,
-        reason: "requester_generation_stale", error: "AGENT_SESSION_GENERATION_STALE" });
+      input.onDeliveryResult?.({ delivered: false, path: "none", terminal: true, reason, error });
       return false;
     });
     const controller = createSubagentRegistryLifecycleController({
@@ -116,7 +118,7 @@ describe("reserved owners in real registry lifecycle and restore helpers", () =>
     expect(controller.startSubagentAnnounceCleanupFlow(original.runId, original)).toBe(false);
     await vi.waitFor(() => expect(original.cleanupCompletedAt).toEqual(expect.any(Number)));
     const restored = structuredClone(saved.at(-1)!);
-    expect(restored.delivery).toMatchObject({ status: "failed", lastDropReason: "requester_generation_stale" });
+    expect(restored.delivery).toMatchObject({ status: "failed", lastDropReason: reason });
     runs.set(restored.runId, restored);
     expect(controller.startSubagentAnnounceCleanupFlow(restored.runId, restored)).toBe(false);
     expect(announce).toHaveBeenCalledTimes(1);

@@ -25,3 +25,5 @@ requiredRules:
 8. Agent在同一候选上执行UI、故障、真实provider和源码/冻结包验证，保留各自边界、命令、退出码、计数、hash与actor；所有自动产物标agent，不声称real-human或产品发布批准。
 
 项目完成通知的代次验收见 `harness/specs/tasks/project-coordinator-continuation.md`：agent 驱动 worker 写入，等待负责人自动续行，重启后检查重放次数，重置负责人后拒绝旧代结果。
+
+负责人交接等待在途工具操作结清，再转移同一任务与 checkpoint；新负责人使用新的 writer epoch 读写任务。旧会话保留历史，迟到的完成通知不会触发旧负责人。
