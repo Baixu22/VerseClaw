@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { performance } from "node:perf_hooks";
+import { performance as _performance } from "node:perf_hooks";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   buildRuntimeMemoryEpisodeFixture,
@@ -136,7 +136,7 @@ const EVALUATION_QUERIES: readonly EvaluationQuery[] = [
   },
 ];
 
-function evaluateArm(params: {
+function _evaluateArm(params: {
   arm: EvaluationArm;
   facts: readonly RuntimeMemoryHydrationShadowFactProjection[];
   latencyMs: number;
@@ -307,7 +307,7 @@ function assessmentFor(params: {
   return "negative_naive_hydration";
 }
 
-function createControlledRuntimeMemoryDatabase(): string {
+function _createControlledRuntimeMemoryDatabase(): string {
   const dbPath = createTempDbPath();
   let now = 1_000;
   const firstEpisode = buildEpisode("episode_phase_29_primary", 10);

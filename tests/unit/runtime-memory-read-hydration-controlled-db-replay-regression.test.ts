@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe as _describe, expect, it } from "vitest";
 import {
   buildRuntimeMemoryEpisodeFixture,
   buildRuntimeMemoryInvalidationProposalFixture,
@@ -151,7 +151,7 @@ const ISOLATION_TASK_ID = "task_phase_30_isolation";
 const OTHER_TASK_ID = "task_phase_30_other";
 const LIMIT_TASK_ID = "task_phase_30_limit";
 
-const REPLAY_SCENARIOS: readonly ReplayScenario[] = [
+const _REPLAY_SCENARIOS: readonly ReplayScenario[] = [
   {
     id: "phase_29_parity_hazard_replay",
     tempPrefix: "runtime-memory-phase-30-parity-",
@@ -211,7 +211,7 @@ const REPLAY_SCENARIOS: readonly ReplayScenario[] = [
   },
 ];
 
-function runReplayScenario(scenario: ReplayScenario): ScenarioEvaluation {
+function _runReplayScenario(scenario: ReplayScenario): ScenarioEvaluation {
   const dbPath = createTempDbPath(scenario.tempPrefix);
   scenario.seed(dbPath);
 
@@ -432,7 +432,7 @@ function returnedFactsForArm(
   };
 }
 
-function aggregateEvaluations(
+function _aggregateEvaluations(
   evaluations: readonly ScenarioEvaluation[],
 ): AggregateEvaluation {
   const baseline = aggregateArm(

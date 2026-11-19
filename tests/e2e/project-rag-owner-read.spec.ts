@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import type { Page } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import { allocatePort, buildMockProviderConfig, MOCK_MODEL_ID, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { allocatePort, buildMockProviderConfig, MOCK_MODEL_ID as _MOCK_MODEL_ID, startScriptedLlm } from './fixtures/fp-p1-harness';
 import type { OwnerReadSnapshotV1, SourceRefV2 } from '../../shared/knowledge/owner-read-contract';
 
 type Json = Record<string, unknown>;

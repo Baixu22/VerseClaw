@@ -691,7 +691,7 @@ function getEvidenceRun(runId?: string, childSessionKey?: string) {
   };
 }
 
-function decisionSurface(result: TaskLoopRunResult) {
+function _decisionSurface(result: TaskLoopRunResult) {
   return {
     status: result.status,
     phase: result.phase,

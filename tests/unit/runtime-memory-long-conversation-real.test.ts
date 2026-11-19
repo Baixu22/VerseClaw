@@ -113,7 +113,7 @@ function loadStats(dbPath: string): {
   };
 }
 
-function measureRetentionAt(
+function _measureRetentionAt(
   dbPath: string,
   factIds: readonly string[],
 ): { retained: string[]; lost: string[]; retentionRate: number } {
@@ -128,7 +128,7 @@ function measureRetentionAt(
   return { retained, lost, retentionRate };
 }
 
-function measureNoiseRateAt(
+function _measureNoiseRateAt(
   dbPath: string,
   labels: Map<string, "useful" | "noise">,
 ): { noiseRate: number; noiseCount: number; totalCount: number } {

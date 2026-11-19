@@ -215,7 +215,7 @@ function writeEvidence(fixture: Fixture, caseInfo: { case: string; breakPoint?: 
     journal = { state: `unreadable:${error instanceof Error ? error.message : String(error)}`, requestDigest: '', manifestDigest: '' };
   }
 
-  let session: CaseEvidence['session'] = null;
+  let session: CaseEvidence['session'];
   try {
     clearSessionStoreCacheForTest();
     const entry = getSessionEntry({ storePath: fixture.sessionStorePath, sessionKey: fixture.sessionKey });

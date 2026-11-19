@@ -11,8 +11,8 @@ import { afterAll, describe, expect, it } from "vitest";
 import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/state/openclaw-state-db";
 import { closeRuntimeMemoryHydrationShadowDatabasesForTest } from "../../openclaw_runtime/src/runtime-core/memory-read-hydration-shadow";
 import {
-  buildRuntimeMemoryEpisodeFixture,
-  buildRuntimeMemoryInvalidationProposalFixture,
+  buildRuntimeMemoryEpisodeFixture as _buildRuntimeMemoryEpisodeFixture,
+  buildRuntimeMemoryInvalidationProposalFixture as _buildRuntimeMemoryInvalidationProposalFixture,
   buildRuntimeMemoryTemporalFactFixture,
   type RuntimeMemoryTemporalFact,
 } from "../../openclaw_runtime/src/runtime-core";
@@ -48,7 +48,7 @@ function makePersistence(dbPath: string, maxFacts?: number) {
 
 // Build a fact with raw content in objectSummary, bypassing fixture sanitize.
 // The persistence layer's sanitizeFactForPersistence will catch this.
-function makeRawContentFact(params: {
+function _makeRawContentFact(params: {
   factId: string;
   objectSummary: string;
   taskId?: string;

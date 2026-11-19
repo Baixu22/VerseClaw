@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { performance } from "node:perf_hooks";
+import { performance as _performance } from "node:perf_hooks";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   buildRuntimeMemoryEpisodeFixture,
@@ -243,7 +243,7 @@ function hasRawLeakText(
   );
 }
 
-function createMockRuntimeMemoryDatabase(): string {
+function _createMockRuntimeMemoryDatabase(): string {
   const dbPath = createTempDbPath();
   let now = 1_000;
   const episode = buildEpisode("opt_in_memory_eval_episode", 10);

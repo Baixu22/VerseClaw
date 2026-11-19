@@ -27,7 +27,7 @@ export function acceptPersistentTask(
     const verification = criterion.verification;
     if (verification.kind !== "owner-receipt") continue;
     let evidence: TaskEvidence[] = [];
-    let artifacts: Array<{ path: string; sha256: string }> = [];
+    let artifacts: Array<{ path: string; sha256: string }>;
     let verifierRunId: string | undefined;
     if (verification.owner === "evidence-verifier") {
       const requires = verification.requires ?? [];

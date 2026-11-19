@@ -110,7 +110,7 @@ function tryInitializeDb(dbPath: string): string {
   return result.status === "skipped" ? result.reason : result.status;
 }
 
-function runTopicDiagnostics(
+function _runTopicDiagnostics(
   segments: readonly TopicSegment[],
   dbPath: string,
 ): TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[] {

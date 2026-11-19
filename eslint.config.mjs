@@ -25,6 +25,9 @@ export default [
       '**/.artifacts/**',
       '.claude/worktrees/**',
       'artifacts/**',
+      // Historical evidence and frozen evaluation programs retain their hash-verified bytes.
+      'docs/dev/evidence/**',
+      'harness/specs/fixtures/project-rag/**/programs/**',
       'dist/**',
       'dist-electron/**',
       'openclaw/**',

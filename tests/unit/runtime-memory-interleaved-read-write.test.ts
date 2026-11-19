@@ -100,7 +100,7 @@ function loadFactIds(dbPath: string): Set<string> {
   return new Set(facts.map((f) => f.factId));
 }
 
-function loadStats(dbPath: string): { facts: number; invalidations: number; factIds: Set<string> } {
+function _loadStats(dbPath: string): { facts: number; invalidations: number; factIds: Set<string> } {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },

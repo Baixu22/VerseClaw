@@ -268,9 +268,15 @@ function SessionFolderTreeInner({
   const [dropTargetKey, setDropTargetKey] = useState<string | null>(null);
   const [expandedFamilies, setExpandedFamilies] = useState<Record<string, boolean>>({});
   const [interactionOrder, setInteractionOrder] = useState<string[] | null>(null);
+  const interactionScope = JSON.stringify([workspace.id, currentSessionKey, sessionSort]);
+  const [lastInteractionScope, setLastInteractionScope] = useState(interactionScope);
+  if (lastInteractionScope !== interactionScope) {
+    setLastInteractionScope(interactionScope);
+    setInteractionOrder(null);
+  }
   const pointerInside = useRef(false);
   const treeElement = useRef<HTMLDivElement>(null);
-  const revealedSelection = useRef<string | undefined>(undefined);
+  const [revealedSelection, setRevealedSelection] = useState<string | undefined>(undefined);
   /**
    * `dragOver` can fire in the same native gesture before React has committed
    * the drag-start state update. The ref keeps the active drag key available
@@ -315,7 +321,6 @@ function SessionFolderTreeInner({
     const keys = rowGroups.flatMap(group => group.rows.map(row => row.entry.session.key));
     if (keys.length) setInteractionOrder(current => current ?? keys);
   };
-  useEffect(() => { setInteractionOrder(null); }, [workspace.id, currentSessionKey, sessionSort]);
   useEffect(() => {
     if (!interactionOrder) return;
     const releaseOutside = (event: PointerEvent) => {
@@ -354,15 +359,15 @@ function SessionFolderTreeInner({
     }
     return visible;
   }, [rowGroups, collapsedFolders, expandedFamilies, currentSessionKey, renderLimit]);
-  useEffect(() => {
-    if (!currentSessionKey || revealedSelection.current === currentSessionKey) return;
+  if (currentSessionKey && revealedSelection !== currentSessionKey) {
     const group = [groups.rootSessions, ...groups.folders.map((folder) => folder.sessions)]
       .find((entries) => entries.some((entry) => entry.session.key === currentSessionKey));
-    if (!group) return;
-    revealedSelection.current = currentSessionKey;
-    const row = threadSessionsByLineage(group).find((entry) => entry.entry.session.key === currentSessionKey);
-    if (row?.originKey) setExpandedFamilies((current) => ({ ...current, [row.originKey!]: true }));
-  }, [currentSessionKey, groups]);
+    if (group) {
+      setRevealedSelection(currentSessionKey);
+      const row = threadSessionsByLineage(group).find((entry) => entry.entry.session.key === currentSessionKey);
+      if (row?.originKey) setExpandedFamilies((current) => ({ ...current, [row.originKey!]: true }));
+    }
+  }
 
   const sessionNameByKey = useMemo(() => new Map(
     sessions.map((entry) => [

@@ -21,7 +21,7 @@ type LedgerFault = {
 };
 type FaultGlobal = typeof globalThis & { __u2LedgerFault?: LedgerFault };
 
-test.beforeEach(async ({}, info) => {
+test.beforeEach(async ({ browserName: _browserName }, info) => {
   test.setTimeout(240_000);
   runs.set(info.testId, { facts: {
     driven_by: 'agent', actor: 'playwright-u2-state-proof',
@@ -30,7 +30,7 @@ test.beforeEach(async ({}, info) => {
   } });
 });
 
-test.afterEach(async ({}, info) => {
+test.afterEach(async ({ browserName: _browserName }, info) => {
   const run = runs.get(info.testId)!;
   try {
     if (run.app) {

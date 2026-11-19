@@ -672,7 +672,7 @@ function evidenceRefs() {
   ];
 }
 
-function expectPilotThresholds(
+function _expectPilotThresholds(
   report:
     | TaskLoopRunResult["runtimeMemoryReadHydrationShadowOnlyDiagnostics"]
     | undefined,

@@ -6,18 +6,18 @@ import {
 } from "./helpers/context-provider-registry";
 import {
   createRuntimeMemoryContextProvider,
-  createRuntimeMemoryProviderResult,
+  createRuntimeMemoryProviderResult as _createRuntimeMemoryProviderResult,
   RUNTIME_MEMORY_CONTEXT_PROVIDER_ID,
 } from "../../openclaw_runtime/src/context-engine/memory-context-provider";
 import {
   buildGroundingRefFixture,
   buildRuntimeMemoryTemporalFactCandidateFixture,
   buildRuntimeMemoryTemporalFactFixture,
-  isContextItem,
+  isContextItem as _isContextItem,
   isRuntimeContextProviderManifest,
   isRuntimeContextProviderResult,
-  isRuntimeMemoryContextProviderResult,
-  isRuntimeRegistryDiagnostic,
+  isRuntimeMemoryContextProviderResult as _isRuntimeMemoryContextProviderResult,
+  isRuntimeRegistryDiagnostic as _isRuntimeRegistryDiagnostic,
   type RuntimeContextProviderResult,
   type RuntimeMemoryQueryableFact,
 } from "../../openclaw_runtime/src/runtime-core";
@@ -30,7 +30,7 @@ const enabledConfig = {
   },
 };
 
-const RAW_GROUNDING_SENTINEL =
+const _RAW_GROUNDING_SENTINEL =
   "RAW_RUNTIME_MEMORY_GROUNDING_DIAGNOSTIC_SHOULD_NOT_SURVIVE";
 
 describe("runtime memory context provider", () => {
@@ -187,7 +187,7 @@ function fact(
   });
 }
 
-function candidate(
+function _candidate(
   overrides: Partial<RuntimeMemoryQueryableFact> = {},
 ): RuntimeMemoryQueryableFact {
   return buildRuntimeMemoryTemporalFactCandidateFixture({

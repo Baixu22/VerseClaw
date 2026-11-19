@@ -48,7 +48,7 @@ export function reconcileExecutionCheckout(checkout: Checkout): void {
   if (current?.terminalReceipt && current.operations.every(operation => operation.state === 'settled') && !processesPending(current)) {
     const ledger = openExecutionTaskStore(current.root);
     let delegation;
-    let terminalTask = false;
+    let terminalTask: boolean;
     try {
       delegation = ledger.delegationForChild(sessionKey);
       const task = ledger.get(state.owner.task.taskNodeId);

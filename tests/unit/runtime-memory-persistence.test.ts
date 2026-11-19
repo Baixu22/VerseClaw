@@ -4,15 +4,15 @@ import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { afterEach, describe, expect, it } from "vitest";
 import {
-  RUNTIME_MEMORY_PERSISTENCE_OWNER,
-  RUNTIME_MEMORY_PERSISTENCE_SCHEMA_VERSION,
+  RUNTIME_MEMORY_PERSISTENCE_OWNER as _RUNTIME_MEMORY_PERSISTENCE_OWNER,
+  RUNTIME_MEMORY_PERSISTENCE_SCHEMA_VERSION as _RUNTIME_MEMORY_PERSISTENCE_SCHEMA_VERSION,
   createRuntimeMemoryPersistenceStore,
   inspectRuntimeMemorySanitizedEpisodes,
 } from "../../openclaw_runtime/src/runtime-core/memory-persistence";
 import {
   buildRuntimeMemoryEpisodeFixture,
   buildRuntimeMemoryInvalidationProposalFixture,
-  buildRuntimeMemoryTemporalFactCandidateFixture,
+  buildRuntimeMemoryTemporalFactCandidateFixture as _buildRuntimeMemoryTemporalFactCandidateFixture,
   buildRuntimeMemoryTemporalFactFixture,
   type RuntimeMemoryEpisodeRecord,
   type RuntimeMemorySourceEpisodeRef,
@@ -200,7 +200,7 @@ function buildEpisode(
   });
 }
 
-function sourceEpisodeRef(
+function _sourceEpisodeRef(
   episode: RuntimeMemoryEpisodeRecord,
 ): RuntimeMemorySourceEpisodeRef {
   return {
@@ -223,7 +223,7 @@ function createTempDir(): string {
   return dir;
 }
 
-function factIds(facts: readonly { readonly factId: string }[]): string[] {
+function _factIds(facts: readonly { readonly factId: string }[]): string[] {
   return facts.map((fact) => fact.factId);
 }
 
@@ -233,14 +233,14 @@ function sqlCount(db: DatabaseSync, tableName: string, where?: string): number {
   return Number(row?.count ?? 0);
 }
 
-function tableExists(db: DatabaseSync, tableName: string): boolean {
+function _tableExists(db: DatabaseSync, tableName: string): boolean {
   const row = db
     .prepare("SELECT 1 AS ok FROM sqlite_master WHERE type = 'table' AND name = ?")
     .get(tableName) as { ok?: unknown } | undefined;
   return row?.ok === 1;
 }
 
-function inspectPersistenceTables(dbPath: string): Record<string, unknown> {
+function _inspectPersistenceTables(dbPath: string): Record<string, unknown> {
   const db = new DatabaseSync(dbPath, { readOnly: true });
   try {
     const meta = db.prepare(

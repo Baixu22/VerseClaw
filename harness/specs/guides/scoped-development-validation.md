@@ -41,3 +41,7 @@ budgets, product locks or candidate/digest binding to save runtime.
 Harness `fast` is a historical broad profile name (including the root suite),
 not a promise of seconds. Use task-specific development commands; use
 `harness run --dry-run` to inspect the formal profile without executing it.
+
+The full fast profile builds the VerseBrowser workspace package before typecheck
+and unit imports. Fresh detached checkouts obtain its package declarations and
+runtime exports from the locked source instead of depending on a previous Vite build.

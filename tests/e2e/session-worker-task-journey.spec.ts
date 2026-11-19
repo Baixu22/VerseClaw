@@ -259,7 +259,7 @@ test('a real delegated worker receives its own task, reports separately and acce
     expect(currentProject.coordinatorBindings?.[second.key].state).toBe('active');
     expect(currentProject.coordinatorBindings?.[readOnlyKey]?.writerClaim).toBeUndefined();
     expect(currentProject.sessionStates?.[readOnlyKey]).toBeUndefined();
-    const readOnlyDescription = await rpc<{ session: { sessionId: string } }>('sessions.describe', { key: readOnlyKey });
+    const _readOnlyDescription = await rpc<{ session: { sessionId: string } }>('sessions.describe', { key: readOnlyKey });
     const firstOrigin = await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', {
       workspaceId: project.workspaceId, sessionKey: childKey });
     const secondOrigin = await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', {

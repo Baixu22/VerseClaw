@@ -46,6 +46,9 @@ describe("runtime.contextBlock working-memory config", () => {
           checkpointedContextReset?: {
             enabled?: boolean;
           };
+          contextFolding?: {
+            enabled?: boolean;
+          };
           "context-write"?: {
             role?: string;
           };

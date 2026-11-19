@@ -106,7 +106,7 @@ function tryInitializeDb(dbPath: string): string {
   return result.status === "skipped" ? result.reason : result.status;
 }
 
-function runConflictDiagnostics(
+function _runConflictDiagnostics(
   scenario: readonly ConflictGroup[],
   dbPath: string,
 ): TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[] {

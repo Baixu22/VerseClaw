@@ -2,6 +2,7 @@ export const PROFILES = {
   fast: [
     { name: 'Generate extension bridge', command: 'pnpm', args: ['-w', 'run', 'ext:bridge'] },
     { name: 'Lint without autofix', command: 'pnpm', args: ['-w', 'run', 'lint:check'] },
+    { name: 'Build workspace browser package', command: 'pnpm', args: ['-w', 'run', 'versebrowser:build'] },
     { name: 'Typecheck', command: 'pnpm', args: ['-w', 'run', 'typecheck'] },
     { name: 'Unit tests', command: 'pnpm', args: ['-w', 'test'] },
   ],

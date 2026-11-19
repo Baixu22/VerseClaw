@@ -57,7 +57,7 @@ beforeEach(()=>{
  });
 });
 afterEach(async()=>{
- for(const context of executions){try{finishExecutionCheckoutRun(context.runId);}catch{};try{finishPersistentTaskRun(root,context.sessionKey,context.runId);}catch{};clearSessionTaskScopeRun(context.runId);}
+ for(const context of executions){try{finishExecutionCheckoutRun(context.runId);}catch{/* Cleanup can be fenced by the exercised case. */};try{finishPersistentTaskRun(root,context.sessionKey,context.runId);}catch{/* Cleanup can be fenced by the exercised case. */};clearSessionTaskScopeRun(context.runId);}
  await Promise.resolve();resetManagedProcessCapacity();vi.restoreAllMocks();closeOpenClawStateDatabaseForTest();vi.unstubAllEnvs();rmSync(root,{recursive:true,force:true});
 });
 

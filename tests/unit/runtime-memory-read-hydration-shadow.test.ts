@@ -5,8 +5,8 @@ import { DatabaseSync } from "node:sqlite";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   buildRuntimeMemoryEpisodeFixture,
-  buildRuntimeMemoryTemporalFactCandidateFixture,
-  buildRuntimeMemoryTemporalFactFixture,
+  buildRuntimeMemoryTemporalFactCandidateFixture as _buildRuntimeMemoryTemporalFactCandidateFixture,
+  buildRuntimeMemoryTemporalFactFixture as _buildRuntimeMemoryTemporalFactFixture,
   closeRuntimeMemoryHydrationShadowDatabasesForTest,
   hydrateRuntimeMemoryShadowContext,
   readRuntimeMemoryHydrationShadow,
@@ -203,7 +203,7 @@ function buildEpisode(
   });
 }
 
-function sourceEpisodeRef(
+function _sourceEpisodeRef(
   episode: RuntimeMemoryEpisodeRecord,
 ): RuntimeMemorySourceEpisodeRef {
   return {
@@ -239,7 +239,7 @@ function tableExists(db: DatabaseSync, tableName: string): boolean {
   return row?.ok === 1;
 }
 
-function inspectPersistenceTables(dbPath: string): Record<string, unknown> {
+function _inspectPersistenceTables(dbPath: string): Record<string, unknown> {
   const db = new DatabaseSync(dbPath, { readOnly: true });
   try {
     return {

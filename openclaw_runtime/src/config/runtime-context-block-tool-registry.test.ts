@@ -46,6 +46,9 @@ describe("runtime.contextBlock tool-registry config", () => {
           checkpointedContextReset?: {
             enabled?: boolean;
           };
+          contextFolding?: {
+            enabled?: boolean;
+          };
           "context-write"?: {
             role?: string;
           };

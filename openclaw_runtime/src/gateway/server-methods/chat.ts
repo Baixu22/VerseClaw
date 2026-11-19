@@ -159,7 +159,6 @@ import {
   normalizeChatKnowledgeScope,
   normalizeChatKnowledgeReferences,
   resolveChatKnowledgeIntent,
-  type ChatKnowledgeDenial,
 } from "../../context-engine/chat-knowledge-intent.js";
 import { createProductionChatKnowledgeSourceAdapters } from "../../context-engine/chat-knowledge-source-adapters.js";
 import { stripEnvelopeFromMessage } from "../chat-sanitize.js";
@@ -3447,7 +3446,6 @@ export const chatHandlers: GatewayRequestHandlers = {
     const resolvedSessionAuthProvider = resolveProviderIdForAuth(resolvedSessionModel.provider, {
       config: cfg,
     });
-    let chatKnowledgeDenials: ChatKnowledgeDenial[] = [];
     let parsedMessage = inboundMessage;
     let parsedImages: ChatImageContent[] = [];
     let imageOrder: PromptImageOrderEntry[] = [];
@@ -4103,7 +4101,7 @@ export const chatHandlers: GatewayRequestHandlers = {
         }
       }
     }
-    chatKnowledgeDenials = chatKnowledgeResolution.denied;
+    const chatKnowledgeDenials = chatKnowledgeResolution.denied;
     context.logGateway.info(
       `chat.send pre-ack ready runId=${clientRunId} sessionKey=${sessionKey} attachments=${normalizedAttachments.length}`,
     );

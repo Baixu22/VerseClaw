@@ -6059,10 +6059,10 @@ export function createKnowledgeApi({
       let compileResult: KnowledgeCompileResult | null = null;
       let lintResult: KnowledgeLintResult | null = null;
       try {
-        compileResult = await rpc<any>('wiki.compile', {}, 120_000);
+        compileResult = await rpc<KnowledgeCompileResult>('wiki.compile', {}, 120_000);
       } catch { /* ignore */ }
       try {
-        lintResult = await rpc<any>('wiki.lint', {}, 60_000);
+        lintResult = await rpc<KnowledgeLintResult>('wiki.lint', {}, 60_000);
       } catch { /* ignore */ }
 
       const issues: KnowledgeGovernanceIssue[] = [];
@@ -6073,14 +6073,15 @@ export function createKnowledgeApi({
       if (compileResult?.contradictionClusters) {
         const clusters = Array.isArray(compileResult.contradictionClusters) ? compileResult.contradictionClusters as unknown[] : [];
         for (const cluster of clusters) {
-          const ids = (Array.isArray((cluster as any).claimIds) ? (cluster as any).claimIds : []).filter(Boolean);
+          const details = cluster as Record<string, unknown>;
+          const ids = (Array.isArray(details.claimIds) ? details.claimIds : []).filter(Boolean);
           summaries.contradictions++;
           issues.push({
             id: `gov_contradiction_${summaries.contradictions}`,
             category: 'contradiction',
             severity: 'error',
-            title: typeof (cluster as any).topic === 'string' ? (cluster as any).topic : 'Contradictory claims',
-            description: typeof (cluster as any).description === 'string' ? (cluster as any).description : `${ids.length} contradictory claim(s) detected`,
+            title: typeof details.topic === 'string' ? details.topic : 'Contradictory claims',
+            description: typeof details.description === 'string' ? details.description : `${ids.length} contradictory claim(s) detected`,
             affectedPageIds: ids as string[],
             affectedPagePaths: ids as string[],
             detectedAt: now,

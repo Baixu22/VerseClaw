@@ -39,7 +39,11 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
   const elements = useRef(new Map<string, HTMLElement>());
   const frame = useRef<number | undefined>(undefined);
   const initialRestore = useRef<{ sessionKey: string; position?: ReadingPosition; done: boolean }>({ sessionKey, position: initialReadingPosition, done: !initialReadingPosition });
-  if (initialRestore.current.sessionKey !== sessionKey) initialRestore.current = { sessionKey, position: initialReadingPosition, done: !initialReadingPosition };
+  useLayoutEffect(() => {
+    if (initialRestore.current.sessionKey !== sessionKey) {
+      initialRestore.current = { sessionKey, position: initialReadingPosition, done: !initialReadingPosition };
+    }
+  }, [sessionKey, initialReadingPosition]);
   const origin = useCallback(() => {
     const container = getScrollElement();
     return container && listRef.current ? listRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop : 0;
