@@ -232,8 +232,11 @@ export function createSubagentRegistryLifecycleController(params: {
     if (!delivery.delivered && delivery.terminal) {
       deliveryState.status = "failed";
       deliveryState.lastError = formatAnnounceDeliveryError(delivery);
-      deliveryState.lastDropReason = delivery.reason === "requester_generation_stale"
-        ? "requester_generation_stale" : "sink_unavailable";
+      const reason = delivery.reason;
+      deliveryState.lastDropReason =
+        reason === "requester_generation_stale" || reason === "requester_owner_retired"
+          ? reason
+          : "sink_unavailable";
       params.persist();
     }
   };

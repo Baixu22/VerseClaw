@@ -232,7 +232,8 @@ export type SubagentCompletionDeliveryState = {
     | "sink_unavailable"
     | "dedupe"
     | "waiting_for_requester_turn"
-    | "requester_generation_stale";
+    | "requester_generation_stale"
+    | "requester_owner_retired";
 };
 
 export type SubagentRunRecord = {

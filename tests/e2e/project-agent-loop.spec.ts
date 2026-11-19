@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, observeSessionUi } from './fixtures/session-task-chain';
+import type { TaskLedgerSnapshotResult } from '../../shared/host-api/contract';
 import type { ProjectPlanSnapshot, TaskEvidence, TaskSessionSnapshot, TaskView } from '../../shared/task-system/types';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
@@ -215,8 +216,14 @@ test('hands a project checkpoint to the new coordinator and rejects a late compl
     git('init', '-b', 'main', root);
     git('-C', root, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'Fixture base');
     const project = await createSessionChainProject(app, root, 'Checkpoint handoff');
+    const ledger = await hostInvoke<TaskLedgerSnapshotResult>(app, 'taskLedger', 'createNode', {
+      workspaceId: project.workspaceId, node: { title: 'Checkpoint handoff', kind: 'task', status: 'todo' },
+      idempotencyKey: 'project-checkpoint-binding-task',
+    });
+    const bindingTask = ledger.snapshot.nodes.find(node => node.title === 'Checkpoint handoff');
+    if (!bindingTask) throw new Error('Task Ledger did not return the coordinator binding task');
     const binding = await hostInvoke(app, 'workspaces', 'bindCoordinator', {
-      ...project, agentId: 'main', expectedRevision: 0, taskLedgerNodeIds: [],
+      ...project, agentId: 'main', expectedRevision: 0, taskLedgerNodeIds: [bindingTask.id],
       environment: { kind: 'local', rootPath: root }, archiveRestorePolicy: 'restore',
     });
     expect(binding).toMatchObject({ recovery: { state: 'ready' }, binding: { sessionGeneration: project.generation } });
