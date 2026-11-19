@@ -14,13 +14,16 @@ function stableEventPayload(value: unknown): unknown {
       .map(([key, val]) => [key, stableEventPayload(val)]),
   );
 }
-function eventMeaning(event: TaskLedgerEvent) {
+function eventMeaning(event: TaskLedgerEvent, savedLinkId?: string) {
+  const link = event.payload.sessionLink;
   return {
     type: event.type,
     actor: event.actor,
     taskId: event.taskId ?? event.payload.nodeId ?? event.payload.node?.id ?? null,
     sessionId: event.sessionId ?? null,
-    payload: stableEventPayload(event.payload),
+    payload: stableEventPayload(savedLinkId && link
+      ? { ...event.payload, sessionLink: { ...link, id: savedLinkId } }
+      : event.payload),
   };
 }
 
@@ -139,12 +142,21 @@ export function appendPersistentTaskEvents(
 ): void {
   withTaskEvents(path, (db) => {
     if (batchKey) {
-      const hash = createHash("sha256")
-        .update(JSON.stringify(events.map(eventMeaning)))
-        .digest("hex");
       const prior = db.prepare("SELECT hash FROM batches WHERE id=?").get(batchKey) as
         | { hash: string }
         | undefined;
+      const [first] = events;
+      // The public single-link command generates a new ID on every invocation.
+      // Use its persisted ID for comparison, including batches from old builds.
+      const savedLink = prior && events.length === 1 && first.type === "session_linked" &&
+        first.actor === "user" && first.payload.sessionLink
+        ? db.prepare(`SELECT json_extract(json,'$.payload.sessionLink.id') AS id FROM events
+            WHERE json_extract(json,'$.idempotencyKey')=? AND json_extract(json,'$.type')='session_linked'
+              AND json_extract(json,'$.actor')='user' ORDER BY seq LIMIT 1`).get(batchKey) as { id: string } | undefined
+        : undefined;
+      const hash = createHash("sha256")
+        .update(JSON.stringify(events.map(event => eventMeaning(event, savedLink?.id))))
+        .digest("hex");
       if (prior) {
         if (prior.hash !== hash) throw new Error("TASK_EVENT_IDEMPOTENCY_CONFLICT");
         return;

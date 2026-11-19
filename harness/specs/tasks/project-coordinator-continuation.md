@@ -29,12 +29,15 @@ touchedAreas:
   - openclaw_runtime/src/gateway/server-methods/agent*.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/agent.ts
   - shared/task-system/project-coordinator.ts
+  - shared/task-system/event-store.ts
   - shared/task-system/store.ts
   - electron/services/task-system-service.ts
   - tests/unit/durable-task-system.test.ts
+  - tests/unit/durable-task-event-store.test.ts
   - tests/unit/durable-task-project-planning.test.ts
   - tests/e2e/project-agent-loop.spec.ts
   - tests/e2e/long-session-completion-continuation.spec.ts
+  - tests/e2e/long-session-restart-journeys.spec.ts
   - harness/specs/tasks/project-coordinator-continuation.md
   - harness/specs/scenarios/autonomous-project-system.md
   - harness/specs/rules/durable-task-system-boundary.md
@@ -54,7 +57,7 @@ requiredTests:
   - pnpm run typecheck
   - pnpm run comms:replay
   - pnpm run comms:compare
-  - pnpm run test:e2e tests/e2e/project-agent-loop.spec.ts tests/e2e/long-session-completion-continuation.spec.ts
+  - pnpm run test:e2e tests/e2e/project-agent-loop.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-restart-journeys.spec.ts
 acceptance:
   - Persist and pass the original requester generation; never derive an old completion pin from a newer child run.
   - Reject generation changes at delivery and again inside the atomic session update before agent ingress.
@@ -65,6 +68,8 @@ acceptance:
   - Pause rejects new dispatch without stopping an active run. Stopping it retains the task checkpoint. Cancellation waits for its pending effects, refuses old generations and never makes the cancelled child eligible again.
   - Cancel owned worker sessions by their pinned generation. Retain the claim until the worker and effects settle; late completion and restart cannot wake or replay a cancelled task, including after a Registry run replacement.
   - After a terminal worker failure with no unresolved effects, the coordinator continues an independent ready child, without accepting the failed child, unblocking its dependents or bypassing resource admission.
+  - Repeated rate limits stop at the transport attempt limit or at the stricter spend limit. Read the physical call count and its scoped spend receipts before accepting the independent continuation.
+  - A repeated session link keeps its original record; reusing the request key with different link details rejects the write.
   - A burst of duplicate goal-wake timer fires records one mission tick. Reopening its ledger does not re-fire it.
   - Verify durable deduplication, idle continuation, cancellation, restart and unknown-effect reconciliation on the same candidate before closing TF-0677.
 docs:

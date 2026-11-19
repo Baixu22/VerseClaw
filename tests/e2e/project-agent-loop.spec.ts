@@ -14,9 +14,10 @@ import type { GatewayStatus } from '../../shared/types/gateway';
 import type { SessionDelegationResult } from '../../shared/types/session-delegation';
 import type { SessionHandoffOperation } from '../../shared/types/session-handoff';
 
-for (const mode of ['cancel', 'failure'] as const) test(
+for (const mode of ['cancel', 'failure', 'budget'] as const) test(
   mode === 'cancel' ? 'cancels the active project worker without delivering its late result'
-    : 'advances an independent plan task after terminal worker failure',
+    : mode === 'budget' ? 'advances an independent plan task when spend admission caps worker retries'
+      : 'advances an independent plan task after terminal worker failure',
   async ({ launchElectronApp, userDataDir }, info) => {
     test.setTimeout(360_000);
     const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', windowsHide: true }).trim();
@@ -27,6 +28,9 @@ for (const mode of ['cancel', 'failure'] as const) test(
     }
     const workerTask = 'P3 worker fault fixture';
     const independentTask = 'Write the independent index';
+    const projectLimit = 4_000_000;
+    // Two unpriced requests using the fixture model's 128k input and 4096 output bounds.
+    const sessionLimit = mode === 'budget' ? 2 * (128_000 + 4_096) : undefined;
     let release!: () => void;
     const hold = new Promise<void>(resolve => { release = resolve; });
     let workerCalls = 0;
@@ -50,7 +54,7 @@ for (const mode of ['cancel', 'failure'] as const) test(
       }
       if (text.includes(workerTask)) {
         workerCalls++;
-        if (mode === 'failure') return { rateLimited: true };
+        if (mode !== 'cancel') return { rateLimited: true };
         await hold;
         return { toolCall: { id: 'lateworkerwrite', name: 'write', args: { path: 'late.txt', content: 'must not land' } } };
       }
@@ -67,7 +71,9 @@ for (const mode of ['cancel', 'failure'] as const) test(
       const project = await createSessionChainProject(app, root, 'Project worker faults');
       const config = await hostInvoke<{ hash: string }>(app, 'gateway', 'rpc', { method: 'config.get', params: {} });
       await hostInvoke(app, 'gateway', 'rpc', { method: 'config.patch', params: { baseHash: config.hash, raw: JSON.stringify({
-        runtime: { providerBudget: { project: { maxTokens: 4_000_000 } } },
+        runtime: { providerBudget: {
+          project: { maxTokens: projectLimit }, ...(sessionLimit ? { session: { maxTokens: sessionLimit } } : {}),
+        } },
       }), note: 'P3 worker fault fixture' } });
       await hostInvoke(app, 'gateway', 'stop');
       await startGateway(app);
@@ -80,7 +86,7 @@ for (const mode of ['cancel', 'failure'] as const) test(
           nextAction: workerTask, children: [
             { key: 'fault', contract: goal(workerTask, 'late.txt') },
             { key: 'dependent', contract: goal('Requires first result', 'dependent.txt'), dependsOn: ['fault'] },
-            ...(mode === 'failure' ? [{ key: 'independent', contract: goal(independentTask, 'index.txt') }] : []),
+            ...(mode !== 'cancel' ? [{ key: 'independent', contract: goal(independentTask, 'index.txt') }] : []),
           ],
         });
         const dispatch = { workspaceId: project.workspaceId, sessionKey: project.sessionKey, expectedSessionGeneration: project.generation,
@@ -119,8 +125,9 @@ for (const mode of ['cancel', 'failure'] as const) test(
             if (error.code === 'ENOENT') return null;
             throw error;
           }), { timeout: 100_000 }).toBe('independent result');
-          expect(llm.log.filter(row => row.issued === 'http:429')).toHaveLength(3);
-          expect(workerCalls).toBe(3);
+          const expectedAttempts = mode === 'budget' ? 2 : 3;
+          expect(llm.log.filter(row => row.issued === 'http:429')).toHaveLength(expectedAttempts);
+          expect(workerCalls).toBe(expectedAttempts);
           expect(llm.log.filter(row => row.issued === 'independentwrite')).toHaveLength(1);
           expect(store.get(plan.childIds[0])).toMatchObject({ contract: { state: 'paused' }, claim: { state: 'released' } });
           expect(store.get(plan.childIds[2]).claim).toMatchObject({ sessionKey: project.sessionKey, generation: project.generation, state: 'active' });
@@ -131,12 +138,25 @@ for (const mode of ['cancel', 'failure'] as const) test(
         const db = new DatabaseSync(join(userDataDir, 'openclaw-source-state', 'state', 'openclaw.sqlite'), { readOnly: true });
         let registry, spend;
         try {
-          registry = db.prepare(`SELECT run_id, ended_reason, outcome_json, completion_announced_at, last_announce_delivery_error FROM subagent_runs WHERE run_id=?`).get(worker.childRunId!);
-          spend = db.prepare(`SELECT model, state, reserved_tokens, actual_tokens, scope_json FROM provider_spend_calls WHERE json_extract(scope_json,'$.sessionKey')=?`).all(worker.childSessionKey!);
+          const readRegistry = () => db.prepare(`SELECT run_id, ended_reason, outcome_json, completion_announced_at, last_announce_delivery_error FROM subagent_runs WHERE run_id=?`).get(worker.childRunId!);
+          await expect.poll(readRegistry, { timeout: 45_000 }).toMatchObject(mode === 'cancel'
+            ? { ended_reason: 'subagent-killed', completion_announced_at: null }
+            : { ended_reason: 'subagent-error', completion_announced_at: expect.any(Number) });
+          registry = readRegistry();
+          spend = db.prepare(`SELECT run_id, model, state, reserved_tokens, actual_tokens, scope_json, reconciliation_ref
+            FROM provider_spend_calls WHERE json_extract(scope_json,'$.sessionKey')=? ORDER BY created_at`).all(worker.childSessionKey!);
+          expect(spend).toHaveLength(workerCalls);
+          expect(spend.every(row => row.run_id === worker.childRunId && row.state === 'unknown' && row.actual_tokens === null)).toBe(true);
+          if (sessionLimit) expect(spend.reduce((sum, row) => sum + Number(row.reserved_tokens), 0)).toBe(sessionLimit);
         } finally { db.close(); }
+        if (mode !== 'cancel') {
+          const callsBeforeReplay = llm.log.length;
+          expect(await hostInvoke(app, 'sessions', 'dispatchPlanTask', dispatch)).toMatchObject({ success: true, replayed: true });
+          expect(llm.log).toHaveLength(callsBeforeReplay);
+        }
         await writeFile(info.outputPath('worker-fault-readback.json'), JSON.stringify({
           driven_by: 'agent', actor: 'playwright-project-worker-fault', sourceCandidate, sourceTree: git('rev-parse', 'HEAD^{tree}'),
-          mode, worker, workerCalls, completionCalls,
+          mode, worker, workerCalls, completionCalls, input: { projectLimit, sessionLimit, repeatedResponse: mode !== 'cancel' ? 429 : null },
           delegation: readWorker(), registry, spend, plan, tasks: plan.childIds.map(id => store.get(id)),
           events: plan.childIds.map(id => store.history(id)),
         }, null, 2));
