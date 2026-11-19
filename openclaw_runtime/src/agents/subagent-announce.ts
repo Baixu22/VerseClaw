@@ -401,7 +401,8 @@ export async function runSubagentAnnounceFlow(params: {
         reply = await readSubagentOutput(params.childSessionKey, outcome);
       }
 
-      if (!reply?.trim() && allowFailedOutputCapture) {
+      // A terminal error already has a status to report, even without assistant text.
+      if (!reply?.trim() && !failedTerminalOutcome) {
         reply = await readLatestSubagentOutputWithRetry({
           sessionKey: params.childSessionKey,
           maxWaitMs: params.timeoutMs,

@@ -617,6 +617,7 @@ export function createSubagentRunManager(params: {
     const sourceCompletion = ensureCompletionState(source);
     const next: SubagentRunRecord = normalizeSubagentRunState({
       ...source,
+      initialRunId: source.initialRunId ?? source.runId,
       runId: nextRunId,
       createdAt: now,
       startedAt: observedStartedAt,

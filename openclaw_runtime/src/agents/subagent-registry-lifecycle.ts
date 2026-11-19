@@ -1348,7 +1348,7 @@ export function createSubagentRegistryLifecycleController(params: {
     if(entry.workspaceDir){
       try{
         const parent=loadSubagentSessionEntry({childSessionKey:entry.requesterSessionKey});
-        returnPersistentTaskWriter({workspace:entry.workspaceDir,childSessionKey:entry.childSessionKey,runId:entry.runId,endedAt:entry.endedAt,outcome:completionReason === SUBAGENT_ENDED_REASON_KILLED ? "cancelled" : outcome.status,parentGeneration:parent?.sessionId});
+        returnPersistentTaskWriter({workspace:entry.workspaceDir,childSessionKey:entry.childSessionKey,runId:entry.initialRunId ?? entry.runId,endedAt:entry.endedAt,outcome:completionReason === SUBAGENT_ENDED_REASON_KILLED ? "cancelled" : outcome.status,parentGeneration:parent?.sessionId});
       }catch(error){params.warn('persistent task writer return requires recovery',{runId:entry.runId,error:String(error)});}
     }
     safeFinalizeSubagentTaskRun({

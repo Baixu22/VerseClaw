@@ -95,14 +95,16 @@ export function recordPersistentTaskDispatch(
 }
 
 /** Read the task owner's cancellation before emitting or replaying a worker completion. */
-export function isCancelledPersistentTaskWorker(entry: { workspaceDir?: string; childSessionKey: string; runId: string }): boolean {
+export function isCancelledPersistentTaskWorker(entry: {
+  workspaceDir?: string; childSessionKey: string; runId: string; initialRunId?: string;
+}): boolean {
   if (!entry.workspaceDir || !existsSync(entry.workspaceDir)) return false;
   const access = createExecutionTaskAccess(entry.workspaceDir);
   if (!existsSync(access.domain.database)) return false;
   const store = new TaskSystemStore(access.domain, undefined, access);
   try {
     const delegation = store.delegationForChild(entry.childSessionKey);
-    if (!delegation || delegation.mode !== "writer" || delegation.childRunId !== entry.runId) return false;
+    if (!delegation || delegation.mode !== "writer" || delegation.childRunId !== (entry.initialRunId ?? entry.runId)) return false;
     const { contract } = store.get(delegation.taskNodeId);
     return contract.state === "cancelling" || contract.state === "cancelled";
   } finally {

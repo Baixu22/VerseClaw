@@ -6,6 +6,7 @@ import type { GitOperationResult } from '../../shared/types/git';
 import { checkoutWriterSnapshot } from '../../openclaw_runtime/src/agents/worktree-writer';
 import { resolveExecutionDomain } from '../../openclaw_runtime/src/agents/execution-domain';
 import { TaskSystemStore } from "../../shared/task-system/store";
+import { canonicalPath } from "../../shared/task-system/identity";
 import { projectCoordinatorProfile, projectCoordinatorScope } from "../../shared/task-system/project-coordinator";
 import { createExecutionTaskAccess, openExecutionTaskStore, inheritExecutionTaskReference, type ExecutionTaskAuthorityBasis } from "../../openclaw_runtime/src/agents/execution-task-authority";
 import type {
@@ -413,7 +414,7 @@ export async function taskSystemCommand(
     const current = await generationFor(coordinator.sessionKey, workspaceId, controlOnly);
     if (current.generation !== coordinator.generation) throw new Error("TASK_GENERATION_STALE");
     if (worker) {
-      if (worker.parentWorktree !== current.worktree) throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
+      if (worker.parentWorktree !== canonicalPath(current.worktree)) throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
       const described = await gateway!.rpc<{ session?: { sessionId?: string } }>(
         "sessions.describe", { key: credential.sessionKey }, 10_000,
       );

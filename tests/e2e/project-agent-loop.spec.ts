@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, observeSessionUi } from './fixtures/session-task-chain';
-import type { TaskLedgerSnapshotResult, WorkspaceCoordinatorBindingResult } from '../../shared/host-api/contract';
+import type { TaskLedgerSnapshotResult, TaskSystemCommandResult, WorkspaceCoordinatorBindingResult } from '../../shared/host-api/contract';
 import type { ProjectPlanSnapshot, TaskEvidence, TaskSessionSnapshot, TaskView } from '../../shared/task-system/types';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
@@ -21,7 +21,10 @@ for (const mode of ['cancel', 'failure'] as const) test(
     test.setTimeout(360_000);
     const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', windowsHide: true }).trim();
     const sourceCandidate = git('rev-parse', 'HEAD');
-    if (process.env.CLAWX_P3_EXPECTED_HEAD) expect(sourceCandidate).toBe(process.env.CLAWX_P3_EXPECTED_HEAD);
+    if (process.env.CLAWX_P3_EXPECTED_HEAD) {
+      expect(sourceCandidate).toBe(process.env.CLAWX_P3_EXPECTED_HEAD);
+      expect(git('status', '--porcelain')).toBe('');
+    }
     const workerTask = 'P3 worker fault fixture';
     const independentTask = 'Write the independent index';
     let release!: () => void;
@@ -29,7 +32,7 @@ for (const mode of ['cancel', 'failure'] as const) test(
     let workerCalls = 0;
     let completionCalls = 0;
     const llm = await startScriptedLlm(async (text, results) => {
-      if (text.includes('A background task completed.') || text.includes('[Internal task completion event]')) {
+      if (text.includes('A background task finished.') || text.includes('[Internal task completion event]')) {
         completionCalls++;
         if (mode === 'cancel') return { text: 'Unexpected cancellation wake.' };
         if (!Object.hasOwn(results, 'failureplan')) return { toolCall: { id: 'failureplan', name: 'task_control', args: { action: 'planStatus' } } };
@@ -61,20 +64,10 @@ for (const mode of ['cancel', 'failure'] as const) test(
       await mkdir(root, { recursive: true });
       git('init', '-b', 'main', root);
       git('-C', root, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'Fixture base');
-      const workerModel = `${getOpenClawProviderKeyForType('custom', 'custom-p3worker')}/mock-worker`;
-      if (mode === 'failure') {
-        const now = new Date().toISOString();
-        expect(await hostInvoke(app, 'providers', 'createAccount', { account: {
-          id: 'custom-p3worker', vendorId: 'custom', label: 'Fault fixture', authMode: 'api_key', apiProtocol: 'openai-completions',
-          baseUrl: `http://127.0.0.1:${llm.port}/v1`, model: 'mock-worker', enabled: true, isDefault: false,
-          createdAt: now, updatedAt: now, modelProfile: { supportsReasoning: true, supportsVision: false, contextWindow: 128000, maxTokens: 4096 },
-        }, apiKey: 'local-fixture' })).toMatchObject({ success: true });
-      }
       const project = await createSessionChainProject(app, root, 'Project worker faults');
       const config = await hostInvoke<{ hash: string }>(app, 'gateway', 'rpc', { method: 'config.get', params: {} });
       await hostInvoke(app, 'gateway', 'rpc', { method: 'config.patch', params: { baseHash: config.hash, raw: JSON.stringify({
         runtime: { providerBudget: { project: { maxTokens: 4_000_000 } } },
-        ...(mode === 'failure' ? { agents: { defaults: { subagents: { model: { primary: workerModel, fallbacks: [] } } } } } : {}),
       }), note: 'P3 worker fault fixture' } });
       await hostInvoke(app, 'gateway', 'stop');
       await startGateway(app);
@@ -101,11 +94,15 @@ for (const mode of ['cancel', 'failure'] as const) test(
         if (mode === 'cancel') {
           await expect.poll(() => workerCalls, { timeout: 60_000 }).toBe(1);
           const child = readWorker()!.child;
-          const cancel = (generation = child.generation) => hostInvoke(app, 'taskLedger', 'command', {
+          const cancel = (generation = child.generation) => hostInvoke<TaskSystemCommandResult>(app, 'taskLedger', 'command', {
             workspaceId: project.workspaceId, command: { action: 'cancel', credential: { ...child, generation } },
           });
-          expect(await cancel('stale-worker')).toMatchObject({ success: false });
-          expect(await cancel()).toMatchObject({ success: true, result: { contract: { state: 'cancelled' } } });
+          const stale = await cancel('stale-worker');
+          expect(stale, stale.error).toMatchObject({ success: false });
+          expect(store.get(child.taskNodeId).contract.state).toBe('doing');
+          const cancelled = await cancel();
+          await writeFile(info.outputPath('cancel-responses.json'), JSON.stringify({ stale, cancelled }, null, 2));
+          expect(cancelled, cancelled.error).toMatchObject({ success: true, result: { contract: { state: 'cancelled' } } });
           release();
           const describeChild = () => hostInvoke(app, 'gateway', 'rpc', { method: 'sessions.describe', params: { key: child.sessionKey } });
           await expect.poll(describeChild).toMatchObject({ session: { sessionId: child.generation, hasActiveRun: false } });
@@ -122,7 +119,8 @@ for (const mode of ['cancel', 'failure'] as const) test(
             if (error.code === 'ENOENT') return null;
             throw error;
           }), { timeout: 100_000 }).toBe('independent result');
-          expect(workerCalls).toBeGreaterThan(0);
+          expect(llm.log.filter(row => row.issued === 'http:429')).toHaveLength(3);
+          expect(workerCalls).toBe(3);
           expect(llm.log.filter(row => row.issued === 'independentwrite')).toHaveLength(1);
           expect(store.get(plan.childIds[0])).toMatchObject({ contract: { state: 'paused' }, claim: { state: 'released' } });
           expect(store.get(plan.childIds[2]).claim).toMatchObject({ sessionKey: project.sessionKey, generation: project.generation, state: 'active' });
@@ -133,14 +131,19 @@ for (const mode of ['cancel', 'failure'] as const) test(
         const db = new DatabaseSync(join(userDataDir, 'openclaw-source-state', 'state', 'openclaw.sqlite'), { readOnly: true });
         let registry, spend;
         try {
-          registry = db.prepare(`SELECT run_id, ended_reason, outcome_json, completion_announced_at FROM subagent_runs WHERE run_id=?`).get(worker.childRunId!);
-          spend = db.prepare(`SELECT model, state, reserved_tokens, actual_tokens FROM provider_spend_calls WHERE json_extract(scope_json,'$.sessionKey')=?`).all(worker.childSessionKey!);
+          registry = db.prepare(`SELECT run_id, ended_reason, outcome_json, completion_announced_at, last_announce_delivery_error FROM subagent_runs WHERE run_id=?`).get(worker.childRunId!);
+          spend = db.prepare(`SELECT model, state, reserved_tokens, actual_tokens, scope_json FROM provider_spend_calls WHERE json_extract(scope_json,'$.sessionKey')=?`).all(worker.childSessionKey!);
         } finally { db.close(); }
         await writeFile(info.outputPath('worker-fault-readback.json'), JSON.stringify({
-          driven_by: 'agent', actor: 'playwright-project-worker-fault', sourceCandidate, mode, worker, workerCalls, completionCalls,
+          driven_by: 'agent', actor: 'playwright-project-worker-fault', sourceCandidate, sourceTree: git('rev-parse', 'HEAD^{tree}'),
+          mode, worker, workerCalls, completionCalls,
           delegation: readWorker(), registry, spend, plan, tasks: plan.childIds.map(id => store.get(id)),
           events: plan.childIds.map(id => store.history(id)),
         }, null, 2));
+        if (process.env.CLAWX_P3_EXPECTED_HEAD) {
+          expect(git('rev-parse', 'HEAD')).toBe(sourceCandidate);
+          expect(git('status', '--porcelain')).toBe('');
+        }
       } finally { store.close(); }
     } finally {
       release();

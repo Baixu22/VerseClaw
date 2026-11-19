@@ -19,6 +19,7 @@ requiredProfiles:
 touchedAreas:
   - openclaw_runtime/src/agents/subagent-announce*.ts
   - openclaw_runtime/src/agents/subagent-registry-lifecycle.ts
+  - openclaw_runtime/src/agents/subagent-registry-run-manager*.ts
   - openclaw_runtime/src/agents/subagent-registry.types.ts
   - openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts
   - openclaw_runtime/src/agents/subagent-orphan-recovery.ts
@@ -62,7 +63,7 @@ acceptance:
   - Atomically replace an interrupted run under the current writer epoch only after verifying process exit, an executing task, and zero started or unknown effects. Retain the process and run identities in the Task Ledger event.
   - Reject unknown-effect replay before calling the model. Resume the original task only after a matching effect owner receipt settles the operation exactly once.
   - Pause rejects new dispatch without stopping an active run. Stopping it retains the task checkpoint. Cancellation waits for its pending effects, refuses old generations and never makes the cancelled child eligible again.
-  - Cancel owned worker sessions by their pinned generation. Retain the claim until the worker and effects settle; late completion and restart cannot wake or replay a cancelled task.
+  - Cancel owned worker sessions by their pinned generation. Retain the claim until the worker and effects settle; late completion and restart cannot wake or replay a cancelled task, including after a Registry run replacement.
   - After a terminal worker failure with no unresolved effects, the coordinator continues an independent ready child, without accepting the failed child, unblocking its dependents or bypassing resource admission.
   - A burst of duplicate goal-wake timer fires records one mission tick. Reopening its ledger does not re-fire it.
   - Verify durable deduplication, idle continuation, cancellation, restart and unknown-effect reconciliation on the same candidate before closing TF-0677.

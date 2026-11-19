@@ -166,6 +166,7 @@ describe("recovery adoption in the actual subagent run manager", () => {
     expect(manager.replaceSubagentRunAfterSteer(remap)).toBe(true);
     const installed = runs.get("admitted")!;
     expect(installed.startedAt).toBe(150);
+    expect(installed.initialRunId).toBe("original");
     installed.endedAt = 200;
     installed.cleanupHandled = true;
     installed.completion = {
@@ -181,5 +182,7 @@ describe("recovery adoption in the actual subagent run manager", () => {
     expect(installed.cleanupHandled).toBe(true);
     expect(installed.completion?.resultText).toBe("completed result");
     expect(persist).toHaveBeenCalledTimes(writes);
+    expect(manager.replaceSubagentRunAfterSteer({ previousRunId: "admitted", nextRunId: "recovered" })).toBe(true);
+    expect(runs.get("recovered")?.initialRunId).toBe("original");
   });
 });

@@ -237,6 +237,8 @@ export type SubagentCompletionDeliveryState = {
 };
 
 export type SubagentRunRecord = {
+  /** Dispatch identity retained when the registry replaces the execution run. */
+  initialRunId?: string;
   runId: string;
   /** Prepared agent RPC owned by this registry; retained until dispatch is acknowledged. */
   queuedDispatch?: {
