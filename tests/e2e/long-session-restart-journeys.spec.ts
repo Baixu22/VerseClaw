@@ -222,9 +222,6 @@ test.describe('long-session restart journeys', () => {
       });
       if (!handoffChild.session?.sessionId) throw new Error('handoff child has no generation');
       expect(handoffChild.session).toMatchObject({ sessionId: handoff.operation?.sessionGeneration, parentSessionKey: sourceSession.key });
-      await hostInvoke(firstApp, 'workspaces', 'saveState', {
-        id: firstWorkspace.id, activeSessionKey: handoffKey, sessionKey: handoffKey,
-      });
       await inject(firstApp, handoffKey, 'F1-HANDOFF-ONLY');
 
       afterGatewayRestart = await (async () => {
@@ -280,6 +277,9 @@ test.describe('long-session restart journeys', () => {
       const relaunchedLedger = await hostInvoke<LedgerSnapshot>(relaunched, 'taskLedger', 'snapshot', { workspaceId: firstWorkspace.id });
       expect(relaunchedLedger.snapshot.sessionLinks.filter((link) => link.sessionKey === sourceSession.key && link.nodeId === sourceTaskId)).toHaveLength(1);
 
+      await hostInvoke(relaunched, 'workspaces', 'saveState', {
+        id: firstWorkspace.id, activeSessionKey: handoffKey, sessionKey: handoffKey,
+      });
       const active = await hostInvoke<{ activeWorkspace?: Workspace }>(relaunched, 'workspaces', 'getActive');
       expect(active.activeWorkspace).toMatchObject({ id: firstWorkspace.id, activeSessionKey: handoffKey });
       const orchestration = await hostInvoke<{ orchestrationRunId?: string }>(relaunched, 'gateway', 'rpc', {

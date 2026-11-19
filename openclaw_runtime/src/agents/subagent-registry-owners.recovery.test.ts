@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { resolveTaskDomain } from "../../../shared/task-system/identity.js";
+import { TaskSystemStore } from "../../../shared/task-system/store.js";
 import type { SessionEntry } from "../config/sessions.js";
+import { withTempDir } from "../test-utils/temp-dir.js";
 import {
   buildRecoveryAdmissionKey,
   prepareOwnerRecoveryAdmission,
@@ -130,6 +133,65 @@ describe("reserved owners in real registry lifecycle and restore helpers", () =>
     expect(reconcileOrphanedRestoredRuns({ runs, resumedRuns: new Set() })).toBe(false);
     expect(runs.get(original.runId)).toBe(original);
     expect(original.endedAt).toBeUndefined();
+  });
+
+  it("settles a remapped worker's cancelled delegation without announcing or resuming after restore", async () => {
+    await withTempDir("cancel-remapped-worker-", async (workspaceDir) => {
+      const { original } = fixture("not_applied");
+      const parentGeneration = "parent-generation";
+      const worker = { ...original, runId: "remapped", initialRunId: original.runId, workspaceDir, expectsCompletionMessage: true };
+      state.store = {
+        [original.requesterSessionKey]: { sessionId: parentGeneration, updatedAt: Date.now() },
+        [key]: { sessionId: "generation", updatedAt: Date.now() },
+      };
+      const ledger = new TaskSystemStore(resolveTaskDomain(workspaceDir));
+      try {
+        const taskId = ledger.create({
+          objective: "Verify cancelled worker settlement", target: "result.txt", constraints: [],
+          acceptance: [{ id: "proof", description: "Verify output", verification: { kind: "owner-receipt", owner: "fixture" } }],
+        }, "create").task.contract.taskNodeId;
+        const parent = ledger.claim(taskId, original.requesterSessionKey, parentGeneration, "claim").claim!;
+        const delegation = ledger.prepareWriterDelegation(parent, {
+          delegationId: original.runId, childRunId: original.runId, childSessionKey: key,
+          childGeneration: "generation", childWorktree: workspaceDir, mode: "writer",
+        });
+        ledger.recordDelegationDispatch(key, original.runId, "dispatched");
+        expect(ledger.control(delegation.child, "cancel").contract.state).toBe("cancelling");
+
+        const runs = new Map<string, SubagentRunRecord>([[worker.runId, worker]]);
+        const saved: SubagentRunRecord[] = [];
+        const announce = vi.fn();
+        const resume = vi.fn();
+        const controller = createSubagentRegistryLifecycleController({
+          runs, resumedRuns: new Set(), subagentAnnounceTimeoutMs: 1000,
+          persist: () => saved.push(structuredClone(runs.get(worker.runId)!)),
+          clearPendingLifecycleError: vi.fn(), countPendingDescendantRuns: () => 0,
+          suppressAnnounceForSteerRestart: () => false, shouldEmitEndedHookForRun: () => false,
+          emitSubagentEndedHookForRun: vi.fn(), notifyContextEngineSubagentEnded: vi.fn(),
+          resumeSubagentRun: resume, callGateway: vi.fn(), captureSubagentCompletionReply: vi.fn(),
+          runSubagentAnnounceFlow: announce, cleanupBrowserSessionsForLifecycleEnd: vi.fn(), warn: vi.fn(),
+        });
+        const lateSuccess = { runId: worker.runId, outcome: { status: "ok" }, reason: "subagent-complete", triggerCleanup: true } as const;
+        await controller.completeSubagentRun(lateSuccess);
+        await vi.waitFor(() => expect(saved.at(-1)?.cleanupCompletedAt).toEqual(expect.any(Number)));
+        const restored = saved.at(-1)!;
+        expect(restored).toMatchObject({ endedReason: "subagent-killed", expectsCompletionMessage: false });
+        runs.set(worker.runId, restored);
+        await controller.completeSubagentRun(lateSuccess);
+        expect(controller.startSubagentAnnounceCleanupFlow(worker.runId, restored)).toBe(false);
+
+        expect(ledger.delegationForChild(key)).toMatchObject({
+          phase: "returned", terminalReceipt: { runId: original.runId, outcome: "cancelled", parentGeneration },
+        });
+        expect(ledger.get(taskId)).toMatchObject({ contract: { state: "cancelled" }, claim: { state: "released" } });
+        expect(ledger.history(taskId).filter((event) => event.kind === "cancelled")).toHaveLength(1);
+        expect(ledger.getTaskEvidence(taskId)).toEqual([]);
+        expect(announce).not.toHaveBeenCalled();
+        expect(resume).not.toHaveBeenCalled();
+      } finally {
+        ledger.close();
+      }
+    });
   });
 
   it.each(["unknown", "not_applied"] as const)(
