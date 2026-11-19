@@ -83,7 +83,11 @@ function scopePresenceDiscovery(
   options: ChannelPresenceOptions,
   env: NodeJS.ProcessEnv,
 ): ChannelPresenceOptions {
-  let discovery = options.discovery;
+  // Config and workspace scans can shadow bundled origins; keep the environment catalog.
+  const scoped = options.discovery?.candidates.some(
+    ({ origin }) => origin === "config" || origin === "workspace",
+  );
+  let discovery = scoped ? undefined : options.discovery;
   return {
     ...options,
     get discovery() {

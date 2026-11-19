@@ -11,6 +11,9 @@ intent: Measure the managed Gateway startup path and remove verified startup bot
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - openclaw_runtime/src/plugins/channel-presence-policy.ts
+  - openclaw_runtime/src/channels/plugins/read-only.ts
+  - tests/unit/gateway-readonly-prepared-discovery.test.ts
   - openclaw_runtime/src/channels/config-presence.ts
   - openclaw_runtime/src/plugins/plugin-lookup-table.ts
   - tests/unit/gateway-channel-presence-discovery.test.ts
@@ -81,6 +84,7 @@ requiredRules:
   - gateway-readiness-policy
   - repository-artifact-retention
 requiredTests:
+  - tests/unit/gateway-readonly-prepared-discovery.test.ts
   - tests/unit/gateway-startup-prepared-discovery.test.ts
   - tests/unit/gateway-channel-presence-discovery.test.ts
   - tests/unit/gateway-sdk-alias-dependencies.test.ts
@@ -97,6 +101,7 @@ requiredTests:
   - tests/unit/gateway-process-launcher-trace.test.ts
   - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
+  - Read-only channel views share the selected metadata discovery with configuration and stored-auth probes. Config/workspace discovery retains the environment catalog fallback so load-path overlaps preserve bundled environment and authentication signals. Channel and plugin disablement, denial reasons and source roots retain their checks.
   - Gateway startup plans and lookup tables reuse discovery from a compatible prepared metadata snapshot for channel scope and final activation. Missing discovery and changed roots retain discovery fallback; explicit channel disables and stored-auth exclusion remain intact.
   - Compiled SDK alias resolution checks each shared dependency once per map. Missing dependencies and unreadable barrels retain source fallback or omit unavailable exports; availability remains scoped to the resolved package root.
   - Windows host time detection reads the OS short-time pattern without loading shell profiles. Explicit 12/24-hour settings and the existing Intl fallback remain available.
