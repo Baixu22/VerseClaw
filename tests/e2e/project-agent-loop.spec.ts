@@ -10,6 +10,7 @@ import type { ProjectPlanSnapshot, TaskEvidence, TaskSessionSnapshot, TaskView }
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import { getOpenClawProviderKeyForType } from '../../electron/utils/provider-keys';
+import type { GatewayStatus } from '../../shared/types/gateway';
 import type { SessionDelegationResult } from '../../shared/types/session-delegation';
 import type { SessionHandoffOperation } from '../../shared/types/session-handoff';
 
@@ -303,6 +304,102 @@ test('hands a project checkpoint to the new coordinator and rejects a late compl
   }
 });
 
+test('resumes the project coordinator from its confirmed checkpoint after an in-flight Gateway restart', async ({ launchElectronApp }, info) => {
+  test.setTimeout(300_000);
+  const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', windowsHide: true }).trim();
+  const sourceCandidate = git('rev-parse', 'HEAD');
+  if (process.env.CLAWX_P3_EXPECTED_HEAD) {
+    expect(sourceCandidate).toBe(process.env.CLAWX_P3_EXPECTED_HEAD);
+    expect(git('status', '--porcelain')).toBe('');
+  }
+  const prompt = 'Continue the P3 restart fixture.';
+  const checkpoint = { nextAction: 'Read the confirmed restart checkpoint', completed: [], unresolved: [], artifacts: [] };
+  const resumed = { ...checkpoint, nextAction: 'Checkpoint recovered from disk' };
+  const recoveryPrompt = 'Your previous turn was interrupted by a gateway restart';
+  const marker = 'P3 checkpoint recovery finished.';
+  let releaseProvider!: () => void;
+  const hold = new Promise<void>(resolve => { releaseProvider = resolve; });
+  let interruptedRequests = 0;
+  const llm = await startScriptedLlm(async (text, results) => {
+    if (text.includes(recoveryPrompt)) {
+      if (!Object.hasOwn(results, 'restartread')) return { toolCall: { id: 'restartread', name: 'task_control', args: { action: 'current' } } };
+      const task = JSON.parse(results.restartread) as TaskView | null;
+      if (task?.checkpoint?.nextAction !== checkpoint.nextAction) return { text: 'Restart checkpoint missing.' };
+      if (!Object.hasOwn(results, 'restartwrite')) return { toolCall: { id: 'restartwrite', name: 'task_control', args: { action: 'checkpoint', checkpoint: resumed } } };
+      return { text: marker };
+    }
+    if (text.includes(prompt)) { interruptedRequests++; await hold; }
+    return { text: 'Fixture response.' };
+  });
+  const app = await launchElectronApp({ skipSetup: true });
+  try {
+    await getStableWindow(app);
+    await configureSessionChainProvider(app, llm.port);
+    const root = info.outputPath('project');
+    await mkdir(root, { recursive: true });
+    git('init', '-b', 'main', root);
+    git('-C', root, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'Fixture base');
+    const project = await createSessionChainProject(app, root, 'Checkpoint restart');
+    const store = new TaskSystemStore(resolveTaskDomain(root));
+    try {
+      const goal = { objective: 'Recover the current project task', target: '.', constraints: [], acceptance: [{
+        id: 'proof', description: 'Confirm the recovered checkpoint', verification: { kind: 'owner-receipt' as const, owner: 'fixture' },
+      }] };
+      const plan = store.saveProjectPlan(project, { goal, requestId: 'restart-plan', nextAction: goal.objective, children: [{ key: 'recover', contract: goal }] });
+      const original = store.startNextPlanTask(project, plan.taskNodeId, plan.revision, 'claim-for-restart').claim!;
+      store.checkpoint(original, checkpoint);
+      const describe = () => hostInvoke<{ session: { sessionId: string; hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
+        method: 'sessions.describe', params: { key: project.sessionKey },
+      });
+      const priorGateway = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+      expect(priorGateway.pid).toBeGreaterThan(0);
+      const sent = await hostInvoke<{ success: boolean; result: { runId: string } }>(app, 'chat', 'sendWithMedia', {
+        workspaceId: project.workspaceId, sessionKey: project.sessionKey, message: prompt, idempotencyKey: 'p3-restart-original-turn',
+      });
+      expect(sent.success).toBe(true);
+      await expect.poll(() => interruptedRequests, { timeout: 60_000 }).toBe(1);
+      const inFlight = await describe();
+      expect(inFlight.session).toMatchObject({ sessionId: project.generation, hasActiveRun: true });
+      expect(store.get(original.taskNodeId)).toMatchObject({ checkpoint, pendingOperations: 0 });
+      await hostInvoke(app, 'gateway', 'stop');
+      releaseProvider();
+      await startGateway(app);
+      const nextGateway = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+      expect(nextGateway.pid).toBeGreaterThan(0);
+      expect(nextGateway.pid).not.toBe(priorGateway.pid);
+      await expect.poll(() => store.get(original.taskNodeId).checkpoint, { timeout: 75_000 }).toEqual(resumed);
+      await expect.poll(async () => {
+        const history = await hostInvoke<{ messages: unknown[] }>(app, 'sessions', 'history', { sessionKey: project.sessionKey });
+        return JSON.stringify(history.messages);
+      }, { timeout: 30_000 }).toContain(marker);
+      const after = await describe();
+      expect(after.session.sessionId).toBe(project.generation);
+      const writes = llm.log.filter(row => row.issued === 'restartwrite');
+      expect(writes).toHaveLength(1);
+      const recoveredTask = JSON.parse(writes[0].toolResults.restartread) as TaskView;
+      expect(recoveredTask).toMatchObject({ checkpoint, pendingOperations: 0, claim: {
+        taskNodeId: original.taskNodeId, sessionKey: original.sessionKey, generation: original.generation,
+      } });
+      const checkpoints = store.history(original.taskNodeId).filter(event => event.kind === 'checkpoint');
+      expect(checkpoints.map(event => JSON.parse(event.json).nextAction)).toEqual([checkpoint.nextAction, resumed.nextAction]);
+      await writeFile(info.outputPath('project-restart-checkpoint.json'), `${JSON.stringify({
+        driven_by: 'agent', actor: 'playwright-project-checkpoint-restart', sourceCandidate, project,
+        priorGateway: priorGateway.pid, nextGateway: nextGateway.pid, interruptedRequests, originalRunId: sent.result.runId,
+        inFlight: inFlight.session, resumedGeneration: after.session.sessionId,
+        original, recoveredTask, checkpoints, resumed: store.get(original.taskNodeId),
+      }, null, 2)}\n`);
+    } finally {
+      store.close();
+    }
+  } finally {
+    releaseProvider();
+    await writeFile(info.outputPath('restart-provider.json'), JSON.stringify({ interruptedRequests, log: llm.log, anomalies: llm.anomalies }, null, 2));
+    await hostInvoke(app, 'gateway', 'stop').catch(() => undefined);
+    await closeElectronApp(app);
+    llm.server.closeAllConnections();
+    await new Promise<void>(resolve => llm.server.close(() => resolve()));
+  }
+});
 
 test('dispatches the ready plan child through the project menu and reads its worker effect', async ({ launchElectronApp, userDataDir }, info) => {
   test.setTimeout(360_000);
