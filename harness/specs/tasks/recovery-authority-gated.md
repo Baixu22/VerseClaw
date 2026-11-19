@@ -8,6 +8,8 @@ intent: Complete TF-0715 with owner-bound, durable recovery decisions and finite
 diffBase: 05d787213
 humanEvidence: not-required
 touchedAreas:
+  - openclaw_runtime/src/plugins/sdk-alias.ts
+  - tests/unit/gateway-sdk-alias-dependencies.test.ts
   - openclaw_runtime/src/agents/date-time.ts
   - openclaw_runtime/src/agents/runtime-plugins.ts
   - tests/unit/gateway-host-time-format.test.ts
@@ -254,6 +256,7 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-sdk-alias-dependencies.test.ts
   - tests/unit/gateway-host-time-format.test.ts
   - tests/unit/gateway-agent-startup-scope.test.ts
   - tests/unit/gateway-plugin-activation-discovery.test.ts
@@ -300,6 +303,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Compiled SDK alias resolution checks each shared dependency once per map. Missing dependencies and unreadable barrels retain source fallback or omit unavailable exports; availability remains scoped to the resolved package root.
   - Windows host time detection reads the OS short-time pattern without loading shell profiles. Explicit 12/24-hour settings and the existing Intl fallback remain available.
   - Agent startup borrows the compatible Gateway startup plugin scope through its metadata owner. Missing plans and mismatched workspaces retain standalone resolution; existing runtime-registry ownership controls reuse and subagent bindings.
   - Runtime plugin auto-enable borrows discovery and manifests from the provider's prepared metadata view. Requests without a prepared view retain the current/default snapshot scope checks and existing discovery path; explicit discovery stays authoritative.
