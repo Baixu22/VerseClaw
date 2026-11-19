@@ -1,0 +1,119 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "purpose": "development product checks",
+  "rows": [
+    {
+      "id": "typecheck",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "startedAt": "2026-11-19T16:16:10.863Z",
+      "finishedAt": "2026-11-19T16:20:51.265Z",
+      "durationMs": 280402
+    },
+    {
+      "id": "lint",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "lint:check"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "startedAt": "2026-11-19T16:20:54.335Z",
+      "finishedAt": "2026-11-19T16:30:21.820Z",
+      "durationMs": 567485
+    },
+    {
+      "id": "contract",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "contract:check"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "startedAt": "2026-11-19T16:30:22.950Z",
+      "finishedAt": "2026-11-19T16:30:25.222Z",
+      "durationMs": 2272
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "comms:replay"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "startedAt": "2026-11-19T16:30:26.119Z",
+      "finishedAt": "2026-11-19T16:30:27.531Z",
+      "durationMs": 1412
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "comms:compare"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "startedAt": "2026-11-19T16:30:28.252Z",
+      "finishedAt": "2026-11-19T16:30:29.250Z",
+      "durationMs": 998
+    },
+    {
+      "id": "runtime-build",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "build:runtime"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "startedAt": "2026-11-19T16:30:29.922Z",
+      "finishedAt": "2026-11-19T16:32:15.105Z",
+      "durationMs": 105184
+    },
+    {
+      "id": "vite-build",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "build:vite"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "startedAt": "2026-11-19T16:33:14.698Z",
+      "finishedAt": "2026-11-19T16:35:04.882Z",
+      "durationMs": 110184
+    },
+    {
+      "id": "electron",
+      "command": "pnpm",
+      "args": [
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/project-rag-research.spec.ts",
+        "tests/e2e/session-task-state-guidance.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output",
+        "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r8-product-r3/electron"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "startedAt": "2026-11-19T16:35:05.694Z",
+      "finishedAt": "2026-11-19T16:38:27.477Z",
+      "durationMs": 201783
+    }
+  ]
+}

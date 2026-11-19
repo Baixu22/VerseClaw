@@ -1,0 +1,21 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "status": "NO-GO",
+  "exitCode": 1,
+  "passed": 11673,
+  "failed": 4,
+  "skipped": 50,
+  "expectedSkips": 50,
+  "durationSeconds": 2649.5,
+  "timeoutSeconds": 1800,
+  "commandDurationMs": 2655135,
+  "sourceChangedDuringRun": true,
+  "failureSurfaces": [
+    "agent-engineering-acceptance requiredTests case timeout before batched Git repair",
+    "chat-history-reply-while-sending cold import timeout before static import repair",
+    "two newly added Knowledge QA cancellation cases in pre-repair module cache; separate current-source14/14 pass"
+  ],
+  "followingRootIsolatedAndDcs": "not-run (root failed)",
+  "logSha256": "7a0aeb0922394e0d43655c065bf4f7568e9b44dcae53ba48a99f7ff5ecacb2fa"
+}

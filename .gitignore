@@ -3977,6 +3977,36 @@ openclaw_runtime/_tmp_*
 !/team/dcs/dcs-v1.6-spec.md
 !/team/dcs/dcs-v1.6.1-addendum.md
 !/team/role-architecture-design/area-4-role-memory-completion.md
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/.gitattributes
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/README.md
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/SHA256SUMS
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/acceptance-framework-tests.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/code-task-context-receipt.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/control-audit-command.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/control-audit.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/control-cache-miss-report.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/control-history.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/control-refresh-command.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/full-root-diagnostic.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/identity-legacy-tests.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/identity-read-tests.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/independent-git-review.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/independent-identity-review.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/independent-research-review.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/migration-lifecycle-tests.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/playwright.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/process-cleanup.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/product-gates.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/product-readback.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/report.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/research-cancelled.png
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/research-conflict.png
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/research-controller-tests.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/research-dcs-partial.png
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/research-receipt.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/research-result.png
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/source-mutation-guard.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/temporary-trust-status.json
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

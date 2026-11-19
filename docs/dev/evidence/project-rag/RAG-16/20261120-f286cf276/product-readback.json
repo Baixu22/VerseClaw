@@ -1,0 +1,56 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "candidate": "f286cf276512920f65b345c6e1cbb3d85e7870be",
+  "status": "pass",
+  "tests": {
+    "startTime": "2026-11-19T16:35:07.823Z",
+    "duration": 199560.687,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "sourceUnchanged": true,
+  "cleanup": "passed",
+  "remaining": [],
+  "receipts": [
+    {
+      "path": "D:\\tmp\\g2-rag16-relay-20261118-01a1ef53\\r8-product-r3\\electron\\project-rag-research-Proje-34b2e-nt-task-through-normal-Chat\\code-task-context-receipt.json",
+      "sha256": "8147cfca5881a92f926c4c91a08069dd6fa97d5f83d900660cef77f8a5472a97",
+      "status": "pass",
+      "steps": {
+        "missingTaskDegraded": true,
+        "taskHintReadOnly": true,
+        "crossWorkspaceDenied": true,
+        "normalChatExactGraph": true,
+        "twoHopBound": true,
+        "incomingScanBudget": true,
+        "taskAbsentFromCodeChunks": true,
+        "staleEdgeDenied": true,
+        "taskHintRollback": true,
+        "taskRevisionPinDenied": true
+      }
+    },
+    {
+      "path": "D:\\tmp\\g2-rag16-relay-20261118-01a1ef53\\r8-product-r3\\electron\\project-rag-research-Proje-87af9-llation-and-partial-results\\research-receipt.json",
+      "sha256": "0c48b1d14c2cdf2f28abac041010b1fb640c753ba40a1557ce581a3769158cbf",
+      "status": "pass",
+      "steps": {
+        "normalTurnCannotAcquirePlanningBudget": true,
+        "realMultiRoundEvidence": true,
+        "frozenTotalBudget": true,
+        "realDcsBudgetReadback": true,
+        "ownerCancellationWithPartialEvidence": true,
+        "lateModelCannotResume": true,
+        "draftPreserved": true,
+        "realConflictingSources": true,
+        "scopeAndPermissionForgeryDenied": true,
+        "ownerRevisionRecheckedOnDelivery": true,
+        "localRollbackPreservesScope": true,
+        "normalChatUsesOwnerEvidence": true
+      }
+    }
+  ],
+  "observedAt": "2026-11-19T16:43:42.662775+00:00"
+}

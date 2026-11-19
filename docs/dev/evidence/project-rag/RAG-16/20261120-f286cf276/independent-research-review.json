@@ -1,0 +1,96 @@
+{
+  "schema": "clawx.rag16-research-contract-review-followup/v1",
+  "driven_by": "agent",
+  "actor": "codex-g2-rag16-independent-contract-review",
+  "required_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-fix-and-regression-review",
+  "formal_verifier_execution": false,
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "0a20e9485ed7ccbb9ac3776f8ff1a3608636efe2",
+    "includes_uncommitted_changes": true
+  },
+  "prior_report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r7-xingchi-research-contract-review.json",
+  "result": "PASS_STATIC_REVIEW",
+  "summary": "R7-RESEARCH-001 已在源码修复；wait reject/timeout 两项回归覆盖未取消信号时主动 abort 及后续监听释放。未发现新增可复现 P0/P1/P2。",
+  "findings": [],
+  "resolved_findings": [
+    {
+      "id": "R7-RESEARCH-001",
+      "priority": "P2",
+      "status": "resolved-by-source-review",
+      "evidence": [
+        {
+          "file": "electron/services/knowledge-evidence-qa.ts",
+          "lines": "173-175,208-211",
+          "observation": "completed 初始化为 false；仅在 agent.wait 返回 completed 或 ok 之后设置 true，reject 和 timeout 均保留 false。"
+        },
+        {
+          "file": "electron/services/knowledge-evidence-qa.ts",
+          "lines": "226-229",
+          "observation": "finally 在 !completed 或 options.signal.aborted 时调用 abortRun，再移除 AbortSignal 和 runtime-event 监听；abort 仍包含当前随机模型 sessionKey 与已接受 runId。"
+        },
+        {
+          "file": "tests/unit/knowledge-evidence-qa.test.ts",
+          "lines": "123-150",
+          "observation": "参数化 connection-error 与 timeout 两项：先接受具体 runId，等待失败后断言 signal 尚未取消、具体内部 sessionKey/runId 已调用 chat.abort 恰一次；随后 controller.abort 不增加调用数，runtime-event listeners 清空。"
+        }
+      ],
+      "runtime_validation": "本审查未执行；用户计划在全量完成后由主代理单跑 14 项 QA。"
+    }
+  ],
+  "edge_path_review": [
+    {
+      "area": "同步 RPC 抛错",
+      "result": "no-reproducible-production-P0-P1-P2",
+      "evidence": [
+        "electron/gateway/manager.ts:1078 的实际 rpc 为 async 方法；函数内抛错与 Promise executor 的错误均表现为 rejected Promise。",
+        "agent/agent.wait 的 RPC 调用位于 runKnowledgeModel 的 try 内；reject 进入 finally 并补偿 abort，chat.abort rejected Promise 由 abortRun 内 catch 消化，继续完成监听清理。"
+      ],
+      "specific_boundary": "若使用违背 GatewayManager 实际 Promise 接口的非 async 替身，并让 chat.abort 同步 throw，则当前 abortRun 的 .catch 尚未建立，finally 会在移除监听之前中断。该触发要求替换实际 rpc 实现，未据此登记生产缺陷。"
+    },
+    {
+      "area": "取消前与迟到 acceptance",
+      "result": "preserved-by-source-review",
+      "evidence": [
+        "knowledge-evidence-qa.ts:188 在发送前检查已取消信号；未完成退出会按唯一模型 sessionKey 发 abort。",
+        "175-176 仍安装 abort 监听；197-200 保留 acceptance.then 补偿。取消导致 bounded wait 退出后，若 acceptance Promise 后续成功返回 runId，回调仍会使用该 runId 再发 abort。",
+        "tests/unit/knowledge-evidence-qa.test.ts:104-120 原迟到 acceptance 回归仍保留：取消后才交付 runId，检查具体 late-acceptance abort，agent.wait 不执行。",
+        "该取消路径可有主动 abort 与迟到 runId 补偿多次调用；新增恰一次断言只针对未取消 signal 的 wait reject/timeout 场景，两者不冲突。"
+      ]
+    },
+    {
+      "area": "完成状态及输出校验",
+      "result": "no-new-reproducible-P0-P1-P2",
+      "evidence": [
+        "completed 表示远端执行已终止，后续缺 DCS receipt 或文本不合法时不必再次 abort 已完成模型；相应输出校验仍抛错。",
+        "带 options 与普通 QA 共用未完成退出 abort；已完成且信号未取消时保持原正常返回。"
+      ]
+    }
+  ],
+  "validation": {
+    "method": "当前工作树源码、git diff、GatewayManager Promise 合同与回归断言只读核对",
+    "tests_started": 0,
+    "builds_started": 0,
+    "verifier_executions": 0,
+    "subagents_spawned": 0,
+    "source_writes": 0,
+    "git_mutations": 0
+  },
+  "next_step": "主代理按既定队列执行 QA 14 项并继续 product；本轮静态结论不包含执行结果。",
+  "recorded_at": "2026-11-19T22:35:52.9878573+08:00",
+  "source_snapshot_sha256": [
+    {
+      "path": "electron/services/knowledge-evidence-qa.ts",
+      "sha256": "f4c41f738d1ae77466fee4f289c04af1562c24ddafd286ff2f2d92ea5b5c0a08"
+    },
+    {
+      "path": "tests/unit/knowledge-evidence-qa.test.ts",
+      "sha256": "fedffebe8609ca5590e95975db7150b17b6f8ac7dd844ee5114b63ce496c9e45"
+    },
+    {
+      "path": "electron/gateway/manager.ts",
+      "sha256": "ab67a97dd1edfe0570b12657928ea3da41c4c879563cbaceb927ea92c345d562"
+    }
+  ]
+}

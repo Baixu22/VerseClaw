@@ -1,0 +1,14 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "command": "pnpm",
+  "args": [
+    "run",
+    "agent-dev:deep-test:reuse:full"
+  ],
+  "startedAt": "2026-11-19T17:01:15.619Z",
+  "finishedAt": "2026-11-19T17:04:25.147Z",
+  "durationMs": 189528,
+  "exitCode": 1,
+  "error": null
+}

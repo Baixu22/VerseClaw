@@ -186,6 +186,7 @@ touchedAreas:
   - "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts"
   - "openclaw_runtime/src/gateway/server-methods/sessions.read.ts"
   - "tests/unit/knowledge-session-identity.test.ts"
+  - "docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/**"
 requiredProfiles:
   - "fast"
   - "comms"

@@ -1,0 +1,38 @@
+{
+  "schema": "ProjectRagResearchDevelopmentCheckpoint/v1",
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "sourceCandidate": "f286cf276512920f65b345c6e1cbb3d85e7870be",
+  "status": "NO-GO",
+  "productJourney": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "sourceUnchanged": true,
+    "cleanup": "passed"
+  },
+  "developmentChecks": {
+    "uncachedNodeWebTestsTypes": "passed",
+    "lint": "passed; 0 errors/119 warnings",
+    "contract": "passed",
+    "commsReplayAndCompare": "passed",
+    "runtimeBuildAndSmoke": "passed",
+    "viteBuild": "passed"
+  },
+  "formal25GateCycle": {
+    "executor": "not-run for this candidate",
+    "verifier": "not-run for this candidate",
+    "model": "ccs-ai/gpt-6.1-sol"
+  },
+  "blockingEvidence": [
+    "latest control audit failed: Agent Dev firstWindow timeout plus performance hard limits",
+    "last full root diagnostic before final repairs exceeded1800s; candidate full root not yet rerun"
+  ],
+  "recordedAt": "2026-11-19T17:09:42.178981+00:00",
+  "temporaryTrust": {
+    "directory": "empty",
+    "devMode": 1,
+    "restoreResult": "concurrent configuration preserved"
+  }
+}

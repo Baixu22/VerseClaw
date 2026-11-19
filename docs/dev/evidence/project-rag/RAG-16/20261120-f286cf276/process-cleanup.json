@@ -1,0 +1,88 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\g2-rag16-relay-20261118-01a1ef53\\r8-product-r3\\fixtures\\verse-claw-e2e-run-Ap6hB9",
+  "ledgerEntries": 25,
+  "checks": [
+    {
+      "pid": 32300,
+      "creationTime": 1795106110414,
+      "status": "exited"
+    },
+    {
+      "pid": 38700,
+      "creationTime": 1795106117602,
+      "status": "exited"
+    },
+    {
+      "pid": 42656,
+      "creationTime": 1795106118082,
+      "status": "exited"
+    },
+    {
+      "pid": 41768,
+      "creationTime": 1795106193385,
+      "status": "exited"
+    },
+    {
+      "pid": 32708,
+      "creationTime": 1795106197861,
+      "status": "exited"
+    },
+    {
+      "pid": 24412,
+      "creationTime": 1795106198008,
+      "status": "exited"
+    },
+    {
+      "pid": 8488,
+      "creationTime": 1795106248425,
+      "status": "exited"
+    },
+    {
+      "pid": 19692,
+      "creationTime": 1795106253178,
+      "status": "exited"
+    },
+    {
+      "pid": 17756,
+      "creationTime": 1795106253377,
+      "status": "exited"
+    },
+    {
+      "pid": 25624,
+      "creationTime": 1795106256658,
+      "status": "exited"
+    },
+    {
+      "pid": 43108,
+      "creationTime": 1795106260985,
+      "status": "exited"
+    },
+    {
+      "pid": 38504,
+      "creationTime": 1795106261151,
+      "status": "exited"
+    },
+    {
+      "pid": 31304,
+      "creationTime": 1795106278230,
+      "status": "exited"
+    },
+    {
+      "pid": 28192,
+      "creationTime": 1795106282998,
+      "status": "exited"
+    },
+    {
+      "pid": 42140,
+      "creationTime": 1795106283479,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

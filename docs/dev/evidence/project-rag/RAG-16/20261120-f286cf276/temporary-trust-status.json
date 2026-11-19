@@ -1,0 +1,10 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "restoreAttempted": true,
+  "restored": false,
+  "reason": "Concurrent developer configuration found; preserve it",
+  "observedDirectoryTrust": "empty",
+  "observedDevMode": 1,
+  "preservedConcurrentConfiguration": true
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "clawx.readonly-batched-git-review-followup/v1",
+  "driven_by": "agent",
+  "actor": "codex-g2-rag16-independent-gate-review",
+  "required_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-fix-and-regression-review",
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "0a20e9485ed7ccbb9ac3776f8ff1a3608636efe2",
+    "includes_uncommitted_changes": true
+  },
+  "prior_report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r7-xingchi-batched-git-review.json",
+  "result": "PASS_STATIC_REVIEW",
+  "summary": "R7-GIT-001 已在源码中修复，新增回归覆盖原精确触发条件；无新增可复现 P0/P1/P2。",
+  "findings": [],
+  "resolved_findings": [
+    {
+      "id": "R7-GIT-001",
+      "priority": "P2",
+      "status": "resolved-by-source-review",
+      "evidence": [
+        {
+          "file": "scripts/lib/agent-engineering-acceptance.mjs",
+          "lines": "962-965",
+          "observation": "先保存 runGit 返回值 sourceDiff，再读取 String(sourceDiff.result.stdout ?? \"\")，按 NUL 拆分；不再消费经过 trim 的 sourceDiff.stdout，路径首部空白保留。"
+        },
+        {
+          "file": "scripts/lib/agent-engineering-acceptance.mjs",
+          "lines": "963,975",
+          "observation": "继续使用 --literal-pathspecs、--no-renames、--name-only、-z、candidate.commit 和 sourcePaths；按原始 expected.path 查 Set 并报告原逐文件错误。runGit 执行错误的抛出与外层失败处理保留。"
+        },
+        {
+          "file": "tests/unit/agent-engineering-acceptance.test.ts",
+          "lines": "547-560",
+          "observation": "独立 fixture 创建根目录 \" task.md\" 并真实提交，以 HEAD^ 创建 plan；先断言 requireClean:false 的干净正例 ok=true；随后仅追加正文，断言 ok=false 且 errors 包含 source input differs from candidate Git blob:  task.md。模板插值保留文件名前导空格。"
+        }
+      ],
+      "regression_strength": "旧 trim 实现会漏掉唯一正文脏改，无法满足新增 ok=false 和精确 source drift 错误断言；新断言不依靠 requireClean:true 的通用 dirty 错误。",
+      "runtime_validation": "未执行，按用户说明等待 root 完成后由主代理安排 framework 78 用例。"
+    }
+  ],
+  "related_regression_review": [
+    {
+      "file": "tests/unit/agent-engineering-acceptance.test.ts",
+      "lines": "527-545",
+      "observation": "先提交含空格和方括号的 rule [case].md，比较实际完整 Git blob 身份并验证干净正例；随后以相同字节创建 replacement.md、删除原文件并 git add，断言原路径身份 unavailable 和校验失败。",
+      "interpretation": "覆盖 literal 名称读取与删除/替换负例，断言均保留。"
+    }
+  ],
+  "validation_status": {
+    "method": "源码差异、调用链与测试断言只读核对",
+    "tests_executed": false,
+    "queued_framework_test_count": 78,
+    "queued_count_source": "用户说明；本审查未启动或确认排队执行结果。"
+  },
+  "actions": {
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0,
+    "git_mutations": 0,
+    "subagents_spawned": 0,
+    "only_written_artifact": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r7-xingchi-batched-git-review-followup.json"
+  },
+  "recorded_at": "2026-11-19T22:24:53.2672688+08:00",
+  "source_snapshot_sha256": [
+    {
+      "path": "scripts/lib/agent-engineering-acceptance.mjs",
+      "sha256": "1155fafa801d94b4391b0bb817bde99b17cd2ba890c038c79b6bdc17d7c8154b"
+    },
+    {
+      "path": "tests/unit/agent-engineering-acceptance.test.ts",
+      "sha256": "bd5480a92706fc92e03e00dc1fae7545bd4b99f8e7c9fb08850be8e45e296e5e"
+    }
+  ]
+}

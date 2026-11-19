@@ -1,0 +1,116 @@
+{
+  "schema": "clawx.rag16-identity-read-review-followup/v1",
+  "driven_by": "agent",
+  "actor": "codex-g2-rag16-independent-identity-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "result": "PASS_STATIC_REVIEW",
+  "prior_report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r7-xingchi-identity-read-review.json",
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "0a20e9485ed7ccbb9ac3776f8ff1a3608636efe2",
+    "working_tree": true,
+    "sha256": {
+      "openclaw_runtime/src/gateway/server-methods/sessions.read.ts": "797e14d4fb9cb7a8787a47908ed700d8d162dae03cf46ac0839037ad95def8a3",
+      "tests/unit/knowledge-session-identity.test.ts": "30667a2c40e8bfa144bcc66ae37bb306ee9df7049fc83d6e99b52dd4855ddd24",
+      "electron/services/knowledge-read-scope.ts": "d942513e68656e798a643a9c13ade6f74b906832744d49fd98945a2a4e50a713"
+    }
+  },
+  "resolved_findings": [
+    {
+      "id": "R7-IDENTITY-ARCHIVE-01",
+      "priority": "P2",
+      "status": "resolved-by-source-review",
+      "evidence": [
+        {
+          "file": "openclaw_runtime/src/gateway/session-archive-service.ts",
+          "line": 355,
+          "observation": "归档 owner 使用同一 store 路径的索引。索引记录 canonical key 与活跃行完整快照，其 sessionId 对应被归档 generation。"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/sessions.read.ts",
+          "line": 351,
+          "observation": "identityOnly 读取归档索引后同步重新加载活跃 store 并选择 freshest entry。如果索引已含对应 canonical key 或 store alias，且快照与活跃行 sessionId 相同，即使活跃行尚存也返回 archived。旧归档记录不会阻断不同 generation。行已移除时返回 null。"
+        },
+        {
+          "file": "electron/services/knowledge-read-scope.ts",
+          "line": 40,
+          "observation": "Main 拒绝 archived 或不符合绑定的 generation。已冻结身份重读得到 null 或新 generation 时也不能通过 fingerprint 校验。"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/session-archive-index.ts",
+          "line": 61,
+          "observation": "ENOENT 保持无索引语义。权限、读取和格式错误抛出，identityOnly handler 在返回身份前结束。缺省与 false 走原完整响应，条件分支不打开索引。"
+        },
+        {
+          "file": "tests/unit/knowledge-session-identity.test.ts",
+          "line": 49,
+          "observation": "新增断言覆盖索引已写但活跃行尚存、旧索引下的 fresh generation、索引拒绝及不调用 buildRow。缺行、缺省完整响应和参数类型用例保留。"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "existing_validation": {
+    "first_revision": {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r7-identity-read-r1.json",
+      "passed": 99,
+      "total": 99
+    },
+    "archive_revision": "未在本轮读取到最终报告"
+  },
+  "actions": {
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0
+  },
+  "recorded_at": "2026-11-19T23:56:29.2019921+08:00",
+  "followup_entries": [
+    {
+      "id": "R7-IDENTITY-ARCHIVE-01-type-guard",
+      "result": "PASS_STATIC_REVIEW",
+      "head": "0a20e9485ed7ccbb9ac3776f8ff1a3608636efe2",
+      "source_sha256": {
+        "openclaw_runtime/src/gateway/server-methods/sessions.read.ts": "ea75ef14e8115f317293445eaeef6c0c72e2e43a2d9ba65f3b3a769b9d67250b",
+        "tests/unit/knowledge-session-identity.test.ts": "969b3ffda67c96a1e8e100a474b546157a35c17a545169aa34dabbe811733e5f"
+      },
+      "evidence": [
+        {
+          "file": "openclaw_runtime/src/gateway/session-mutation-operation-journal.ts",
+          "line": 34,
+          "observation": "归档快照合同为 SessionEntry | { key: string }。"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/sessions.read.ts",
+          "line": 359,
+          "observation": "先匹配 canonical key 或 store alias。存在 sessionId 时类型守卫收窄后仅匹配同 generation。旧式快照缺少 sessionId 时按匹配的 key 返回 archived，避免在无法证明 generation 时放行。该分支补齐旧 unknown-generation 归档的拒绝语义。"
+        },
+        {
+          "file": "electron/services/knowledge-read-scope.ts",
+          "line": 40,
+          "observation": "Main 继续在构造 scope 和 fingerprint 前拒绝 archived。"
+        },
+        {
+          "file": "tests/unit/knowledge-session-identity.test.ts",
+          "line": 49,
+          "observation": "同一 generation-2 先在 generation-1 的明确归档下保持 running，再在同 key 的旧式快照下变为 archived。两条断言区分了明确的旧 generation 和未知 generation。"
+        }
+      ],
+      "new_findings": [],
+      "existing_validation": {
+        "archive_r2": {
+          "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r7-identity-archive-r2.json",
+          "passed": 100,
+          "total": 100,
+          "source_binding": "既有报告未绑定本次 guard 源码摘要，单列为历史执行结果。"
+        },
+        "current_source_typecheck": "用户已启动复测，本次结论为静态复核。"
+      },
+      "actions": {
+        "tests_started": 0,
+        "builds_started": 0,
+        "source_writes": 0
+      },
+      "recorded_at": "2026-11-20T00:08:49.1621706+08:00"
+    }
+  ]
+}
