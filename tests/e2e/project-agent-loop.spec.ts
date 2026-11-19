@@ -198,6 +198,7 @@ test('hands a project checkpoint to the new coordinator and rejects a late compl
   const draft = 'Resume the handed-off project task from its checkpoint.';
   const checkpoint = { nextAction: 'Read the confirmed handoff checkpoint', completed: ['Prepared fixture work'], unresolved: [], artifacts: [] };
   const continued = { ...checkpoint, nextAction: 'Continue with the replacement coordinator' };
+  const resumedText = 'Resumed the confirmed checkpoint.';
   const llm = await startScriptedLlm((text, results) => {
     if (!text.includes(draft)) return { text: 'Fixture ready.' };
     if (!Object.hasOwn(results, 'currenttask')) return { toolCall: { id: 'currenttask', name: 'task_control', args: { action: 'current' } } };
@@ -205,7 +206,7 @@ test('hands a project checkpoint to the new coordinator and rejects a late compl
       return { text: 'Checkpoint not found.' };
     }
     if (!Object.hasOwn(results, 'newcheckpoint')) return { toolCall: { id: 'newcheckpoint', name: 'task_control', args: { action: 'checkpoint', checkpoint: continued } } };
-    return { text: 'Resumed the confirmed project checkpoint.' };
+    return { text: resumedText };
   });
   const app = await launchElectronApp({ skipSetup: true });
   try {
@@ -241,7 +242,11 @@ test('hands a project checkpoint to the new coordinator and rejects a late compl
       });
       store.beginOperation(original, 'fixture-operation', 'write');
       await expect(create()).rejects.toThrow('TASK_OPERATIONS_PENDING');
-      expect(store.get(original.taskNodeId)).toMatchObject({ claim: original, checkpoint, pendingOperations: 1 });
+      const blocked = store.get(original.taskNodeId);
+      expect(blocked).toMatchObject({ checkpoint, pendingOperations: 1, claim: {
+        taskNodeId: original.taskNodeId, sessionKey: original.sessionKey, generation: original.generation,
+        epoch: original.epoch, attemptId: original.attemptId, state: 'active',
+      } });
       store.finishOperation(original, 'fixture-operation', 'completed', 'Fixture operation settled');
       const { success, operation } = await create();
       expect(success).toBe(true);
@@ -262,25 +267,29 @@ test('hands a project checkpoint to the new coordinator and rejects a late compl
         sessionKey: project.sessionKey, sessionId: project.generation, expectedSessionId: project.generation,
         message: 'A worker completed after the original coordinator handed off.', deliver: false, idempotencyKey: 'late-after-project-handoff',
       } })).rejects.toThrow('AGENT_CONTINUATION_OWNER_RETIRED');
-      expect(llm.log).toHaveLength(beforeLate);
+      const lateCompletionProviderCalls = llm.log.length - beforeLate;
+      expect(lateCompletionProviderCalls).toBe(0);
       expect(await hostInvoke(app, 'chat', 'sendWithMedia', {
         workspaceId: project.workspaceId, sessionKey: operation.sessionKey, message: draft,
         handoffOperationId: operation.id, idempotencyKey: operation.firstSendIdempotencyKey,
       })).toMatchObject({ success: true });
       await expect.poll(() => store.get(original.taskNodeId).checkpoint, { timeout: 60_000 }).toEqual(continued);
       await expect.poll(() => llm.log.find(row => row.toolResults.newcheckpoint)?.issued, { timeout: 30_000 })
-        .toBe('text:Resumed the confirmed project checkpoint.');
+        .toBe(`text:${resumedText}`);
       const observed = llm.log.find(row => row.toolResults.currenttask)!.toolResults.currenttask;
       expect(JSON.parse(observed)).toMatchObject({ checkpoint, claim: {
         taskNodeId: original.taskNodeId, sessionKey: operation.sessionKey, generation: operation.sessionGeneration,
         epoch: original.epoch + 1,
       } });
       expect(llm.log.filter(row => row.issued === 'newcheckpoint')).toHaveLength(1);
+      const checkpoints = store.history(original.taskNodeId).filter(event => event.kind === 'checkpoint');
+      expect(checkpoints.map(event => JSON.parse(event.json).nextAction))
+        .toEqual([checkpoint.nextAction, continued.nextAction]);
       await writeFile(info.outputPath('project-handoff-checkpoint.json'), `${JSON.stringify({
         driven_by: 'agent', actor: 'playwright-project-handoff', sourceCandidate, original, operation,
-        transferred, observed: JSON.parse(observed), resumed: store.get(original.taskNodeId),
+        blocked, transferred, observed: JSON.parse(observed), resumed: store.get(original.taskNodeId), checkpoints,
         originalGenerationRetained: old.session?.sessionId === original.generation,
-        lateCompletionProviderCalls: 0, handoffRefusedWhileOperationPending: true,
+        lateCompletionProviderCalls,
       }, null, 2)}\n`);
     } finally {
       store.close();
