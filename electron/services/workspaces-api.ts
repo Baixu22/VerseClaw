@@ -331,6 +331,8 @@ function normalizeCoordinatorBindings(
         branch: typeof environment.branch === 'string' ? environment.branch : null,
         detachedHead: environment.detachedHead,
         setupProfile: typeof environment.setupProfile === 'string' ? environment.setupProfile : null,
+        ...(typeof environment.managedWorktreeGeneration === 'string'
+          ? { managedWorktreeGeneration: environment.managedWorktreeGeneration } : {}),
       },
       archiveRestorePolicy: candidate.archiveRestorePolicy,
       state: candidate.state,
@@ -1022,6 +1024,16 @@ async function resolveCoordinatorEnvironment(
       setupProfile,
     };
   }
+  const { findManagedWorktreeByRoot } = await import('../../openclaw_runtime/src/agents/worktree-registry');
+  const managed = findManagedWorktreeByRoot(rootPath);
+  if (managed?.record.backend === 'inprocess') {
+    const { findManagedWorktree, isManagedWorktreeCurrent } = await import('../../openclaw_runtime/src/agents/worktree-service');
+    const current = findManagedWorktree(rootPath, managed.record.id);
+    if (!isSamePath(managed.baseRoot, profile.rootPath) || !current || !isManagedWorktreeCurrent(current))
+      throw coordinatorError('COORDINATOR_ENVIRONMENT_SCOPE_MISMATCH', 'Managed worktree does not belong to the current project.');
+    return { kind: 'managed-worktree', canonicalRoot: rootPath, backend: 'local-workspace',
+      branch: null, detachedHead: false, setupProfile, managedWorktreeGeneration: current.generation };
+  }
   if (!ctx.gitApi) {
     throw coordinatorError('COORDINATOR_GIT_OWNER_UNAVAILABLE', 'Git owner is unavailable.');
   }
@@ -1065,6 +1077,7 @@ async function validateStoredCoordinatorEnvironment(
       environment.backend !== binding.environment.backend
       || environment.branch !== binding.environment.branch
       || environment.detachedHead !== binding.environment.detachedHead
+      || environment.managedWorktreeGeneration !== binding.environment.managedWorktreeGeneration
     ) {
       return { ok: false, reason: 'environment-generation-changed' };
     }

@@ -352,3 +352,5 @@ Recovery implementation and evidence: the opt-in execution writer persists tool 
 Gated subagent recovery (`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority`, with both writers selecting `taskflow`) commits its decision and budget before RPC and preserves unknown outcomes for reconciliation. Recovered tool events enter the current run subscription to update delivery and completion records. See the [recovery admission guide](docs/dev/recovery-contract/GA-READINESS-20261106.md).
 
 Managed worktree integration preserves deletions, renames and binary bytes through the existing Coding journal. Persistent worktree receipts reconcile duplicate completion and restart, while target drift refuses an overwrite. Cleanup preserves undeclared and ignored local files. Executable permission changes are refused before integration.
+
+Tasks with an independent review criterion submit a candidate for a read-only reviewer. The coordinator can repair it once when the task allows it, rerun checks and request a fresh review before acceptance. Review results stay bound to the submitted files, and repair counts survive restart and handoff.

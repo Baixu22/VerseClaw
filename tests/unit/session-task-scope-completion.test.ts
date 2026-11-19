@@ -133,6 +133,27 @@ afterEach(async () => {
 });
 
 describe('first effect consumes the canonical execution contract', () => {
+  it('binds an in-process worker through its persisted worktree owner', async () => {
+    const { execFileSync } = await import('node:child_process');
+    execFileSync('git', ['init', '-q', state.root], { windowsHide: true });
+    const { createWorktreeService } = await import('../../openclaw_runtime/src/agents/worktree-service');
+    const worker = createWorktreeService(state.root, { backend: 'inprocess' }).create('scope-worker', {
+      seedFiles: ['owner-proof.json'], writeSet: ['owner-proof.json'],
+      owner: { sessionKey: parent, expectedSessionId: 'generation-parent', agentId: 'main' },
+    });
+    const task = startTask();
+    tasks.prepareWriterDelegation(task.claim!, { delegationId: 'run-child', childSessionKey: child,
+      childGeneration: 'generation-child', childWorktree: worker.root, childRunId: 'run-child', mode: 'writer' });
+    runs.get('run-child')!.delegation = { parentSessionKey: parent, parentGeneration: 'generation-parent', workspaceDir: worker.root,
+      taskReference: { taskRef: task.contract.taskNodeId, coordinator: { workspaceId: 'workspace-a', sessionKey: parent,
+        sessionGeneration: 'generation-parent', bindingRevision: 0 } } };
+    const admitted = await api().admitTaskEffect({ ...request(child, 'run-child', 'generation-child'), workspaceDir: worker.root });
+    expect(admitted.claim.credential?.sessionKey).toBe(child);
+    expect((await binding(child))?.environment).toMatchObject({ kind: 'managed-worktree', backend: 'local-workspace',
+      managedWorktreeGeneration: worker.generation });
+    const repeated = await api().admitTaskEffect({ ...request(child, 'run-child', 'generation-child'), workspaceDir: worker.root });
+    expect(repeated.claim.credential?.epoch).toBe(admitted.claim.credential?.epoch);
+  });
   it('uses the canonical parent reference after transfer even before its navigation link was persisted', async () => {
     const task = startTask();
     tasks.prepareWriterDelegation(task.claim!, { delegationId: 'run-child', childSessionKey: child,

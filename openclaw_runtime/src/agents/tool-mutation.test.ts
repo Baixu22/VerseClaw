@@ -6,6 +6,10 @@ function isReadOnlyExec(command: string): boolean {
 }
 
 describe("git command read-only classification", () => {
+  it('allows waiting for delegated work without claiming the delegated writer', () => {
+    expect(requiresSessionTaskScope('sessions_yield', {})).toBe(false);
+    expect(requiresSessionTaskScope('sessions_spawn', {})).toBe(true);
+  });
   it("requires a task writer for output-producing modes of otherwise read-only tools", () => {
     for (const command of [
       "file -C -m magic",

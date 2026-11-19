@@ -63,6 +63,7 @@ type FakeSpawnResult = {
 interface FakeSpawnContext {
   agentSessionKey?: string;
   workspaceDir?: string;
+  taskAuthorityWorkspaceDir?: string;
   agentChannel?: string;
   agentAccountId?: string;
   requesterAgentIdOverride?: string;
@@ -588,8 +589,10 @@ describe('orchestrator run bridge', () => {
 
   it('creates a worktree and passes its cwd to isolated workers', async () => {
     const spawned: FakeSpawnParams[] = [];
-    const fakeSpawn = async (params: FakeSpawnParams): Promise<FakeSpawnResult> => {
+    const contexts: FakeSpawnContext[] = [];
+    const fakeSpawn = async (params: FakeSpawnParams, context: FakeSpawnContext): Promise<FakeSpawnResult> => {
       spawned.push(params);
+      contexts.push(context);
       return { status: 'accepted', runId: 'run_worktree', childSessionKey: 'child_worktree' };
     };
     const result = await runOrchestration(
@@ -612,6 +615,8 @@ describe('orchestrator run bridge', () => {
 
     expect(result.failures, JSON.stringify(result.failures)).toHaveLength(0);
     expect(spawned).toHaveLength(1);
+    expect(contexts[0].taskAuthorityWorkspaceDir).toBe(tempDir);
+    expect(contexts[0].workspaceDir).not.toBe(tempDir);
     expect(spawned[0]?.cwd?.replace(/\\/g, '/')).toContain('/.openclaw/worktrees/');
     expect(spawned[0]?.orchestration).toMatchObject({
       isolation: 'worktree',

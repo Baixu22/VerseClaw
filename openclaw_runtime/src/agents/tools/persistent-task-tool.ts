@@ -19,6 +19,7 @@ const taskContractSchema = Type.Object({
   target: Type.String(),
   constraints: Type.Array(Type.String(), { maxItems: 30 }),
   expectedOutcomes: Type.Optional(Type.Array(Type.String(), { maxItems: 30 })),
+  maxRepairAttempts: Type.Optional(Type.Integer({ minimum: 0, maximum: 1 })),
   acceptance: Type.Array(
     Type.Object({
       id: Type.String(),
@@ -56,6 +57,8 @@ export function createPersistentTaskTool(input: {
   workspace: string;
   sessionKey?: string;
   generation?: string;
+  inheritedToolAllowlist?: string[];
+  inheritedToolDenylist?: string[];
 }): AnyAgentTool {
   let pinned: TaskCredential | null = null;
   const access = createExecutionTaskAccess(input.workspace);
@@ -74,6 +77,7 @@ export function createPersistentTaskTool(input: {
     label: "Task control",
     risk: "write",
     description:
+      "For a project delivery loop, declare maxRepairAttempts (0 or 1) and an owner-receipt criterion with owner subagent-verifier and the files to review. Execute and test through the existing orchestration path, integrate its result, rerun affected checks, then submit a candidate. Use review with candidate and a stable requestId to dispatch the independent read-only reviewer, then sessions_yield for its completion notification. Accept only after it passes. If verification fails, use repair with candidate, reason and a stable requestId, fix within the same scope and remaining budget, rerun checks, submit a new candidate and obtain a fresh review. A second repair is refused. Report verified results, untested checks, residuals and next action from current/history; never infer done from prose. " +
       "When explicitly asked to execute the next project plan task, read planStatus, then use startNextPlanTask with the parent taskNodeId, expectedRevision and a stable requestId. This claims one dependency-ready task; worker admission is separate. " +
       "On an internal project worker failure notice, read planStatus. If the failed child is paused and its writer released, continue the next independent ready child using startNextPlanTask and a new stable requestId derived from the completed run. Leave the failed child and its dependents unaccepted; new work must still pass resource admission. " +
       "Manage execution tasks quietly in conversation. For explicit project planning requests in a project coordinator session, read planStatus and relevant project facts first, then use savePlan with goal contract, a bounded list of children with concrete verification, local dependsOn keys, and nextAction. Record uncertain facts as assumptions and unresolved major scope choices as decisions; scope those tasks to work that is safe under those uncertainties. Change an existing plan explicitly with taskNodeId, expectedRevision, and revisionReason; keep the requestId stable across retries and use a new ID for a new goal. Planning does not start execution. Before implementation, read current and use start with either taskNodeId or a complete contract to resolve and claim atomically. Derive goals and verifiable checks from the user request and repository; do not ask for task forms, internal IDs, or manual claims. Ordinary discussion creates no task. Report progress and genuine blockers plainly, checkpoint progress, and submit candidate-bound evidence for acceptance. Use stable request IDs across retries; suggestions do not grant identity. Use history to trace candidate checks and retention receipts; readRetainedArtifact returns verified bytes in bounded base64 pages after source cleanup. Task ownership does not grant tool permissions. Never replace the goal with a status question.",
@@ -102,6 +106,8 @@ export function createPersistentTaskTool(input: {
           "release",
           "cancel",
           "submit",
+          "repair",
+          "review",
           "verifyFile",
           "accept",
         ].map((x) => Type.Literal(x)),
@@ -139,6 +145,7 @@ export function createPersistentTaskTool(input: {
       contract: Type.Optional(taskContractSchema),
       checkpoint: Type.Optional(Type.Unknown()),
       candidate: Type.Optional(Type.String()),
+      reason: Type.Optional(Type.String({ maxLength: 2000 })),
       criterionId: Type.Optional(Type.String()),
       path: Type.Optional(Type.String()),
       sha256: Type.Optional(Type.String()),
@@ -300,6 +307,48 @@ export function createPersistentTaskTool(input: {
             result = store.control(c, p.action);
             pinned = (result as { claim: TaskCredential }).claim;
           } else if (p.action === "submit") result = store.submit(c, str("candidate"));
+          else if (p.action === "repair") result = store.repair(c, str("candidate"), str("requestId"), str("reason"));
+          else if (p.action === "review") {
+            const candidate = str("candidate");
+            const parentTools = input.inheritedToolAllowlist;
+            const denied = input.inheritedToolDenylist ?? [];
+            if (!['sessions_spawn', 'team_orchestrate'].some(name =>
+              (!parentTools || parentTools.includes(name)) && !denied.includes(name)))
+              throw new Error('TASK_REVIEW_DELEGATION_NOT_ALLOWED');
+            const readTools = ['read', 'glob', 'grep'].filter(name =>
+              (!parentTools || parentTools.includes(name)) && !denied.includes(name));
+            if (!readTools.includes('read')) throw new Error('TASK_REVIEW_READ_PERMISSION_REQUIRED');
+            const [{ spawnRoleSubagent }, { spawnSubagentDirect }, { getRuntimeConfig }, { resolveOrchestrationContext }] = await Promise.all([
+              import('../role-spawn.js'), import('../subagent-spawn.js'), import('../../config/config.js'),
+              import('../orchestration-workspace-context.js'),
+            ]);
+            const cfg = getRuntimeConfig();
+            const context = resolveOrchestrationContext({ sessionKey: c.sessionKey,
+              expectedSessionGeneration: c.generation, workspaceDir: input.workspace }, () => cfg);
+            const reservation = store.reserveReview(c, candidate, str("requestId"));
+            if (reservation.replayed) result = { ...reservation.result, replayed: true };
+            else {
+              const submission = store.submission(c);
+              const task = `Independently review this submitted project candidate. Read the listed files from disk, check the task criteria and report concrete findings. Do not modify files. Return verificationVerdict=pass|fail|repair_required.\n${JSON.stringify({
+                contract: current.contract, candidate, artifacts: submission.artifacts,
+              })}`;
+              const admission = await spawnRoleSubagent({ role: 'reviewer', task, cfg, writeSet: [], agentId: context.requesterAgentIdOverride,
+                orchestration: { orchestrationRunId: reservation.id, roleName: 'reviewer', isVerifier: true,
+                  phase: 'verifier', leadRole: 'planner', originalTask: current.contract.objective,
+                  verifierNoSelfRepair: true, taskNodeId: c.taskNodeId },
+              }, { ...context, agentSessionKey: c.sessionKey, completionOwnerKey: c.sessionKey,
+                reviewReservationId: reservation.id,
+                workspaceDir: context.workspaceDir, assertWorkspaceCurrent: context.assertWorkspaceCurrent,
+                inheritedToolAllowlist: readTools,
+                inheritedToolDenylist: input.inheritedToolDenylist,
+              }, { spawn: spawnSubagentDirect });
+              const receipt = { status: admission.status, runId: admission.result?.runId,
+                childSessionKey: admission.result?.childSessionKey, error: admission.error ?? admission.result?.error,
+                dispatchOutcome: admission.result?.dispatchOutcome };
+              store.recordReviewDispatch(c, reservation, receipt);
+              result = receipt;
+            }
+          }
           else if (p.action === "verifyFile")
             result = store.verifyFile(
               c,

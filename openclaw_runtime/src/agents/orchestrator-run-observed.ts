@@ -759,6 +759,7 @@ export async function runOrchestrationWithRecorder(
         {
           ...spawnCtx,
           workspaceDir: worktree?.root ?? ctx.workspaceDir,
+          taskAuthorityWorkspaceDir: ctx.workspaceDir,
           assertWorkspaceCurrent() {
             ctx.assertWorkspaceCurrent?.();
             if (

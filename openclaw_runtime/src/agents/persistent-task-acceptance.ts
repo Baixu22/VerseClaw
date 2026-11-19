@@ -23,6 +23,8 @@ export function acceptPersistentTask(
   if (view.contract.state === "done") return store.accept(credential, candidate);
   store.assertOwner(credential);
   if (view.contract.state !== "review") throw new Error("TASK_SUBMISSION_REQUIRED");
+  const submission = store.submission(credential);
+  if (submission.candidate !== candidate) throw new Error("TASK_SUBMISSION_STALE");
   for (const criterion of view.contract.acceptance) {
     const verification = criterion.verification;
     if (verification.kind !== "owner-receipt") continue;
@@ -50,21 +52,31 @@ export function acceptPersistentTask(
         .prepare("SELECT json FROM task_writer_delegations WHERE task_id=? ORDER BY rowid DESC")
         .all(credential.taskNodeId) as Array<{ json: string }>;
       const observed = observers
+        // Rows are newest first; late updates to an older run do not reorder them.
+        // Never fall back past a newer pending or failed review.
         .map((row) => JSON.parse(row.json) as TaskWriterDelegation)
         .find(
           (d) =>
             d.mode === "observer" &&
+            d.verifier === true &&
             d.parent.epoch === credential.epoch &&
-            d.contractRevision === view.contract.revision &&
-            d.phase === "returned",
+            d.parent.sessionKey === credential.sessionKey &&
+            d.parent.generation === credential.generation &&
+            d.contractRevision === view.contract.revision,
         );
       if (!observed || !observed.candidateArtifacts?.length)
         throw new Error("TASK_VERIFIER_RUN_MISSING");
+      if (observed.phase !== "returned") throw new Error("TASK_VERIFIER_RUN_PENDING");
+      if (observed.submissionSequence !== submission.sequence)
+        throw new Error("TASK_VERIFIER_SUBMISSION_CHANGED");
       const actualRun = getSubagentRunByRunId(observed.childRunId);
       if (
         !actualRun ||
+        actualRun.runId !== observed.childRunId ||
         actualRun.childSessionKey !== observed.child.sessionKey ||
+        actualRun.childSessionKey === credential.sessionKey ||
         actualRun.requesterSessionKey !== credential.sessionKey ||
+        actualRun.requesterSessionId !== credential.generation ||
         typeof actualRun.endedAt !== "number" ||
         actualRun.outcome?.status !== "ok" ||
         actualRun.orchestration?.isVerifier !== true
@@ -76,7 +88,9 @@ export function acceptPersistentTask(
         resultText: actualRun.completion?.resultText ?? undefined,
       });
       if (verdict.verdict !== "pass") throw new Error("TASK_VERIFIER_NOT_APPROVED");
-      if (JSON.stringify(observed.candidateArtifacts) !== JSON.stringify(current))
+      store.assertReviewerReadCandidate(observed);
+      if (JSON.stringify(submission.artifacts) !== JSON.stringify(current) ||
+          JSON.stringify(observed.candidateArtifacts) !== JSON.stringify(current))
         throw new Error("TASK_VERIFIER_CANDIDATE_CHANGED");
       artifacts = current;
       verifierRunId = actualRun.runId;
@@ -120,6 +134,7 @@ export function acceptPersistentTask(
       epoch: credential.epoch,
       generation: credential.generation,
       candidate,
+      submissionSequence: submission.sequence,
       criterionId: criterion.id,
       evidenceDigest: verifier.evidenceDigest,
       verifierRunId,
@@ -211,6 +226,7 @@ export function readPersistentTaskCompletionReceipt(
     evidence.candidate !== refs.candidateDigest
   )
     throw new Error("TASK_COMPLETION_RECEIPT_SCOPE_MISMATCH");
+  store.assertCompletionEvidenceCurrent(evidence, refs.candidateDigest);
   const effect = new EffectReceiptStore().getById(refs.effectReceiptId);
   if (
     !effect ||

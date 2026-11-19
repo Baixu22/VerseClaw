@@ -72,6 +72,8 @@ export type RoleSpawnContext = {
   agentMemberRoleIds?: string[];
   requesterAgentIdOverride?: string;
   workspaceDir?: string;
+  /** Parent Task Ledger authority workspace when workspaceDir is an isolated child checkout. */
+  taskAuthorityWorkspaceDir?: string;
   /** Resolved by the parent session owner, never by model/request path parameters. */
   workspaceOwner?: WorktreeLifecycleOwner;
   assertWorkspaceCurrent?: () => void;
@@ -81,10 +83,13 @@ export type RoleSpawnContext = {
   parentRole?: RoleContract | null;
   permissionDecisionEvents?: PermissionDecisionEvent[];
   completionOwnerKey?: string;
+  /** Internal Task Ledger reservation; never supplied by model-authored spawn arguments. */
+  reviewReservationId?: string;
 };
 
 /** Result shape returned by a spawn call. */
 export type RoleSpawnResultShape = {
+  dispatchOutcome?: 'not-dispatched';
   status: "accepted" | "forbidden" | "error";
   runState?: 'queued';
   runId?: string;

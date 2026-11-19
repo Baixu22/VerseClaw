@@ -32,11 +32,13 @@ import { getTextOutput, invalidArgText, replaceTabs, shortenPath, str } from "./
 import type { ReadToolDetails } from "./tool-contracts.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
 import { decodeTextFile } from "./text-file-codec.js";
-import { createVerseGitReadBasis } from "./versegit-tool-basis.js";
+import { createVerseGitReadBasis, verseGitSha256 } from "./versegit-tool-basis.js";
 import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, formatSize, truncateHead } from "./truncate.js";
 
 const readSchema = Type.Object({
   path: Type.String({ description: "Path to the file to read (relative or absolute)" }),
+  charOffset: Type.Optional(Type.Integer({ minimum: 0, description: 'Zero-based decoded character offset for long lines; continue until the file is read.' })),
+  charLimit: Type.Optional(Type.Integer({ minimum: 1, maximum: 8000, description: 'Characters to return when charOffset is set (default 2000).' })),
   offset: Type.Optional(
     Type.Number({ description: "Line number to start reading from (1-indexed)" }),
   ),
@@ -157,9 +159,6 @@ function toPosixPath(filePath: string): string {
   return filePath.split(sep).join("/");
 }
 
-function quotePosixShellArg(value: string): string {
-  return `'${value.replaceAll("'", "'\\''")}'`;
-}
 
 function getOpenClawDocsClassification(
   absolutePath: string,
@@ -297,7 +296,7 @@ export function createReadToolDefinition(
   return {
     name: "read",
     label: "read",
-    description: `Read the contents of a file. This tool accepts files only; use ls to list a directory. Supports text files and images (jpg, png, gif, webp). Images are sent as attachments. For text files, output is truncated to ${DEFAULT_MAX_LINES} lines or ${DEFAULT_MAX_BYTES / 1024}KB (whichever is hit first). Use offset/limit for large files. When you need the full file, continue with offset until complete.`,
+    description: `Read the contents of a file. This tool accepts files only; use ls to list a directory. Supports text files and images (jpg, png, gif, webp). Images are sent as attachments. For text files, output is truncated to ${DEFAULT_MAX_LINES} lines or ${DEFAULT_MAX_BYTES / 1024}KB (whichever is hit first). Use offset/limit for large files. For long lines or downstream output limits, use charOffset/charLimit and continue from the returned character offset. When you need the full file, continue until complete.`,
     promptSnippet: "Read file contents",
     promptGuidelines: [
       "Use read to examine files instead of cat or sed.",
@@ -306,7 +305,7 @@ export function createReadToolDefinition(
     parameters: readSchema,
     async execute(
       toolCallId,
-      { path, offset, limit }: { path: string; offset?: number; limit?: number },
+      { path, offset, limit, charOffset, charLimit }: { path: string; offset?: number; limit?: number; charOffset?: number; charLimit?: number },
       signal?: AbortSignal,
       onUpdate?,
       ctx?,
@@ -383,6 +382,9 @@ export function createReadToolDefinition(
                   { type: "image", data: base64, mimeType },
                 ];
               }
+              if (content.some(block => block.type === 'image')) details = { reviewReads: [{
+                path: absolutePath, sha256: verseGitSha256(buffer), start: 1, end: 1, lines: 1, kind: 'image',
+              }] };
             } else {
               // Read text content.
               const buffer = await ops.readFile(absolutePath);
@@ -390,6 +392,19 @@ export function createReadToolDefinition(
               const physical = splitPhysicalLines(textContent);
               const allLines = physical.lines;
               const totalFileLines = allLines.length;
+              if (charOffset !== undefined) {
+                if (offset !== undefined || limit !== undefined || !Number.isSafeInteger(charOffset) || charOffset < 0 || charOffset > textContent.length)
+                  throw new Error('Invalid character range; use charOffset/charLimit without offset/limit.');
+                const count = charLimit ?? 2000;
+                if (!Number.isSafeInteger(count) || count < 1 || count > 8000) throw new Error('charLimit must be between 1 and 8000.');
+                const end = Math.min(textContent.length, charOffset + count);
+                const text = textContent.slice(charOffset, end);
+                signal?.removeEventListener('abort', onAbort);
+                resolve({ content: [{ type: 'text', text: text + (end < textContent.length ? `\n\n[Use charOffset=${end} to continue.]` : '') }],
+                  details: { reviewReads: [{ path: absolutePath, sha256: verseGitSha256(buffer), kind: 'text',
+                    start: 1, end: 1, lines: totalFileLines, startChar: charOffset, endChar: end, characters: textContent.length }] } });
+                return;
+              }
               // Apply offset if specified. Convert from 1-indexed input to 0-indexed array access.
               const startLine = offset ? Math.max(0, offset - 1) : 0;
               const startLineDisplay = startLine + 1;
@@ -416,7 +431,7 @@ export function createReadToolDefinition(
               if (truncation.firstLineExceedsLimit) {
                 // First line alone exceeds the byte limit. Point the model at a bash fallback.
                 const firstLineSize = formatSize(Buffer.byteLength(allLines[startLine], "utf-8"));
-                outputText = `[Line ${startLineDisplay} is ${firstLineSize}, exceeds ${formatSize(DEFAULT_MAX_BYTES)} limit. Use bash: sed -n '${startLineDisplay}p' ${quotePosixShellArg(path)} | head -c ${DEFAULT_MAX_BYTES}]`;
+                outputText = `[Line ${startLineDisplay} is ${firstLineSize}, exceeds ${formatSize(DEFAULT_MAX_BYTES)} limit. Use read with charOffset=${slicePhysicalLines(physical, 0, startLine).length} and charLimit=2000.]`;
                 details = { truncation };
               } else if (truncation.truncated) {
                 // Truncation occurred. Build an actionable continuation notice.
@@ -452,6 +467,11 @@ export function createReadToolDefinition(
               );
               details = {
                 ...(details ?? {}),
+                ...(!truncation.firstLineExceedsLimit ? { reviewReads: [{ path: absolutePath, sha256: verseGitSha256(buffer),
+                  start: startLineDisplay, end: Math.min(totalFileLines, startLineDisplay + splitPhysicalLines(truncation.content).lines.length - 1),
+                  lines: totalFileLines, kind: 'text' as const, startChar: slicePhysicalLines(physical, 0, startLine).length,
+                  endChar: slicePhysicalLines(physical, 0, Math.min(totalFileLines, startLine + splitPhysicalLines(truncation.content).lines.length)).length,
+                  characters: textContent.length }] } : {}),
                 versegit_basis: createVerseGitReadBasis({
                   path,
                   lineStart: startLineDisplay,

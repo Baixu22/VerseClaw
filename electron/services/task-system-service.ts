@@ -447,6 +447,7 @@ export async function taskSystemCommand(
         return scoped.handoff(credential, command.targetSessionKey, next.generation, next.worktree);
       }
       if (command.action === "submit") return scoped.submit(credential, command.candidate);
+      if (command.action === "repair") return scoped.repair(credential, command.candidate, command.requestId, command.reason);
       if (command.action === "verifyFile")
         return scoped.verifyFile(
           credential,

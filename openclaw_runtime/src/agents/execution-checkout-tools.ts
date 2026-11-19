@@ -60,6 +60,13 @@ export function reconcileExecutionCheckout(checkout: Checkout): void {
         returnPersistentTaskWriter({ workspace: current.root, childSessionKey: sessionKey,
           ...delegation.terminalReceipt, parentGeneration: parent?.sessionId });
       }
+      if (delegation.phase === 'returned' && delegation.childWorktree !== delegation.parentWorktree) {
+        // An isolated worker has returned the task to another checkout. Its
+        // settled source can now be acquired by the existing merge owner.
+        service.releaseWriter(checkout.credential);
+        runCheckouts.delete(state.owner.run.runId);
+        return;
+      }
       // The returning task retains checkout exclusion until the parent's next
       // admitted run atomically rotates it; never expose a release/claim gap.
       return;

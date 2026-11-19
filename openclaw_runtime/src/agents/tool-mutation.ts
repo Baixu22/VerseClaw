@@ -483,6 +483,7 @@ export function requiresSessionTaskScope(toolName: string, args: unknown): boole
       "memory_get",
       "sessions_list",
       "sessions_history",
+      "sessions_yield",
       "get_goal",
       "task_control",
     ].includes(name)

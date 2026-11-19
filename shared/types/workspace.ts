@@ -156,6 +156,7 @@ export interface WorkspaceCoordinatorEnvironmentBinding {
   branch: string | null;
   detachedHead: boolean;
   setupProfile: string | null;
+  managedWorktreeGeneration?: string;
 }
 
 /**

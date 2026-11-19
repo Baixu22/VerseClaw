@@ -209,6 +209,7 @@ export async function executeTaskGuarded<T>(
     "web_search",
     "web_fetch",
     "session_status",
+    "sessions_yield",
     "task_control",
     "read_file",
     "read_files",
@@ -240,6 +241,14 @@ export async function executeTaskGuarded<T>(
     }
   }
   if (!guard.credential) {
+    if (toolName === 'read' && readonlyTools.has(toolName)) {
+      const reader = new TaskSystemStore(guard.domain, undefined, guard.access);
+      try {
+        const result = await execute();
+        reader.recordReviewRead(guard.sessionKey, guard.generation, operationId, result);
+        return result;
+      } finally { reader.close(); }
+    }
     if (readonlyTools.has(toolName)) return execute();
     throw new Error("TASK_CLAIM_REQUIRED");
   }

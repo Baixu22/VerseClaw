@@ -1,4 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { chmodSync, existsSync, linkSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -58,6 +59,50 @@ describe('R4 durable worktree integration', () => {
     git('add', '.');
     git('-c', 'user.name=Agent', '-c', 'user.email=agent@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', 'base');
   }
+  it('keeps an in-process worker in its original task domain during workspace bootstrap', async () => {
+    nativeRepository();
+    const worker = createWorktreeService(root, { backend: 'inprocess' }).create('bootstrap-worker', { writeSet: ['result.txt'] });
+    const { resolveTaskDomain } = await import('../../shared/task-system/identity');
+    const { ensureAgentWorkspace } = await import('../../openclaw_runtime/src/agents/workspace');
+    const before = resolveTaskDomain(worker.root);
+    await ensureAgentWorkspace({ dir: worker.root, ensureBootstrapFiles: true });
+    expect(existsSync(path.join(worker.root, '.git'))).toBe(false);
+    expect(resolveTaskDomain(worker.root).id).toBe(before.id);
+    expect(before.id).toBe(resolveTaskDomain(root).id);
+  });
+  it('releases only a settled isolated child writer after task return so integration can acquire it', async () => {
+    nativeRepository();
+    const { TaskSystemStore } = await import('../../shared/task-system/store');
+    const { resolveTaskDomain } = await import('../../shared/task-system/identity');
+    const { normalizeRunScope } = await import('../../shared/types/identity-scope');
+    const { reconcileExecutionCheckout } = await import('../../openclaw_runtime/src/agents/execution-checkout-tools');
+    const ledger = new TaskSystemStore(resolveTaskDomain(root));
+    const service = createWorktreeService(root, { backend: 'inprocess' });
+    const worker = service.create('returned-worker', { writeSet: ['other.txt'], seedFiles: ['other.txt'] });
+    try {
+      const task = ledger.start({ contract: { objective: 'Integrate worker result', target: 'other.txt', constraints: [],
+        acceptance: [{ id: 'check', description: 'Read final result', verification: { kind: 'owner-receipt', owner: 'fixture' } }] } },
+        owner.sessionKey, owner.expectedSessionId, 'start');
+      const delegation = ledger.prepareWriterDelegation(task.claim!, { delegationId: 'isolated-run', childSessionKey: 'agent:r4:child',
+        childGeneration: 'child-generation', childRunId: 'isolated-run', childWorktree: worker.root, mode: 'writer' });
+      const credential = service.claimWriter(worker.id, worker.generation, { kind: 'run',
+        run: normalizeRunScope({ runId: 'isolated-run', scope: { workspaceId: 'project', sessionKey: delegation.child.sessionKey } }),
+        agentId: 'r4', sessionGeneration: 'child-generation', bindingRevision: 1,
+        task: { authorityId: ledger.domain.id, taskNodeId: task.contract.taskNodeId, epoch: delegation.child.epoch, contractRevision: 1 },
+      }, 'writer');
+      writeFileSync(path.join(worker.root, 'other.txt'), 'worker result');
+      service.endWriter(credential, { runId: 'isolated-run', sessionGeneration: 'child-generation', endedAt: Date.now(), ownerReceipt: 'runtime-terminal' });
+      const checkout = { baseRoot: root, worktreeId: worker.id, credential };
+      reconcileExecutionCheckout(checkout);
+      expect(service.writer(worker.id)?.state).toBe('draining');
+      ledger.returnDelegatedWriter(delegation.child.sessionKey, { runId: 'isolated-run', endedAt: Date.now(), outcome: 'ok', parentGeneration: owner.expectedSessionId });
+      reconcileExecutionCheckout(checkout);
+      expect(service.writer(worker.id)?.state).toBe('released');
+      service.enqueueMerge({ worktreeId: worker.id, worktreeGeneration: worker.generation, changedFiles: ['other.txt'] });
+      expect((await service.processMergeQueue())[0].status).toBe('merged');
+      expect(readFileSync(path.join(root, 'other.txt'), 'utf8')).toBe('worker result');
+    } finally { ledger.close(); }
+  });
   it.each(['inprocess', 'git'] as const)('preserves deletion and rename through the actual %s owner', async backend => {
     if (backend === 'git') nativeRepository();
     else writeFileSync(path.join(root, 'original.bin'), Buffer.from([0, 1, 255, 4]));
@@ -914,8 +959,44 @@ describe('R4 durable worktree integration', () => {
     expect(git('rev-parse', 'HEAD')).toBe(oldHead);
     expect(readFileSync(path.join(root, 'other.txt'), 'utf8')).toBe('first result');
     expect(readFileSync(path.join(root, 'new.txt'), 'utf8')).toBe('second result');
+    const integratedCheck = spawnSync(process.execPath, ['-e', verify], { cwd: root, encoding: 'utf8', windowsHide: true });
+    expect(integratedCheck.status, integratedCheck.stderr).toBe(0);
+    for (const item of merged) for (const file of item.changedFiles) {
+      const delivered = createHash('sha256').update(readFileSync(path.join(root, file))).digest('hex');
+      const verified = createHash('sha256').update(readFileSync(path.join(candidate.materializedPath, file))).digest('hex');
+      expect(delivered).toBe(verified);
+      expect(item.hashes?.[file]).toBe(delivered);
+    }
     proof('two-worktree-candidate', { candidate, checks: { verificationCwd: candidate.materializedPath, exitCode: checked.status,
-      originalHead: oldHead, integrated: merged, candidateCommitOid: candidate.manifest.candidateCommitOid } });
+      integratedCheckExit: integratedCheck.status, originalHead: oldHead, integrated: merged, candidateCommitOid: candidate.manifest.candidateCommitOid } });
+  });
+  it('repairs a failed worker check and rechecks the exact integrated candidate', async () => {
+    nativeRepository();
+    const service = createWorktreeService(root, { backend: 'git' });
+    const worker = service.create('p4-repair-worker', { writeSet: ['other.txt'] });
+    const check = 'const fs=require("node:fs"),a=require("node:assert/strict");a.equal(fs.readFileSync("other.txt","utf8"),"repaired result");';
+    writeFileSync(path.join(worker.root, 'other.txt'), 'broken result');
+    const failed = spawnSync(process.execPath, ['-e', check], { cwd: worker.root, encoding: 'utf8', windowsHide: true });
+    expect(failed.status).toBe(1);
+    const input = { taskNodeId: 'p4-task', worktreeId: worker.id, worktreeGeneration: worker.generation, declaredWriteSet: ['other.txt'] };
+    const oldCandidate = freezeOrchestrationWorktreeCandidate({ baseRoot: root, workers: [input] });
+    expect(oldCandidate.status).toBe('frozen');
+    writeFileSync(path.join(worker.root, 'other.txt'), 'repaired result');
+    const candidate = freezeOrchestrationWorktreeCandidate({ baseRoot: root, workers: [input] });
+    if (candidate.status !== 'frozen' || oldCandidate.status !== 'frozen') throw new Error('candidate unavailable');
+    expect(candidate.manifest.candidateCommitOid).not.toBe(oldCandidate.manifest.candidateCommitOid);
+    const { orchestrationCandidatePostimages } = await import('../../openclaw_runtime/src/agents/orchestration-candidate');
+    const merged = await mergeOrchestrationWorktrees({ baseRoot: root, workers: [{ ...input,
+      expectedPostimages: orchestrationCandidatePostimages(root, candidate.manifest, ['other.txt']),
+    }] });
+    expect(merged[0]).toMatchObject({ status: 'merged', journalRef: expect.stringMatching(/^write-journal:/) });
+    const runs = [oldCandidate.materializedPath, candidate.materializedPath, root].map(cwd => ({ cwd,
+      exit: spawnSync(process.execPath, ['-e', check], { cwd, windowsHide: true }).status }));
+    expect(runs.map(run => run.exit)).toEqual([1, 0, 0]);
+    const deliveredHash = createHash('sha256').update(readFileSync(path.join(root, 'other.txt'))).digest('hex');
+    expect(merged[0].hashes?.['other.txt']).toBe(deliveredHash);
+    expect(createHash('sha256').update(readFileSync(path.join(candidate.materializedPath, 'other.txt'))).digest('hex')).toBe(deliveredHash);
+    proof('p4-repair-integration', { failedExit: failed.status, oldCandidate, candidate, merged, checks: runs, deliveredHash });
   });
   it('retains unknown journal completion after restart and forbids replay or cleanup', async () => {
     nativeRepository();

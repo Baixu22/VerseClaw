@@ -20,6 +20,7 @@ export type TaskContractInput = {
   occurrenceKey?: string;
   dependencies?: string[];
   expectedOutcomes?: string[];
+  maxRepairAttempts?: number;
 };
 export type TaskContract = TaskContractInput & {
   origin: { source: string; requestId: string; sessionKey?: string };
@@ -60,6 +61,8 @@ export type TaskEvidence = {
   sha256: string;
   verifier: string;
   createdAt: number;
+  repairAttempt?: number;
+  submissionSequence?: number;
   inputArtifacts?: Array<{ path: string; sha256: string }>;
   ownerProof?: {
     verifierReceiptId: string;
@@ -67,6 +70,18 @@ export type TaskEvidence = {
     evidenceDigest: string;
     proposalDigest?: string;
   };
+};
+/** File bytes and returned coverage observed by the read-tool owner. */
+export type TaskReviewReadProof = {
+  path: string;
+  sha256: string;
+  start: number;
+  end: number;
+  lines: number;
+  kind: 'text' | 'image';
+  startChar?: number;
+  endChar?: number;
+  characters?: number;
 };
 export type TaskView = {
   contract: TaskContract;
@@ -142,6 +157,9 @@ export type TaskWriterDelegation = {
   contractRevision?: number;
   authorityBasis?: TaskAuthorityBasis;
   candidateArtifacts?: Array<{ path: string; sha256: string }>;
+  submissionSequence?: number;
+  reviewReservationId?: string;
+  verifier?: boolean;
 };
 export type TaskDelegationIntent = {
   workspace: string;
@@ -153,6 +171,8 @@ export type TaskDelegationIntent = {
   childRunId: string;
   observer: boolean;
   expectedParent: TaskCredential;
+  reviewReservationId?: string;
+  verifier?: boolean;
   authorityBasis?: TaskAuthorityBasis;
 };
 export type TaskResolution = { kind: "created" | "existing" | "duplicate"; task: TaskView };
@@ -183,6 +203,7 @@ export type TaskSystemCommand =
     }
   | { action: "recover"; taskNodeId: string; targetSessionKey: string }
   | { action: "submit"; credential: TaskCredential; candidate: string }
+  | { action: "repair"; credential: TaskCredential; candidate: string; requestId: string; reason: string }
   | {
       action: "verifyFile";
       credential: TaskCredential;
