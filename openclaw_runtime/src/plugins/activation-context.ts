@@ -165,7 +165,7 @@ function applyPluginAutoEnableForActivation(params: {
     allowWorkspaceScopedSnapshot: true,
   });
   const defaultDiscoverySnapshot =
-    normalizePluginsConfig(params.config.plugins).loadPaths.length === 0
+    !currentSnapshot && normalizePluginsConfig(params.config.plugins).loadPaths.length === 0
       ? getCurrentPluginMetadataSnapshot({
           env: params.env,
           workspaceDir: params.workspaceDir,
@@ -173,13 +173,13 @@ function applyPluginAutoEnableForActivation(params: {
           requireDefaultDiscoveryContext: true,
         })
       : undefined;
-  const currentManifestRegistry =
-    currentSnapshot?.manifestRegistry ?? defaultDiscoverySnapshot?.manifestRegistry;
+  // Keep discovery paired with its manifests instead of rescanning approved roots.
+  const metadataSnapshot = currentSnapshot ?? defaultDiscoverySnapshot;
   return applyPluginAutoEnable({
     config: params.config,
     env: params.env,
-    manifestRegistry: currentManifestRegistry,
-    discovery: params.discovery,
+    manifestRegistry: metadataSnapshot?.manifestRegistry,
+    discovery: params.discovery ?? metadataSnapshot?.discovery,
   });
 }
 

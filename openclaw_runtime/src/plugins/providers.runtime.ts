@@ -256,6 +256,7 @@ function resolveRuntimeProviderPluginLoadState(
     rawConfig: requestConfig,
     env: base.env,
     workspaceDir: base.workspaceDir,
+    discovery: snapshot.discovery,
     onlyPluginIds: runtimeRequestedPluginIds,
     applyAutoEnable: params.applyAutoEnable ?? true,
     compatMode: {

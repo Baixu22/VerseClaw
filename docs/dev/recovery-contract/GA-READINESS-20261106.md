@@ -1,5 +1,7 @@
 # 恢复统一与 GA 验收
 
+2026-11-19 的插件发现结果传递修复通过 29 项定向回归和指定 DeepSeek 复核。三组连续重启均正确完成，当前 GA 为 **NO_GO**；稳定时延与完整候选验收继续推进。[源码与磁盘证据](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/activation-discovery-20261119/README.md)记录了各跑次与资源观测。
+
 2026-11-17 接力候选 `da1125874` 完成租约过期同 owner 接续修复，193 项定向回归通过，三次真实 kill 的复测效果一次、重复与丢失均为0、终态正确。过期分支另有标注时钟构造的跨进程 SQLite 证明。当前 GA 为 **NO_GO**：连续重启76.466秒，桌面构建63.724秒，完整同候选冻结矩阵尚待执行。[本轮验证与原件](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/relay-20261117/README.md)保留各候选结果。
 
 恢复验收先检查 Electron 可执行路径、桌面与 runtime 构建产物。故障夹具通过现有 Host API 创建任务、绑定协调会话并认领任务后再注入故障；长会话夹具使用 `activeWorkspace.id` 作为交接和分支的 owner。`recovery-contract-acceptance.mjs` 将九指标结论写入 `acceptance.json`，候选未通过时以非零状态退出。每个跑次单独保留 Playwright 诊断，关闭隐式重试，避免覆盖原始失败。
@@ -7,6 +9,8 @@
 Windows 插件加载将 `file:` URL 转回原生路径后执行已编译 JavaScript，并按同一身份清理模块缓存。源码插件与依赖加载失败沿用原回退策略。
 
 插件发现会在持久索引缺失或过期时重建完整元数据快照。运行时入口、静态模型目录与别名查询在 owner 确认配置和作用域兼容后复用该快照，保留初次索引诊断；插件重载或重启由原生命周期 owner 更新快照。
+
+插件自动启用判断也复用同一快照中的目录发现结果。provider 解析将已准备的发现结果传入激活判断；显式传入的结果保持优先，快照作用域校验继续由原 owner 执行。
 
 快照保存插件发现环境和模型归一化登记，捕获与还原继续保留原绑定。插件根目录、配置加载路径、source overlay、Nix 模式或实际 host 兼容版本变化时，查询转入原发现路径；省略配置时按默认加载路径核对。`OPENCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY` 开启时，索引与清单查询都使用派生路径并返回禁用诊断。
 
