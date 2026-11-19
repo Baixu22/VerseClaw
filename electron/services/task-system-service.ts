@@ -332,10 +332,11 @@ export async function taskSystemCommand(
 ): Promise<unknown> {
   const store = await openTaskSystem(workspaceId, !['history', 'readRetainedArtifact'].includes(command.action));
   if (!store) throw new Error("TASK_STORE_UNAVAILABLE");
-  const generationFor = async (sessionKey: string, bindingWorkspaceId = workspaceId) => {
+  const generationFor = async (sessionKey: string, bindingWorkspaceId = workspaceId, allowUserPaused = false) => {
     if (!gateway) throw new Error("TASK_SESSION_OWNER_UNAVAILABLE");
     const binding = await getPersistedCoordinatorBinding(bindingWorkspaceId, sessionKey);
-    if (!binding || binding.state !== "active") throw new Error("TASK_COORDINATOR_REQUIRED");
+    if (!binding || (binding.state !== "active" && !(allowUserPaused && binding.state === "paused" && binding.invalidationReason === "user-paused")))
+      throw new Error("TASK_COORDINATOR_REQUIRED");
     const described = await gateway.rpc<{ session?: { sessionId?: string } }>(
       "sessions.describe",
       { key: sessionKey },
@@ -406,7 +407,7 @@ export async function taskSystemCommand(
       }
     }
     const credential = command.credential;
-    const current = await generationFor(credential.sessionKey);
+    const current = await generationFor(credential.sessionKey, workspaceId, command.action === "cancel" || command.action === "reconcile");
     if (current.generation !== credential.generation) throw new Error("TASK_GENERATION_STALE");
     const scoped = openExecutionTaskStore(current.worktree);
     try {
@@ -455,7 +456,7 @@ export async function taskSystemCommand(
       if (command.action === "cancel") {
         const cancelled = scoped.control(credential, "cancel");
         if (cancelled.contract.state === "cancelling" && gateway)
-          await gateway.rpc("sessions.stop", { key: credential.sessionKey }, 20_000);
+          await gateway.rpc("sessions.stop", { key: credential.sessionKey, expectedSessionId: credential.generation }, 20_000);
         return scoped.get(credential.taskNodeId);
       }
       return scoped.control(credential, command.action);

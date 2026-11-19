@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, observeSessionUi } from './fixtures/session-task-chain';
-import type { TaskLedgerSnapshotResult } from '../../shared/host-api/contract';
+import type { TaskLedgerSnapshotResult, WorkspaceCoordinatorBindingResult } from '../../shared/host-api/contract';
 import type { ProjectPlanSnapshot, TaskEvidence, TaskSessionSnapshot, TaskView } from '../../shared/task-system/types';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
@@ -258,6 +258,9 @@ test('hands a project checkpoint to the new coordinator and rejects a late compl
         taskNodeId: original.taskNodeId, sessionKey: operation.sessionKey, generation: operation.sessionGeneration,
         epoch: original.epoch + 1,
       } });
+      expect(await hostInvoke(app, 'taskLedger', 'command', {
+        workspaceId: project.workspaceId, command: { action: 'cancel', credential: original },
+      })).toMatchObject({ success: false, error: 'TASK_COORDINATOR_REQUIRED' });
       const old = await hostInvoke<{ session?: { sessionId?: string } }>(app, 'gateway', 'rpc', {
         method: 'sessions.describe', params: { key: project.sessionKey },
       });
@@ -304,7 +307,12 @@ test('hands a project checkpoint to the new coordinator and rejects a late compl
   }
 });
 
-test('resumes the project coordinator from its confirmed checkpoint after an in-flight Gateway restart', async ({ launchElectronApp }, info) => {
+for (const mode of ['restart', 'unknown-effect', 'controls'] as const) test(
+  mode === 'unknown-effect' ? 'blocks project replay after an in-flight Gateway restart until the effect owner reconciles'
+    : mode === 'controls' ? 'separates project dispatch pause, run stop and task cancellation'
+      : 'resumes the project coordinator from its confirmed checkpoint after an in-flight Gateway restart',
+  async ({ launchElectronApp, userDataDir }, info) => {
+  const unknownEffect = mode === 'unknown-effect';
   test.setTimeout(300_000);
   const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', windowsHide: true }).trim();
   const sourceCandidate = git('rev-parse', 'HEAD');
@@ -316,12 +324,15 @@ test('resumes the project coordinator from its confirmed checkpoint after an in-
   const checkpoint = { nextAction: 'Read the confirmed restart checkpoint', completed: [], unresolved: [], artifacts: [] };
   const resumed = { ...checkpoint, nextAction: 'Checkpoint recovered from disk' };
   const recoveryPrompt = 'Your previous turn was interrupted by a gateway restart';
+  const reconciledPrompt = 'Continue from the checkpoint after effect-owner reconciliation.';
   const marker = 'P3 checkpoint recovery finished.';
   let releaseProvider!: () => void;
   const hold = new Promise<void>(resolve => { releaseProvider = resolve; });
   let interruptedRequests = 0;
+  let automaticRecoveryCalls = 0;
   const llm = await startScriptedLlm(async (text, results) => {
-    if (text.includes(recoveryPrompt)) {
+    if (text.includes(recoveryPrompt)) automaticRecoveryCalls++;
+    if (text.includes(recoveryPrompt) || text.includes(reconciledPrompt)) {
       if (!Object.hasOwn(results, 'restartread')) return { toolCall: { id: 'restartread', name: 'task_control', args: { action: 'current' } } };
       const task = JSON.parse(results.restartread) as TaskView | null;
       if (task?.checkpoint?.nextAction !== checkpoint.nextAction) return { text: 'Restart checkpoint missing.' };
@@ -340,6 +351,26 @@ test('resumes the project coordinator from its confirmed checkpoint after an in-
     git('init', '-b', 'main', root);
     git('-C', root, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'Fixture base');
     const project = await createSessionChainProject(app, root, 'Checkpoint restart');
+    const scope = { workspaceId: project.workspaceId, sessionKey: project.sessionKey, agentId: 'main' };
+    let bindingInput: Record<string, unknown> | undefined;
+    let bindingRevision: number | undefined;
+    if (mode === 'controls') {
+      const config = await hostInvoke<{ hash: string }>(app, 'gateway', 'rpc', { method: 'config.get', params: {} });
+      await hostInvoke(app, 'gateway', 'rpc', { method: 'config.patch', params: { baseHash: config.hash,
+        raw: JSON.stringify({ runtime: { providerBudget: { project: { maxTokens: 4_000_000 } } } }), note: 'Fixture project budget' } });
+      await hostInvoke(app, 'gateway', 'stop');
+      await startGateway(app);
+      const ledger = await hostInvoke<TaskLedgerSnapshotResult>(app, 'taskLedger', 'createNode', {
+        workspaceId: project.workspaceId, node: { title: 'Project controls', kind: 'task', status: 'todo' }, idempotencyKey: 'p3-controls-binding',
+      });
+      const taskRef = ledger.snapshot.nodes.find(node => node.title === 'Project controls');
+      if (!taskRef) throw new Error('Missing coordinator binding task');
+      bindingInput = { ...scope, expectedRevision: 0, taskLedgerNodeIds: [taskRef.id],
+        environment: { kind: 'local', rootPath: root }, archiveRestorePolicy: 'restore' };
+      const bound = await hostInvoke<WorkspaceCoordinatorBindingResult>(app, 'workspaces', 'bindCoordinator', bindingInput);
+      expect(bound).toMatchObject({ recovery: { state: 'ready' }, binding: { sessionGeneration: project.generation } });
+      bindingRevision = bound.binding!.bindingRevision;
+    }
     const store = new TaskSystemStore(resolveTaskDomain(root));
     try {
       const goal = { objective: 'Recover the current project task', target: '.', constraints: [], acceptance: [{
@@ -348,7 +379,7 @@ test('resumes the project coordinator from its confirmed checkpoint after an in-
       const plan = store.saveProjectPlan(project, { goal, requestId: 'restart-plan', nextAction: goal.objective, children: [{ key: 'recover', contract: goal }] });
       const original = store.startNextPlanTask(project, plan.taskNodeId, plan.revision, 'claim-for-restart').claim!;
       store.checkpoint(original, checkpoint);
-      const describe = () => hostInvoke<{ session: { sessionId: string; hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
+      const describe = () => hostInvoke<{ session: { sessionId: string; hasActiveRun: boolean; status?: string } }>(app, 'gateway', 'rpc', {
         method: 'sessions.describe', params: { key: project.sessionKey },
       });
       const priorGateway = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
@@ -364,12 +395,120 @@ test('resumes the project coordinator from its confirmed checkpoint after an in-
       const activeRun = store.db.prepare('SELECT epoch, run_id, owner_pid FROM task_active_runs WHERE task_id=?')
         .get(original.taskNodeId);
       expect(activeRun).toEqual({ epoch: original.epoch, run_id: sent.result.runId, owner_pid: priorGateway.pid });
+      if (mode === 'controls') {
+        const paused = await hostInvoke<WorkspaceCoordinatorBindingResult>(app, 'workspaces', 'pauseCoordinator', {
+          ...scope, expectedRevision: bindingRevision,
+        });
+        expect(paused.binding).toMatchObject({ state: 'paused', invalidationReason: 'user-paused' });
+        const idle = async () => !(await describe()).session.hasActiveRun;
+        expect(await idle()).toBe(false);
+        const stopped = await hostInvoke(app, 'sessions', 'stop', { ...scope, expectedSessionId: original.generation });
+        expect(stopped).toMatchObject({ success: true, stopped: true, expectedSessionId: original.generation,
+          resourceReclamation: { action: 'run-cancel' } });
+        releaseProvider();
+        await expect.poll(idle).toBe(true);
+        const afterStop = store.get(original.taskNodeId);
+        expect(afterStop).toMatchObject({ contract: { state: 'doing' }, checkpoint, claim: { epoch: original.epoch, state: 'active' } });
+        const dispatch = () => hostInvoke<SessionDelegationResult>(app, 'sessions', 'dispatchPlanTask', {
+          ...scope, expectedSessionGeneration: original.generation, planId: plan.taskNodeId, expectedRevision: plan.revision,
+          expectedChildId: original.taskNodeId,
+        });
+        const pausedDispatch = await dispatch();
+        expect(pausedDispatch).toMatchObject({ status: 'rejected', error: 'TASK_PROJECT_COORDINATOR_REQUIRED' });
+        const completionAttempts = llm.log.length;
+        store.beginOperation(original, 'control-pending-effect', 'write');
+        const missingPausedReceipt = await hostInvoke(app, 'taskLedger', 'command', {
+          workspaceId: project.workspaceId, command: { action: 'reconcile', credential: original,
+            operationId: 'control-pending-effect', effectReceiptId: 'missing-control-receipt' },
+        });
+        expect(missingPausedReceipt).toMatchObject({ success: false, error: expect.stringContaining('TASK_EFFECT_RECEIPT_UNAVAILABLE') });
+        const cancelTask = (generation = original.generation) => hostInvoke<{ success: boolean; error?: string; result?: TaskView }>(app, 'taskLedger', 'command', {
+          workspaceId: project.workspaceId, command: { action: 'cancel', credential: { ...original, generation } },
+        });
+        const staleCancel = await cancelTask('earlier-generation');
+        expect(staleCancel).toMatchObject({ success: false, error: 'TASK_GENERATION_STALE' });
+        const cancel = await cancelTask();
+        expect(cancel.error).toBeUndefined();
+        expect(cancel).toMatchObject({ success: true, result: { contract: { state: 'cancelling' }, pendingOperations: 1 } });
+        const whileCancelling = store.get(original.taskNodeId);
+        expect(whileCancelling).toMatchObject({ contract: { state: 'cancelling' }, checkpoint, pendingOperations: 1 });
+        expect(() => store.beginOperation(original, 'late-write', 'write')).toThrow('TASK_EXECUTION_NOT_RUNNING');
+        store.finishOperation(original, 'control-pending-effect', 'completed', 'Fixture effect owner settled the write');
+        const cancelled = store.get(original.taskNodeId);
+        expect(cancelled).toMatchObject({ contract: { state: 'cancelled' }, checkpoint, pendingOperations: 0,
+          claim: { epoch: original.epoch + 1, state: 'released' } });
+        const unpaused = await hostInvoke<WorkspaceCoordinatorBindingResult>(app, 'workspaces', 'bindCoordinator', {
+          ...bindingInput, expectedRevision: paused.binding!.bindingRevision,
+        });
+        expect(unpaused.recovery.state).toBe('ready');
+        const cancelledDispatch = await dispatch();
+        expect(cancelledDispatch).toMatchObject({ status: 'rejected', error: 'TASK_PROJECT_NO_READY_CHILD' });
+        expect(llm.log).toHaveLength(completionAttempts);
+        await writeFile(info.outputPath('project-control-readback.json'), `${JSON.stringify({
+          driven_by: 'agent', actor: 'playwright-project-controls', sourceCandidate, original, activeRun,
+          paused, stopped, afterStop, pausedDispatch, missingPausedReceipt, staleCancel, whileCancelling, cancelled, cancelledDispatch,
+          events: store.history(original.taskNodeId), modelCallsAfterStop: completionAttempts, modelCallsAfterCancel: llm.log.length,
+        }, null, 2)}\n`);
+        return;
+      }
+      const toolCallId = 'fixture-write';
+      const operationId = `${sent.result.runId}:${toolCallId}`;
+      const effectPath = join(root, 'unconfirmed.txt');
+      const effectBytes = 'A fixture write with a missing effect receipt.\n';
+      if (unknownEffect) {
+        store.beginOperation(original, operationId, 'write');
+        await writeFile(effectPath, effectBytes, { flag: 'wx' });
+        store.finishOperation(original, operationId, 'unknown', 'Fixture lost the effect acknowledgement');
+      }
       await hostInvoke(app, 'gateway', 'stop');
       releaseProvider();
       await startGateway(app);
       const nextGateway = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
       expect(nextGateway.pid).toBeGreaterThan(0);
       expect(nextGateway.pid).not.toBe(priorGateway.pid);
+      let effectReadback: unknown;
+      if (unknownEffect) {
+        await expect.poll(async () => (await describe()).session.status, { timeout: 75_000 }).toBe('failed');
+        expect(automaticRecoveryCalls).toBe(0);
+        const blocked = store.get(original.taskNodeId);
+        expect(blocked).toMatchObject({ checkpoint, pendingOperations: 1, pendingOperationDetails: [{ operationId, state: 'unknown' }] });
+        expect(store.history(original.taskNodeId).some(event => event.kind === 'interrupted_run_replaced')).toBe(false);
+        const reconcile = (effectReceiptId: string, generation = original.generation) => hostInvoke(app, 'gateway', 'rpc', {
+          method: 'tasks.contract.reconcile', params: { workspaceDir: root, credential: { ...original, generation }, operationId, effectReceiptId },
+        });
+        await expect(reconcile('missing-fixture-receipt')).rejects.toThrow('TASK_EFFECT_RECEIPT_UNAVAILABLE');
+        const observed = await readFile(effectPath);
+        expect(observed.toString('utf8')).toBe(effectBytes);
+        const sha256 = createHash('sha256').update(observed).digest('hex');
+        const { EffectReceiptStore } = await import('../../openclaw_runtime/src/agents/effect-receipt');
+        const { closeOpenClawStateDatabase } = await import('../../openclaw_runtime/src/state/openclaw-state-db');
+        const receipts = new EffectReceiptStore({ path: join(userDataDir, 'openclaw-source-state', 'state', 'openclaw.sqlite') });
+        try {
+          const receipt = receipts.record({ idempotencyKey: operationId, proposal: { sha256 }, outcome: 'applied',
+            domainExecutor: 'playwright-fixture-write-owner', recoverability: 'owner-readback', stage1Context: {
+              actor: { sessionKey: original.sessionKey, runId: sent.result.runId, attemptIndex: 1, modelCallIndex: 1, actorKind: 'principal' },
+              effect: { toolCallId, toolName: 'write', resource: 'workspace:unconfirmed.txt', action: 'write' },
+            } });
+          expect(receipt.ok).toBe(true);
+          const owner = receipts.getById(receipt.effectReceiptId);
+          expect(owner?.outcome).toBe('applied');
+          await expect(reconcile(receipt.effectReceiptId, 'stale-generation')).rejects.toThrow('TASK_GENERATION_STALE');
+          expect(store.get(original.taskNodeId).pendingOperations).toBe(1);
+          for (let replay = 0; replay < 2; replay++) expect(await reconcile(receipt.effectReceiptId)).toMatchObject({
+            success: true, task: { checkpoint, pendingOperations: 0 },
+          });
+          const reconciled = store.history(original.taskNodeId).filter(event => event.kind === 'effect_reconciled');
+          expect(reconciled).toHaveLength(1);
+          expect(JSON.parse(reconciled[0].json)).toMatchObject({ operationId, receipt: { id: receipt.effectReceiptId, outcome: 'applied' } });
+          effectReadback = { blocked, owner, sha256, reconciled, automaticRecoveryCalls };
+        } finally {
+          closeOpenClawStateDatabase();
+        }
+        const retry = await hostInvoke<{ success: boolean }>(app, 'chat', 'sendWithMedia', {
+          workspaceId: project.workspaceId, sessionKey: project.sessionKey, message: reconciledPrompt, idempotencyKey: 'p3-restart-reconciled-turn',
+        });
+        expect(retry.success).toBe(true);
+      }
       await expect.poll(() => store.get(original.taskNodeId).checkpoint, { timeout: 75_000 }).toEqual(resumed);
       await expect.poll(async () => {
         const history = await hostInvoke<{ messages: unknown[] }>(app, 'sessions', 'history', { sessionKey: project.sessionKey });
@@ -397,14 +536,14 @@ test('resumes the project coordinator from its confirmed checkpoint after an in-
         driven_by: 'agent', actor: 'playwright-project-checkpoint-restart', sourceCandidate, project,
         priorGateway: priorGateway.pid, nextGateway: nextGateway.pid, interruptedRequests, originalRunId: sent.result.runId,
         inFlight: inFlight.session, resumedGeneration: after.session.sessionId,
-        original, activeRun, recoveredTask, replacements, checkpoints, resumed: finalTask,
+        original, activeRun, recoveredTask, replacements, checkpoints, resumed: finalTask, effectReadback,
       }, null, 2)}\n`);
     } finally {
       store.close();
     }
   } finally {
     releaseProvider();
-    await writeFile(info.outputPath('restart-provider.json'), JSON.stringify({ interruptedRequests, log: llm.log, anomalies: llm.anomalies }, null, 2));
+    await writeFile(info.outputPath('restart-provider.json'), JSON.stringify({ interruptedRequests, automaticRecoveryCalls, log: llm.log, anomalies: llm.anomalies }, null, 2));
     await hostInvoke(app, 'gateway', 'stop').catch(() => undefined);
     await closeElectronApp(app);
     llm.server.closeAllConnections();
