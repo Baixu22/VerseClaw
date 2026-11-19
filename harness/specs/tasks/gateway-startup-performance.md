@@ -4,10 +4,17 @@ id: gateway-startup-performance
 title: Reduce Gateway startup latency with measured evidence
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+residualPaths:
+  # Concurrent repository reviewer-model policy synchronization.
+  - AGENTS.md
 intent: Measure the managed Gateway startup path and remove verified startup bottlenecks while preserving authentication, readiness, channels, and restart ownership.
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - openclaw_runtime/src/channels/config-presence.ts
+  - openclaw_runtime/src/plugins/plugin-lookup-table.ts
+  - tests/unit/gateway-channel-presence-discovery.test.ts
+  - tests/unit/gateway-startup-prepared-discovery.test.ts
   - docs/dev/recovery-contract/GA-READINESS-20261106.md
   - harness/specs/tasks/recovery-authority-gated.md
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/sdk-alias-20261119/**
@@ -74,6 +81,8 @@ requiredRules:
   - gateway-readiness-policy
   - repository-artifact-retention
 requiredTests:
+  - tests/unit/gateway-startup-prepared-discovery.test.ts
+  - tests/unit/gateway-channel-presence-discovery.test.ts
   - tests/unit/gateway-sdk-alias-dependencies.test.ts
   - tests/unit/gateway-host-time-format.test.ts
   - tests/unit/gateway-agent-startup-scope.test.ts
@@ -88,6 +97,7 @@ requiredTests:
   - tests/unit/gateway-process-launcher-trace.test.ts
   - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
+  - Gateway startup plans and lookup tables reuse discovery from a compatible prepared metadata snapshot for channel scope and final activation. Missing discovery and changed roots retain discovery fallback; explicit channel disables and stored-auth exclusion remain intact.
   - Compiled SDK alias resolution checks each shared dependency once per map. Missing dependencies and unreadable barrels retain source fallback or omit unavailable exports; availability remains scoped to the resolved package root.
   - Windows host time detection reads the OS short-time pattern without loading shell profiles. Explicit 12/24-hour settings and the existing Intl fallback remain available.
   - Agent startup borrows the compatible Gateway startup plugin scope through its metadata owner. Missing plans and mismatched workspaces retain standalone resolution; existing runtime-registry ownership controls reuse and subagent bindings.

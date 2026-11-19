@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { expect, it, vi } from 'vitest';
-import { listPotentialConfiguredChannelIds } from '../../openclaw_runtime/src/channels/config-presence';
+import { listPotentialEnabledChannelIds } from '../../openclaw_runtime/src/channels/config-presence';
 import {
   createConfigValidationMetadataPluginIdScope,
   createGatewayStartupMetadataPluginIdScope,
@@ -9,7 +9,7 @@ import type { InstalledPluginIndex } from '../../openclaw_runtime/src/plugins/in
 
 vi.mock('../../openclaw_runtime/src/channels/config-presence', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../../openclaw_runtime/src/channels/config-presence')>();
-  return { ...actual, listPotentialConfiguredChannelIds: vi.fn(actual.listPotentialConfiguredChannelIds) };
+  return { ...actual, listPotentialEnabledChannelIds: vi.fn(actual.listPotentialEnabledChannelIds) };
 });
 
 const index: InstalledPluginIndex = {
@@ -26,7 +26,7 @@ it.each([
   createConfigValidationMetadataPluginIdScope,
   createGatewayStartupMetadataPluginIdScope,
 ])('%p resolves from the channel signals captured in its lookup key', (createScope) => {
-  const scan = vi.mocked(listPotentialConfiguredChannelIds);
+  const scan = vi.mocked(listPotentialEnabledChannelIds);
   scan.mockClear();
   scan.mockImplementation((_config, env) => env?.CHANNEL_TEST ? [env.CHANNEL_TEST] : []);
   const config = { plugins: { allow: ['channel-a'], slots: { memory: 'none' } } };

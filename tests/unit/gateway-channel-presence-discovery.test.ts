@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { hasPotentialConfiguredChannels, listPotentialConfiguredChannelPresenceSignals } from '../../openclaw_runtime/src/channels/config-presence';
+import { hasPotentialConfiguredChannels, listPotentialConfiguredChannelPresenceSignals, listPotentialEnabledChannelIds } from '../../openclaw_runtime/src/channels/config-presence';
 import { discoverOpenClawPlugins, type PluginDiscoveryResult } from '../../openclaw_runtime/src/plugins/discovery';
 
 vi.mock('../../openclaw_runtime/src/plugins/discovery', async (original) => ({
@@ -45,5 +45,15 @@ it('uses supplied discovery or channel ids and skips discovery on an explicit co
   expect(listPotentialConfiguredChannelPresenceSignals({}, env, { discovery: catalog('first') })).toEqual([{ channelId: 'first', source: 'env' }]);
   expect(hasPotentialConfiguredChannels({}, env, { channelIds: ['first'] })).toBe(true);
   expect(hasPotentialConfiguredChannels({ channels: { defaults: {}, custom: { enabled: true, account: 'x' } } }, env)).toBe(true);
+  expect(discover).not.toHaveBeenCalled();
+});
+
+it('startup candidates skip stored auth and honor explicit disables with prepared discovery', () => {
+  const env = { OPENCLAW_STATE_DIR: dir, FIXTURE_AUTH: 'yes', FIRST_TOKEN: '' };
+  const prepared = catalog('first');
+  expect(listPotentialEnabledChannelIds({}, env, prepared)).toEqual([]);
+  env.FIRST_TOKEN = 'present';
+  expect(listPotentialEnabledChannelIds({}, env, prepared)).toEqual(['first']);
+  expect(listPotentialEnabledChannelIds({ channels: { first: { enabled: false } } }, env, prepared)).toEqual([]);
   expect(discover).not.toHaveBeenCalled();
 });

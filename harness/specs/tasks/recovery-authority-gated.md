@@ -7,7 +7,12 @@ taskType: runtime-bridge
 intent: Complete TF-0715 with owner-bound, durable recovery decisions and finite attempts for main sessions, subagents, final delivery, ACP, and goal-wake; prepare the existing frozen GA acceptance without changing defaults or thresholds.
 diffBase: 05d787213
 humanEvidence: not-required
+residualPaths:
+  # Concurrent repository reviewer-model policy synchronization.
+  - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/plugins/plugin-lookup-table.ts
+  - tests/unit/gateway-startup-prepared-discovery.test.ts
   - openclaw_runtime/src/plugins/sdk-alias.ts
   - tests/unit/gateway-sdk-alias-dependencies.test.ts
   - openclaw_runtime/src/agents/date-time.ts
@@ -256,6 +261,7 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-startup-prepared-discovery.test.ts
   - tests/unit/gateway-sdk-alias-dependencies.test.ts
   - tests/unit/gateway-host-time-format.test.ts
   - tests/unit/gateway-agent-startup-scope.test.ts
@@ -303,6 +309,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Gateway startup plans and lookup tables reuse discovery from a compatible prepared metadata snapshot for channel scope and final activation. Missing discovery and changed roots retain discovery fallback; explicit channel disables and stored-auth exclusion remain intact.
   - Compiled SDK alias resolution checks each shared dependency once per map. Missing dependencies and unreadable barrels retain source fallback or omit unavailable exports; availability remains scoped to the resolved package root.
   - Windows host time detection reads the OS short-time pattern without loading shell profiles. Explicit 12/24-hour settings and the existing Intl fallback remain available.
   - Agent startup borrows the compatible Gateway startup plugin scope through its metadata owner. Missing plans and mismatched workspaces retain standalone resolution; existing runtime-registry ownership controls reuse and subagent bindings.

@@ -234,3 +234,16 @@ export function hasPotentialConfiguredChannels(
   }
   return hasEnvConfiguredChannel(cfg ?? {}, env, scopePresenceDiscovery(options, env));
 }
+
+/** Lists startup channel candidates from config/env, excluding explicit disables and stored auth. */
+export function listPotentialEnabledChannelIds(
+  config: OpenClawConfig,
+  env: NodeJS.ProcessEnv,
+  discovery?: PluginDiscoveryResult,
+): string[] {
+  const disabled = new Set(listExplicitlyDisabledChannelIdsForConfig(config));
+  const presenceOptions = { includePersistedAuthState: false, discovery };
+  return listPotentialConfiguredChannelIds(config, env, presenceOptions)
+    .map((id) => normalizeOptionalLowercaseString(id) ?? "")
+    .filter((id) => id && !disabled.has(id));
+}

@@ -59,14 +59,7 @@ export function clearPluginLookUpTableMemoForTest(): void {
 
 export function loadPluginLookUpTable(params: LoadPluginLookUpTableParams): PluginLookUpTable {
   const requestedSnapshotConfig = params.activationSourceConfig ?? params.config;
-  const pluginIdScope = createGatewayStartupMetadataPluginIdScope({
-    config: params.config,
-    ...(params.activationSourceConfig !== undefined
-      ? { activationSourceConfig: params.activationSourceConfig }
-      : {}),
-    env: params.env,
-  });
-  const metadataSnapshot =
+  const compatibleSnapshot =
     params.metadataSnapshot &&
     isPluginMetadataSnapshotCompatible({
       snapshot: params.metadataSnapshot,
@@ -75,12 +68,22 @@ export function loadPluginLookUpTable(params: LoadPluginLookUpTableParams): Plug
       allowScopedSnapshot: true,
       workspaceDir: params.workspaceDir,
       index: params.index,
-    }) &&
-    isMetadataSnapshotScopedForGatewayStartup({
-      metadataSnapshot: params.metadataSnapshot,
-      pluginIdScope,
     })
       ? params.metadataSnapshot
+      : undefined;
+  const pluginIdScope = createGatewayStartupMetadataPluginIdScope({
+    config: params.config,
+    activationSourceConfig: params.activationSourceConfig,
+    env: params.env,
+    discovery: compatibleSnapshot?.discovery,
+  });
+  const metadataSnapshot =
+    compatibleSnapshot &&
+    isMetadataSnapshotScopedForGatewayStartup({
+      metadataSnapshot: compatibleSnapshot,
+      pluginIdScope,
+    })
+      ? compatibleSnapshot
       : resolvePluginMetadataSnapshot({
           config: requestedSnapshotConfig,
           workspaceDir: params.workspaceDir,
@@ -98,12 +101,11 @@ export function loadPluginLookUpTable(params: LoadPluginLookUpTableParams): Plug
   const startupPlanStartedAt = performance.now();
   const startup = resolveGatewayStartupPluginPlanFromRegistry({
     config: params.config,
-    ...(params.activationSourceConfig !== undefined
-      ? { activationSourceConfig: params.activationSourceConfig }
-      : {}),
+    activationSourceConfig: params.activationSourceConfig,
     env: params.env,
     index,
     manifestRegistry,
+    discovery: metadataSnapshot.discovery,
   });
   const startupPlanMs = performance.now() - startupPlanStartedAt;
 
