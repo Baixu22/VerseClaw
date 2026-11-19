@@ -293,6 +293,8 @@ test('a project coordinator saves, revises and reopens its owner-backed plan', a
     const setupReceipts: TaskEvidence[] = [];
     for (const [index, prompt] of completionPrompts.entries()) {
       await send(prompt);
+      const accepted = JSON.parse(await readToolResult(`fixture${index}accept`)) as TaskView;
+      expect(accepted.contract).toMatchObject({ taskNodeId: plan.children[index].contract.taskNodeId, state: 'done' });
       await expect.poll(async () => (await read()).projectPlan?.children[index].contract.state, {timeout:60_000}).toBe('done');
       setupReceipts.push(JSON.parse(await readToolResult(`fixture${index}verify`)) as TaskEvidence);
     }
