@@ -149,7 +149,8 @@
     "harness/specs/fixtures/autonomous-project-system/p4/report.json",
     "harness/specs/fixtures/autonomous-project-system/p4/task-closeout.json",
     "harness/specs/fixtures/autonomous-project-system/p4/verifier-report.json",
-    "harness/specs/fixtures/autonomous-project-system/p4/verify.py"
+    "harness/specs/fixtures/autonomous-project-system/p4/verify.py",
+    "harness/specs/fixtures/autonomous-project-system/p4/supplemental-checks.json"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",

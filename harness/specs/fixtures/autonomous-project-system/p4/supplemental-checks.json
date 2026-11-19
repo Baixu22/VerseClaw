@@ -1,0 +1,264 @@
+{
+  "actor": "codex-tf0678",
+  "sourceCandidate": "acb6869d46a5ce44815d33d35ee256bea5218cbc",
+  "elapsedMs": 28868,
+  "executionHead": "814845fae7154fc807388087e49005088bb9acd9",
+  "command": [
+    "node",
+    "scripts/run-vitest.mjs",
+    "src/agents/tool-mutation.test.ts",
+    "--reporter=json",
+    "--outputFile=D:/tmp/tf0678-20261119-01a1f347/final-r2/tool-mutation.json"
+  ],
+  "exit": 0,
+  "driven_by": "agent",
+  "sourceUnchanged": true,
+  "evidenceOnlyChanges": [
+    "harness/specs/fixtures/autonomous-project-system/p4/SHA256SUMS",
+    "harness/specs/fixtures/autonomous-project-system/p4/credential-scan.json",
+    "harness/specs/fixtures/autonomous-project-system/p4/fixed-candidate.json",
+    "harness/specs/fixtures/autonomous-project-system/p4/gates.json",
+    "harness/specs/fixtures/autonomous-project-system/p4/repair-history.json",
+    "harness/specs/fixtures/autonomous-project-system/p4/report.json",
+    "harness/specs/fixtures/autonomous-project-system/p4/task-closeout.json",
+    "harness/specs/fixtures/autonomous-project-system/p4/verifier-report.json",
+    "harness/specs/fixtures/autonomous-project-system/p4/verify.py",
+    "scripts/repository-artifacts.json"
+  ],
+  "source": {
+    "path": "D:/tmp/tf0678-20261119-01a1f347/final-r2/tool-mutation.json",
+    "sha256": "ec0676c873fed0a2e0744b22fccf3e386cece412dc92c89cebae771b4d2817af"
+  },
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 12,
+    "numPassedTests": 12,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1795111023612,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification allows waiting for delegated work without claiming the delegated writer",
+            "status": "passed",
+            "title": "allows waiting for delegated work without claiming the delegated writer",
+            "duration": 1.445400000000518,
+            "failureMessages": [],
+            "location": {
+              "line": 9,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification requires a task writer for output-producing modes of otherwise read-only tools",
+            "status": "passed",
+            "title": "requires a task writer for output-producing modes of otherwise read-only tools",
+            "duration": 0.5983999999989464,
+            "failureMessages": [],
+            "location": {
+              "line": 13,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification treats plain read-only subcommands as read-only",
+            "status": "passed",
+            "title": "treats plain read-only subcommands as read-only",
+            "duration": 0.6194999999988795,
+            "failureMessages": [],
+            "location": {
+              "line": 25,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification resolves the subcommand behind harmless global flags",
+            "status": "passed",
+            "title": "resolves the subcommand behind harmless global flags",
+            "duration": 0.26009999999951106,
+            "failureMessages": [],
+            "location": {
+              "line": 33,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification rejects config-injection global flags whatever the subcommand",
+            "status": "passed",
+            "title": "rejects config-injection global flags whatever the subcommand",
+            "duration": 0.26960000000144646,
+            "failureMessages": [],
+            "location": {
+              "line": 41,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification rejects flags that redirect git's helper binaries",
+            "status": "passed",
+            "title": "rejects flags that redirect git's helper binaries",
+            "duration": 0.17369999999937136,
+            "failureMessages": [],
+            "location": {
+              "line": 50,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification rejects flags that move the operation off the intended repository",
+            "status": "passed",
+            "title": "rejects flags that move the operation off the intended repository",
+            "duration": 0.20759999999972933,
+            "failureMessages": [],
+            "location": {
+              "line": 55,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification still rejects mutating subcommands, including behind global flags",
+            "status": "passed",
+            "title": "still rejects mutating subcommands, including behind global flags",
+            "duration": 0.18519999999989523,
+            "failureMessages": [],
+            "location": {
+              "line": 62,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification does not mistake a global flag value for the subcommand",
+            "status": "passed",
+            "title": "does not mistake a global flag value for the subcommand",
+            "duration": 0.20080000000052678,
+            "failureMessages": [],
+            "location": {
+              "line": 69,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification keeps existing unsafe-flag rejections for read-only subcommands",
+            "status": "passed",
+            "title": "keeps existing unsafe-flag rejections for read-only subcommands",
+            "duration": 0.20930000000043947,
+            "failureMessages": [],
+            "location": {
+              "line": 76,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification rejects a bare git invocation with no subcommand",
+            "status": "passed",
+            "title": "rejects a bare git invocation with no subcommand",
+            "duration": 0.10580000000118162,
+            "failureMessages": [],
+            "location": {
+              "line": 81,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "git command read-only classification"
+            ],
+            "fullName": "git command read-only classification rejects commands the simple tokenizer cannot prove safe",
+            "status": "passed",
+            "title": "rejects commands the simple tokenizer cannot prove safe",
+            "duration": 0.0853000000006432,
+            "failureMessages": [],
+            "location": {
+              "line": 87,
+              "column": 3
+            },
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1795111025501,
+        "endTime": 1795111025506.1057,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/tool-mutation.test.ts"
+      }
+    ]
+  }
+}
