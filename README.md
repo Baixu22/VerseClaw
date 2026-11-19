@@ -333,6 +333,7 @@ Open the plan’s task menu and choose **Dispatch next plan task** to start one 
 Completed workers resume the coordinator that started them. Completion retries preserve its session generation. Results for a replaced generation or a coordinator that handed off are rejected before a model call; the successor resumes from the saved task checkpoint.
 After a Gateway restart, an interrupted coordinator with a valid task claim resumes from the saved checkpoint once the previous process has exited and no task effects are unsettled.
 Pausing dispatch keeps the current run and lets you cancel its task or reconcile pending effects. Stopping a run keeps the task and its checkpoint.
+Cancelling a delegated task stops its worker and prevents late results from resuming the coordinator. A failed worker with settled effects releases its claim and leaves an unaccepted checkpoint; the coordinator can continue an independent ready task within its budget.
 
 Managed worktree cleanup preserves historical task artifacts under verified Git references and records the retained bytes in the original task history. Agents can trace acceptance and read those artifacts after the checkout is removed. Active tasks, unresolved effects and artifacts without a matching retained snapshot keep the checkout available.
 

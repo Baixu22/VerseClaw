@@ -14,6 +14,145 @@ import type { GatewayStatus } from '../../shared/types/gateway';
 import type { SessionDelegationResult } from '../../shared/types/session-delegation';
 import type { SessionHandoffOperation } from '../../shared/types/session-handoff';
 
+for (const mode of ['cancel', 'failure'] as const) test(
+  mode === 'cancel' ? 'cancels the active project worker without delivering its late result'
+    : 'advances an independent plan task after terminal worker failure',
+  async ({ launchElectronApp, userDataDir }, info) => {
+    test.setTimeout(360_000);
+    const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', windowsHide: true }).trim();
+    const sourceCandidate = git('rev-parse', 'HEAD');
+    if (process.env.CLAWX_P3_EXPECTED_HEAD) expect(sourceCandidate).toBe(process.env.CLAWX_P3_EXPECTED_HEAD);
+    const workerTask = 'P3 worker fault fixture';
+    const independentTask = 'Write the independent index';
+    let release!: () => void;
+    const hold = new Promise<void>(resolve => { release = resolve; });
+    let workerCalls = 0;
+    let completionCalls = 0;
+    const llm = await startScriptedLlm(async (text, results) => {
+      if (text.includes('A background task completed.') || text.includes('[Internal task completion event]')) {
+        completionCalls++;
+        if (mode === 'cancel') return { text: 'Unexpected cancellation wake.' };
+        if (!Object.hasOwn(results, 'failureplan')) return { toolCall: { id: 'failureplan', name: 'task_control', args: { action: 'planStatus' } } };
+        const plan = JSON.parse(results.failureplan) as ProjectPlanSnapshot;
+        if (plan.children?.[0]?.contract.state !== 'paused') return { text: 'Failed worker still holds its task.' };
+        if (!Object.hasOwn(results, 'independentclaim')) return { toolCall: { id: 'independentclaim', name: 'task_control', args: {
+          action: 'startNextPlanTask', taskNodeId: plan.task.contract.taskNodeId, expectedRevision: plan.task.contract.revision,
+          requestId: 'p3-worker-failure-next',
+        } } };
+        if ((JSON.parse(results.independentclaim) as TaskView)?.contract?.objective !== independentTask) return { text: 'Independent claim failed.' };
+        if (!Object.hasOwn(results, 'independentwrite')) return { toolCall: { id: 'independentwrite', name: 'write', args: {
+          path: 'index.txt', content: 'independent result',
+        } } };
+        return { text: 'Independent work advanced.' };
+      }
+      if (text.includes(workerTask)) {
+        workerCalls++;
+        if (mode === 'failure') return { rateLimited: true };
+        await hold;
+        return { toolCall: { id: 'lateworkerwrite', name: 'write', args: { path: 'late.txt', content: 'must not land' } } };
+      }
+      return { text: 'Fixture response.' };
+    });
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      await getStableWindow(app);
+      await configureSessionChainProvider(app, llm.port);
+      const root = info.outputPath('project');
+      await mkdir(root, { recursive: true });
+      git('init', '-b', 'main', root);
+      git('-C', root, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'Fixture base');
+      const workerModel = `${getOpenClawProviderKeyForType('custom', 'custom-p3worker')}/mock-worker`;
+      if (mode === 'failure') {
+        const now = new Date().toISOString();
+        expect(await hostInvoke(app, 'providers', 'createAccount', { account: {
+          id: 'custom-p3worker', vendorId: 'custom', label: 'Fault fixture', authMode: 'api_key', apiProtocol: 'openai-completions',
+          baseUrl: `http://127.0.0.1:${llm.port}/v1`, model: 'mock-worker', enabled: true, isDefault: false,
+          createdAt: now, updatedAt: now, modelProfile: { supportsReasoning: true, supportsVision: false, contextWindow: 128000, maxTokens: 4096 },
+        }, apiKey: 'local-fixture' })).toMatchObject({ success: true });
+      }
+      const project = await createSessionChainProject(app, root, 'Project worker faults');
+      const config = await hostInvoke<{ hash: string }>(app, 'gateway', 'rpc', { method: 'config.get', params: {} });
+      await hostInvoke(app, 'gateway', 'rpc', { method: 'config.patch', params: { baseHash: config.hash, raw: JSON.stringify({
+        runtime: { providerBudget: { project: { maxTokens: 4_000_000 } } },
+        ...(mode === 'failure' ? { agents: { defaults: { subagents: { model: { primary: workerModel, fallbacks: [] } } } } } : {}),
+      }), note: 'P3 worker fault fixture' } });
+      await hostInvoke(app, 'gateway', 'stop');
+      await startGateway(app);
+      const store = new TaskSystemStore(resolveTaskDomain(root));
+      try {
+        const goal = (objective: string, target: string) => ({ objective, target, constraints: [], acceptance: [{
+          id: 'file', description: 'Read the expected file', verification: { kind: 'owner-receipt' as const, owner: 'fixture' },
+        }] });
+        const plan = store.saveProjectPlan(project, { goal: goal('Handle a project worker fault', '.'), requestId: 'p3-worker-fault',
+          nextAction: workerTask, children: [
+            { key: 'fault', contract: goal(workerTask, 'late.txt') },
+            { key: 'dependent', contract: goal('Requires first result', 'dependent.txt'), dependsOn: ['fault'] },
+            ...(mode === 'failure' ? [{ key: 'independent', contract: goal(independentTask, 'index.txt') }] : []),
+          ],
+        });
+        const dispatch = { workspaceId: project.workspaceId, sessionKey: project.sessionKey, expectedSessionGeneration: project.generation,
+          planId: plan.taskNodeId, expectedRevision: plan.revision, expectedChildId: plan.childIds[0] };
+        const admitted = await hostInvoke<SessionDelegationResult>(app, 'sessions', 'dispatchPlanTask', dispatch);
+        expect(admitted, admitted.error).toMatchObject({ success: true, status: 'accepted' });
+        const worker = admitted.receipt!.children[0];
+        expect(worker).toMatchObject({ childSessionKey: expect.any(String), childRunId: expect.any(String) });
+        const readWorker = () => store.delegationForChild(worker.childSessionKey!);
+        await expect.poll(readWorker, { timeout: 60_000 }).not.toBeNull();
+        if (mode === 'cancel') {
+          await expect.poll(() => workerCalls, { timeout: 60_000 }).toBe(1);
+          const child = readWorker()!.child;
+          const cancel = (generation = child.generation) => hostInvoke(app, 'taskLedger', 'command', {
+            workspaceId: project.workspaceId, command: { action: 'cancel', credential: { ...child, generation } },
+          });
+          expect(await cancel('stale-worker')).toMatchObject({ success: false });
+          expect(await cancel()).toMatchObject({ success: true, result: { contract: { state: 'cancelled' } } });
+          release();
+          const describeChild = () => hostInvoke(app, 'gateway', 'rpc', { method: 'sessions.describe', params: { key: child.sessionKey } });
+          await expect.poll(describeChild).toMatchObject({ session: { sessionId: child.generation, hasActiveRun: false } });
+          await hostInvoke(app, 'gateway', 'stop');
+          await startGateway(app);
+          const replay = await hostInvoke(app, 'sessions', 'dispatchPlanTask', dispatch);
+          expect(replay).toMatchObject({ success: true, replayed: true });
+          expect(completionCalls).toBe(0);
+          expect(workerCalls).toBe(1);
+          await expect(readFile(join(root, 'late.txt'))).rejects.toMatchObject({ code: 'ENOENT' });
+          expect(readWorker()).toMatchObject({ phase: 'returned', terminalReceipt: { outcome: 'cancelled' } });
+        } else {
+          await expect.poll(() => readFile(join(root, 'index.txt'), 'utf8').catch((error: NodeJS.ErrnoException) => {
+            if (error.code === 'ENOENT') return null;
+            throw error;
+          }), { timeout: 100_000 }).toBe('independent result');
+          expect(workerCalls).toBeGreaterThan(0);
+          expect(llm.log.filter(row => row.issued === 'independentwrite')).toHaveLength(1);
+          expect(store.get(plan.childIds[0])).toMatchObject({ contract: { state: 'paused' }, claim: { state: 'released' } });
+          expect(store.get(plan.childIds[2]).claim).toMatchObject({ sessionKey: project.sessionKey, generation: project.generation, state: 'active' });
+          expect(store.getTaskEvidence(plan.childIds[0])).toEqual([]);
+        }
+        expect(store.get(plan.childIds[1]).claim).toBeNull();
+        const { DatabaseSync } = await import('node:sqlite');
+        const db = new DatabaseSync(join(userDataDir, 'openclaw-source-state', 'state', 'openclaw.sqlite'), { readOnly: true });
+        let registry, spend;
+        try {
+          registry = db.prepare(`SELECT run_id, ended_reason, outcome_json, completion_announced_at FROM subagent_runs WHERE run_id=?`).get(worker.childRunId!);
+          spend = db.prepare(`SELECT model, state, reserved_tokens, actual_tokens FROM provider_spend_calls WHERE json_extract(scope_json,'$.sessionKey')=?`).all(worker.childSessionKey!);
+        } finally { db.close(); }
+        await writeFile(info.outputPath('worker-fault-readback.json'), JSON.stringify({
+          driven_by: 'agent', actor: 'playwright-project-worker-fault', sourceCandidate, mode, worker, workerCalls, completionCalls,
+          delegation: readWorker(), registry, spend, plan, tasks: plan.childIds.map(id => store.get(id)),
+          events: plan.childIds.map(id => store.history(id)),
+        }, null, 2));
+      } finally { store.close(); }
+    } finally {
+      release();
+      await writeFile(info.outputPath('provider-log.json'), JSON.stringify({ log: llm.log, workerCalls, completionCalls, anomalies: llm.anomalies }, null, 2));
+      await hostInvoke(app, 'gateway', 'stop').catch(() => undefined);
+      await closeElectronApp(app);
+      llm.server.closeAllConnections();
+      await new Promise<void>(resolve => llm.server.close(() => resolve()));
+    }
+  },
+);
+
 test('a project coordinator saves, revises and reopens its owner-backed plan', async ({ launchElectronApp, userDataDir }, info) => {
   test.setTimeout(240_000);
   const sourceCandidate = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();

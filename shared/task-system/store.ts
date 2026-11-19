@@ -545,7 +545,9 @@ export class TaskSystemStore {
         if (plan.task.contract.state !== "ready") throw new Error("TASK_PLAN_NOT_EXECUTABLE");
         // A previous goal can still have a delegated writer after a newer plan is saved.
         const busy = this.db.prepare(`SELECT 1 FROM task_plan_children p JOIN task_contracts c ON c.id=p.child_id
-          WHERE c.state NOT IN ('ready','done','cancelled') AND EXISTS (SELECT 1 FROM task_events e
+          LEFT JOIN task_claims cl ON cl.task_id=c.id
+          WHERE c.state NOT IN ('ready','done','cancelled')
+          AND NOT (c.state='paused' AND COALESCE(cl.state,'')='released') AND EXISTS (SELECT 1 FROM task_events e
           WHERE e.task_id=p.parent_id AND e.kind='project_plan_saved' AND json_extract(e.json,'$.workspaceId')=?) LIMIT 1`)
           .get(scope.workspaceId);
         if (busy) throw new Error("TASK_PROJECT_WRITER_BUSY");
@@ -1116,6 +1118,11 @@ export class TaskSystemStore {
       childSessionKey,
     );
   }
+  writerDelegationFor(credential: TaskCredential): TaskWriterDelegation | null {
+    const d = this.delegationForChild(credential.sessionKey);
+    return d?.mode === "writer" && d.taskNodeId === credential.taskNodeId
+      && d.child.generation === credential.generation && d.child.epoch === credential.epoch ? d : null;
+  }
   markDelegationRecoveryRequired(childSessionKey: string, receipt: NonNullable<TaskWriterDelegation['terminalReceipt']>, reason: string): TaskWriterDelegation {
     return this.transaction(() => {
       const delegation = this.delegationForChild(childSessionKey);
@@ -1277,20 +1284,26 @@ export class TaskSystemStore {
         throw new Error("TASK_DELEGATION_TERMINAL_MISMATCH");
       if (d.phase === "returned") return d;
       const view = this.get(d.taskNodeId);
-      if (view.contract.state === "cancelling" && !view.pendingOperations) {
-        this.settleCancellation(d.taskNodeId);
+      if (view.contract.state === "cancelling" && view.claim && this.writerDelegationFor(view.claim)?.delegationId === d.delegationId) {
         d.phase = "returned";
-        d.terminalReceipt = receipt;
+        d.terminalReceipt = { ...receipt, outcome: "cancelled" };
         this.saveWriterDelegation(d);
+        this.settleCancellation(d.taskNodeId);
         return d;
       }
       const parentBinding = this.db
         .prepare("SELECT task_id FROM task_bindings WHERE session_key=?")
         .get(d.parent.sessionKey) as { task_id: string } | undefined;
+      const pauseFailedChild = d.mode === "writer" && view.contract.origin.source === "project-plan-child"
+        && view.contract.state === "doing" && ["error", "timeout"].includes(receipt.outcome);
+      const activeRun = pauseFailedChild ? this.db
+        .prepare("SELECT owner_pid FROM task_active_runs WHERE task_id=? AND epoch=?")
+        .get(d.taskNodeId, d.child.epoch) as { owner_pid: number | null } | undefined : undefined;
       if (
         receipt.parentGeneration !== d.parent.generation ||
         (d.mode === "writer" &&
-          (view.pendingOperations || (parentBinding && parentBinding.task_id !== d.taskNodeId)))
+          (view.pendingOperations || (activeRun && !runProcessExited(activeRun.owner_pid)) ||
+            (parentBinding && parentBinding.task_id !== d.taskNodeId)))
       ) {
         d.phase = "recovery_required";
         d.terminalReceipt = receipt;
@@ -1318,19 +1331,23 @@ export class TaskSystemStore {
           worktree: parentWorktree,
           epoch: c.epoch + 1,
           expiresAt: this.now() + LEASE_MS,
-          state: "active",
+          state: pauseFailedChild ? "released" : "active",
           attemptId: randomUUID(),
         };
         this.saveClaim(returned);
         this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(d.taskNodeId);
-        this.db
-          .prepare("INSERT INTO task_bindings VALUES(?,?,?,?)")
-          .run(returned.sessionKey, returned.taskNodeId, returned.generation, returned.epoch);
-        this.db.prepare("DELETE FROM task_references WHERE session_key=?").run(returned.sessionKey);
+        if (pauseFailedChild) {
+          this.saveContract({ ...view.contract, state: "paused", updatedAt: this.now() });
+          this.event(d.taskNodeId, "project_child_paused", { from: d.child, claim: returned, receipt });
+        } else {
+          this.db.prepare("INSERT INTO task_bindings VALUES(?,?,?,?)")
+            .run(returned.sessionKey, returned.taskNodeId, returned.generation, returned.epoch);
+          this.db.prepare("DELETE FROM task_references WHERE session_key=?").run(returned.sessionKey);
+          this.event(d.taskNodeId, "writer_returned", { from: d.child, to: returned, receipt });
+        }
         this.db
           .prepare("INSERT OR REPLACE INTO task_references VALUES(?,?,?,?)")
           .run(c.sessionKey, c.taskNodeId, c.generation, "observer");
-        this.event(d.taskNodeId, "writer_returned", { from: d.child, to: returned, receipt });
       }
       d.phase = "returned";
       d.terminalReceipt = receipt;
@@ -1352,7 +1369,9 @@ export class TaskSystemStore {
         }
       }
       const view = this.assertOwner(credential, action !== "renew");
-      if (action === "cancel" && view.childTaskNodeIds?.length) {
+      const worker = action === "cancel" ? this.writerDelegationFor(credential) : null;
+      if (action === "cancel" && (view.childTaskNodeIds?.length || view.contract.state === "cancelling"
+        || (worker && worker.phase !== "returned"))) {
         this.cancelPlan(credential.taskNodeId);
         return this.get(credential.taskNodeId);
       }
@@ -1550,6 +1569,7 @@ export class TaskSystemStore {
   beginRun(credential: TaskCredential, runId: string): void {
     this.transaction(() => {
       const view = this.assertOwner(credential);
+      if (view.contract.state === "cancelling") throw new Error("TASK_EXECUTION_NOT_RUNNING");
       const prior = this.db
         .prepare("SELECT epoch,run_id,owner_pid FROM task_active_runs WHERE task_id=?")
         .get(credential.taskNodeId) as { epoch: number; run_id: string; owner_pid: number | null } | undefined;
@@ -1697,18 +1717,24 @@ export class TaskSystemStore {
   private cancelPlan(taskNodeId: string): void {
     const view = this.get(taskNodeId);
     if (["done", "cancelled"].includes(view.contract.state)) return;
-    this.saveContract({ ...view.contract, state: "cancelling", updatedAt: this.now() });
-    this.event(taskNodeId, "cancel_requested", { source: "plan-coordinator", pendingOperations: view.pendingOperations });
+    if (view.contract.state !== "cancelling") {
+      this.saveContract({ ...view.contract, state: "cancelling", updatedAt: this.now() });
+      this.event(taskNodeId, "cancel_requested", { source: "plan-coordinator", pendingOperations: view.pendingOperations });
+    }
     for (const childId of view.childTaskNodeIds ?? []) this.cancelPlan(childId);
     this.settleCancellation(taskNodeId);
   }
   private settleCancellation(taskNodeId: string): void {
     const view = this.get(taskNodeId);
     if (view.contract.state !== "cancelling" || view.pendingOperations || view.childTaskNodeIds?.some((id) => !["done", "cancelled"].includes(this.get(id).contract.state))) return;
+    const worker = view.claim && this.writerDelegationFor(view.claim);
+    if (worker && worker.phase !== "returned") return;
     this.saveContract({ ...view.contract, state: "cancelled", updatedAt: this.now() });
     if (view.claim) this.saveClaim({ ...view.claim, state: "released", epoch: view.claim.epoch + 1 });
     this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(taskNodeId);
-    this.event(taskNodeId, "cancelled", { reason: "owned-operations-settled" });
+    if (worker) this.db.prepare("INSERT OR REPLACE INTO task_references VALUES(?,?,?,?)")
+      .run(worker.child.sessionKey, taskNodeId, worker.child.generation, "observer");
+    this.event(taskNodeId, "cancelled", { reason: "owned-work-settled" });
     if (view.parentTaskNodeId) this.settleCancellation(view.parentTaskNodeId);
   }
   operation(

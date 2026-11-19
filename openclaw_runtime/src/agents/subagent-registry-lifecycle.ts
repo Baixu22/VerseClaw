@@ -65,7 +65,7 @@ import { deleteSubagentSessionForCleanup } from "./subagent-session-cleanup.js";
 import { createWorktreeService } from './worktree-service.js';
 import { runSubagentVerseGitCleanup } from './subagent-versegit-cleanup.js';
 import { loadSubagentSessionEntry } from './subagent-session-reconciliation.js';
-import { returnPersistentTaskWriter } from './persistent-task-delegation.js';
+import { isCancelledPersistentTaskWorker, returnPersistentTaskWriter } from './persistent-task-delegation.js';
 
 type CaptureSubagentCompletionReply =
   (typeof import("./subagent-announce.js"))["captureSubagentCompletionReply"];
@@ -1089,6 +1089,10 @@ export function createSubagentRegistryLifecycleController(params: {
   };
 
   const startSubagentAnnounceCleanupFlow = (runId: string, entry: SubagentRunRecord): boolean => {
+    if (entry.expectsCompletionMessage !== false && isCancelledPersistentTaskWorker(entry)) {
+      entry.expectsCompletionMessage = false;
+      params.persist();
+    }
     if (typeof entry.delivery?.announcedAt === "number" || entry.delivery?.status === "delivered") {
       if (!beginSubagentCleanup(runId)) {
         return false;
@@ -1221,6 +1225,8 @@ export function createSubagentRegistryLifecycleController(params: {
     if (!entry) {
       return;
     }
+    const taskCancelled = isCancelledPersistentTaskWorker(entry);
+    if (taskCancelled && typeof entry.cleanupCompletedAt === "number") return;
 
     // Old terminal events cannot clean up a child owned by unresolved recovery.
     if (
@@ -1246,8 +1252,9 @@ export function createSubagentRegistryLifecycleController(params: {
     }
 
     let endedAt = typeof completeParams.endedAt === "number" ? completeParams.endedAt : Date.now();
-    let completionOutcome = completeParams.outcome;
-    let completionReason = completeParams.reason;
+    let completionOutcome: SubagentRunOutcome = taskCancelled
+      ? { status: "error", error: "Persistent task cancelled" } : completeParams.outcome;
+    let completionReason = taskCancelled ? SUBAGENT_ENDED_REASON_KILLED : completeParams.reason;
     if (
       shouldPreservePublishedExplicitRunTimeout({
         entry,
@@ -1274,7 +1281,7 @@ export function createSubagentRegistryLifecycleController(params: {
       nextEndedAt: endedAt,
       observedStartedAt,
     });
-    if (expiredDeadlineMs !== undefined) {
+    if (expiredDeadlineMs !== undefined && !taskCancelled) {
       endedAt = expiredDeadlineMs;
       completionOutcome = { status: "timeout" };
       completionReason = SUBAGENT_ENDED_REASON_COMPLETE;
@@ -1341,7 +1348,7 @@ export function createSubagentRegistryLifecycleController(params: {
     if(entry.workspaceDir){
       try{
         const parent=loadSubagentSessionEntry({childSessionKey:entry.requesterSessionKey});
-        returnPersistentTaskWriter({workspace:entry.workspaceDir,childSessionKey:entry.childSessionKey,runId:entry.runId,endedAt:entry.endedAt,outcome:outcome.status,parentGeneration:parent?.sessionId});
+        returnPersistentTaskWriter({workspace:entry.workspaceDir,childSessionKey:entry.childSessionKey,runId:entry.runId,endedAt:entry.endedAt,outcome:completionReason === SUBAGENT_ENDED_REASON_KILLED ? "cancelled" : outcome.status,parentGeneration:parent?.sessionId});
       }catch(error){params.warn('persistent task writer return requires recovery',{runId:entry.runId,error:String(error)});}
     }
     safeFinalizeSubagentTaskRun({

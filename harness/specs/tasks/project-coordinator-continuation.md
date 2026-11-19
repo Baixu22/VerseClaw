@@ -21,6 +21,9 @@ touchedAreas:
   - openclaw_runtime/src/agents/subagent-registry-lifecycle.ts
   - openclaw_runtime/src/agents/subagent-registry.types.ts
   - openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts
+  - openclaw_runtime/src/agents/subagent-orphan-recovery.ts
+  - openclaw_runtime/src/agents/persistent-task-delegation.ts
+  - openclaw_runtime/src/agents/tools/persistent-task-tool.ts
   - openclaw_runtime/src/agents/goal-wake-triggers.test.ts
   - openclaw_runtime/src/gateway/server-methods/agent*.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/agent.ts
@@ -28,6 +31,7 @@ touchedAreas:
   - shared/task-system/store.ts
   - electron/services/task-system-service.ts
   - tests/unit/durable-task-system.test.ts
+  - tests/unit/durable-task-project-planning.test.ts
   - tests/e2e/project-agent-loop.spec.ts
   - tests/e2e/long-session-completion-continuation.spec.ts
   - harness/specs/tasks/project-coordinator-continuation.md
@@ -42,6 +46,7 @@ expectedUserBehavior:
   - Handoff waits for pending task effects; the successor resumes from the retained checkpoint. A late completion cannot wake the retired source.
   - Gateway restart recovery reuses the current task and checkpoint when the prior process has exited and no task effects remain unsettled.
   - A user-paused coordinator can stop its current run, cancel its task and reconcile existing effects while new project dispatch is paused.
+  - A failed worker with settled effects leaves an unaccepted checkpoint and releases the writer so the coordinator can continue an independent ready task.
 requiredTests:
   - pnpm exec vitest run tests/unit/durable-task-system.test.ts
   - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.agents-core.config.ts src/agents/goal-wake-triggers.test.ts
@@ -57,6 +62,8 @@ acceptance:
   - Atomically replace an interrupted run under the current writer epoch only after verifying process exit, an executing task, and zero started or unknown effects. Retain the process and run identities in the Task Ledger event.
   - Reject unknown-effect replay before calling the model. Resume the original task only after a matching effect owner receipt settles the operation exactly once.
   - Pause rejects new dispatch without stopping an active run. Stopping it retains the task checkpoint. Cancellation waits for its pending effects, refuses old generations and never makes the cancelled child eligible again.
+  - Cancel owned worker sessions by their pinned generation. Retain the claim until the worker and effects settle; late completion and restart cannot wake or replay a cancelled task.
+  - After a terminal worker failure with no unresolved effects, the coordinator continues an independent ready child, without accepting the failed child, unblocking its dependents or bypassing resource admission.
   - A burst of duplicate goal-wake timer fires records one mission tick. Reopening its ledger does not re-fire it.
   - Verify durable deduplication, idle continuation, cancellation, restart and unknown-effect reconciliation on the same candidate before closing TF-0677.
 docs:

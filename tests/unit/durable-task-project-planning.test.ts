@@ -60,6 +60,56 @@ describe('project coordinator planning', () => {
     expect(store.list()).toHaveLength(3);
   });
 
+  it('releases a settled failed writer without accepting its task or unlocking its dependents', () => {
+    const plan = store.saveProjectPlan(scope, { ...initial, children: [
+      ...initial.children, { key: 'independent', contract: contract('Update the index') },
+    ] });
+    const first = store.startNextPlanTask(scope, plan.taskNodeId, plan.revision, 'first').claim!;
+    const d = store.prepareWriterDelegation(first, {
+      delegationId: 'worker-run', childRunId: 'worker-run', childSessionKey: 'worker',
+      childGeneration: 'worker-generation', childWorktree: root, mode: 'writer',
+    });
+    const checkpoint = { nextAction: 'Keep the failed checkpoint', completed: [], unresolved: [], artifacts: [] };
+    store.checkpoint(d.child, checkpoint);
+    store.beginRun(d.child, d.childRunId);
+    store.beginOperation(d.child, 'pending-effect', 'write');
+    const receipt = { runId: d.childRunId, endedAt: Date.now(), outcome: 'error', parentGeneration: scope.generation };
+    expect(store.returnDelegatedWriter(d.child.sessionKey, receipt)?.phase).toBe('recovery_required');
+    expect(() => store.startNextPlanTask(scope, plan.taskNodeId, plan.revision, 'independent')).toThrow('TASK_PROJECT_WRITER_BUSY');
+    store.endRun(d.child, d.childRunId);
+    expect(store.returnDelegatedWriter(d.child.sessionKey, receipt)?.phase).toBe('recovery_required');
+    store.finishOperation(d.child, 'pending-effect', 'completed', 'Recorded by the effect owner');
+    expect(store.returnDelegatedWriter(d.child.sessionKey, { ...receipt, parentGeneration: 'stale' })?.phase).toBe('recovery_required');
+    for (let i = 0; i < 2; i++) expect(store.returnDelegatedWriter(d.child.sessionKey, receipt)?.phase).toBe('returned');
+    expect(store.get(first.taskNodeId)).toMatchObject({ contract: { state: 'paused' }, checkpoint, claim: { state: 'released' } });
+    expect(store.getTaskEvidence(first.taskNodeId)).toEqual([]);
+    expect(store.history(first.taskNodeId).filter(event => event.kind === 'project_child_paused')).toHaveLength(1);
+    expect(store.startNextPlanTask(scope, plan.taskNodeId, plan.revision, 'independent').claim?.taskNodeId).toBe(plan.childIds[2]);
+    expect(store.get(plan.childIds[1]).claim).toBeNull();
+  });
+
+  it('holds a cancelling project writer until its worker and effects both settle', () => {
+    const plan = store.saveProjectPlan(scope, initial);
+    const first = store.startNextPlanTask(scope, plan.taskNodeId, plan.revision, 'first').claim!;
+    const d = store.prepareWriterDelegation(first, {
+      delegationId: 'worker-run', childRunId: 'worker-run', childSessionKey: 'worker',
+      childGeneration: 'worker-generation', childWorktree: root, mode: 'writer',
+    });
+    store.recordDelegationDispatch(d.child.sessionKey, d.childRunId, 'dispatched');
+    store.beginOperation(d.child, 'write', 'write');
+    expect(() => store.control(first, 'cancel')).toThrow('TASK_STALE_OWNER');
+    expect(store.control(d.child, 'cancel').contract.state).toBe('cancelling');
+    expect(() => store.beginRun(d.child, 'restarted-worker')).toThrow('TASK_EXECUTION_NOT_RUNNING');
+    store.finishOperation(d.child, 'write', 'completed', 'Effect owner settled');
+    expect(store.get(first.taskNodeId).contract.state).toBe('cancelling');
+    expect(store.returnDelegatedWriter(d.child.sessionKey, {
+      runId: d.childRunId, endedAt: Date.now(), outcome: 'ok', parentGeneration: scope.generation,
+    })).toMatchObject({ phase: 'returned', terminalReceipt: { outcome: 'cancelled' } });
+    expect(store.get(first.taskNodeId)).toMatchObject({ contract: { state: 'cancelled' }, claim: { state: 'released' } });
+    expect(store.binding(d.child.sessionKey, d.child.generation)?.referenceOnly).toBe(true);
+    expect(() => store.startNextPlanTask(scope, plan.taskNodeId, plan.revision, 'blocked')).toThrow('TASK_PROJECT_NO_READY_CHILD');
+  });
+
   it('checks the active Workspace and live generation before claiming, including on replay', async () => {
     const path = join(root, 'workspaces.json');
     const profiles = [{ id: scope.workspaceId, rootPath: root, projectCoordinatorSessionKey: scope.sessionKey }];

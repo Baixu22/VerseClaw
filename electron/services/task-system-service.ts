@@ -407,9 +407,20 @@ export async function taskSystemCommand(
       }
     }
     const credential = command.credential;
-    const current = await generationFor(credential.sessionKey, workspaceId, command.action === "cancel" || command.action === "reconcile");
-    if (current.generation !== credential.generation) throw new Error("TASK_GENERATION_STALE");
-    const scoped = openExecutionTaskStore(current.worktree);
+    const controlOnly = command.action === "cancel" || command.action === "reconcile";
+    const worker = controlOnly ? store.writerDelegationFor(credential) : null;
+    const coordinator = worker?.parent ?? credential;
+    const current = await generationFor(coordinator.sessionKey, workspaceId, controlOnly);
+    if (current.generation !== coordinator.generation) throw new Error("TASK_GENERATION_STALE");
+    if (worker) {
+      if (worker.parentWorktree !== current.worktree) throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
+      const described = await gateway!.rpc<{ session?: { sessionId?: string } }>(
+        "sessions.describe", { key: credential.sessionKey }, 10_000,
+      );
+      if (described.session?.sessionId !== credential.generation) throw new Error("TASK_GENERATION_STALE");
+    }
+    const worktree = worker?.childWorktree ?? current.worktree;
+    const scoped = openExecutionTaskStore(worktree);
     try {
       if (command.action === "decompose")
         return scoped.decompose(credential, command.children, command.requestId);
@@ -418,7 +429,7 @@ export async function taskSystemCommand(
         return gateway.rpc(
           "tasks.contract.reconcile",
           {
-            workspaceDir: current.worktree,
+            workspaceDir: worktree,
             credential,
             operationId: command.operationId,
             effectReceiptId: command.effectReceiptId,
@@ -455,8 +466,25 @@ export async function taskSystemCommand(
       }
       if (command.action === "cancel") {
         const cancelled = scoped.control(credential, "cancel");
-        if (cancelled.contract.state === "cancelling" && gateway)
-          await gateway.rpc("sessions.stop", { key: credential.sessionKey, expectedSessionId: credential.generation }, 20_000);
+        if (cancelled.contract.state === "cancelling" && gateway) {
+          const stopOwned = async (view: TaskView) => {
+            const claim = view.claim;
+            if (view.contract.state !== "cancelling") return;
+            for (const id of view.childTaskNodeIds ?? []) await stopOwned(scoped.get(id));
+            if (!claim || claim.state === "released") return;
+            const delegation = scoped.writerDelegationFor(claim);
+            if (delegation?.phase === "returned") return;
+            const stopped = await gateway.rpc<{ ok: boolean; sessionId: string }>(
+              "sessions.stop", { key: claim.sessionKey, expectedSessionId: claim.generation }, 20_000,
+            );
+            if (!stopped.ok || stopped.sessionId !== claim.generation) throw new Error("TASK_CANCEL_STOP_UNCONFIRMED");
+            if (delegation) scoped.returnDelegatedWriter(claim.sessionKey, {
+              runId: delegation.childRunId, parentGeneration: delegation.parent.generation,
+              endedAt: Date.now(), outcome: "cancelled",
+            });
+          };
+          await stopOwned(cancelled);
+        }
         return scoped.get(credential.taskNodeId);
       }
       return scoped.control(credential, command.action);
