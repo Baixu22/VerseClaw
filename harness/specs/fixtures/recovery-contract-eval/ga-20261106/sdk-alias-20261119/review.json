@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.96,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "未发现可操作缺陷。成功的依赖存在检查仅在单次同步 map 构建内按绝对路径复用；private 调用使用独立 Set。JavaScript 扩展分类、读取失败处理、source fallback、包根隔离和 public/private 导出筛选均保留，既有缓存键未变。优化位于现有共享 helper，改动范围合理。已读取指定报告，分别记录 4/4 和 25/25 通过；本次未执行测试。"
+}
