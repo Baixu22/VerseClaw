@@ -86,14 +86,13 @@ async function activeWorkspace(app: ElectronApplication): Promise<Workspace> {
   return active.activeWorkspace;
 }
 
-async function createWorkspace(app: ElectronApplication, rootPath: string, name: string): Promise<Workspace> {
+async function createInactiveWorkspace(app: ElectronApplication, rootPath: string, name: string): Promise<Workspace> {
   await mkdir(rootPath, { recursive: true });
-  const result = await hostInvoke<{ activeWorkspace?: Workspace; profiles?: Workspace[] }>(app, 'workspaces', 'create', {
-    name, rootPath, permissionMode: 'fullAccess', agentId: 'main',
+  const { createdWorkspace } = await hostInvoke<{ createdWorkspace?: Workspace }>(app, 'workspaces', 'create', {
+    name, rootPath, permissionMode: 'fullAccess', agentId: 'main', activate: false,
   });
-  const workspace = result.activeWorkspace ?? result.profiles?.find((entry) => entry.rootPath === rootPath);
-  if (!workspace?.id) throw new Error(`Workspace create returned no profile for ${name}`);
-  return workspace;
+  if (!createdWorkspace?.id) throw new Error(`Workspace create returned no profile for ${name}`);
+  return createdWorkspace;
 }
 
 async function createLedgerNode(app: ElectronApplication, workspaceId: string, title: string): Promise<string> {
@@ -149,7 +148,7 @@ test.describe('long-session restart journeys', () => {
       beforeGatewayRestart = await ensureGatewayReady(firstApp);
       const firstWorkspace = await activeWorkspace(firstApp);
       expect(firstWorkspace.rootPath).toBe(workspaceA);
-      const secondWorkspace = await createWorkspace(firstApp, workspaceB, 'F1 Workspace B');
+      const secondWorkspace = await createInactiveWorkspace(firstApp, workspaceB, 'F1 Workspace B');
       const sourceSession = await createSession(firstApp, 'F1 source session');
       const ordinarySession = await createSession(firstApp, 'F1 ordinary session');
       await hostInvoke(firstApp, 'workspaces', 'update', {
