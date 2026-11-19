@@ -1,0 +1,3052 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0677",
+  "realHumanEvidence": false,
+  "candidate": "73bf2fae8bea0c4f76f5d2fda74c482caefc4cd5",
+  "tree": "7d8f277a250c8cd0e7a59fbf82d35c1e91c829de",
+  "receipts": [
+    {
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/product-gates.json",
+        "bytes": 2910,
+        "sha256": "a9e88891ac954b89a62df393134fc7c7fc7f8776912aceccf7275c57bcf15298"
+      },
+      "value": {
+        "candidate": "73bf2fae8bea0c4f76f5d2fda74c482caefc4cd5",
+        "steps": [
+          {
+            "command": [
+              "pnpm",
+              "run",
+              "build:runtime"
+            ],
+            "elapsedMs": 52807,
+            "name": "build-runtime",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118"
+          },
+          {
+            "command": [
+              "pnpm",
+              "run",
+              "build:vite"
+            ],
+            "elapsedMs": 106020,
+            "name": "build-vite",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118"
+          },
+          {
+            "command": [
+              "node",
+              "./node_modules/@playwright/test/cli.js",
+              "test",
+              "tests/e2e/project-agent-loop.spec.ts",
+              "--grep",
+              "a project coordinator saves, revises and reopens",
+              "--workers=1",
+              "--retries=0",
+              "--output=D:/tmp/g5677-73bf2fa/planning-journey",
+              "--reporter=line,json"
+            ],
+            "elapsedMs": 234722,
+            "name": "planning-journey",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118"
+          },
+          {
+            "command": [
+              "node",
+              "./node_modules/@playwright/test/cli.js",
+              "test",
+              "tests/e2e/long-session-restart-journeys.spec.ts",
+              "--workers=1",
+              "--retries=0",
+              "--output=D:/tmp/g5677-73bf2fa/long-session-restart",
+              "--reporter=line,json"
+            ],
+            "elapsedMs": 131232,
+            "name": "long-session-restart",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118"
+          },
+          {
+            "command": [
+              "node",
+              "./node_modules/@playwright/test/cli.js",
+              "test",
+              "tests/e2e/project-agent-loop.spec.ts",
+              "--grep",
+              "cancels the active project worker|advances an independent plan task",
+              "--workers=1",
+              "--retries=0",
+              "--output=D:/tmp/g5677-73bf2fa/worker-faults",
+              "--reporter=line,json"
+            ],
+            "elapsedMs": 239554,
+            "name": "worker-faults",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118"
+          },
+          {
+            "command": [
+              "node",
+              "./node_modules/@playwright/test/cli.js",
+              "test",
+              "tests/e2e/project-agent-loop.spec.ts",
+              "tests/e2e/long-session-completion-continuation.spec.ts",
+              "--grep-invert",
+              "cancels the active project worker|advances an independent plan task|a project coordinator saves, revises and reopens",
+              "--workers=1",
+              "--retries=0",
+              "--output=D:/tmp/g5677-73bf2fa/continuation-journeys",
+              "--reporter=line,json"
+            ],
+            "elapsedMs": 584046,
+            "name": "continuation-journeys",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118"
+          }
+        ],
+        "driven_by": "agent",
+        "dirty": false,
+        "actor": "codex-tf0677",
+        "tree": "7d8f277a250c8cd0e7a59fbf82d35c1e91c829de"
+      }
+    },
+    {
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/support-gates.json",
+        "bytes": 5228,
+        "sha256": "b84b27e49113621ed8db226d86d34ac4914cd5ab930682940fddf98f5506b280"
+      },
+      "value": {
+        "candidate": "73bf2fae8bea0c4f76f5d2fda74c482caefc4cd5",
+        "driven_by": "agent",
+        "steps": [
+          {
+            "name": "typecheck",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "run",
+              "typecheck"
+            ],
+            "elapsedMs": 28610
+          },
+          {
+            "name": "task-units",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "node",
+              "./node_modules/vitest/vitest.mjs",
+              "run",
+              "tests/unit/durable-task-acceptance.test.ts",
+              "tests/unit/durable-task-authority-access.test.ts",
+              "tests/unit/durable-task-coordinator-context.test.ts",
+              "tests/unit/durable-task-delegation.test.ts",
+              "tests/unit/durable-task-event-store.test.ts",
+              "tests/unit/durable-task-faults.test.ts",
+              "tests/unit/durable-task-planning.test.ts",
+              "tests/unit/durable-task-project-planning.test.ts",
+              "tests/unit/durable-task-runtime.test.ts",
+              "tests/unit/durable-task-session-scope.test.ts",
+              "tests/unit/durable-task-start.test.ts",
+              "tests/unit/durable-task-system.test.ts",
+              "tests/unit/durable-task-tool.test.ts",
+              "tests/unit/task-ledger-service.test.ts",
+              "tests/unit/long-session-completion-continuation.test.ts",
+              "tests/unit/session-handoff-recovery.test.ts",
+              "tests/unit/session-task-scope-completion.test.ts",
+              "tests/unit/autonomy-provider-spend.test.ts",
+              "--reporter=json",
+              "--outputFile=D:/tmp/g5677-73bf2fa/task-units.json"
+            ],
+            "elapsedMs": 36373
+          },
+          {
+            "name": "runtime-units",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime",
+            "command": [
+              "node",
+              "./node_modules/vitest/vitest.mjs",
+              "run",
+              "--config",
+              "test/vitest/vitest.agents-core.config.ts",
+              "src/agents/subagent-registry-run-manager.recovery.test.ts",
+              "src/agents/subagent-registry-owners.recovery.test.ts",
+              "src/agents/subagent-orphan-recovery.admission.test.ts",
+              "src/agents/subagent-announce-generation-pin.test.ts",
+              "src/agents/goal-wake-triggers.test.ts",
+              "src/agents/request-attempt-budget.test.ts",
+              "src/agents/provider-outbound-budget.test.ts",
+              "--reporter=json",
+              "--outputFile=D:/tmp/g5677-73bf2fa/runtime-units.json"
+            ],
+            "elapsedMs": 40528
+          },
+          {
+            "name": "gateway-units",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime",
+            "command": [
+              "node",
+              "./node_modules/vitest/vitest.mjs",
+              "run",
+              "--config",
+              "test/vitest/vitest.gateway-methods.config.ts",
+              "src/gateway/server-methods/agent.recovery-admission.test.ts",
+              "--reporter=json",
+              "--outputFile=D:/tmp/g5677-73bf2fa/gateway-units.json"
+            ],
+            "elapsedMs": 25964
+          },
+          {
+            "name": "contract",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "run",
+              "contract:check"
+            ],
+            "elapsedMs": 4545
+          },
+          {
+            "name": "harness-validate",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "harness",
+              "validate",
+              "--spec",
+              "harness/specs/tasks/project-coordinator-continuation.md"
+            ],
+            "elapsedMs": 3477
+          },
+          {
+            "name": "harness-dry-run",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "harness",
+              "run",
+              "--spec",
+              "harness/specs/tasks/project-coordinator-continuation.md",
+              "--dry-run"
+            ],
+            "elapsedMs": 3601
+          },
+          {
+            "name": "comms-replay",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "run",
+              "comms:replay"
+            ],
+            "elapsedMs": 2332
+          },
+          {
+            "name": "comms-compare",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "run",
+              "comms:compare"
+            ],
+            "elapsedMs": 2194
+          },
+          {
+            "name": "harness-ci",
+            "exit": 1,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "run",
+              "harness:ci"
+            ],
+            "elapsedMs": 39267
+          },
+          {
+            "name": "evidence-links",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "run",
+              "repo:evidence:check"
+            ],
+            "elapsedMs": 2308
+          },
+          {
+            "name": "coverage-baseline",
+            "exit": 0,
+            "cwd": "D:/ClawX-work/g5-test-review-20261118",
+            "command": [
+              "pnpm",
+              "run",
+              "repo:test-coverage:check"
+            ],
+            "elapsedMs": 2750
+          }
+        ],
+        "dirty": false,
+        "actor": "codex-tf0677",
+        "tree": "7d8f277a250c8cd0e7a59fbf82d35c1e91c829de"
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "build:runtime"
+      ],
+      "elapsedMs": 52807,
+      "name": "build-runtime",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/build-runtime.log",
+        "bytes": 3174,
+        "sha256": "d11a61c09a26e25ff56c8d46f95d241642ced731f44a0e1c32e3e8918fc9c557"
+      }
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "build:vite"
+      ],
+      "elapsedMs": 106020,
+      "name": "build-vite",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/build-vite.log",
+        "bytes": 55717,
+        "sha256": "9f6757eb571ffb57abbdfdd228232fddb73168a973a35142b03c27ba2746d6c8"
+      }
+    },
+    {
+      "command": [
+        "node",
+        "./node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/project-agent-loop.spec.ts",
+        "--grep",
+        "a project coordinator saves, revises and reopens",
+        "--workers=1",
+        "--retries=0",
+        "--output=D:/tmp/g5677-73bf2fa/planning-journey",
+        "--reporter=line,json"
+      ],
+      "elapsedMs": 234722,
+      "name": "planning-journey",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/planning-journey.log",
+        "bytes": 1039,
+        "sha256": "5e6a62c291f3bc7e16af1fa0054ebbd2765c9714050ca539c98a4c40c1484c89"
+      }
+    },
+    {
+      "command": [
+        "node",
+        "./node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/long-session-restart-journeys.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--output=D:/tmp/g5677-73bf2fa/long-session-restart",
+        "--reporter=line,json"
+      ],
+      "elapsedMs": 131232,
+      "name": "long-session-restart",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/long-session-restart.log",
+        "bytes": 962,
+        "sha256": "7d49859e01e892fd8904a85a6013c735a971551cb07972427d2b46ad4bf3f3b6"
+      }
+    },
+    {
+      "command": [
+        "node",
+        "./node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/project-agent-loop.spec.ts",
+        "--grep",
+        "cancels the active project worker|advances an independent plan task",
+        "--workers=1",
+        "--retries=0",
+        "--output=D:/tmp/g5677-73bf2fa/worker-faults",
+        "--reporter=line,json"
+      ],
+      "elapsedMs": 239554,
+      "name": "worker-faults",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/worker-faults.log",
+        "bytes": 1575,
+        "sha256": "21f19712ae8d843137a931d8b2711d40beaa97b8cb38796caf18733875ec3d96"
+      }
+    },
+    {
+      "command": [
+        "node",
+        "./node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/project-agent-loop.spec.ts",
+        "tests/e2e/long-session-completion-continuation.spec.ts",
+        "--grep-invert",
+        "cancels the active project worker|advances an independent plan task|a project coordinator saves, revises and reopens",
+        "--workers=1",
+        "--retries=0",
+        "--output=D:/tmp/g5677-73bf2fa/continuation-journeys",
+        "--reporter=line,json"
+      ],
+      "elapsedMs": 584046,
+      "name": "continuation-journeys",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/continuation-journeys.log",
+        "bytes": 3213,
+        "sha256": "2589e3a80e4be0cd496a9df1160cd8710aedc1b4f42b9d87f709a2130d07d635"
+      }
+    },
+    {
+      "name": "typecheck",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 28610,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/typecheck.log",
+        "bytes": 1610,
+        "sha256": "03b033347782f13d5543e793a9443936464c03641b93baee1cce0843e0c87383"
+      }
+    },
+    {
+      "name": "task-units",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "node",
+        "./node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/durable-task-acceptance.test.ts",
+        "tests/unit/durable-task-authority-access.test.ts",
+        "tests/unit/durable-task-coordinator-context.test.ts",
+        "tests/unit/durable-task-delegation.test.ts",
+        "tests/unit/durable-task-event-store.test.ts",
+        "tests/unit/durable-task-faults.test.ts",
+        "tests/unit/durable-task-planning.test.ts",
+        "tests/unit/durable-task-project-planning.test.ts",
+        "tests/unit/durable-task-runtime.test.ts",
+        "tests/unit/durable-task-session-scope.test.ts",
+        "tests/unit/durable-task-start.test.ts",
+        "tests/unit/durable-task-system.test.ts",
+        "tests/unit/durable-task-tool.test.ts",
+        "tests/unit/task-ledger-service.test.ts",
+        "tests/unit/long-session-completion-continuation.test.ts",
+        "tests/unit/session-handoff-recovery.test.ts",
+        "tests/unit/session-task-scope-completion.test.ts",
+        "tests/unit/autonomy-provider-spend.test.ts",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g5677-73bf2fa/task-units.json"
+      ],
+      "elapsedMs": 36373,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/task-units.log",
+        "bytes": 61,
+        "sha256": "c65c87b87238b38453e47a06aaed31543d37621dbe3880355a40905466bb3e63"
+      }
+    },
+    {
+      "name": "runtime-units",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime",
+      "command": [
+        "node",
+        "./node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents-core.config.ts",
+        "src/agents/subagent-registry-run-manager.recovery.test.ts",
+        "src/agents/subagent-registry-owners.recovery.test.ts",
+        "src/agents/subagent-orphan-recovery.admission.test.ts",
+        "src/agents/subagent-announce-generation-pin.test.ts",
+        "src/agents/goal-wake-triggers.test.ts",
+        "src/agents/request-attempt-budget.test.ts",
+        "src/agents/provider-outbound-budget.test.ts",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g5677-73bf2fa/runtime-units.json"
+      ],
+      "elapsedMs": 40528,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/runtime-units.log",
+        "bytes": 64,
+        "sha256": "22ee30d740bc316d85e572a4fa222501d2b8394ffcc6d7d37e447074e8e46d26"
+      }
+    },
+    {
+      "name": "gateway-units",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime",
+      "command": [
+        "node",
+        "./node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.gateway-methods.config.ts",
+        "src/gateway/server-methods/agent.recovery-admission.test.ts",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g5677-73bf2fa/gateway-units.json"
+      ],
+      "elapsedMs": 25964,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/gateway-units.log",
+        "bytes": 64,
+        "sha256": "8eeb94d208244beaabe650ae1267ae0877a4e9aa7e0cae22734bb2caabe1a7d6"
+      }
+    },
+    {
+      "name": "contract",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "run",
+        "contract:check"
+      ],
+      "elapsedMs": 4545,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/contract.log",
+        "bytes": 59,
+        "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+      }
+    },
+    {
+      "name": "harness-validate",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-coordinator-continuation.md"
+      ],
+      "elapsedMs": 3477,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/harness-validate.log",
+        "bytes": 299,
+        "sha256": "2317b394e2c4571c4585bc335511d1196cb6e6d25d8c3c88eeb299a761a7f0c6"
+      }
+    },
+    {
+      "name": "harness-dry-run",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-coordinator-continuation.md",
+        "--dry-run"
+      ],
+      "elapsedMs": 3601,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/harness-dry-run.log",
+        "bytes": 346,
+        "sha256": "7fbc3c21efbd819ce2e35836dd1ae9ef2db89b6b61c74cc32d5f3a96172bad43"
+      }
+    },
+    {
+      "name": "comms-replay",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "run",
+        "comms:replay"
+      ],
+      "elapsedMs": 2332,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/comms-replay.log",
+        "bytes": 139,
+        "sha256": "83b65d036f2a6604331e1efa3b379129f2feb883e4b31b53e837c05edaaa28f7"
+      }
+    },
+    {
+      "name": "comms-compare",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "run",
+        "comms:compare"
+      ],
+      "elapsedMs": 2194,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/comms-compare.log",
+        "bytes": 3519,
+        "sha256": "0dcc114707e0d40a19485f0cb633fc44ee55e799cc75d5009a843724dd69e9a9"
+      }
+    },
+    {
+      "name": "harness-ci",
+      "exit": 1,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "run",
+        "harness:ci"
+      ],
+      "elapsedMs": 39267,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/harness-ci.log",
+        "bytes": 24044,
+        "sha256": "ddfa73ffd7e240534a7483b5534e0cd998eafb116c149bcaaf41f0f9c6e1ebb9"
+      }
+    },
+    {
+      "name": "evidence-links",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "run",
+        "repo:evidence:check"
+      ],
+      "elapsedMs": 2308,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/evidence-links.log",
+        "bytes": 85,
+        "sha256": "9a6f9f65f81c216293c205632b85231968a65cb983e0d6b303c256f7e728e561"
+      }
+    },
+    {
+      "name": "coverage-baseline",
+      "exit": 0,
+      "cwd": "D:/ClawX-work/g5-test-review-20261118",
+      "command": [
+        "pnpm",
+        "run",
+        "repo:test-coverage:check"
+      ],
+      "elapsedMs": 2750,
+      "log": {
+        "path": "D:/tmp/g5677-73bf2fa/coverage-baseline.log",
+        "bytes": 104,
+        "sha256": "6a6d543fd7467a6204fabec24ba8df27c7ddd54b7b76c2ccb3ad64ab5a8b2b2d"
+      }
+    }
+  ],
+  "unitRuns": [
+    {
+      "name": "task-units",
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/task-units.json",
+        "bytes": 78775,
+        "sha256": "01cc14c3a43d71eb507bd7c4398fa0c572a83665eb5cfd7b062c9069ea16fa4c"
+      },
+      "total": 205,
+      "passed": 205,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation rejects a plugin slot that would overwrite the owner workspace budget identity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation reserves every scope atomically, denies overspend across sessions, and reconciles once",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation enforces project even with a larger host quota and preserves rollback",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation enforces session even with a larger host quota and preserves rollback",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation reserves known USD across projects without charging the same reconciliation twice",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation keeps project ceilings shared by sessions and isolated between owner-supplied projects",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation session budget cannot be reset by changing the project coordinate",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation rebuilds the runtime provider projection after caches and DB handles are cleared",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation unknown usage survives SQLite reopen and cannot be freed by TTL or forged owner",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation rejects unknown scope and cost before reserving, and compensates only unsent reservations",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation rejects invalid estimates instead of allowing NaN or negative cost to mint capacity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation never rounds a fractional microdollar ceiling upward or lets actual overruns create credit",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation gates the real stream boundary and settles from final usage before returning its result",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation keeps the disabled stream unchanged and never treats unpriced usage as zero USD",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation accounts for a fallback separately and rejects replay of the same fallback attempt",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation pins the run identity before mutable caller metadata changes",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation reads the session owner project and rejects missing, stale or conflicting identities before sending",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation persists the trusted initial workspace and recovers it after the owner DB is reopened",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation the production stream resolver and guarded HTTP boundary refuse a physical retry before a second send",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation settles priced usage from the captured rate and preserves the raw normalized message",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation does not price an incomplete usage breakdown as a free request",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation retains token and USD liabilities when usage components 5 disagree with the reported total",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation retains token and USD liabilities when usage components 15 disagree with the reported total",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation rejects a zero model bound before reserving or invoking the provider",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation compensates the spend reservation when the transport confirms overloaded before wire dispatch",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation compensates the spend reservation when the transport confirms cancelled before wire dispatch",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation prevents two real processes from double spending host tokens capacity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation prevents two real processes from double spending project tokens capacity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation prevents two real processes from double spending session tokens capacity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation prevents two real processes from double spending host cost capacity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation prevents two real processes from double spending project cost capacity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "name": "provider owner layered spend reservation prevents two real processes from double spending session cost capacity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners reconciles an unknown effect only from a matching terminal receipt owned by the runtime",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners requires an independent verifier run bound to the unchanged input snapshot",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners reads actual evidence, records an existing effect receipt, and accepts only the current candidate",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects artifacts changed after the requirement was checked",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners does not accept caller-chosen unknown owners",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-acceptance.test.ts",
+          "name": "existing verifier and effect owners rejects new generations and unresolved operations before completing",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "TaskSystemStore authority access rejects stale authority on construction, reads, and writes without changing the ledger",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "TaskSystemStore authority access rejects an access domain mismatch before opening the database",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "TaskSystemStore authority access rejects an execution worktree mismatch before opening the database",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "TaskSystemStore authority access rejects other authorities and allows one authority across physical checkouts",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "rechecks real authority after another process releases SQLite (unchanged)",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "rechecks real authority after another process releases SQLite (removed)",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-authority-access.test.ts",
+          "name": "rechecks real authority after another process releases SQLite (replaced)",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-coordinator-context.test.ts",
+          "name": "recovers a fork's read reference from owner lineage without copying its parent's writer",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-coordinator-context.test.ts",
+          "name": "rehydrates a coordinator read reference using the parent generation while a child owns the writer",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol does not transfer queued work until dispatch and rejects changed parent ownership",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol retains ownership after lost dispatch acknowledgement and rejects a second writer",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol restores the delegation from disk and keeps unknown effects as a return barrier",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol gives a verifier a read reference without transferring writer or blocking the parent",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-delegation.test.ts",
+          "name": "durable production delegation protocol does not return writing authority to a reset parent generation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration reuses the current projection and invalidates it after an appended event",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration deduplicates event-level keys while preserving new logical requests",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration imports old IDs, leaves original bytes intact, and appends in one owner store",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration replays a single session-link batch using the original generated ID",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-event-store.test.ts",
+          "name": "existing Task Ledger transactional migration rejects corrupt legacy history instead of presenting an empty task graph",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-faults.test.ts",
+          "name": "task owner fault boundaries rejects a busy claim transaction then resumes the same request without a partial owner",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-faults.test.ts",
+          "name": "task owner fault boundaries blocks writes on a corrupt database while preserving its bytes for recovery",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-faults.test.ts",
+          "name": "task owner fault boundaries handles clock rollback conservatively without losing the task or admitting a second owner",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition replays committed changes after a missed acknowledgement and rejects a stale consumer cursor",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition paginates a frozen insertion window without hiding old tasks behind new arrivals",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition suggests overlapping goals without merging their identities",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition decomposes atomically, retains the original goal and gates the parent on accepted children",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition rolls back every child when the plan contains an invalid dependency",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition rehydrates the root goal through multiple decompositions and retains valid progress JSON",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition cancels a whole plan only after child effects settle and replays the final effect receipt",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition retires settled children explicitly before revising a parent plan",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-planning.test.ts",
+          "name": "task discovery and goal decomposition rejects cycles that cross a parent-child plan edge",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning takes planning scope from the Workspace owner and fences stale Runtime calls",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning releases a settled failed writer without accepting its task or unlocking its dependents",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning holds a cancelling project writer until its worker and effects both settle",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning checks the active Workspace and live generation before claiming, including on replay",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning persists the plan, provisional facts and dependencies across reopen and idempotent retries",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning selects a dependency-ready child in plan order and fences replays after handoff or completion",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning does not admit work in a new plan while a previous plan child has a writer",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning keeps settled tasks and evidence when replacing a revision without recycling child identities",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning rolls back cyclic, missing and foreign dependencies without leaving any tasks",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-project-planning.test.ts",
+          "name": "project coordinator planning uses the Workspace owner binding and rejects another checkout, generation or duplicate coordinator",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard requires a task before the first write even when no task database exists yet",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard records cancellation immediately and waits for the in-flight owner before releasing the task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard blocks retries after a background effect until the real process owner reports completion",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard restores a goal created during the run after ten compacted contexts without duplicating it",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard does not grant a fork or unbound session write access in a managed repository",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard adopts only a new initial binding, then keeps its epoch pinned",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard captures the old epoch and refuses execution after handoff",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-runtime.test.ts",
+          "name": "production task runtime guard binds a real tool result to unchanged verification inputs",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner reads project plans only through the current Workspace coordinator binding",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner reads actual verifier receipts without promoting a doing task to accepted",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner fences worker acceptance reads before and after a session generation changes",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner keeps the task owner readable when generation check 1 takes twelve seconds",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner keeps the task owner readable when generation check 2 takes twelve seconds",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects effects without a contract without creating a database",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner reuses the canonical TaskID and writer attempt across admission retries",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects a legacy reference without inventing a contract or upgrading its state",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects a second writer and a stale generation at the new entry point",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner keeps fork references read only until an explicit new owner is granted",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner uses the existing handoff epoch and fences the previous credential",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner retains the old owner while an effect is still unresolved",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner keeps an accepted task closed when selected for another effect",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner retains task identity and writer exclusivity when runtime bootstrap initializes Git",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects conflicting stores after repository initialization",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner rejects a conflicting explicit task instead of reverting the selection",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner selects another canonical task without changing its state and grants only its next execution",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-session-scope.test.ts",
+          "name": "session bridge consumes the persistent task owner retains the current task when an execution or an unknown operation blocks selection",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-start.test.ts",
+          "name": "starts and binds an execution task in one tool call and reuses the original attempt on retry",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-start.test.ts",
+          "name": "rolls back a proposed task if the session is already implementing another task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-start.test.ts",
+          "name": "rejects a duplicate writer through the automatic start path and preserves the first claim",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-start.test.ts",
+          "name": "reads only the owning session generation, including its cancelled task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership replaces an exited process's run without replacing its task owner or checkpoint",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (undefined)",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (EPERM)",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership retains the old run after process exit while an effect is started",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership retains the old run after process exit while an effect is unknown",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership refuses a changed contract for the same business key",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership rejects a second owner and a stale revision",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership does not convert lease expiration into automatic reassignment",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership enforces dependencies and rejects cycles",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership does not let a file hash satisfy a business verification requirement",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership uses one task domain for two real Git worktrees",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-system.test.ts",
+          "name": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-tool.test.ts",
+          "name": "agent-facing production task tool creates, claims, executes a real check, and accepts its owner-produced receipt",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-tool.test.ts",
+          "name": "agent-facing production task tool does not let an old task tool take control of a newer epoch",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/durable-task-tool.test.ts",
+          "name": "agent-facing production task tool revises an explicitly changed goal with optimistic versioning and fences the previous run",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/long-session-completion-continuation.test.ts",
+          "name": "long-session orchestration completion batches stays collecting until every expected accepted worker is terminal",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/long-session-completion-continuation.test.ts",
+          "name": "long-session orchestration completion batches commits one deterministic consolidated receipt after success, failure and cancellation all settle",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/long-session-completion-continuation.test.ts",
+          "name": "long-session orchestration completion batches fences a terminal batch when the requester generation changed",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/long-session-completion-continuation.test.ts",
+          "name": "long-session orchestration completion batches preserves busy/paused delivery intent and never treats a pending intent as delivered",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/long-session-completion-continuation.test.ts",
+          "name": "long-session orchestration completion batches replays the same batch receipt from persisted rows after restart",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/long-session-completion-continuation.test.ts",
+          "name": "long-session orchestration completion batches keeps multiple independent batches separate",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/long-session-completion-continuation.test.ts",
+          "name": "long-session orchestration completion batches uses terminal outcome facts rather than model text to classify a member",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner retains one pending child while source resources remain unresolved without a writer binding",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner binds the task selected in the existing composer before dispatching chat effects",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner keeps the same pending child when the source starts a run during creation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner confirms runtime ancestry, saves the child draft and reuses one child across duplicate creation requests",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner creates independent children for different intent IDs and replays each ID without creating again",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner recovers a lost creation reply from the same runtime child after reconstructing Main services",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner keeps creation pending when the lifecycle owner is unavailable",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner pins the child generation before activation and rejects a removed or reset child during recovery",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner rejects a changed source generation or draft without creating a second child",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner records acknowledgement separately and confirms the exact persisted first-turn identity",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner reconciles a lost send reply from the exact runtime transcript after restart",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner retains an unknown delivery and prevents silent resends even when the text matches",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner allows an explicitly retried pre-effect rejection with the same child and send key",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner does not reuse a first-send key with a different compiled payload",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner fences child transcript reads against wrong parents and reset races",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner sends to the selected worker through the existing permission route and rejects stale parent generations",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true}",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true,\"steered\":true}",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner reports a definite runtime worker rejection as rejected: INVALID_REQUEST",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner reports a definite runtime worker rejection as rejected: -32600",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner reports a definite runtime worker rejection as rejected: -32602",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner keeps a lost worker response unknown until delivery evidence is available",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-handoff-recovery.test.ts",
+          "name": "durable handoff owner recovers a lost worker acknowledgement from the exact persisted intervention key",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract uses the canonical parent reference after transfer even before its navigation link was persisted",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract admits an owned child while the fenced parent run remains active",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects missing and incomplete contracts without creating a Legacy business task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract starts a complete canonical contract through task_control without requiring a session bridge",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract associates a live isolated scheduled run with its canonical contract without replacing the project coordinator",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract uses a decomposed scheduled child contract under the recorded parent TaskRef",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a missing scheduled coordinator before claiming another task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a stale scheduled coordinator before claiming another task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a paused scheduled coordinator before claiming another task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects an isolated schedule from another workspace or agent before creating a task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract consumes a canonical business contract after a failed turn left a diagnostic deviation link",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract selects an existing completed task and preserves its status and historical links",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract uses the captured worker parent TaskRef with a real child contract despite a later parent selection",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract pauses new dispatch while retaining the already admitted writer and workgroup ownership",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract captures checkout execution revision while allowing the admitted run through coordinator pause",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects effects on a completed canonical task, including after owner reconstruction",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a Legacy done node without creating a canonical replacement or changing it to doing",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract does not release a live canonical claim because a new API instance or response settled",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects an old claim after canonical epoch rotation even when the Workspace cache still has it",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects unknown session before writing a task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects wrong root before writing a task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects stale generation before writing a task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects forged claim before writing a task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects foreign workspace identity and a changed session generation without manufacturing a replacement",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract fences a generation change while admission is awaiting its final live owner read",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract leaves a selected task unclaimed when the final run check fails",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract rejects a contract revision changed after resolution without claiming the revised task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract blocks task selection and rebinding on session resources even without a Workspace writer",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract requires explicit canonical selection for multiple links and rejects an external reference as a task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract does not silently switch a running canonical task through coordinator rebinding",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract requires admission for unknown MCP effects and checks cancellation before execution",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/session-task-scope-completion.test.ts",
+          "name": "first effect consumes the canonical execution contract cancels an effect after Main admission without releasing or upgrading its canonical claim",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/task-ledger-service.test.ts",
+          "name": "task ledger service projects nodes, dependencies, review state, decisions, and session links",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/task-ledger-service.test.ts",
+          "name": "task ledger service removes deleted nodes and related edges from the snapshot",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/task-ledger-service.test.ts",
+          "name": "task ledger service preserves long conversation control metadata and review tags without auto-clearing review state",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/task-ledger-service.test.ts",
+          "name": "task ledger service projects long-task root children for checkpoints decisions deviations evidence and review",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/task-ledger-service.test.ts",
+          "name": "task ledger service keeps valid JSONL events and reports damaged lines",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "runtime-units",
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/runtime-units.json",
+        "bytes": 29752,
+        "sha256": "3e7944a6678264ae9ee8b5d85347337f8f5632ccaea857a42f343e3af6d0b79e"
+      },
+      "total": 79,
+      "passed": 79,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "cases": [
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "goal-wake trigger kinds produces exactly one deduped continuation for a process trigger",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "goal-wake trigger kinds produces exactly one deduped continuation for a child trigger",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "goal-wake trigger kinds produces exactly one deduped continuation for a timer trigger",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "goal-wake trigger kinds produces exactly one deduped continuation for a approval trigger",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "goal-wake trigger kinds produces exactly one deduped continuation for a event trigger",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "goal-wake trigger kinds refuses a replayed wakeId at the mission fence for every trigger kind",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "timer fire seam resolves the wait from its cron job id and consumes a burst of 32 fires in one tick",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "child fire seam resolves the wait from its child session key and fires exactly once",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "child fire seam carries a failed subagent outcome into the continuation",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "timer wait scheduling on cron hands the deadline to cron as a one-shot at job and binds it to the wait",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "timer wait scheduling on cron removes the scheduled job when the arm is refused",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "timer wait scheduling on cron refuses a deadline that cron could never schedule",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+          "name": "goal-wake trigger defaults defaults a wait with no recorded trigger kind to process",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget quota identity normalizes endpoint identity and treats default ports as equal",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget quota identity shares one group across model names on the same endpoint and credential",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget quota identity separates different credentials on the same endpoint and different endpoints",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget quota identity never puts the raw credential into the group id",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget configuration surface is inert until an operator configures a limit",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget configuration surface keeps the coverage table honest about what is not gated",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget guarded transport boundary sends nothing while ungated and shares one slot when a limit is configured",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget guarded transport boundary rejects an over-capacity request without sending it to the provider",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget guarded transport boundary releases only when the guarded request is confirmed finished",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget guarded transport boundary releases the slot when the transport fails and re-admits the retry",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget guarded transport boundary does not block a different account or a different endpoint",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget guarded transport boundary maps two derived groups onto one quota group through an explicit alias",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget guarded transport boundary leaves no slot behind when a queued caller is aborted",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget logical request budget records a physical provider attempt inside an ambient logical request",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget logical request budget fails closed before sending when the ambient budget is already exhausted",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget shutdown and fairness rejects queued waiters on shutdown and leaves no slot behind",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+          "name": "provider outbound concurrency budget shutdown and fairness does not starve a waiter when the holder keeps running",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/request-attempt-budget.test.ts",
+          "name": "RequestAttemptBudget shares one physical-attempt budget across retry layers",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/request-attempt-budget.test.ts",
+          "name": "RequestAttemptBudget fails closed when a layer tries to exceed the budget",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/request-attempt-budget.test.ts",
+          "name": "RequestAttemptBudget keeps finite non-negative Retry-After metadata as a lower bound",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/request-attempt-budget.test.ts",
+          "name": "RequestAttemptBudget does not turn invalid Retry-After metadata into a delay",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/request-attempt-budget.test.ts",
+          "name": "RequestAttemptBudget rounds fractional and invalid maxima into a safe bounded budget",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/request-attempt-budget.test.ts",
+          "name": "RequestAttemptBudget never schedules retries by itself",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-announce-generation-pin.test.ts",
+          "name": "subagent announce generation pin never steers a post-reset generation with a completion pinned to the old generation",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-announce-generation-pin.test.ts",
+          "name": "subagent announce generation pin steers when the pinned generation matches the current session",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-announce-generation-pin.test.ts",
+          "name": "subagent announce generation pin keeps legacy liveness-only behavior for records without a pin",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-announce-generation-pin.test.ts",
+          "name": "subagent announce generation pin does not steer when no current session generation is resolvable",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-announce-generation-pin.test.ts",
+          "name": "subagent announce generation pin passes the generation to the Gateway when waking an idle requester",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-announce-generation-pin.test.ts",
+          "name": "subagent announce generation pin does not steer a handed-off coordinator even if its transcript generation still matches",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-announce-generation-pin.test.ts",
+          "name": "subagent announce generation pin stops fallback and retries when Gateway rejects ownership with AGENT_SESSION_GENERATION_STALE",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-announce-generation-pin.test.ts",
+          "name": "subagent announce generation pin stops fallback and retries when Gateway rejects ownership with AGENT_CONTINUATION_OWNER_RETIRED",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission reserves an unknown effect with 0 consumed attempts",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission reserves an unknown effect with 2 consumed attempts",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission rejects an ordinary rotation retaining an older compaction usage family",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission does not redispatch an interrupted admitted run appended during registry adoption",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission retains the original owner until the admitted lifecycle has durably started",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission reserves the original registry owner while its admitted run is already active after ACK loss",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission releases a reservation copied into an unrelated session generation",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission rejects a stale adoption snapshot before mutating the registry",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission keeps the admitted run in the original lifecycle while suppressing its synthetic prompt",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission records the attempt before RPC, then retains uncertainty without a second dispatch",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission keeps the registry owner when the scheduled RPC acknowledgement is lost",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission finalizes a known unapplied run when its durable budget is exhausted",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission preserves a committed admission when acknowledgement persistence fails",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission claims a concurrent boundary once and acknowledges its admitted owner",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission does not clear a replacement generation after an old RPC completes",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission does not dispatch when the durable admission cannot commit",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission reconciles unknown tool effects and persists the shared authority decision",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission does not resume a registry run that no longer owns the session lifecycle",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission keeps the default legacy path and its existing accepted-attempt policy",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission reconciles an accepted RPC whose registry owner cannot be remapped",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission does not acquire recovery against a closed lifecycle fence",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission holds the lifecycle permit until the acknowledgement commits",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission adopts a lost-ACK run with compaction=false and mode='authority'",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission adopts a lost-ACK run with compaction=true and mode='authority'",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission adopts a lost-ACK run with compaction=true and mode='legacy'",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission preserves the next interruption when the admitted run fails before an old acknowledgement",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+          "name": "subagent durable recovery admission preserves uncertainty when the authority mode rolls back to legacy",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+          "name": "reserved owners in real registry lifecycle and restore helpers persists terminal requester_generation_stale without retrying after duplicate delivery or restore",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+          "name": "reserved owners in real registry lifecycle and restore helpers persists terminal requester_owner_retired without retrying after duplicate delivery or restore",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+          "name": "reserved owners in real registry lifecycle and restore helpers retains an admitted run before cold-start stale orphan pruning",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+          "name": "reserved owners in real registry lifecycle and restore helpers settles a remapped worker's cancelled delegation without announcing or resuming after restore",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+          "name": "reserved owners in real registry lifecycle and restore helpers rejects an original terminal callback with effect=unknown",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+          "name": "reserved owners in real registry lifecycle and restore helpers rejects an original terminal callback with effect=not_applied",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-registry-run-manager.recovery.test.ts",
+          "name": "recovery adoption in the actual subagent run manager preserves the original owner when its wait finishes after a recovery admission",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/subagent-registry-run-manager.recovery.test.ts",
+          "name": "recovery adoption in the actual subagent run manager keeps an installed terminal destination when a delayed acknowledgement remaps again",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "gateway-units",
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/gateway-units.json",
+        "bytes": 7932,
+        "sha256": "9393ac4eb10d79e9bb1e332fcba7cb35b71142dc724f01e02d51e3d245481440"
+      },
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "cases": [
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store resumes an idle expired generation without rotating the transcript",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store rejects a replace before ingress",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store rejects a delete before ingress",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store rejects a reset racing the atomic session patch",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store refuses ingress when a handoff retires the requester before delivery",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store refuses ingress when a handoff retires the requester during the session update",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store refuses ingress when a handoff retires the requester after acceptance",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store rejects a conflicting key",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent continuation generation against the real session store rejects a conflicting id",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store continues an expired admitted session without rotating its transcript generation",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store rejects a replaced generation before dispatch",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store rejects a replaced attempt before dispatch",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store rejects a replaced epoch before dispatch",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store rejects a replaced lifecycle before dispatch",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store rejects a replaced state before dispatch",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store checks the owner again when it changes before the fresh-store patch",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store rejects recovery admission from a non-backend caller",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store requires the admitted sessionKey",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store requires the admitted sessionId",
+          "status": "passed"
+        },
+        {
+          "file": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+          "name": "agent receiver recovery admission against the real session store requires visible lifecycle effects for an admitted continuation",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "electronRuns": [
+    {
+      "name": "planning-journey",
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/planning-journey.json",
+        "bytes": 3929,
+        "sha256": "2c8e7b6f353a34bff6b356763344469b928d2c1cf31cc38b7c321698a905b7b6"
+      },
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "cases": [
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 179,
+          "name": "a project coordinator saves, revises and reopens its owner-backed plan",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 228625
+            }
+          ]
+        }
+      ],
+      "guard": {
+        "source": {
+          "path": "D:/tmp/g5677-73bf2fa/planning-journey/source-mutation-guard.json",
+          "bytes": 585,
+          "sha256": "cb666866f50c6e5fb0974eb1d6287abe5c381c1d2cc8fc2629ac591183f58c01"
+        },
+        "value": {
+          "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+          "driven_by": "agent",
+          "actor": "playwright-runner",
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "46360a0eac04fb7b427bce704f5417713111e743505afa37a6600a1f4ce78f90",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "46360a0eac04fb7b427bce704f5417713111e743505afa37a6600a1f4ce78f90",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      "cleanup": {
+        "source": {
+          "path": "D:/tmp/g5677-73bf2fa/planning-journey/electron-process-cleanup.json",
+          "bytes": 941,
+          "sha256": "8b1e78e5d6b795609cf85a6d1ffadbedb08f1d0d46abf90a76770eedbf47da12"
+        },
+        "value": {
+          "driven_by": "agent",
+          "actor": "playwright-runner",
+          "runRoot": "D:\\tmp\\g5677-73bf2fa\\run\\verse-claw-e2e-run-fbpRHv",
+          "ledgerEntries": 5,
+          "checks": [
+            {
+              "pid": 4444,
+              "creationTime": 1795073396097,
+              "status": "exited"
+            },
+            {
+              "pid": 40372,
+              "creationTime": 1795073409475,
+              "status": "exited"
+            },
+            {
+              "pid": 42376,
+              "creationTime": 1795073410378,
+              "status": "exited"
+            }
+          ],
+          "processObservations": [
+            [
+              {
+                "pid": 4444,
+                "creationTime": 1795073396097,
+                "status": "exited"
+              },
+              {
+                "pid": 40372,
+                "creationTime": 1795073409475,
+                "status": "exited"
+              },
+              {
+                "pid": 42376,
+                "creationTime": 1795073410378,
+                "status": "exited"
+              }
+            ]
+          ],
+          "owned": [],
+          "remaining": [],
+          "survivors": [],
+          "detectedPendingLaunches": 0,
+          "pendingLaunches": 0,
+          "status": "passed"
+        }
+      }
+    },
+    {
+      "name": "long-session-restart",
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/long-session-restart.json",
+        "bytes": 4282,
+        "sha256": "442ded2b48e001589b1b44134a2fb4aa5b157b039ac8c21af26be1c3d69d69bb"
+      },
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "cases": [
+        {
+          "file": "long-session-restart-journeys.spec.ts",
+          "line": 118,
+          "name": "real Electron journeys preserve scope, transcripts, task links, and lifecycle generations",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 127825
+            }
+          ]
+        }
+      ],
+      "guard": {
+        "source": {
+          "path": "D:/tmp/g5677-73bf2fa/long-session-restart/source-mutation-guard.json",
+          "bytes": 585,
+          "sha256": "cb666866f50c6e5fb0974eb1d6287abe5c381c1d2cc8fc2629ac591183f58c01"
+        },
+        "value": {
+          "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+          "driven_by": "agent",
+          "actor": "playwright-runner",
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "46360a0eac04fb7b427bce704f5417713111e743505afa37a6600a1f4ce78f90",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "46360a0eac04fb7b427bce704f5417713111e743505afa37a6600a1f4ce78f90",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      "cleanup": {
+        "source": {
+          "path": "D:/tmp/g5677-73bf2fa/long-session-restart/electron-process-cleanup.json",
+          "bytes": 1944,
+          "sha256": "9efb8ef99357b618973e23aac97b6f758d98331c572311ffac8f1898660589ea"
+        },
+        "value": {
+          "driven_by": "agent",
+          "actor": "playwright-runner",
+          "runRoot": "D:\\tmp\\g5677-73bf2fa\\run\\verse-claw-e2e-run-VkSPHw",
+          "ledgerEntries": 12,
+          "checks": [
+            {
+              "pid": 27508,
+              "creationTime": 1795073627595,
+              "status": "exited"
+            },
+            {
+              "pid": 30020,
+              "creationTime": 1795073635265,
+              "status": "exited"
+            },
+            {
+              "pid": 32824,
+              "creationTime": 1795073635706,
+              "status": "exited"
+            },
+            {
+              "pid": 44004,
+              "creationTime": 1795073688967,
+              "status": "exited"
+            },
+            {
+              "pid": 34684,
+              "creationTime": 1795073708487,
+              "status": "exited"
+            },
+            {
+              "pid": 13336,
+              "creationTime": 1795073721727,
+              "status": "exited"
+            },
+            {
+              "pid": 33368,
+              "creationTime": 1795073721989,
+              "status": "exited"
+            },
+            {
+              "pid": 10016,
+              "creationTime": 1795073722933,
+              "status": "exited"
+            }
+          ],
+          "processObservations": [
+            [
+              {
+                "pid": 27508,
+                "creationTime": 1795073627595,
+                "status": "exited"
+              },
+              {
+                "pid": 30020,
+                "creationTime": 1795073635265,
+                "status": "exited"
+              },
+              {
+                "pid": 32824,
+                "creationTime": 1795073635706,
+                "status": "exited"
+              },
+              {
+                "pid": 44004,
+                "creationTime": 1795073688967,
+                "status": "exited"
+              },
+              {
+                "pid": 34684,
+                "creationTime": 1795073708487,
+                "status": "exited"
+              },
+              {
+                "pid": 13336,
+                "creationTime": 1795073721727,
+                "status": "exited"
+              },
+              {
+                "pid": 33368,
+                "creationTime": 1795073721989,
+                "status": "exited"
+              },
+              {
+                "pid": 10016,
+                "creationTime": 1795073722933,
+                "status": "exited"
+              }
+            ]
+          ],
+          "owned": [],
+          "remaining": [],
+          "survivors": [],
+          "detectedPendingLaunches": 0,
+          "pendingLaunches": 0,
+          "status": "passed"
+        }
+      }
+    },
+    {
+      "name": "worker-faults",
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/worker-faults.json",
+        "bytes": 6193,
+        "sha256": "5d41789d1af8d298060ea3568133a3a5d5c585c11a300efc65af81d40c3e901d"
+      },
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "cases": [
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 17,
+          "name": "cancels the active project worker without delivering its late result",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 65267
+            }
+          ]
+        },
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 17,
+          "name": "advances an independent plan task after terminal worker failure",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 81215
+            }
+          ]
+        },
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 17,
+          "name": "advances an independent plan task when spend admission caps worker retries",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 89861
+            }
+          ]
+        }
+      ],
+      "guard": {
+        "source": {
+          "path": "D:/tmp/g5677-73bf2fa/worker-faults/source-mutation-guard.json",
+          "bytes": 585,
+          "sha256": "cb666866f50c6e5fb0974eb1d6287abe5c381c1d2cc8fc2629ac591183f58c01"
+        },
+        "value": {
+          "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+          "driven_by": "agent",
+          "actor": "playwright-runner",
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "46360a0eac04fb7b427bce704f5417713111e743505afa37a6600a1f4ce78f90",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "46360a0eac04fb7b427bce704f5417713111e743505afa37a6600a1f4ce78f90",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      "cleanup": {
+        "source": {
+          "path": "D:/tmp/g5677-73bf2fa/worker-faults/electron-process-cleanup.json",
+          "bytes": 2144,
+          "sha256": "62f9517e6a714a23305ee0a8b56933b0d95be83ac73683f8ae61a513dd32e6fb"
+        },
+        "value": {
+          "driven_by": "agent",
+          "actor": "playwright-runner",
+          "runRoot": "D:\\tmp\\g5677-73bf2fa\\run\\verse-claw-e2e-run-fW6eAv",
+          "ledgerEntries": 15,
+          "checks": [
+            {
+              "pid": 30144,
+              "creationTime": 1795073759611,
+              "status": "exited"
+            },
+            {
+              "pid": 29036,
+              "creationTime": 1795073763764,
+              "status": "exited"
+            },
+            {
+              "pid": 20020,
+              "creationTime": 1795073763959,
+              "status": "exited"
+            },
+            {
+              "pid": 27712,
+              "creationTime": 1795073824151,
+              "status": "exited"
+            },
+            {
+              "pid": 40020,
+              "creationTime": 1795073828264,
+              "status": "exited"
+            },
+            {
+              "pid": 24812,
+              "creationTime": 1795073828485,
+              "status": "exited"
+            },
+            {
+              "pid": 26584,
+              "creationTime": 1795073905378,
+              "status": "exited"
+            },
+            {
+              "pid": 27292,
+              "creationTime": 1795073910247,
+              "status": "exited"
+            },
+            {
+              "pid": 37972,
+              "creationTime": 1795073910535,
+              "status": "exited"
+            }
+          ],
+          "processObservations": [
+            [
+              {
+                "pid": 30144,
+                "creationTime": 1795073759611,
+                "status": "exited"
+              },
+              {
+                "pid": 29036,
+                "creationTime": 1795073763764,
+                "status": "exited"
+              },
+              {
+                "pid": 20020,
+                "creationTime": 1795073763959,
+                "status": "exited"
+              },
+              {
+                "pid": 27712,
+                "creationTime": 1795073824151,
+                "status": "exited"
+              },
+              {
+                "pid": 40020,
+                "creationTime": 1795073828264,
+                "status": "exited"
+              },
+              {
+                "pid": 24812,
+                "creationTime": 1795073828485,
+                "status": "exited"
+              },
+              {
+                "pid": 26584,
+                "creationTime": 1795073905378,
+                "status": "exited"
+              },
+              {
+                "pid": 27292,
+                "creationTime": 1795073910247,
+                "status": "exited"
+              },
+              {
+                "pid": 37972,
+                "creationTime": 1795073910535,
+                "status": "exited"
+              }
+            ]
+          ],
+          "owned": [],
+          "remaining": [],
+          "survivors": [],
+          "detectedPendingLaunches": 0,
+          "pendingLaunches": 0,
+          "status": "passed"
+        }
+      }
+    },
+    {
+      "name": "continuation-journeys",
+      "source": {
+        "path": "D:/tmp/g5677-73bf2fa/continuation-journeys.json",
+        "bytes": 11555,
+        "sha256": "5e921f63408e474e231b8131929e832d2d897025855402669273b4b43f7409a6"
+      },
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "cases": [
+        {
+          "file": "long-session-completion-continuation.spec.ts",
+          "line": 153,
+          "name": "consolidates deferred worker completion into one generation-fenced batch after restart",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 66759
+            }
+          ]
+        },
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 354,
+          "name": "hands a project checkpoint to the new coordinator and rejects a late completion for the old one",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 46649
+            }
+          ]
+        },
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 474,
+          "name": "resumes the project coordinator from its confirmed checkpoint after an in-flight Gateway restart",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 75162
+            }
+          ]
+        },
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 474,
+          "name": "blocks project replay after an in-flight Gateway restart until the effect owner reconciles",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 135947
+            }
+          ]
+        },
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 474,
+          "name": "separates project dispatch pause, run stop and task cancellation",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 79537
+            }
+          ]
+        },
+        {
+          "file": "project-agent-loop.spec.ts",
+          "line": 718,
+          "name": "dispatches the ready plan child through the project menu and reads its worker effect",
+          "status": "expected",
+          "attempts": [
+            {
+              "status": "passed",
+              "duration": 174385
+            }
+          ]
+        }
+      ],
+      "guard": {
+        "source": {
+          "path": "D:/tmp/g5677-73bf2fa/continuation-journeys/source-mutation-guard.json",
+          "bytes": 585,
+          "sha256": "cb666866f50c6e5fb0974eb1d6287abe5c381c1d2cc8fc2629ac591183f58c01"
+        },
+        "value": {
+          "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+          "driven_by": "agent",
+          "actor": "playwright-runner",
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "46360a0eac04fb7b427bce704f5417713111e743505afa37a6600a1f4ce78f90",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "46360a0eac04fb7b427bce704f5417713111e743505afa37a6600a1f4ce78f90",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      "cleanup": {
+        "source": {
+          "path": "D:/tmp/g5677-73bf2fa/continuation-journeys/electron-process-cleanup.json",
+          "bytes": 4934,
+          "sha256": "8dd53949f4e8662e3ce524e5cda84c9db13c045242f45635b4f96c0ca83a5365"
+        },
+        "value": {
+          "driven_by": "agent",
+          "actor": "playwright-runner",
+          "runRoot": "D:\\tmp\\g5677-73bf2fa\\run\\verse-claw-e2e-run-hV23O1",
+          "ledgerEntries": 37,
+          "checks": [
+            {
+              "pid": 9236,
+              "creationTime": 1795073999576,
+              "status": "exited"
+            },
+            {
+              "pid": 13596,
+              "creationTime": 1795074004251,
+              "status": "exited"
+            },
+            {
+              "pid": 21620,
+              "creationTime": 1795074004485,
+              "status": "exited"
+            },
+            {
+              "pid": 40404,
+              "creationTime": 1795074006788,
+              "status": "exited"
+            },
+            {
+              "pid": 21836,
+              "creationTime": 1795074041440,
+              "status": "exited"
+            },
+            {
+              "pid": 40680,
+              "creationTime": 1795074046170,
+              "status": "exited"
+            },
+            {
+              "pid": 12736,
+              "creationTime": 1795074046405,
+              "status": "exited"
+            },
+            {
+              "pid": 43804,
+              "creationTime": 1795074048234,
+              "status": "exited"
+            },
+            {
+              "pid": 19628,
+              "creationTime": 1795074066371,
+              "status": "exited"
+            },
+            {
+              "pid": 35592,
+              "creationTime": 1795074071446,
+              "status": "exited"
+            },
+            {
+              "pid": 26936,
+              "creationTime": 1795074071680,
+              "status": "exited"
+            },
+            {
+              "pid": 14404,
+              "creationTime": 1795074112990,
+              "status": "exited"
+            },
+            {
+              "pid": 6396,
+              "creationTime": 1795074117667,
+              "status": "exited"
+            },
+            {
+              "pid": 24896,
+              "creationTime": 1795074117904,
+              "status": "exited"
+            },
+            {
+              "pid": 39908,
+              "creationTime": 1795074188260,
+              "status": "exited"
+            },
+            {
+              "pid": 28840,
+              "creationTime": 1795074197819,
+              "status": "exited"
+            },
+            {
+              "pid": 43116,
+              "creationTime": 1795074198313,
+              "status": "exited"
+            },
+            {
+              "pid": 17784,
+              "creationTime": 1795074324180,
+              "status": "exited"
+            },
+            {
+              "pid": 35056,
+              "creationTime": 1795074328983,
+              "status": "exited"
+            },
+            {
+              "pid": 38720,
+              "creationTime": 1795074329276,
+              "status": "exited"
+            },
+            {
+              "pid": 5584,
+              "creationTime": 1795074403473,
+              "status": "exited"
+            },
+            {
+              "pid": 19652,
+              "creationTime": 1795074419949,
+              "status": "exited"
+            },
+            {
+              "pid": 432,
+              "creationTime": 1795074420320,
+              "status": "exited"
+            }
+          ],
+          "processObservations": [
+            [
+              {
+                "pid": 9236,
+                "creationTime": 1795073999576,
+                "status": "exited"
+              },
+              {
+                "pid": 13596,
+                "creationTime": 1795074004251,
+                "status": "exited"
+              },
+              {
+                "pid": 21620,
+                "creationTime": 1795074004485,
+                "status": "exited"
+              },
+              {
+                "pid": 40404,
+                "creationTime": 1795074006788,
+                "status": "exited"
+              },
+              {
+                "pid": 21836,
+                "creationTime": 1795074041440,
+                "status": "exited"
+              },
+              {
+                "pid": 40680,
+                "creationTime": 1795074046170,
+                "status": "exited"
+              },
+              {
+                "pid": 12736,
+                "creationTime": 1795074046405,
+                "status": "exited"
+              },
+              {
+                "pid": 43804,
+                "creationTime": 1795074048234,
+                "status": "exited"
+              },
+              {
+                "pid": 19628,
+                "creationTime": 1795074066371,
+                "status": "exited"
+              },
+              {
+                "pid": 35592,
+                "creationTime": 1795074071446,
+                "status": "exited"
+              },
+              {
+                "pid": 26936,
+                "creationTime": 1795074071680,
+                "status": "exited"
+              },
+              {
+                "pid": 14404,
+                "creationTime": 1795074112990,
+                "status": "exited"
+              },
+              {
+                "pid": 6396,
+                "creationTime": 1795074117667,
+                "status": "exited"
+              },
+              {
+                "pid": 24896,
+                "creationTime": 1795074117904,
+                "status": "exited"
+              },
+              {
+                "pid": 39908,
+                "creationTime": 1795074188260,
+                "status": "exited"
+              },
+              {
+                "pid": 28840,
+                "creationTime": 1795074197819,
+                "status": "exited"
+              },
+              {
+                "pid": 43116,
+                "creationTime": 1795074198313,
+                "status": "exited"
+              },
+              {
+                "pid": 17784,
+                "creationTime": 1795074324180,
+                "status": "exited"
+              },
+              {
+                "pid": 35056,
+                "creationTime": 1795074328983,
+                "status": "exited"
+              },
+              {
+                "pid": 38720,
+                "creationTime": 1795074329276,
+                "status": "exited"
+              },
+              {
+                "pid": 5584,
+                "creationTime": 1795074403473,
+                "status": "exited"
+              },
+              {
+                "pid": 19652,
+                "creationTime": 1795074419949,
+                "status": "exited"
+              },
+              {
+                "pid": 432,
+                "creationTime": 1795074420320,
+                "status": "exited"
+              }
+            ]
+          ],
+          "owned": [],
+          "remaining": [],
+          "survivors": [],
+          "detectedPendingLaunches": 0,
+          "pendingLaunches": 0,
+          "status": "passed"
+        }
+      }
+    }
+  ]
+}

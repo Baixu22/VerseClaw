@@ -1,0 +1,548 @@
+{
+  "schema": "clawx.project-continuation-closeout/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0677",
+  "realHumanEvidence": false,
+  "taskForestNode": "TF-0677",
+  "candidate": {
+    "commit": "73bf2fae8bea0c4f76f5d2fda74c482caefc4cd5",
+    "tree": "7d8f277a250c8cd0e7a59fbf82d35c1e91c829de",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-19T09:18:32.812Z",
+  "verdict": {
+    "nodeFunctional": "passed",
+    "repositoryHarnessCi": "failed"
+  },
+  "totals": {
+    "unit": 304,
+    "electron": 11,
+    "failures": 0,
+    "skips": 0
+  },
+  "inputs": {
+    "artifacts": [
+      {
+        "path": "harness/specs/tasks/project-coordinator-continuation.md",
+        "sha256": "15aa568fdf1a8b13eb149f7400413ace7f04b378e4f05c96dca643718b5ca4e8"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "sha256": "9a36ae57be4028d929b42b1461c67f3913fccdfb8e30c0bfe24b9379afab1ac4"
+      },
+      {
+        "path": "playwright.config.ts",
+        "sha256": "2cd607585ca31082af882c3a55f4edb11842c4a81e275f391dc7773c949ee804"
+      },
+      {
+        "path": "tests/e2e/project-agent-loop.spec.ts",
+        "sha256": "c4a01d70d5fa43b4575271403843c82ff4688c0deb3ac308e833fe3ce58823d2"
+      },
+      {
+        "path": "tests/e2e/long-session-restart-journeys.spec.ts",
+        "sha256": "e3e60724e53a2f76b1efa93b2095bdde3aba6f669b970468d3da521d06a8d364"
+      },
+      {
+        "path": "tests/e2e/long-session-completion-continuation.spec.ts",
+        "sha256": "a265187954aa418f1d1f1519ff99391fd58b54b7623ec47de79523e025bff6d2"
+      },
+      {
+        "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+        "sha256": "26d175ad02f4d08cb92880ff7c4fcba14ec576f9db4e3fd6d33f88ce9ebb7e87"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+        "sha256": "009d45ca08763d9b9bdcf9470d37b037a6920dbd6aa22ce6f594b77e9cf1a8dd"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+        "sha256": "0407715acf0d574c7de3621095c33d88550a24c18fd1503e94a90f109412cc3f"
+      },
+      {
+        "path": "openclaw_runtime/pnpm-lock.yaml",
+        "sha256": "663afb8ca136834971505684403b8c98a0665e20b20d6ba9eec4a69abbfa9b0e"
+      }
+    ],
+    "host": "win32",
+    "node": "v24.22.1",
+    "electron": "40.8.4",
+    "runtime": "source",
+    "provider": "local scripted OpenAI-compatible fixture",
+    "entrypoints": [
+      {
+        "path": "D:/ClawX-work/g5-test-review-20261118/dist-electron/main/index.js",
+        "bytes": 1375,
+        "sha256": "10f59e58cbae383a006e2a965e36e06f6a645e33d028e5c580fa8421d7c8d911"
+      },
+      {
+        "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/dist/entry.js",
+        "bytes": 2777,
+        "sha256": "3e048c08ac01156d43e8274d6c1de76e00fc0344f803fedfa1659003d3ea4970"
+      }
+    ],
+    "workers": 1,
+    "retries": 0,
+    "runner": {
+      "path": "D:/tmp/g5677-73bf2fa/run-validation.ps1",
+      "bytes": 5569,
+      "sha256": "9e9ff4cc280e5673b4e5ab58c3a1bff423ec2f88ea65e715dd474e549b001624"
+    },
+    "collector": {
+      "path": "D:/tmp/g5677-73bf2fa/collect-closeout.mjs",
+      "bytes": 30923,
+      "sha256": "190d21fd7863e6605e1d4ef9e83b7ece12e99c56d39dc464eeb7f4a0d1213d4c"
+    }
+  },
+  "behavior": {
+    "completion": {
+      "coordinatorWrites": 1,
+      "callsBeforeRestart": 7,
+      "callsAfterRestart": 7,
+      "callsAfterLateCompletion": 7,
+      "staleWorkerBatchStatus": "fenced"
+    },
+    "recovery": {
+      "originalTask": "95f12c01-b51f-4b5f-8d9b-f9aeb2837227",
+      "generation": "99cb97b1-7e19-48a1-b758-793a3178e9c5",
+      "epoch": 1,
+      "exitedGatewayPid": 3532,
+      "replacementGatewayPid": 33616,
+      "modelCallsBeforeUnknownEffectReceipt": 0,
+      "matchingSettlements": 1
+    },
+    "handoff": {
+      "fromEpoch": 1,
+      "toEpoch": 2,
+      "oldOwnerCompletionModelCalls": 0
+    },
+    "timer": {
+      "duplicateFireInputs": 32,
+      "dispatches": 1,
+      "redispatchesAfterLedgerReopen": 0,
+      "test": {
+        "file": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+        "name": "timer fire seam resolves the wait from its cron job id and consumes a burst of 32 fires in one tick",
+        "status": "passed"
+      }
+    },
+    "remappedWorkerCancellation": {
+      "test": {
+        "file": "openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+        "name": "reserved owners in real registry lifecycle and restore helpers settles a remapped worker's cancelled delegation without announcing or resuming after restore",
+        "status": "passed"
+      },
+      "registryTerminalReason": "subagent-killed",
+      "writerReturn": "original delegation run ID",
+      "releasedClaims": 1,
+      "lateAnnouncements": 0,
+      "resumesAfterRestore": 0
+    },
+    "dualWorkers": {
+      "counts": {
+        "expected": 2,
+        "settled": 2,
+        "completed": 2,
+        "failed": 0,
+        "cancelled": 0,
+        "unknown": 0
+      },
+      "requesterSessionKey": "agent:main:session-1795073687403-6b8d9269-069",
+      "requesterSessionGeneration": "6877773b-cdf8-4f33-b7ac-ecb13c563aa2",
+      "results": [
+        {
+          "roleName": "architect",
+          "runId": "b85b9e28-b1aa-4a7a-8e44-bb27828d9a5f",
+          "childSessionKey": "agent:main:subagent:231c888d-cf5a-4ea3-b10d-1e856ed9e426",
+          "requesterSessionId": "6877773b-cdf8-4f33-b7ac-ecb13c563aa2",
+          "outcome": {
+            "status": "ok",
+            "startedAt": 1795073740629,
+            "endedAt": 1795073740843,
+            "elapsedMs": 214
+          },
+          "endedReason": "subagent-complete",
+          "executionStatus": "terminal"
+        },
+        {
+          "roleName": "tester",
+          "runId": "4b97ac21-f37b-4cd4-9834-3f6753bb6681",
+          "childSessionKey": "agent:main:subagent:8f221c2d-220f-4044-ab2c-3033b6fe9395",
+          "requesterSessionId": "6877773b-cdf8-4f33-b7ac-ecb13c563aa2",
+          "outcome": {
+            "status": "ok",
+            "startedAt": 1795073746482,
+            "endedAt": 1795073748188,
+            "elapsedMs": 1706
+          },
+          "endedReason": "subagent-complete",
+          "executionStatus": "terminal"
+        }
+      ]
+    },
+    "workers": [
+      {
+        "mode": "cancel",
+        "physicalWorkerRequests": 1,
+        "ownerContinuationRequests": 0,
+        "unknownReservedTokens": [
+          132096
+        ],
+        "registry": {
+          "run_id": "2370c27c-776c-42f7-9360-1f40fe83cd83",
+          "ended_reason": "subagent-killed",
+          "outcome_json": "{\"status\":\"error\",\"error\":\"Persistent task cancelled\",\"startedAt\":1795073804799,\"endedAt\":1795073809112,\"elapsedMs\":4313}",
+          "completion_announced_at": null,
+          "last_announce_delivery_error": null
+        },
+        "runtimeDatabase": {
+          "path": "D:/tmp/g5677-73bf2fa/run/verse-claw-e2e-run-fW6eAv/verse-claw-e2e-user-data-u4yDCX/openclaw-source-state/state/openclaw.sqlite",
+          "bytes": 1404928,
+          "sha256": "bbffd69c9049d0126cd72495e1f03fd7789e0535bb0e3049cd1a0d440550a015"
+        },
+        "database": {
+          "path": "D:/tmp/g5677-73bf2fa/worker-faults/project-agent-loop-cancels-4ca3a--delivering-its-late-result/project/.git/verse-claw/task-ledger.sqlite3",
+          "bytes": 200704,
+          "sha256": "d08a9e6c294017432cfeff64cb4b070d898b80223620dc045a85ca393f203b8a"
+        },
+        "states": [
+          {
+            "id": "a552eb0e-d233-4598-bd63-bf914fea8b71",
+            "state": "cancelled",
+            "claimState": "released",
+            "epoch": 3,
+            "session_key": "agent:main:subagent:3db6b68f-9b39-4915-bbab-3411294374fe",
+            "generation": "4ee91bf2-cbda-49a6-b5c8-d9f16401b63f",
+            "evidence": 0
+          },
+          {
+            "id": "6c48ee85-b162-4dcc-a6c1-51c396bca475",
+            "state": "ready",
+            "claimState": null,
+            "epoch": null,
+            "session_key": null,
+            "generation": null,
+            "evidence": 0
+          }
+        ],
+        "absentFiles": [
+          "late.txt",
+          "dependent.txt"
+        ],
+        "independentFile": null
+      },
+      {
+        "mode": "failure",
+        "physicalWorkerRequests": 3,
+        "ownerContinuationRequests": 4,
+        "unknownReservedTokens": [
+          132096,
+          132096,
+          132096
+        ],
+        "registry": {
+          "run_id": "e0c1bc28-d2f2-4fd8-add7-98f54780cd7b",
+          "ended_reason": "subagent-error",
+          "outcome_json": "{\"status\":\"error\",\"error\":\"FailoverError: ⚠️ API rate limit reached. Please try again later.\",\"startedAt\":1795073873172,\"endedAt\":1795073879623,\"elapsedMs\":6451}",
+          "completion_announced_at": 1795073900465,
+          "last_announce_delivery_error": null
+        },
+        "runtimeDatabase": {
+          "path": "D:/tmp/g5677-73bf2fa/run/verse-claw-e2e-run-fW6eAv/verse-claw-e2e-user-data-WjaSDl/openclaw-source-state/state/openclaw.sqlite",
+          "bytes": 1404928,
+          "sha256": "d529fb938e3ac38e2ec9c24538434e2eb3509857febe9cba0302eeb71b89313a"
+        },
+        "database": {
+          "path": "D:/tmp/g5677-73bf2fa/worker-faults/project-agent-loop-advance-3abd6-ter-terminal-worker-failure/project/.git/verse-claw/task-ledger.sqlite3",
+          "bytes": 212992,
+          "sha256": "a3879b37186630cc25a83db8ed2930520e2073048be444583f1938de58abe2d2"
+        },
+        "states": [
+          {
+            "id": "97c42552-e6ec-4718-863c-82944991c2bd",
+            "state": "paused",
+            "claimState": "released",
+            "epoch": 3,
+            "session_key": "agent:main:session-1795073829624-projectworkerfaults",
+            "generation": "1ffbd639-5c74-4fa4-848e-2b79b53d8b73",
+            "evidence": 0
+          },
+          {
+            "id": "f0fe0110-3f58-41a2-b58d-dbbdc6107ee4",
+            "state": "ready",
+            "claimState": null,
+            "epoch": null,
+            "session_key": null,
+            "generation": null,
+            "evidence": 0
+          },
+          {
+            "id": "f4378980-8aff-48e4-806c-6383df6b4a25",
+            "state": "doing",
+            "claimState": "active",
+            "epoch": 1,
+            "session_key": "agent:main:session-1795073829624-projectworkerfaults",
+            "generation": "1ffbd639-5c74-4fa4-848e-2b79b53d8b73",
+            "evidence": 0
+          }
+        ],
+        "absentFiles": [
+          "late.txt",
+          "dependent.txt"
+        ],
+        "independentFile": {
+          "path": "D:/tmp/g5677-73bf2fa/worker-faults/project-agent-loop-advance-3abd6-ter-terminal-worker-failure/project/index.txt",
+          "bytes": 18,
+          "sha256": "42c4befe8a591f40ad8113a1200c61a4fe31e6106791a584d4375615a9768824"
+        }
+      },
+      {
+        "mode": "budget",
+        "physicalWorkerRequests": 2,
+        "ownerContinuationRequests": 4,
+        "unknownReservedTokens": [
+          132096,
+          132096
+        ],
+        "registry": {
+          "run_id": "6032a861-c795-403a-9d76-fd3da09dfe44",
+          "ended_reason": "subagent-error",
+          "outcome_json": "{\"status\":\"error\",\"error\":\"FailoverError: LLM request failed: network connection error.\",\"startedAt\":1795073960706,\"endedAt\":1795073967347,\"elapsedMs\":6641}",
+          "completion_announced_at": 1795073989804,
+          "last_announce_delivery_error": null
+        },
+        "runtimeDatabase": {
+          "path": "D:/tmp/g5677-73bf2fa/run/verse-claw-e2e-run-fW6eAv/verse-claw-e2e-user-data-D9nYut/openclaw-source-state/state/openclaw.sqlite",
+          "bytes": 1404928,
+          "sha256": "99f8ce964b0440e9984bbb690d3a912389326ceec9588fb6a695008ba172a075"
+        },
+        "database": {
+          "path": "D:/tmp/g5677-73bf2fa/worker-faults/project-agent-loop-advance-9ff11-mission-caps-worker-retries/project/.git/verse-claw/task-ledger.sqlite3",
+          "bytes": 212992,
+          "sha256": "d5ab2842952f35c5da29e5021ff6755a5db964f3a7842c0bf52acf9dab0eb2d3"
+        },
+        "states": [
+          {
+            "id": "91010c70-9541-4865-a6b3-6f91188158da",
+            "state": "paused",
+            "claimState": "released",
+            "epoch": 3,
+            "session_key": "agent:main:session-1795073911636-projectworkerfaults",
+            "generation": "89624634-d8c2-41ff-8c78-70eef418e338",
+            "evidence": 0
+          },
+          {
+            "id": "89a80915-b0ae-47e4-b572-a0a0c41b9259",
+            "state": "ready",
+            "claimState": null,
+            "epoch": null,
+            "session_key": null,
+            "generation": null,
+            "evidence": 0
+          },
+          {
+            "id": "d0e0a76e-2ecb-47fd-acd2-d4d6148bae27",
+            "state": "doing",
+            "claimState": "active",
+            "epoch": 1,
+            "session_key": "agent:main:session-1795073911636-projectworkerfaults",
+            "generation": "89624634-d8c2-41ff-8c78-70eef418e338",
+            "evidence": 0
+          }
+        ],
+        "absentFiles": [
+          "late.txt",
+          "dependent.txt"
+        ],
+        "independentFile": {
+          "path": "D:/tmp/g5677-73bf2fa/worker-faults/project-agent-loop-advance-9ff11-mission-caps-worker-retries/project/index.txt",
+          "bytes": 18,
+          "sha256": "42c4befe8a591f40ad8113a1200c61a4fe31e6106791a584d4375615a9768824"
+        }
+      }
+    ],
+    "unwantedEffects": {
+      "staleGenerationModelCalls": 0,
+      "lateWorkerFiles": 0,
+      "incorrectFailedChildAccepts": 0,
+      "dependentClaims": 0,
+      "crossWorkspaceNodes": 0
+    }
+  },
+  "repositoryHarnessCi": {
+    "exitCode": 1,
+    "baselineTestsPassed": 59,
+    "reasons": [
+      "typecheck exceeded hard limit: 68533ms > 45000ms.",
+      "playwright-agent-dev exceeded hard limit: 46635ms > 40000ms.",
+      "contract exceeded hard limit: 3388ms > 3000ms."
+    ],
+    "log": {
+      "path": "D:/tmp/g5677-73bf2fa/harness-ci.log",
+      "bytes": 24044,
+      "sha256": "ddfa73ffd7e240534a7483b5534e0cd998eafb116c149bcaaf41f0f9c6e1ebb9"
+    }
+  },
+  "preservedRuns": [
+    {
+      "path": "D:/tmp/g5677-4be12f625-validation/continuation-journeys.json",
+      "bytes": 17975,
+      "sha256": "0c5f7d18fff0806037f63d032b0be889f9d9c4f3363faf40ddba2d794524221f",
+      "result": "Repeated session link conflicted."
+    },
+    {
+      "path": "D:/tmp/g5677-cd6e1cf40-validation/worker-faults.json",
+      "bytes": 11527,
+      "sha256": "a7ca314a776234065a71f71189bd0ba1db956538d087980e1b6f6bfe839e9f90",
+      "result": "The default workspace in the long-session fixture was missing."
+    },
+    {
+      "path": "D:/tmp/g5677-54810a/long-session-restart.json",
+      "bytes": 7339,
+      "sha256": "df42990a5af33a9ccbe9cbde6b536e0edc1783186c3f4949e8d0f7fadf14c5c9",
+      "result": "The isolation workspace was incorrectly active during dispatch."
+    },
+    {
+      "path": "D:/tmp/g5677-c18bbe/long-session-restart/long-session-restart-journ-aed0a-s-and-lifecycle-generations/restart-journey-results.json",
+      "bytes": 35439,
+      "sha256": "8672fedad2fdb7fb5e75378a89a981d6189bab8d4b7dd75ea2dc7f81f990c99d",
+      "candidate": "c18bbe0a0e589cd48bd2e435e99f92f52230b0a7",
+      "result": "The terminal-only test passed although neither worker completed.",
+      "counts": {
+        "expected": 2,
+        "settled": 2,
+        "completed": 0,
+        "failed": 2,
+        "cancelled": 0,
+        "unknown": 0
+      },
+      "registry": {
+        "database": {
+          "path": "D:/tmp/g5677-c18bbe/run/verse-claw-e2e-run-VcQPVR/verse-claw-e2e-user-data-92He5U/openclaw-source-state/state/openclaw.sqlite",
+          "bytes": 1441792,
+          "sha256": "d8207567f31d9ef297c1a3bcc522b1a8e8f86fe821e35c5dec41c5236e00dc59"
+        },
+        "rows": [
+          {
+            "roleName": "architect",
+            "runId": "1b65ffc7-0328-4434-a6c4-f10f72febb9e",
+            "childSessionKey": "agent:main:subagent:ad5f31e5-c8fb-4e50-8ac5-3fbfdf0a9844",
+            "requesterSessionId": "d8e3600d-16a5-4000-8fee-00238688ec29",
+            "outcome": {
+              "status": "error",
+              "error": "Error: Thinking level \"high\" is not supported for openai/mock-coder. Use one of: off.",
+              "startedAt": 1795070487733,
+              "endedAt": 1795070489736,
+              "elapsedMs": 2003
+            },
+            "endedReason": "subagent-error",
+            "executionStatus": "terminal"
+          },
+          {
+            "roleName": "tester",
+            "runId": "446cc431-8707-4694-9052-ea6350ff2235",
+            "childSessionKey": "agent:main:subagent:ffe32806-c000-40d3-9f66-18d2fbf1bb9f",
+            "requesterSessionId": "d8e3600d-16a5-4000-8fee-00238688ec29",
+            "outcome": {
+              "status": "error",
+              "error": "orchestration predecessor failed or was cancelled",
+              "endedAt": 1795070491045
+            },
+            "endedReason": "subagent-error",
+            "executionStatus": "terminal"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:/tmp/g5677-fd7b07a/long-session-restart.json",
+      "bytes": 8708,
+      "sha256": "339b413425ce730f001b0f60c96dae6e7dce97f2db2df49ca938633e131e3fc1",
+      "candidate": "fd7b07a70902793a8e8b293a1138c4095bc86e67",
+      "result": "After relaunch the fixture had not selected the handoff child and stopped before dispatch."
+    },
+    {
+      "path": "D:/tmp/g5677-8776096/continuation-journeys.json",
+      "bytes": 17001,
+      "sha256": "a86ca6e62f551490bfbeaccf5ae609ccc758de9c647dc62328e46e9934609302",
+      "candidate": "8776096fa064f49e5c6eb80432f724770ea9b80b",
+      "result": "A read spanning the accepted event used 12.5 seconds; the next read finished after the assertion deadline.",
+      "proof": {
+        "source": {
+          "path": "D:/tmp/g5677-8776096/plan-acceptance-timeout.json",
+          "bytes": 1722,
+          "sha256": "05ad5f5775eac4f1ff4f01372c159cb83d87bed27d6a53dc14c57142ce37c0fa"
+        },
+        "value": {
+          "driven_by": "agent",
+          "actor": "codex-tf0677",
+          "realHumanEvidence": false,
+          "candidate": "8776096fa064f49e5c6eb80432f724770ea9b80b",
+          "failure": "The final completed owner snapshot did not return inside the polling deadline.",
+          "ledger": {
+            "seq": 11,
+            "task_id": "c6d8292f-4bf7-45de-b28c-746451fb450c",
+            "at": 1795072666540,
+            "json": "{\"candidate\":\"fixture-version-1\",\"revision\":1}",
+            "state": "done"
+          },
+          "timing": [
+            {
+              "id": "expect@120",
+              "startEpochMs": 1795072619333.156,
+              "endEpochMs": 1795072679338.9082,
+              "durationMs": 60005.75200000001
+            },
+            {
+              "id": "pw:api@149",
+              "startEpochMs": 1795072665677.7961,
+              "endEpochMs": 1795072678164.0752,
+              "durationMs": 12486.27899999998
+            },
+            {
+              "id": "pw:api@151",
+              "startEpochMs": 1795072679182.7112,
+              "endEpochMs": 1795072679938.133,
+              "durationMs": 755.4220000000205
+            }
+          ],
+          "inputs": [
+            {
+              "path": "D:/tmp/g5677-8776096/continuation-journeys/project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan/project/.git/verse-claw/task-ledger.sqlite3",
+              "sha256": "6826fe20e278147c71d7577fcd0db2fd25c4c59ffb96e3aba8d5c921abb0cf24"
+            },
+            {
+              "path": "D:/tmp/g5677-8776096/continuation-journeys/project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan/trace.zip",
+              "sha256": "3395032ead9aa781554ea9c0fd48a87118e394ae48d8cd81c9d0d79aaab3ba73"
+            },
+            {
+              "path": "D:/tmp/g5677-8776096/continuation-journeys/project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan/provider-log.json",
+              "sha256": "5fab7dc334fe99b15d3e49f93aa1e132fc4c608d2d71bc9ebcc5a9e84af9193f"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "unmeasured": [
+    "Installed build and non-Windows environments.",
+    "Live-provider quality and long-run performance.",
+    "Remapped cancellation uses the Registry lifecycle and SQLite Task Ledger regression. Electron cancels the original run."
+  ],
+  "assets": [
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/p3/closeout/gates.json",
+      "sha256": "34f8276fbf2f7edc42db2565711b56d1ffe0147777d90d91b7b00c88782e4e21",
+      "bytes": 124806
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/p3/closeout/journeys.json",
+      "sha256": "00d0eac177b8e0fea5ae745ff7e742720782974f0637f784d022753c7f454123",
+      "bytes": 302482
+    }
+  ],
+  "credentialScan": {
+    "filesScanned": 3,
+    "patterns": "policy-doc credential shapes, bearer token, GitHub PAT and Slack/provider prefixes",
+    "hits": []
+  }
+}
