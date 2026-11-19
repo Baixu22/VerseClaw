@@ -361,6 +361,9 @@ test('resumes the project coordinator from its confirmed checkpoint after an in-
       const inFlight = await describe();
       expect(inFlight.session).toMatchObject({ sessionId: project.generation, hasActiveRun: true });
       expect(store.get(original.taskNodeId)).toMatchObject({ checkpoint, pendingOperations: 0 });
+      const activeRun = store.db.prepare('SELECT epoch, run_id, owner_pid FROM task_active_runs WHERE task_id=?')
+        .get(original.taskNodeId);
+      expect(activeRun).toEqual({ epoch: original.epoch, run_id: sent.result.runId, owner_pid: priorGateway.pid });
       await hostInvoke(app, 'gateway', 'stop');
       releaseProvider();
       await startGateway(app);
@@ -377,16 +380,24 @@ test('resumes the project coordinator from its confirmed checkpoint after an in-
       const writes = llm.log.filter(row => row.issued === 'restartwrite');
       expect(writes).toHaveLength(1);
       const recoveredTask = JSON.parse(writes[0].toolResults.restartread) as TaskView;
-      expect(recoveredTask).toMatchObject({ checkpoint, pendingOperations: 0, claim: {
-        taskNodeId: original.taskNodeId, sessionKey: original.sessionKey, generation: original.generation,
-      } });
-      const checkpoints = store.history(original.taskNodeId).filter(event => event.kind === 'checkpoint');
+      const claim = { taskNodeId: original.taskNodeId, sessionKey: original.sessionKey,
+        generation: original.generation, epoch: original.epoch };
+      expect(recoveredTask).toMatchObject({ checkpoint, pendingOperations: 0, claim });
+      const history = store.history(original.taskNodeId);
+      const replacements = history.filter(event => event.kind === 'interrupted_run_replaced');
+      expect(replacements).toHaveLength(1);
+      expect(JSON.parse(replacements[0].json)).toMatchObject({ generation: original.generation, epoch: original.epoch,
+        previousRunId: sent.result.runId, previousPid: priorGateway.pid, runId: expect.any(String), pid: nextGateway.pid });
+      const checkpoints = history.filter(event => event.kind === 'checkpoint');
       expect(checkpoints.map(event => JSON.parse(event.json).nextAction)).toEqual([checkpoint.nextAction, resumed.nextAction]);
+      expect(replacements[0].seq).toBeLessThan(checkpoints[1].seq);
+      const finalTask = store.get(original.taskNodeId);
+      expect(finalTask).toMatchObject({ checkpoint: resumed, pendingOperations: 0, claim });
       await writeFile(info.outputPath('project-restart-checkpoint.json'), `${JSON.stringify({
         driven_by: 'agent', actor: 'playwright-project-checkpoint-restart', sourceCandidate, project,
         priorGateway: priorGateway.pid, nextGateway: nextGateway.pid, interruptedRequests, originalRunId: sent.result.runId,
         inFlight: inFlight.session, resumedGeneration: after.session.sessionId,
-        original, recoveredTask, checkpoints, resumed: store.get(original.taskNodeId),
+        original, activeRun, recoveredTask, replacements, checkpoints, resumed: finalTask,
       }, null, 2)}\n`);
     } finally {
       store.close();

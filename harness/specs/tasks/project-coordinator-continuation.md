@@ -1,6 +1,6 @@
 ---
 id: project-coordinator-continuation
-title: TF-0677 Project completion continuation and coordinator fencing
+title: TF-0677 Project continuation, restart recovery and coordinator fencing
 lifecycleStatus: active
 scenario: gateway-backend-communication
 taskType: runtime-bridge
@@ -24,6 +24,8 @@ touchedAreas:
   - openclaw_runtime/src/gateway/server-methods/agent*.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/agent.ts
   - shared/task-system/project-coordinator.ts
+  - shared/task-system/store.ts
+  - tests/unit/durable-task-system.test.ts
   - tests/e2e/project-agent-loop.spec.ts
   - tests/e2e/long-session-completion-continuation.spec.ts
   - harness/specs/tasks/project-coordinator-continuation.md
@@ -36,7 +38,9 @@ expectedUserBehavior:
   - A settled worker wakes its original project coordinator without another user message.
   - A completion retains its spawn generation through retries and restart. A replacement coordinator never consumes it.
   - Handoff waits for pending task effects; the successor resumes from the retained checkpoint. A late completion cannot wake the retired source.
+  - Gateway restart recovery reuses the current task and checkpoint when the prior process has exited and no task effects remain unsettled.
 requiredTests:
+  - pnpm exec vitest run tests/unit/durable-task-system.test.ts
   - pnpm run typecheck
   - pnpm run comms:replay
   - pnpm run comms:compare
@@ -46,6 +50,7 @@ acceptance:
   - Reject generation changes at delivery and again inside the atomic session update before agent ingress.
   - Terminal stale completions persist a failed delivery and stop retries; late completion cannot write a replacement generation.
   - Check the Workspace owner's handoff state at completion delivery and before Gateway ingress. Preserve the source transcript and transfer the task checkpoint under a new writer epoch.
+  - Atomically replace an interrupted run under the current writer epoch only after verifying process exit, an executing task, and zero started or unknown effects. Retain the process and run identities in the Task Ledger event.
   - Verify durable deduplication, idle continuation, cancellation, restart and unknown-effect reconciliation on the same candidate before closing TF-0677.
 docs:
   required: true

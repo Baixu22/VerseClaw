@@ -27,3 +27,5 @@ requiredRules:
 项目完成通知的代次验收见 `harness/specs/tasks/project-coordinator-continuation.md`：agent 驱动 worker 写入，等待负责人自动续行，重启后检查重放次数，重置负责人后拒绝旧代结果。
 
 负责人交接等待在途工具操作结清，再转移同一任务与 checkpoint；新负责人使用新的 writer epoch 读写任务。旧会话保留历史，迟到的完成通知不会触发旧负责人。
+
+在模型请求仍在途时重启 Gateway，核对原进程确已退出、会话代次和 writer epoch 未变、未决效果为零，随后从同一任务的 checkpoint 续行。回读 Task Ledger，确认只有一次运行替换和一条恢复 checkpoint。

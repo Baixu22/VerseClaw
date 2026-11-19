@@ -33,6 +33,16 @@ import { retainTaskArtifact, readRetainedTaskArtifact, type TaskArtifactReferenc
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
 const LEASE_MS = 120_000;
+const TASK_SCHEMA_VERSION = 7;
+function runProcessExited(pid: number | null): boolean {
+  if (pid === null || !Number.isSafeInteger(pid) || pid <= 0 || pid === process.pid) return false;
+  try {
+    process.kill(pid, 0);
+    return false;
+  } catch (error) {
+    return (error as NodeJS.ErrnoException).code === 'ESRCH';
+  }
+}
 function withinPath(root: string, pathname: string): boolean {
   const offset = relative(root, process.platform === 'win32' ? pathname.toLowerCase() : pathname);
   return offset === '' || (offset !== '..' && !offset.startsWith(`..${sep}`) && !isAbsolute(offset));
@@ -135,12 +145,12 @@ export class TaskSystemStore {
         const version = Number(
           (db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version,
         );
-        if (version > 6) {
+        if (version > TASK_SCHEMA_VERSION) {
           db.close();
           throw new Error("TASK_SCHEMA_NEWER_THAN_CLIENT");
         }
         db.exec("PRAGMA synchronous=FULL;");
-        if (version === 6) return db;
+        if (version === TASK_SCHEMA_VERSION) return db;
         db.exec("PRAGMA journal_mode=WAL; BEGIN IMMEDIATE;");
         db.exec(`
         CREATE TABLE IF NOT EXISTS task_contracts(id TEXT PRIMARY KEY, fingerprint TEXT NOT NULL, business_key TEXT, state TEXT NOT NULL, revision INTEGER NOT NULL, json TEXT NOT NULL);
@@ -156,7 +166,7 @@ export class TaskSystemStore {
         CREATE TABLE IF NOT EXISTS task_events(seq INTEGER PRIMARY KEY AUTOINCREMENT, task_id TEXT NOT NULL, kind TEXT NOT NULL, at INTEGER NOT NULL, json TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS task_submissions(task_id TEXT PRIMARY KEY, candidate TEXT NOT NULL, revision INTEGER NOT NULL, epoch INTEGER NOT NULL);
         CREATE TABLE IF NOT EXISTS task_operation_owners(id TEXT PRIMARY KEY, pid INTEGER NOT NULL, started_at INTEGER NOT NULL);
-        CREATE TABLE IF NOT EXISTS task_active_runs(task_id TEXT PRIMARY KEY, epoch INTEGER NOT NULL, run_id TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_active_runs(task_id TEXT PRIMARY KEY, epoch INTEGER NOT NULL, run_id TEXT NOT NULL, owner_pid INTEGER);
         CREATE TABLE IF NOT EXISTS task_delegations(task_id TEXT NOT NULL,epoch INTEGER NOT NULL,request_id TEXT NOT NULL,PRIMARY KEY(task_id,epoch));
         CREATE TABLE IF NOT EXISTS task_operation_handles(id TEXT PRIMARY KEY,handle TEXT NOT NULL,json TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS task_references(session_key TEXT PRIMARY KEY,task_id TEXT NOT NULL,generation TEXT NOT NULL,role TEXT NOT NULL);
@@ -165,9 +175,12 @@ export class TaskSystemStore {
         CREATE INDEX IF NOT EXISTS task_event_page ON task_events(task_id,seq);
         CREATE TABLE IF NOT EXISTS task_event_consumers(id TEXT PRIMARY KEY,sequence INTEGER NOT NULL);
         CREATE INDEX IF NOT EXISTS task_claim_session ON task_claims(session_key,generation);
-        PRAGMA user_version=6;
-        COMMIT;
-      `);
+        `);
+        const columns = db.prepare("PRAGMA table_info(task_active_runs)").all();
+        if (!columns.some(column => column.name === "owner_pid")) {
+          db.exec("ALTER TABLE task_active_runs ADD COLUMN owner_pid INTEGER");
+        }
+        db.exec(`PRAGMA user_version=${TASK_SCHEMA_VERSION}; COMMIT;`);
       } catch (error) {
         try {
           db.close();
@@ -1536,16 +1549,23 @@ export class TaskSystemStore {
   }
   beginRun(credential: TaskCredential, runId: string): void {
     this.transaction(() => {
-      this.assertOwner(credential);
+      const view = this.assertOwner(credential);
       const prior = this.db
-        .prepare("SELECT epoch,run_id FROM task_active_runs WHERE task_id=?")
-        .get(credential.taskNodeId) as { epoch: number; run_id: string } | undefined;
-      if (prior && prior.epoch === credential.epoch && prior.run_id !== runId)
-        throw new Error("TASK_RUN_ALREADY_ACTIVE");
-      if (prior && prior.epoch === credential.epoch && prior.run_id === runId) return;
+        .prepare("SELECT epoch,run_id,owner_pid FROM task_active_runs WHERE task_id=?")
+        .get(credential.taskNodeId) as { epoch: number; run_id: string; owner_pid: number | null } | undefined;
+      if (prior?.epoch === credential.epoch) {
+        if (prior.run_id === runId && prior.owner_pid === process.pid) return;
+        if (!runProcessExited(prior.owner_pid)) throw new Error("TASK_RUN_ALREADY_ACTIVE");
+        if (view.pendingOperations) throw new Error("TASK_EFFECT_OWNER_RECONCILIATION_REQUIRED");
+        if (view.contract.state !== "doing") throw new Error("TASK_EXECUTION_NOT_RUNNING");
+        this.event(credential.taskNodeId, "interrupted_run_replaced", {
+          generation: credential.generation, epoch: credential.epoch,
+          previousRunId: prior.run_id, previousPid: prior.owner_pid, runId, pid: process.pid,
+        });
+      }
       this.db
-        .prepare("INSERT OR REPLACE INTO task_active_runs VALUES(?,?,?)")
-        .run(credential.taskNodeId, credential.epoch, runId);
+        .prepare("INSERT OR REPLACE INTO task_active_runs(task_id,epoch,run_id,owner_pid) VALUES(?,?,?,?)")
+        .run(credential.taskNodeId, credential.epoch, runId, process.pid);
     });
   }
   reserveDelegation(credential: TaskCredential, requestId: string): 'reserved' | 'existing' {
@@ -1567,8 +1587,8 @@ export class TaskSystemStore {
   endRun(credential: TaskCredential, runId: string): void {
     this.assertAuthorityCurrent();
     this.db
-      .prepare("DELETE FROM task_active_runs WHERE task_id=? AND epoch=? AND run_id=?")
-      .run(credential.taskNodeId, credential.epoch, runId);
+      .prepare("DELETE FROM task_active_runs WHERE task_id=? AND epoch=? AND run_id=? AND owner_pid=?")
+      .run(credential.taskNodeId, credential.epoch, runId, process.pid);
   }
   recover(
     taskNodeId: string,
@@ -1588,13 +1608,7 @@ export class TaskSystemStore {
       for (const op of pending) {
         if (!["write", "edit", "apply_patch"].includes(op.kind) || !op.pid)
           throw new Error("TASK_EFFECT_OWNER_RECONCILIATION_REQUIRED");
-        let dead = false;
-        try {
-          process.kill(op.pid, 0);
-        } catch (error) {
-          dead = (error as NodeJS.ErrnoException).code === "ESRCH";
-        }
-        if (!dead) throw new Error("TASK_OLD_PROCESS_STILL_ALIVE");
+        if (!runProcessExited(op.pid)) throw new Error("TASK_OLD_PROCESS_STILL_ALIVE");
         this.db
           .prepare(
             "UPDATE task_operations SET state='reconciled',result='Old in-process writer exited; partial files require review' WHERE id=?",
