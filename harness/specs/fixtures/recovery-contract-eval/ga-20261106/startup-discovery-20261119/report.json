@@ -1,0 +1,312 @@
+{
+  "schema": "G3StartupDiscoveryDevelopment/v1",
+  "decision": "NO_GO",
+  "codeCommit": "a3e185925c6f221d614bca6b21a192304087261d",
+  "inputs": [
+    {
+      "file": "openclaw_runtime/src/channels/config-presence.ts",
+      "sha256": "b716072c821e070b4e98313c0bde06d981053aa227898006a09ac6bc12554a11",
+      "gitBlob": "bebfcd8d562a9309d63279a9a4163c1952ca6ad6",
+      "gitBlobSha256": "b716072c821e070b4e98313c0bde06d981053aa227898006a09ac6bc12554a11",
+      "diskSha256": "b716072c821e070b4e98313c0bde06d981053aa227898006a09ac6bc12554a11",
+      "byteIdentical": true
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/gateway-startup-plugin-ids.ts",
+      "sha256": "5ba306e89faef2be0bfa685a606c573973ceebc831f1266664a5915cf7deae91",
+      "gitBlob": "9c1260e33d6cd0b3c7f69056856c7f40719a6237",
+      "gitBlobSha256": "5ba306e89faef2be0bfa685a606c573973ceebc831f1266664a5915cf7deae91",
+      "diskSha256": "5ba306e89faef2be0bfa685a606c573973ceebc831f1266664a5915cf7deae91",
+      "byteIdentical": true
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/plugin-lookup-table.ts",
+      "sha256": "b5783fb3b2cf8f47097d5ff877467be07fd96524916619ad843a86f92f3ba0ee",
+      "gitBlob": "3780150051131f2c9ff8dc6ae08d4352d8343f3d",
+      "gitBlobSha256": "b5783fb3b2cf8f47097d5ff877467be07fd96524916619ad843a86f92f3ba0ee",
+      "diskSha256": "b5783fb3b2cf8f47097d5ff877467be07fd96524916619ad843a86f92f3ba0ee",
+      "byteIdentical": true
+    },
+    {
+      "file": "tests/unit/gateway-startup-prepared-discovery.test.ts",
+      "sha256": "be8460f570a65efbc0f54532660bfbe3c86a82224e39d08d1fdd37fe524175ca",
+      "gitBlob": "4d799da85cd825701c372327f6cdf559925ecd22",
+      "gitBlobSha256": "be8460f570a65efbc0f54532660bfbe3c86a82224e39d08d1fdd37fe524175ca",
+      "diskSha256": "be8460f570a65efbc0f54532660bfbe3c86a82224e39d08d1fdd37fe524175ca",
+      "byteIdentical": true
+    },
+    {
+      "file": "tests/unit/gateway-plugin-startup-scope.test.ts",
+      "sha256": "30beff36762eab4013f5e31da1b8c84567ae19377fd918dff566b6e64b8d4679",
+      "gitBlob": "5345a553caa1887d92c5b751b1e4824d9f7f4bb4",
+      "gitBlobSha256": "30beff36762eab4013f5e31da1b8c84567ae19377fd918dff566b6e64b8d4679",
+      "diskSha256": "30beff36762eab4013f5e31da1b8c84567ae19377fd918dff566b6e64b8d4679",
+      "byteIdentical": true
+    },
+    {
+      "file": "tests/unit/gateway-channel-presence-discovery.test.ts",
+      "sha256": "c222bec3c81fc0aed6efcbdb21032ec42ebd01e5a76df844de29245de94df125",
+      "gitBlob": "a92f1395d1e580b3985812871ab0a90f286ee510",
+      "gitBlobSha256": "c222bec3c81fc0aed6efcbdb21032ec42ebd01e5a76df844de29245de94df125",
+      "diskSha256": "c222bec3c81fc0aed6efcbdb21032ec42ebd01e5a76df844de29245de94df125",
+      "byteIdentical": true
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "726fa80361385cb48b3326a804da417b940730ea80ce28d250923b8f22d039b6",
+      "gitBlob": "e069bbff4f709b16669edf626f62181941f76d83",
+      "gitBlobSha256": "726fa80361385cb48b3326a804da417b940730ea80ce28d250923b8f22d039b6",
+      "diskSha256": "726fa80361385cb48b3326a804da417b940730ea80ce28d250923b8f22d039b6",
+      "byteIdentical": true
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "0a947853d8447e475b2b678d41ffc332a17360477b279049031f69e3f7d4986a",
+      "gitBlob": "a3e2fe7d292f3d704c872b7e2753eccf7551574b",
+      "gitBlobSha256": "0a947853d8447e475b2b678d41ffc332a17360477b279049031f69e3f7d4986a",
+      "diskSha256": "0a947853d8447e475b2b678d41ffc332a17360477b279049031f69e3f7d4986a",
+      "byteIdentical": true
+    }
+  ],
+  "tests": {
+    "red": {
+      "total": 6,
+      "passed": 4,
+      "failed": 2
+    },
+    "focused": {
+      "total": 11,
+      "passed": 11
+    },
+    "related": {
+      "total": 34,
+      "passed": 34
+    }
+  },
+  "benchmark": [
+    {
+      "name": "startup-plan",
+      "queriesPerArm": 9,
+      "beforeBundledReads": 18,
+      "afterBundledReads": 0,
+      "beforeMedianMs": 4.358099999999922,
+      "afterMedianMs": 0.36199999999996635,
+      "plansIdentical": true
+    },
+    {
+      "name": "lookup-table",
+      "queriesPerArm": 9,
+      "beforeBundledReads": 18,
+      "afterBundledReads": 0,
+      "beforeMedianMs": 4.529999999999745,
+      "afterMedianMs": 0.3663999999999987,
+      "plansIdentical": true
+    }
+  ],
+  "review": {
+    "model": "ccs-ai/gpt-6.1-sol",
+    "findings": [],
+    "elapsedMs": 166773,
+    "initialFailure": "Python GBK decoding failed before model invocation; original receipt retained."
+  },
+  "stages": [
+    {
+      "name": "startup-review",
+      "exitCode": 1,
+      "elapsedMs": 4056,
+      "sourceUnchanged": true,
+      "sha256": "02566a30e49852cc9f6cdcc2840aac5ec90a5c6e37fb5f1f5d0412ee42ad4d33"
+    },
+    {
+      "name": "startup-review-r1",
+      "exitCode": 0,
+      "elapsedMs": 166773,
+      "sourceUnchanged": true,
+      "sha256": "77454e6cc801e4285a242ffd2ba28dcb3673e272eddddde95a82c4bf88c61ce4"
+    },
+    {
+      "name": "startup-related-tests",
+      "exitCode": 0,
+      "elapsedMs": 48076,
+      "sourceUnchanged": true,
+      "sha256": "ddba5662ab18bebf3b5528adcf5b48e4e97607cb8389f5e46b507f01cb6c597e"
+    },
+    {
+      "name": "startup-eslint",
+      "exitCode": 0,
+      "elapsedMs": 9098,
+      "sourceUnchanged": true,
+      "sha256": "e7ea3bd2d578e50c95b961165193b9afdb62731ed198f462e96b1d95fa940666"
+    },
+    {
+      "name": "startup-runtime-lint",
+      "exitCode": 0,
+      "elapsedMs": 292225,
+      "sourceUnchanged": true,
+      "sha256": "cb54a829b33fa1285bed8ba26825fba9bb69367041315e1657cb8a01cd476f6b"
+    },
+    {
+      "name": "startup-harness",
+      "exitCode": 1,
+      "elapsedMs": 39683,
+      "sourceUnchanged": true,
+      "sha256": "341856ff20c39de44f2e64b2eb3fb5303cbabc4d27df6bee3e72d152d30157cd"
+    },
+    {
+      "name": "startup-harness-r1",
+      "exitCode": 0,
+      "elapsedMs": 2501,
+      "sourceUnchanged": true,
+      "sha256": "cf34dfb30e8e4c174f77c07daf01c5f3e1c3b6968936e0a7601d88ce472206e3"
+    },
+    {
+      "name": "startup-harness-startup-r1",
+      "exitCode": 0,
+      "elapsedMs": 2175,
+      "sourceUnchanged": true,
+      "sha256": "91e9d4f0d3dbcab285f113a7fc6a8c32077421adca0707676f62655f2871e0dc"
+    },
+    {
+      "name": "startup-harness-flow-r1",
+      "exitCode": 0,
+      "elapsedMs": 2055,
+      "sourceUnchanged": true,
+      "sha256": "659089beb308c1bda2fcfff6ee26fd9e946ad58b34aac1551ca99946f8c6998e"
+    },
+    {
+      "name": "startup-comms-replay",
+      "exitCode": 0,
+      "elapsedMs": 1488,
+      "sourceUnchanged": true,
+      "sha256": "cf981218f7bf5cfe6af90949e7cdb5f72390bf561b6aad7e2b5eb17e2ad3bfe3"
+    },
+    {
+      "name": "startup-comms-compare",
+      "exitCode": 0,
+      "elapsedMs": 1375,
+      "sourceUnchanged": true,
+      "sha256": "f28b1c070d3ae9168098867c9b5221ab9912fd92feddfdbd5bcc7a2022d6a484"
+    },
+    {
+      "name": "startup-built-baseline",
+      "exitCode": 1,
+      "elapsedMs": 4032,
+      "sourceUnchanged": true,
+      "sha256": "fb447f8f24e3ee782b33a7d4ad4fbbb9871f528fe8375390209bc42e04095063"
+    },
+    {
+      "name": "startup-built-baseline-r1",
+      "exitCode": 0,
+      "elapsedMs": 3932,
+      "sourceUnchanged": true,
+      "sha256": "0dfa9ca7acb4e96bc537f1a2cbb292fddddf84ef976d1a6d56e12e6fd55ddbf3"
+    },
+    {
+      "name": "startup-runtime",
+      "exitCode": 0,
+      "elapsedMs": 65820,
+      "sourceUnchanged": true,
+      "sha256": "fb785d244951c5f4705c152a72719b0d1339f9a731c3436d316de948244c045c"
+    },
+    {
+      "name": "startup-built-candidate",
+      "exitCode": 0,
+      "elapsedMs": 1671,
+      "sourceUnchanged": true,
+      "sha256": "6220eb2fbb4de6ebb956798d142a529dc436bb8c4fabdf6ed1244dac251d7d85"
+    },
+    {
+      "name": "startup-types",
+      "exitCode": 0,
+      "elapsedMs": 41493,
+      "sourceUnchanged": true,
+      "sha256": "6ed21c29bf933c6a4e6e309c0fb5736a1ffb9726a41cdc9e4a1dd158833f8d74"
+    },
+    {
+      "name": "startup-source-gates",
+      "exitCode": 0,
+      "elapsedMs": 44424,
+      "sourceUnchanged": true,
+      "sha256": "efba2ce1800d95c0d4edae5b58ac02b0f681eaeb633f103e1364226a35a481aa"
+    },
+    {
+      "name": "startup-desktop",
+      "exitCode": 0,
+      "elapsedMs": 82469,
+      "sourceUnchanged": true,
+      "sha256": "111be07cf79eb9910f8dc897945681053c630b5fde7762e3f878eba635ca2ffe"
+    }
+  ],
+  "nativeDiagnostic": {
+    "method": "V8 inspector sampling with restored built entry and probe",
+    "runs": [
+      {
+        "arm": "candidate",
+        "windowId": "repeated-restart",
+        "index": 0,
+        "exit": {
+          "code": 0,
+          "signal": null
+        },
+        "testStatus": "passed",
+        "elapsedMs": 188047,
+        "setupWaitMs": 0,
+        "log": "D:\\tmp\\g3-sdk-profile-20261119-01a1f36c\\startup-current-cpu\\candidate\\repeated-restart-0.log",
+        "receiptFile": "D:\\tmp\\g3-sdk-profile-20261119-01a1f36c\\startup-current-cpu\\candidate\\trial-repeated-restart-0.json",
+        "measurement": {
+          "lostTasks": 0,
+          "duplicateEffects": 0,
+          "terminalCorrect": true,
+          "recoveryLatencyMs": 103917
+        },
+        "receiptSha256": "e44a2647cc33448ae84907dec7a7da79ccb112868d53dd354a42bb5e1b9bf71c"
+      }
+    ],
+    "memoryMiB": 4886,
+    "minimumObservedMiB": 578,
+    "restoredFiles": [
+      {
+        "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\entry.js",
+        "originalSha256": "baeb1c91e23fe4e8474d058e6ff36eb7a516f1eaf3740775f55f337fdcddd096",
+        "patchedSha256": "c47072a9f37a4adde7c4edbd6ab8cc7e4f605841edce2c5449f5055d5388349f",
+        "restoredSha256": "baeb1c91e23fe4e8474d058e6ff36eb7a516f1eaf3740775f55f337fdcddd096"
+      },
+      {
+        "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\recovery-eval-probe-BkDDp-Zb.js",
+        "originalSha256": "21255fffe8c40a034a1a5a1a38a5d86ac5a4284ae02556a8285ff4fdb0f81756",
+        "patchedSha256": "a76303086fcd164fc72b909b0c726cbc1e37774c4b5bdff9cda3e5219dcac552",
+        "restoredSha256": "21255fffe8c40a034a1a5a1a38a5d86ac5a4284ae02556a8285ff4fdb0f81756"
+      }
+    ]
+  },
+  "budgets": {
+    "typecheck": {
+      "elapsedMs": 41493,
+      "limitMs": 45000,
+      "passed": true
+    },
+    "desktopBuild": {
+      "elapsedMs": 82469,
+      "limitMs": 58000,
+      "passed": false
+    },
+    "recovery": {
+      "limitP50Ms": 5000,
+      "limitP95Ms": 15000,
+      "diagnosticLatencyMs": 103917
+    }
+  },
+  "archive": {
+    "file": "startup-raw.json.gz",
+    "sha256": "697b44a8f4dd126c522965d3a785120b9aa718633201aecaf8bc97115cea3390",
+    "files": 80
+  },
+  "remaining": [
+    "Uninstrumented recovery verification against the unchanged 5/15-second thresholds",
+    "Desktop build 58-second budget",
+    "Frozen clean-candidate two-arm matrix, 30 live-provider pairs, second legacy round and full source/packaged gates"
+  ],
+  "driven_by": "agent",
+  "actor": "codex/g3-startup-discovery",
+  "realHumanEvidence": false
+}
