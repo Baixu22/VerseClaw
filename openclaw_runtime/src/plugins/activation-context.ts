@@ -13,6 +13,7 @@ import {
 } from "./config-state.js";
 import { getCurrentPluginMetadataSnapshot } from "./current-plugin-metadata-snapshot.js";
 import type { PluginDiscoveryResult } from "./discovery.js";
+import type { PluginMetadataRegistryView } from "./plugin-metadata-snapshot.types.js";
 
 export type PluginActivationCompatConfig = {
   enablementPluginIds?: readonly string[];
@@ -68,6 +69,7 @@ type BundledPluginCompatibleActivationParams = {
     onlyPluginIds?: readonly string[];
   }) => string[];
   discovery?: PluginDiscoveryResult;
+  pluginMetadataSnapshot?: PluginMetadataRegistryView;
 };
 
 export function withActivatedPluginIds(params: {
@@ -157,24 +159,25 @@ function applyPluginAutoEnableForActivation(params: {
   env: NodeJS.ProcessEnv;
   workspaceDir?: string;
   discovery?: PluginDiscoveryResult;
+  pluginMetadataSnapshot?: PluginMetadataRegistryView;
 }) {
-  const currentSnapshot = getCurrentPluginMetadataSnapshot({
-    config: params.config,
-    env: params.env,
-    workspaceDir: params.workspaceDir,
-    allowWorkspaceScopedSnapshot: true,
-  });
-  const defaultDiscoverySnapshot =
-    !currentSnapshot && normalizePluginsConfig(params.config.plugins).loadPaths.length === 0
+  // The caller's prepared view owns its discovery and manifests together.
+  const metadataSnapshot =
+    params.pluginMetadataSnapshot ??
+    getCurrentPluginMetadataSnapshot({
+      config: params.config,
+      env: params.env,
+      workspaceDir: params.workspaceDir,
+      allowWorkspaceScopedSnapshot: true,
+    }) ??
+    (normalizePluginsConfig(params.config.plugins).loadPaths.length === 0
       ? getCurrentPluginMetadataSnapshot({
           env: params.env,
           workspaceDir: params.workspaceDir,
           allowWorkspaceScopedSnapshot: true,
           requireDefaultDiscoveryContext: true,
         })
-      : undefined;
-  // Keep discovery paired with its manifests instead of rescanning approved roots.
-  const metadataSnapshot = currentSnapshot ?? defaultDiscoverySnapshot;
+      : undefined);
   return applyPluginAutoEnable({
     config: params.config,
     env: params.env,
@@ -191,6 +194,7 @@ export function resolvePluginActivationSnapshot(params: {
   workspaceDir?: string;
   applyAutoEnable?: boolean;
   discovery?: PluginDiscoveryResult;
+  pluginMetadataSnapshot?: PluginMetadataRegistryView;
 }): PluginActivationSnapshot {
   const env = params.env ?? process.env;
   const rawConfig = params.rawConfig ?? params.resolvedConfig;
@@ -203,6 +207,7 @@ export function resolvePluginActivationSnapshot(params: {
       env,
       workspaceDir: params.workspaceDir,
       discovery: params.discovery,
+      pluginMetadataSnapshot: params.pluginMetadataSnapshot,
     });
     resolvedConfig = autoEnabled.config;
     autoEnabledReasons = autoEnabled.autoEnabledReasons;
@@ -229,6 +234,7 @@ export function resolvePluginActivationInputs(params: {
   compat?: PluginActivationCompatConfig;
   applyAutoEnable?: boolean;
   discovery?: PluginDiscoveryResult;
+  pluginMetadataSnapshot?: PluginMetadataRegistryView;
 }): PluginActivationInputs {
   const env = params.env ?? process.env;
   const snapshot = resolvePluginActivationSnapshot({
@@ -239,6 +245,7 @@ export function resolvePluginActivationInputs(params: {
     workspaceDir: params.workspaceDir,
     applyAutoEnable: params.applyAutoEnable,
     discovery: params.discovery,
+    pluginMetadataSnapshot: params.pluginMetadataSnapshot,
   });
   const config = applyPluginCompatibilityOverrides({
     config: snapshot.config,
@@ -267,6 +274,7 @@ export function resolveBundledPluginCompatibleActivationInputs(
     workspaceDir: params.workspaceDir,
     applyAutoEnable: params.applyAutoEnable,
     discovery: params.discovery,
+    pluginMetadataSnapshot: params.pluginMetadataSnapshot,
   });
   const shouldResolveCompatPluginIds = shouldResolveBundledCompatPluginIds({
     compatMode: params.compatMode,
@@ -290,6 +298,7 @@ export function resolveBundledPluginCompatibleActivationInputs(
       compatPluginIds,
     }),
     discovery: params.discovery,
+    pluginMetadataSnapshot: params.pluginMetadataSnapshot,
   });
 
   return {
@@ -312,6 +321,7 @@ export function resolveBundledPluginCompatibleLoadValues(
       env,
       workspaceDir: params.workspaceDir,
       discovery: params.discovery,
+      pluginMetadataSnapshot: params.pluginMetadataSnapshot,
     });
     resolvedConfig = autoEnabled.config;
     autoEnabledReasons = autoEnabled.autoEnabledReasons;

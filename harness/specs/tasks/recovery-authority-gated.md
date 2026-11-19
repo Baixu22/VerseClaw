@@ -294,7 +294,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
-  - Runtime plugin auto-enable carries discovery and manifests from the same compatible current metadata snapshot. Explicit discovery stays authoritative, and a rejected snapshot context uses the existing fresh discovery path.
+  - Runtime plugin auto-enable borrows discovery and manifests from the provider's prepared metadata view. Requests without a prepared view retain the current/default snapshot scope checks and existing discovery path; explicit discovery stays authoritative.
   - A device credential mutation invalidates both registered clients and pending handshakes for that device/role. Registration checks the original revision after asynchronous pairing work, and device-token reuse requires the credential that authenticated the connection. Explicit authorized rotation and shared-secret bootstrap retain their issuance path.
   - Gateway paired-device authentication, Control UI token lookup, token rotation/revocation and presence updates do not read the pending pairing queue. The paired-device owner still rejects revoked tokens, unauthorized scopes and corrupt paired records; cross-table removal validates pending repair requests before mutation.
   - Managed Gateway restarts reuse an authenticated device token only within its original device, endpoint and shared credential. A rejected cached token falls back once on a device-token mismatch; transport errors and startup unavailability retain it. Node bytecode cache controls are preserved, and the startup flush retains compilation across a real process kill.

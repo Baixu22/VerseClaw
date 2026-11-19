@@ -77,7 +77,7 @@ requiredTests:
   - tests/unit/gateway-process-launcher-trace.test.ts
   - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
-  - Runtime plugin auto-enable carries discovery and manifests from the same compatible current metadata snapshot. Explicit discovery stays authoritative, and a rejected snapshot context uses the existing fresh discovery path.
+  - Runtime plugin auto-enable borrows discovery and manifests from the provider's prepared metadata view. Requests without a prepared view retain the current/default snapshot scope checks and existing discovery path; explicit discovery stays authoritative.
   - Regular-file append retains descriptor identity, hardlink, size and permission checks while skipping an already matching mode for the same POSIX owner. Another effective owner retains the original chmod authorization. POSIX special bits and Windows read-only transitions retain their existing behavior; failed required permission updates stop writes.
   - Token revocation, rotation and device removal invalidate pending handshakes before registration. Cached-token connections cannot issue a replacement for a changed credential; authorized rotation and shared-secret bootstrap retain the existing issuance contract.
   - Paired-device authentication, Control UI token lookup, token rotation/revocation and access metadata updates read the approved device table independently of pending pairing requests. Approved scopes and corrupt paired-record failures retain their existing checks; cross-table pairing removal still validates the pending repair queue before mutation.

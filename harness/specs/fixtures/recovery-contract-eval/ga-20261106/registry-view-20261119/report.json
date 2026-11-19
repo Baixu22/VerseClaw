@@ -1,0 +1,443 @@
+{
+  "schema": "G3PreparedRegistryViewDevelopment/v1",
+  "actor": "codex/g3-view-20261119-01a1f21b",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "decision": "NO_GO",
+  "sourceBase": "259611ea1745a5f04de1568cb493e88b14af39d5",
+  "validatedChangesSha256": "e9af3c335b8de0be9e138a4225f9aab86f49b76e75805663a24557910e4f479a",
+  "inputs": [
+    {
+      "file": "openclaw_runtime/src/plugins/activation-context.ts",
+      "sha256": "22b95474f32a6b32078e98cbdee72e27c38875029ea59590deeb80e7649549a3"
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/providers.runtime.ts",
+      "sha256": "fa220c77378a27a0819bd3a02392d4764461bb42ea541354b8ec56dc0f75efc7"
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/plugin-metadata-snapshot.types.ts",
+      "sha256": "a3744fcb5b9e1266f214e47227777ec91bcaa62461807207e8af0118f8f1cf0a"
+    },
+    {
+      "file": "tests/unit/gateway-plugin-activation-discovery.test.ts",
+      "sha256": "29b4838704f46bebc428622f40281e7bab818f7adf56f4d886bb53eac92d88fa"
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "22c80f0911ae1ac95eddd7a53c42100a9d337e36551b0ef511a533582bd9f6b2"
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "ac50ddcda266a0d5d9f4a00f1a4c064a7e5ab581ab040c2b8ff82918cfe0d252"
+    },
+    {
+      "file": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+      "sha256": "df74b62c1f928e406ffc89d8092f5d49f5c30711d7cbc63fe5566d5b70b92a5f"
+    }
+  ],
+  "stages": [
+    {
+      "name": "view-red",
+      "elapsedMs": 13204,
+      "exitCode": 1,
+      "memoryMiB": 2775,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-red.json",
+        "sha256": "fd28c1f9eb96601fd7178f77bbe02bb2be6d0bbfb10237ea9e8459c684196f77"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-red.log",
+        "sha256": "54ec8e76f9dc550008ef0e28d2219cb8a776d1353cf9a3c8e50d0499f00d0f7d"
+      }
+    },
+    {
+      "name": "view-reload-red",
+      "elapsedMs": 12635,
+      "exitCode": 1,
+      "memoryMiB": 2516,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-reload-red.json",
+        "sha256": "fdc82b9920292db201cd7d8dcdab9ca24e2e56d7d36dd347a0dca7d2ece7feda"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-reload-red.log",
+        "sha256": "522108e1ef69c6050b2cf09fcf9982128899eb012424251ea5e44dcd7325db2e"
+      }
+    },
+    {
+      "name": "view-green",
+      "elapsedMs": 14842,
+      "exitCode": 0,
+      "memoryMiB": 5720,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-green.json",
+        "sha256": "d23b516d2b059b5901316f7ff34a375c7a08c63026e17971ce779dd5623fd60e"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-green.log",
+        "sha256": "636cd1864bfc94cc67b34499209830731b8cc51405ac22aa19c4474d8eb509ca"
+      }
+    },
+    {
+      "name": "view-harness",
+      "elapsedMs": 1611,
+      "exitCode": 0,
+      "memoryMiB": 4606,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-harness.json",
+        "sha256": "905bf73381fb50481e37ea252e2d5a354ce284c839a9a03234e4b10924f001c9"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-harness.log",
+        "sha256": "66256961710d20cfeeb1d346b155f00f3b86be6c9d6e2c535fef89e4cb6b997f"
+      }
+    },
+    {
+      "name": "view-harness-plan",
+      "elapsedMs": 1669,
+      "exitCode": 0,
+      "memoryMiB": 5699,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-harness-plan.json",
+        "sha256": "ceac1c948b0b1bd0a331c0ad2fd969ab2a2ea05030a1a2418c33c74bd6b0a3bb"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-harness-plan.log",
+        "sha256": "ed1a852c0010f75daa7c7b230d6cc967a3476c77e6c15facbdc2d2f44be6faf2"
+      }
+    },
+    {
+      "name": "view-types",
+      "elapsedMs": 41850,
+      "exitCode": 0,
+      "memoryMiB": 6504,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-types.json",
+        "sha256": "f4e6ecf1957c54df9a2faf1e46e27bc7b180daff7284862d8651aa9995806bfc"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-types.log",
+        "sha256": "16caa023e503b525e787dfd818d18eebbe56f4ab2e646925fe150950672d119e"
+      }
+    },
+    {
+      "name": "view-runtime",
+      "elapsedMs": 59296,
+      "exitCode": 0,
+      "memoryMiB": 4916,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-runtime.json",
+        "sha256": "45fc6bee724cb6ba714e8f7fcff97ed3c7b0b0b63a6364eccc33c862beb6a741"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-runtime.log",
+        "sha256": "286aea8944a785e2b424b80e195e831c2be6bb71415a06a12974634c101f976a"
+      }
+    },
+    {
+      "name": "view-runtime-lint",
+      "elapsedMs": 1296,
+      "exitCode": 0,
+      "memoryMiB": 4929,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-runtime-lint.json",
+        "sha256": "c90f89f9c566dda1bd71074e57224f9a5180c34f19d45ec380272cd40f0ffa54"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-runtime-lint.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "view-test-lint",
+      "elapsedMs": 6767,
+      "exitCode": 0,
+      "memoryMiB": 4273,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-test-lint.json",
+        "sha256": "3bfc7938de0e665937e566be6ef84ecdb8ea8832dda3caeecdc13679271b2e00"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-test-lint.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "view-comms-replay",
+      "elapsedMs": 1636,
+      "exitCode": 0,
+      "memoryMiB": 3954,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-comms-replay.json",
+        "sha256": "f1936fca8db84ea4a806627ce24ce1dbd485b1e7a0fb7693df80a88ba1f74683"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-comms-replay.log",
+        "sha256": "ef8afa4618061946a9e8a73d78094658e666fa14d6b970cbfd6ca3ea6dc17ae1"
+      }
+    },
+    {
+      "name": "view-comms-compare",
+      "elapsedMs": 1417,
+      "exitCode": 0,
+      "memoryMiB": 3951,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-comms-compare.json",
+        "sha256": "4d5ac57bf5a1a10cff53d6b005c8631bb018505853c74ec12d820d2e04082f88"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-comms-compare.log",
+        "sha256": "44b43868d8410c07c06c81f243dffa6623a526783f4634e8614a2be4c5b0d753"
+      }
+    },
+    {
+      "name": "view-source-gates",
+      "elapsedMs": 49695,
+      "exitCode": 0,
+      "memoryMiB": 2528,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-source-gates.json",
+        "sha256": "b430b7305fd414f8a720f9b8ba6b81869957cb6762647a2e469283cb83e292db"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-source-gates.log",
+        "sha256": "0ba15f931ca72176789362f0edf7a389c34ae8d64dd5d250375254955d98c3ee"
+      }
+    },
+    {
+      "name": "view-desktop",
+      "elapsedMs": 70916,
+      "exitCode": 0,
+      "memoryMiB": 3876,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-desktop.json",
+        "sha256": "5cdf890d78b76f898c637cf016b9a098ab8a68e3c67829863673fd7444e17f8e"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-desktop.log",
+        "sha256": "0a8f0878aedde8b2cf16d0c1222f557fbae841ca08b7d8855eaaea99069d0523"
+      }
+    },
+    {
+      "name": "view-review",
+      "elapsedMs": 865566,
+      "exitCode": 0,
+      "memoryMiB": 6504,
+      "minimumMiB": 2500,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-review.json",
+        "sha256": "a24257304621585a4a37a7ef7d8a8b0583318b6af4148fc1e2d7f26cc4858327"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-review.log",
+        "sha256": "3054867145ce4b0da4e1fc0281c1b05cba9555c6b6e01c35b3ada05339450b83"
+      }
+    },
+    {
+      "name": "view-stable-native",
+      "elapsedMs": 330677,
+      "exitCode": 0,
+      "memoryMiB": 7533,
+      "minimumMiB": 6000,
+      "minimumObservedMiB": 1500,
+      "receipt": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native.json",
+        "sha256": "edce9f778fa4c6f1e4d2320dfdd285e6c72d6e7a9e33ffcc33bb1a4132b3f478"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native.log",
+        "sha256": "78c485080a4892d01d2c66ca8ab22ba35a5c93c72b0fd18b19467ca415ee3af3"
+      }
+    }
+  ],
+  "unit": {
+    "passed": 30,
+    "failed": 0,
+    "receipt": {
+      "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-green.tests.json",
+      "sha256": "97d7c71bc08ce0061ea9ce43e06c8aa51cd57c553953e2689697916a4235389e"
+    }
+  },
+  "review": {
+    "engine": "codex",
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "findingCount": 0,
+    "receipt": {
+      "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-review-result.json",
+      "sha256": "d952b588633b2107d54db09535d6f387316e6489de7440098752be07c9c07c6a"
+    }
+  },
+  "typecheck": {
+    "cacheEnabled": false,
+    "durationMs": 39774,
+    "budgetMs": 45000
+  },
+  "desktop": {
+    "durationMs": 70916,
+    "budgetMs": 58000
+  },
+  "native": {
+    "correct": 3,
+    "duplicate": 0,
+    "lost": 0,
+    "memoryAtStartMiB": 7533,
+    "minimumObservedMiB": 1500,
+    "rows": [
+      {
+        "index": 0,
+        "latencyMs": 65133,
+        "receipt": {
+          "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\trial-repeated-restart-0.json",
+          "sha256": "869bd3450a937d630a2c7a7d9f3461feb3fc36a8f710af3cbbcb6ae50d38ab65"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-0\\task-owner.json",
+            "sha256": "cc2c6124821fa6b370effedc1003193dac7dbcef3390a0125cbfa93dcba64d76",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-0\\before.json",
+            "sha256": "1d731a359176c5fb2a52e1b331df4761e725f0603e40e0796b66dac15abd5757",
+            "bytes": 81777
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-0\\crash-0.json",
+            "sha256": "2e5ccc17ccc90799573717710582c002f8df1ff2f4ad1a1c8b33688191fc54f8",
+            "bytes": 86678
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-0\\crash-1.json",
+            "sha256": "9538f5728fea26bfed9b4595dfbd60d47bbd5d090de2dd2a8d24c1df40360899",
+            "bytes": 90456
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-0\\crash-2.json",
+            "sha256": "89d13a13152a9f2340d52e8960408491152f0ce7924d49dd177c16063438d493",
+            "bytes": 90454
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-0\\after.json",
+            "sha256": "87ddaf3f9527c79fe58e24bb3ec9bac4125ae0aa4b6ab14b00de814b2d0c980d",
+            "bytes": 98345
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "latencyMs": 66372,
+        "receipt": {
+          "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\trial-repeated-restart-1.json",
+          "sha256": "ea4a37e27379eb6f26e5a0bc4072d4afb661ac34894ad5f7ae36238de8e371a8"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-1\\task-owner.json",
+            "sha256": "c1d3d3fdb81f38150751416a713d70191d0009e50217d312ff63bc661fe2d528",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-1\\before.json",
+            "sha256": "12d0ceafcdb31e6de208440a2dc6753b1c4454446363024ce4c5afa83b625bd7",
+            "bytes": 81777
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-1\\crash-0.json",
+            "sha256": "443451895d126a846e8398bd06e129225dfb5db5cee42ec6ecc8450f7d8f2dfb",
+            "bytes": 86678
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-1\\crash-1.json",
+            "sha256": "b88b3b8a514e8669a1bcb9fe13cdc15285320053d2a9af3684fce4f7b2792e54",
+            "bytes": 90456
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-1\\crash-2.json",
+            "sha256": "967428c29eabe0c65d7109e20ff1cf37b8c938a4f90aeed7e483afbd59e6eaec",
+            "bytes": 90454
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-1\\after.json",
+            "sha256": "846fe3a423ad5d1fa266640492e9f5978f38a9fc0f35c1231ebbf0affd413d3a",
+            "bytes": 98345
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "latencyMs": 77858,
+        "receipt": {
+          "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\trial-repeated-restart-2.json",
+          "sha256": "f5f2ea81e871ef3e6f9c1c4967ee7af2b106e8fef2c5f86e3d2430537aa9346f"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-2\\task-owner.json",
+            "sha256": "87a94cb871fd67b0f6585254ea4718e67f82f76facfb52c2f4260d24aa8b6387",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-2\\before.json",
+            "sha256": "bf6ecc176a36ea6b9b43cf7043974508770d2fc968d0a283abfcf1b5cce9e744",
+            "bytes": 81777
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-2\\crash-0.json",
+            "sha256": "775eba3d0a4a15335f32c65fcfe5f666b01fda7ba68cb0be2aae97187861cfff",
+            "bytes": 86678
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-2\\crash-1.json",
+            "sha256": "38d89b5deb2ffff5bf25b3665d87c1a711cb95225067563996e9b9557d3bcaa8",
+            "bytes": 90456
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-2\\crash-2.json",
+            "sha256": "8083e595e1870a99ffe7459f7c94e6ac3d337257054a855ac2af0f49ccd72bd2",
+            "bytes": 90454
+          },
+          {
+            "file": "D:\\tmp\\g3-registry-view-20261119-01a1f21b\\view-stable-native\\candidate\\evidence-repeated-restart-2\\after.json",
+            "sha256": "f3d04ffc8a85c6264ac4e4b420e1b918e3e31a69370b85570379312cf9157498",
+            "bytes": 98345
+          }
+        ]
+      }
+    ]
+  },
+  "remaining": [
+    "5/15-second recovery latency gates",
+    "58-second desktop build gate",
+    "same-candidate full frozen windows/quality matrix",
+    "legacy repeat consistency and full source/package acceptance"
+  ],
+  "rawRoot": "D:/tmp/g3-registry-view-20261119-01a1f21b"
+}
