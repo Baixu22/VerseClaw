@@ -24,6 +24,8 @@ function resolveStartupPluginIdsFromCurrentSnapshot(params: {
   const snapshot = getCurrentPluginMetadataSnapshot({
     config: params.config,
     workspaceDir: params.workspaceDir,
+    // Startup IDs belong to this Gateway scope; the owner still checks roots and workspace.
+    allowScopedSnapshot: true,
   }) as StartupScopedPluginSnapshot | undefined;
   const pluginIds = snapshot?.startup?.pluginIds;
   if (!Array.isArray(pluginIds)) {

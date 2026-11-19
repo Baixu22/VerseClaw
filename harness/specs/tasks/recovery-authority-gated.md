@@ -8,6 +8,10 @@ intent: Complete TF-0715 with owner-bound, durable recovery decisions and finite
 diffBase: 05d787213
 humanEvidence: not-required
 touchedAreas:
+  - openclaw_runtime/src/agents/date-time.ts
+  - openclaw_runtime/src/agents/runtime-plugins.ts
+  - tests/unit/gateway-host-time-format.test.ts
+  - tests/unit/gateway-agent-startup-scope.test.ts
   - openclaw_runtime/src/plugins/activation-context.ts
   - openclaw_runtime/src/plugins/providers.runtime.ts
   - openclaw_runtime/src/plugins/plugin-metadata-snapshot.types.ts
@@ -250,6 +254,8 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-host-time-format.test.ts
+  - tests/unit/gateway-agent-startup-scope.test.ts
   - tests/unit/gateway-plugin-activation-discovery.test.ts
   - tests/unit/fs-safe-append-mode.test.ts
   - tests/unit/gateway-ws-client.test.ts
@@ -294,6 +300,8 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Windows host time detection reads the OS short-time pattern without loading shell profiles. Explicit 12/24-hour settings and the existing Intl fallback remain available.
+  - Agent startup borrows the compatible Gateway startup plugin scope through its metadata owner. Missing plans and mismatched workspaces retain standalone resolution; existing runtime-registry ownership controls reuse and subagent bindings.
   - Runtime plugin auto-enable borrows discovery and manifests from the provider's prepared metadata view. Requests without a prepared view retain the current/default snapshot scope checks and existing discovery path; explicit discovery stays authoritative.
   - A device credential mutation invalidates both registered clients and pending handshakes for that device/role. Registration checks the original revision after asynchronous pairing work, and device-token reuse requires the credential that authenticated the connection. Explicit authorized rotation and shared-secret bootstrap retain their issuance path.
   - Gateway paired-device authentication, Control UI token lookup, token rotation/revocation and presence updates do not read the pending pairing queue. The paired-device owner still rejects revoked tokens, unauthorized scopes and corrupt paired records; cross-table removal validates pending repair requests before mutation.
