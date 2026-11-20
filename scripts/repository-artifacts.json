@@ -201,7 +201,19 @@
     "harness/specs/fixtures/autonomous-project-system/s2/unit-tests.json",
     "harness/specs/fixtures/autonomous-project-system/s2/verify.py",
     "harness/specs/fixtures/autonomous-project-system/s2/zh-dark.png",
-    "harness/specs/fixtures/autonomous-project-system/s2/zh-light.png"
+    "harness/specs/fixtures/autonomous-project-system/s2/zh-light.png",
+    "harness/specs/fixtures/autonomous-project-system/s3/configuration-en.png",
+    "harness/specs/fixtures/autonomous-project-system/s3/configuration-ja.png",
+    "harness/specs/fixtures/autonomous-project-system/s3/configuration-ru.png",
+    "harness/specs/fixtures/autonomous-project-system/s3/configuration-zh.png",
+    "harness/specs/fixtures/autonomous-project-system/s3/credential-scan.json",
+    "harness/specs/fixtures/autonomous-project-system/s3/gates.json",
+    "harness/specs/fixtures/autonomous-project-system/s3/independent-review.json",
+    "harness/specs/fixtures/autonomous-project-system/s3/journey.json",
+    "harness/specs/fixtures/autonomous-project-system/s3/report.json",
+    "harness/specs/fixtures/autonomous-project-system/s3/SHA256SUMS",
+    "harness/specs/fixtures/autonomous-project-system/s3/unit-tests.json",
+    "harness/specs/fixtures/autonomous-project-system/s3/verify.py"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",

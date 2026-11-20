@@ -1,0 +1,27 @@
+{
+  "node": "TF-0685",
+  "driven_by": "agent",
+  "actor": "codex-g5-config",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "c48fc9d699cf1f0cda92cd0a21d371204a7039b9",
+    "tree": "fd138d5b5efa280dbe1fcec87a27b7f23877f9d6"
+  },
+  "verdict": {
+    "source": "passed",
+    "runtime": "passed",
+    "effect": "passed"
+  },
+  "counts": {
+    "unit": 148,
+    "electron": 1,
+    "locales": 4,
+    "failures": 0,
+    "skips": 0
+  },
+  "rawRoot": "D:\\tmp\\g5-20261120\\s3-final-r2",
+  "providerMode": "Local scripted fixture; configuration issued no model requests",
+  "scope": "Exclusive project agent; known non-increasing model costs, additive deny tools, reduced context quota; frozen global defaults and credentials excluded",
+  "recovery": "Actual Gateway stop and injected restart failures, persisted degraded operation recovered through UI after reload; rollback confirmed by loaded Runtime generation",
+  "repositoryHarnessCi": "Earlier whole-repository b5 run remains failed on Agent Dev stale reports and historical performance limits; scoped node gates passed"
+}

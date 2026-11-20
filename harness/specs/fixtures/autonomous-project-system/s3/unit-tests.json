@@ -1,0 +1,1855 @@
+{
+  "candidate": "c48fc9d699cf1f0cda92cd0a21d371204a7039b9",
+  "passed": 148,
+  "failed": 0,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade reads system portfolio and project identity through Main",
+          "status": "passed",
+          "title": "reads system portfolio and project identity through Main",
+          "duration": 195.29870000000028,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+          "status": "passed",
+          "title": "routes handoff creation through Main with the source session and edited draft",
+          "duration": 5.1994000000004235,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes the typed session stop surface through the sessions module",
+          "status": "passed",
+          "title": "routes the typed session stop surface through the sessions module",
+          "duration": 3.850199999999859,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls settings.getAll through hostInvoke",
+          "status": "passed",
+          "title": "calls settings.getAll through hostInvoke",
+          "duration": 3.405499999999847,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+          "status": "passed",
+          "title": "routes diagnostics.exportSupportBundle through hostInvoke",
+          "duration": 2.578099999999722,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade throws response errors",
+          "status": "passed",
+          "title": "throws response errors",
+          "duration": 4.207399999999325,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls settings.setMany and reset through hostInvoke",
+          "status": "passed",
+          "title": "calls settings.setMany and reset through hostInvoke",
+          "duration": 3.4365999999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes project rules methods through hostInvoke",
+          "status": "passed",
+          "title": "routes project rules methods through hostInvoke",
+          "duration": 3.1977999999999156,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes agent browser methods through hostInvoke",
+          "status": "passed",
+          "title": "routes agent browser methods through hostInvoke",
+          "duration": 4.5963999999994485,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes code review methods through hostInvoke",
+          "status": "passed",
+          "title": "routes code review methods through hostInvoke",
+          "duration": 3.8697000000001935,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes Remote Forge reads through the typed host facade",
+          "status": "passed",
+          "title": "routes Remote Forge reads through the typed host facade",
+          "duration": 3.5056000000004133,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+          "status": "passed",
+          "title": "routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+          "duration": 3.1456000000007407,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes uv installer setup through hostInvoke",
+          "status": "passed",
+          "title": "routes uv installer setup through hostInvoke",
+          "duration": 2.4012000000002445,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+          "status": "passed",
+          "title": "routes dcsProdFlags methods through hostInvoke",
+          "duration": 2.797700000000077,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes vtoken methods through hostInvoke",
+          "status": "passed",
+          "title": "routes vtoken methods through hostInvoke",
+          "duration": 3.4178000000001703,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes git methods through hostInvoke",
+          "status": "passed",
+          "title": "routes git methods through hostInvoke",
+          "duration": 2.5338000000001557,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes log file path and tail lines through hostInvoke",
+          "status": "passed",
+          "title": "passes log file path and tail lines through hostInvoke",
+          "duration": 2.1877999999996973,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls channels.accounts through hostInvoke with options",
+          "status": "passed",
+          "title": "calls channels.accounts through hostInvoke with options",
+          "duration": 3.4000000000005457,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes channel credential validation payload through hostInvoke",
+          "status": "passed",
+          "title": "passes channel credential validation payload through hostInvoke",
+          "duration": 2.822400000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes channel target lookup payload through hostInvoke",
+          "status": "passed",
+          "title": "passes channel target lookup payload through hostInvoke",
+          "duration": 2.2627000000002226,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls agents.list through hostInvoke",
+          "status": "passed",
+          "title": "calls agents.list through hostInvoke",
+          "duration": 2.7719999999999345,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls providers.list through hostInvoke",
+          "status": "passed",
+          "title": "calls providers.list through hostInvoke",
+          "duration": 2.5443999999997686,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes provider validation payload through hostInvoke",
+          "status": "passed",
+          "title": "passes provider validation payload through hostInvoke",
+          "duration": 2.2836999999999534,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes provider OAuth requests through hostInvoke",
+          "status": "passed",
+          "title": "passes provider OAuth requests through hostInvoke",
+          "duration": 2.3562000000001717,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+          "status": "passed",
+          "title": "calls chat.sendWithMedia through hostInvoke",
+          "duration": 2.927799999999479,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls work provider APIs through hostInvoke",
+          "status": "passed",
+          "title": "calls work provider APIs through hostInvoke",
+          "duration": 2.301300000000083,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls knowledge APIs through hostInvoke",
+          "status": "passed",
+          "title": "calls knowledge APIs through hostInvoke",
+          "duration": 3.2695999999996275,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls sessions.summaries through hostInvoke",
+          "status": "passed",
+          "title": "calls sessions.summaries through hostInvoke",
+          "duration": 2.4684000000006563,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls session compaction methods through hostInvoke",
+          "status": "passed",
+          "title": "calls session compaction methods through hostInvoke",
+          "duration": 7.972600000000057,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls clawGraph methods through hostInvoke",
+          "status": "passed",
+          "title": "calls clawGraph methods through hostInvoke",
+          "duration": 2.826799999999821,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls cron.list through hostInvoke",
+          "status": "passed",
+          "title": "calls cron.list through hostInvoke",
+          "duration": 2.1185000000004948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls skills.clawhubList through hostInvoke",
+          "status": "passed",
+          "title": "calls skills.clawhubList through hostInvoke",
+          "duration": 1.946100000000115,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+          "status": "passed",
+          "title": "calls usage.recentTokenHistory through hostInvoke",
+          "duration": 2.2344999999995707,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability queryTraces through hostInvoke",
+          "status": "passed",
+          "title": "calls observability queryTraces through hostInvoke",
+          "duration": 1.9218999999993684,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+          "status": "passed",
+          "title": "calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+          "duration": 2.290399999999863,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability reportTrace through hostInvoke",
+          "status": "passed",
+          "title": "calls observability reportTrace through hostInvoke",
+          "duration": 1.8379000000004453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+          "status": "passed",
+          "title": "keeps hostApi response types on facade methods instead of call-site generics",
+          "duration": 301.97130000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade uses a function-shaped host API contract to type host invocations",
+          "status": "passed",
+          "title": "uses a function-shaped host API contract to type host invocations",
+          "duration": 3.3218000000006214,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+          "status": "passed",
+          "title": "keeps async handler flexibility out of the renderer-facing host API contract",
+          "duration": 1.9476999999997133,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+          "status": "passed",
+          "title": "keeps production main, preload, renderer, and shared imports on their side of the boundary",
+          "duration": 404.5458000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade lets service handlers inherit payload types from the host API contract",
+          "status": "passed",
+          "title": "lets service handlers inherit payload types from the host API contract",
+          "duration": 13.478000000000065,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+          "status": "passed",
+          "title": "does not keep hostApi-covered legacy direct IPC channels registered",
+          "duration": 1.8323999999993248,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep uninvoked direct IPC channels registered",
+          "status": "passed",
+          "title": "does not keep uninvoked direct IPC channels registered",
+          "duration": 2.050699999999779,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep the legacy unified app:request client path",
+          "status": "passed",
+          "title": "does not keep the legacy unified app:request client path",
+          "duration": 0.4282999999995809,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+          "status": "passed",
+          "title": "does not keep legacy IPC helper exports or production call sites",
+          "duration": 70.36579999999958,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+          "status": "passed",
+          "title": "keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+          "duration": 3.7450000000008004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+          "status": "passed",
+          "title": "keeps diagnostics on the extension-contributed host API path",
+          "duration": 0.6865000000007058,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795164461449,
+      "endTime": 1795164462555.745,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/host-api-facade.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator previews without writes and applies only after loaded Runtime readback",
+          "status": "passed",
+          "title": "previews without writes and applies only after loaded Runtime readback",
+          "duration": 7.1860000000000355,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"apiKey\":\"forbidden\"} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"apiKey\":\"forbidden\"} before writing",
+          "duration": 1.0802000000000476,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"evaluator\":false} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"evaluator\":false} before writing",
+          "duration": 0.3131999999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"permissionMode\":\"fullAccess\"} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"permissionMode\":\"fullAccess\"} before writing",
+          "duration": 0.23250000000001592,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"contextTokens\":16384} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"contextTokens\":16384} before writing",
+          "duration": 0.40320000000002665,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"denyTools\":[]} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"denyTools\":[]} before writing",
+          "duration": 0.3191999999999666,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"modelRef\":\"known/expensive\"} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"modelRef\":\"known/expensive\"} before writing",
+          "duration": 0.30169999999998254,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"modelRef\":\"unknown/model\"} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"modelRef\":\"unknown/model\"} before writing",
+          "duration": 0.27249999999997954,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects stale revision, shared agent ownership and same request id with different intent",
+          "status": "passed",
+          "title": "rejects stale revision, shared agent ownership and same request id with different intent",
+          "duration": 1.006400000000042,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator restores previous fields and verifies rollback when Runtime reload fails",
+          "status": "passed",
+          "title": "restores previous fields and verifies rollback when Runtime reload fails",
+          "duration": 0.8360000000000127,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator preserves a concurrent field edit and blocks later writes when rollback ownership is lost",
+          "status": "passed",
+          "title": "preserves a concurrent field edit and blocks later writes when rollback ownership is lost",
+          "duration": 1.2742999999999824,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rolls back its context field while preserving another owner tool change",
+          "status": "passed",
+          "title": "rolls back its context field while preserving another owner tool change",
+          "duration": 1.025000000000034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator reconciles a persisted pending operation through the same request instead of writing twice",
+          "status": "passed",
+          "title": "reconciles a persisted pending operation through the same request instead of writing twice",
+          "duration": 0.7951999999999657,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator detects retained assistant bindings on another workspace",
+          "status": "passed",
+          "title": "detects retained assistant bindings on another workspace",
+          "duration": 0.3950999999999567,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator preserves configured model fallbacks when changing the primary",
+          "status": "passed",
+          "title": "preserves configured model fallbacks when changing the primary",
+          "duration": 0.6469999999999914,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator preserves inherited fallbacks when the agent had no model override",
+          "status": "passed",
+          "title": "preserves inherited fallbacks when the agent had no model override",
+          "duration": 0.7730999999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator keeps default fallbacks disabled for an explicit string model",
+          "status": "passed",
+          "title": "keeps default fallbacks disabled for an explicit string model",
+          "duration": 0.6265000000000214,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator restarts an offline Gateway before validating live recovery identity",
+          "status": "passed",
+          "title": "restarts an offline Gateway before validating live recovery identity",
+          "duration": 0.8246999999999503,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator refuses stale-owner replay then lets the current owner reconcile after a renderer restart",
+          "status": "passed",
+          "title": "refuses stale-owner replay then lets the current owner reconcile after a renderer restart",
+          "duration": 0.9689999999999941,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795164467710,
+      "endTime": 1795164467728.969,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/project-configuration-operator.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope pins an inactive project policy without changing UI workspace or leaking concurrent contexts",
+          "status": "passed",
+          "title": "pins an inactive project policy without changing UI workspace or leaking concurrent contexts",
+          "duration": 2.9424999999999955,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed permission before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed permission before consuming its scope",
+          "duration": 1.4197000000000344,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed root before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed root before consuming its scope",
+          "duration": 0.39330000000001064,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed generation before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed generation before consuming its scope",
+          "duration": 0.29419999999998936,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed duplicate before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed duplicate before consuming its scope",
+          "duration": 0.28879999999998063,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed pause before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed pause before consuming its scope",
+          "duration": 0.23989999999997735,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed revision before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed revision before consuming its scope",
+          "duration": 0.220799999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects corrupt policy values instead of normalizing them to unpaused",
+          "status": "passed",
+          "title": "rejects corrupt policy values instead of normalizing them to unpaused",
+          "duration": 0.31560000000001764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795164468138,
+      "endTime": 1795164468144.3157,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/project-execution-scope.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rechecks a restrictive project permission before the next effect",
+          "status": "passed",
+          "title": "rechecks a restrictive project permission before the next effect",
+          "duration": 1167.4541000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract serializes permission downgrade behind an already admitted effect boundary",
+          "status": "passed",
+          "title": "serializes permission downgrade behind an already admitted effect boundary",
+          "duration": 642.8744999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps paused task_loop status on its owning control path",
+          "status": "passed",
+          "title": "keeps paused task_loop status on its owning control path",
+          "duration": 154.61739999999918,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps paused mission_loop status on its owning control path",
+          "status": "passed",
+          "title": "keeps paused mission_loop status on its owning control path",
+          "duration": 67.74609999999848,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps paused transcripts stop on its owning control path",
+          "status": "passed",
+          "title": "keeps paused transcripts stop on its owning control path",
+          "duration": 65.45170000000144,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract global pause rejects the next managed effect even when its project binding remains active",
+          "status": "passed",
+          "title": "global pause rejects the next managed effect even when its project binding remains active",
+          "duration": 719.2746000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract binds an in-process worker through its persisted worktree owner",
+          "status": "passed",
+          "title": "binds an in-process worker through its persisted worktree owner",
+          "duration": 972.9530000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract uses the canonical parent reference after transfer even before its navigation link was persisted",
+          "status": "passed",
+          "title": "uses the canonical parent reference after transfer even before its navigation link was persisted",
+          "duration": 750.303899999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract admits an owned child while the fenced parent run remains active",
+          "status": "passed",
+          "title": "admits an owned child while the fenced parent run remains active",
+          "duration": 950.9632999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects missing and incomplete contracts without creating a Legacy business task",
+          "status": "passed",
+          "title": "rejects missing and incomplete contracts without creating a Legacy business task",
+          "duration": 726.7807000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract starts a complete canonical contract through task_control without requiring a session bridge",
+          "status": "passed",
+          "title": "starts a complete canonical contract through task_control without requiring a session bridge",
+          "duration": 838.3021000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract associates a live isolated scheduled run with its canonical contract without replacing the project coordinator",
+          "status": "passed",
+          "title": "associates a live isolated scheduled run with its canonical contract without replacing the project coordinator",
+          "duration": 697.1440000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract uses a decomposed scheduled child contract under the recorded parent TaskRef",
+          "status": "passed",
+          "title": "uses a decomposed scheduled child contract under the recorded parent TaskRef",
+          "duration": 1065.743599999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a missing scheduled coordinator before claiming another task",
+          "status": "passed",
+          "title": "rejects a missing scheduled coordinator before claiming another task",
+          "duration": 830.3136999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a stale scheduled coordinator before claiming another task",
+          "status": "passed",
+          "title": "rejects a stale scheduled coordinator before claiming another task",
+          "duration": 892.0476999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a paused scheduled coordinator before claiming another task",
+          "status": "passed",
+          "title": "rejects a paused scheduled coordinator before claiming another task",
+          "duration": 829.7741999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects an isolated schedule from another workspace or agent before creating a task",
+          "status": "passed",
+          "title": "rejects an isolated schedule from another workspace or agent before creating a task",
+          "duration": 468.74259999999776,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract consumes a canonical business contract after a failed turn left a diagnostic deviation link",
+          "status": "passed",
+          "title": "consumes a canonical business contract after a failed turn left a diagnostic deviation link",
+          "duration": 1721.5982000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract selects an existing completed task and preserves its status and historical links",
+          "status": "passed",
+          "title": "selects an existing completed task and preserves its status and historical links",
+          "duration": 3381.926599999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract uses the captured worker parent TaskRef with a real child contract despite a later parent selection",
+          "status": "passed",
+          "title": "uses the captured worker parent TaskRef with a real child contract despite a later parent selection",
+          "duration": 2722.498200000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract pauses new dispatch while retaining the already admitted writer and workgroup ownership",
+          "status": "passed",
+          "title": "pauses new dispatch while retaining the already admitted writer and workgroup ownership",
+          "duration": 895.3473000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary",
+          "status": "passed",
+          "title": "keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary",
+          "duration": 1293.3786,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract captures checkout execution revision while allowing the admitted run through coordinator pause",
+          "status": "passed",
+          "title": "captures checkout execution revision while allowing the admitted run through coordinator pause",
+          "duration": 798.0430000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects effects on a completed canonical task, including after owner reconstruction",
+          "status": "passed",
+          "title": "rejects effects on a completed canonical task, including after owner reconstruction",
+          "duration": 793.2898000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a Legacy done node without creating a canonical replacement or changing it to doing",
+          "status": "passed",
+          "title": "rejects a Legacy done node without creating a canonical replacement or changing it to doing",
+          "duration": 649.222400000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token",
+          "status": "passed",
+          "title": "keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token",
+          "duration": 654.8366000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract does not release a live canonical claim because a new API instance or response settled",
+          "status": "passed",
+          "title": "does not release a live canonical claim because a new API instance or response settled",
+          "duration": 830.7994000000035,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects an old claim after canonical epoch rotation even when the Workspace cache still has it",
+          "status": "passed",
+          "title": "rejects an old claim after canonical epoch rotation even when the Workspace cache still has it",
+          "duration": 451.19980000000214,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface",
+          "status": "passed",
+          "title": "preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface",
+          "duration": 1008.7462000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects unknown session before writing a task",
+          "status": "passed",
+          "title": "rejects unknown session before writing a task",
+          "duration": 314.1883999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects wrong root before writing a task",
+          "status": "passed",
+          "title": "rejects wrong root before writing a task",
+          "duration": 361.50159999999596,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects stale generation before writing a task",
+          "status": "passed",
+          "title": "rejects stale generation before writing a task",
+          "duration": 440.6020999999964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects forged claim before writing a task",
+          "status": "passed",
+          "title": "rejects forged claim before writing a task",
+          "duration": 313.119200000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects foreign workspace identity and a changed session generation without manufacturing a replacement",
+          "status": "passed",
+          "title": "rejects foreign workspace identity and a changed session generation without manufacturing a replacement",
+          "duration": 553.8891000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract fences a generation change while admission is awaiting its final live owner read",
+          "status": "passed",
+          "title": "fences a generation change while admission is awaiting its final live owner read",
+          "duration": 307.9343000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract leaves a selected task unclaimed when the final run check fails",
+          "status": "passed",
+          "title": "leaves a selected task unclaimed when the final run check fails",
+          "duration": 401.1457999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a contract revision changed after resolution without claiming the revised task",
+          "status": "passed",
+          "title": "rejects a contract revision changed after resolution without claiming the revised task",
+          "duration": 536.0282000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract blocks task selection and rebinding on session resources even without a Workspace writer",
+          "status": "passed",
+          "title": "blocks task selection and rebinding on session resources even without a Workspace writer",
+          "duration": 790.4323000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract requires explicit canonical selection for multiple links and rejects an external reference as a task",
+          "status": "passed",
+          "title": "requires explicit canonical selection for multiple links and rejects an external reference as a task",
+          "duration": 1059.2611000000034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract does not silently switch a running canonical task through coordinator rebinding",
+          "status": "passed",
+          "title": "does not silently switch a running canonical task through coordinator rebinding",
+          "duration": 625.9193999999989,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract requires admission for unknown MCP effects and checks cancellation before execution",
+          "status": "passed",
+          "title": "requires admission for unknown MCP effects and checks cancellation before execution",
+          "duration": 70.02939999999944,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract cancels an effect after Main admission without releasing or upgrading its canonical claim",
+          "status": "passed",
+          "title": "cancels an effect after Main admission without releasing or upgrading its canonical claim",
+          "duration": 686.2971000000034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795164422142,
+      "endTime": 1795164455645.297,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/session-task-scope-completion.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh publishes each project independently, retains old observations on failure, and never activates a workspace",
+          "status": "passed",
+          "title": "publishes each project independently, retains old observations on failure, and never activates a workspace",
+          "duration": 65.07070000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh ignores a late response from a replaced project root",
+          "status": "passed",
+          "title": "ignores a late response from a replaced project root",
+          "duration": 61.62329999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh rejects a response for another project and keeps successful entries when the list fails",
+          "status": "passed",
+          "title": "rejects a response for another project and keeps successful entries when the list fails",
+          "duration": 0.7249000000000478,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795164467144,
+      "endTime": 1795164467270.7249,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-portfolio-store.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read reads two plans from the same task authority without leaking tasks, receipts or changing history",
+          "status": "passed",
+          "title": "reads two plans from the same task authority without leaking tasks, receipts or changing history",
+          "duration": 154.3342,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read rejects missing projects and a request for an old workspace identity",
+          "status": "passed",
+          "title": "rejects missing projects and a request for an old workspace identity",
+          "duration": 78.77080000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read rejects an owner change while the live session read is in flight",
+          "status": "passed",
+          "title": "rejects an owner change while the live session read is in flight",
+          "duration": 118.34199999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps duplicate coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps duplicate coordinator unavailable while retaining its task facts",
+          "duration": 82.35339999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps archived coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps archived coordinator unavailable while retaining its task facts",
+          "duration": 72.99770000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps stale-generation coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps stale-generation coordinator unavailable while retaining its task facts",
+          "duration": 82.64769999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps handoff coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps handoff coordinator unavailable while retaining its task facts",
+          "duration": 113.15879999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps gateway-down coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps gateway-down coordinator unavailable while retaining its task facts",
+          "duration": 80.97530000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795164464927,
+      "endTime": 1795164465709.9753,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-portfolio.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "system dispatch admission"
+          ],
+          "fullName": "system dispatch admission admits three projects in order and isolates one rejected project without duplicate concurrent calls",
+          "status": "passed",
+          "title": "admits three projects in order and isolates one rejected project without duplicate concurrent calls",
+          "duration": 71.83400000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system dispatch admission"
+          ],
+          "fullName": "system dispatch admission rechecks global pause after a queued lease is granted",
+          "status": "passed",
+          "title": "rechecks global pause after a queued lease is granted",
+          "duration": 62.41140000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system dispatch admission"
+          ],
+          "fullName": "system dispatch admission refuses foreign coordinator identity and stale policy before reserving",
+          "status": "passed",
+          "title": "refuses foreign coordinator identity and stale policy before reserving",
+          "duration": 0.8761000000000649,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795164466437,
+      "endTime": 1795164466572.8762,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-project-dispatch.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration persists versioned global pause and rejects stale or conflicting requests",
+          "status": "passed",
+          "title": "persists versioned global pause and rejects stale or conflicting requests",
+          "duration": 318.4414999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps a project with unfinished configuration recoverable before deletion",
+          "status": "passed",
+          "title": "keeps a project with unfinished configuration recoverable before deletion",
+          "duration": 9.57899999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "status": "passed",
+          "title": "hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "duration": 1.9718000000000302,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration publishes background membership after persistence without publishing draft-only edits",
+          "status": "passed",
+          "title": "publishes background membership after persistence without publishing draft-only edits",
+          "duration": 2.030699999999797,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration normalizes legacy nested session folders and new parent input to one level",
+          "status": "passed",
+          "title": "normalizes legacy nested session folders and new parent input to one level",
+          "duration": 1.6266000000000531,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration creates the default workspace from list when no workspace exists",
+          "status": "passed",
+          "title": "creates the default workspace from list when no workspace exists",
+          "duration": 1.5906999999999698,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration falls back to the default workspace when the stored active id is missing",
+          "status": "passed",
+          "title": "falls back to the default workspace when the stored active id is missing",
+          "duration": 1.123299999999972,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps independent UI state for each session inside a workspace",
+          "status": "passed",
+          "title": "keeps independent UI state for each session inside a workspace",
+          "duration": 1.4402000000000044,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session",
+          "status": "passed",
+          "title": "does not copy the previous active session state into a newly selected empty session",
+          "duration": 1.048699999999826,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps each agent binding session independent within the same workspace",
+          "status": "passed",
+          "title": "keeps each agent binding session independent within the same workspace",
+          "duration": 1.5456000000001495,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding",
+          "status": "passed",
+          "title": "does not inherit the previous agent state when switching to a new agent binding",
+          "duration": 7.161399999999958,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile",
+          "status": "passed",
+          "title": "seeds the Verse Claw harness when creating a workspace profile",
+          "duration": 5.527700000000095,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state",
+          "status": "passed",
+          "title": "switches workspaces without rewriting the target workspace session or state",
+          "duration": 4.2456999999999425,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default",
+          "status": "passed",
+          "title": "P2-001: creates new workspaces with readOnly permission mode by default",
+          "duration": 2.4367999999999483,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "status": "passed",
+          "title": "P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "duration": 62.9067,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "status": "passed",
+          "title": "P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "duration": 3.4766000000001895,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration switches workspaces without closing the previous workspace resources",
+          "status": "passed",
+          "title": "switches workspaces without closing the previous workspace resources",
+          "duration": 2.3678999999999633,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration workspace delete reclaims Main browser and managed-port owners",
+          "status": "passed",
+          "title": "workspace delete reclaims Main browser and managed-port owners",
+          "duration": 0.8951000000001841,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795164463961,
+      "endTime": 1795164464390.895,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/workspaces-api.test.ts"
+    }
+  ]
+}
