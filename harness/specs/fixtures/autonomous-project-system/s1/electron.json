@@ -1,0 +1,234 @@
+{
+  "candidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+  "stats": {
+    "startTime": "2026-11-20T02:21:32.602Z",
+    "duration": 89362.291,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "journey": {
+    "driven_by": "agent",
+    "actor": "s1-electron-verifier",
+    "realHumanEvidence": false,
+    "sourceCandidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+    "sourceStatus": "",
+    "fixture": "Two plans seeded through TaskSystemStore; actual Workspace, Gateway, task and resource owners read through production Host API",
+    "ownerReadbacks": {
+      "alpha": {
+        "scope": "project",
+        "workspaceId": "portfolio-alpha",
+        "ownerKey": "[\"portfolio-alpha\",\"D:\\\\tmp\\\\g5-20261120\\\\s1-final\\\\electron\\\\system-agent-portfolio-sys-faa12-nd-unavailable-observations\\\\alpha\",\"agent:main:session-1795141310277-portfolioalpha\",[\"portfolio-alpha\",\"agent:main:session-1795141310277-portfolioalpha\",\"9d0d40c5-2830-4271-8ca9-ccd8c91a7eff\",1,\"active\",null,{\"kind\":\"local\",\"canonicalRoot\":\"D:\\\\tmp\\\\g5-20261120\\\\s1-final\\\\electron\\\\system-agent-portfolio-sys-faa12-nd-unavailable-observations\\\\alpha\",\"backend\":\"git\",\"branch\":\"main\",\"detachedHead\":false,\"setupProfile\":null}],false]",
+        "observedAt": 1795141355774,
+        "coordinator": {
+          "sessionKey": "agent:main:session-1795141310277-portfolioalpha",
+          "generation": "9d0d40c5-2830-4271-8ca9-ccd8c91a7eff",
+          "bindingRevision": 1,
+          "state": "ready"
+        },
+        "plan": {
+          "taskNodeId": "9b01c572-763b-4208-80e0-039f0642ad77",
+          "objective": "Portfolio Alpha delivery",
+          "state": "ready",
+          "revision": 1,
+          "nextAction": "Portfolio Alpha next action",
+          "nextTaskNodeId": "a6e522e0-1573-4b51-ad8b-f2dee8f090e6",
+          "pendingDecisions": [
+            "Portfolio Alpha scope decision"
+          ],
+          "tasks": [
+            {
+              "taskNodeId": "327e8950-a75f-42c0-acf7-cba1ecdea360",
+              "objective": "Portfolio Alpha delivery",
+              "state": "done",
+              "revision": 1
+            },
+            {
+              "taskNodeId": "a6e522e0-1573-4b51-ad8b-f2dee8f090e6",
+              "objective": "Portfolio Alpha next",
+              "state": "ready",
+              "revision": 2
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "taskNodeId": "327e8950-a75f-42c0-acf7-cba1ecdea360",
+            "receiptId": "9f633460-5120-4a10-b318-1749bfb80d6f",
+            "candidate": "alpha-candidate",
+            "revision": 1,
+            "sha256": "f5380359af80ded246625513be2d9963adc646cd3634bf2a6d482d6deb69d6b0",
+            "verifier": "host-file-verifier"
+          }
+        ],
+        "resources": {
+          "activeTaskClaims": 0,
+          "pendingEffects": 0,
+          "costUsd": null,
+          "observations": [
+            {
+              "id": "main:pty-session:ed4693a4-a717-4659-9a7d-df4b78e0d13f",
+              "owner": "main",
+              "kind": "pty-session",
+              "activeSlots": 1,
+              "queuedCount": 0,
+              "observedAt": 1795141355774
+            }
+          ]
+        }
+      },
+      "beta": {
+        "scope": "project",
+        "workspaceId": "portfolio-beta",
+        "ownerKey": "[\"portfolio-beta\",\"D:\\\\tmp\\\\g5-20261120\\\\s1-final\\\\electron\\\\system-agent-portfolio-sys-faa12-nd-unavailable-observations\\\\beta\",\"agent:main:session-1795141333029-portfoliobeta\",[\"portfolio-beta\",\"agent:main:session-1795141333029-portfoliobeta\",\"20d7e3ac-4a80-4ef8-abee-f77f38e0d564\",1,\"active\",null,{\"kind\":\"local\",\"canonicalRoot\":\"D:\\\\tmp\\\\g5-20261120\\\\s1-final\\\\electron\\\\system-agent-portfolio-sys-faa12-nd-unavailable-observations\\\\beta\",\"backend\":\"git\",\"branch\":\"main\",\"detachedHead\":false,\"setupProfile\":null}],false]",
+        "observedAt": 1795141356673,
+        "coordinator": {
+          "sessionKey": "agent:main:session-1795141333029-portfoliobeta",
+          "generation": "20d7e3ac-4a80-4ef8-abee-f77f38e0d564",
+          "bindingRevision": 1,
+          "state": "ready"
+        },
+        "plan": {
+          "taskNodeId": "8535c07c-0b6b-41f7-92eb-25e99baa4119",
+          "objective": "Portfolio Beta delivery",
+          "state": "ready",
+          "revision": 1,
+          "nextAction": "Portfolio Beta next action",
+          "nextTaskNodeId": "a6c71917-b8c4-4e37-ab7f-cdb800f0b171",
+          "pendingDecisions": [
+            "Portfolio Beta scope decision"
+          ],
+          "tasks": [
+            {
+              "taskNodeId": "9af2d78c-4378-4963-a2b8-e0ea876d7e19",
+              "objective": "Portfolio Beta delivery",
+              "state": "done",
+              "revision": 1
+            },
+            {
+              "taskNodeId": "a6c71917-b8c4-4e37-ab7f-cdb800f0b171",
+              "objective": "Portfolio Beta next",
+              "state": "ready",
+              "revision": 2
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "taskNodeId": "9af2d78c-4378-4963-a2b8-e0ea876d7e19",
+            "receiptId": "ea739bb1-121a-425c-99e4-2ac3a49858b1",
+            "candidate": "beta-candidate",
+            "revision": 1,
+            "sha256": "f4b16883d09315d73c7f1bdf31bea31c14a3aed295eef636e72423f16a60239b",
+            "verifier": "host-file-verifier"
+          }
+        ],
+        "resources": {
+          "activeTaskClaims": 0,
+          "pendingEffects": 0,
+          "costUsd": null,
+          "observations": []
+        }
+      }
+    },
+    "readOnly": {
+      "workspaceUnchanged": true,
+      "modelCallsBefore": 0,
+      "modelCallsAfter": 0
+    },
+    "frames": [
+      {
+        "locale": "en",
+        "theme": "light",
+        "dimensions": {
+          "width": 1280,
+          "height": 800
+        },
+        "overflow": false,
+        "screenshot": "en-light.png"
+      },
+      {
+        "locale": "en",
+        "theme": "dark",
+        "dimensions": {
+          "width": 960,
+          "height": 800
+        },
+        "overflow": false,
+        "screenshot": "en-dark.png"
+      },
+      {
+        "locale": "zh",
+        "theme": "light",
+        "dimensions": {
+          "width": 1280,
+          "height": 800
+        },
+        "overflow": false,
+        "screenshot": "zh-light.png"
+      },
+      {
+        "locale": "zh",
+        "theme": "dark",
+        "dimensions": {
+          "width": 960,
+          "height": 800
+        },
+        "overflow": false,
+        "screenshot": "zh-dark.png"
+      },
+      {
+        "locale": "ja",
+        "theme": "light",
+        "dimensions": {
+          "width": 1280,
+          "height": 800
+        },
+        "overflow": false,
+        "screenshot": "ja-light.png"
+      },
+      {
+        "locale": "ja",
+        "theme": "dark",
+        "dimensions": {
+          "width": 960,
+          "height": 800
+        },
+        "overflow": false,
+        "screenshot": "ja-dark.png"
+      },
+      {
+        "locale": "ru",
+        "theme": "light",
+        "dimensions": {
+          "width": 1280,
+          "height": 800
+        },
+        "overflow": false,
+        "screenshot": "ru-light.png"
+      },
+      {
+        "locale": "ru",
+        "theme": "dark",
+        "dimensions": {
+          "width": 960,
+          "height": 800
+        },
+        "overflow": false,
+        "screenshot": "ru-dark.png"
+      }
+    ],
+    "unavailableRecovered": true,
+    "status": "passed"
+  },
+  "ui": {
+    "errors": [],
+    "pages": [
+      {
+        "url": "file:///D:/ClawX-work/g5-test-review-20261118/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/system",
+        "body": "Обзор системы\n\nОбласть системы · Просматривайте состояние проектов и открывайте сеансы координаторов.\n\nОбновить\nФильтр проектов\n默认工作区\n\nОбласть проекта · Выполнением управляет координатор проекта\n\nСостояние проекта недоступно.\n\nPortfolio Alpha\n\nОбласть проекта · Выполнением управляет координатор проекта\n\nКоординатор: Доступен\n\nПроверено: 20.11.2026, 10:22:58\n\nPortfolio Alpha delivery\n\nСледующее действие: Portfolio Alpha next action\n\nЗадачи: принято 1 из 2\n\nОжидающие решения\n\nPortfolio Alpha scope decision\nЗанятые права на задачи\n0\nНезавершённые действия\n0\nУчтённая стоимость\nНеизвестно\nНаблюдаемые активные ресурсы\nНеизвестно\nИсточники состояния и подтверждения\nPortfolio Beta\n\nОбласть проекта · Выполнением управляет координатор проекта\n\nКоординатор: Доступен\n\nПроверено: 20.11.2026, 10:22:58\n\nPortfolio Beta delivery\n\nСледующее действие: Portfolio Beta next action\n\nЗадачи: принято 1 из 2\n\nОжидающие решения\n\nPortfolio Beta scope decision\nЗанятые права на задачи\n0\nНезавершённые действия\n0\nУчтённая стоимость\nНеизвестно\nНаблюдаемые активные ресурсы\nНеизвестно\nИсточники состояния и подтверждения"
+      }
+    ]
+  }
+}

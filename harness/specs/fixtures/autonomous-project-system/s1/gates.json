@@ -1,0 +1,171 @@
+{
+  "candidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+  "product": {
+    "actor": "codex-tf0683",
+    "steps": [
+      {
+        "elapsedMs": 117694,
+        "exit": 0,
+        "name": "build-vite",
+        "command": [
+          "pnpm",
+          "run",
+          "build:vite"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118"
+      },
+      {
+        "elapsedMs": 92914,
+        "exit": 0,
+        "name": "electron",
+        "command": [
+          "node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "tests/e2e/system-agent-portfolio.spec.ts",
+          "--workers=1",
+          "--retries=0",
+          "--output=D:/tmp/g5-20261120/s1-final/electron",
+          "--reporter=line,json"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118"
+      }
+    ],
+    "candidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+    "tree": "01710d798f747d8b8cf86a79bb762f4c8f4d3616",
+    "driven_by": "agent",
+    "dirty": false
+  },
+  "support": {
+    "dirty": false,
+    "driven_by": "agent",
+    "candidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+    "steps": [
+      {
+        "elapsedMs": 42730,
+        "exit": 0,
+        "command": [
+          "node",
+          "scripts/typecheck-agent-dev.mjs"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "typecheck"
+      },
+      {
+        "elapsedMs": 17645,
+        "exit": 0,
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/system-portfolio.test.ts",
+          "tests/unit/system-portfolio-store.test.ts",
+          "tests/unit/host-api-facade.test.ts",
+          "tests/unit/roles-orchestration-panel.test.tsx",
+          "tests/unit/workspaces-api.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=D:/tmp/g5-20261120/s1-final/units.json"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "units"
+      },
+      {
+        "elapsedMs": 3551,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "contract:check"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "contract"
+      },
+      {
+        "elapsedMs": 1547,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "i18n:lint"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "i18n"
+      },
+      {
+        "elapsedMs": 1437,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "comms:replay"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "comms-replay"
+      },
+      {
+        "elapsedMs": 1444,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "comms:compare"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "comms-compare"
+      },
+      {
+        "elapsedMs": 1299,
+        "exit": 0,
+        "command": [
+          "node",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/system-agent-portfolio.md"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "harness-validate"
+      },
+      {
+        "elapsedMs": 1265,
+        "exit": 0,
+        "command": [
+          "node",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/system-agent-portfolio.md",
+          "--dry-run"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "harness-dry-run"
+      },
+      {
+        "elapsedMs": 38085,
+        "exit": 1,
+        "command": [
+          "pnpm",
+          "run",
+          "harness:ci"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "harness-ci"
+      },
+      {
+        "elapsedMs": 7958,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "repo:artifacts:check"
+        ],
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "name": "retention"
+      }
+    ],
+    "tree": "01710d798f747d8b8cf86a79bb762f4c8f4d3616",
+    "actor": "codex-tf0683"
+  }
+}

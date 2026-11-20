@@ -1,0 +1,81 @@
+{
+  "driven_by": "agent",
+  "actor": "independent-review",
+  "sourceCandidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+  "diffBase": "a8f207f207d75c44c6cb6cbebcb8c312b1595394",
+  "findings": [],
+  "overall_correctness": "correct",
+  "inspectedFiles": [
+    {
+      "sha256": "4fdbdb6cdc32fa4bcb64ac7f127cb61414b041dfda98ae9182c0802e6e92d286",
+      "path": "harness/specs/tasks/system-agent-portfolio.md"
+    },
+    {
+      "sha256": "dab040c6110baa254b43e68aeff55641a927a3c73911db4eb8909bdc30efa633",
+      "path": "shared/types/system-portfolio.ts"
+    },
+    {
+      "sha256": "09b3318ea9e7b4b152dfb2810dcbfdbf6143049a1493d8a4d07563cd718ca642",
+      "path": "electron/services/system-portfolio.ts"
+    },
+    {
+      "sha256": "dd1368d01f589bfa20beb0c70e81a917221094509af5bfd1a1ae66c8fd257a42",
+      "path": "electron/services/workspaces-api.ts"
+    },
+    {
+      "sha256": "815eabb0d8ac030cfeae3e625269bbe9a8c17e62df6b740641077594a378c924",
+      "path": "shared/host-api/contract.ts"
+    },
+    {
+      "sha256": "72ad2cfe95763d47cf4d1d47ca75960db36d3a8ce79467a20cc2250627a302d0",
+      "path": "src/lib/host-api.ts"
+    },
+    {
+      "sha256": "dc00e81e7ace8844c249bb3b2618983ce380c2cf510eb24584a85ad16e2d71a4",
+      "path": "src/stores/system-portfolio.ts"
+    },
+    {
+      "sha256": "51256c6452d70884ae7604c34b99bef862d287812c09ea00b06a1f3f934bbed5",
+      "path": "src/components/agents/SystemPortfolioPanel.tsx"
+    },
+    {
+      "sha256": "a49639af58311ebd39f1838df0a77f480e09c3b610f8c0e850b0fa749e286048",
+      "path": "src/pages/Projects/index.tsx"
+    },
+    {
+      "sha256": "8e0de7a612032a5967787a134f097fcdf39a9a368e8a1598f6267ed28a2a6ad4",
+      "path": "src/App.tsx"
+    },
+    {
+      "sha256": "6c3f3b6c6992e90959f15cb95a2915126dc336ff3bb1c5fca1958c50011f4434",
+      "path": "src/components/layout/Sidebar.tsx"
+    },
+    {
+      "sha256": "2f1c731b1ba2efabc0c135bccb53daa595eaf7dd0b5633fb3e505b7cc4bd9f94",
+      "path": "tests/unit/system-portfolio.test.ts"
+    },
+    {
+      "sha256": "0568f4331f2529998ffe501e58e4907ff65a4702ed2871c69f204e0f285886f0",
+      "path": "tests/unit/system-portfolio-store.test.ts"
+    },
+    {
+      "sha256": "7631c4e00cd9e86043d3ccd40ca3c5fbd22f0832f62fd7649b8ed218b221ecd1",
+      "path": "tests/unit/host-api-facade.test.ts"
+    },
+    {
+      "sha256": "7797f38e99eb947314b8bfce866295c91e1f7443a0ec10f51640733e2d2bffec",
+      "path": "tests/e2e/system-agent-portfolio.spec.ts"
+    }
+  ],
+  "evidenceRead": [
+    "D:/tmp/g5-20261120/s1-final/product.json: candidate b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b; build:vite and Electron E2E exited 0; source tree clean.",
+    "D:/tmp/g5-20261120/s1-final/support.json: typecheck, 81 unit tests, contract, i18n, comms replay/compare, harness validate/dry-run, and artifact retention exited 0; harness-ci exited 1.",
+    "D:/tmp/g5-20261120/s1-final/units.json: 81/81 tests passed across 10 suites.",
+    "D:/tmp/g5-20261120/s1-final/electron.json: system-agent-portfolio E2E 1/1 passed.",
+    "D:/tmp/g5-20261120/s1-final/electron/system-agent-portfolio-sys-faa12-nd-unavailable-observations/system-portfolio.json: source candidate matches; two production-owner readbacks are project-isolated; workspace unchanged; no model calls; en/zh/ja/ru light/dark and back-navigation/filter checks passed; unavailable observation recovered; driven_by=agent.",
+    "D:/tmp/g5-20261120/s1-final/harness-ci.log: existing agent-dev-quality evidence expired at 35.25h (24h freshness window); latest deep-test blocked on typecheck, playwright-agent-dev, and contract performance limits. Full harness-ci is not green.",
+    "Read-only review: git HEAD b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b; diff from a8f207f20; working tree clean; diff --check clean."
+  ],
+  "model": "ccs-ai/gpt-6.1-sol",
+  "reviewAgentId": "01a1f6d3-0f76-7880-9488-37cc2b44a7d8"
+}

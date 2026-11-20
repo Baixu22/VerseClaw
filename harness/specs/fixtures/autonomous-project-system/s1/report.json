@@ -1,0 +1,71 @@
+{
+  "node": "TF-0683",
+  "driven_by": "agent",
+  "actor": "codex-g5-system",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+    "tree": "01710d798f747d8b8cf86a79bb762f4c8f4d3616",
+    "sourceSha256": {
+      "README.ja-JP.md": "f86f7346e295d8ed6377b2dde39b09a0e7f61cc33ef303bcc3acd0fa865cc07d",
+      "README.md": "133011b7c91031f511f70638af3c84386cb9d1ab5a558d7e8165b418bbc7dad4",
+      "README.ru-RU.md": "2ec2696e52fa5947caf540a889ae6bfcfec9068e78e68896d65bf7e52f711ddc",
+      "README.zh-CN.md": "b36d17b3cb329fdea1748d4a70f8ebce5e630b53d71b0cea046cf7e103c73dca",
+      "docs/modules/multi-agent-and-tasks.md": "d44b8b3db1b27eba5d0451d4a3b6ae9c21a954610688278b0140bd380c60f979",
+      "electron/services/system-portfolio.ts": "09b3318ea9e7b4b152dfb2810dcbfdbf6143049a1493d8a4d07563cd718ca642",
+      "electron/services/workspaces-api.ts": "dd1368d01f589bfa20beb0c70e81a917221094509af5bfd1a1ae66c8fd257a42",
+      "harness/specs/scenarios/autonomous-project-system.md": "ea62ca18b0d2f28bbd5bf0fc809203864e3c31d31f051c0ce3a5cee6420c70e3",
+      "harness/specs/tasks/system-agent-portfolio.md": "4fdbdb6cdc32fa4bcb64ac7f127cb61414b041dfda98ae9182c0802e6e92d286",
+      "shared/host-api/contract.ts": "815eabb0d8ac030cfeae3e625269bbe9a8c17e62df6b740641077594a378c924",
+      "shared/i18n/locales/en/agents.json": "0a406c81481f8b974cf9db3cf7e92aadd8b7d369f2311c22a5ba21731e5c13e8",
+      "shared/i18n/locales/ja/agents.json": "2d0b87a7104d6afc95a0690dfc92633a33f4044c9b2b2faa0d27468ca2ecc902",
+      "shared/i18n/locales/ru/agents.json": "021c23780b4de66e90bf407af17aac0a7d71e0bf4957b614b489690d87a6e7ee",
+      "shared/i18n/locales/zh/agents.json": "54ba4e1b410a9ff16feabca2f09a812f9093fd6dc3f08ea0e925a6cf05488c76",
+      "shared/types/system-portfolio.ts": "dab040c6110baa254b43e68aeff55641a927a3c73911db4eb8909bdc30efa633",
+      "src/App.tsx": "8e0de7a612032a5967787a134f097fcdf39a9a368e8a1598f6267ed28a2a6ad4",
+      "src/components/agents/RolesOrchestrationPanel.tsx": "87871aa98d091bbd4636b2792be6233b63d2a2e67c5fe39fd45fef74045a358b",
+      "src/components/agents/SystemPortfolioPanel.tsx": "51256c6452d70884ae7604c34b99bef862d287812c09ea00b06a1f3f934bbed5",
+      "src/components/layout/Sidebar.tsx": "6c3f3b6c6992e90959f15cb95a2915126dc336ff3bb1c5fca1958c50011f4434",
+      "src/lib/host-api.ts": "72ad2cfe95763d47cf4d1d47ca75960db36d3a8ce79467a20cc2250627a302d0",
+      "src/stores/system-portfolio.ts": "dc00e81e7ace8844c249bb3b2618983ce380c2cf510eb24584a85ad16e2d71a4",
+      "tests/e2e/system-agent-portfolio.spec.ts": "7797f38e99eb947314b8bfce866295c91e1f7443a0ec10f51640733e2d2bffec",
+      "tests/unit/host-api-facade.test.ts": "7631c4e00cd9e86043d3ccd40ca3c5fbd22f0832f62fd7649b8ed218b221ecd1",
+      "tests/unit/roles-orchestration-panel.test.tsx": "2477541197596943b942cce4f68d90bccea1d88782c83d1263c2915958001f8a",
+      "tests/unit/system-portfolio-store.test.ts": "0568f4331f2529998ffe501e58e4907ff65a4702ed2871c69f204e0f285886f0",
+      "tests/unit/system-portfolio.test.ts": "2f1c731b1ba2efabc0c135bccb53daa595eaf7dd0b5633fb3e505b7cc4bd9f94"
+    }
+  },
+  "verdict": {
+    "source": "passed",
+    "runtime": "passed",
+    "effect": "passed",
+    "repositoryHarnessCi": "failed"
+  },
+  "counts": {
+    "unit": 81,
+    "electron": 1,
+    "localeThemeFrames": 8
+  },
+  "rawRoot": "D:\\tmp\\g5-20261120\\s1-final",
+  "retainedFailure": "D:/tmp/g5-20261120/s1-electron-dev1",
+  "failureResolution": "Development fixture attempted to open Alpha terminal after activating Beta. The actual active-workspace gate refused it. The fixture now opens Alpha terminal before activating Beta.",
+  "ciFailures": [
+    "four Agent Dev reports exceed 24-hour freshness",
+    "historical typecheck 68533/45000ms",
+    "historical Playwright Agent Dev 46635/40000ms",
+    "historical contract 3388/3000ms"
+  ],
+  "acceptance": {
+    "twoProjectsOwnerReadback": true,
+    "sameAuthorityIsolation": "unit-tests.json",
+    "unavailableRecovery": true,
+    "navigationFilterRetained": true,
+    "readOnly": {
+      "workspaceUnchanged": true,
+      "modelCallsBefore": 0,
+      "modelCallsAfter": 0
+    }
+  },
+  "providerMode": "local scripted endpoint; portfolio itself issued zero model requests",
+  "package": "source Electron build; installed package acceptance belongs to TF-0689"
+}

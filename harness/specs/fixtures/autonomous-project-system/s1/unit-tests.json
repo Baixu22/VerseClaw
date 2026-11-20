@@ -1,0 +1,1024 @@
+{
+  "candidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+  "passed": 81,
+  "failed": 0,
+  "suites": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade reads system portfolio and project identity through Main",
+          "status": "passed",
+          "title": "reads system portfolio and project identity through Main",
+          "duration": 159.84300000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+          "status": "passed",
+          "title": "routes handoff creation through Main with the source session and edited draft",
+          "duration": 3.6504999999999654,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes the typed session stop surface through the sessions module",
+          "status": "passed",
+          "title": "routes the typed session stop surface through the sessions module",
+          "duration": 2.811300000000074,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls settings.getAll through hostInvoke",
+          "status": "passed",
+          "title": "calls settings.getAll through hostInvoke",
+          "duration": 1.8523000000000138,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+          "status": "passed",
+          "title": "routes diagnostics.exportSupportBundle through hostInvoke",
+          "duration": 1.8494000000000597,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade throws response errors",
+          "status": "passed",
+          "title": "throws response errors",
+          "duration": 2.580299999999852,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls settings.setMany and reset through hostInvoke",
+          "status": "passed",
+          "title": "calls settings.setMany and reset through hostInvoke",
+          "duration": 2.219100000000026,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes project rules methods through hostInvoke",
+          "status": "passed",
+          "title": "routes project rules methods through hostInvoke",
+          "duration": 1.8692999999998392,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes agent browser methods through hostInvoke",
+          "status": "passed",
+          "title": "routes agent browser methods through hostInvoke",
+          "duration": 3.0049000000001342,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes code review methods through hostInvoke",
+          "status": "passed",
+          "title": "routes code review methods through hostInvoke",
+          "duration": 2.1340999999999894,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes Remote Forge reads through the typed host facade",
+          "status": "passed",
+          "title": "routes Remote Forge reads through the typed host facade",
+          "duration": 8.093499999999949,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+          "status": "passed",
+          "title": "routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+          "duration": 1.8134999999999764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes uv installer setup through hostInvoke",
+          "status": "passed",
+          "title": "routes uv installer setup through hostInvoke",
+          "duration": 1.7707000000000335,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+          "status": "passed",
+          "title": "routes dcsProdFlags methods through hostInvoke",
+          "duration": 1.9776999999999134,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes vtoken methods through hostInvoke",
+          "status": "passed",
+          "title": "routes vtoken methods through hostInvoke",
+          "duration": 2.0236999999999625,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade routes git methods through hostInvoke",
+          "status": "passed",
+          "title": "routes git methods through hostInvoke",
+          "duration": 1.4975999999999203,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes log file path and tail lines through hostInvoke",
+          "status": "passed",
+          "title": "passes log file path and tail lines through hostInvoke",
+          "duration": 1.398300000000063,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls channels.accounts through hostInvoke with options",
+          "status": "passed",
+          "title": "calls channels.accounts through hostInvoke with options",
+          "duration": 1.8630000000000564,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes channel credential validation payload through hostInvoke",
+          "status": "passed",
+          "title": "passes channel credential validation payload through hostInvoke",
+          "duration": 1.9420000000000073,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes channel target lookup payload through hostInvoke",
+          "status": "passed",
+          "title": "passes channel target lookup payload through hostInvoke",
+          "duration": 1.392799999999852,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls agents.list through hostInvoke",
+          "status": "passed",
+          "title": "calls agents.list through hostInvoke",
+          "duration": 1.3135999999999513,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls providers.list through hostInvoke",
+          "status": "passed",
+          "title": "calls providers.list through hostInvoke",
+          "duration": 1.3062999999999647,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes provider validation payload through hostInvoke",
+          "status": "passed",
+          "title": "passes provider validation payload through hostInvoke",
+          "duration": 1.9086999999999534,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade passes provider OAuth requests through hostInvoke",
+          "status": "passed",
+          "title": "passes provider OAuth requests through hostInvoke",
+          "duration": 1.4958000000001448,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+          "status": "passed",
+          "title": "calls chat.sendWithMedia through hostInvoke",
+          "duration": 1.7738000000001648,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls work provider APIs through hostInvoke",
+          "status": "passed",
+          "title": "calls work provider APIs through hostInvoke",
+          "duration": 1.3824999999999363,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls knowledge APIs through hostInvoke",
+          "status": "passed",
+          "title": "calls knowledge APIs through hostInvoke",
+          "duration": 2.0188000000000557,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls sessions.summaries through hostInvoke",
+          "status": "passed",
+          "title": "calls sessions.summaries through hostInvoke",
+          "duration": 1.3531000000000404,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls session compaction methods through hostInvoke",
+          "status": "passed",
+          "title": "calls session compaction methods through hostInvoke",
+          "duration": 2.4448999999999614,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls clawGraph methods through hostInvoke",
+          "status": "passed",
+          "title": "calls clawGraph methods through hostInvoke",
+          "duration": 1.411100000000033,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls cron.list through hostInvoke",
+          "status": "passed",
+          "title": "calls cron.list through hostInvoke",
+          "duration": 1.2335000000000491,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls skills.clawhubList through hostInvoke",
+          "status": "passed",
+          "title": "calls skills.clawhubList through hostInvoke",
+          "duration": 1.3380999999999403,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+          "status": "passed",
+          "title": "calls usage.recentTokenHistory through hostInvoke",
+          "duration": 1.210700000000088,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability queryTraces through hostInvoke",
+          "status": "passed",
+          "title": "calls observability queryTraces through hostInvoke",
+          "duration": 1.3041000000000622,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+          "status": "passed",
+          "title": "calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+          "duration": 1.3427000000001499,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade calls observability reportTrace through hostInvoke",
+          "status": "passed",
+          "title": "calls observability reportTrace through hostInvoke",
+          "duration": 1.2357999999999265,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+          "status": "passed",
+          "title": "keeps hostApi response types on facade methods instead of call-site generics",
+          "duration": 248.68939999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade uses a function-shaped host API contract to type host invocations",
+          "status": "passed",
+          "title": "uses a function-shaped host API contract to type host invocations",
+          "duration": 8.223600000000033,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+          "status": "passed",
+          "title": "keeps async handler flexibility out of the renderer-facing host API contract",
+          "duration": 0.7663000000000011,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+          "status": "passed",
+          "title": "keeps production main, preload, renderer, and shared imports on their side of the boundary",
+          "duration": 484.59580000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade lets service handlers inherit payload types from the host API contract",
+          "status": "passed",
+          "title": "lets service handlers inherit payload types from the host API contract",
+          "duration": 12.50669999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+          "status": "passed",
+          "title": "does not keep hostApi-covered legacy direct IPC channels registered",
+          "duration": 2.0995999999995547,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep uninvoked direct IPC channels registered",
+          "status": "passed",
+          "title": "does not keep uninvoked direct IPC channels registered",
+          "duration": 1.3793000000000575,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep the legacy unified app:request client path",
+          "status": "passed",
+          "title": "does not keep the legacy unified app:request client path",
+          "duration": 0.36619999999993524,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+          "status": "passed",
+          "title": "does not keep legacy IPC helper exports or production call sites",
+          "duration": 70.30959999999959,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+          "status": "passed",
+          "title": "keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+          "duration": 2.4972999999999956,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "hostApi facade"
+          ],
+          "fullName": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+          "status": "passed",
+          "title": "keeps diagnostics on the extension-contributed host API path",
+          "duration": 0.642699999999877,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795141227051,
+      "endTime": 1795141228112.6426,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/host-api-facade.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "RolesOrchestrationPanel"
+          ],
+          "fullName": "RolesOrchestrationPanel records successful orchestration plan previews to Task Ledger as read-only projections",
+          "status": "passed",
+          "title": "records successful orchestration plan previews to Task Ledger as read-only projections",
+          "duration": 409.0807999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RolesOrchestrationPanel"
+          ],
+          "fullName": "RolesOrchestrationPanel saves lightweight plan edits to Task Ledger without creating a DAG editor",
+          "status": "passed",
+          "title": "saves lightweight plan edits to Task Ledger without creating a DAG editor",
+          "duration": 327.8003000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RolesOrchestrationPanel"
+          ],
+          "fullName": "RolesOrchestrationPanel creates a config-backed role through the typed host API and shows pending runtime refresh state",
+          "status": "passed",
+          "title": "creates a config-backed role through the typed host API and shows pending runtime refresh state",
+          "duration": 493.8261999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RolesOrchestrationPanel"
+          ],
+          "fullName": "RolesOrchestrationPanel edits only config roles from the selected role detail",
+          "status": "passed",
+          "title": "edits only config roles from the selected role detail",
+          "duration": 490.7037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RolesOrchestrationPanel"
+          ],
+          "fullName": "RolesOrchestrationPanel does not offer editing for built-in roles",
+          "status": "passed",
+          "title": "does not offer editing for built-in roles",
+          "duration": 163.0742999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RolesOrchestrationPanel"
+          ],
+          "fullName": "RolesOrchestrationPanel exports accepted memory through the single surface and deletes through tombstone confirmation",
+          "status": "passed",
+          "title": "exports accepted memory through the single surface and deletes through tombstone confirmation",
+          "duration": 491.78979999999956,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RolesOrchestrationPanel"
+          ],
+          "fullName": "RolesOrchestrationPanel shows memory proposal source metadata in the review queue without claiming automatic writes",
+          "status": "passed",
+          "title": "shows memory proposal source metadata in the review queue without claiming automatic writes",
+          "duration": 335.8072999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795141223165,
+      "endTime": 1795141225876.8074,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/roles-orchestration-panel.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh publishes each project independently, retains old observations on failure, and never activates a workspace",
+          "status": "passed",
+          "title": "publishes each project independently, retains old observations on failure, and never activates a workspace",
+          "duration": 56.68060000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh ignores a late response from a replaced project root",
+          "status": "passed",
+          "title": "ignores a late response from a replaced project root",
+          "duration": 59.03120000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh rejects a response for another project and keeps successful entries when the list fails",
+          "status": "passed",
+          "title": "rejects a response for another project and keeps successful entries when the list fails",
+          "duration": 0.7398000000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795141231570,
+      "endTime": 1795141231685.7397,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-portfolio-store.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read reads two plans from the same task authority without leaking tasks, receipts or changing history",
+          "status": "passed",
+          "title": "reads two plans from the same task authority without leaking tasks, receipts or changing history",
+          "duration": 161.91639999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read rejects missing projects and a request for an old workspace identity",
+          "status": "passed",
+          "title": "rejects missing projects and a request for an old workspace identity",
+          "duration": 75.86560000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read rejects an owner change while the live session read is in flight",
+          "status": "passed",
+          "title": "rejects an owner change while the live session read is in flight",
+          "duration": 77.71259999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps duplicate coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps duplicate coordinator unavailable while retaining its task facts",
+          "duration": 80.68259999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps archived coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps archived coordinator unavailable while retaining its task facts",
+          "duration": 110.40610000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps stale-generation coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps stale-generation coordinator unavailable while retaining its task facts",
+          "duration": 67.0186000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps handoff coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps handoff coordinator unavailable while retaining its task facts",
+          "duration": 84.67650000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps gateway-down coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps gateway-down coordinator unavailable while retaining its task facts",
+          "duration": 74.06169999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795141228748,
+      "endTime": 1795141229481.0618,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-portfolio.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "status": "passed",
+          "title": "hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "duration": 252.39660000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration publishes background membership after persistence without publishing draft-only edits",
+          "status": "passed",
+          "title": "publishes background membership after persistence without publishing draft-only edits",
+          "duration": 2.539299999999912,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration normalizes legacy nested session folders and new parent input to one level",
+          "status": "passed",
+          "title": "normalizes legacy nested session folders and new parent input to one level",
+          "duration": 1.4893999999999323,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration creates the default workspace from list when no workspace exists",
+          "status": "passed",
+          "title": "creates the default workspace from list when no workspace exists",
+          "duration": 1.0921000000000731,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration falls back to the default workspace when the stored active id is missing",
+          "status": "passed",
+          "title": "falls back to the default workspace when the stored active id is missing",
+          "duration": 4.080900000000156,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps independent UI state for each session inside a workspace",
+          "status": "passed",
+          "title": "keeps independent UI state for each session inside a workspace",
+          "duration": 0.8457999999998265,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session",
+          "status": "passed",
+          "title": "does not copy the previous active session state into a newly selected empty session",
+          "duration": 0.6183000000000902,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps each agent binding session independent within the same workspace",
+          "status": "passed",
+          "title": "keeps each agent binding session independent within the same workspace",
+          "duration": 0.7971999999999753,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding",
+          "status": "passed",
+          "title": "does not inherit the previous agent state when switching to a new agent binding",
+          "duration": 0.5422000000000935,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile",
+          "status": "passed",
+          "title": "seeds the Verse Claw harness when creating a workspace profile",
+          "duration": 2.610500000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state",
+          "status": "passed",
+          "title": "switches workspaces without rewriting the target workspace session or state",
+          "duration": 3.293600000000197,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default",
+          "status": "passed",
+          "title": "P2-001: creates new workspaces with readOnly permission mode by default",
+          "duration": 1.5386999999998352,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "status": "passed",
+          "title": "P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "duration": 62.20790000000011,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "status": "passed",
+          "title": "P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "duration": 3.6981000000000677,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration switches workspaces without closing the previous workspace resources",
+          "status": "passed",
+          "title": "switches workspaces without closing the previous workspace resources",
+          "duration": 4.687599999999975,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration workspace delete reclaims Main browser and managed-port owners",
+          "status": "passed",
+          "title": "workspace delete reclaims Main browser and managed-port owners",
+          "duration": 2.0020999999999276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795141230734,
+      "endTime": 1795141231079.0022,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/workspaces-api.test.ts"
+    }
+  ]
+}
