@@ -190,6 +190,7 @@ touchedAreas:
   - "scripts/typecheck-agent-dev.mjs"
   - "tests/unit/typecheck-gate.test.ts"
   - "docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/**"
+  - "scripts/validate-runtime-authority-convergence.mjs"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -266,3 +267,7 @@ Knowledge身份复验使用sessions.describe的identityOnly投影，直接从同
 单次验收计划复用已验证的比较基准，并将真实差异绑定到本次读取的候选 commit；后续调用重新解析移动 ref 和 ancestry。NUL 差异保留前导空白路径。
 
 类型检查的指纹读取按32文件批量执行，仍按原排序逐字节计算相同SHA-256，读取错误直接失败；测试覆盖跨批次的测试文件与runtime输入变更使缓存失效。
+
+收敛验收按单次Git树与NUL差异批量核对来源blob，literal pathspec保留空格/方括号路径；正文恢复、修改和删除均重新读取。仓库身份的commit/tree在同次Git调用中解析并校验完整SHA，工作树和ref继续独立读取。
+
+进程迁移回归在子进程退出时清理等待计时器，超时则移除退出监听；真实终止/重启、17项断言及10/25秒等待上限保持。

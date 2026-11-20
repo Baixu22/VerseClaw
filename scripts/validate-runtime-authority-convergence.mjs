@@ -102,6 +102,7 @@ function git(root, args, options = {}) {
     cwd: root,
     encoding: 'utf8',
     shell: false,
+    windowsHide: true,
     timeout: options.timeoutMs ?? 30_000,
     maxBuffer: 16 * 1024 * 1024,
   });
@@ -422,20 +423,30 @@ function validateSourceIdentity(root, manifest, errors) {
     return;
   }
   if (!Array.isArray(source?.missing) || source.missing.length !== 0) errors.push('manifest declares missing source inputs');
+  const paths = source.files.map((file) => normalizedPath(file?.path)).filter(Boolean);
+  const blobs = new Map();
+  let changed;
+  try {
+    const tree = git(root, ['--literal-pathspecs', 'ls-tree', '-r', '-z', candidate, '--', ...paths]);
+    for (const row of tree.stdout.split('\0')) {
+      const entry = /^\d+ blob ([a-f0-9]{40})\t([\s\S]+)$/u.exec(row);
+      if (entry) blobs.set(entry[2], entry[1]);
+    }
+    changed = new Set(git(root, ['--literal-pathspecs', 'diff', '--no-renames', '--name-only', '-z', candidate, '--', ...paths]).stdout.split('\0'));
+  } catch (error) {
+    errors.push(`cannot inspect source Git blobs: ${error instanceof Error ? error.message : String(error)}`);
+    return;
+  }
   for (const file of source.files) {
     const pathValue = normalizedPath(file?.path);
     if (!pathValue || file?.exists !== true || !isNonBlankString(file?.gitBlob) || !SHA1_HEX.test(file.gitBlob)) {
       errors.push(`manifest source input is malformed: ${file?.path ?? '<unknown>'}`);
       continue;
     }
-    try {
-      const candidateBlob = git(root, ['rev-parse', '--verify', `${candidate}:${pathValue}`]).stdout.trim().toLowerCase();
-      if (candidateBlob !== file.gitBlob.toLowerCase()) errors.push(`source Git blob mismatch: ${pathValue}`);
-      const diff = git(root, ['diff', '--quiet', candidate, '--', pathValue], { allowFailure: true });
-      if (diff.status !== 0) errors.push(`source worktree differs from candidate Git blob: ${pathValue}`);
-    } catch (error) {
-      errors.push(`cannot verify source Git blob ${pathValue}: ${error instanceof Error ? error.message : String(error)}`);
-    }
+    const candidateBlob = blobs.get(pathValue);
+    if (!candidateBlob) errors.push(`cannot verify source Git blob ${pathValue}: missing candidate blob`);
+    else if (candidateBlob !== file.gitBlob.toLowerCase()) errors.push(`source Git blob mismatch: ${pathValue}`);
+    if (changed.has(pathValue)) errors.push(`source worktree differs from candidate Git blob: ${pathValue}`);
   }
 }
 

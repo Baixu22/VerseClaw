@@ -311,6 +311,7 @@ function runGit(root, args, options = {}) {
     cwd: root,
     encoding: 'utf8',
     shell: false,
+    windowsHide: true,
     timeout: options.timeoutMs ?? 30_000,
     maxBuffer: 16 * 1024 * 1024,
     env: options.env ?? process.env,
@@ -324,12 +325,13 @@ function runGit(root, args, options = {}) {
 }
 
 export function repositoryIdentity(root = REPOSITORY_ROOT, options = {}) {
-  const commitResult = runGit(root, ['rev-parse', '--verify', 'HEAD'], options);
-  const treeResult = runGit(root, ['rev-parse', '--verify', 'HEAD^{tree}'], options);
+  const revisions = runGit(root, ['rev-parse', 'HEAD^{commit}', 'HEAD^{tree}'], options).stdout.split(/\r?\n/u);
+  if (revisions.length !== 2 || revisions.some((value) => !/^[a-f0-9]{40}$/iu.test(value))) {
+    throw new Error('cannot resolve source HEAD commit and tree');
+  }
   const refResult = runGit(root, ['symbolic-ref', '--quiet', '--short', 'HEAD'], { ...options, allowFailure: true });
   const statusResult = runGit(root, ['status', '--porcelain=v1', '--untracked-files=all'], options);
-  const commit = commitResult.stdout.toLowerCase();
-  const tree = treeResult.stdout.toLowerCase();
+  const [commit, tree] = revisions.map((value) => value.toLowerCase());
   return {
     commit,
     tree,

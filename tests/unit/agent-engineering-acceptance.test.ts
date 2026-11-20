@@ -1700,6 +1700,28 @@ describe('Agent Engineering Acceptance', () => {
     expect(result.errors).toContain('source worktree is dirty');
   });
 
+  it('rechecks literal convergence source paths after content changes and deletion', () => {
+    const { root, manifest } = createConvergencePreflightFixture();
+    const path = ' source [case].md';
+    writeFileSync(join(root, path), '# pinned input\n');
+    git(root, ['add', '--', path]);
+    git(root, ['commit', '--quiet', '-m', 'pin literal source']);
+    const identity = repositoryIdentity(root);
+    Object.assign(manifest.candidate, identity);
+    manifest.source.files.push({ path, exists: true, gitBlob: gitText(root, ['rev-parse', `HEAD:${path}`]), sha256: sha256File(join(root, path)) });
+    resealManifest(manifest);
+    const check = () => validateRuntimeAuthorityConvergencePreflight({ root, manifest }).errors;
+    const drift = `source worktree differs from candidate Git blob: ${path}`;
+    writeFileSync(join(root, ' source c.md'), '# unrelated literal sibling\n');
+    expect(check()).not.toContain(drift);
+    writeFileSync(join(root, path), '# changed input\n');
+    expect(check()).toContain(drift);
+    writeFileSync(join(root, path), '# pinned input\n');
+    expect(check()).not.toContain(drift);
+    rmSync(join(root, path));
+    expect(check()).toContain(drift);
+  });
+
   it('validates engineering and human convergence evidence and rejects semantic tampering', () => {
     const { root, base, baselineRelative } = createConvergenceFixture();
     const outputDir = join(root, 'artifacts', 'agent-engineering-acceptance', 'fixture-convergence');

@@ -595,12 +595,17 @@ async function waitForSignal(fixture: Fixture, run: WorkerRun): Promise<{ pid: n
 
 async function waitForExit(child: ChildProcessWithoutNullStreams, timeoutMs = 10_000): Promise<number | null> {
   if (child.exitCode !== null) return child.exitCode;
-  return await Promise.race([
-    new Promise<number | null>((resolve) => child.once('exit', (code) => resolve(code))),
-    sleep(timeoutMs).then(() => {
-      throw new Error('worker did not exit within timeout');
-    }),
-  ]);
+  return await new Promise<number | null>((resolve, reject) => {
+    const onExit = (code: number | null) => {
+      clearTimeout(timer);
+      resolve(code);
+    };
+    const timer = setTimeout(() => {
+      child.off('exit', onExit);
+      reject(new Error('worker did not exit within timeout'));
+    }, timeoutMs);
+    child.once('exit', onExit);
+  });
 }
 
 function pidExists(pid: number): boolean {
