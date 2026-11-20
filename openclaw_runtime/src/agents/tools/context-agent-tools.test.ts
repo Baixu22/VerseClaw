@@ -273,10 +273,15 @@ describe("DCS Stage 5 context agent tools", () => {
   });
 
   describe("production catalog registration", () => {
+    let workspaceDir: string;
+    beforeEach(() => { workspaceDir = mkdtempSync(path.join(tmpdir(), "context-catalog-")); });
+    afterEach(() => { rmSync(workspaceDir, { recursive: true, force: true }); });
+
     it("createOpenClawCodingTools includes three names when DCS deps present", () => {
       const store = makeBlockStore();
       const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
       const tools = createOpenClawCodingTools({
+        workspaceDir,
         sessionId: "session-a",
         sessionKey: "agent:main:main",
         dcsBlockStore: store,
@@ -294,6 +299,7 @@ describe("DCS Stage 5 context agent tools", () => {
 
     it("createOpenClawCodingTools omits context tools without DCS deps", () => {
       const tools = createOpenClawCodingTools({
+        workspaceDir,
         sessionId: "session-a",
         sessionKey: "agent:main:main",
         config: {
@@ -433,6 +439,7 @@ describe("DCS FactStore view tools (C0-1')", () => {
     const store = makeBlockStore();
     const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
     const tools = createOpenClawCodingTools({
+      workspaceDir: repoRoot,
       sessionId: "session-a",
       sessionKey: "agent:main:main",
       dcsBlockStore: store,
@@ -450,6 +457,7 @@ describe("DCS FactStore view tools (C0-1')", () => {
 
   it("createOpenClawCodingTools omits view tools without factService (flag-off-equivalent)", () => {
     const tools = createOpenClawCodingTools({
+      workspaceDir: repoRoot,
       sessionId: "session-a",
       sessionKey: "agent:main:main",
       dcsBlockStore: makeBlockStore(),

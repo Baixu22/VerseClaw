@@ -26,7 +26,11 @@ describe('native shared observation', () => {
     const handle = hub.subscribeDirectory(root, (_type, name) => events.push(name), () => {}, { recursive: true });
     try {
       await writeFile(join(root, 'first.txt'), 'first'); await vi.waitFor(() => expect(events).toContain('first.txt'), { timeout: 3000 });
-      await rm(root, { recursive: true }); await mkdir(root); await writeFile(join(root, 'recreated.txt'), 'new');
+      await rm(root, { recursive: true });
+      await vi.waitFor(() => expect(events).toContain(null), { timeout: 4000 });
+      // Deletion invalidates the root; wait for a new hint after recreation before writing again.
+      events.length = 0;
+      await mkdir(root); await writeFile(join(root, 'recreated.txt'), 'new');
       await vi.waitFor(() => expect(events).toContain(null), { timeout: 4000 });
       await writeFile(join(root, 'after.txt'), 'after'); await vi.waitFor(() => expect(events).toContain('after.txt'), { timeout: 3000 });
     } finally { handle.close(); }

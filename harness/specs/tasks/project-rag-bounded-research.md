@@ -193,6 +193,8 @@ touchedAreas:
   - "scripts/validate-runtime-authority-convergence.mjs"
   - "package.json"
   - "tests/unit/chat-api-workspace-fingerprint.test.ts"
+  - "tests/unit/shared-watchers-native.test.ts"
+  - "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -275,3 +277,7 @@ Knowledge身份复验使用sessions.describe的identityOnly投影，直接从同
 进程迁移回归在子进程退出时清理等待计时器，超时则移除退出监听；真实终止/重启、17项断言及10/25秒等待上限保持。
 
 根测试首段最多3个worker；原三个权限/原生检查文件保持单worker隔离，随后完整执行DCS，整条1800秒与50/10/0跳过合同不变。Chat协调器测试使用独立临时workspace，避免读取仓库共享Task数据库；实际generation和权限拒绝仍按原断言执行。
+
+原生目录监听回归分别等待删除失效和重建后的新通知，再断言后续文件事件；null仍是失效提示，不能用删除通知当作重建完成。原事件/句柄清理断言和15秒测试总上限保持。
+
+DCS工具注册测试显式传入各自临时workspace，FactStore测试复用已有repoRoot；Task owner入口和schema拒绝逻辑继续真实执行，避免默认cwd读取开发仓库共享数据库。
