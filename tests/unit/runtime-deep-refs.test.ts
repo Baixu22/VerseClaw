@@ -133,6 +133,17 @@ describe('runtime deep reference guard (#93)', () => {
     expect(stale.staleExemptions).toHaveLength(1);
   });
 
+  it('limits generated-output declarations to the exact producer file and target', () => {
+    const { root, write } = fixtureRepo();
+    write('scripts/built-probe.mjs', "const target = 'openclaw_runtime/dist/entry.js';\n");
+    write('scripts/other.mjs', "const target = 'openclaw_runtime/dist/entry.js';\n");
+    const baseline = { entries: [{ file: 'scripts/built-probe.mjs', target: 'openclaw_runtime/dist/entry.js', reason: 'Generated entry verified by the build probe.' }] };
+    expect(checkRuntimeDeepRefs({ root, baseline, files: ['scripts/built-probe.mjs'] }).ok).toBe(true);
+    expect(checkRuntimeDeepRefs({ root, baseline, files: ['scripts/other.mjs'] }).ok).toBe(false);
+    write('scripts/built-probe.mjs', "const target = 'openclaw_runtime/dist/missing.js';\n");
+    expect(checkRuntimeDeepRefs({ root, baseline, files: ['scripts/built-probe.mjs'] }).ok).toBe(false);
+  });
+
   it('passes on the real tree and ships a reasoned exemption ledger', () => {
     const baseline = loadBaseline(repoRoot);
     const report = checkRuntimeDeepRefs({ root: repoRoot });

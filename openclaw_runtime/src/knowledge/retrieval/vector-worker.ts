@@ -26,6 +26,14 @@ export function createPortableVectorSearch(database: { path?: string } | undefin
   const start = () => {
     const current = new Worker(target, {
       workerData: { database },
+      ...(target.pathname.endsWith(".ts")
+        ? {
+            env: {
+              ...process.env,
+              TSX_TSCONFIG_PATH: fileURLToPath(new URL("../../../tsconfig.json", import.meta.url)),
+            },
+          }
+        : {}),
       execArgv: target.pathname.endsWith(".ts")
         ? ["--import", pathToFileURL(createRequire(import.meta.url).resolve("tsx")).href]
         : [],

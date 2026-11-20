@@ -40,6 +40,14 @@ export function runProjectionWorker(
   const nonce = randomUUID();
   const worker = new Worker(target, {
     workerData: { ...input, nonce },
+    ...(target.pathname.endsWith(".ts")
+      ? {
+          env: {
+            ...process.env,
+            TSX_TSCONFIG_PATH: fileURLToPath(new URL("../../../tsconfig.json", import.meta.url)),
+          },
+        }
+      : {}),
     execArgv: target.pathname.endsWith(".ts")
       ? ["--import", pathToFileURL(createRequire(import.meta.url).resolve("tsx")).href]
       : [],

@@ -196,6 +196,8 @@ touchedAreas:
   - "tests/unit/shared-watchers-native.test.ts"
   - "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts"
   - "docs/dev/evidence/project-rag/RAG-16/20261120-r10-e32a06779/**"
+  - "scripts/runtime-deep-refs-baseline.json"
+  - "tests/unit/chat-leading-orphan-tools.test.tsx"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -284,3 +286,5 @@ Knowledge身份复验使用sessions.describe的identityOnly投影，直接从同
 DCS工具注册测试显式传入各自临时workspace，FactStore测试复用已有repoRoot；Task owner入口和schema拒绝逻辑继续真实执行，避免默认cwd读取开发仓库共享数据库。
 
 生命周期夹具按完整换行累计stdout后识别真实child PID，前缀与数字跨分片均有回归；10秒握手、15秒drain、50周期和堆/活动记录阈值保持。
+
+源码index/vector worker显式绑定同一Runtime tsconfig路径映射，仅作用于.ts入口，干净未构建检出不再依赖workspace package的dist残留；打包.js入口保持原行为。生成物引用按既有精确file-target清单登记，原构建/哈希读取仍拒绝缺失产物，其他来源文件或目标路径继续报错。Chat orphan旅程的模块加载移到收集期，原交互断言和单用例30秒上限保持。
