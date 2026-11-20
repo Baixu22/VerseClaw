@@ -1,0 +1,898 @@
+{
+  "candidate": "c051aa58fea6c1c410dbb9215dff92f6011408de",
+  "stats": {
+    "startTime": "2026-11-20T09:37:46.144Z",
+    "duration": 256144.16,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "readbacks": {
+    "project-configuration-oper-48800-them-after-a-reload-failure/configuration-operator.json": {
+      "driven_by": "agent",
+      "actor": "s3-electron-verifier",
+      "candidate": "c051aa58fea6c1c410dbb9215dff92f6011408de",
+      "dirty": "",
+      "provider": "local-scripted",
+      "realHumanEvidence": false,
+      "preview": {
+        "workspaceId": "configuration-project",
+        "agentId": "configuration-owner",
+        "ownerKey": "[\"configuration-project\",\"D:\\\\tmp\\\\g5-20261120\\\\system-phase-r2\\\\electron\\\\project-configuration-oper-48800-them-after-a-reload-failure\\\\configuration-project\",\"agent:configuration-owner:configuration-project\",[\"configuration-project\",\"agent:configuration-owner:configuration-project\",\"1414583d-6bcd-438d-9e14-c716e32ba8b1\",1,\"active\",null,{\"kind\":\"local\",\"canonicalRoot\":\"D:\\\\tmp\\\\g5-20261120\\\\system-phase-r2\\\\electron\\\\project-configuration-oper-48800-them-after-a-reload-failure\\\\configuration-project\",\"backend\":\"local-workspace\",\"branch\":null,\"detachedHead\":false,\"setupProfile\":null}],false]",
+        "configRevision": "d8a3e1039c02341a0895673727a4e612f96f36d942adab95234e309e2d0f4b83",
+        "digest": "1884b406d7dda234bef2f731c3b5798b4b447318f3628233242a826bcea61a06",
+        "before": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser"
+          ],
+          "contextTokens": 8192
+        },
+        "desired": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 4096
+        }
+      },
+      "loaded": {
+        "schema": "runtime-flag-ack/v1",
+        "gatewayGeneration": "2",
+        "childPid": 21324,
+        "launchEnv": {
+          "VERSE_VTOKEN_ASSEMBLY_ENABLED": {
+            "present": false
+          },
+          "VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH": {
+            "present": false
+          },
+          "OPENCLAW_DCS_CONTEXT_VIEW_TOOLS": {
+            "present": false
+          },
+          "OPENCLAW_DCS_CONTEXT_TOOLS": {
+            "present": false
+          }
+        },
+        "injectionBudget": {
+          "totalChars": 6000,
+          "precedence": [
+            "knowledge",
+            "session_start",
+            "working_memory",
+            "tool_registry",
+            "cvk_addition",
+            "vtoken",
+            "memory_pilot",
+            "other"
+          ],
+          "dropAlertRatio": 0.1,
+          "counters": {
+            "turns": 0,
+            "killedTurns": 0,
+            "appliedChars": 0,
+            "requestedChars": 0,
+            "droppedChars": 0,
+            "truncatedChars": 0,
+            "dropAlerts": 0
+          },
+          "lastTurn": null
+        },
+        "effectiveFlags": {
+          "runtime.contextBlock.compass.enabled": false,
+          "runtime.contextBlock.role_memory.enabled": false,
+          "runtime.contextBlock.working_memory.enabled": true,
+          "runtime.contextBlock.tool_registry.enabled": true,
+          "runtime.coding.parseOnTouch.enabled": true,
+          "runtime.coding.staleWriteGuard.enabled": false,
+          "runtime.coding.writeJournal.enabled": true,
+          "runtime.coding.autoVerify.enabled": "auto",
+          "runtime.coding.worktree.backend": "inprocess",
+          "runtime.coding.symbolLease.enabled": false,
+          "runtime.coding.symbolLease.mode": "memory",
+          "runtime.coding.patchFlow.default": false,
+          "runtime.coding.sekb.experienceShadow": false,
+          "runtime.coding.sekb.retrievalShadow": false,
+          "runtime.coding.routingMemo.shadow": false,
+          "runtime.vtoken.assembly.enabled": false,
+          "dcs.contextViewTools.enabled": false,
+          "runtime.contextEnhancement.killSwitch": false
+        },
+        "flagAttribution": {
+          "runtime.contextBlock.compass.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextBlock.role_memory.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextBlock.working_memory.enabled": {
+            "value": true,
+            "origin": "default"
+          },
+          "runtime.contextBlock.tool_registry.enabled": {
+            "value": true,
+            "origin": "default"
+          },
+          "runtime.coding.parseOnTouch.enabled": {
+            "value": true,
+            "origin": "default"
+          },
+          "runtime.coding.staleWriteGuard.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.writeJournal.enabled": {
+            "value": true,
+            "origin": "default"
+          },
+          "runtime.coding.autoVerify.enabled": {
+            "value": "auto",
+            "origin": "default"
+          },
+          "runtime.coding.worktree.backend": {
+            "value": "inprocess",
+            "origin": "default"
+          },
+          "runtime.coding.symbolLease.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.symbolLease.mode": {
+            "value": "memory",
+            "origin": "default"
+          },
+          "runtime.coding.patchFlow.default": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.sekb.experienceShadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.sekb.retrievalShadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.routingMemo.shadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.vtoken.assembly.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "dcs.contextViewTools.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextEnhancement.killSwitch": {
+            "value": false,
+            "origin": "default"
+          }
+        },
+        "configSource": {
+          "path": "D:\\tmp\\g5-20261120\\system-phase-r2\\temp\\verse-claw-e2e-run-ALpro1\\verse-claw-e2e-user-data-A2XOcf\\openclaw-source-state\\openclaw.json",
+          "exists": true,
+          "origin": "env-override"
+        },
+        "runtimeBuildOrConfigHash": "ce9a0c775ecea3be1b42e5344a549854",
+        "turnEffectProbe": {
+          "wouldChangeTurn": true,
+          "killSwitchEngaged": false,
+          "activeSurfaces": [
+            "runtime.contextBlock.working_memory.enabled",
+            "runtime.contextBlock.tool_registry.enabled"
+          ]
+        },
+        "degradedReason": null,
+        "answeredAt": "2026-11-20T09:38:20.774Z",
+        "projectConfiguration": {
+          "agentId": "configuration-owner",
+          "values": {
+            "modelRef": "custom-sessionc/mock-coder",
+            "denyTools": [
+              "browser",
+              "exec"
+            ],
+            "contextTokens": 4096
+          }
+        }
+      },
+      "degraded": {
+        "requestId": "reload-failure",
+        "workspaceId": "configuration-project",
+        "agentId": "configuration-owner",
+        "phase": "degraded",
+        "desired": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 2048
+        },
+        "configured": null,
+        "effective": null,
+        "runtimeGeneration": null,
+        "error": "CONFIG_RECOVERY_REQUIRED"
+      },
+      "rollback": {
+        "requestId": "reload-failure",
+        "workspaceId": "configuration-project",
+        "agentId": "configuration-owner",
+        "phase": "rolled-back",
+        "desired": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 2048
+        },
+        "configured": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 4096
+        },
+        "effective": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 4096
+        },
+        "runtimeGeneration": "4",
+        "error": "CONFIG_APPLY_RELOADED_ROLLBACK"
+      },
+      "session": {
+        "ok": true,
+        "key": "agent:configuration-owner:configuration-project",
+        "sessionId": "1414583d-6bcd-438d-9e14-c716e32ba8b1",
+        "entry": {
+          "sessionId": "1414583d-6bcd-438d-9e14-c716e32ba8b1",
+          "sessionFile": "D:\\tmp\\g5-20261120\\system-phase-r2\\temp\\verse-claw-e2e-run-ALpro1\\verse-claw-e2e-user-data-A2XOcf\\openclaw-source-state\\agents\\configuration-owner\\sessions\\1414583d-6bcd-438d-9e14-c716e32ba8b1.jsonl",
+          "updatedAt": 1795167486206
+        },
+        "runStarted": false
+      },
+      "modelsInvoked": 0,
+      "frames": [
+        "configuration-en.png",
+        "configuration-zh.png",
+        "configuration-ja.png",
+        "configuration-ru.png"
+      ],
+      "status": "passed"
+    },
+    "system-agent-portfolio-sys-829cb-ause-fences-the-next-effect/system-dispatch.json": {
+      "driven_by": "agent",
+      "actor": "s2-electron-verifier",
+      "sourceCandidate": "c051aa58fea6c1c410dbb9215dff92f6011408de",
+      "sourceDirty": "",
+      "provider": "local-scripted",
+      "realHumanEvidence": false,
+      "pausedAgent": {
+        "pausedAgentError": "Error: [INTERNAL] Error: SYSTEM_EXECUTION_PAUSED",
+        "modelCallsBeforePausedAgent": 2,
+        "modelCallsAfter": 2
+      },
+      "projects": {
+        "alpha": {
+          "workspaceId": "alpha",
+          "rootPath": "D:\\tmp\\g5-20261120\\system-phase-r2\\electron\\system-agent-portfolio-sys-829cb-ause-fences-the-next-effect\\Alpha",
+          "sessionKey": "agent:main:session-1795167623761-alpha",
+          "generation": "c3210989-57cf-410a-b07c-9ce22c2ddcec",
+          "plan": {
+            "workspaceId": "alpha",
+            "sessionKey": "agent:main:session-1795167623761-alpha",
+            "generation": "c3210989-57cf-410a-b07c-9ce22c2ddcec",
+            "requestId": "Alpha-plan",
+            "taskNodeId": "916dfbca-8712-46d7-bb13-8c04753e4e53",
+            "revision": 1,
+            "objective": "S2_ALPHA: implement result.txt in this project",
+            "nextAction": "S2_ALPHA: implement result.txt in this project",
+            "assumptions": [],
+            "pendingDecisions": [],
+            "previousChildIds": [],
+            "childIds": [
+              "033593b0-8603-4121-be52-4cf0fd70ba2d"
+            ]
+          }
+        },
+        "beta": {
+          "workspaceId": "beta",
+          "rootPath": "D:\\tmp\\g5-20261120\\system-phase-r2\\electron\\system-agent-portfolio-sys-829cb-ause-fences-the-next-effect\\Beta",
+          "sessionKey": "agent:main:session-1795167639016-beta",
+          "generation": "56792f4e-231b-41d6-a636-17a264040159",
+          "plan": {
+            "workspaceId": "beta",
+            "sessionKey": "agent:main:session-1795167639016-beta",
+            "generation": "56792f4e-231b-41d6-a636-17a264040159",
+            "requestId": "Beta-plan",
+            "taskNodeId": "3b527a2a-fc2f-42ff-b69c-7949549034e3",
+            "revision": 1,
+            "objective": "S2_BETA: implement result.txt in this project",
+            "nextAction": "S2_BETA: implement result.txt in this project",
+            "assumptions": [],
+            "pendingDecisions": [],
+            "previousChildIds": [],
+            "childIds": [
+              "5df9c850-f5d5-45ba-b8cc-58d9b2220934"
+            ]
+          }
+        }
+      },
+      "admissions": {
+        "alphaAdmission": {
+          "success": true,
+          "status": "accepted",
+          "receipt": {
+            "schemaVersion": "clawx.session-delegation-receipt/v1",
+            "admissionId": "81ec644d-7824-4af8-82a3-e69c2f72c772",
+            "idempotencyKey": "project-dispatch:0d2a3f85cae1d9a0aa014666cee00066619f8181704ce5b5e7eb179376090369",
+            "status": "accepted",
+            "orchestrationRunId": "orch_5999856d-7c7d-4b54-84f5-684156ab2c05",
+            "acceptedAt": "2026-11-20T09:41:13.493Z",
+            "coordinator": {
+              "workspaceId": "alpha",
+              "agentId": "main",
+              "sessionKey": "agent:main:session-1795167623761-alpha",
+              "bindingRevision": 2,
+              "sessionGeneration": "c3210989-57cf-410a-b07c-9ce22c2ddcec"
+            },
+            "taskRef": "033593b0-8603-4121-be52-4cf0fd70ba2d",
+            "parentEnvironment": {
+              "kind": "local",
+              "canonicalRoot": "D:\\tmp\\g5-20261120\\system-phase-r2\\electron\\system-agent-portfolio-sys-829cb-ause-fences-the-next-effect\\Alpha",
+              "backend": "git",
+              "branch": "main",
+              "detachedHead": false,
+              "setupProfile": null
+            },
+            "parentEnvironmentRevision": 2,
+            "authorization": {
+              "approvalId": null,
+              "grantState": "authorized",
+              "owner": "gateway-permission"
+            },
+            "budget": {
+              "status": "observed",
+              "reason": null,
+              "maxWorkers": 1,
+              "process": {
+                "maxChildrenPerAgent": 5,
+                "maxSpawnDepth": 1,
+                "source": "agents.defaults.subagents"
+              },
+              "backgroundTerminal": {
+                "lane": "subagent",
+                "maxConcurrent": 8,
+                "activeCount": 0,
+                "queuedCount": 0,
+                "source": "process.command-queue.subagent"
+              }
+            },
+            "scheduler": {
+              "executionWaves": [
+                {
+                  "wave": 1,
+                  "taskNodeIds": [
+                    "implementer-1"
+                  ],
+                  "roles": [
+                    "implementer"
+                  ],
+                  "reason": "scheduled 1 ready node(s) within concurrency cap 1"
+                }
+              ],
+              "metrics": {
+                "queued": 0,
+                "running": 0,
+                "scheduled": 1,
+                "skipped": 0,
+                "concurrencyCap": 1,
+                "budgetEstimate": 2
+              }
+            },
+            "children": [
+              {
+                "roleName": "implementer",
+                "taskNodeId": "implementer-1",
+                "roleInstanceId": "orch_5999856d-7c7d-4b54-84f5-684156ab2c05:implementer-1:implementer:attempt-1",
+                "admissionStatus": "accepted",
+                "runState": "accepted-not-completed",
+                "completionObserved": false,
+                "backend": "subagent",
+                "childSessionKey": "agent:main:subagent:62e5e01c-dc1c-4cdb-a3ef-cc808873e6f2",
+                "childRunId": "30d6b1d1-1a3b-4571-ba7e-c28a566c1da4",
+                "toolAuthorization": {
+                  "status": "effective",
+                  "source": "role-contract+parent-clamp",
+                  "roleName": "implementer",
+                  "effectiveRoleName": "implementer",
+                  "parentRoleName": null,
+                  "allowlist": [
+                    "read",
+                    "write",
+                    "edit",
+                    "bash"
+                  ],
+                  "denylist": [
+                    "web_search",
+                    "web_fetch",
+                    "x_search",
+                    "code_execution",
+                    "browser",
+                    "__role_capability:mcp_network"
+                  ],
+                  "permissionDecisionCount": 6
+                },
+                "isolation": {
+                  "mode": "shared",
+                  "backend": "shared-inprocess",
+                  "canonicalRoot": "D:\\tmp\\g5-20261120\\system-phase-r2\\electron\\system-agent-portfolio-sys-829cb-ause-fences-the-next-effect\\Alpha",
+                  "branch": null,
+                  "detachedHead": false,
+                  "verifiedCheckout": false
+                },
+                "schedulerWave": 1,
+                "error": null
+              }
+            ],
+            "errors": [],
+            "completionObserved": false,
+            "recoveryRequired": false,
+            "replayed": true
+          },
+          "replayed": true
+        },
+        "betaAdmission": {
+          "success": true,
+          "status": "accepted",
+          "receipt": {
+            "schemaVersion": "clawx.session-delegation-receipt/v1",
+            "admissionId": "710b97bf-fc75-4967-9511-82b805b1bb4a",
+            "idempotencyKey": "project-dispatch:6cc7273f73c348faaec17b3fc2c65e1072a4da5dc8abee2ab7ea9950e97f0ffa",
+            "status": "accepted",
+            "orchestrationRunId": "orch_5ecc42da-1bf2-4146-b4f2-2189300819f5",
+            "acceptedAt": "2026-11-20T09:41:33.140Z",
+            "coordinator": {
+              "workspaceId": "beta",
+              "agentId": "main",
+              "sessionKey": "agent:main:session-1795167639016-beta",
+              "bindingRevision": 2,
+              "sessionGeneration": "56792f4e-231b-41d6-a636-17a264040159"
+            },
+            "taskRef": "5df9c850-f5d5-45ba-b8cc-58d9b2220934",
+            "parentEnvironment": {
+              "kind": "local",
+              "canonicalRoot": "D:\\tmp\\g5-20261120\\system-phase-r2\\electron\\system-agent-portfolio-sys-829cb-ause-fences-the-next-effect\\Beta",
+              "backend": "git",
+              "branch": "main",
+              "detachedHead": false,
+              "setupProfile": null
+            },
+            "parentEnvironmentRevision": 2,
+            "authorization": {
+              "approvalId": null,
+              "grantState": "authorized",
+              "owner": "gateway-permission"
+            },
+            "budget": {
+              "status": "observed",
+              "reason": null,
+              "maxWorkers": 1,
+              "process": {
+                "maxChildrenPerAgent": 5,
+                "maxSpawnDepth": 1,
+                "source": "agents.defaults.subagents"
+              },
+              "backgroundTerminal": {
+                "lane": "subagent",
+                "maxConcurrent": 8,
+                "activeCount": 1,
+                "queuedCount": 0,
+                "source": "process.command-queue.subagent"
+              }
+            },
+            "scheduler": {
+              "executionWaves": [
+                {
+                  "wave": 1,
+                  "taskNodeIds": [
+                    "implementer-1"
+                  ],
+                  "roles": [
+                    "implementer"
+                  ],
+                  "reason": "scheduled 1 ready node(s) within concurrency cap 1"
+                }
+              ],
+              "metrics": {
+                "queued": 0,
+                "running": 0,
+                "scheduled": 1,
+                "skipped": 0,
+                "concurrencyCap": 1,
+                "budgetEstimate": 2
+              }
+            },
+            "children": [
+              {
+                "roleName": "implementer",
+                "taskNodeId": "implementer-1",
+                "roleInstanceId": "orch_5ecc42da-1bf2-4146-b4f2-2189300819f5:implementer-1:implementer:attempt-1",
+                "admissionStatus": "accepted",
+                "runState": "accepted-not-completed",
+                "completionObserved": false,
+                "backend": "subagent",
+                "childSessionKey": "agent:main:subagent:c861b2db-5fac-4b86-bf62-8ba641f986cf",
+                "childRunId": "4bdac21c-0f18-4a1c-8755-6bacb2c5d20e",
+                "toolAuthorization": {
+                  "status": "effective",
+                  "source": "role-contract+parent-clamp",
+                  "roleName": "implementer",
+                  "effectiveRoleName": "implementer",
+                  "parentRoleName": null,
+                  "allowlist": [
+                    "read",
+                    "write",
+                    "edit",
+                    "bash"
+                  ],
+                  "denylist": [
+                    "web_search",
+                    "web_fetch",
+                    "x_search",
+                    "code_execution",
+                    "browser",
+                    "__role_capability:mcp_network"
+                  ],
+                  "permissionDecisionCount": 6
+                },
+                "isolation": {
+                  "mode": "shared",
+                  "backend": "shared-inprocess",
+                  "canonicalRoot": "D:\\tmp\\g5-20261120\\system-phase-r2\\electron\\system-agent-portfolio-sys-829cb-ause-fences-the-next-effect\\Beta",
+                  "branch": null,
+                  "detachedHead": false,
+                  "verifiedCheckout": false
+                },
+                "schedulerWave": 1,
+                "error": null
+              }
+            ],
+            "errors": [],
+            "completionObserved": false,
+            "recoveryRequired": false,
+            "replayed": true
+          },
+          "replayed": true
+        },
+        "refused": {
+          "success": false,
+          "status": "rejected",
+          "error": "SYSTEM_DISPATCH_PAUSED_OR_CHANGED"
+        },
+        "stale": {
+          "success": false,
+          "status": "rejected",
+          "error": "SYSTEM_DISPATCH_PAUSED_OR_CHANGED"
+        }
+      },
+      "pause": {
+        "revision": 1,
+        "paused": true,
+        "inFlightPolicy": "settle-admitted-effects",
+        "updatedAt": "2026-11-20T09:41:47.912Z",
+        "recentRequests": [
+          {
+            "requestId": "cf4c32e0-e696-4980-bf0f-03a6cea37202",
+            "paused": true
+          }
+        ]
+      },
+      "betaHistory": {
+        "success": true,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "[Subagent Context] You are running as a subagent (depth 1/1). Results auto-announce to your requester; do not busy-poll for status.\n\n[Subagent Task]\n\n{\"objective\":\"S2_BETA: implement result.txt in this project\",\"target\":\"result.txt\",\"constraints\":[\"Write only in this project\"],\"acceptance\":[{\"id\":\"file\",\"description\":\"Verify result bytes\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"result.txt\",\"sha256\":\"9c418193e2397da51d41eff0415e36fa8654c78a9a014d358c2dd28ad851578e\"}}]}\n\nBegin. Execute the assigned task to completion."
+              }
+            ],
+            "timestamp": 1795167703968,
+            "__openclaw": {
+              "id": "bc1319c8",
+              "recordTimestampMs": 1795167704645,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "toolCall",
+                "id": "s2beta",
+                "name": "write",
+                "arguments": {
+                  "path": "result.txt",
+                  "content": "beta result"
+                }
+              }
+            ],
+            "api": "openai-completions",
+            "provider": "custom-sessionc",
+            "model": "mock-coder",
+            "usage": {
+              "input": 120,
+              "output": 30,
+              "totalTokens": 150,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "toolUse",
+            "timestamp": 1795167706322,
+            "__openclaw": {
+              "id": "c7a0b397",
+              "recordTimestampMs": 1795167709143,
+              "seq": 2
+            }
+          },
+          {
+            "role": "toolResult",
+            "toolCallId": "s2beta",
+            "toolName": "write",
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"status\": \"error\",\n  \"tool\": \"write\",\n  \"error\": \"SYSTEM_EXECUTION_PAUSED\"\n}"
+              }
+            ],
+            "isError": true,
+            "timestamp": 1795167713465,
+            "__openclaw": {
+              "id": "afc97068",
+              "recordTimestampMs": 1795167713876,
+              "seq": 3
+            }
+          }
+        ],
+        "sessionGeneration": "9af2fe8c-a6c3-4652-a8ab-f1fdf79a70ed",
+        "model": "custom-sessionc/mock-coder",
+        "costUsd": 0
+      },
+      "betaRequests": 1,
+      "activeWorkspaceUnchanged": true,
+      "activeWorkspacePermission": "readOnly",
+      "status": "passed"
+    },
+    "system-agent-portfolio-sys-faa12-nd-unavailable-observations/system-portfolio.json": {
+      "driven_by": "agent",
+      "actor": "s1-electron-verifier",
+      "realHumanEvidence": false,
+      "sourceCandidate": "c051aa58fea6c1c410dbb9215dff92f6011408de",
+      "sourceStatus": "",
+      "fixture": "Two plans seeded through TaskSystemStore; actual Workspace, Gateway, task and resource owners read through production Host API",
+      "ownerReadbacks": {
+        "alpha": {
+          "scope": "project",
+          "workspaceId": "portfolio-alpha",
+          "ownerKey": "[\"portfolio-alpha\",\"D:\\\\tmp\\\\g5-20261120\\\\system-phase-r2\\\\electron\\\\system-agent-portfolio-sys-faa12-nd-unavailable-observations\\\\alpha\",\"agent:main:session-1795167536828-portfolioalpha\",[\"portfolio-alpha\",\"agent:main:session-1795167536828-portfolioalpha\",\"e5123e59-1d51-49a2-bb4c-149578eb2b63\",1,\"active\",null,{\"kind\":\"local\",\"canonicalRoot\":\"D:\\\\tmp\\\\g5-20261120\\\\system-phase-r2\\\\electron\\\\system-agent-portfolio-sys-faa12-nd-unavailable-observations\\\\alpha\",\"backend\":\"git\",\"branch\":\"main\",\"detachedHead\":false,\"setupProfile\":null}],false]",
+          "observedAt": 1795167562642,
+          "coordinator": {
+            "sessionKey": "agent:main:session-1795167536828-portfolioalpha",
+            "generation": "e5123e59-1d51-49a2-bb4c-149578eb2b63",
+            "bindingRevision": 1,
+            "state": "ready"
+          },
+          "plan": {
+            "taskNodeId": "f9d3095e-59b2-46c0-93d8-42e75016347d",
+            "objective": "Portfolio Alpha delivery",
+            "state": "ready",
+            "revision": 1,
+            "nextAction": "Portfolio Alpha next action",
+            "nextTaskNodeId": "9d9518c8-d7ac-4135-9339-10135a5dec5b",
+            "pendingDecisions": [
+              "Portfolio Alpha scope decision"
+            ],
+            "tasks": [
+              {
+                "taskNodeId": "ceaeca61-e407-4eb8-9bd3-449e354dc60f",
+                "objective": "Portfolio Alpha delivery",
+                "state": "done",
+                "revision": 1
+              },
+              {
+                "taskNodeId": "9d9518c8-d7ac-4135-9339-10135a5dec5b",
+                "objective": "Portfolio Alpha next",
+                "state": "ready",
+                "revision": 2
+              }
+            ]
+          },
+          "evidence": [
+            {
+              "taskNodeId": "ceaeca61-e407-4eb8-9bd3-449e354dc60f",
+              "receiptId": "9d2947ed-2464-4859-9cf2-e0a246098c63",
+              "candidate": "alpha-candidate",
+              "revision": 1,
+              "sha256": "f5380359af80ded246625513be2d9963adc646cd3634bf2a6d482d6deb69d6b0",
+              "verifier": "host-file-verifier"
+            }
+          ],
+          "resources": {
+            "activeTaskClaims": 0,
+            "pendingEffects": 0,
+            "costUsd": null,
+            "observations": [
+              {
+                "id": "main:pty-session:ae0794f1-d72e-455b-b8e3-e4dacc854474",
+                "owner": "main",
+                "kind": "pty-session",
+                "activeSlots": 1,
+                "queuedCount": 0,
+                "observedAt": 1795167562642
+              }
+            ]
+          }
+        },
+        "beta": {
+          "scope": "project",
+          "workspaceId": "portfolio-beta",
+          "ownerKey": "[\"portfolio-beta\",\"D:\\\\tmp\\\\g5-20261120\\\\system-phase-r2\\\\electron\\\\system-agent-portfolio-sys-faa12-nd-unavailable-observations\\\\beta\",\"agent:main:session-1795167548484-portfoliobeta\",[\"portfolio-beta\",\"agent:main:session-1795167548484-portfoliobeta\",\"fc700a0c-0a73-4900-8fe6-7faf64dbed7e\",1,\"active\",null,{\"kind\":\"local\",\"canonicalRoot\":\"D:\\\\tmp\\\\g5-20261120\\\\system-phase-r2\\\\electron\\\\system-agent-portfolio-sys-faa12-nd-unavailable-observations\\\\beta\",\"backend\":\"git\",\"branch\":\"main\",\"detachedHead\":false,\"setupProfile\":null}],false]",
+          "observedAt": 1795167564082,
+          "coordinator": {
+            "sessionKey": "agent:main:session-1795167548484-portfoliobeta",
+            "generation": "fc700a0c-0a73-4900-8fe6-7faf64dbed7e",
+            "bindingRevision": 1,
+            "state": "ready"
+          },
+          "plan": {
+            "taskNodeId": "210b90fa-00f9-48e7-8cdc-b8402dd06de5",
+            "objective": "Portfolio Beta delivery",
+            "state": "ready",
+            "revision": 1,
+            "nextAction": "Portfolio Beta next action",
+            "nextTaskNodeId": "6c7b69f5-6fb0-4fbf-91d6-552c92708085",
+            "pendingDecisions": [
+              "Portfolio Beta scope decision"
+            ],
+            "tasks": [
+              {
+                "taskNodeId": "79ae8fcd-fd6b-4690-bfc6-6e46a8e4700e",
+                "objective": "Portfolio Beta delivery",
+                "state": "done",
+                "revision": 1
+              },
+              {
+                "taskNodeId": "6c7b69f5-6fb0-4fbf-91d6-552c92708085",
+                "objective": "Portfolio Beta next",
+                "state": "ready",
+                "revision": 2
+              }
+            ]
+          },
+          "evidence": [
+            {
+              "taskNodeId": "79ae8fcd-fd6b-4690-bfc6-6e46a8e4700e",
+              "receiptId": "1da8e32f-1871-45e1-9194-c8b757322a8a",
+              "candidate": "beta-candidate",
+              "revision": 1,
+              "sha256": "f4b16883d09315d73c7f1bdf31bea31c14a3aed295eef636e72423f16a60239b",
+              "verifier": "host-file-verifier"
+            }
+          ],
+          "resources": {
+            "activeTaskClaims": 0,
+            "pendingEffects": 0,
+            "costUsd": null,
+            "observations": []
+          }
+        }
+      },
+      "readOnly": {
+        "workspaceUnchanged": true,
+        "modelCallsBefore": 0,
+        "modelCallsAfter": 0
+      },
+      "frames": [
+        {
+          "locale": "en",
+          "theme": "light",
+          "dimensions": {
+            "width": 1280,
+            "height": 800
+          },
+          "overflow": false,
+          "screenshot": "en-light.png"
+        },
+        {
+          "locale": "en",
+          "theme": "dark",
+          "dimensions": {
+            "width": 960,
+            "height": 800
+          },
+          "overflow": false,
+          "screenshot": "en-dark.png"
+        },
+        {
+          "locale": "zh",
+          "theme": "light",
+          "dimensions": {
+            "width": 1280,
+            "height": 800
+          },
+          "overflow": false,
+          "screenshot": "zh-light.png"
+        },
+        {
+          "locale": "zh",
+          "theme": "dark",
+          "dimensions": {
+            "width": 960,
+            "height": 800
+          },
+          "overflow": false,
+          "screenshot": "zh-dark.png"
+        },
+        {
+          "locale": "ja",
+          "theme": "light",
+          "dimensions": {
+            "width": 1280,
+            "height": 800
+          },
+          "overflow": false,
+          "screenshot": "ja-light.png"
+        },
+        {
+          "locale": "ja",
+          "theme": "dark",
+          "dimensions": {
+            "width": 960,
+            "height": 800
+          },
+          "overflow": false,
+          "screenshot": "ja-dark.png"
+        },
+        {
+          "locale": "ru",
+          "theme": "light",
+          "dimensions": {
+            "width": 1280,
+            "height": 800
+          },
+          "overflow": false,
+          "screenshot": "ru-light.png"
+        },
+        {
+          "locale": "ru",
+          "theme": "dark",
+          "dimensions": {
+            "width": 960,
+            "height": 800
+          },
+          "overflow": false,
+          "screenshot": "ru-dark.png"
+        }
+      ],
+      "unavailableRecovered": true,
+      "status": "passed"
+    }
+  }
+}

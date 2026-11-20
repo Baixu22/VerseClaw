@@ -1,0 +1,51 @@
+{
+  "tree": "062e4fcf7c1822eb193210f027f82c33080bdc0f",
+  "candidate": "c051aa58fea6c1c410dbb9215dff92f6011408de",
+  "driven_by": "agent",
+  "actor": "codex-tf0668",
+  "dirty": false,
+  "steps": [
+    {
+      "exit": 0,
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/project-configuration-operator.test.ts",
+        "tests/unit/workspaces-api.test.ts",
+        "tests/unit/session-task-scope-completion.test.ts",
+        "tests/unit/project-execution-scope.test.ts",
+        "tests/unit/system-project-dispatch.test.ts",
+        "tests/unit/project-runtime-policy.test.ts",
+        "tests/unit/system-transcript-control.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/system-portfolio.test.ts",
+        "tests/unit/system-portfolio-store.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g5-20261120/system-phase-r2/units.json"
+      ],
+      "elapsedMs": 27501,
+      "name": "system-units",
+      "cwd": "D:/ClawX-work/g5-test-review-20261118"
+    },
+    {
+      "exit": 0,
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/system-agent-portfolio.spec.ts",
+        "tests/e2e/project-configuration-operator.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--output=D:/tmp/g5-20261120/system-phase-r2/electron",
+        "--reporter=line,json"
+      ],
+      "elapsedMs": 257154,
+      "name": "electron",
+      "cwd": "D:/ClawX-work/g5-test-review-20261118"
+    }
+  ]
+}
