@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { OpenClawConfig } from '../../openclaw_runtime/src/config/types.openclaw';
+import { clearRuntimeConfigSnapshot, setRuntimeConfigSnapshot } from '../../openclaw_runtime/src/config/config';
 import type { MemoryCard } from '../../openclaw_runtime/src/memory/types';
 import { clearMemoryCards, setMemoryStorePath, storeMemoryCard } from '../../openclaw_runtime/src/memory/memory-store';
 import { closeOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
@@ -51,6 +52,8 @@ beforeEach(async () => {
   cfg = { agents: { defaults: { workspace: identity().workspaceDir, memorySearch: { enabled: true } } },
     plugins: { slots: { memory: 'memory-core' }, entries: { 'memory-core': { enabled: true } } },
     session: { store: join(root, 'sessions.json') } };
+  vi.stubEnv('OPENCLAW_STATE_DIR', join(root, 'state'));
+  setRuntimeConfigSnapshot(cfg);
   await upsertSessionEntry({ agentId: 'main', storePath: cfg.session!.store, sessionKey,
     entry: { sessionId: identity().sessionId, updatedAt: Date.now(), workspaceDir: identity().workspaceDir } });
   registerMemoryRuntimeForPlugin('memory-core', runtime());
@@ -63,6 +66,8 @@ afterEach(async () => {
   setMemoryStorePath(undefined);
   closeSqliteSessionStoreDatabase(cfg.session!.store!);
   closeOpenClawStateDatabase();
+  clearRuntimeConfigSnapshot();
+  vi.unstubAllEnvs();
   await rm(root, { recursive: true, force: true });
 });
 
