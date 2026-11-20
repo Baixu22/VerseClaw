@@ -118,6 +118,12 @@ describe('typed project configuration operator', () => {
     expect((await api().apply(await prepared())).phase).toBe('applied');
     expect(state.config.agents!.list![0].model).toEqual({ primary: 'known/cheaper', fallbacks: ['known/backup'] });
   });
+  it('keeps default fallbacks disabled for an explicit string model', async () => {
+    state.config.agents!.defaults = { model: { primary: 'known/current', fallbacks: ['known/backup'] } };
+    state.config.agents!.list![0].model = 'known/current';
+    expect((await api().apply(await prepared())).phase).toBe('applied');
+    expect(state.config.agents!.list![0].model).toEqual({ primary: 'known/cheaper', fallbacks: [] });
+  });
   it('restarts an offline Gateway before validating live recovery identity', async () => {
     const request = await prepared(); await api().apply(request); state.operations[request.requestId].result.phase = 'degraded';
     let connected = false;

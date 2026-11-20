@@ -142,7 +142,7 @@ export function createProjectConfigurationOperator(gateway?: Pick<GatewayManager
         if (patch.modelRef !== undefined) {
           const inherited = config.agents?.defaults?.model;
           agent.model = { ...(typeof agent.model === 'object' ? agent.model
-            : { fallbacks: typeof inherited === 'object' ? inherited.fallbacks ?? [] : [] }), primary: patch.modelRef };
+            : { fallbacks: !agent.model && typeof inherited === 'object' ? inherited.fallbacks ?? [] : [] }), primary: patch.modelRef };
         }
         if (patch.denyTools !== undefined) agent.tools = { ...agent.tools, deny: patch.denyTools };
         if (patch.contextTokens !== undefined) agent.contextTokens = patch.contextTokens;
