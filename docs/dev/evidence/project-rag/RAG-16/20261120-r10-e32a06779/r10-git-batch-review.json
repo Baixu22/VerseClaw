@@ -1,0 +1,126 @@
+{
+  "schema": "clawx.rag16-git-batch-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-git-batch-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-uncommitted-delta-review",
+  "formal_verifier_execution": false,
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "013652ef179babb99484d827b5bec3a7b9cdfd15",
+    "comparison": "HEAD到当前工作树的指定三文件未提交差异",
+    "working_tree": true,
+    "sha256": {
+      "scripts/lib/agent-engineering-acceptance.mjs": "2e0c6b90cf771ff4f7d7070ee0fd6301e283c1fff752ca2467359cdd31000c1d",
+      "scripts/validate-runtime-authority-convergence.mjs": "2524cc1784ac9da909af013d1ba3acaca6a4810af663d0ee9c7429b65a370ca6",
+      "tests/unit/agent-engineering-acceptance.test.ts": "6c67de56040d7c27ee1e415e224bf284cca0f3bf2562171b3a835df34cc30257"
+    }
+  },
+  "result": "PASS_STATIC_REVIEW",
+  "summary": "指定三文件未发现新增可复现P0/P1/P2或校验放宽。合并HEAD/tree输出严格校验，批量blob/工作树差异保留失败拒绝和逐项诊断。新增literal回归未在现有两项筛选运行中执行。",
+  "findings": [],
+  "checks": [
+    {
+      "area": "HEAD / tree / ref / dirty",
+      "locations": [
+        "scripts/lib/agent-engineering-acceptance.mjs:309-341"
+      ],
+      "observations": [
+        "rev-parse HEAD^{commit} HEAD^{tree}使用两个固定revision表达式，要求输出恰好两行且均为40hex，再统一小写。",
+        "通常调用未设置allowFailure；非零退出、spawn失败、signal或timeout导致status不为0时仍抛错。未解析出的ref文本或不足两条SHA也被新格式检查拒绝。",
+        "symbolic-ref仍独立读取，detached HEAD时ref=null；status仍保留原porcelain及untracked-files=all，clean/status字段语义未改。",
+        "合并的是revision读取次数，后续ref/status仍独立读取。正式候选tree一致性、HEAD漂移、requireRef、dirty和ancestry检查保持。",
+        "windowsHide:true只改变Windows子进程窗口显示；shell:false、编码、timeout、输出上限及既有env处理保持。"
+      ]
+    },
+    {
+      "area": "缺失blob / 非法Git / 空输入",
+      "locations": [
+        "scripts/validate-runtime-authority-convergence.mjs:100-123",
+        "scripts/validate-runtime-authority-convergence.mjs:415-450",
+        "scripts/validate-runtime-authority-convergence.mjs:704-732"
+      ],
+      "observations": [
+        "source.files缺失或空数组直接记录manifest source files are missing。",
+        "ls-tree只接受blob类型和40位对象SHA；合法路径不在candidate中、返回目录或gitlink时，Map缺项明确记录missing candidate blob。",
+        "blob摘要不符保留source Git blob mismatch；工作树删除保留candidate blob并由diff路径集报source worktree differs。",
+        "两条批量Git命令均不设置allowFailure；任一命令错误记cannot inspect source Git blobs后返回，errors非空使preflight拒绝，不能以空Map/空Set当成功。",
+        "空字符串、纯空白、null、绝对路径或路径逃逸都由normalizedPath和逐项形状检查拒绝。不存在失败后改查HEAD或缩减到可读文件的回退。"
+      ],
+      "edge_observation": {
+        "location": "scripts/validate-runtime-authority-convergence.mjs:426-443",
+        "trigger": "source.files非空但所有path无效。",
+        "behavior": "过滤后paths为空，当前仍执行无pathspec的ls-tree/diff，等同读取整个candidate集合，然后逐项报告malformed。仍拒绝输入；可能产生多余扫描。",
+        "severity": "非阻断的无效输入开销观察，未发现错误放行。",
+        "optional_direction": "如后续整理，可在保留逐项malformed错误后对paths.length===0提前返回，避免无效manifest触发整树读取。"
+      }
+    },
+    {
+      "area": "literal路径 / NUL / 刷新",
+      "locations": [
+        "scripts/validate-runtime-authority-convergence.mjs:109",
+        "scripts/validate-runtime-authority-convergence.mjs:426-449",
+        "tests/unit/agent-engineering-acceptance.test.ts:1703-1722"
+      ],
+      "observations": [
+        "两个查询都有全局--literal-pathspecs与--分隔，参数以argv传入而非shell拼接；空格和方括号不作shell或Git glob展开。",
+        "convergence git helper保持原始stdout，按NUL拆分；blob行用tab区分metadata与路径，路径捕获允许空白/换行。无新增trim丢失前导空白。",
+        "--no-renames将rename视为增删，原路径删除可进入差异集合；不存在依赖只返回rename新端点而漏旧source的路径。",
+        "blobs Map与changed Set均在validateSourceIdentity本次调用创建，后续调用重新执行真实Git；正文修改、恢复、删除各次均重新观察。",
+        "EOL一致性继续通过candidate Git blob与Git diff判断，未改成raw SHA强制比较不同checkout字节。"
+      ]
+    },
+    {
+      "area": "新回归及原合同",
+      "locations": [
+        "tests/unit/agent-engineering-acceptance.test.ts:1703-1722"
+      ],
+      "observations": [
+        "新增真实仓库文件“ source [case].md”，提交后pin其Git blob；创建“ source c.md”作为literal sibling；检查目标正文修改、恢复、删除对应错误的出现/消失。",
+        "该用例断言的是特定source drift错误，不是整个manifest有效：它新增source.files后未刷新全部ownership/changedPaths。正负断言仍可定位被审查的validateSourceIdentity行为。",
+        "原有测试只新增22行用例，未删除旧断言或修改timeout/skip。门禁表与性能预算无变化。"
+      ]
+    }
+  ],
+  "existing_run_readback": {
+    "before": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-convergence-before.json",
+      "log": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-convergence-before.log",
+      "selected_passed": 2,
+      "selected_failed": 0,
+      "enumerated": 79,
+      "filtered_out": 77,
+      "vitest_wall_seconds": 112.79
+    },
+    "after": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-convergence-after.json",
+      "log": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-convergence-after.log",
+      "selected_passed": 2,
+      "selected_failed": 0,
+      "enumerated": 80,
+      "filtered_out": 78,
+      "vitest_wall_seconds": 166.3
+    },
+    "selected_cases": [
+      "validates engineering and human convergence evidence and rejects semantic tampering",
+      "replays over closure-only descendants and fails closed on everything else"
+    ],
+    "new_literal_case": {
+      "title": "rechecks literal convergence source paths after content changes and deletion",
+      "after_report_status": "skipped",
+      "reason": "现有执行以testNamePattern仅选上述两项。"
+    },
+    "interpretation": "两项历史回归before/after均通过。filtered-out数来自定向选择，不是正式跳过预算。墙钟从112.79秒增加到166.30秒，本次不宣称性能加速；Git调用数待主代理另行记录。"
+  },
+  "validation": {
+    "method": "三文件差异与相邻调用链静态核对，读取主代理已存报告",
+    "diff_check": "pass",
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0,
+    "git_mutations": 0,
+    "subagents_spawned": 0
+  },
+  "next_step": "主代理既定验证窗口补齐新增literal用例与完整框架回归；正式Verifier仍等待冻结候选与独立执行通知。",
+  "recorded_at": "2026-11-20T12:10:51.9589162+08:00"
+}

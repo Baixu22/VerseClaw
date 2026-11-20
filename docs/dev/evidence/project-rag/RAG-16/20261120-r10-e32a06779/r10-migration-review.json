@@ -1,0 +1,75 @@
+{
+  "schema": "clawx.rag16-migration-helper-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-migration-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-single-helper-review",
+  "formal_verifier_execution": false,
+  "result": "PASS_STATIC_REVIEW",
+  "findings": [],
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "013652ef179babb99484d827b5bec3a7b9cdfd15",
+    "file": "tests/unit/execution-migration-process.test.ts",
+    "working_tree": true,
+    "sha256": "91235da0d181e6158c38a6a0a50c40adfe4916c5098916c22708cd212a782842"
+  },
+  "checks": [
+    {
+      "lines": "596-607",
+      "area": "退出路径",
+      "observation": "已设置exitCode时立即返回。等待中收到exit时先clearTimeout，再返回原始number|null退出码；once监听在触发时自行移除。"
+    },
+    {
+      "lines": "603-607",
+      "area": "超时路径",
+      "observation": "原timeoutMs到期后移除本helper注册的onExit，再以原错误文本reject。不会移除其他进程观察者，也不把超时当作成功。"
+    },
+    {
+      "lines": "598-607",
+      "area": "注册与竞态",
+      "observation": "timer在注册exit监听前完成初始化；中间没有await。真实ChildProcess退出事件不会在同一段同步代码中抢占timer初始化。退出先发生则取消timer，超时先发生则移除监听，两条路径保持一次Promise终结。"
+    },
+    {
+      "lines": "620-664",
+      "area": "调用与断言",
+      "observation": "terminateWorker继续使用默认10,000ms、真实SIGKILL和PID消失断言；completeWorker继续使用25,000ms、退出码和落盘结果检查。diff仅改waitForExit，不改17项用例、断言、skip或超时。"
+    }
+  ],
+  "resource_effect": "原Promise.race在退出获胜后仍保留sleep计时器，在超时获胜后仍保留exit监听。新实现分别清理这些未完成资源。未据此推断整套墙钟加速。",
+  "existing_execution_evidence": {
+    "migration": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-migration.json",
+      "command": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-migration-command.json",
+      "log": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-migration.log",
+      "passed": 17,
+      "total": 17,
+      "failed": 0,
+      "pending": 0,
+      "vitest_duration_seconds": 124.02,
+      "command_duration_ms": 128217,
+      "exit_code": 0,
+      "timed_out": false,
+      "attribution": "主代理已执行的工作树回归；本审查只读取报告。"
+    },
+    "framework_followup": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-framework.json",
+      "passed": 80,
+      "total": 80,
+      "failed": 0,
+      "pending": 0,
+      "new_literal_case": "rechecks literal convergence source paths after content changes and deletion",
+      "new_literal_case_status": "passed",
+      "resolves_prior_evidence_gap": "r10-git-batch-review.json 中新增literal用例未被定向选择的缺口，已有完整框架报告补齐。"
+    }
+  },
+  "validation": {
+    "diff_check": "pass",
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0,
+    "git_mutations": 0
+  },
+  "next_step": "主代理完成类型检查并冻结候选后，按原合同运行完整根测试；正式Verifier独立执行。",
+  "recorded_at": "2026-11-20T12:23:01.7431266+08:00"
+}

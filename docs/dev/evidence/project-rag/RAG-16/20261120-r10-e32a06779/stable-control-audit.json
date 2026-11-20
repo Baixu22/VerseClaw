@@ -1,0 +1,432 @@
+{
+  "schema": "clawx.agent-dev.audit.v1",
+  "generatedAt": "2026-11-20T07:36:28.626Z",
+  "policy": {
+    "schema": "clawx.agent-dev.audit.v1",
+    "passScore": 90,
+    "warnScore": 80,
+    "maxEvidenceAgeHours": 24,
+    "maxHistoryEntries": 20,
+    "hardVetoSeverities": [
+      "fail"
+    ],
+    "statusSemantics": {
+      "pass": "Score is at least 90 and no hard-veto findings exist.",
+      "warn": "Score is at least 80 and below 90 with no hard-veto findings.",
+      "fail": "Score is below 80 or at least one hard-veto finding exists."
+    }
+  },
+  "status": "pass",
+  "grade": "A",
+  "maturityLevel": "review-ready",
+  "confidence": {
+    "level": "high",
+    "reason": "Required generated evidence is present, parseable, and within the freshness window.",
+    "freshGeneratedCount": 4,
+    "generatedSourceCount": 4,
+    "staleGeneratedCount": 0
+  },
+  "totalScore": 91,
+  "maxScore": 100,
+  "summary": {
+    "pass": 5,
+    "warn": 0,
+    "fail": 1,
+    "disqualifierCount": 0
+  },
+  "dimensions": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "maxScore": 20,
+      "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required.",
+      "score": 20,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "maxScore": 20,
+      "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist.",
+      "score": 20,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "maxScore": 20,
+      "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage.",
+      "score": 20,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "maxScore": 20,
+      "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence.",
+      "score": 11,
+      "findings": [
+        {
+          "id": "latest-needs-full-gate",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "Latest deep-test is daily-loop evidence and still requires full gates.",
+          "recommendation": "Run decision.requiredFullGates before PR/release review."
+        },
+        {
+          "id": "performance-watch:playwright-agent-dev",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "playwright-agent-dev exceeded target: 30034ms > 25000ms.",
+          "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+        },
+        {
+          "id": "performance-watch:contract",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "contract exceeded target: 1227ms > 1000ms.",
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        }
+      ],
+      "status": "fail"
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "maxScore": 10,
+      "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation.",
+      "score": 10,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "maxScore": 10,
+      "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded.",
+      "score": 10,
+      "findings": [],
+      "status": "pass"
+    }
+  ],
+  "scoreBreakdown": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "score": 20,
+      "maxScore": 20,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "score": 20,
+      "maxScore": 20,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "score": 20,
+      "maxScore": 20,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "score": 11,
+      "maxScore": 20,
+      "deducted": 9,
+      "status": "fail",
+      "reason": "3 finding(s) deducted 9 point(s).",
+      "findings": [
+        {
+          "id": "latest-needs-full-gate",
+          "severity": "warn",
+          "estimatedPenalty": 3,
+          "recommendation": "Run decision.requiredFullGates before PR/release review."
+        },
+        {
+          "id": "performance-watch:playwright-agent-dev",
+          "severity": "warn",
+          "estimatedPenalty": 3,
+          "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+        },
+        {
+          "id": "performance-watch:contract",
+          "severity": "warn",
+          "estimatedPenalty": 3,
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        }
+      ]
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "score": 10,
+      "maxScore": 10,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "score": 10,
+      "maxScore": 10,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    }
+  ],
+  "rubric": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "maxScore": 20,
+      "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required."
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "maxScore": 20,
+      "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist."
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "maxScore": 20,
+      "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage."
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "maxScore": 20,
+      "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence."
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "maxScore": 10,
+      "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation."
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "maxScore": 10,
+      "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded."
+    }
+  ],
+  "evidenceInventory": [
+    {
+      "id": "workbench",
+      "path": "artifacts/agent-dev-workbench/evidence.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-20T07:36:26.354Z",
+      "generatedAt": "2026-11-20T07:36:26.352Z",
+      "ageHours": 0,
+      "newestRelevantSource": {
+        "path": "package.json",
+        "mtime": "2026-11-20T05:07:05.000Z",
+        "mtimeMs": 1795151225000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "deep-test",
+      "path": "artifacts/agent-dev-deep-test/report.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-20T07:36:26.383Z",
+      "generatedAt": "2026-11-20T07:36:26.380Z",
+      "ageHours": 0,
+      "newestRelevantSource": {
+        "path": "package.json",
+        "mtime": "2026-11-20T05:07:05.000Z",
+        "mtimeMs": 1795151225000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "deep-test-history",
+      "path": "artifacts/agent-dev-deep-test/history.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-20T07:36:26.382Z",
+      "generatedAt": "2026-11-20T07:36:26.380Z",
+      "ageHours": 0,
+      "newestRelevantSource": {
+        "path": "package.json",
+        "mtime": "2026-11-20T05:07:05.000Z",
+        "mtimeMs": 1795151225000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "quality",
+      "path": "artifacts/agent-dev-quality/report.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-20T07:36:25.927Z",
+      "generatedAt": "2026-11-20T07:36:25.924Z",
+      "ageHours": 0,
+      "newestRelevantSource": {
+        "path": "package.json",
+        "mtime": "2026-11-20T05:07:05.000Z",
+        "mtimeMs": 1795151225000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "package-scripts",
+      "path": "package.json",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-20T04:59:46.600Z",
+      "generatedAt": null,
+      "ageHours": 2.61,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "agent-dev-runbook",
+      "path": "docs/agent-dev-control-plane.md",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-18T17:53:34.112Z",
+      "generatedAt": null,
+      "ageHours": 37.71,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "agent-instructions",
+      "path": "AGENTS.md",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-18T17:53:33.251Z",
+      "generatedAt": null,
+      "ageHours": 37.71,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "scenario-registry",
+      "path": "shared/agent-dev/scenarios.ts",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-18T17:53:57.468Z",
+      "generatedAt": null,
+      "ageHours": 37.71,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "regularization-tests",
+      "path": "tests/unit/agent-dev-regularization.test.ts",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-18T17:53:58.812Z",
+      "generatedAt": null,
+      "ageHours": 37.71,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    }
+  ],
+  "prioritizedFindings": [
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-needs-full-gate",
+      "severity": "warn",
+      "priority": "P1",
+      "message": "Latest deep-test is daily-loop evidence and still requires full gates.",
+      "recommendation": "Run decision.requiredFullGates before PR/release review.",
+      "impact": "medium",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm exec vitest run --maxWorkers=1 tests/unit/agent-dev-regularization.test.ts",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-watch:contract",
+      "severity": "warn",
+      "priority": "P1",
+      "message": "contract exceeded target: 1227ms > 1000ms.",
+      "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+      "impact": "medium",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:fast",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-watch:playwright-agent-dev",
+      "severity": "warn",
+      "priority": "P1",
+      "message": "playwright-agent-dev exceeded target: 30034ms > 25000ms.",
+      "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
+      "impact": "medium",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:fast",
+        "pnpm agent-dev:audit:report"
+      ]
+    }
+  ],
+  "disqualifiers": [],
+  "recommendations": [
+    "Run decision.requiredFullGates before PR/release review.",
+    "Keep contract scanning text-based and bounded to host-api/service sources.",
+    "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+  ]
+}

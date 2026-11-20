@@ -1,0 +1,19 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "scope": "two selected real-repository convergence tests; filtered77/78 are diagnostic only",
+  "passedBoth": 2,
+  "counts": [
+    {
+      "gitStarts": 1249,
+      "stage": "before"
+    },
+    {
+      "gitStarts": 927,
+      "stage": "after"
+    }
+  ],
+  "conclusion": "Git invocations reduced322; current measurements do not demonstrate wall-time speedup",
+  "beforeWallSeconds": 112.79,
+  "driven_by": "agent",
+  "afterWallSeconds": 166.3
+}

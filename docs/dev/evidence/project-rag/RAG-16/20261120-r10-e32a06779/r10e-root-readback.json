@@ -1,0 +1,77 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "candidate": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+  "command": {
+    "actor": "codex-g2-rag16-relay1",
+    "driven_by": "agent",
+    "sourceCommit": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+    "command": "node",
+    "args": [
+      "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10e-observe-root.mjs"
+    ],
+    "startedAt": "2026-11-20T06:50:36.236Z",
+    "finishedAt": "2026-11-20T07:18:19.694Z",
+    "durationMs": 1663458,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false
+  },
+  "registered": [
+    1272,
+    3
+  ],
+  "completedFiles": 1275,
+  "failures": [],
+  "active": [],
+  "summedPhaseMs": {
+    "environmentSetupDuration": 744395,
+    "prepareDuration": 24490,
+    "collectDuration": 1294046,
+    "setupDuration": 141985,
+    "duration": 2042358
+  },
+  "testCounts": {
+    "passed": 12177,
+    "failed": 0,
+    "skipped": 50,
+    "total": 12227,
+    "source": "parsed",
+    "segments": 6
+  },
+  "slowest": [
+    {
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/agent-engineering-acceptance.test.ts",
+      "durationMs": 255335
+    },
+    {
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/rsi-benefit-eval.test.ts",
+      "durationMs": 149576
+    },
+    {
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/runtime-lifecycle-governance.test.ts",
+      "durationMs": 142313
+    },
+    {
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/execution-migration-process.test.ts",
+      "durationMs": 128636
+    },
+    {
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/rsi-candidate-evolution.test.ts",
+      "durationMs": 93878
+    },
+    {
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/rsi-decision-check.test.ts",
+      "durationMs": 49470
+    },
+    {
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/model-capability-effective-state-tf0512.test.ts",
+      "durationMs": 40823
+    },
+    {
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/versegit-candidate-freeze.test.ts",
+      "durationMs": 33181
+    }
+  ],
+  "observedAt": "2026-11-20T07:19:33.874Z"
+}

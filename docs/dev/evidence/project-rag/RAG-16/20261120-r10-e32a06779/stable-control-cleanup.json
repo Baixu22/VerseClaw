@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX-work\\g2-rag16-relay-20261119\\.tmp\\e2e-runs\\verse-claw-e2e-run-UCOwhz",
+  "ledgerEntries": 20,
+  "checks": [
+    {
+      "pid": 7744,
+      "creationTime": 1795160158860,
+      "status": "exited"
+    },
+    {
+      "pid": 27176,
+      "creationTime": 1795160174815,
+      "status": "exited"
+    },
+    {
+      "pid": 32656,
+      "creationTime": 1795160158867,
+      "status": "exited"
+    },
+    {
+      "pid": 28468,
+      "creationTime": 1795160174815,
+      "status": "exited"
+    },
+    {
+      "pid": 29412,
+      "creationTime": 1795160175650,
+      "status": "exited"
+    },
+    {
+      "pid": 32308,
+      "creationTime": 1795160175649,
+      "status": "exited"
+    },
+    {
+      "pid": 44524,
+      "creationTime": 1795160178132,
+      "status": "exited"
+    },
+    {
+      "pid": 16640,
+      "creationTime": 1795160182715,
+      "status": "exited"
+    },
+    {
+      "pid": 23136,
+      "creationTime": 1795160178142,
+      "status": "exited"
+    },
+    {
+      "pid": 11832,
+      "creationTime": 1795160182721,
+      "status": "exited"
+    },
+    {
+      "pid": 31652,
+      "creationTime": 1795160182907,
+      "status": "exited"
+    },
+    {
+      "pid": 15112,
+      "creationTime": 1795160182925,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

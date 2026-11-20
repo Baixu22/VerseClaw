@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "review_id": "r10-tail-fixture-review",
+  "driven_by": "agent",
+  "actor": "xingchi-independent-reviewer",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "review_mode": "read_only_static_review",
+  "verdict": "PASS_STATIC_REVIEW",
+  "findings": [],
+  "candidate": {
+    "worktree": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "commit": "3dd62e9914fc5003243bd22c4dd3eb80b7b6abbc",
+    "tree": "8c7cbebcdd0c1c6e211610b77c69f71f87949278",
+    "review_base": "8a1d72009a30dae0e960a0555b12d78651252b7e",
+    "original_diff_base": "159d7d2450e3776814e0ea83e03e2db1698dceb7",
+    "tracked_worktree_clean": true,
+    "target_matches_committed_blob": true,
+    "file": "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts",
+    "old_blob": "7cdd4035a63fb589d962bb6c4fd8f9a045caa063",
+    "new_blob": "a99ac4b0d8557cc0b5f4a1e91521c49c43870463",
+    "working_file_sha256": "c399fb29a3797275c15e2b61a9a3686d684de39ad5d35499033f23177c4dd34a",
+    "additions": 8,
+    "deletions": 0
+  },
+  "conclusion": "四个真实 catalog 注册 case 通过显式 workspaceDir 脱离 cwd 对应的共享 Task DB。两处新增 hook 为 production catalog 的每个 case 创建并删除独立临时目录；FactStore 两个 case 复用各自已有 repoRoot。原 sessionKey/sessionId、依赖开关、断言、用例及超时/skip 均保留，未发现可复现 P0/P1/P2。",
+  "checks": [
+    {
+      "name": "共享 Task DB 污染根因与修复路径",
+      "result": "PASS",
+      "evidence": [
+        "openclaw_runtime/src/agents/workspace-dir.ts:24-25：未传 workspaceDir 时回退 process.cwd()。",
+        "openclaw_runtime/src/agents/agent-tools.ts:801-804、1356：workspaceRoot 传给真实 createPersistentTaskTool，sessionKey/sessionId 存在时仍创建该工具。",
+        "openclaw_runtime/src/agents/tools/persistent-task-tool.ts:59-68：已有 Task DB 时读取 binding；TaskSystemStore 在 finally 关闭。",
+        "shared/task-system/identity.ts:34-64：无 Git 祖先时以传入 workspace 自身确定 Task DB domain；shared/task-system/store.ts:129-131 继续拒绝较新 schema。",
+        "r10-tail-check.log:42-53：原失败栈落在 TaskSystemStore -> createPersistentTaskTool -> createOpenClawCodingTools。"
+      ],
+      "assessment": "新增参数改变 fixture 的工作目录，保留真实生产注册路径和较新 schema 拒绝逻辑。"
+    },
+    {
+      "name": "临时目录生命周期",
+      "result": "PASS",
+      "evidence": [
+        "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts:275-278：局部 beforeEach 用 mkdtempSync 创建独立目录，afterEach 用 rmSync 清理该目录。",
+        "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts:284、302：production catalog 两个 case 均传 workspaceDir。",
+        "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts:365-383：FactStore 组每次创建 repoRoot，原 afterEach 先 reset registry/closeAllFactStores 再删除目录。",
+        "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts:442、460：FactStore 注册两个 case 均传已有 repoRoot，带 factService 的 case 与同一 repoRoot 对齐。"
+      ],
+      "assessment": "四个调用均有每用例目录所有权与对应清理；未新增全局 cwd 修改或注册函数 mock。"
+    },
+    {
+      "name": "覆盖与断言",
+      "result": "PASS",
+      "evidence": [
+        "8a1d72009..3dd62e991 的目标文件 diff 为 +8/-0；仅新增局部变量、两个 hook、空行及四处 workspaceDir。",
+        "context-agent-tools.test.ts:285-312、443-475 保留 session-a、agent:main:main、full profile、DCS 依赖有无、view tools 有无及原断言。",
+        "原文件 21 个测试保留；diff 无 timeout、skip、todo、断言或测试删除。",
+        "该提交相对 review_base 仅变更 task spec、watcher 测试及本测试文件，未变更生产 Task DB / catalog 代码。"
+      ]
+    }
+  ],
+  "existing_execution_evidence": {
+    "executor": "codex-g2-rag16-relay1",
+    "executed_by_this_reviewer": false,
+    "artifacts": [
+      "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-tail-check-r2-command.json",
+      "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-tail-stages-r2.json",
+      "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-tail-check-r2.log"
+    ],
+    "recorded_source_commit": "8a1d72009a30dae0e960a0555b12d78651252b7e",
+    "status": "两段命令 exitCode 均为 0，timedOut=false；日志逐段为 33/33、343/343、10/10、98/98、7/7。",
+    "passed_by_group": {
+      "isolated": 33,
+      "dcs_unit": 343,
+      "dcs_runtime_config": 10,
+      "dcs_agents": 98,
+      "maturity_registry": 7
+    },
+    "artifact_binding": "r2 在提交前执行，命令产物记录 8a1d72009；本静态审查单独将已提交的 8 行修复绑定到 3dd62e991。",
+    "root_verdict": "r2 是尾部诊断；r10c 完整三段 root 结论待其产物完成。"
+  },
+  "verifier": {
+    "role": "independent",
+    "state": "awaiting_frozen_manifest",
+    "required_model": "ccs-ai/gpt-6.1-sol",
+    "formal_execution_started": false,
+    "next_action": "最终 manifest 冻结并通知执行后，在独立 Verifier 路径亲跑正式验收。"
+  },
+  "reviewer_actions": {
+    "source_writes": 0,
+    "test_runs": 0,
+    "build_runs": 0,
+    "electron_runs": 0,
+    "nested_agents": 0
+  },
+  "reviewed_at": "2026-11-20T13:53:51.5528244+08:00"
+}

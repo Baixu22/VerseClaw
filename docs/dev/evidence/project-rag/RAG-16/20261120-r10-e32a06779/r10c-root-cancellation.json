@@ -1,0 +1,8 @@
+{
+  "pid": 25476,
+  "observedAt": "2026-11-20T13:52:01.3607803+08:00",
+  "action": "cancel-own-failed-development-run",
+  "actor": "codex-g2-rag16-relay1",
+  "reason": "runtime-lifecycle-governance failed early; focused diagnosis before another complete cycle",
+  "driven_by": "agent"
+}

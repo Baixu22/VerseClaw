@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-11-20T02:03:27.293Z",
+  "generatedAt": "2026-11-20T07:36:25.924Z",
   "success": true,
   "buildReuse": {
     "mode": "reuse",
@@ -11,15 +11,15 @@
     "artifacts": [
       {
         "path": "dist/index.html",
-        "mtimeMs": 1795139837187.151
+        "mtimeMs": 1795159604755.7234
       },
       {
         "path": "dist-electron/main/index.js",
-        "mtimeMs": 1795139843221.6587
+        "mtimeMs": 1795159610641.533
       },
       {
         "path": "dist-electron/preload/index.js",
-        "mtimeMs": 1795139843243.6848
+        "mtimeMs": 1795159610698.8965
       }
     ],
     "requiredArtifacts": [
@@ -38,30 +38,28 @@
     ]
   },
   "decision": {
-    "status": "blocked",
-    "reason": "playwright-agent-dev, typecheck exceeded hard performance limits.",
-    "dailyLoopReady": false,
+    "status": "needs-full-gate",
+    "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+    "dailyLoopReady": true,
     "releaseReady": false,
     "fullGateComplete": false,
-    "budgetStatus": "limit",
+    "budgetStatus": "watch",
     "fastPathModes": [
-      "reuse-build"
+      "reuse-build",
+      "cached-typecheck"
     ],
     "requiredFullGates": [
-      "pnpm run build:vite"
+      "pnpm run build:vite",
+      "pnpm run typecheck"
     ],
     "watchSteps": [
-      "harness-agent-dev",
-      "contract",
-      "i18n"
-    ],
-    "limitSteps": [
       "playwright-agent-dev",
-      "typecheck"
-    ]
+      "contract"
+    ],
+    "limitSteps": []
   },
   "unitMode": "full",
-  "typecheckMode": "full",
+  "typecheckMode": "cached",
   "e2eMode": "full",
   "build": {
     "ok": true,
@@ -73,7 +71,7 @@
   },
   "playwright": {
     "ok": true,
-    "durationMs": 69900,
+    "durationMs": 30034,
     "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
     "mode": "full",
@@ -81,23 +79,23 @@
     "diagnostics": {
       "kind": "playwright",
       "passed": 4,
-      "reportedDurationMs": 66000,
+      "reportedDurationMs": 28300,
       "tests": [
         {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 32400
-        },
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
-          "durationMs": 32400
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+          "durationMs": 19500
         },
         {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
-          "durationMs": 29900
+          "durationMs": 19400
         },
         {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
-          "durationMs": 29800
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+          "durationMs": 7100
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+          "durationMs": 6900
         }
       ]
     },

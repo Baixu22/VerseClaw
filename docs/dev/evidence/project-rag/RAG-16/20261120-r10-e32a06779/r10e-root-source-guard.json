@@ -1,0 +1,9 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "candidate": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+  "currentHead": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+  "status": "",
+  "unchanged": true,
+  "observedAt": "2026-11-20T07:18:20.960Z"
+}

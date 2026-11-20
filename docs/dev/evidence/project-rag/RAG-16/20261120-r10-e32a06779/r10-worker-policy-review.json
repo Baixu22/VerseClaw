@@ -1,0 +1,150 @@
+{
+  "schema": "clawx.rag16-root-worker-policy-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-worker-policy-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-policy-and-local-history-review",
+  "formal_verifier_execution": false,
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "d33c887655d26452dc14846b8f732331cf825a34",
+    "inspected_config_files_clean": true,
+    "sha256": {
+      "package.json": "94b5a2230c040723cbc7859843625b031027fcb5a73ebc0da8f7c22dbe0a4dec",
+      "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42",
+      "harness/src/profiles.mjs": "9b47fffc904458e0c5c14b325b7f9a2342f81ef5c450dc465c52b9fcb4a6ab37",
+      "scripts/lib/agent-engineering-acceptance.mjs": "2e0c6b90cf771ff4f7d7070ee0fd6301e283c1fff752ca2467359cdd31000c1d"
+    }
+  },
+  "result": "ALLOWED_AS_MEASURED_NEW_CANDIDATE_HARNESS_CHANGE",
+  "conclusion": "在检查到的现行规则、门禁实现与该参数Git历史中，没有将root首段maxWorkers=2冻结为产品默认或禁止改为3的条款。首段2→3可作为后续新候选的测试调度改进进行测量与验收，通常不需要单独产品决策。当前d33c88765运行中不得修改；不得以旧候选/旧manifest执行改写后的命令。",
+  "current_execution": {
+    "first_segment": "package.json:71 显式 vitest run --maxWorkers=2，排除指定三文件。",
+    "isolated_segment": "同一脚本第二段仅执行gateway-permissions-api、files-permissions-api、runtime-memory-operator-inspection，--maxWorkers=1。",
+    "tail": "第二段之后仍以 && 执行 pnpm run test:dcs，所有段成功才能认定整条root命令通过。",
+    "configuration": "vitest.config.ts:124-127 的无环境覆盖默认值是 max(1,min(4,floor(cpuCount/2)))，即最多4，非无条件4；显式CLI的首段2才是当前root配置。",
+    "observation_only": "r10-root-full-running.json与r10-observe-root.mjs表明当前是保留原三段命令、添加reporter的诊断。前31文件及已完成热点不足以证明完整根suite或3-worker安全/收益。"
+  },
+  "contract_evidence": [
+    {
+      "file": "harness/src/profiles.mjs",
+      "line": 7,
+      "fact": "完整root门禁调用 pnpm -w test；worker数从候选package脚本取值，没有在该profile另行固定2。"
+    },
+    {
+      "file": "plans/system-maturity/gates.json",
+      "lines": "32-60",
+      "fact": "release命令包括pnpm test；vitestPolicy固定passWithNoTests:false，未固定worker数。禁止daily/cached/smoke替代完整验收。"
+    },
+    {
+      "file": "scripts/validate-test-gates.mjs",
+      "lines": "1-6,33-82",
+      "fact": "校验器检查完整/日常分层、passWithNoTests与空shard失败，没有root worker=2断言。"
+    },
+    {
+      "file": "vitest.config.ts",
+      "lines": "122-127,143-151",
+      "fact": "因Windows高fan-out导致transform/import抖动而限制并发；允许VITEST_MAX_WORKERS配置，默认CPU自适应上限4。testTimeout/hookTimeout均30秒，不因worker实验变化。"
+    },
+    {
+      "file": "harness/specs/rules/agent-engineering-acceptance-boundary.md",
+      "lines": "18-48",
+      "fact": "两角色必须从候选重新派生完整gate和source身份；拒绝旧manifest的命令覆盖、dirty/source漂移、预算变化或漏测。固定skip、逐段计数、真实失败不能被掩盖。"
+    },
+    {
+      "file": "scripts/lib/agent-engineering-acceptance.mjs",
+      "lines": "31,84,677-679,929-933",
+      "fact": "root gate默认1800秒；package.json属于REQUIRED_LOCK_FILES并锁定源身份。因此测试脚本改变是候选变化，必须提交冻结新版本并重新派生manifest，不能沿用d33c88765身份。"
+    },
+    {
+      "file": "harness/specs/tasks/project-rag-bounded-research.md",
+      "lines": "205-208",
+      "fact": "显式requiredTests中的maxWorkers=1及Playwright workers=1仍按原spec执行；只调整根脚本首段不改这些任务命令。"
+    },
+    {
+      "file": "harness/specs/guides/agent-first-acceptance.md",
+      "lines": "241-255",
+      "fact": "每次试验隔离历史、临时文件、端口、进程、DB，并记录硬件、worker数、随机种子和失败。"
+    },
+    {
+      "file": "harness/specs/rules/resource-mixed-measurement.md",
+      "lines": "8-20",
+      "fact": "适用的资源性能比较显式记录revision、fixture、worker数和工作量，保留所有attempt/原始数据，并采用同一driver的ABBA顺序；缺结果、错误owner或泄漏不能用平均提速抵消。"
+    },
+    {
+      "source": "用户本轮替换的AGENTS.md §Human-in-the-loop 5 / Task Forest closure policy",
+      "fact": "例行开发、证据、验收由agent负责；产品锁、冻结产品默认值和范围变更才升级。没有证据把root runner worker=2归入此类产品锁。"
+    }
+  ],
+  "parameter_history": [
+    {
+      "commit": "449e484efc194425aca84453ff4ea639f6b07f64",
+      "date": "2026-07-14T00:39:35+08:00",
+      "title": "fix(validation): restore root lint and test baseline",
+      "change": "vitest.config.ts引入VITEST_MAX_WORKERS与CPU/2、上限4的默认值。注释说明高fan-out会造成Windows transform/import抖动。"
+    },
+    {
+      "commit": "9d8dd60dae86d4e3c7cb663e5f9e46cf52092178",
+      "date": "2026-07-18T09:04:16+08:00",
+      "title": "test(maturity): serialize permission approval suites",
+      "change": "将两项permission suite从首段移至第二段worker=1，首段当时未指定worker数。"
+    },
+    {
+      "commit": "7788c52cebf744d0f9687ad806070a3048eb738a",
+      "date": "2026-07-18T09:27:51+08:00",
+      "title": "fix(maturity): canonicalize cross-worktree evidence",
+      "change": "为root首段增加--maxWorkers=2。提交没有把它声明为冻结产品锁。"
+    },
+    {
+      "commit": "19f9a5e2dbc458ed21501ea190bd3d5f713fc678",
+      "date": "2026-07-18T12:16:20+08:00",
+      "title": "feat(maturity): complete P7-001 traceability",
+      "change": "将runtime-memory-operator-inspection加入首段排除和第二段worker=1。历史delivery写明full unit/DCS在native operator inspection串行后通过。"
+    }
+  ],
+  "permission_assessment": {
+    "allowed": "当前观测完成后，保持同一测试全集、原断言、timeout和skip，把首段worker=3作为唯一调度变量。以新的源码候选和证据测量它，而非改写现有计划。",
+    "prohibited": "在当前root仍运行时写入package/config；对现有冻结manifest追加/覆盖worker命令并继续声称原候选；省略隔离段或DCS；吞并发错误、增加skip/timeout；把2-worker已通过片段当3-worker完整验证。",
+    "needs_product_decision": "仅本提案的测试worker数调整没有触发产品决策的具体依据；如同时变更生产调度上限、冻结产品默认或项目范围，则另按AGENTS升级。",
+    "separate_e2e_policy": "playwright.config.ts:16-22 明确要求完整Electron E2E workers=1；AGENTS对Agent Dev专用两worker的例外不属于root Vitest首段。不能把Vitest worker=3解释成修改这些E2E并发。"
+  },
+  "concurrency_risks": [
+    {
+      "risk": "已有不适合并行的隔离组",
+      "evidence": "上述7月历史特意将permission suites和native inspection移出首段。runtime-memory-operator-inspection.test.ts:14-27 在beforeAll调用build-openclaw-runtime --memory-operator-inspection-only，写共享构建输出。",
+      "constraint": "三文件继续独立第二段worker=1；不凭首段测试成功解除隔离。"
+    },
+    {
+      "risk": "共享文件与进程资源",
+      "evidence": "tests/setup.ts:14 为Electron mock提供固定/tmp/verse-claw-test；部分Main用例用cwd或持久路径。execution-migration-process.test.ts:351-365,545-569 和runtime-lifecycle-governance.test.ts:104-128 启动真实子进程。JS测试worker隔离并不等于文件/SQLite/端口/进程隔离。",
+      "constraint": "3-worker验证须观察文件/DB锁、端口碰撞、source mutation和子进程残留。保持每用例独立目录及已有清理断言，记录新出现的失败。"
+    },
+    {
+      "risk": "内存/导入/原生进程争用",
+      "evidence": "vitest.config.ts:122-127 的限制理由就是Windows高fan-out；本机16GiB信息来自用户，r10启动记录freeGiB约7.93。三个runner还可各自启动Node/tsc/Git/PowerShell子进程。",
+      "constraint": "worker是上限而非总OS进程数。相同宿主负载下比较2与3，保留RSS/可用内存/GC/timeout数据，不推断必然1.5倍提速。"
+    },
+    {
+      "risk": "不同文件调度次序暴露潜在依赖",
+      "evidence": "root第一段覆盖unit/integration集合，vitest.config.ts:147。并发改变可能改变完成次序和文件副作用重叠。",
+      "constraint": "完整重跑三个阶段并逐段核对passed/failed/skipped/total；新race属于需修复的测试隔离或产品问题，不能靠挑选通过片段接受。"
+    }
+  ],
+  "recommended_evidence": {
+    "after_current_run": "先封存本次2-worker完整/超时结果与source guard。只在后续试验写新的候选脚本。",
+    "comparison": "同一测试集合、同依赖/缓存策略、同固定timeout/skip；每次独立输出，明确worker数是实验变量。保留全部样本、阶段工作量、调度轨迹、资源及清理结果。",
+    "final_gate": "如采纳3，冻结新commit/tree，重新derive原25门禁。Executor/独立Verifier使用同一候选package脚本跑原pnpm -w test，三个段与原1800秒总门禁继续计时，不能分别给各段重置成三个1800秒。",
+    "no_current_claim": "本报告判定合同可行性；尚无3-worker整套结果。"
+  },
+  "search_scope": "本地AGENTS、相关harness规则/指南/任务、系统maturity gate配置与校验器、package/vitest最近历史及参数引入提交；未联网。",
+  "actions": {
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0,
+    "git_mutations": 0,
+    "network_requests": 0,
+    "subagents_spawned": 0,
+    "formal_verifier_executions": 0
+  },
+  "recorded_at": "2026-11-20T12:52:41.5712120+08:00"
+}

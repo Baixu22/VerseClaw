@@ -1,0 +1,651 @@
+{
+  "schema_version": 1,
+  "review_id": "r10-root-independent-readback",
+  "actor": "xingchi-independent-reviewer",
+  "driven_by": "agent",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "review_mode": "read_only_disk_artifact_readback",
+  "verdict": "PASS_DEVELOPMENT_ROOT_READBACK",
+  "findings": [],
+  "conclusion": "e32a06779 的r10e完整根链开发预检磁盘证据一致：六段共12177通过、0失败、50跳过、总计12227；1663458ms小于1800000ms。三阶段与候选package原命令一致，仅前两段追加诊断reporter/JSON输出；源起止及当前状态均为同一clean候选，历史失败/中断产物仍保留。",
+  "candidate": {
+    "commit": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+    "tree": "adcc04aee92e6fa28da041f5f3bdb5fb77408a36",
+    "worktree": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "diff_base": "159d7d2450e3776814e0ea83e03e2db1698dceb7",
+    "current_status": "",
+    "source_guard": {
+      "actor": "codex-g2-rag16-relay1",
+      "driven_by": "agent",
+      "candidate": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+      "currentHead": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+      "status": "",
+      "unchanged": true,
+      "observedAt": "2026-11-20T07:18:20.96Z"
+    },
+    "guard_mechanism": "run-r10e-root-when-ready.mjs执行前检查HEAD及完整git status，结束后重读同两项；本次独立读取当前HEAD、tree、完整git status并比对关键候选blob。",
+    "source_files": [
+      {
+        "file": "package.json",
+        "sha256": "a878483ccbc9c2e07cbbe8e257e1f2ad190886b9e4306a8b6f64404b2d6944da",
+        "candidateBlob": "65c27a4239270e14d4b6d68193d7b7b726777be6",
+        "workingBlob": "65c27a4239270e14d4b6d68193d7b7b726777be6"
+      },
+      {
+        "file": "vitest.config.ts",
+        "sha256": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42",
+        "candidateBlob": "4ed53b9b9ec9361f2c2669da27e8d9f92e26f8a4",
+        "workingBlob": "4ed53b9b9ec9361f2c2669da27e8d9f92e26f8a4"
+      },
+      {
+        "file": "harness/src/profiles.mjs",
+        "sha256": "9b47fffc904458e0c5c14b325b7f9a2342f81ef5c450dc465c52b9fcb4a6ab37",
+        "candidateBlob": "245dad46d5a71c504155b20675668deb11172fdb",
+        "workingBlob": "245dad46d5a71c504155b20675668deb11172fdb"
+      },
+      {
+        "file": "harness/specs/tasks/project-rag-bounded-research.md",
+        "sha256": "4c36cbfec4a1a143e23b6e90bea854a55640a34b3e54f046235fe82bb71df6a7",
+        "candidateBlob": "f2dd42bdd9e1699268d9b31837711735a6c370ea",
+        "workingBlob": "f2dd42bdd9e1699268d9b31837711735a6c370ea"
+      },
+      {
+        "file": "harness/specs/rules/agent-engineering-acceptance-boundary.md",
+        "sha256": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
+        "candidateBlob": "d866dd600dff74687180683854e8e0b9a9736ec4",
+        "workingBlob": "d866dd600dff74687180683854e8e0b9a9736ec4"
+      },
+      {
+        "file": "scripts/lib/agent-engineering-acceptance.mjs",
+        "sha256": "2e0c6b90cf771ff4f7d7070ee0fd6301e283c1fff752ca2467359cdd31000c1d",
+        "candidateBlob": "423748924f7f7ad1e05dbc0d9f4cbc3f7b09c9c2",
+        "workingBlob": "423748924f7f7ad1e05dbc0d9f4cbc3f7b09c9c2"
+      },
+      {
+        "file": "tests/unit/runtime-lifecycle-governance.test.ts",
+        "sha256": "955620f9ef2ace27994b0d095f93819d4f8ca6e7966833a025948c972536d52b",
+        "candidateBlob": "af5a4fb16d85fdc3fd3b2ba5095cf184eded74f6",
+        "workingBlob": "af5a4fb16d85fdc3fd3b2ba5095cf184eded74f6"
+      }
+    ],
+    "all_checked_blobs_match": true
+  },
+  "counts": {
+    "passed": 12177,
+    "failed": 0,
+    "skipped": 50,
+    "todo": 0,
+    "total": 12227,
+    "segment_count": 6,
+    "segments": [
+      {
+        "segment": 1,
+        "passed": 11686,
+        "failed": 0,
+        "skipped": 50,
+        "todo": 0,
+        "total": 11736,
+        "consistent": true,
+        "name": "根 Vitest 首段（3 worker）"
+      },
+      {
+        "segment": 2,
+        "passed": 33,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "total": 33,
+        "consistent": true,
+        "name": "原三文件隔离段（1 worker）"
+      },
+      {
+        "segment": 3,
+        "passed": 343,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "total": 343,
+        "consistent": true,
+        "name": "DCS unit"
+      },
+      {
+        "segment": 4,
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "total": 10,
+        "consistent": true,
+        "name": "DCS runtime config"
+      },
+      {
+        "segment": 5,
+        "passed": 98,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "total": 98,
+        "consistent": true,
+        "name": "DCS agents"
+      },
+      {
+        "segment": 6,
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "total": 7,
+        "consistent": true,
+        "name": "maturity findings registry"
+      }
+    ],
+    "methods": [
+      "从r10e-root-full.log独立解析全部六个Tests summary并逐段核对passed+failed+skipped+todo=total。",
+      "前两段另从r10e-root-stage1/2.json逐assertion统计，与各自顶层计数及日志一致；未发现失败case或failureMessages。",
+      "DCS完整命令在日志中与候选test:dcs逐字一致，四个尾部Vitest summary及findings registry: OK均存在，第三阶段exitCode=0。",
+      "总数按原package执行计数，保留原maturity-registry尾段。"
+    ],
+    "matches_executor_readback": true,
+    "stage1_json": {
+      "files": 1272,
+      "assertions": 11736,
+      "passed": 11686,
+      "failed": 0,
+      "skipped": 50,
+      "todo": 0
+    },
+    "stage2_json": {
+      "files": 3,
+      "assertions": 33,
+      "passed": 33,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "root_observer": {
+      "runStartFiles": [
+        1272,
+        3
+      ],
+      "moduleStarts": 1275,
+      "moduleEnds": 1275,
+      "uniqueEndFiles": 1275,
+      "active": [],
+      "endStates": {
+        "passed": 1272,
+        "skipped": 3
+      },
+      "eventsMatchJsonFiles": true,
+      "phaseSums": {
+        "environmentSetupDuration": 744395,
+        "prepareDuration": 24490,
+        "collectDuration": 1294046,
+        "setupDuration": 141985,
+        "duration": 2042358
+      },
+      "readbackPhaseSumsMatch": true
+    },
+    "root_observer_coverage": "observer记录前两段1275个文件完成：1272 passed、3 skipped；DCS四段由完整日志及第三阶段exitCode核对。"
+  },
+  "command_contract": {
+    "formal_profile_root_command": "pnpm -w test",
+    "development_launch": {
+      "actor": "codex-g2-rag16-relay1",
+      "driven_by": "agent",
+      "sourceCommit": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+      "command": "node",
+      "args": [
+        "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10e-observe-root.mjs"
+      ],
+      "startedAt": "2026-11-20T06:50:36.236Z",
+      "finishedAt": "2026-11-20T07:18:19.694Z",
+      "durationMs": 1663458,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false
+    },
+    "stage_count": 3,
+    "stages_match_candidate": [
+      {
+        "stage": 1,
+        "originalMatchesCandidate": true,
+        "diagnosticMatchesOriginalPlusReporters": true,
+        "exitCode": 0,
+        "durationMs": 1542810
+      },
+      {
+        "stage": 2,
+        "originalMatchesCandidate": true,
+        "diagnosticMatchesOriginalPlusReporters": true,
+        "exitCode": 0,
+        "durationMs": 28332
+      },
+      {
+        "stage": 3,
+        "originalMatchesCandidate": true,
+        "diagnosticMatchesOriginalPlusReporters": true,
+        "exitCode": 0,
+        "durationMs": 92065
+      }
+    ],
+    "candidate_package_scripts_match_working_tree": true,
+    "first_two_additions": "--reporter=default、failure observer、root observer、--reporter=json、--outputFile.json",
+    "third_stage": "pnpm run test:dcs",
+    "dcs_command_matches_log": true,
+    "isolation": {
+      "stage1ExcludesAllThree": true,
+      "stage2ExactlyAllThree": true
+    },
+    "environment": {
+      "root_worker_count": 3,
+      "isolated_worker_count": 1,
+      "runtime_worker_cap": "OPENCLAW_VITEST_MAX_WORKERS=1",
+      "resource_governance_stress": "1",
+      "temporary_directory": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/acceptance-temp",
+      "credentials": "wrapper按变量名过滤provider凭据及NODE_TLS_REJECT_UNAUTHORIZED；VITEST_MAX_WORKERS移除后使用原CLI并发。",
+      "dependency_check": "pnpm_config_verify_deps_before_run=false"
+    },
+    "per_case_timeouts": "追加参数未设置testTimeout/hookTimeout；候选vitest.config.ts保留30000ms默认及各用例自身timeout。",
+    "contract_refs": [
+      "harness/specs/tasks/project-rag-bounded-research.md:263,265,279,285",
+      "harness/specs/rules/agent-engineering-acceptance-boundary.md:43-54",
+      "harness/src/profiles.mjs:7",
+      "scripts/lib/agent-engineering-acceptance.mjs:31,38-58,519-534",
+      "vitest.config.ts:143-151",
+      "D:/tmp/g2-rag16-relay-20261118-01a1ef53/run-r10e.mjs:11-18"
+    ]
+  },
+  "skip_contract": {
+    "expected_root": 50,
+    "actual_root": 50,
+    "expected_tail": 0,
+    "actual_tail": 0,
+    "inventory_match": true,
+    "inventory_files": [
+      {
+        "file": "tests/unit/agency-role-importer.test.ts",
+        "skips": 1
+      },
+      {
+        "file": "tests/unit/cross-encoder-rerank.test.ts",
+        "skips": 2
+      },
+      {
+        "file": "tests/unit/helpers/query-classifier.test.ts",
+        "skips": 2
+      },
+      {
+        "file": "tests/unit/justifier-rerank.test.ts",
+        "skips": 2
+      },
+      {
+        "file": "tests/unit/question-decomposer.test.ts",
+        "skips": 4
+      },
+      {
+        "file": "tests/unit/runtime-memory-adversarial-holdout.test.ts",
+        "skips": 3
+      },
+      {
+        "file": "tests/unit/runtime-memory-consumer-llm-judge.test.ts",
+        "skips": 3
+      },
+      {
+        "file": "tests/unit/runtime-memory-interleaved-read-write.test.ts",
+        "skips": 3
+      },
+      {
+        "file": "tests/unit/runtime-memory-llm-multi-judge.test.ts",
+        "skips": 4
+      },
+      {
+        "file": "tests/unit/runtime-memory-llm-real-usage.test.ts",
+        "skips": 8
+      },
+      {
+        "file": "tests/unit/runtime-memory-locomo-benchmark.test.ts",
+        "skips": 1
+      },
+      {
+        "file": "tests/unit/runtime-memory-locomo-full-500.test.ts",
+        "skips": 1
+      },
+      {
+        "file": "tests/unit/runtime-memory-long-conversation-real.test.ts",
+        "skips": 3
+      },
+      {
+        "file": "tests/unit/runtime-memory-retention-llm-judge.test.ts",
+        "skips": 4
+      },
+      {
+        "file": "tests/unit/runtime-memory-useless-content-judge.test.ts",
+        "skips": 6
+      },
+      {
+        "file": "tests/unit/runtime-memory-write-path-llm-judge.test.ts",
+        "skips": 3
+      }
+    ],
+    "all_skipped_file_count": 3,
+    "interpretation": "首段50项跳过逐文件等于候选ROOT_UNIT_SKIP_INVENTORY的16项清单；后五段skip均0，未引入额外能力跳过。"
+  },
+  "timeout_contract": {
+    "durationMs": 1663458,
+    "isoDurationMs": 1663458,
+    "stageDurationsSum": 1663207,
+    "wrapperOverheadMs": 251,
+    "limitMs": 1800000,
+    "headroomMs": 136542,
+    "started_at": "2026-11-20T06:50:36.236Z",
+    "finished_at": "2026-11-20T07:18:19.694Z",
+    "exit_code": 0,
+    "signal": null,
+    "timed_out": false,
+    "actual_timer": "run-r10e.mjs:18 设置1800000ms外层timer并在close后清除。",
+    "measurement": "1800秒以外层命令startedAt/finishedAt差值衡量；三个阶段耗时累计1663207ms，外层差额251ms。模块phase累计值按并发执行累计。",
+    "resource_wait": "启动前freeGiB>=5的连续3次采样发生于测试命令计时前；计时后完整包含原三阶段。"
+  },
+  "failure_history": {
+    "retained": true,
+    "r9_log_matches_recorded_original_sha256": true,
+    "runs": [
+      {
+        "run": "r9",
+        "command": "r9-root-full-command.json",
+        "readback": "r9-root-readback.json",
+        "guard": "r9-root-source-guard.json",
+        "log": "r9-root-full.log",
+        "outcome": "1800秒超时；RSI历史corpus及WP6封存输入失败仍保留。",
+        "candidate": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+        "exitCode": 1,
+        "timedOut": true,
+        "guardUnchanged": true,
+        "artifacts": [
+          {
+            "kind": "command",
+            "name": "r9-root-full-command.json",
+            "bytes": 350,
+            "sha256": "033d90b7446d0d120e778a13009704fcf1976c0dc8dddd3168271ac2087591ca"
+          },
+          {
+            "kind": "readback",
+            "name": "r9-root-readback.json",
+            "bytes": 1125,
+            "sha256": "627b892b5b7afdc531091c2e14995294d7b5f2c4ccb5b9c374571980e8134bfd"
+          },
+          {
+            "kind": "guard",
+            "name": "r9-root-source-guard.json",
+            "bytes": 263,
+            "sha256": "ec215d1a5296215b9f380990ed10ab02269825f08915e77f97455c03bb850d78"
+          },
+          {
+            "kind": "log",
+            "name": "r9-root-full.log",
+            "bytes": 15763,
+            "sha256": "91e87a6fbb4b9f1b7302eaafa1a76c2ba57c62403d8c12f4831e03b2036b2037"
+          }
+        ]
+      },
+      {
+        "run": "r10",
+        "command": "r10-root-full-command.json",
+        "readback": "r10-root-readback.json",
+        "guard": "r10-root-source-guard.json",
+        "log": "r10-root-full.log",
+        "outcome": "1800秒超时；完成1082个文件，两个共享Task DB fixture文件失败仍保留。",
+        "candidate": "d33c887655d26452dc14846b8f732331cf825a34",
+        "exitCode": 1,
+        "timedOut": true,
+        "guardUnchanged": true,
+        "completedFiles": 1082,
+        "caseCounts": null,
+        "artifacts": [
+          {
+            "kind": "command",
+            "name": "r10-root-full-command.json",
+            "bytes": 396,
+            "sha256": "de798d4497167ba1035110034780e5c0c8653127a9c94f91d930a877006fec8a"
+          },
+          {
+            "kind": "readback",
+            "name": "r10-root-readback.json",
+            "bytes": 2229,
+            "sha256": "1309e5b4c02da4f5f7f56e097c1dd7747c4bf947fd6cbdfe17e65898637739f3"
+          },
+          {
+            "kind": "guard",
+            "name": "r10-root-source-guard.json",
+            "bytes": 263,
+            "sha256": "3eaacf4b677537b6c74ee5541be3a8e8ac7bbe97a2ff605fa56a5c9629687514"
+          },
+          {
+            "kind": "log",
+            "name": "r10-root-full.log",
+            "bytes": 721147,
+            "sha256": "bc6a2dc29fae102f2319935f46e3cb3ee57e0db86771358ad94fedea83a9aef8"
+          }
+        ]
+      },
+      {
+        "run": "r10b",
+        "command": "r10b-root-full-command.json",
+        "readback": "r10b-root-readback.json",
+        "guard": "r10b-root-source-guard.json",
+        "log": "r10b-root-full.log",
+        "outcome": "首段完成；watcher after.txt断言失败仍保留，后续原阶段未执行。",
+        "candidate": "8a1d72009a30dae0e960a0555b12d78651252b7e",
+        "exitCode": 1,
+        "timedOut": false,
+        "guardUnchanged": true,
+        "completedFiles": 1272,
+        "caseCounts": {
+          "passed": 11683,
+          "failed": 1,
+          "skipped": 50,
+          "total": 11734,
+          "source": "parsed",
+          "segments": 1
+        },
+        "artifacts": [
+          {
+            "kind": "command",
+            "name": "r10b-root-full-command.json",
+            "bytes": 398,
+            "sha256": "70c1c771fdc97114175bb8e185c03fd738e50e7e60dafea6dfed304f08a63b87"
+          },
+          {
+            "kind": "readback",
+            "name": "r10b-root-readback.json",
+            "bytes": 2248,
+            "sha256": "fdac2241391de04466ff98f8d8cae07510d4ffc84a5dd6c166053af7ae13a2cf"
+          },
+          {
+            "kind": "guard",
+            "name": "r10b-root-source-guard.json",
+            "bytes": 263,
+            "sha256": "dee74587757b1b9639217ef035918c27a4288d358d5b36458431ae33f5539184"
+          },
+          {
+            "kind": "log",
+            "name": "r10b-root-full.log",
+            "bytes": 737739,
+            "sha256": "1fce8f2ff454e83cde3583d1fec11dbfa2e0b1065d82d2a2abe2a9bd750b6b13"
+          }
+        ]
+      },
+      {
+        "run": "r10c",
+        "command": "r10c-root-full-command.json",
+        "cancellation": "r10c-root-cancellation.json",
+        "guard": "r10c-root-source-guard.json",
+        "log": "r10c-root-full.log",
+        "outcome": "lifecycle用例20787ms失败后主动取消；原异常栈缺失，根因仍unknown。",
+        "candidate": "3dd62e9914fc5003243bd22c4dd3eb80b7b6abbc",
+        "exitCode": 1,
+        "timedOut": false,
+        "guardUnchanged": true,
+        "artifacts": [
+          {
+            "kind": "command",
+            "name": "r10c-root-full-command.json",
+            "bytes": 397,
+            "sha256": "00a3a02fe5770a6f9f1d32fa1901b6ea360276fdeb30de18a3f2e14d46ca679b"
+          },
+          {
+            "kind": "guard",
+            "name": "r10c-root-source-guard.json",
+            "bytes": 263,
+            "sha256": "06a2f998fe631d69a247b7b1a6cbc67bd255615cba864d8a6220319e944e88cb"
+          },
+          {
+            "kind": "cancellation",
+            "name": "r10c-root-cancellation.json",
+            "bytes": 295,
+            "sha256": "53f5a8d3bd8eb9bcb9839499345094068deaaaa076627e9de7c42d30789abfbe"
+          },
+          {
+            "kind": "log",
+            "name": "r10c-root-full.log",
+            "bytes": 832,
+            "sha256": "7adab4004e9b8e01151ec412228d1b3c967a19a477b12859401b1b0a1e0364dd"
+          }
+        ]
+      },
+      {
+        "run": "r10d",
+        "readback": "r10d-root-interrupted-readback.json",
+        "log": "r10d-root-full.log",
+        "outcome": "运行中断；记录267个模块完成，command=null，无完整root通过结论。",
+        "candidate": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+        "completedFiles": 267,
+        "caseCounts": null,
+        "artifacts": [
+          {
+            "kind": "readback",
+            "name": "r10d-root-interrupted-readback.json",
+            "bytes": 1841,
+            "sha256": "a0f558cc4e070845ea829ef5526f0a288c4fd98bdfdb1d006fe73b4c68a3a910"
+          },
+          {
+            "kind": "log",
+            "name": "r10d-root-full.log",
+            "bytes": 435969,
+            "sha256": "026db3518c175af1e3588b4457d78394a9712ad806392806e10360191271f782"
+          }
+        ]
+      },
+      {
+        "run": "r10-tail-r1",
+        "stages": "r10-tail-stages.json",
+        "log": "r10-tail-check.log",
+        "outcome": "隔离段通过、DCS agents组4个context-agent-tools case报TASK_SCHEMA_NEWER_THAN_CLIENT。",
+        "stageExitCodes": [
+          0,
+          1
+        ],
+        "artifacts": [
+          {
+            "kind": "stages",
+            "name": "r10-tail-stages.json",
+            "bytes": 510,
+            "sha256": "14fd9c94ef378419da37b5c71d5b17f1eb20416fa0fc193de4203e1de1377c29"
+          },
+          {
+            "kind": "log",
+            "name": "r10-tail-check.log",
+            "bytes": 7287,
+            "sha256": "8d8b4b5b62395188ede2b5b620bdc46a612d970eb26644d4fdccf8628162b94a"
+          }
+        ]
+      }
+    ],
+    "attribution": "r10c的20.8秒失败保持unknown；PID分片修复及r10e通过均未改写该历史归因。"
+  },
+  "artifact_root": "D:/tmp/g2-rag16-relay-20261118-01a1ef53",
+  "artifact_hashes": [
+    {
+      "name": "r10e-root-full-command.json",
+      "bytes": 398,
+      "sha256": "ab03a6f732058a1fe2aac87758cb3b426e2c78a19d1715f778a9830c118101b5"
+    },
+    {
+      "name": "r10e-root-readback.json",
+      "bytes": 2167,
+      "sha256": "a4c18949dad8bb320e8f8e711829ba286531e61579c4382cf86afeaabae1f4e6"
+    },
+    {
+      "name": "r10e-root-source-guard.json",
+      "bytes": 263,
+      "sha256": "878439cb29928ebac1a88c09583c275196b3e7c18b7f0d6f0a6d0df39937d738"
+    },
+    {
+      "name": "r10e-root-stages.json",
+      "bytes": 1858,
+      "sha256": "ba5c7d14b6299265671ca2f815662bd63cab2861671d5b17f51a1c9c804e87f7"
+    },
+    {
+      "name": "r10e-root-stage1.json",
+      "bytes": 4204826,
+      "sha256": "7176ce3f79d133987a6b51fcc8ad16e8348f2ac6d99f55d15a27122a063e3ed3"
+    },
+    {
+      "name": "r10e-root-stage2.json",
+      "bytes": 13001,
+      "sha256": "aae706c2cf4913af6e0d5d1dcdbc1a0ce7ab866e7ca6a97318804ce38fbc53d9"
+    },
+    {
+      "name": "r10e-root-full.log",
+      "bytes": 743988,
+      "sha256": "f23f3b17d56b95dd931b6ff12a7e52690953217d0bc959e384f9f6a84f2669ea"
+    },
+    {
+      "name": "r10e-root-events.jsonl",
+      "bytes": 641727,
+      "sha256": "de1cd28a18cc98294d33bad8ef1a536293cf709bc35a57191e497b6e5b7f73ab"
+    },
+    {
+      "name": "run-r10e.mjs",
+      "bytes": 2311,
+      "sha256": "03610d63b1a378815c3969a57447e5545bb3b248e9bfd699844813c4fbb21ff8"
+    },
+    {
+      "name": "run-r10e-root-when-ready.mjs",
+      "bytes": 1601,
+      "sha256": "3d31c57b8a7953b3c5578e26e8e6b5438de8f3891ceaf048f9c8dc645485297e"
+    },
+    {
+      "name": "r10e-observe-root.mjs",
+      "bytes": 1682,
+      "sha256": "233026f9465a2e35d95cff0ce2500bf9b22ce303dc9f56126e20db4ad209b7ef"
+    },
+    {
+      "name": "r10e-root-observer.mjs",
+      "bytes": 693,
+      "sha256": "52495dbee1c25b97652915a50bc116271032c7ad19af1a51e92c5538c5c6bc8f"
+    },
+    {
+      "name": "r10-failure-observer.mjs",
+      "bytes": 371,
+      "sha256": "5f332a14db29e01f0bd65e2c821d80f613744cb0adf1027a0e0ef09a95d7015a"
+    }
+  ],
+  "evidence_role": {
+    "executor": "codex-g2-rag16-relay1",
+    "readback_reviewer": "xingchi-independent-reviewer",
+    "classification": "development_preflight",
+    "formal_acceptance_completed": false,
+    "formal_verifier_state": "awaiting_frozen_manifest",
+    "next_action": "最终manifest冻结通知后，由独立Verifier在独立工作树亲跑正式门禁。"
+  },
+  "reviewer_actions": {
+    "source_writes": 0,
+    "test_runs": 0,
+    "build_runs": 0,
+    "electron_runs": 0,
+    "process_actions": 0,
+    "nested_agents": 0
+  },
+  "reviewed_at": "2026-11-20T15:29:36.8622563+08:00"
+}

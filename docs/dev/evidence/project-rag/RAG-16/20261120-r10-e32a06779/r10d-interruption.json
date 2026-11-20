@@ -1,0 +1,12 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "observedProcesses": [],
+  "candidate": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+  "state": "execution-lost-without-terminal-receipt",
+  "driven_by": "agent",
+  "lastLogWrite": "2026-11-20T14:39:44.8187111+08:00",
+  "observedAt": "2026-11-20T14:46:45.1941545+08:00",
+  "sourceHead": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+  "sourceClean": true,
+  "cause": "unknown; tool session no longer exists, launcher and child absent; do not infer test success or code failure"
+}

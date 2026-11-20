@@ -1,0 +1,15 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "sourceCommit": "8a1d72009a30dae0e960a0555b12d78651252b7e",
+  "command": "node",
+  "args": [
+    "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-tail-stages-r2.mjs"
+  ],
+  "startedAt": "2026-11-20T05:43:18.201Z",
+  "finishedAt": "2026-11-20T05:46:46.900Z",
+  "durationMs": 208699,
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false
+}

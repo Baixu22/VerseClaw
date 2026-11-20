@@ -1,0 +1,17 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "scope": "Development diagnosis of isolated and DCS tails; not a full root verdict",
+  "results": [
+    {
+      "command": "vitest run tests/unit/gateway-permissions-api.test.ts tests/unit/files-permissions-api.test.ts tests/unit/runtime-memory-operator-inspection.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 54131
+    },
+    {
+      "command": "pnpm run test:dcs",
+      "exitCode": 0,
+      "durationMs": 153956
+    }
+  ]
+}

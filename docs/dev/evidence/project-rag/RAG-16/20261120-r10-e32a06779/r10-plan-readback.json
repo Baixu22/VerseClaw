@@ -1,0 +1,15 @@
+{
+  "sameTimeouts": true,
+  "sameIds": true,
+  "actor": "codex-g2-rag16-relay1",
+  "sameSkips": true,
+  "gates": 25,
+  "driven_by": "agent",
+  "candidate": {
+    "cleanAtPlan": true,
+    "commit": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+    "ref": "codex/g2-rag16-relay-20261119",
+    "tree": "adcc04aee92e6fa28da041f5f3bdb5fb77408a36"
+  },
+  "executed": false
+}

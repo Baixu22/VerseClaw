@@ -1,0 +1,36 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "steps": [
+    {
+      "actor": "codex-g2-rag16-relay1",
+      "driven_by": "agent",
+      "sourceCommit": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+      "command": "pnpm",
+      "args": [
+        "agent-dev:deep-test:reuse:full"
+      ],
+      "startedAt": "2026-11-20T07:35:36.647Z",
+      "finishedAt": "2026-11-20T07:36:26.419Z",
+      "durationMs": 49772,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false
+    },
+    {
+      "actor": "codex-g2-rag16-relay1",
+      "driven_by": "agent",
+      "sourceCommit": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+      "command": "pnpm",
+      "args": [
+        "agent-dev:audit"
+      ],
+      "startedAt": "2026-11-20T07:36:26.496Z",
+      "finishedAt": "2026-11-20T07:36:28.668Z",
+      "durationMs": 2172,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false
+    }
+  ]
+}

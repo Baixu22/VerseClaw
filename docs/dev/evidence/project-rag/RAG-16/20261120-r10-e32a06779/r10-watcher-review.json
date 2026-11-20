@@ -1,0 +1,120 @@
+{
+  "schema": "clawx.rag16-watcher-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-watcher-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-current-test-delta-and-failure-review",
+  "formal_verifier_execution": false,
+  "result": "PASS_STATIC_REVIEW",
+  "findings": [],
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "8a1d72009a30dae0e960a0555b12d78651252b7e",
+    "working_tree_test_delta": true,
+    "production_watcher_unchanged": true,
+    "sha256": {
+      "shared/resources/watcher-hub.ts": "c257bc9be394abe44e631846c8e97af45eea3f4ee062653b1dc3935012eedc66",
+      "tests/unit/shared-watchers-native.test.ts": "571d46b6fa15755673a22222849bd7bf79b0c79c228a9a88ac7ba0c33b578359"
+    }
+  },
+  "conclusion": "当前最小测试修复通过静态复核：先独立观察删除失效并清除已收集事件，再重建并等待新的失效提示，最后保留原after.txt原生事件作为恢复判据。已读取15/15通过产物。当前证据不足以把本次失败归因为生产watcher永久失效，不建议据此修改生产恢复策略。",
+  "failure_analysis": {
+    "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10b-root-stage1.json",
+    "log": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10b-root-full.log",
+    "case": "recovers a recursive directory subscription after native deletion and recreation",
+    "failed_assertion": "tests/unit/shared-watchers-native.test.ts 原第31行等待 after.txt",
+    "duration_ms": 4566.488,
+    "confirmed": "等待null的原第30行已通过。源码shared/resources/watcher-hub.ts:47-49在删除(nlink=0)与成功重挂后都发送rename/null，因此旧用例可以把删除通知当成重挂完成后立即写after.txt。",
+    "allowed_interleaving": [
+      "monitor观察到目录消失，关闭旧watcher并发删除null。",
+      "旧测试完成mkdir/recreated.txt后看到数组已有null，提前写after.txt。",
+      "下一次poll才attach；先前after.txt事件不会因重挂而重放，等待该文件名失败。"
+    ],
+    "certainty": "这是源码明确允许的测试时序；失败产物没有保存逐条null来源/stat/attach时点，不能把它声明为该次运行已捕获的唯一时序。"
+  },
+  "delta_checks": [
+    {
+      "file": "tests/unit/shared-watchers-native.test.ts",
+      "lines": "29-34",
+      "observation": "rm后以4000ms等待删除阶段null，清空events，再mkdir和写recreated.txt，独立以4000ms等待新的null。消除了沿用已收集删除提示的直接路径，没有添加固定sleep或重复写after.txt。"
+    },
+    {
+      "file": "tests/unit/shared-watchers-native.test.ts",
+      "lines": "28,35-38",
+      "observation": "first.txt和after.txt仍分别要求真实原生文件事件，原3000ms等待值保持；finally仍close，随后要求subscriptions=0；总timeout仍15000ms。"
+    },
+    {
+      "file": "shared/resources/watcher-hub.ts",
+      "lines": "32-56",
+      "observation": "生产源码与HEAD、审查前SHA相同。monitor仍按原1000ms采样与epoch隔离执行。"
+    },
+    {
+      "file": "tests/unit/shared-watchers-native.test.ts",
+      "lines": "16-21,39-65",
+      "observation": "外部独立file监听与ABBA句柄/内存对照用例没有减少覆盖；本轮只改删除/重建的测试顺序。"
+    }
+  ],
+  "recovery_observation_boundary": {
+    "null_semantics": "null仍是失效提示，新的null本身不等于公开的attach完成回执；实际恢复由保留的after.txt事件断言验证。",
+    "earlier_concern": "此前指出原生null与monitor零stat交错可能仍形成另一条测试竞态，源码有透传null入口，但本轮没有相应回调轨迹或受控复现，未将其登记为当前已确认P2，也不据此扩展生产修改。",
+    "next_diagnosis_if_repeated": "若同样失败再次出现，定向记录真实attach成功、monitor零stat与原生null时序，再决定测试屏障是否需透明观察成功attach。不得把null直接当恢复结论，也不得通过重复写入或放宽timeout掩盖问题。",
+    "identity_hypotheses": "首次stat初始化时机及Windows ino/birthtime复用均无该次采样证据，不作为本次已证实根因。"
+  },
+  "existing_execution_evidence": {
+    "focused_before": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-watcher-before.json",
+      "passed": 3,
+      "total": 3,
+      "failed": 0,
+      "recovery_case_ms": 1013.5604,
+      "interpretation": "原用例独立运行也通过，符合时序敏感故障。"
+    },
+    "focused_after": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-watcher-after.json",
+      "command": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-watcher-after-command.json",
+      "passed": 15,
+      "total": 15,
+      "failed": 0,
+      "pending": 0,
+      "workers": 3,
+      "files": {
+        "shared-watchers-native.test.ts": 3,
+        "shared-watchers-read-models.test.ts": 8,
+        "resource-timer-watcher.test.ts": 4
+      },
+      "recovery_case_ms": 2078.5905,
+      "exit_code": 0,
+      "timed_out": false,
+      "attribution": "主代理已执行，审查只回读磁盘结果。"
+    },
+    "prior_root_first_segment": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10b-root-stage1.json",
+      "candidate": "8a1d72009a30dae0e960a0555b12d78651252b7e",
+      "passed": 11683,
+      "failed": 1,
+      "skipped": 50,
+      "total": 11734,
+      "files": 1272,
+      "duration_seconds": 1280.12,
+      "meaning": "第一段失败，因此原&&完整链没有通过。"
+    },
+    "later_tail_diagnosis": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-tail-stages.json",
+      "isolated_exit_code": 0,
+      "isolated_duration_ms": 27655,
+      "dcs_exit_code": 1,
+      "dcs_duration_ms": 47192,
+      "scope": "单独执行用于发现此前未执行尾部缺陷，不与首段或focused结果拼成完整root通过。"
+    }
+  },
+  "validation": {
+    "diff_check": "pass",
+    "tests_started": 0,
+    "builds_started": 0,
+    "watchers_started": 0,
+    "source_writes": 0,
+    "git_mutations": 0
+  },
+  "next_step": "主代理处理DCS尾部失败，冻结新候选后重新执行完整根链；本次审查保留独立Verifier身份。",
+  "recorded_at": "2026-11-20T13:41:24.6182557+08:00"
+}

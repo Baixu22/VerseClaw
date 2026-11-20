@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "review_id": "r10-pid-review",
+  "driven_by": "agent",
+  "actor": "xingchi-independent-reviewer",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "review_mode": "read_only_static_review",
+  "verdict": "PASS_STATIC_REVIEW",
+  "findings": [],
+  "candidate": {
+    "worktree": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head_at_review": "3dd62e9914fc5003243bd22c4dd3eb80b7b6abbc",
+    "head_tree": "8c7cbebcdd0c1c6e211610b77c69f71f87949278",
+    "delta_state": "uncommitted_at_review",
+    "file": "tests/unit/runtime-lifecycle-governance.test.ts",
+    "base_blob": "5e7bba9c946ff1c20002a991f70301c642555794",
+    "working_blob": "af5a4fb16d85fdc3fd3b2ba5095cf184eded74f6",
+    "working_file_sha256": "955620f9ef2ace27994b0d095f93819d4f8ca6e7966833a025948c972536d52b",
+    "additions": 21,
+    "deletions": 4
+  },
+  "conclusion": "createChildPidReader 消除了逐 chunk 漏报和截断 PID 接受；两项新增回归直接覆盖原缺陷。每个真实进程树使用独立 reader，原50周期、泄漏断言与超时保持。未发现新增可复现 P0/P1/P2。",
+  "resolution": {
+    "prior_finding": "R10-LIFECYCLE-001",
+    "status": "FIX_CONFIRMED_STATIC_AND_EXISTING_REGRESSION_EVIDENCE",
+    "original_r10c_failure": {
+      "case_duration_ms_displayed": 20787,
+      "root_cause": "unknown",
+      "evidence_gap": "原失败未持久化异常栈、cycle/phase 或 stdout 分片。",
+      "attribution": "本修复关闭已确认的分片解析缺陷；不将原20.8秒失败归因为该缺陷。"
+    }
+  },
+  "checks": [
+    {
+      "name": "完整行与跨分片",
+      "result": "PASS",
+      "location": "tests/unit/runtime-lifecycle-governance.test.ts:99-107",
+      "evidence": "闭包保留 output 并追加 chunk；/(?:^|\\n)child-pid=(\\d+)\\r?\\n/u 仅接受行首或换行后的完整记录，兼容 LF/CRLF；无换行、被拆开的前缀和被拆开的数字均不会提前返回PID。",
+      "regression_effect": "['child-', 'pid=12345\\n'] 与 ['child-pid=12', '345\\r\\n'] 都在首段返回-1、完成后返回12345。"
+    },
+    {
+      "name": "PID值与实例隔离",
+      "result": "PASS",
+      "locations": [
+        "tests/unit/runtime-lifecycle-governance.test.ts:104-105",
+        "tests/unit/runtime-lifecycle-governance.test.ts:114,125-126"
+      ],
+      "evidence": "Number.isSafeInteger(pid) && pid > 0 拒绝0、非整数和超出安全整数范围的值；每次startLeakFixtureTree重新创建reader。完整有效记录留在累计串中，后续chunk不会把已接受PID重置为-1。",
+      "memory_assessment": "现有fixture第41-49行只输出一条PID记录，之后运行静默interval；累计串跟随每次启动闭包，不跨周期共享。"
+    },
+    {
+      "name": "回归与原覆盖",
+      "result": "PASS",
+      "location": "tests/unit/runtime-lifecycle-governance.test.ts:187-194",
+      "evidence": "it.each 新增prefix/digits两项，均同时断言首段-1和完成后精确PID12345；原5项保留，总数7。diff未删除或修改原断言，未新增skip/todo。"
+    },
+    {
+      "name": "周期与预算",
+      "result": "PASS",
+      "evidence": [
+        "第88-96行：父/子PID死亡等待各10秒，轮询25ms。",
+        "第129-134行：启动握手10秒，轮询20ms。",
+        "第163行：drainScope仍为15000ms。",
+        "第170-181行：父/子死亡检查、bash/supervisor active记录、sweeper检查保留。",
+        "第234-241行：2个warmup及50个正式周期保留。",
+        "第248-251行：activeRecords===0、heapDeltaMb<=2、总timeout300000ms保留。"
+      ]
+    },
+    {
+      "name": "生产清理路径",
+      "result": "PASS",
+      "evidence": "定向git diff HEAD核对supervisor、child adapter、session-drain-service、os-containment、pid-alive及agent-core kill-tree均无未提交修改。"
+    }
+  ],
+  "existing_execution_evidence": {
+    "executor": "codex-g2-rag16-relay1",
+    "executed_by_this_reviewer": false,
+    "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-pid-handshake.json",
+    "command_report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-pid-handshake-command.json",
+    "recorded_source_commit": "3dd62e9914fc5003243bd22c4dd3eb80b7b6abbc",
+    "success": true,
+    "passed": 7,
+    "failed": 0,
+    "pending": 0,
+    "original_50_cycle_case_duration_ms": 168304.6921,
+    "command_duration_ms": 175730,
+    "exit_code": 0,
+    "timed_out": false,
+    "completed_at": "2026-11-20T06:17:21.446Z",
+    "artifact_binding": "主代理运行记录提交前HEAD；本次已审未提交delta由上述working blob及SHA256单独绑定。"
+  },
+  "next_evidence": "新候选完整root待执行；正式Verifier亲跑等待最终manifest冻结通知。",
+  "reviewer_actions": {
+    "source_writes": 0,
+    "test_runs": 0,
+    "build_runs": 0,
+    "nested_agents": 0
+  },
+  "formal_verifier_state": "awaiting_frozen_manifest",
+  "reviewed_at": "2026-11-20T14:18:36.9078248+08:00"
+}

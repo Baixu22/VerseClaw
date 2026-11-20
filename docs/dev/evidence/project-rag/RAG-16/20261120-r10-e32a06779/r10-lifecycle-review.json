@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "review_id": "r10-lifecycle-review",
+  "driven_by": "agent",
+  "actor": "xingchi-independent-reviewer",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "review_mode": "read_only_static_diagnosis",
+  "candidate": {
+    "worktree": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "commit": "3dd62e9914fc5003243bd22c4dd3eb80b7b6abbc",
+    "reviewed_paths_match_head": true,
+    "source_hashes": {
+      "tests/unit/runtime-lifecycle-governance.test.ts": "58fddccdd156d8dd56456cc7b3c236fb9d8114f7ee7f8a15b075315dc01c6150",
+      "openclaw_runtime/src/process/supervisor/supervisor.ts": "2b12a256d3f52f9164b1985633ca5a0bdc897edaeef177022d385b0e347e7952",
+      "openclaw_runtime/src/process/supervisor/adapters/child.ts": "afe1674ac1fb616620da6aebcdff75eb11c853be5730f3baa8dd9ea100216338",
+      "openclaw_runtime/src/gateway/session-drain-service.ts": "ec8975f352d4453e53da91d730c141c177a1d0070fc510cbba6b6444334ff2c8",
+      "openclaw_runtime/src/process/os-containment.ts": "cb954d3a58a84504abc5b81a4c00a1899b7dd102156f70da5959eb3cdf1e48aa",
+      "openclaw_runtime/src/shared/pid-alive.ts": "f744d60b86f95355b966d6fc7aac6a766ce4376676530a14b95b3d07a6e2df2d",
+      "openclaw_runtime/packages/agent-core/src/harness/env/kill-tree.ts": "3f99eb435c9223de89e5e35dc3b95344caeca12f0013ac35b2ad94b8b16ff4a4"
+    }
+  },
+  "observed_failure": {
+    "artifact": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10c-root-full.log",
+    "case_duration_ms_displayed": 20787,
+    "module_duration_ms": 20791.3772,
+    "errors_persisted": false,
+    "source_guard_unchanged": true,
+    "cancellation_artifact": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10c-root-cancellation.json",
+    "root_cause_status": "原异常栈及 cycle/phase 缺失，20.8 秒本身不能确定失败分支。"
+  },
+  "findings": [
+    {
+      "id": "R10-LIFECYCLE-001",
+      "priority": "P2",
+      "title": "PID 握手按 chunk 匹配，可漏报或接受截断 PID",
+      "file": "D:/ClawX-work/g2-rag16-relay-20261119/tests/unit/runtime-lifecycle-governance.test.ts",
+      "line_start": 114,
+      "line_end": 118,
+      "evidence": [
+        "buildLeakChildTreeScript 第47行输出 child-pid=<digits> 加换行。",
+        "child adapter 第159-164行将解码后的每个 data chunk 直接交给 listener；supervisor 第376-381行再原样交给 input.onStdout。",
+        "startLeakFixtureTree 第115行只对当前 chunk 执行 /child-pid=(\\d+)/，没有跨 chunk 累积，也没有完整行终止条件。"
+      ],
+      "deterministic_triggers_by_static_evaluation": [
+        {
+          "chunks": [
+            "child-",
+            "pid=12345\n"
+          ],
+          "result": "两次都不匹配；childPid 保持 -1，10 秒后触发 leak fixture child did not report its pid。"
+        },
+        {
+          "chunks": [
+            "child-pid=12",
+            "345\n"
+          ],
+          "result": "第一次设置 childPid=12，第二次不更正；实际子 PID 12345 被误读。后续检查 PID 12，若该 PID 存活则等满10秒，若不存在则错检通过。"
+        }
+      ],
+      "impact": "fixture 的启动和显式子进程死亡断言不再绑定真实 child PID。生产 OS containment 仍执行，不能据此认定本次 root 是生产漏杀。",
+      "attribution_to_r10c": "代码缺陷可由上述分片确定性触发；原 run 没有原始 chunk 或异常栈，尚未证明其触发了20.8秒失败。"
+    }
+  ],
+  "timing_paths": [
+    {
+      "branch": "启动 PID 握手",
+      "location": "tests/unit/runtime-lifecycle-governance.test.ts:121-126",
+      "wait_ms": 10000,
+      "error_signature": "leak fixture child did not report its pid",
+      "interpretation": "计时在 supervisor.spawn 返回后开始；可叠加之前成功周期和启动耗时。"
+    },
+    {
+      "branch": "supervisor/bash drain",
+      "location": "tests/unit/runtime-lifecycle-governance.test.ts:155-157; openclaw_runtime/src/gateway/session-drain-service.ts:143-171,180-192",
+      "wait_ms": 15000,
+      "error_signature": "cycle <index> drain failed: timeout supervised run drain timed out ... / bash process session drain timed out ...",
+      "interpretation": "supervisor 与 bash 的15秒等待并行。之前先 await OS capture；os-containment.ts:11,39-42,83-105 中 PowerShell 单次最多5秒，失败后 WMIC 可再用5秒。因此约5秒采集加15秒等待是20.8秒的一条可行路径，尚无原错误佐证。"
+    },
+    {
+      "branch": "成功 drain 后 PID 死亡检查",
+      "location": "tests/unit/runtime-lifecycle-governance.test.ts:88-96,162-163",
+      "wait_ms": 10000,
+      "error_signature": "pid <pid> survived drain",
+      "interpretation": "parent、child 顺序等待；parent 超时就抛错，不会再等待 child。20.8秒不能直接解释成固定的两次10秒。"
+    },
+    {
+      "branch": "OS containment 取证或残留",
+      "location": "openclaw_runtime/src/process/os-containment.ts:11-13,242-262,284-312; openclaw_runtime/src/gateway/session-drain-service.ts:211-226",
+      "error_signature": "os-containments-unknown / os-containments-residual",
+      "interpretation": "15秒只包 owner 等待；OS probe 和后续5秒 residual settle 另行执行。OS probe 超时、PID token 改变、真实残留会产生不同 reason/message，必须按实际异常区别。"
+    }
+  ],
+  "production_cleanup_assessment": [
+    {
+      "topic": "子进程尚未执行 fixture JS",
+      "evidence": "测试第44-47行在 spawn 返回后立即打印 child.pid，没有子 JS ready 信号。父进程已执行到打印；stdout握手不证明子进程已进入 setInterval。",
+      "conclusion": "缺少子 ready 本身不证明漏杀：drainScope 第152行先采集真实 OS 树，supervisor 第579-586行发起终止。需要实际残留 PID/创建时间证据才能把启动时序认定为根因。"
+    },
+    {
+      "topic": "Windows 强杀时序",
+      "evidence": "supervisor.ts:354-360 先 SIGTERM，5秒后 adapter SIGKILL；drainRunsForLifecycle:585-586 另立即发 taskkill /F /T。agent-core kill-tree.ts:111-120 只启动 taskkill，不等待其退出。child.ts:371-378 在发起树杀后立即 child.kill(SIGKILL)，再设4秒 wait fallback。",
+      "conclusion": "树杀完成与直接杀父进程之间没有等待关系，存在可分析的孤儿化窗口；本轮没有 taskkill 结果或 OS 残留记录，不能据20.8秒确认发生。若捕获的同一 child token 仍存活，drain 的 OS residual 检查会拒绝成功。"
+    },
+    {
+      "topic": "PID reuse",
+      "evidence": "waitForPidDeath 调用 pid-alive.ts:42-51 的数值 PID 存活检查，不绑定创建时间。OS containment 第275-303行则比较 capture token，复用时返回 unknown。",
+      "conclusion": "测试末尾两次 PID 检查可能受复用影响；生产取证已有 token 拒绝路径。当前没有 PID/token 样本证明发生复用。"
+    }
+  ],
+  "recommendation": {
+    "count": 1,
+    "target": "tests/unit/runtime-lifecycle-governance.test.ts:114-118",
+    "action": "优先将 PID 握手改为累积 stdout 到完整换行记录后再解析并校验正整数，保持原10秒期限；冻结解除后用前缀分片与数字分片覆盖上述两个确定性触发。",
+    "immediate_diagnostic_use": "读取当前 failure observer 的完整 error：child did not report 对应握手；pid survived drain 对应末尾 PID 检查；cycle drain failed 则按 reason 进入15秒 owner 等待或 OS 取证分支。",
+    "budgets": "50周期、原泄漏断言、10/15秒等待及300秒总timeout保持。"
+  },
+  "existing_evidence": {
+    "independent_focused_artifact": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-lifecycle-repro.json",
+    "focused_passed": 5,
+    "focused_failed": 0,
+    "focused_cycle_duration_ms": 165156.02779999998,
+    "retained_heap_delta_mb": 0.641,
+    "active_records": 0,
+    "focused_executor": "codex-g2-rag16-relay1",
+    "current_concurrency_artifact": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-native-concurrent-command.json",
+    "current_concurrency": "同源三文件 --maxWorkers=3 --cache=false 已完成，102/102通过（framework80、migration17、lifecycle5），exitCode=0，timedOut=false。",
+    "failure_observer": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-live-failures.jsonl",
+    "failure_observer_last_read_at": "2026-11-20T14:04:40.7090615+08:00",
+    "failure_observer_last_state": "文件未生成；本次并发JSON报告确认零失败，未复现r10c早期失败。",
+    "concurrent_result": {
+      "artifact": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-native-concurrent.json",
+      "passed": 102,
+      "failed": 0,
+      "pending": 0,
+      "vitest_duration_seconds": 281.35,
+      "command_duration_ms": 288706,
+      "lifecycle_case_ms": 198974.6774,
+      "retained_heap_delta_mb": 0.699,
+      "active_records": 0
+    }
+  },
+  "reviewer_actions": {
+    "source_writes": 0,
+    "test_runs": 0,
+    "build_runs": 0,
+    "process_actions": 0
+  },
+  "formal_verifier_state": "awaiting_frozen_manifest",
+  "reviewed_at": "2026-11-20T14:02:47.4752881+08:00",
+  "updated_at": "2026-11-20T14:04:40.7264685+08:00"
+}

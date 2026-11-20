@@ -1,0 +1,126 @@
+{
+  "schema": "clawx.rag16-r10-development/v1",
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "sourceCandidate": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+  "productSource": "f286cf276512920f65b345c6e1cbb3d85e7870be",
+  "status": "NO-GO",
+  "changes": [
+    "Batched literal source identity queries and HEAD/tree reads",
+    "Dispose child-exit test timers",
+    "Separate Chat/DCS fixture workspaces from shared repository Task DB",
+    "Use three workers for root phase1, preserve phase2 isolation and phase3 DCS",
+    "Observe deletion/recreation separately in native watcher regression",
+    "Parse complete newline-delimited child PID across stdout chunks"
+  ],
+  "validation": {
+    "framework": 80,
+    "migration": 17,
+    "chatIsolation": 21,
+    "historical": 46,
+    "watcherRelated": 15,
+    "isolatedTail": 33,
+    "dcsTail": [
+      343,
+      10,
+      98,
+      7
+    ],
+    "nativeConcurrent": 102,
+    "pidHandshake": 7,
+    "rootCommand": {
+      "actor": "codex-g2-rag16-relay1",
+      "driven_by": "agent",
+      "sourceCommit": "e32a067791dd803aeb544a25c3882af7535f2f2d",
+      "command": "node",
+      "args": [
+        "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10e-observe-root.mjs"
+      ],
+      "startedAt": "2026-11-20T06:50:36.236Z",
+      "finishedAt": "2026-11-20T07:18:19.694Z",
+      "durationMs": 1663458,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false
+    },
+    "root": {
+      "passed": 12177,
+      "failed": 0,
+      "skipped": 50,
+      "total": 12227,
+      "source": "parsed",
+      "segments": 6
+    },
+    "rootUnchanged": true,
+    "controlDecision": {
+      "status": "needs-full-gate",
+      "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+      "dailyLoopReady": true,
+      "releaseReady": false,
+      "fullGateComplete": false,
+      "budgetStatus": "watch",
+      "fastPathModes": [
+        "reuse-build",
+        "cached-typecheck"
+      ],
+      "requiredFullGates": [
+        "pnpm run build:vite",
+        "pnpm run typecheck"
+      ],
+      "watchSteps": [
+        "playwright-agent-dev",
+        "contract"
+      ],
+      "limitSteps": []
+    },
+    "audit": {
+      "status": "pass",
+      "score": 91,
+      "summary": {
+        "pass": 5,
+        "warn": 0,
+        "fail": 1,
+        "disqualifierCount": 0
+      }
+    }
+  },
+  "retainedFailures": [
+    "r10 two-worker1800s timeout plus shared TaskDB fixture errors",
+    "r10b first phase11683pass/1watcher-failure/50skip in1280.12s",
+    "r10c lifecycle20.8s early failure; original stack unavailable, root cause unknown; cancelled to diagnose"
+  ],
+  "unknownFailure": "Do not attribute r10c to PID chunk parsing; deterministic parsing defect separately fixed and verified.",
+  "formal25GateCycle": {
+    "executorExecuted": false,
+    "independentVerifierExecuted": false,
+    "rederiveFinalManifest": true
+  },
+  "rawInventory": [
+    {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10e-root-full.log",
+      "bytes": 743988,
+      "sha256": "f23f3b17d56b95dd931b6ff12a7e52690953217d0bc959e384f9f6a84f2669ea"
+    },
+    {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10e-root-events.jsonl",
+      "bytes": 641727,
+      "sha256": "de1cd28a18cc98294d33bad8ef1a536293cf709bc35a57191e497b6e5b7f73ab"
+    },
+    {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10e-root-stage1.json",
+      "bytes": 4204826,
+      "sha256": "7176ce3f79d133987a6b51fcc8ad16e8348f2ac6d99f55d15a27122a063e3ed3"
+    },
+    {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10e-root-stage2.json",
+      "bytes": 13001,
+      "sha256": "aae706c2cf4913af6e0d5d1dcdbc1a0ce7ab866e7ca6a97318804ce38fbc53d9"
+    },
+    {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-tail-check-r2.log",
+      "bytes": 4474,
+      "sha256": "6766f33980a51d5d4583e506f62d52f75dba3de696448295dcab4c2f560abe61"
+    }
+  ],
+  "recordedAt": "2026-11-20T07:39:35.059Z"
+}

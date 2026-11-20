@@ -195,6 +195,7 @@ touchedAreas:
   - "tests/unit/chat-api-workspace-fingerprint.test.ts"
   - "tests/unit/shared-watchers-native.test.ts"
   - "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts"
+  - "docs/dev/evidence/project-rag/RAG-16/20261120-r10-e32a06779/**"
 requiredProfiles:
   - "fast"
   - "comms"

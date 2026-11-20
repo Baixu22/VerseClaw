@@ -1,0 +1,14 @@
+{
+  "eventIds": [
+    1000,
+    1001,
+    2004
+  ],
+  "window": {
+    "end": "2026-11-20T14:41:30+08:00",
+    "start": "2026-11-20T14:38:00+08:00"
+  },
+  "driven_by": "agent",
+  "actor": "codex-g2-rag16-relay1",
+  "events": []
+}

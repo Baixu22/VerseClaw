@@ -1,0 +1,151 @@
+{
+  "schema": "clawx.rag16-isolation-worker-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-isolation-worker-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-four-file-delta-review",
+  "formal_verifier_execution": false,
+  "result": "PASS_STATIC_REVIEW",
+  "findings": [],
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "d33c887655d26452dc14846b8f732331cf825a34",
+    "comparison": "HEAD到当前工作树未提交差异",
+    "working_tree": true,
+    "sha256": {
+      "package.json": "a878483ccbc9c2e07cbbe8e257e1f2ad190886b9e4306a8b6f64404b2d6944da",
+      "tests/unit/chat-api-workspace-fingerprint.test.ts": "5561b8ea4c502385a4ccdf604d41b049c93807d1db1ffbabb1138ff7cc6264af",
+      "tests/unit/long-session-continuity-context.test.ts": "90ad1c2864baac2820a12e43c979531641c97edde30d897245d75c9ecf472be2",
+      "harness/specs/tasks/project-rag-bounded-research.md": "784b07454a7e6de8e2fdb5c62743a019ade345985ea727b14d97d649bcf0bf8a"
+    }
+  },
+  "checks": [
+    {
+      "area": "连续性fixture数据库隔离",
+      "locations": [
+        "tests/unit/long-session-continuity-context.test.ts:51-52",
+        "shared/task-system/identity.ts:34-80",
+        "electron/services/task-system-service.ts:190-200"
+      ],
+      "observations": [
+        "ROOT从process.cwd改为mkdtemp的唯一目录，所有原scopeKey、workspaceRootPath和coordinator canonicalRoot继续使用ROOT。",
+        "该文件没有初始化Git；在本机TEMP/TMP=D:/tmp且D:/tmp、D:/都没有.git标记的环境下，解析为本临时目录的.verse-claw/task-ledger.sqlite3，脱离工作树共用.git数据库。",
+        "新目录无Task DB时，persistentTaskChatContext在数据库打开前返回null；原continuity owner事实来自既有mock，projection/来源/generation拒绝等断言未改。"
+      ]
+    },
+    {
+      "area": "workspace fingerprint fixture数据库隔离",
+      "locations": [
+        "tests/unit/chat-api-workspace-fingerprint.test.ts:10-12,20-35,202-247",
+        "shared/task-system/identity.ts:40-64"
+      ],
+      "observations": [
+        "coordinatorRoot使用唯一tmpdir子目录并真实git init，Task domain止于该目录自己的.git；不沿真实仓库的commondir定位。",
+        "binding与managed-worktree场景统一指向该fixture，workspaceDir断言同步从process.cwd改为coordinatorRoot，其强度保持为精确相等。",
+        "paused与generation mismatch仍拒绝chat.send；pending generation材料化断言保留。",
+        "原quiet-task用例仍独立创建自己的TaskSystemStore，真实start/binding行为及finally关闭/清理保持。"
+      ]
+    },
+    {
+      "area": "fixture清理",
+      "locations": [
+        "tests/unit/long-session-continuity-context.test.ts:52",
+        "tests/unit/chat-api-workspace-fingerprint.test.ts:12,75-85",
+        "electron/services/task-system-service.ts:230-234"
+      ],
+      "observations": [
+        "两个新目录均由本文件mkdtemp创建，afterAll只递归清理对应常量路径，不使用process.cwd或共享Task DB根。",
+        "没有通过删除共享DB、清除全局状态或修改schema version来修复失败。",
+        "persistentTaskChatContext打开的TaskSystemStore在finally关闭；quiet-task用例也显式tasks.close后删除，fixture返回后不存在这条路径留下的正常SQLite句柄。",
+        "tmpdir从环境取值，源码未硬编码D盘。本轮读到TEMP/TMP均为D:/tmp；后续测试仍按仓库磁盘策略设置进程临时目录。"
+      ]
+    },
+    {
+      "area": "生产版本拒绝语义",
+      "locations": [
+        "shared/task-system/store.ts:125-131"
+      ],
+      "observations": [
+        "生产store仍在PRAGMA user_version>6时close并抛TASK_SCHEMA_NEWER_THAN_CLIENT；该生产文件及Task identity/Chat/authority实现均无本轮diff。",
+        "本轮修复将场景数据从开发仓库DB隔离，不捕获/忽略版本错误，也未降低兼容性拒绝条件。"
+      ]
+    },
+    {
+      "area": "root worker与覆盖合同",
+      "locations": [
+        "package.json:71-72",
+        "harness/specs/tasks/project-rag-bounded-research.md:193-194,276"
+      ],
+      "observations": [
+        "通过解析HEAD与当前package scripts比对：三个&&阶段数量相同，首段仅--maxWorkers=2替换为3；三项exclude逐字一致。",
+        "第二段三文件及--maxWorkers=1逐字一致，第三段pnpm run test:dcs和test:dcs定义也逐字一致。",
+        "没有删除测试/断言、调整timeout/skip或修改任何历史manifest/hash。两文件原21用例保留。",
+        "spec增加package.json与fingerprint测试touchedAreas，continuity测试原已登记；新增正文准确记录3-worker、隔离三文件、DCS和1800秒/50/10/0合同。",
+        "该变更适用r10-worker-policy-review.json的新候选条件。正式验收需冻结并重新派生manifest，现有2-worker结果不能代替3-worker整条root。"
+      ]
+    }
+  ],
+  "existing_evidence": {
+    "prior_root": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-root-readback.json",
+      "source_guard": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-root-source-guard.json",
+      "candidate": "d33c887655d26452dc14846b8f732331cf825a34",
+      "timed_out": true,
+      "duration_ms": 1800538,
+      "completed_files": 1082,
+      "registered_files": 1272,
+      "source_unchanged": true,
+      "final_counts": null
+    },
+    "isolation": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-chat-isolation.json",
+      "command": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-chat-isolation-command.json",
+      "passed": 21,
+      "total": 21,
+      "failed": 0,
+      "pending": 0,
+      "workers": 2,
+      "exit_code": 0,
+      "attribution": "主代理既有工作树focused执行"
+    },
+    "historical": {
+      "report": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-historical-after-worker.json",
+      "command": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r10-historical-after-worker-command.json",
+      "passed": 46,
+      "total": 46,
+      "failed": 0,
+      "pending": 0,
+      "workers": 1,
+      "exit_code": 0,
+      "files": [
+        "rsi-historical-task-corpus.test.ts",
+        "rsi-decision-check.test.ts",
+        "rsi-tf0592-statistical-adjudication.test.ts",
+        "versegit-wp6-closeout.test.ts",
+        "typecheck-gate.test.ts"
+      ],
+      "status": "审查过程中最终报告已落盘并回读通过。"
+    },
+    "three_worker_full_root": "本轮尚无该工作树新候选的完整根测试结果。"
+  },
+  "validation": {
+    "diff_check": "pass",
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0,
+    "git_mutations": 0,
+    "subagents_spawned": 0
+  },
+  "recorded_at": "2026-11-20T13:08:32.1835384+08:00",
+  "committed_candidate_readback": {
+    "recorded_at": "2026-11-20T13:10:59.4534886+08:00",
+    "commit": "8a1d72009a30dae0e960a0555b12d78651252b7e",
+    "tree": "fb8c590f0dde135d3915c0cbdd6c32450bcb7183",
+    "clean": true,
+    "reviewed_file_count": 4,
+    "all_four_sha256_match": true,
+    "result": "PASS_STATIC_REVIEW",
+    "note": "提交包含原审查的四文件delta，文件SHA逐项一致；此前静态结论绑定到此提交。",
+    "formal_verifier_execution": false
+  }
+}
