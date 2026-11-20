@@ -43,3 +43,5 @@ TF0686连续性验收使用既有 Working Context、Task context 与30对冻结�
 TF0684总控派发旅程验证后台项目A写入、项目B模型在途时全局暂停后写入被拒，UI活动workspace保持不变。三个项目在真实ResourceFabric准入队列中的等待和失败隔离由定向测试回读；重复请求不重复派发，恢复后旧控制版本拒绝。
 
 TF0685配置旅程包括只读预览、实际重载、两次重载失败后的degraded、页面重载后由当前owner恢复，以及四语的desired/configured/effective/runtime-generation展示。未知费用、全局扩权、自改evaluator、secret参数、共享Agent和陈旧revision均拒绝。
+
+TF0687经验治理验证成功/失败Mission候选、审核前不可见、原session使用、跨session拒绝、撤销/替代/过期后后续读取失效。真实Gateway canary核对pending/accepted/foreign/revoked四次provider请求，并区分selector receipt和最终prompt delivery；8个留出查询复用既有预算评估，不把结构覆盖作为live模型质量。

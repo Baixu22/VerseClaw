@@ -706,7 +706,7 @@ function withInnerTaskLoopConfig(
 }
 
 function memoryEvidenceRefs(record: MissionRunRecord): MemoryEvidenceRef[] {
-  return record.evidenceRefs.flatMap((ref) => {
+  return [{ type: 'session', ref: record.sessionKey }, { type: 'tool', ref: `mission:${record.missionId}:tick:${record.tick}` }, ...record.evidenceRefs.flatMap((ref) => {
     if (
       ref.type === "trace" ||
       ref.type === "session" ||
@@ -731,7 +731,7 @@ function memoryEvidenceRefs(record: MissionRunRecord): MemoryEvidenceRef[] {
       ];
     }
     return [];
-  });
+  })] as MemoryEvidenceRef[];
 }
 
 function clampScore(value: number): number {
@@ -983,7 +983,7 @@ function proposeMemoryCandidates(
     const proposal: MemoryProposal = {
       type: "episode",
       scope: "session",
-      scopeKey: record.missionId,
+      scopeKey: record.sessionKey,
       roleTags: ["mission-control"],
       content: candidate.summary,
       evidenceRefs: memoryEvidenceRefs(record),
@@ -992,6 +992,8 @@ function proposeMemoryCandidates(
       importance: 0.4,
       source: "trace",
       durability: "session",
+      sensitivity: 'normal',
+      expiresAt: new Date((deps.now?.() ?? Date.now()) + 24 * 60 * 60 * 1000).toISOString(),
       operation: "create",
       reason: `Mission ${record.missionId} memory candidate`,
     };
@@ -1039,7 +1041,7 @@ function proposeExtractedMemoryCandidates(
   const drafts = extractMemoryProposalDrafts({
     text,
     roleName: "mission-control",
-    scopeKey: record.missionId,
+    scopeKey: record.sessionKey,
     source: "trace_summary",
     evidenceRefs: memoryEvidenceRefs(record),
   });
@@ -1047,8 +1049,8 @@ function proposeExtractedMemoryCandidates(
   for (const draft of drafts) {
     const proposal: MemoryProposal = {
       type: draft.type,
-      scope: draft.scope,
-      scopeKey: draft.scopeKey ?? record.missionId,
+      scope: 'session',
+      scopeKey: record.sessionKey,
       roleTags: draft.roleTags,
       content: draft.content,
       evidenceRefs: draft.evidenceRefs,
@@ -1057,6 +1059,8 @@ function proposeExtractedMemoryCandidates(
       importance: draft.importance,
       source: draft.source,
       durability: "session",
+      sensitivity: 'normal',
+      expiresAt: new Date((deps.now?.() ?? Date.now()) + 24 * 60 * 60 * 1000).toISOString(),
       operation: "create",
       reason: `Mission ${record.missionId} extracted memory candidate (tick ${record.tick})`,
     };

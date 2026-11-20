@@ -361,7 +361,7 @@ describe('Mission Control controller', () => {
     expect(deps.proposeMemory).toHaveBeenCalledTimes(1);
     expect(deps.proposeMemory).toHaveBeenCalledWith(expect.objectContaining({
       content: 'Remember that Mission Control evidence should stay review-gated.',
-      scopeKey: expect.stringMatching(/^mission-/),
+      scope: 'session', scopeKey: 'agent:main:session', expiresAt: expect.any(String),
     }), expect.anything());
     expect(createKnowledgeInboxItem).not.toHaveBeenCalled();
   });
@@ -438,6 +438,7 @@ describe('Mission Control controller', () => {
     expect(deps.proposeMemory).toHaveBeenCalledWith(expect.objectContaining({
       content: 'to verify Mission evidence before reuse.',
       source: 'trace',
+      scope: 'session', scopeKey: 'agent:main:session',
     }), expect.anything());
   });
 

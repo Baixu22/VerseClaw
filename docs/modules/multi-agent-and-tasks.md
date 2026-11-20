@@ -547,3 +547,5 @@ Git 工作树存在未提交内容时拒绝回收，声明的写集也不能豁�
 总控派发复用 sessions.dispatchPlanTask 和持久委派回执。Main 以已登记负责人、代次、项目根目录、权限和控制版本建立单请求执行范围，不修改 UI activeWorkspace。排队使用 ResourceFabric 的单槽 projectDispatch 准入队列，tenant 为项目，沿用等待老化与份额比较；worker 生命周期和费用仍由 Runtime owner 持有。Workspace 保存全局暂停版本，变更与受管效果准入共享 mutation barrier；Runtime 开始新领取、评审和受管效果前也读取暂停。已准入效果结清，读取、核对、停止和取消可继续；未知派发结果复用原回执，禁止重复发起。
 
 配置操作员只接受modelRef、denyTools和contextTokens。独占Agent检查覆盖workspace所有绑定；预览生成configRevision与patch digest。应用在Workspace mutation barrier与原config mutex中写入，原配置仍是唯一真源；Workspace只保留无凭据的操作回执和已改字段备份。Runtime flags ack从已加载配置返回安全投影与gateway generation，未确认生效不标applied。重载失败按触碰字段CAS回滚并核验，冲突保留degraded；当前owner可枚举和reconcile持久操作，旧owner重放不能重启Runtime。
+
+Mission 的直接经验候选和摘要提炼候选均使用原 sessionKey 作为 session scope，记录 mission/tick 与原证据引用，设置 24h TTL。候选继续走原 Role Memory 审核 owner，未接受不进入实际 provider；canary由agent审核并保留actor。相同provider对象在撤销、替代或过期后的下一次读取重新校验原store。记忆选择回执表示selector选中，实际模型请求投递还需共享注入预算和最终request回读；M2显式12000字符canary证明投递，默认2000预算下未投递记录保留。

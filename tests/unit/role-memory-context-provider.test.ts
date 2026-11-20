@@ -186,7 +186,7 @@ describe("role memory context provider", () => {
       defaultTokenBudget: 1024,
     });
     const result = await provider.getContext({
-      goal: "test",
+      goal: "Fact that should be budgeted.",
       tokenBudget: 64,
     });
 
@@ -236,7 +236,7 @@ describe("role memory context provider", () => {
     // Even with runtime.memory.provider: false (runtime memory disabled),
     // role memory should still inject because it is gated by OPENCLAW_ROLE_MEMORY_ENABLED.
     const result = await provider.getContext({
-      goal: "test",
+      goal: "Fact that should surface regardless of runtime.memory.provider flag.",
       metadata: enabledConfig,
     });
 

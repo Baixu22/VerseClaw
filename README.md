@@ -362,3 +362,5 @@ Project continuity reads accepted context for the bound tasks and rechecks coord
 System overview can dispatch the next ready task for an explicitly bound project without switching the active workspace. Each request uses that project’s permissions and budget. Global pause blocks new dispatches and managed effects while admitted effects settle; resuming a project cannot override the global pause.
 
 Project configuration supports typed previews for an exclusive project Agent. It may select an existing model with known non-increasing prices, add tool restrictions, or reduce context limits. Applying verifies the loaded Runtime generation; reload failures roll back only the fields changed by that operation. Pending or degraded operations can be recovered from the project card after reopening the app.
+
+Mission experience remains a reviewable candidate, bound to the originating session with source references and a 24-hour expiry. Accepted experience is filtered by session and lifecycle on each context read; revocation, replacement and expiry stop subsequent reuse. Delivery to a model also depends on the existing shared context budget.
