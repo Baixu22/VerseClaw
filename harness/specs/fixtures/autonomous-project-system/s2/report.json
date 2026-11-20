@@ -1,0 +1,30 @@
+{
+  "node": "TF-0684",
+  "driven_by": "agent",
+  "actor": "codex-g5-system-dispatch",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "1e7d28cb90f06685d5566932213c4223916fdcd0",
+    "tree": "cbdea89ac2ee6c5bcccf21276a575e7331f2d26c"
+  },
+  "verdict": {
+    "source": "passed",
+    "runtime": "passed",
+    "effect": "passed",
+    "liveModelQuality": "not-measured"
+  },
+  "counts": {
+    "unit": 490,
+    "electron": 2,
+    "localeThemeFrames": 8,
+    "failed": 0,
+    "skipped": 0
+  },
+  "rawRoot": "D:\\tmp\\g5-20261120\\s2-final-r2",
+  "sourceReview": "independent-review.json",
+  "measurement": "Actual Gateway workers on two projects under a readOnly active workspace; local scripted provider",
+  "resourceScope": "ResourceFabric serializes project dispatch admission with tenant fairness. Worker lifetime and spend remain with existing runtime owners.",
+  "repositoryHarnessCi": "Last whole-repository b5ce07acd run failed on four stale Agent Dev reports and three historical performance limits; this node runs scoped gates",
+  "priorReviewFindings": "D:/tmp/g5-20261120/s2-source-review.json, s2-review-final.json and s2-review-third.json retained; findings repaired and tested before final candidate",
+  "package": "source Electron; installed combined acceptance continues in TF-0689"
+}
