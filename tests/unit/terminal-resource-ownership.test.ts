@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
 import { mkdtempSync, rmSync } from 'node:fs';

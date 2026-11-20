@@ -1,4 +1,3 @@
-// @vitest-environment node
 /**
  * i18n locale parity test
  *

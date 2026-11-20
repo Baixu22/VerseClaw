@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { rmSync } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
 import { collectMc0Baseline, validateMc0Baseline } from '../../scripts/versegit-mc0-baseline.mjs';

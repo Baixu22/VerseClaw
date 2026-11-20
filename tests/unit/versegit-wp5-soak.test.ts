@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { buildWp5Report, validateWp5Report } from '../../scripts/versegit-wp5-soak.mjs';

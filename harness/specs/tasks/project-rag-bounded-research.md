@@ -187,34 +187,6 @@ touchedAreas:
   - "openclaw_runtime/src/gateway/server-methods/sessions.read.ts"
   - "tests/unit/knowledge-session-identity.test.ts"
   - "docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/**"
-  - "tests/unit/rsi-candidate-evolution.test.ts"
-  - "tests/unit/versegit-candidate-freeze.test.ts"
-  - "tests/unit/versegit-candidate-receipts.test.ts"
-  - "tests/unit/checkout-writer-ownership.test.ts"
-  - "tests/unit/role-memory-v2.test.ts"
-  - "tests/unit/release-baseline-p6-005.test.ts"
-  - "tests/unit/versegit-cleanup-barrier.test.ts"
-  - "tests/unit/worktree-registry-restart.test.ts"
-  - "tests/unit/terminal-resource-native.test.ts"
-  - "tests/unit/harness-git.test.ts"
-  - "tests/unit/process-tree-sampler.test.ts"
-  - "tests/unit/versegit-completion-lifecycle.test.ts"
-  - "tests/unit/terminal-resource-ownership.test.ts"
-  - "tests/unit/i18n-locale-parity.test.ts"
-  - "tests/unit/versegit-mc0-baseline.test.ts"
-  - "tests/unit/rc09-ownership-matrix.test.ts"
-  - "tests/unit/versegit-wp5-soak.test.ts"
-  - "tests/unit/lobe-icons-assets.test.ts"
-  - "tests/unit/role-memory-context-provider.test.ts"
-  - "tests/unit/memory-dual-gate-p3-003.test.ts"
-  - "tests/unit/policy-light-snapshotter.test.ts"
-  - "tests/unit/autonomy-worktree-owner.test.ts"
-  - "tests/unit/terminal-session-manager.test.ts"
-  - "tests/unit/tf0018-cross-workspace-session-isolation.test.ts"
-  - "tests/unit/runtime-event-log-persistence.test.ts"
-  - "tests/unit/versegit-mc3-delivery.test.ts"
-  - "tests/unit/orchestration-worktree-merge.test.ts"
-  - "tests/unit/comms-scripts.test.ts"
   - "scripts/typecheck-agent-dev.mjs"
   - "tests/unit/typecheck-gate.test.ts"
 requiredProfiles:
@@ -290,6 +262,6 @@ Cargo 为其设置 `test=false`。完整锁定的库、12 个集成目标和文�
 
 Knowledge身份复验使用sessions.describe的identityOnly投影，直接从同一session owner读取canonical key、generation和status，省略模型/转录装饰；每次读取均重新校验，旧完整describe默认响应保留。
 
-单次验收计划复用已验证的比较基准，并将真实差异绑定到本次读取的候选 commit；后续调用重新解析移动 ref 和 ancestry。NUL 差异保留前导空白路径。纯 Node 的 Git、持久化与进程回归显式使用 Node 环境，原用例、断言、隔离和超时保持。
+单次验收计划复用已验证的比较基准，并将真实差异绑定到本次读取的候选 commit；后续调用重新解析移动 ref 和 ancestry。NUL 差异保留前导空白路径。
 
 类型检查的指纹读取按32文件批量执行，仍按原排序逐字节计算相同SHA-256，读取错误直接失败；测试覆盖跨批次的测试文件与runtime输入变更使缓存失效。
