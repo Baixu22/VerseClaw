@@ -2,6 +2,8 @@
 
 Gateway 重启后，任务效果准入等待唯一 Main 桥完成认证，并与 Main 回应共享原 15 秒预算。等待期间保留请求去重和当前 run 核验；多桥歧义、代次变化、超时或不匹配的结果继续拒绝效果。
 
+2026-11-20 的来源激活事实修复已提交为 `133a98d1f`：Agent 首次准备携带 `openai` 来源激活理由，直接复用原九个启动插件；45 项回归、指定模型复核、类型感知 lint、两份 Harness、通信、runtime 构建和源码门禁通过。完整无缓存类型检查外层 40.963 秒，桌面构建 89.118 秒；三组连续三次真实 kill 全部正确终态、重复和丢失为 0，恢复 64.275、104.411、91.944 秒。恢复时延和桌面构建仍超原 15/58 秒预算，GA 保持 **NO_GO**。[来源激活验证](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/activation-provenance-20261120/README.md)保存 255 份原件、18 份附件、九个源码输入及诊断改写的恢复记录。
+
 2026-11-20 的桥接等待修复已提交为 `e3384611c`：38 项回归与指定 `ccs-ai/gpt-6.1-sol` 复核通过，完整无缓存类型检查外层 41.688 秒、桌面构建 56.565 秒，满足原 45/58 秒预算；runtime 构建、启动检查、源码门禁、lint、Harness 与通信检查通过。三组连续三次真实重启全部正确完成，重复和丢失均为 0，耗时 32.935、32.207、34.844 秒。18 份磁盘附件与 147 份归档原件逐 SHA256 回读一致。恢复用时仍超过原 15 秒上限，GA 保持 **NO_GO**；继续定位启动和恢复准备耗时。[桥接修复与验证](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/bridge-readiness-20261120/README.md)保存当时源码字节、独立复核与全部试次。
 
 2026-11-20 接力修复已提交为 `a3e185925` 和 `6ab34b48c`：启动计划、lookup table与只读渠道视图复用兼容快照的discovery；来源重叠时保留环境目录回退。最新39项关联回归和指定 `ccs-ai/gpt-6.1-sol` 复核通过。两个启动入口各九次调用的bundled目录读取18→0；18次只读查询27→0，返回内容一致。最新完整类型检查35.017秒、runtime构建/启动、源码门禁与通信检查通过。[启动证据](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/startup-discovery-20261119/README.md)与[只读查询证据](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/readonly-discovery-20261119/README.md)保留原始失败、复核、编译对照和附件。

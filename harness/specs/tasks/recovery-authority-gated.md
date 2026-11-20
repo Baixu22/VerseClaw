@@ -11,6 +11,7 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/activation-provenance-20261120/**
   - tests/unit/session-task-scope-bridge.test.ts
   - openclaw_runtime/src/infra/runtime-compile-cache.ts
   - openclaw_runtime/src/agents/command/attempt-execution.runtime.ts
