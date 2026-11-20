@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
   Archive,
@@ -2955,6 +2956,7 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
 
           {/* Section B: orchestration task */}
           <div className="space-y-3 border-t border-border/60 pt-4">
+            <Link to="/system" className="block text-sm underline underline-offset-4">{t('portfolio.title')}</Link>
             <span className="text-sm font-medium">{tt('roles.orchestrate', 'Orchestrate task')}</span>
             <div
               data-testid="routing-memo-dashboard"

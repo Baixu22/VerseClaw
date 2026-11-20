@@ -1,4 +1,5 @@
 import { knowledgeHostApi } from './host-api/knowledge';
+import type { SystemProjectRead } from '@shared/types/system-portfolio';
 import type { SessionStorageScope, StorageRemovePayload } from '@shared/types/session-storage';
 import type {
   AgentCreatePayload,
@@ -830,6 +831,8 @@ export const hostApi = {
   },
   workspaces: {
     list: () => invokeHost('workspaces', 'list'),
+    portfolio: () => invokeHost('workspaces', 'portfolio'),
+    projectSummary: (input: SystemProjectRead) => invokeHost('workspaces', 'projectSummary', input),
     getActive: () => invokeHost('workspaces', 'getActive'),
     create: (input: WorkspaceCreatePayload) => invokeHost('workspaces', 'create', input),
     update: (id: string, input: Omit<WorkspaceUpdatePayload, 'id'>) => (

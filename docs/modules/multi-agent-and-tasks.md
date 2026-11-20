@@ -539,3 +539,5 @@ Git 工作树存在未提交内容时拒绝回收，声明的写集也不能豁�
 交接前，Task Ledger 等待在途工具操作结清。新负责人用新的 writer epoch 接续同一任务和 checkpoint；源会话保留历史，完成通知根据 Workspace 已提交的交接状态拒绝唤醒源负责人。
 
 需要独立评审的项目任务声明 subagent-verifier、待评审文件及 maxRepairAttempts（0 或 1）。负责人检查整合后的文件、提交候选，再用 task_control.review 派发现有只读 reviewer。评审回执绑定本次提交、负责人代次和文件摘要；完成通知唤醒负责人继续验收。评审不通过时，task_control.repair 消费约定次数并使旧检查失效；修复后重新测试、提交和评审。重启、交接或重复请求保持同一预算与派发记录。最终报告列出已验证结果、未测项、残留和下一步。
+
+系统总览通过 Workspace 的只读目录和每项目摘要入口读取已登记项目。计划、待决事项、任务与回执来自原 TaskSystemStore；负责人代次来自 Workspace 绑定与 Runtime 会话描述；资源按 workspace 从 Resource Envelope 过滤并保留观测时间。各项目独立加载，身份变化后拒绝旧响应，读取失败保留陈旧标记及上次状态。页面不建立计划、不派发、不切换活动工作区；点击项目名时使用既有项目负责人入口。

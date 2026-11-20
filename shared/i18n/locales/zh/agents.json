@@ -795,5 +795,40 @@
     "openFromAgents": "在唯一的记忆面板中审阅已批准记忆、候选、批准、删除与导出。",
     "openFromAgentsAction": "打开记忆",
     "runtimeCandidateNotPersisted": "Runtime 候选当前不会持久化；Role 提议队列仍然可用。"
-  }
+  },
+    "portfolio": {
+        "title": "系统总览",
+        "readOnly": "系统范围 · 查看各项目状态，进入项目负责人会话。",
+        "refresh": "刷新",
+        "filter": "筛选项目",
+        "loading": "正在读取项目状态…",
+        "listUnavailable": "项目列表暂不可用，已保留上次读取的状态。",
+        "empty": "没有匹配的项目。",
+        "projectScope": "项目范围 · 项目负责人负责执行",
+        "unavailable": "暂时无法读取项目状态。",
+        "stale": "刷新失败，当前显示上次读取的状态。",
+        "coordinator": "负责人",
+        "coordinatorState": {
+            "ready": "可用",
+            "paused": "已暂停",
+            "unbound": "未绑定",
+            "unavailable": "不可用"
+        },
+        "observedAt": "读取时间：{{time}}",
+        "nextAction": "下一步",
+        "unknown": "未知",
+        "tasks": "任务：已验收 {{done}} / {{total}}",
+        "decisions": "待决事项",
+        "noPlan": "尚未记录项目计划。",
+        "activeClaims": "持有的任务资格",
+        "pendingEffects": "待结清效果",
+        "cost": "已归属费用",
+        "references": "归属与证据引用",
+        "session": "会话",
+        "generation": "代次",
+        "task": "任务",
+        "revision": "版本 {{revision}}",
+        "noEvidence": "尚无验证回执。",
+        "resources": "已观测活跃资源"
+    }
 }

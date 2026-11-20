@@ -1,4 +1,5 @@
 import type { RawMessage } from '../chat/types';
+import type { SystemPortfolio, SystemProjectRead, SystemProjectSnapshot } from '../types/system-portfolio';
 import type { SessionHandoffOperation } from '../types/session-handoff';
 import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
 export type { WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
@@ -5833,6 +5834,8 @@ export type HostApiContract = {
   };
   workspaces: {
     list: () => WorkspaceSnapshotResult;
+    portfolio: () => SystemPortfolio;
+    projectSummary: (payload: SystemProjectRead) => SystemProjectSnapshot;
     getActive: () => WorkspaceActiveResult;
     create: (payload: WorkspaceCreatePayload) => WorkspaceCreateResult;
     update: (payload: WorkspaceUpdatePayload) => WorkspaceSnapshotResult;

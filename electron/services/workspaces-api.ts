@@ -1,4 +1,6 @@
 import { access, realpath, stat } from 'node:fs/promises';
+import { systemProjectOwnerKey } from '@shared/types/system-portfolio';
+import type { WorkspaceId } from '@shared/types/identity-scope';
 import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { basename, resolve } from 'node:path';
@@ -1652,6 +1654,13 @@ export function createWorkspacesApi(
       const document = await ensureDocumentWithDefault();
       return successSnapshot(document);
     },
+    projectSummary: async (payload) => {
+      const { readSystemProject } = await import('./system-portfolio');
+      return readSystemProject(payload, ctx.gatewayManager);
+    },
+    portfolio: async () => ({ scope: 'system', profiles: (await readDocument()).profiles.map(profile => ({
+      id: profile.id as WorkspaceId, name: profile.name, ownerKey: systemProjectOwnerKey(profile),
+    })) }),
     getActive: async () => {
       const document = await ensureDocumentWithDefault();
       const snapshot = toSnapshot(document);

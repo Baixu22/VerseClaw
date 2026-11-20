@@ -15,6 +15,16 @@ beforeEach(() => {
 });
 
 describe('hostApi facade', () => {
+  it('reads system portfolio and project identity through Main', async () => {
+    hostInvoke.mockResolvedValue({ ok: true, data: {} });
+    const { hostApi } = await import('@/lib/host-api');
+    await hostApi.workspaces.portfolio();
+    await hostApi.workspaces.projectSummary({ workspaceId: 'project-a', expectedOwnerKey: 'owner-version' });
+    expect(hostInvoke.mock.calls.map(([request]) => ({ module: request.module, action: request.action, payload: request.payload }))).toEqual([
+      { module: 'workspaces', action: 'portfolio', payload: undefined },
+      { module: 'workspaces', action: 'projectSummary', payload: { workspaceId: 'project-a', expectedOwnerKey: 'owner-version' } },
+    ]);
+  });
   it('routes handoff creation through Main with the source session and edited draft', async () => {
     hostInvoke.mockResolvedValueOnce({ ok: true, data: { success: true, sessionKey: 'agent:main:derived', handoffDepth: 1 } });
     const { hostApi } = await import('@/lib/host-api');

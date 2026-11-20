@@ -795,5 +795,40 @@
     "openFromAgents": "Review accepted memory, candidates, approval, deletion and export in one Memory panel.",
     "openFromAgentsAction": "Open Memory",
     "runtimeCandidateNotPersisted": "Runtime candidates are not persisted; the Role proposal queue remains available."
-  }
+  },
+    "portfolio": {
+        "title": "System overview",
+        "readOnly": "System scope · Read project status and open each project coordinator.",
+        "refresh": "Refresh",
+        "filter": "Filter projects",
+        "loading": "Reading project owners…",
+        "listUnavailable": "Project list unavailable. Previous observations are retained.",
+        "empty": "No matching projects.",
+        "projectScope": "Project scope · Project coordinator owns execution",
+        "unavailable": "Project owners are unavailable.",
+        "stale": "Refresh failed. Showing the previous observation.",
+        "coordinator": "Coordinator",
+        "coordinatorState": {
+            "ready": "Available",
+            "paused": "Paused",
+            "unbound": "Not bound",
+            "unavailable": "Unavailable"
+        },
+        "observedAt": "Observed at {{time}}",
+        "nextAction": "Next action",
+        "unknown": "Unknown",
+        "tasks": "Tasks: {{done}} / {{total}} accepted",
+        "decisions": "Pending decisions",
+        "noPlan": "No project plan recorded.",
+        "activeClaims": "Task claims held",
+        "pendingEffects": "Pending effects",
+        "cost": "Attributed cost",
+        "references": "Owner and evidence references",
+        "session": "Session",
+        "generation": "Generation",
+        "task": "Task",
+        "revision": "Revision {{revision}}",
+        "noEvidence": "No verification receipts recorded.",
+        "resources": "Observed active resources"
+    }
 }

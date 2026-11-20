@@ -656,7 +656,7 @@ export function Sidebar() {
     return () => window.clearInterval(intervalId);
   }, [location.pathname, refreshInbox]);
 
-  const { t } = useTranslation(['common', 'chat', 'taskLedger', 'clawGraph', 'codeReview']);
+  const { t } = useTranslation(['common', 'chat', 'taskLedger', 'clawGraph', 'codeReview', 'agents']);
   /* The delete target outlives the dialog on purpose: the closing animation
      still shows its name, and the next request replaces it. It used to be
      cleared by a 160ms timer, which raced the 130ms exit animation under load
@@ -1088,6 +1088,7 @@ export function Sidebar() {
   const extraNavItems = rendererExtensionRegistry.getExtraNavItems();
 
   const coreNavItems = [
+    { to: '/system', icon: <Laptop className="h-4 w-4" strokeWidth={2} />, label: t('agents:portfolio.title'), testId: 'sidebar-nav-system' },
     {
       to: '/inbox',
       icon: <CodexInbox className="h-4 w-4" strokeWidth={2} />,

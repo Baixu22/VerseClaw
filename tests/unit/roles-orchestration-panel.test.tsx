@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import RolesOrchestrationPanel from '@/components/agents/RolesOrchestrationPanel';
@@ -94,11 +95,11 @@ vi.mock('sonner', () => ({
 
 function renderPanel() {
   return render(
-    <TooltipProvider>
+    <MemoryRouter><TooltipProvider>
       <RolesOrchestrationPanel
         agents={[{ id: 'main', name: 'Main', isDefault: true, mainSessionKey: 'agent:main:abc' }]}
       />
-    </TooltipProvider>,
+    </TooltipProvider></MemoryRouter>,
   );
 }
 
