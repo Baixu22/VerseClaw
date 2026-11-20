@@ -551,6 +551,8 @@ describe('Agent Engineering Acceptance', () => {
     git(root, ['add', '--', specPath]);
     git(root, ['commit', '--quiet', '-m', 'leading-space task']);
     const plan = createAcceptancePlan({ root, specPath, since: 'HEAD^' });
+    expect(plan.changedPaths).toEqual([specPath]);
+    expect(resolveChangedPaths(root, { since: 'HEAD^' })).toEqual([specPath]);
     expect(validateAcceptanceManifest(plan, { root, requireClean: false }).ok).toBe(true);
     writeFileSync(join(root, specPath), readFileSync(join(root, specPath), 'utf8') + '\nchanged body\n');
     const invalid = validateAcceptanceManifest(plan, { root, requireClean: false });
@@ -1090,6 +1092,28 @@ describe('Agent Engineering Acceptance', () => {
     expect(() => resolveChangedPaths(root, { since: 'no-such-ref' })).toThrow(/invalid or missing base ref/);
     // An explicit changedPaths list never touches the base ref machinery.
     expect(resolveChangedPaths(root, { changedPaths: ['src/a.ts', 'src/b.ts'] })).toEqual(['src/a.ts', 'src/b.ts']);
+  });
+
+  it('revalidates moved comparison refs and rejects non-ancestors on each plan and direct diff call', () => {
+    const root = createFixtureRepository();
+    const base = repositoryIdentity(root).commit;
+    git(root, ['tag', 'comparison', base]);
+    writeFileSync(join(root, 'change.ts'), 'export const changed = true;\n');
+    git(root, ['add', 'change.ts']);
+    git(root, ['commit', '--quiet', '-m', 'candidate change']);
+    const candidate = repositoryIdentity(root).commit;
+    const options = {
+      root,
+      spec: { path: 'harness/specs/tasks/fixture.md', data: { id: 'fixture-task', diffBase: 'comparison' }, body: '# fixture' },
+      since: ' comparison ',
+    };
+    expect(createAcceptancePlan(options)).toMatchObject({ baseRef: base, changedPaths: ['change.ts'] });
+    git(root, ['tag', '--force', 'comparison', candidate]);
+    expect(createAcceptancePlan(options)).toMatchObject({ baseRef: candidate, changedPaths: [] });
+    const unrelated = gitText(root, ['commit-tree', `${base}^{tree}`, '-m', 'unrelated root']);
+    git(root, ['tag', '--force', 'comparison', unrelated]);
+    expect(() => createAcceptancePlan(options)).toThrow(/not an ancestor/);
+    expect(() => resolveChangedPaths(root, { since: 'comparison' })).toThrow(/not an ancestor/);
   });
 
   it('createAcceptancePlan fails closed without an explicit since or changed paths', () => {

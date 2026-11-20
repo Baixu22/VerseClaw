@@ -339,7 +339,7 @@ export function repositoryIdentity(root = REPOSITORY_ROOT, options = {}) {
   };
 }
 
-function assertBaseRef(root, since) {
+function assertBaseRef(root, since, candidate = 'HEAD') {
   if (typeof since !== 'string' || since.trim() === '') {
     throw new Error('acceptance plan requires --since <ref> (or explicit --changed paths); the implicit HEAD^ default is removed');
   }
@@ -349,17 +349,16 @@ function assertBaseRef(root, since) {
   if (rev.status !== 0 || !/^[a-f0-9]{40}$/u.test(rev.stdout)) {
     throw new Error(`invalid or missing base ref: ${since}`);
   }
-  const mergeBase = runGit(root, ['merge-base', '--is-ancestor', rev.stdout, 'HEAD'], { allowFailure: true });
+  const mergeBase = runGit(root, ['merge-base', '--is-ancestor', rev.stdout, candidate], { allowFailure: true });
   if (mergeBase.status !== 0) {
     throw new Error(`base ref is not an ancestor of HEAD: ${since}`);
   }
   return rev.stdout;
 }
 
-function gitChangedPaths(root, since) {
-  const base = assertBaseRef(root, since);
-  const result = runGit(root, ['diff', '--name-only', '-z', `${base}..HEAD`]);
-  return result.stdout
+function gitChangedPaths(root, base, candidate = 'HEAD') {
+  const result = runGit(root, ['diff', '--name-only', '-z', `${base}..${candidate}`]);
+  return String(result.result.stdout ?? '')
     .split('\0')
     .map(normalizePath)
     .filter(Boolean)
@@ -383,7 +382,7 @@ export function resolveChangedPaths(root = REPOSITORY_ROOT, options = {}) {
   }
   // No implicit HEAD^ default and no catch-all fallback: an invalid or missing
   // --since ref must fail closed instead of silently using the HEAD file list.
-  return gitChangedPaths(root, options.since);
+  return gitChangedPaths(root, assertBaseRef(root, options.since));
 }
 
 function globToRegExp(glob) {
@@ -655,14 +654,21 @@ export function createAcceptancePlan(options = {}) {
   // or fall back to the HEAD file list.
   let baseRef = null;
   if (!hasExplicitChangedPaths) {
-    baseRef = assertBaseRef(root, options.since);
+    baseRef = assertBaseRef(root, options.since, identity.commit);
   } else if (typeof options.since === 'string' && options.since.trim() !== '') {
-    baseRef = assertBaseRef(root, options.since);
+    baseRef = assertBaseRef(root, options.since, identity.commit);
   }
-  if (baseRef && spec.data?.diffBase && baseRef !== assertBaseRef(root, String(spec.data.diffBase))) {
-    throw new Error('comparison base must match the candidate task spec diffBase');
+  if (baseRef && spec.data?.diffBase) {
+    const declaredBase = String(spec.data.diffBase).trim();
+    // Reuse only this plan's verified base; later calls must re-read movable refs.
+    const specBase = declaredBase === options.since.trim() || declaredBase === baseRef
+      ? baseRef
+      : assertBaseRef(root, declaredBase, identity.commit);
+    if (baseRef !== specBase) throw new Error('comparison base must match the candidate task spec diffBase');
   }
-  const changedPaths = resolveChangedPaths(root, options);
+  const changedPaths = hasExplicitChangedPaths
+    ? resolveChangedPaths(root, options)
+    : gitChangedPaths(root, baseRef, identity.commit);
   const coverage = inferCoverage(changedPaths);
   const { profiles, deferredProfiles } = inferProfiles(spec, coverage, mode);
   const rulePaths = collectRulePaths(spec);

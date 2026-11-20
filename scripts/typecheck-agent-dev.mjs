@@ -185,12 +185,15 @@ async function createTypecheckFingerprint() {
     .sort((left, right) => left.relative.localeCompare(right.relative));
 
   const hash = createHash('sha256');
-  for (const file of uniqueFiles) {
-    const content = await readFile(file.absolute);
-    hash.update(file.relative);
-    hash.update('\0');
-    hash.update(content);
-    hash.update('\0');
+  for (let offset = 0; offset < uniqueFiles.length; offset += 32) {
+    const batch = uniqueFiles.slice(offset, offset + 32);
+    const contents = await Promise.all(batch.map((file) => readFile(file.absolute)));
+    for (const [index, file] of batch.entries()) {
+      hash.update(file.relative);
+      hash.update('\0');
+      hash.update(contents[index]);
+      hash.update('\0');
+    }
   }
 
   for (const entry of CACHE_INPUTS) {

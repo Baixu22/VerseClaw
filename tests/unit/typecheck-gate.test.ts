@@ -36,6 +36,10 @@ process.exit(result.status ?? 1);`);
       'typecheck:test': 'node scripts/check-test.mjs',
     } }));
     write('tsconfig.test.json', JSON.stringify({ compilerOptions: { strict: true, types: [] }, include: ['tests/**/*.ts'] }));
+    // Put test/runtime mutations beyond the first fingerprint read batch.
+    for (let index = 0; index < 40; index += 1) {
+      write(`electron/fingerprint-input-${index}.ts`, `export const value = ${index};`);
+    }
     write('tests/check.ts', 'export const value: number = "wrong";');
     const broken = run();
     expect(broken.report.testTypes.errorCount).toBe(1);
