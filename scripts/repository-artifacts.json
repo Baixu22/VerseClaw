@@ -166,7 +166,15 @@
     "harness/specs/fixtures/autonomous-project-system/s1/unit-tests.json",
     "harness/specs/fixtures/autonomous-project-system/s1/verify.py",
     "harness/specs/fixtures/autonomous-project-system/s1/zh-dark.png",
-    "harness/specs/fixtures/autonomous-project-system/s1/zh-light.png"
+    "harness/specs/fixtures/autonomous-project-system/s1/zh-light.png",
+    "harness/specs/fixtures/autonomous-project-system/execution-phase/credential-scan.json",
+    "harness/specs/fixtures/autonomous-project-system/execution-phase/gates.json",
+    "harness/specs/fixtures/autonomous-project-system/execution-phase/independent-review.json",
+    "harness/specs/fixtures/autonomous-project-system/execution-phase/journeys.json",
+    "harness/specs/fixtures/autonomous-project-system/execution-phase/report.json",
+    "harness/specs/fixtures/autonomous-project-system/execution-phase/SHA256SUMS",
+    "harness/specs/fixtures/autonomous-project-system/execution-phase/unit-tests.json",
+    "harness/specs/fixtures/autonomous-project-system/execution-phase/verify.py"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",

@@ -1,0 +1,51 @@
+{
+  "node": "TF-0666",
+  "driven_by": "agent",
+  "actor": "codex-g5-project-phase",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+    "tree": "01710d798f747d8b8cf86a79bb762f4c8f4d3616"
+  },
+  "verdict": {
+    "phaseFunctional": "passed",
+    "repositoryHarnessCi": "failed"
+  },
+  "counts": {
+    "unit": 330,
+    "electron": 11,
+    "failed": 0,
+    "skipped": 0
+  },
+  "rawRoot": "D:\\tmp\\g5-20261120\\p-phase-current",
+  "scope": "Agent-driven local scripted provider; actual Electron/Gateway, Task Ledger, worktree and receipt owners",
+  "sourceReferenceReports": [
+    "p1/report.json",
+    "p2/report.json",
+    "p3/closeout/report.json",
+    "p4/report.json"
+  ],
+  "correction": {
+    "driven_by": "agent",
+    "actor": "codex-g5-system",
+    "candidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+    "initialCommandMissingTarget": "tests/unit/session-delegation-admission.test.ts",
+    "actualInitialFiles": [
+      "tests/unit/long-session-completion-continuation.test.ts",
+      "tests/unit/role-spawn.test.ts",
+      "tests/unit/session-task-scope-completion.test.ts"
+    ],
+    "initialPassed": 67,
+    "correctiveRun": "dispatch-budgets-gate.json",
+    "correctiveFiles": [
+      "tests/unit/long-session-delegation-admission.test.ts",
+      "tests/unit/autonomy-resource-admission.test.ts",
+      "tests/unit/autonomy-provider-spend.test.ts",
+      "tests/unit/orchestration-resource-scheduler.test.ts"
+    ],
+    "correctivePassed": 81,
+    "notDoubleCounted": true
+  },
+  "initialReview": "D:/tmp/g5-20261120/p-phase-review-initial.json",
+  "requiredFullProgram": "System dispatch/configuration, context/memory, trace and combined source/package/quality acceptance continue in TF-0668/0669/0867."
+}
