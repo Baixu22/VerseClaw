@@ -360,3 +360,5 @@ System overview in the sidebar reads each registered project independently, incl
 Project continuity reads accepted context for the bound tasks and rechecks coordinator identity before sending. Handoffs retain task goals, constraints, pending decisions, progress and artifact references. Missing or changed artifact bytes remain explicit; oversized critical context stops the send with a diagnostic.
 
 System overview can dispatch the next ready task for an explicitly bound project without switching the active workspace. Each request uses that project’s permissions and budget. Global pause blocks new dispatches and managed effects while admitted effects settle; resuming a project cannot override the global pause.
+
+Project configuration supports typed previews for an exclusive project Agent. It may select an existing model with known non-increasing prices, add tool restrictions, or reduce context limits. Applying verifies the loaded Runtime generation; reload failures roll back only the fields changed by that operation. Pending or degraded operations can be recovered from the project card after reopening the app.

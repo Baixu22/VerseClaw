@@ -8,6 +8,7 @@ import { useSystemPortfolioStore } from '@/stores/system-portfolio';
 import { hostApi } from '@/lib/host-api';
 import type { SystemControlState } from '@shared/types/system-control';
 import type { SystemProjectSnapshot } from '@shared/types/system-portfolio';
+import { ProjectConfigurationPanel } from './ProjectConfigurationPanel';
 
 export function SystemPortfolioPanel() {
   const { t, i18n } = useTranslation('agents');
@@ -136,6 +137,7 @@ export function SystemPortfolioPanel() {
                   {snapshot.resources.observations.map(entry => <p key={entry.id}>{entry.owner} · {entry.id} · {entry.kind}</p>)}
                 </div>
               </details>
+              <ProjectConfigurationPanel workspaceId={profile.id} ownerKey={snapshot.ownerKey} />
             </div>}
           </article>;
         })}

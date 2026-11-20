@@ -3,6 +3,7 @@ import { systemProjectOwnerKey } from '@shared/types/system-portfolio';
 import type { WorkspaceId } from '@shared/types/identity-scope';
 import { normalizeSystemControl, type SystemControlChange, type SystemControlState } from '@shared/types/system-control';
 import { getExecutionWorkspaceProfile, getProjectExecutionScope } from './project-execution-scope';
+import type { ConfigurationOperation } from './project-configuration-operator';
 import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { basename, resolve } from 'node:path';
@@ -684,6 +685,20 @@ export async function getProjectCoordinatorProfiles(): Promise<WorkspaceProfile[
 
 export async function readSystemControl(): Promise<SystemControlState> {
   return normalizeSystemControl((await getWorkspaceStore()).get('systemControl'));
+}
+
+export async function readProjectConfigurationOperations(): Promise<Record<string, ConfigurationOperation>> {
+  return (await getWorkspaceStore()).get('projectConfigurationOperations') ?? {};
+}
+export async function saveProjectConfigurationOperations(operations: Record<string, ConfigurationOperation>): Promise<void> {
+  (await getWorkspaceStore()).set('projectConfigurationOperations', operations);
+}
+export function withProjectConfigurationOwner<T>(workspaceId: string, ownerKey: string, execute: () => Promise<T>): Promise<T> {
+  return withCoordinatorMutationLock(async () => {
+    const profile = (await readDocument()).profiles.find(p => p.id === workspaceId);
+    if (!profile || systemProjectOwnerKey(profile) !== ownerKey) throw new Error('CONFIG_PROJECT_OWNER_CHANGED');
+    return execute();
+  });
 }
 
 async function changeSystemControl(input: SystemControlChange): Promise<SystemControlState> {
@@ -1692,6 +1707,21 @@ export function createWorkspacesApi(
     })) }),
     systemControl: () => readSystemControl(),
     setSystemControl: payload => withCoordinatorMutationLock(() => changeSystemControl(payload)),
+    previewConfiguration: async payload => {
+      const { createProjectConfigurationOperator } = await import('./project-configuration-operator');
+      return createProjectConfigurationOperator(ctx.gatewayManager).preview(payload);
+    },
+    applyConfiguration: async payload => {
+      const { createProjectConfigurationOperator } = await import('./project-configuration-operator');
+      return createProjectConfigurationOperator(ctx.gatewayManager).apply(payload);
+    },
+    configurationOperation: async ({ requestId }) => (await readProjectConfigurationOperations())[requestId]?.result ?? null,
+    configurationOperations: async ({ workspaceId }) => Object.values(await readProjectConfigurationOperations())
+      .filter(operation => operation.result.workspaceId === workspaceId).map(operation => operation.result),
+    reconcileConfiguration: async payload => {
+      const { createProjectConfigurationOperator } = await import('./project-configuration-operator');
+      return createProjectConfigurationOperator(ctx.gatewayManager).reconcile(payload);
+    },
     getActive: async () => {
       const document = await ensureDocumentWithDefault();
       const snapshot = toSnapshot(document);
@@ -1701,7 +1731,7 @@ export function createWorkspacesApi(
         activeWorkspace: snapshot.activeWorkspace,
       };
     },
-    create: async (payload) => {
+    create: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceCreateBody : {};
       const rootPath = await normalizeRootPath(body.rootPath);
       const name = normalizeName(body.name, rootPath);
@@ -1748,7 +1778,7 @@ export function createWorkspacesApi(
       ctx.webPreviewManager?.registerWorkspace(profile);
       if (body.activate !== false) await syncWorkspacePermissionBestEffort();
       return { ...successSnapshot(nextDocument), createdWorkspace: profile };
-    },
+    }),
     update: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceUpdateBody : {};
       const id = requireId(body.id);
@@ -1844,9 +1874,11 @@ export function createWorkspacesApi(
       }
       return successSnapshot(nextDocument);
     }),
-    delete: async (payload) => {
+    delete: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceIdBody : {};
       const id = requireId(body.id);
+      if (Object.values(await readProjectConfigurationOperations()).some(operation => operation.result.workspaceId === id
+        && ['pending', 'degraded'].includes(operation.result.phase))) throw new Error('CONFIG_RECOVER_BEFORE_PROJECT_DELETE');
       const document = await readDocument();
       const profiles = document.profiles.filter((profile) => profile.id !== id);
       if (profiles.length === document.profiles.length) {
@@ -1874,7 +1906,7 @@ export function createWorkspacesApi(
         await syncWorkspacePermissionBestEffort();
       }
       return successSnapshot(nextDocument);
-    },
+    }),
     // FP-P1-02: preflight a directory before accepting it as the workspace.
     preflight: async (payload) => {
       const body = isRecord(payload) ? payload as { rootPath?: unknown } : {};
@@ -1907,7 +1939,7 @@ export function createWorkspacesApi(
         };
       }
     },
-    switch: async (payload) => {
+    switch: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceIdBody : {};
       const id = requireId(body.id);
       const document = await readDocument();
@@ -1932,8 +1964,8 @@ export function createWorkspacesApi(
         activeWorkspaceId: id,
         activeWorkspace,
       };
-    },
-    saveState: async (payload) => {
+    }),
+    saveState: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceSaveStateBody : {};
       const id = requireId(body.id);
       const document = await readDocument();
@@ -1977,7 +2009,7 @@ export function createWorkspacesApi(
       };
       await writeDocument({ ...document, profiles });
       return { success: true };
-    },
+    }),
     createFolder: async (payload) => {
       const body = isRecord(payload) ? payload as WorkspaceFolderCreateBody : {};
       const workspaceId = requireId(body.workspaceId);

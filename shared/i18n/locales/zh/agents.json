@@ -848,5 +848,31 @@
             "approval-pending": "派发前需要决策",
             "unsupported": "此执行方式不可用"
         }
+    },
+    "configuration": {
+        "title": "项目配置",
+        "policy": "需项目独占的 Agent。仅可更换已配置且费用不增加的模型；工具限制与上下文配额只能收紧。",
+        "model": "已有模型引用（可选）",
+        "tools": "完整禁用工具清单，逗号分隔（可选）",
+        "context": "上下文 Token 上限（可选）",
+        "preview": "预览",
+        "apply": "应用并核验",
+        "error": "配置请求失败",
+        "unavailable": "不可用",
+        "unverified": "尚未核验",
+        "desired": "期望值",
+        "configured": "已保存配置",
+        "effective": "运行时生效值",
+        "none": "无",
+        "values": "模型：{{model}} · 禁用工具：{{tools}} · 上下文：{{tokens}}",
+        "phase": {
+            "pending": "等待 Runtime 确认",
+            "applied": "已生效并核验",
+            "rolled-back": "重载失败，原配置已恢复并核验",
+            "degraded": "配置需要恢复，已阻止后续写入",
+            "superseded": "当前值已核验，原请求已被后续配置替代"
+        },
+        "recover": "恢复操作",
+        "generation": "Runtime 代际"
     }
 }

@@ -41,6 +41,8 @@ const HOST_ACTION_LONG_SET = new Set<string>([
   'dcsProdFlags.setWorkspaceContext',
   'chat.sendWithMedia',
   'sessions.dispatchSystemProject',
+  'workspaces.applyConfiguration',
+  'workspaces.reconcileConfiguration',
   'sessions.compact',
   'sessions.compactRange',
 ]);

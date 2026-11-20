@@ -1,6 +1,7 @@
 import { knowledgeHostApi } from './host-api/knowledge';
 import type { SystemProjectRead } from '@shared/types/system-portfolio';
 import type { SystemControlChange } from '@shared/types/system-control';
+import type { ProjectConfigurationApply, ProjectConfigurationInput, ProjectConfigurationRecovery } from '@shared/project-configuration';
 import type { SessionStorageScope, StorageRemovePayload } from '@shared/types/session-storage';
 import type {
   AgentCreatePayload,
@@ -837,6 +838,11 @@ export const hostApi = {
     projectSummary: (input: SystemProjectRead) => invokeHost('workspaces', 'projectSummary', input),
     systemControl: () => invokeHost('workspaces', 'systemControl'),
     setSystemControl: (input: SystemControlChange) => invokeHost('workspaces', 'setSystemControl', input),
+    previewConfiguration: (input: ProjectConfigurationInput) => invokeHost('workspaces', 'previewConfiguration', input),
+    applyConfiguration: (input: ProjectConfigurationApply) => invokeHost('workspaces', 'applyConfiguration', input),
+    configurationOperation: (requestId: string) => invokeHost('workspaces', 'configurationOperation', { requestId }),
+    configurationOperations: (workspaceId: string) => invokeHost('workspaces', 'configurationOperations', { workspaceId }),
+    reconcileConfiguration: (input: ProjectConfigurationRecovery) => invokeHost('workspaces', 'reconcileConfiguration', input),
     getActive: () => invokeHost('workspaces', 'getActive'),
     create: (input: WorkspaceCreatePayload) => invokeHost('workspaces', 'create', input),
     update: (id: string, input: Omit<WorkspaceUpdatePayload, 'id'>) => (

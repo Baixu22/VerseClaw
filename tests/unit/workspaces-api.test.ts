@@ -8,6 +8,7 @@ const storeState = vi.hoisted(() => ({
   approvals: [] as unknown[],
   decisionEvents: [] as unknown[],
   systemControl: undefined as unknown,
+  configurationOperations: {} as Record<string, unknown>,
 }));
 
 const harnessTemplate = vi.hoisted(() => ({
@@ -38,6 +39,7 @@ vi.mock('electron-store', () => {
       if (key === 'approvals') return storeState.approvals;
       if (key === 'decisionEvents') return storeState.decisionEvents;
       if (key === 'systemControl') return storeState.systemControl;
+      if (key === 'projectConfigurationOperations') return storeState.configurationOperations;
       return undefined;
     }
 
@@ -47,6 +49,7 @@ vi.mock('electron-store', () => {
       if (key === 'approvals') storeState.approvals = Array.isArray(value) ? [...value] : [];
       if (key === 'decisionEvents') storeState.decisionEvents = Array.isArray(value) ? [...value] : [];
       if (key === 'systemControl') storeState.systemControl = value;
+      if (key === 'projectConfigurationOperations') storeState.configurationOperations = value as Record<string, unknown>;
     }
   }
 
@@ -93,6 +96,7 @@ describe('workspaces api compatibility migration', () => {
     storeState.approvals = [];
     storeState.decisionEvents = [];
     storeState.systemControl = undefined;
+    storeState.configurationOperations = {};
     harnessTemplate.ensureVerseClawWorkspaceHarness.mockClear();
     resourceReclamation.reclaimBrowserSessionsForWorkspace.mockReset().mockReturnValue({ attempted: 0, reclaimed: 0 });
     resourceReclamation.reclaimManagedPortsForWorkspace.mockReset().mockResolvedValue({ attempted: 0, reclaimed: 0, failed: 0 });
@@ -112,6 +116,12 @@ describe('workspaces api compatibility migration', () => {
     await expect(api.setSystemControl({ expectedRevision: 0, requestId: 'resume-old', paused: false })).rejects.toThrow('REVISION_CONFLICT');
     expect(await api.setSystemControl({ expectedRevision: 1, requestId: 'resume-1', paused: false })).toMatchObject({ revision: 2, paused: false });
     expect(storeState.profiles).toEqual(before);
+  });
+  it('keeps a project with unfinished configuration recoverable before deletion', async () => {
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    storeState.configurationOperations = { operation: { result: { workspaceId: 'legacy', phase: 'degraded' } } };
+    await expect(createWorkspacesApi().delete({ id: 'legacy' })).rejects.toThrow('CONFIG_RECOVER_BEFORE_PROJECT_DELETE');
+    expect(storeState.profiles).toHaveLength(1);
   });
   it('hydrates old agentId/session fields into selectedAgentId and agentBindings', async () => {
     const { createWorkspacesApi } = await import('@electron/services/workspaces-api');

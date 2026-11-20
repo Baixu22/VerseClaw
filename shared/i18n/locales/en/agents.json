@@ -848,5 +848,31 @@
             "approval-pending": "Decision required before dispatch",
             "unsupported": "This execution mode is unavailable"
         }
+    },
+    "configuration": {
+        "title": "Project configuration",
+        "policy": "An exclusive project agent is required. Existing priced models may be changed without increasing cost; tool restrictions and context quotas may only be tightened.",
+        "model": "Existing model reference (optional)",
+        "tools": "Complete denied tool list, separated by commas (optional)",
+        "context": "Context token limit (optional)",
+        "preview": "Preview",
+        "apply": "Apply and verify",
+        "error": "Configuration request failed",
+        "unavailable": "Unavailable",
+        "unverified": "Not verified",
+        "desired": "Desired",
+        "configured": "Configured",
+        "effective": "Effective",
+        "none": "None",
+        "values": "Model: {{model}} · Denied tools: {{tools}} · Context: {{tokens}}",
+        "phase": {
+            "pending": "Waiting for Runtime confirmation",
+            "applied": "Applied and verified",
+            "rolled-back": "Reload failed; previous values restored and verified",
+            "degraded": "Configuration needs recovery; further writes are blocked",
+            "superseded": "Current owner values verified; original request superseded"
+        },
+        "recover": "Recover operation",
+        "generation": "Runtime generation"
     }
 }

@@ -1,6 +1,7 @@
 import type { RawMessage } from '../chat/types';
 import type { SystemPortfolio, SystemProjectRead, SystemProjectSnapshot } from '../types/system-portfolio';
 import type { SystemControlChange, SystemControlState } from '../types/system-control';
+import type { ProjectConfigurationApply, ProjectConfigurationInput, ProjectConfigurationPreview, ProjectConfigurationRecovery, ProjectConfigurationResult } from '../project-configuration';
 import type { SessionHandoffOperation } from '../types/session-handoff';
 import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
 export type { WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
@@ -5842,6 +5843,11 @@ export type HostApiContract = {
     projectSummary: (payload: SystemProjectRead) => SystemProjectSnapshot;
     systemControl: () => SystemControlState;
     setSystemControl: (payload: SystemControlChange) => SystemControlState;
+    previewConfiguration: (payload: ProjectConfigurationInput) => ProjectConfigurationPreview;
+    applyConfiguration: (payload: ProjectConfigurationApply) => ProjectConfigurationResult;
+    configurationOperation: (payload: { requestId: string }) => ProjectConfigurationResult | null;
+    configurationOperations: (payload: { workspaceId: string }) => ProjectConfigurationResult[];
+    reconcileConfiguration: (payload: ProjectConfigurationRecovery) => ProjectConfigurationResult;
     getActive: () => WorkspaceActiveResult;
     create: (payload: WorkspaceCreatePayload) => WorkspaceCreateResult;
     update: (payload: WorkspaceUpdatePayload) => WorkspaceSnapshotResult;

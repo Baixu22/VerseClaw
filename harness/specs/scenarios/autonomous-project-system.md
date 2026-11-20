@@ -41,3 +41,5 @@ requiredRules:
 TF0686连续性验收使用既有 Working Context、Task context 与30对冻结评估入口。覆盖同workspace不同任务字段、跨workspace快照、读取期间owner变化、关键预算溢出、交接后计划决策与文件引用及产物篡改；结构投影指标与live模型质量分别记录。
 
 TF0684总控派发旅程验证后台项目A写入、项目B模型在途时全局暂停后写入被拒，UI活动workspace保持不变。三个项目在真实ResourceFabric准入队列中的等待和失败隔离由定向测试回读；重复请求不重复派发，恢复后旧控制版本拒绝。
+
+TF0685配置旅程包括只读预览、实际重载、两次重载失败后的degraded、页面重载后由当前owner恢复，以及四语的desired/configured/effective/runtime-generation展示。未知费用、全局扩权、自改evaluator、secret参数、共享Agent和陈旧revision均拒绝。

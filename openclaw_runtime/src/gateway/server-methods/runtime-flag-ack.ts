@@ -4,6 +4,7 @@
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
 import { buildRuntimeFlagAck } from "../../context-engine/runtime-flag-ack.js";
 import type { GatewayRequestHandlers } from "./types.js";
+import { projectConfigurationValues, type ProjectConfigDocument } from '../../../../shared/project-configuration.js';
 
 function normalizeRequestedFlags(params: unknown): Record<string, boolean> | undefined {
   if (!params || typeof params !== "object" || Array.isArray(params)) return undefined;
@@ -25,7 +26,10 @@ export const runtimeFlagAckHandlers: GatewayRequestHandlers = {
         cfg: context.getRuntimeConfig(),
         ...(requestedFlags ? { requestedFlags } : {}),
       });
-      respond(true, ack, undefined);
+      const projectAgentId = (params as { projectAgentId?: unknown } | undefined)?.projectAgentId;
+      const projectConfiguration = typeof projectAgentId === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(projectAgentId)
+        ? { agentId: projectAgentId, values: projectConfigurationValues(context.getRuntimeConfig() as ProjectConfigDocument, projectAgentId) } : undefined;
+      respond(true, { ...ack, ...(projectConfiguration ? { projectConfiguration } : {}) }, undefined);
     } catch (err) {
       respond(
         false,
