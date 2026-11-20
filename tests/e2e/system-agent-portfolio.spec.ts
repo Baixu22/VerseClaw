@@ -121,14 +121,20 @@ test('system portfolio reads two project owners and preserves navigation, isolat
     await expect(page.getByTestId('portfolio-filter')).toHaveValue('Alpha');
     await page.getByTestId('portfolio-filter').fill('');
     await hostInvoke(app, 'terminal', 'close', { sessionId: terminalId }); terminalId = undefined;
+    await expect(card(alpha.workspaceId)).toHaveAttribute('data-state', 'observed');
+    await expect(card(beta.workspaceId)).toHaveAttribute('data-state', 'observed');
+    // Windows keeps the active Gateway cwd open; stop that owner before moving its checkout.
+    await hostInvoke(app, 'gateway', 'stop');
     await rename(beta.rootPath, `${beta.rootPath}-temporarily-unavailable`);
     await page.getByTestId('portfolio-refresh').click();
     await expect(card(beta.workspaceId)).toHaveAttribute('data-state', 'unavailable', { timeout: 30_000 });
     await expect(card(alpha.workspaceId)).toHaveAttribute('data-state', 'observed');
     await expect(card(beta.workspaceId)).toContainText('Portfolio Beta delivery');
     await rename(`${beta.rootPath}-temporarily-unavailable`, beta.rootPath);
+    await startGateway(app);
     await page.getByTestId('portfolio-refresh').click();
     await expect(card(beta.workspaceId)).toHaveAttribute('data-state', 'observed');
+    await expect(page.getByTestId(`portfolio-open-${beta.workspaceId}`)).toBeVisible();
     observations.unavailableRecovered = true;
     observations.status = 'passed';
   } catch (error) { observations.status = 'failed'; observations.error = String(error); throw error; }
