@@ -11,6 +11,7 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - tests/unit/session-task-scope-bridge.test.ts
   - openclaw_runtime/src/infra/runtime-compile-cache.ts
   - openclaw_runtime/src/agents/command/attempt-execution.runtime.ts
   - tests/unit/gateway-late-bytecode-cache.test.ts
@@ -273,6 +274,7 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/session-task-scope-bridge.test.ts
   - tests/unit/gateway-late-bytecode-cache.test.ts
   - openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
   - openclaw_runtime/src/agents/mission-control/mission-lifecycle-cutover.test.ts
@@ -327,6 +329,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Task-scope effect admission waits for one authenticated Main bridge after restart within its original fifteen-second budget. Waiting reserves the request id and rechecks the live owner; ambiguous bridges, stale runs and late or mismatched results cannot grant effects. Readiness waiting and Main response share that budget without new dispatch attempts.
   - Workflow restart recovery checks the lifecycle owner's current writer and durable rows before loading each controller. Legacy and empty or terminal-only domains stay unloaded; Mission recovery remains taskflow-only for running rows. Live-controller, pending-effect and CAS decisions stay with the original recovery entry, and a domain failure does not suppress the other domains.
   - Read-only channel views share the selected metadata discovery with configuration and stored-auth probes. Config/workspace discovery retains the environment catalog fallback so load-path overlaps preserve bundled environment and authentication signals. Channel and plugin disablement, denial reasons and source roots retain their checks.
   - Gateway startup plans and lookup tables reuse discovery from a compatible prepared metadata snapshot for channel scope and final activation. Missing discovery and changed roots retain discovery fallback; explicit channel disables and stored-auth exclusion remain intact.

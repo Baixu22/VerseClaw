@@ -102,6 +102,88 @@ afterEach(() => {
 });
 
 describe('runtime → Gateway → Main task admission bridge', () => {
+  it('keeps structured Main errors readable while refusing effects', async () => {
+    hold = true;
+    const effect = vi.fn(async () => 'written');
+    const result = execute(effect).then(value => ({ value }), error => ({ error: String(error) }));
+    await vi.waitFor(() => expect(requests).toHaveLength(1));
+    const request = requests[0];
+    expect(await dispatch('taskScope.admit.result', { ...request, error: { message: 'Main owner refused admission' } }, backend)).toEqual({ ignored: false });
+    expect(await result).toEqual({ error: 'Error: {"message":"Main owner refused admission"}' });
+    release();
+    expect(effect).not.toHaveBeenCalled();
+  });
+
+  it('reserves a waiting request and ignores an admission result before publication', async () => {
+    vi.useFakeTimers();
+    context.getApprovalClientConnIds.mockReturnValue([]);
+    const effect = vi.fn(async () => 'written');
+    const result = execute(effect).then(value => ({ value }), error => ({ error: String(error) }));
+    await vi.advanceTimersByTimeAsync(100);
+    const request = runtime.invoke.mock.calls[0][0].params as SessionTaskEffectRequest;
+    await expect(dispatch('taskScope.admit', request)).rejects.toThrow('TASK_SCOPE_DUPLICATE_REQUEST');
+    expect(await dispatch('taskScope.admit.result', { ...request, admission: admission(request) }, backend)).toEqual({ ignored: true });
+    context.getApprovalClientConnIds.mockReturnValue([backend.connId]);
+    await vi.advanceTimersByTimeAsync(25);
+    expect(await result).toEqual({ value: 'written' });
+    expect(requests).toHaveLength(1);
+    expect(effect).toHaveBeenCalledTimes(1);
+  });
+
+  it('rechecks the owner after bridge selection yields before publishing an admission', async () => {
+    const effect = vi.fn(async () => 'written');
+    context.getApprovalClientConnIds.mockImplementationOnce(() => {
+      runtime.generation = 'generation-reset';
+      return [backend.connId];
+    });
+    await expect(execute(effect)).rejects.toThrow('TASK_SCOPE_RUN_STALE');
+    expect(requests).toHaveLength(0);
+    expect(effect).not.toHaveBeenCalled();
+  });
+
+  it('waits for the authenticated backend after a Gateway restart before admitting effects', async () => {
+    vi.useFakeTimers();
+    context.getApprovalClientConnIds.mockReturnValue([]);
+    const effect = vi.fn(async () => 'written');
+    const result = execute(effect).then(value => ({ value }), error => ({ error: String(error) }));
+    await vi.advanceTimersByTimeAsync(100);
+    expect(requests).toHaveLength(0);
+    expect(effect).not.toHaveBeenCalled();
+    context.getApprovalClientConnIds.mockReturnValue([backend.connId]);
+    await vi.advanceTimersByTimeAsync(25);
+    expect(await result).toEqual({ value: 'written' });
+    expect(requests).toHaveLength(1);
+    expect(effect).toHaveBeenCalledTimes(1);
+  });
+
+  it('rechecks run generation while the backend is reconnecting', async () => {
+    vi.useFakeTimers();
+    context.getApprovalClientConnIds.mockReturnValue([]);
+    const effect = vi.fn(async () => 'written');
+    const result = execute(effect).then(value => ({ value }), error => ({ error: String(error) }));
+    await vi.advanceTimersByTimeAsync(100);
+    runtime.generation = 'generation-reset';
+    await vi.advanceTimersByTimeAsync(25);
+    expect(await result).toEqual({ error: 'Error: TASK_SCOPE_RUN_STALE' });
+    expect(requests).toHaveLength(0);
+    expect(effect).not.toHaveBeenCalled();
+  });
+
+  it('keeps reconnect waiting and Main admission within the existing fifteen-second budget', async () => {
+    vi.useFakeTimers(); hold = true;
+    context.getApprovalClientConnIds.mockReturnValue([]);
+    const effect = vi.fn(async () => 'written');
+    const result = execute(effect).then(value => ({ value }), error => ({ error: String(error) }));
+    await vi.advanceTimersByTimeAsync(10_000);
+    context.getApprovalClientConnIds.mockReturnValue([backend.connId]);
+    await vi.advanceTimersByTimeAsync(25);
+    expect(requests).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(await result).toEqual({ error: 'Error: TASK_SCOPE_BRIDGE_TIMEOUT' });
+    release();
+    expect(effect).not.toHaveBeenCalled();
+  });
+
   it('gives an unsolicited admission its own bounded deadline instead of the expired socket creator', async () => {
     dispose();
     const deadlines: Array<ReturnType<typeof getHostDeadline>> = [];
@@ -239,9 +321,12 @@ describe('runtime → Gateway → Main task admission bridge', () => {
   });
 
   it('fails closed when no unique backend is connected', async () => {
+    vi.useFakeTimers();
     const effect = vi.fn(async () => 'written');
     context.getApprovalClientConnIds.mockReturnValue([]);
-    await expect(execute(effect)).rejects.toThrow('TASK_SCOPE_BRIDGE_UNAVAILABLE');
+    const missing = execute(effect).then(value => ({ value }), error => ({ error: String(error) }));
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(await missing).toEqual({ error: 'Error: TASK_SCOPE_BRIDGE_UNAVAILABLE' });
     context.getApprovalClientConnIds.mockReturnValue(['desktop', 'another-desktop']);
     await expect(execute(effect)).rejects.toThrow('TASK_SCOPE_BRIDGE_UNAVAILABLE');
     expect(effect).not.toHaveBeenCalled();
