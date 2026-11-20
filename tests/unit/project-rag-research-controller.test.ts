@@ -199,6 +199,27 @@ describe('bounded Project RAG Research controller', () => {
       retrieve: async () => ({ evidence: [evidence('root', '[child](child.md)')], partial: false }) });
     expect(result.graph.nodes.length).toBeLessThanOrEqual(1); expect(result.graph.edges).toEqual([]); expect(result.graph.truncated).toBe(true);
   });
+  it.each(['concepts/b.md', '  CONCEPTS/B.MD  '])('preserves queued link depth when the planner repeats %s', async firstQuery => {
+    const queries: string[] = [];
+    const sources = new Map([
+      ['Gateway port', evidence('a', '[next](b.md)', 'concepts/a.md')],
+      ['concepts/b.md', evidence('b', '[next](c.md)', 'concepts/b.md')],
+      ['concepts/c.md', evidence('c', '[next](d.md)', 'concepts/c.md')],
+    ]);
+    const result = await run({ retrieve: async query => {
+      queries.push(query); return { evidence: [sources.get(query)!], partial: false };
+    }, planNext: async ({ evidence: retained, round }) => ({
+      review: review({ queries: [round === 1 ? firstQuery : 'concepts/c.md'] }),
+      retainedEvidence: manifest(retained), actualTokens: 10, actualCostUsd: 0.0001,
+    }) });
+    expect(queries).toEqual(['Gateway port', 'concepts/b.md', 'concepts/c.md']);
+    expect(result.graph.edges).toEqual([
+      { sourceId: 'a', lookup: 'concepts/b.md', depth: 1 },
+      { sourceId: 'b', lookup: 'concepts/c.md', depth: 2 },
+    ]);
+    expect(result.graph.nodes).not.toContain('concepts/d.md');
+    expect(result.usage).toMatchObject({ queries: 3, rounds: 3, planningModelCalls: 2 });
+  });
   it('cancels a non-cooperative owner wait and preserves already admitted partial evidence', async () => {
     const controller = new AbortController(); let phase = 0;
     const result = await run({ signal: controller.signal, retrieve: async () => {

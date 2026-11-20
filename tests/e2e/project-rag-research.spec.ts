@@ -195,6 +195,10 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (!line) return { text: 'RAG16 ordinary reply' };
     const input = JSON.parse(line) as { query: string; round: number; questions: string[]; evidence: Array<{ sourceId: string; lookup: string }> };
     planningCalls.push({ query: input.query, round: input.round, references: input.evidence.map(source => source.sourceId) });
+    if (input.query === 'RAG16_LINK_BUDGET_ROOT') return { text: JSON.stringify({
+      queries: [input.round === 1 ? 'concepts/betaunique.md' : 'concepts/gammaunique.md'],
+      coverage: [], inferences: [], conflicts: [], gaps: [],
+    }) };
     const find = (path: string) => input.evidence.find(source => source.lookup.endsWith(path))?.sourceId;
     const port = find('gateway.md'), archive = find('archive.md'), other = find('other-port.md');
     if (input.query.includes('cancellation')) await held;
@@ -240,6 +244,10 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await writeFile(join(vault, 'concepts/gateway.md'), raw('Gateway port', 'Gateway port is 8080.'));
     await writeFile(join(vault, 'concepts/archive.md'), raw('Archive destination', 'Archive destination is /archive.'));
     await writeFile(join(vault, 'concepts/giant.md'), raw('Giant policy', 'Giant policy: ' + 'Giant retention policy. '.repeat(120)));
+    await writeFile(join(vault, 'concepts/chain-root.md'), raw('RAG16_LINK_BUDGET_ROOT', 'RAG16_LINK_BUDGET_ROOT. [next](betaunique.md)'));
+    await writeFile(join(vault, 'concepts/betaunique.md'), raw('Beta unique', '[next](gammaunique.md)'));
+    await writeFile(join(vault, 'concepts/gammaunique.md'), raw('Gamma unique', '[next](deltaunique.md)'));
+    await writeFile(join(vault, 'concepts/deltaunique.md'), raw('Delta unique', 'The linked guide beyond the two-hop limit.'));
     await host(page, 'settings', 'set', { key: 'gatewayPort', value: await allocatePort() });
     await host(page, 'gateway', 'start').catch(error => { if (!String(error).includes('timed out')) throw error; });
     await expect.poll(async () => (await host(page!, 'gateway', 'status')).state, { timeout: 120000 }).toBe('running');
@@ -313,6 +321,19 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     receipt.dcs = dcs; steps.realDcsBudgetReadback = true;
     await page.getByTestId('chat-research-gaps').scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('research-dcs-partial.png'), fullPage: true });
+
+    const linked = await execute('RAG16_LINK_BUDGET_ROOT');
+    const rootSource = linked.evidence.find(source => source.lookup === 'concepts/chain-root.md')!;
+    const betaSource = linked.evidence.find(source => source.lookup === 'concepts/betaunique.md')!;
+    expect(rootSource).toBeTruthy(); expect(betaSource).toBeTruthy();
+    expect(linked.steps.map(step => step.query)).toEqual(['RAG16_LINK_BUDGET_ROOT', 'concepts/betaunique.md', 'concepts/gammaunique.md']);
+    expect(linked.graph.edges).toEqual([
+      { sourceId: rootSource.id, lookup: 'concepts/betaunique.md', depth: 1 },
+      { sourceId: betaSource.id, lookup: 'concepts/gammaunique.md', depth: 2 },
+    ]);
+    expect(linked.graph.nodes).not.toContain('concepts/deltaunique.md');
+    expect(linked.usage).toMatchObject({ rounds: 3, queries: 3, planningModelCalls: 2 });
+    receipt.linked = linked; steps.plannerPreservesLinkedDepth = true;
 
     await writeFile(join(vault, 'concepts/cancel.md'), raw('Gateway port cancellation', 'Gateway port is 8080. Cancellation evidence remains available before model completion.'));
     await queryInput.fill('Gateway port cancellation'); await page.getByTestId('chat-knowledge-search-submit').click();

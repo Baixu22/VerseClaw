@@ -661,7 +661,15 @@ export async function runResearchPlan(options: {
             partial = true;
           }
           const unqueried = review.queries.filter((text) => !seenQueries.has(queryKey(text)));
-          pending.unshift(...unqueried.map((text) => ({ text, depth: 0 })));
+          pending.unshift(
+            ...unqueried.map(
+              (text) =>
+                pending.find((query) => queryKey(query.text) === queryKey(text)) ?? {
+                  text,
+                  depth: 0,
+                },
+            ),
+          );
           if (
             covered.size === plan.questions.length &&
             !result.conflicts.length &&

@@ -305,3 +305,5 @@ Windows CIM查询只请求进程ID、父进程ID和创建时间，三列身份�
 独立memory-domain夹具在写入session前绑定已有cfg快照与本项临时state路径，使session maintenance和owner读取使用同一测试配置；真实session/role数据库、50项断言和原hook超时保持。
 
 生命周期50-cycle文件完整移入既有单worker隔离段，避免首段Git密集测试与它并行创建进程；原7项/50循环/泄漏断言与超时保持。数字进程token按BigInt精确排序，同刻子进程保留、早1微秒的旧PID关系排除。
+
+规划器重复建议已排队的Markdown链接时，复用该查询的来源绑定、原路径和深度。查询规范化后的重复也遵循同一规则，后续扩展按原两跳预算停止；单测和既有Research Electron旅程覆盖这条链。
