@@ -19,7 +19,7 @@ assert j['stats']['expected']==11 and j['stats']['unexpected']==j['stats']['skip
 for name,data in j['readbacks'].items():
     if 'sourceCandidate' in data: assert data['sourceCandidate']==candidate,name
     if name.endswith('closeout-readback.json'):
-        assert data['status']=='passed' and data['task']['contract']['state']=='done' and data['sourceDirty']==''
+        assert data['status']=='passed' and data['task']['contract']['state']=='done' and data['sourceDirty'] is False
         assert sum(e['kind']=='accepted' for e in data['events'])==1
         assert sum(e['kind']=='repair_started' for e in data['events'])==1
     if name.endswith('project-continuation.json'):
