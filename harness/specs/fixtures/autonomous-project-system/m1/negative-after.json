@@ -1,0 +1,8 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-m1-negative",
+  "sourceCandidate": "working-tree-after-m1-fix",
+  "expected": "task-b objective excluded for task-a",
+  "actual": [],
+  "defectReproduced": false
+}

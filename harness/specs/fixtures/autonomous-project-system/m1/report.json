@@ -1,0 +1,31 @@
+{
+  "node": "TF-0686",
+  "driven_by": "agent",
+  "actor": "codex-g5-context",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+    "tree": "7db430834c01d1d4c571d1d40d0b7bbe9a6c0b19"
+  },
+  "verdict": {
+    "source": "passed",
+    "runtime": "passed",
+    "effect": "passed",
+    "pairedProjection": "passed",
+    "liveModelQuality": "not-measured"
+  },
+  "counts": {
+    "unit": 204,
+    "electron": 2,
+    "pairs": 30,
+    "failed": 0,
+    "skipped": 0
+  },
+  "rawRoot": "D:\\tmp\\g5-20261120\\m1-final",
+  "sourceReview": "independent-review.json",
+  "sourcePromotion": "Existing bound-project Main continuity and Runtime task-context projection; frozen memory defaults remain unchanged",
+  "measurement": "Frozen 30-case owner projection, baseline90/150 and current150/150 preserved facts; no provider-quality or cost claim",
+  "repositoryHarnessCi": "Last b5ce07acd repository run fails on four stale Agent Dev reports and three historical performance limits; this node runs scoped gates",
+  "package": "source Electron; installed combined acceptance continues in TF-0689",
+  "initialSourceFinding": "stat/read path race in artifact hashing; fixed with one descriptor and bounded reads. Two race regressions validate concurrent growth and oversize refusal."
+}

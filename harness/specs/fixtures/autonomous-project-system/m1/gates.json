@@ -1,0 +1,177 @@
+{
+  "candidate": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+  "product": {
+    "tree": "7db430834c01d1d4c571d1d40d0b7bbe9a6c0b19",
+    "driven_by": "agent",
+    "actor": "codex-tf0683",
+    "dirty": false,
+    "candidate": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+    "steps": [
+      {
+        "command": [
+          "pnpm",
+          "run",
+          "build:runtime"
+        ],
+        "exit": 0,
+        "elapsedMs": 59586,
+        "name": "build-runtime",
+        "cwd": "D:/ClawX-work/g5-test-review-20261118"
+      },
+      {
+        "command": [
+          "pnpm",
+          "run",
+          "build:vite"
+        ],
+        "exit": 0,
+        "elapsedMs": 98559,
+        "name": "build-vite",
+        "cwd": "D:/ClawX-work/g5-test-review-20261118"
+      },
+      {
+        "command": [
+          "node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "tests/e2e/long-session-continuity-context.spec.ts",
+          "tests/e2e/project-agent-loop.spec.ts",
+          "--grep",
+          "continuity preview|hands a project checkpoint",
+          "--workers=1",
+          "--retries=0",
+          "--output=D:/tmp/g5-20261120/m1-final/electron",
+          "--reporter=line,json"
+        ],
+        "exit": 0,
+        "elapsedMs": 237744,
+        "name": "electron",
+        "cwd": "D:/ClawX-work/g5-test-review-20261118"
+      }
+    ]
+  },
+  "support": {
+    "tree": "7db430834c01d1d4c571d1d40d0b7bbe9a6c0b19",
+    "dirty": false,
+    "candidate": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+    "actor": "codex-tf0683",
+    "steps": [
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 29993,
+        "command": [
+          "node",
+          "scripts/typecheck-agent-dev.mjs"
+        ],
+        "name": "typecheck"
+      },
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 36657,
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.task-system.config.ts",
+          "--reporter=json",
+          "--outputFile=D:/tmp/g5-20261120/m1-final/task-units.json"
+        ],
+        "name": "task-units"
+      },
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 11722,
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/long-session-continuity-context.test.ts",
+          "tests/unit/task-ledger-working-context-single-source.test.ts",
+          "tests/unit/autonomy-context-paired.test.ts",
+          "tests/unit/long-session-paired-evaluation.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=D:/tmp/g5-20261120/m1-final/context-units.json"
+        ],
+        "name": "context-units"
+      },
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 2402,
+        "command": [
+          "pnpm",
+          "run",
+          "contract:check"
+        ],
+        "name": "contract"
+      },
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 1183,
+        "command": [
+          "pnpm",
+          "run",
+          "comms:replay"
+        ],
+        "name": "comms-replay"
+      },
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 1075,
+        "command": [
+          "pnpm",
+          "run",
+          "comms:compare"
+        ],
+        "name": "comms-compare"
+      },
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 2096,
+        "command": [
+          "node",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/autonomy-project-continuity.md"
+        ],
+        "name": "harness-validate"
+      },
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 1034,
+        "command": [
+          "node",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/autonomy-project-continuity.md",
+          "--dry-run"
+        ],
+        "name": "harness-dry-run"
+      },
+      {
+        "exit": 0,
+        "cwd": "D:/ClawX-work/g5-test-review-20261118",
+        "elapsedMs": 9494,
+        "command": [
+          "pnpm",
+          "run",
+          "repo:artifacts:check"
+        ],
+        "name": "retention"
+      }
+    ],
+    "driven_by": "agent"
+  }
+}
