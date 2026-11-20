@@ -202,6 +202,7 @@ touchedAreas:
   - "tests/unit/os-containment-windows-token.test.ts"
   - "openclaw_runtime/src/process/supervisor/supervisor.ts"
   - "tests/unit/process-supervisor-exit-observation.test.ts"
+  - "tests/unit/long-session-runtime-resource-inventory.test.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -298,5 +299,7 @@ Windows OS进程身份将PowerShell FILETIME与WMIC带时区/微秒创建时间�
 Windows CIM查询只请求进程ID、父进程ID和创建时间，三列身份合同与原5秒探测预算保持。
 
 进程adapter完成后立即清理终止计时器并停止向该PID发信号，OS验证仍继续，active记录和manifest仍按原验证结果清理。重复cancel与Windows drain直接强杀共用同一完成边界；未退出的进程仍按原5秒升级。
+
+资源清单夹具固定空runtime配置，并将durable-helper与worktree状态绑定到每项独立临时数据库；真实owner查询和原4项断言、30/60秒时限保持。
 
 生命周期50-cycle文件完整移入既有单worker隔离段，避免首段Git密集测试与它并行创建进程；原7项/50循环/泄漏断言与超时保持。数字进程token按BigInt精确排序，同刻子进程保留、早1微秒的旧PID关系排除。
