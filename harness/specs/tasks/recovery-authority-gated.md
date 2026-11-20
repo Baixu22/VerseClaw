@@ -11,6 +11,13 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/infra/runtime-compile-cache.ts
+  - openclaw_runtime/src/agents/command/attempt-execution.runtime.ts
+  - tests/unit/gateway-late-bytecode-cache.test.ts
+  - openclaw_runtime/src/gateway/server-runtime-startup-services.ts
+  - openclaw_runtime/src/gateway/server.impl.ts
+  - openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts
+  - tests/unit/gateway-workflow-recovery-loading.test.ts
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/startup-discovery-20261119/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/readonly-discovery-20261119/**
   - openclaw_runtime/src/plugins/channel-presence-policy.ts
@@ -266,6 +273,11 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-late-bytecode-cache.test.ts
+  - openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
+  - openclaw_runtime/src/agents/mission-control/mission-lifecycle-cutover.test.ts
+  - openclaw_runtime/src/agents/task-loop-lifecycle-cutover.test.ts
+  - tests/unit/gateway-workflow-recovery-loading.test.ts
   - tests/unit/gateway-readonly-prepared-discovery.test.ts
   - tests/unit/gateway-startup-prepared-discovery.test.ts
   - tests/unit/gateway-sdk-alias-dependencies.test.ts
@@ -315,6 +327,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Workflow restart recovery checks the lifecycle owner's current writer and durable rows before loading each controller. Legacy and empty or terminal-only domains stay unloaded; Mission recovery remains taskflow-only for running rows. Live-controller, pending-effect and CAS decisions stay with the original recovery entry, and a domain failure does not suppress the other domains.
   - Read-only channel views share the selected metadata discovery with configuration and stored-auth probes. Config/workspace discovery retains the environment catalog fallback so load-path overlaps preserve bundled environment and authentication signals. Channel and plugin disablement, denial reasons and source roots retain their checks.
   - Gateway startup plans and lookup tables reuse discovery from a compatible prepared metadata snapshot for channel scope and final activation. Missing discovery and changed roots retain discovery fallback; explicit channel disables and stored-auth exclusion remain intact.
   - Compiled SDK alias resolution checks each shared dependency once per map. Missing dependencies and unreadable barrels retain source fallback or omit unavailable exports; availability remains scoped to the resolved package root.
@@ -323,7 +336,7 @@ acceptance:
   - Runtime plugin auto-enable borrows discovery and manifests from the provider's prepared metadata view. Requests without a prepared view retain the current/default snapshot scope checks and existing discovery path; explicit discovery stays authoritative.
   - A device credential mutation invalidates both registered clients and pending handshakes for that device/role. Registration checks the original revision after asynchronous pairing work, and device-token reuse requires the credential that authenticated the connection. Explicit authorized rotation and shared-secret bootstrap retain their issuance path.
   - Gateway paired-device authentication, Control UI token lookup, token rotation/revocation and presence updates do not read the pending pairing queue. The paired-device owner still rejects revoked tokens, unauthorized scopes and corrupt paired records; cross-table removal validates pending repair requests before mutation.
-  - Managed Gateway restarts reuse an authenticated device token only within its original device, endpoint and shared credential. A rejected cached token falls back once on a device-token mismatch; transport errors and startup unavailability retain it. Node bytecode cache controls are preserved, and the startup flush retains compilation across a real process kill.
+  - Managed Gateway restarts reuse an authenticated device token only within its original device, endpoint and shared credential. A rejected cached token falls back once on a device-token mismatch; transport errors and startup unavailability retain it. Node bytecode cache controls are preserved, and startup plus the first lazy agent-attempt load retain compilation across a real process kill. Disabled or unavailable cache storage preserves execution.
   - Current plugin snapshots retain discovery environment and model normalization registration across capture/restore. Changed roots, overlays, Nix mode or effective host version reject reuse with either a cached config object or an omitted config; the existing persisted-registry disable switch selects the derived path and returns its diagnostic in both lookup entry points.
   - Runtime entry, static catalog and model alias lookups reuse the compatible Gateway-owned plugin snapshot, preserve disabled metadata and ambiguous identity handling, and use the existing installed-registry fallback when no compatible snapshot exists. Diagnostics about initial persisted-index repairs remain available while the resolved current snapshot is reused.
   - Desktop builds overlap renderer compilation with embedded-browser and Electron preparation; success waits for all outputs and browser preparation failures fail the entire build.

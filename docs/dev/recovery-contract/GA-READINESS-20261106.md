@@ -22,9 +22,11 @@ Windows 插件加载将 `file:` URL 转回原生路径后执行已编译 JavaScr
 
 Agent 启动读取 Gateway 已确认的启动插件作用域，随后由原 runtime registry owner 核对复用和子代理绑定。Windows 自动时间格式检测直接读取系统短时间模式；显式 12/24 小时设置和 Intl 回退沿原入口执行。
 
+Gateway 重启先由原生命周期 owner 核对 writer 和持久记录，再加载有待恢复工作的 ClawGraph、Mission 或 Task Loop 控制器。空表、仅终态记录和 legacy 模式省去控制器装载；Mission 沿原 taskflow running 条件执行。实际控制器继续核对存活 run、未决效果与 CAS，单个域失败后其余域继续恢复。
+
 快照保存插件发现环境和模型归一化登记，捕获与还原继续保留原绑定。插件根目录、配置加载路径、source overlay、Nix 模式或实际 host 兼容版本变化时，查询转入原发现路径；省略配置时按默认加载路径核对。`OPENCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY` 开启时，索引与清单查询都使用派生路径并返回禁用诊断。
 
-Gateway 重连复用已认证的设备令牌，并核对原设备、端点和共享凭据。服务端明确拒绝缓存令牌时，同一次连接用共享凭据重新引导一次；临时传输故障和启动未就绪保留令牌。引导完成设备令牌认证后才报告就绪。受管进程使用临时目录中的 Node 字节码缓存，并保留 `NODE_COMPILE_CACHE` 和 `NODE_DISABLE_COMPILE_CACHE` 的显式设置；启动完成后写出已加载字节码，让真实进程 kill 后的重启复用编译结果。
+Gateway 重连复用已认证的设备令牌，并核对原设备、端点和共享凭据。服务端明确拒绝缓存令牌时，同一次连接用共享凭据重新引导一次；临时传输故障和启动未就绪保留令牌。引导完成设备令牌认证后才报告就绪。受管进程使用临时目录中的 Node 字节码缓存，并保留 `NODE_COMPILE_CACHE` 和 `NODE_DISABLE_COMPILE_CACHE` 的显式设置；启动完成及首次加载 Agent 执行模块时写出字节码，让真实进程 kill 后的重启复用编译结果。缓存禁用或不可写时，启动与执行沿原路径继续。
 
 已配对设备的认证、Control UI 令牌查询、令牌轮换与撤销及在线元数据更新只读取已批准的设备表。跨表配对移除继续核对待处理的修复请求。撤销令牌、越权 scope 和已配对记录损坏沿原校验拒绝。
 

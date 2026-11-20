@@ -1744,60 +1744,21 @@ export async function startGatewayServer(
       if (!minimalTestGateway) {
         // Phase 4 durable helper recovery is default-off and watches only the
         // bounded background-processes file protocol.
-        const { startDurableHelperRecoveryService } = await import(
-          "../agents/goal-wake-recovery.js"
-        );
+        const { startDurableHelperRecoveryService } =
+          await import("../agents/goal-wake-recovery.js");
         const recovery = startDurableHelperRecoveryService({
           cfg: getRuntimeConfig(),
         });
         stopDurableHelperRecovery = recovery.stop;
-        // RC-06B: ClawGraph runs live in this process only. A lifecycle that
-        // TaskFlow still shows as active belongs to a run the previous boot
-        // held, so it is settled as lost (no-op for the legacy writer).
-        try {
-          const { settleOrphanedClawGraphLifecycles } = await import(
-            "../agents/clawgraph/runtime.js"
-          );
-          const settled = settleOrphanedClawGraphLifecycles();
-          if (settled.length > 0) {
-            log.info(`gateway: settled ${settled.length} orphaned ClawGraph lifecycle(s) as lost`);
-          }
-        } catch (err) {
-          log.warn(`gateway: ClawGraph lifecycle restart recovery failed: ${String(err)}`);
-        }
-        // RC-06C: a mission whose tick the previous boot interrupted goes back
-        // to sleeping through the TaskFlow lifecycle owner (taskflow writer only).
-        try {
-          const { recoverInterruptedMissionLifecycles } = await import(
-            "../agents/mission-control/controller.js"
-          );
-          const recovered = recoverInterruptedMissionLifecycles();
-          if (recovered.length > 0) {
-            log.info(`gateway: recovered ${recovered.length} interrupted mission tick(s)`);
-          }
-        } catch (err) {
-          log.warn(`gateway: Mission lifecycle restart recovery failed: ${String(err)}`);
-        }
-        // RC-06D: Task Loop runs live in this process only, so a lifecycle
-        // TaskFlow still shows as active is settled as lost (no-op for legacy).
-        try {
-          const { settleOrphanedTaskLoopLifecycles } = await import(
-            "../agents/task-loop-controller.js"
-          );
-          const settled = settleOrphanedTaskLoopLifecycles();
-          if (settled.length > 0) {
-            log.info(`gateway: settled ${settled.length} orphaned Task Loop lifecycle(s) as lost`);
-          }
-        } catch (err) {
-          log.warn(`gateway: Task Loop lifecycle restart recovery failed: ${String(err)}`);
-        }
+        const { recoverGatewayWorkflowLifecycles } =
+          await import("./server-runtime-startup-services.js");
+        await recoverGatewayWorkflowLifecycles(log);
         // TF-0081: reconcile supervisor runs orphaned by a previous gateway
         // boot (persisted manifest + fail-closed OS containment). Never
         // expands kill scope and never touches runs with a live owner.
         try {
-          const { attachSupervisorRunManifestAndReconcile } = await import(
-            "../process/supervisor/index.js"
-          );
+          const { attachSupervisorRunManifestAndReconcile } =
+            await import("../process/supervisor/index.js");
           const reconciliation = await attachSupervisorRunManifestAndReconcile(
             path.join(resolveConfigDir(), "process-supervisor"),
           );

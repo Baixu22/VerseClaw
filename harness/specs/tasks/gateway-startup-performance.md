@@ -11,6 +11,11 @@ intent: Measure the managed Gateway startup path and remove verified startup bot
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - openclaw_runtime/src/infra/runtime-compile-cache.ts
+  - openclaw_runtime/src/agents/command/attempt-execution.runtime.ts
+  - tests/unit/gateway-late-bytecode-cache.test.ts
+  - openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts
+  - tests/unit/gateway-workflow-recovery-loading.test.ts
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/startup-discovery-20261119/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/readonly-discovery-20261119/**
   - openclaw_runtime/src/plugins/channel-presence-policy.ts
@@ -86,6 +91,11 @@ requiredRules:
   - gateway-readiness-policy
   - repository-artifact-retention
 requiredTests:
+  - tests/unit/gateway-late-bytecode-cache.test.ts
+  - openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
+  - openclaw_runtime/src/agents/mission-control/mission-lifecycle-cutover.test.ts
+  - openclaw_runtime/src/agents/task-loop-lifecycle-cutover.test.ts
+  - tests/unit/gateway-workflow-recovery-loading.test.ts
   - tests/unit/gateway-readonly-prepared-discovery.test.ts
   - tests/unit/gateway-startup-prepared-discovery.test.ts
   - tests/unit/gateway-channel-presence-discovery.test.ts
@@ -103,6 +113,7 @@ requiredTests:
   - tests/unit/gateway-process-launcher-trace.test.ts
   - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
+  - Workflow restart recovery checks the lifecycle owner's current writer and durable rows before loading each controller. Legacy and empty or terminal-only domains stay unloaded; Mission recovery remains taskflow-only for running rows. Live-controller, pending-effect and CAS decisions stay with the original recovery entry, and a domain failure does not suppress the other domains.
   - Read-only channel views share the selected metadata discovery with configuration and stored-auth probes. Config/workspace discovery retains the environment catalog fallback so load-path overlaps preserve bundled environment and authentication signals. Channel and plugin disablement, denial reasons and source roots retain their checks.
   - Gateway startup plans and lookup tables reuse discovery from a compatible prepared metadata snapshot for channel scope and final activation. Missing discovery and changed roots retain discovery fallback; explicit channel disables and stored-auth exclusion remain intact.
   - Compiled SDK alias resolution checks each shared dependency once per map. Missing dependencies and unreadable barrels retain source fallback or omit unavailable exports; availability remains scoped to the resolved package root.
@@ -115,7 +126,7 @@ acceptance:
   - Configuration validation and Gateway startup use the same captured channel signals for the plugin scope cache key and for owner selection. Creating a new scope reads current config and environment signals.
   - Opt-in startup tracing forwards complete runtime phase lines from stdout while continuously draining ordinary output; authentication and readiness still use their original protocol signals.
   - Reconnects reuse a successfully authenticated device token only for the same paired device, endpoint and shared credential. A device-token mismatch falls back once to shared-secret bootstrap in the same attempt; temporary transport and startup failures retain the token. Bootstrap completes device-token authentication before readiness.
-  - Managed Gateway processes use Node's temporary bytecode cache while preserving explicit cache and disable controls. The entrypoint flushes loaded bytecode after startup so a process kill retains compilation work; failed cache writes do not prevent recovery.
+  - Managed Gateway processes use Node's temporary bytecode cache while preserving explicit cache and disable controls. Startup and the first lazy agent-attempt runtime load flush loaded bytecode before interruption; disabled or unavailable cache storage preserves execution. A real process kill and disk readback verify late runtime bytecode retention.
   - Current snapshot reuse checks roots, configured load paths, source overlays, Nix mode and effective host compatibility version even for a cached config identity or an omitted config. Capture/restore retains the original discovery binding and model normalization registration; the existing persisted-registry disable switch selects the derived path in both lookup entry points.
   - Runtime entry, static catalog and model alias lookups reuse the compatible current plugin snapshot after initial persisted-index repairs without repeating discovery or manifest reads; absent snapshots use the existing installed registry.
   - Before and after measurements use the same built runtime, isolated state, and real Electron utility processes; the baseline explicitly reconstructs the prior contract loader, and raw phase timings are retained and agent driven.
