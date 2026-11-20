@@ -226,7 +226,14 @@ type LongSessionContinuityRead = {
   pack?: LongSessionContinuityContextPack;
   rendered?: string;
   reason?: string;
+  binding?: WorkspaceCoordinatorBinding;
 };
+
+function continuityBindingIdentity(binding: WorkspaceCoordinatorBinding): string {
+  return JSON.stringify([binding.workspaceId, binding.sessionKey, binding.agentId, binding.sessionGeneration,
+    binding.bindingRevision, binding.state, binding.invalidationReason, binding.environment,
+    binding.activeTaskNodeId, binding.taskLedgerReferences]);
+}
 
 async function readLongSessionContinuityContext(input: {
   gatewayManager: GatewayManager;
@@ -250,6 +257,7 @@ async function readLongSessionContinuityContext(input: {
     if (binding.agentId !== agentIdFromSessionKey(input.sessionKey)) {
       return { validation: 'missing', reason: 'coordinator binding targets a different agent' };
     }
+    if (!binding.sessionGeneration) return { validation: 'missing', reason: 'session_generation_unverified' };
     if (binding.sessionGeneration) {
       try {
         const described = await input.gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
@@ -270,10 +278,15 @@ async function readLongSessionContinuityContext(input: {
       }
     }
     const workspaceRootPath = binding.environment.canonicalRoot;
+    const taskRefs = binding.taskLedgerReferences.map(reference => reference.taskLedgerNodeId);
+    if (binding.activeTaskNodeId) taskRefs.push(binding.activeTaskNodeId);
+    if (input.activeTaskNodeId && !taskRefs.includes(input.activeTaskNodeId)) {
+      return { validation: 'invalidated', reason: 'task_scope_mismatch' };
+    }
     const roleMemoryEnabled = (await getSetting('roleMemoryEnabled')) !== false;
     const [ledgerResult, workingContextResult, compressionResult, memoryResult, policyResult] = await Promise.allSettled([
       loadTaskLedgerSnapshot(input.workspaceId),
-      readTaskLedgerWorkingContext(input.workspaceId),
+      readTaskLedgerWorkingContext(input.workspaceId, taskRefs),
       input.gatewayManager.rpc('sessions.compressionArtifact', { key: input.sessionKey }, 10_000),
       input.gatewayManager.rpc('memory.surface', { limit: 100 }, 15_000),
       input.gatewayManager.rpc<{ snapshot?: { policy?: SessionEffectivePolicy }; result?: { policy?: SessionEffectivePolicy } }>(
@@ -297,8 +310,8 @@ async function readLongSessionContinuityContext(input: {
       workspaceId: input.workspaceId,
       ...(workspaceRootPath ? { workspaceRootPath } : {}),
       bindingRevision: binding.bindingRevision,
-      activeTaskNodeId: input.activeTaskNodeId ?? null,
-      taskRefs: binding.taskLedgerReferences.map((reference) => reference.taskLedgerNodeId),
+      activeTaskNodeId: input.activeTaskNodeId ?? binding.activeTaskNodeId ?? null,
+      taskRefs,
       taskLedger: ledgerResult.status === 'fulfilled' ? ledgerResult.value : null,
       workingContext: workingContextResult.status === 'fulfilled' ? workingContextResult.value : null,
       compression,
@@ -321,13 +334,22 @@ async function readLongSessionContinuityContext(input: {
         memory: memoryResult.status === 'fulfilled' && memorySurface !== null,
       },
     });
-    const rendered = capContextText(
-      renderLongSessionContinuityContext(pack),
-      CONTEXT_FRAGMENT_LIMITS.continuityContextChars,
+    const latest = await getPersistedCoordinatorBinding(input.workspaceId, input.sessionKey);
+    if (!latest || continuityBindingIdentity(latest) !== continuityBindingIdentity(binding)) {
+      return { validation: 'invalidated', reason: 'binding_changed_during_context_read' };
+    }
+    const described = await input.gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(
+      'sessions.describe', { key: input.sessionKey }, 15_000,
     );
-    return { validation: 'current', pack, rendered };
+    if (described.session?.sessionId !== binding.sessionGeneration) return { validation: 'invalidated', reason: 'generation_mismatch' };
+    if ((pack.budget.criticalOmissions ?? 0) > 0) return { validation: 'invalidated', reason: 'critical_context_budget_exceeded', pack };
+    const rendered = renderLongSessionContinuityContext(pack);
+    if (rendered.length > CONTEXT_FRAGMENT_LIMITS.continuityContextChars) {
+      return { validation: 'unavailable', reason: 'rendered_context_budget_exceeded', pack };
+    }
+    return { validation: 'current', pack, rendered, binding };
   } catch (error) {
-    logger.warn('[chat:continuity] context read failed; using legacy path', { error: String(error) });
+    logger.warn('[chat:continuity] owner context read failed', { error: String(error) });
     return { validation: 'unavailable', reason: String(error) };
   }
 }
@@ -341,10 +363,12 @@ async function applyLongSessionContinuityContext(
     activeTaskNodeId?: string;
     knowledgeReferences: NormalizedKnowledgeReference[];
   },
-): Promise<string | null> {
+): Promise<{ message: string; binding: WorkspaceCoordinatorBinding } | null> {
   const read = await readLongSessionContinuityContext(input);
-  if (read.validation !== 'current' || !read.rendered) return null;
-  return message ? read.rendered + '\n\n' + message : read.rendered;
+  if (read.validation === 'invalidated') throw new Error(`COORDINATOR_BINDING_INVALID: ${read.reason}`);
+  if (read.validation === 'unavailable') throw new Error(`CONTINUITY_OWNER_UNAVAILABLE: ${read.reason}`);
+  if (read.validation !== 'current' || !read.rendered || !read.binding) return null;
+  return { message: message ? read.rendered + '\n\n' + message : read.rendered, binding: read.binding };
 }
 
 function applyToolUiResponseContract(message: string): string {
@@ -482,7 +506,7 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
           activeTaskNodeId: typeof body.activeTaskNodeId === 'string' ? body.activeTaskNodeId : undefined,
           knowledgeReferences,
         });
-        message = continuityMessage ?? await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
+        message = continuityMessage?.message ?? await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
         const imageAttachments: Array<Record<string, unknown>> = [];
         const fileReferences: string[] = [];
         const media = normalizeMedia(body.media);
@@ -644,6 +668,13 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
         }
         let result: unknown;
         try {
+          if (continuityMessage) {
+            const latest = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
+            if (!latest || continuityBindingIdentity(latest) !== continuityBindingIdentity(continuityMessage.binding)) {
+              throw new Error('COORDINATOR_BINDING_INVALID: context_owner_changed_before_send');
+            }
+            rpcParams.expectedSessionGeneration = continuityMessage.binding.sessionGeneration;
+          }
           result = await gatewayManager.rpc('chat.send', rpcParams, 15 * 60_000);
           if (handoffOperationId) {
             if (!isRecord(result) || result.runId !== idempotencyKey) throw new Error('HANDOFF_SEND_IDENTITY_UNCONFIRMED');

@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {
   createTaskLedgerWorkingContextProposal,
+  createTaskLedgerWorkingContextDecision,
 } from "../../shared/task-ledger-working-context";
 import {
   appendTaskLedgerWorkingContextEvents,
@@ -54,6 +55,21 @@ function proposalEvents() {
 }
 
 describe("L01 working-context single source", () => {
+  it('projects each task before selecting current fields so another task cannot hide accepted context', async () => {
+    const events = ['task-a', 'task-b'].flatMap(taskId => {
+      const proposal = createTaskLedgerWorkingContextProposal({ proposalId: `${taskId}-objective`, field: 'Objective',
+        value: `${taskId} objective`, version: 1, actor: 'assistant', taskId, trust: 'confirmed',
+        evidenceRefs: [{ type: 'file', ref: `${taskId}.md` }], createdAt: baseTime });
+      const decision = createTaskLedgerWorkingContextDecision({ proposalId: `${taskId}-objective`, field: 'Objective',
+        version: 1, decision: 'accepted', actor: 'system', taskId, policyDigest: `sha256:${'a'.repeat(64)}`, createdAt: baseTime });
+      if (!proposal.ok || !decision.ok) throw new Error('Fixture construction failed');
+      return [proposal.event, decision.event];
+    });
+    await appendTaskLedgerWorkingContextEvents(workspaceId, events);
+    expect((await readTaskLedgerWorkingContext(workspaceId, ['task-a'])).fields.Objective.current?.value).toBe('task-a objective');
+    expect((await readTaskLedgerWorkingContext(workspaceId, ['task-b'])).fields.Objective.current?.value).toBe('task-b objective');
+    expect((await readTaskLedgerWorkingContext(workspaceId, [])).fields.Objective.current).toBeUndefined();
+  });
   it("persists through the transactional ledger and reads back a consistent projection", async () => {
     await appendTaskLedgerWorkingContextEvents(workspaceId, proposalEvents());
     const projection = await readTaskLedgerWorkingContext(workspaceId);

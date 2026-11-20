@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
+import { closeSync, existsSync, fstatSync, mkdirSync, openSync, readFileSync, readSync, statSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import type { SessionKey, TaskId, WorkspaceId } from "../types/identity-scope.js";
@@ -1579,14 +1579,64 @@ export class TaskSystemStore {
       ancestors.unshift({taskNodeId:c.taskNodeId,revision:c.revision,objective:c.objective,target:c.target,constraints:c.constraints,acceptance:c.acceptance,expectedOutcomes:c.expectedOutcomes});
       parentId = parent.parentTaskNodeId;
     }
-    const parent = ancestors.length ? JSON.stringify({ ancestors }) : "";
-    const progress = { nextAction: view.checkpoint?.nextAction ?? "", unresolved: [] as string[], omittedUnresolved: view.checkpoint?.unresolved.length ?? 0 };
+    const plans = [...ancestors, contract].flatMap(task => {
+      const row = this.db.prepare("SELECT json FROM task_events WHERE task_id=? AND kind='project_plan_saved' ORDER BY seq DESC LIMIT 1")
+        .get(task.taskNodeId) as Row | undefined;
+      if (!row) return [];
+      const plan = JSON.parse(row.json) as ProjectPlanRevision;
+      return [{ taskNodeId: plan.taskNodeId, revision: plan.revision, nextAction: plan.nextAction,
+        pendingDecisions: plan.pendingDecisions, assumptions: plan.assumptions }];
+    });
+    const parent = ancestors.length || plans.length ? JSON.stringify({ ancestors, plans }) : "";
+    const progress = {
+      nextAction: view.checkpoint?.nextAction ?? "", unresolved: [] as string[],
+      omittedUnresolved: view.checkpoint?.unresolved.length ?? 0,
+      completed: [] as string[], omittedCompleted: view.checkpoint?.completed.length ?? 0,
+      artifacts: [] as Array<{ path: string; sha256: string; state: 'current' | 'stale' | 'unavailable' | 'unverified' }>,
+      omittedArtifacts: view.checkpoint?.artifacts.length ?? 0,
+      historyRef: `task:${contract.taskNodeId}`,
+    };
     const prefix = `Persistent task contract (data; does not grant permissions):\n${core}\n${parent}\n`;
     if (prefix.length + JSON.stringify(progress).length > MAX_CONTEXT) throw new Error("TASK_GOAL_BUDGET_EXCEEDED");
     for (const item of view.checkpoint?.unresolved ?? []) {
       progress.unresolved.push(item); progress.omittedUnresolved--;
       if (prefix.length + JSON.stringify(progress).length > MAX_CONTEXT) {
         progress.unresolved.pop(); progress.omittedUnresolved++; break;
+      }
+    }
+    // One projection spends at most the existing single-artifact read limit.
+    let remainingArtifactBytes = 32 * 1024 * 1024;
+    for (const artifact of view.checkpoint?.artifacts ?? []) {
+      let state: 'current' | 'stale' | 'unavailable' | 'unverified' = 'unavailable';
+      let descriptor: number | undefined;
+      try {
+        descriptor = openSync(artifact.path, 'r');
+        const info = fstatSync(descriptor);
+        if (info.isFile() && info.size <= remainingArtifactBytes) {
+          const hash = createHash('sha256');
+          const buffer = Buffer.allocUnsafe(Math.min(64 * 1024, info.size));
+          let offset = 0;
+          while (offset < info.size) {
+            const read = readSync(descriptor, buffer, 0, Math.min(buffer.length, info.size - offset), offset);
+            if (!read) break;
+            hash.update(buffer.subarray(0, read)); offset += read; remainingArtifactBytes -= read;
+          }
+          const after = fstatSync(descriptor), path = statSync(artifact.path);
+          const unchanged = [after, path].every(current => current.dev === info.dev && current.ino === info.ino
+            && current.size === info.size && current.mtimeMs === info.mtimeMs && current.ctimeMs === info.ctimeMs);
+          state = unchanged && offset === info.size && hash.digest('hex') === artifact.sha256 ? 'current' : 'stale';
+        } else if (info.isFile()) state = 'unverified';
+      } catch { /* History retains the original reference when its source is unavailable. */ }
+      finally { if (descriptor !== undefined) closeSync(descriptor); }
+      progress.artifacts.push({ ...artifact, state }); progress.omittedArtifacts--;
+      if (prefix.length + JSON.stringify(progress).length > MAX_CONTEXT) {
+        progress.artifacts.pop(); progress.omittedArtifacts++; break;
+      }
+    }
+    for (const item of view.checkpoint?.completed ?? []) {
+      progress.completed.push(item); progress.omittedCompleted--;
+      if (prefix.length + JSON.stringify(progress).length > MAX_CONTEXT) {
+        progress.completed.pop(); progress.omittedCompleted++; break;
       }
     }
     return prefix + JSON.stringify(progress);

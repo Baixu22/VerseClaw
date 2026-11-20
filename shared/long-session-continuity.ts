@@ -71,7 +71,7 @@ export type LongSessionContinuityContextPack = {
   activeTaskNodeId?: string | null;
   status: ContinuityPackStatus;
   complete: false;
-  budget: { maxChars: number; usedChars: number; truncated: boolean; droppedItems: number };
+  budget: { maxChars: number; usedChars: number; truncated: boolean; droppedItems: number; criticalOmissions?: number };
   items: ContinuityContextItem[];
   sourceStates: ContinuitySourceState[];
   exclusions: ContinuityExclusion[];
@@ -246,6 +246,7 @@ function addItem(items: ContinuityContextItem[], seen: Set<string>, item: Omit<C
 
 function collectWorkingContext(
   input: BuildLongSessionContinuityInput,
+  relevantIds: ReadonlySet<string>,
   items: ContinuityContextItem[],
   seen: Set<string>,
   exclusions: ContinuityExclusion[],
@@ -259,7 +260,14 @@ function collectWorkingContext(
     if (kind && projection.current) {
       const current = projection.current;
       const expiresAt = isoOrNull(current.ttl.expiresAt);
-      if (expiresAt && Date.parse(expiresAt) <= now) {
+      const task = input.taskLedger?.nodes.find(node => node.id === current.taskId);
+      if (!current.taskId || !relevantIds.has(current.taskId)) {
+        exclusions.push({ ref: `task-ledger-working-context:${current.proposalId}`, reason: 'out-of-scope' });
+      } else if (task?.status === 'dropped') {
+        exclusions.push({ ref: `task-ledger-working-context:${current.proposalId}`, reason: 'revoked-or-superseded' });
+      } else if (!current.acceptedEventId || current.trust !== 'confirmed') {
+        exclusions.push({ ref: `task-ledger-working-context:${current.proposalId}`, reason: 'candidate-not-accepted' });
+      } else if (!expiresAt || Date.parse(expiresAt) <= now) {
         exclusions.push({ ref: `task-ledger-working-context:${current.proposalId}`, reason: 'expired' });
       } else {
         addItem(items, seen, {
@@ -268,7 +276,7 @@ function collectWorkingContext(
           source: 'task-ledger-working-context',
           text: renderValue(current.value),
           owner: 'task-ledger',
-          scope: { kind: 'workspace', key: input.workspaceId },
+          scope: { kind: 'task', key: current.taskId },
           freshness: freshnessForTimestamp(current.acceptedAt, now),
           acceptedAt: current.acceptedAt,
           expiresAt,
@@ -546,6 +554,9 @@ function applyBudget(
 export function buildLongSessionContinuityContext(
   input: BuildLongSessionContinuityInput,
 ): LongSessionContinuityContextPack {
+  if (input.taskLedger && (input.taskLedger.sourceWorkspaceId ?? input.taskLedger.workspaceId) !== input.workspaceId) {
+    throw new Error('CONTINUITY_WORKSPACE_MISMATCH');
+  }
   const now = input.now ?? Date.now();
   const budgetChars = Math.max(200, Math.floor(input.budgetChars ?? DEFAULT_BUDGET_CHARS));
   const relevantIds = relevantTaskIds(input);
@@ -553,7 +564,7 @@ export function buildLongSessionContinuityContext(
   const exclusions: ContinuityExclusion[] = [];
   const seen = new Set<string>();
 
-  collectWorkingContext(input, items, seen, exclusions, now);
+  collectWorkingContext(input, relevantIds, items, seen, exclusions, now);
   collectTaskLedgerNodes(input, relevantIds, items, seen, exclusions, now);
   collectTaskLedgerDependencies(input, relevantIds, items, seen, now);
   collectCompression(input, items, seen, exclusions);
@@ -614,6 +625,8 @@ export function buildLongSessionContinuityContext(
       usedChars: budgeted.usedChars,
       truncated: budgeted.dropped > 0,
       droppedItems: budgeted.dropped,
+      criticalOmissions: items.filter(item => (item.kind === 'objective' || item.kind === 'constraint')
+        && !budgeted.items.some(kept => kept.id === item.id)).length,
     },
     items: budgeted.items,
     sourceStates,

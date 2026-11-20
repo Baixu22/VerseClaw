@@ -42,6 +42,19 @@ describe('project coordinator planning', () => {
     store.close();
     rmSync(root, { recursive: true, force: true });
   });
+  it('retains plan decisions and provisional assumptions when the child coordinator changes', () => {
+    const plan = store.saveProjectPlan(scope, initial);
+    const task = store.startNextPlanTask(scope, plan.taskNodeId, plan.revision, 'continuity-child');
+    store.checkpoint(task.claim!, { nextAction: 'Resume the current step', completed: [], unresolved: [], artifacts: [] });
+    store.handoff(task.claim!, 'next-coordinator', 'next-generation');
+    const context = store.context('next-coordinator', 'next-generation')!;
+    expect(context).toContain('Keep the original evidence');
+    expect(context).toContain('Confirm deployment scope');
+    expect(context).toContain('Existing checklist format remains compatible');
+    expect(context).toContain('"pendingDecisions"');
+    expect(context).toContain('"assumptions"');
+    expect(context).toContain('Resume the current step');
+  });
 
   it('takes planning scope from the Workspace owner and fences stale Runtime calls', async () => {
     const ownerPath = join(root, 'workspaces.json');

@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect } from "vitest";
+import { createHash } from 'node:crypto';
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -20,6 +21,31 @@ import type { AssistantMessage } from '../../openclaw_runtime/src/llm/types';
 import { truncateToolResultMessage } from '../../openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation';
 
 describe("production task runtime guard", () => {
+  it('rehydrates checkpoint evidence references after handoff and marks changed artifacts stale', () => {
+    const root = mkdtempSync(join(tmpdir(), 'task-context-evidence-'));
+    const store = new TaskSystemStore(resolveTaskDomain(root));
+    try {
+      const content = 'long result '.repeat(2000);
+      writeFileSync(join(root, 'result.txt'), content);
+      const hash = createHash('sha256').update(content).digest('hex');
+      const task = store.start({ contract: { objective: 'Keep delivery evidence', constraints: ['Preserve the accepted scope'], target: 'result.txt',
+        acceptance: [{ id: 'proof', description: 'Verify the artifact', verification: { kind: 'file-sha256', path: 'result.txt', sha256: hash } }],
+      } }, 'old-coordinator', 'old-generation', 'start');
+      store.checkpoint(task.claim!, { nextAction: 'Verify the retained artifact', completed: ['Produced the initial artifact'], unresolved: ['Independent verification pending'], artifacts: [{ path: 'result.txt', sha256: hash }] });
+      const next = store.handoff(task.claim!, 'new-coordinator', 'new-generation');
+      const guard = createTaskRuntimeGuard(root, 'new-coordinator', 'new-generation');
+      const context = restoreTaskModelContext(guard, 'Compacted system context');
+      expect(context).toContain('Preserve the accepted scope');
+      expect(context).toContain('Produced the initial artifact');
+      expect(context).toContain('Verify the retained artifact');
+      expect(context).toContain(hash);
+      expect(context).toContain('"state":"current"');
+      expect(context).not.toContain(content);
+      expect(next.claim!.epoch).toBeGreaterThan(task.claim!.epoch);
+      writeFileSync(join(root, 'result.txt'), 'changed');
+      expect(restoreTaskModelContext(guard, 'Compacted system context')).toContain('"state":"stale"');
+    } finally { store.close(); rmSync(root, { recursive: true, force: true }); }
+  });
   it('credits read coverage only after an untruncated provider request returns successfully', async () => {
     const root = mkdtempSync(join(tmpdir(), 'review-visible-'));
     const store = new TaskSystemStore(resolveTaskDomain(root));

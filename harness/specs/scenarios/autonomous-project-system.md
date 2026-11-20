@@ -37,3 +37,5 @@ requiredRules:
 项目收口旅程见 project-coordinator-closeout.md：agent 写入不能通过检查的产物，负责人提交后派发只读评审；消费原契约的一次修复预算，修复并检查整合后的文件，再提交新候选、取得新评审并验收。回读账本与效果回执，确认旧评审拒绝新候选、修复超限被拒绝、完成只记录一次。
 
 系统总览的只读验收见 system-agent-portfolio.md：两个项目在相同Task authority或独立目录下读取各自计划与验证引用；一个目录暂不可用时保留旧观测并继续刷新另一个项目。核对四语、明暗、宽窄窗口和键盘返回的筛选保留，项目读取前后Workspace状态相同且模型调用为零。
+
+TF0686连续性验收使用既有 Working Context、Task context 与30对冻结评估入口。覆盖同workspace不同任务字段、跨workspace快照、读取期间owner变化、关键预算溢出、交接后计划决策与文件引用及产物篡改；结构投影指标与live模型质量分别记录。

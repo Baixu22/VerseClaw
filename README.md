@@ -356,3 +356,5 @@ Managed worktree integration preserves deletions, renames and binary bytes throu
 Tasks with an independent review criterion submit a candidate for a read-only reviewer. The coordinator can repair it once when the task allows it, rerun checks and request a fresh review before acceptance. Review results stay bound to the submitted files, and repair counts survive restart and handoff.
 
 System overview in the sidebar reads each registered project independently, including its plan, next action, coordinator and verification references. Open a project by name to enter its coordinator. Failed refreshes retain the previous observation with its timestamp; unattributed resource usage and cost remain unknown.
+
+Project continuity reads accepted context for the bound tasks and rechecks coordinator identity before sending. Handoffs retain task goals, constraints, pending decisions, progress and artifact references. Missing or changed artifact bytes remain explicit; oversized critical context stops the send with a diagnostic.
