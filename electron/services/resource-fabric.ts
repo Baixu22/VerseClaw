@@ -24,7 +24,7 @@ const PRESSURE_POLICY = { lowAvailableRatio: 0.10, recoveredAvailableRatio: 0.15
 type PressureReason = 'physical-memory' | 'system-commit' | 'event-loop';
 type PressureSignal = { sampledAt: number; observedAt: number; active: boolean; lowSince: number | null; available: boolean };
 
-export type FabricResource = 'workspaceExec' | 'chatHistory';
+export type FabricResource = 'workspaceExec' | 'chatHistory' | 'projectDispatch';
 
 export type GatewayRpcRunner = (
   method: string,
@@ -124,6 +124,10 @@ type Waiter = {
 };
 
 const DEFAULT_ACCOUNTS: Record<FabricResource, FabricAccountConfig> = {
+  projectDispatch: {
+    kind: 'agent-turn', minLimit: 1, maxLimit: 1, initialLimit: 1,
+    queueLength: 64, defaultTimeoutMs: 180_000, minChangeRatio: 0.1, tolerance: 0.1, agePromotionMs: 30_000,
+  },
   workspaceExec: {
     kind: 'terminal-exec',
     minLimit: 1,
@@ -429,6 +433,7 @@ export class ResourceFabric {
     this.accountConfigs = {
       workspaceExec: { ...DEFAULT_ACCOUNTS.workspaceExec, ...options.accounts?.workspaceExec },
       chatHistory: { ...DEFAULT_ACCOUNTS.chatHistory, ...options.accounts?.chatHistory },
+      projectDispatch: { ...DEFAULT_ACCOUNTS.projectDispatch, ...options.accounts?.projectDispatch },
     };
     for (const config of Object.values(this.accountConfigs)) {
       if (!Number.isInteger(config.queueLength) || config.queueLength < 0) throw new RangeError('Invalid queueLength');
@@ -602,15 +607,15 @@ export class ResourceFabric {
 
   private accountFor(resource: FabricResource, key: string): FabricAccount {
     this.reclaimIdleAccounts();
-    const accountKey = resource === 'chatHistory' ? 'chatHistory' : `workspaceExec:${key}`;
+    const accountKey = resource === 'workspaceExec' ? `workspaceExec:${key}` : resource;
     const existing = this.accounts.get(accountKey);
     if (existing) return existing;
     const config = this.accountConfigs[resource];
     const account = new FabricAccount(
       resource,
       key,
-      resource === 'chatHistory' ? 'main:chat-history' : `main:terminal-exec:${key}`,
-      resource === 'chatHistory' ? 'main:chat-history' : key,
+      resource === 'workspaceExec' ? `main:terminal-exec:${key}` : resource === 'chatHistory' ? 'main:chat-history' : 'main:project-dispatch',
+      resource === 'workspaceExec' ? key : resource === 'chatHistory' ? 'main:chat-history' : 'main:project-dispatch',
       config,
       this.drf,
       this.now,

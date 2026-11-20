@@ -543,3 +543,5 @@ Git 工作树存在未提交内容时拒绝回收，声明的写集也不能豁�
 系统总览通过 Workspace 的只读目录和每项目摘要入口读取已登记项目。计划、待决事项、任务与回执来自原 TaskSystemStore；负责人代次来自 Workspace 绑定与 Runtime 会话描述；资源按 workspace 从 Resource Envelope 过滤并保留观测时间。各项目独立加载，身份变化后拒绝旧响应，读取失败保留陈旧标记及上次状态。页面不建立计划、不派发、不切换活动工作区；点击项目名时使用既有项目负责人入口。
 
 连续上下文先按当前负责人绑定的任务筛选原 Working Context 事件，再投影已接受字段，避免同项目其他任务覆盖或混入。异步读取后和发送前复核 binding revision、会话代次、任务引用与环境，发送携带已确认代次。关键目标与约束超预算时拒绝发送。Runtime 沿原任务 context 恢复祖先约束、计划待决事项和假设、checkpoint 下一步、完成摘要及文件摘要引用；读取文件摘要每次最多32 MiB，超出标为未核验，变化与缺失分别标陈旧和不可用。原产物保留在磁盘，省略的条目记录数量并提供任务历史引用。
+
+总控派发复用 sessions.dispatchPlanTask 和持久委派回执。Main 以已登记负责人、代次、项目根目录、权限和控制版本建立单请求执行范围，不修改 UI activeWorkspace。排队使用 ResourceFabric 的单槽 projectDispatch 准入队列，tenant 为项目，沿用等待老化与份额比较；worker 生命周期和费用仍由 Runtime owner 持有。Workspace 保存全局暂停版本，变更与受管效果准入共享 mutation barrier；Runtime 开始新领取、评审和受管效果前也读取暂停。已准入效果结清，读取、核对、停止和取消可继续；未知派发结果复用原回执，禁止重复发起。

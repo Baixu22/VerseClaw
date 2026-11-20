@@ -4,6 +4,7 @@
  * Manages live capture, manual import, summarization, and process-local transcript sessions.
  */
 import { randomUUID } from "node:crypto";
+import { getSessionEntry } from '../../config/sessions/store.js';
 import path from "node:path";
 import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
 import { Type } from "typebox";
@@ -34,7 +35,18 @@ type TranscriptsRuntimeContext = {
   config?: OpenClawConfig;
   stateDir: string;
   logger: TranscriptsLogger;
+  owner?: { sessionKey: string; generation: string; workspace: string };
 };
+
+function ownsCapture(ctx: TranscriptsRuntimeContext, session: TranscriptSessionDescriptor): boolean {
+  return Boolean(ctx.owner && JSON.stringify(session.metadata?.captureOwner) === JSON.stringify(ctx.owner));
+}
+
+function assertCaptureOwner(ctx: TranscriptsRuntimeContext, session: TranscriptSessionDescriptor): void {
+  if (!ownsCapture(ctx, session) || getSessionEntry({ sessionKey: ctx.owner!.sessionKey })?.sessionId !== ctx.owner!.generation) {
+    throw new Error('TRANSCRIPTS_CAPTURE_OWNER_MISMATCH');
+  }
+}
 
 type ActiveTranscriptsSession = {
   session: TranscriptSessionDescriptor;
@@ -203,11 +215,13 @@ async function startTranscripts(params: {
     throw new Error(`transcripts provider ${source.providerId} cannot start live capture`);
   }
   const session: TranscriptSessionDescriptor = {
-    sessionId: readStringParam(params.rawParams, "sessionId", { trim: true }) ?? createSessionId(),
+    sessionId: params.ctx.owner ? createSessionId() : readStringParam(params.rawParams, "sessionId", { trim: true }) ?? createSessionId(),
     title: readStringParam(params.rawParams, "title", { trim: true }),
     source,
     startedAt: new Date().toISOString(),
+    ...(params.ctx.owner ? { metadata: { captureOwner: params.ctx.owner } } : {}),
   };
+  if (await params.store.readSessionEntry(session.sessionId)) throw new Error('TRANSCRIPTS_CAPTURE_ALREADY_EXISTS');
   await params.store.writeSession(session);
   const result = await provider.start({
     cfg: params.ctx.config,
@@ -239,6 +253,7 @@ async function stopTranscripts(params: {
   ctx: TranscriptsRuntimeContext;
   store: TranscriptsStore;
   rawParams: Record<string, unknown>;
+  serviceCapture?: boolean;
 }) {
   const sessionSelector = readStringParam(params.rawParams, "sessionId", {
     required: true,
@@ -260,6 +275,7 @@ async function stopTranscripts(params: {
   if (!session) {
     throw new Error(`transcripts session not found: ${sessionSelector}`);
   }
+  if (!(params.serviceCapture && !session.metadata?.captureOwner)) assertCaptureOwner(params.ctx, session);
   const sessionId = session.sessionId;
   const providerId = selectedActive?.providerId ?? session.source.providerId;
   const provider = resolveSourceProvider(providerId, params.ctx);
@@ -322,12 +338,14 @@ async function importTranscripts(params: {
     throw new Error(`transcripts provider ${source.providerId} cannot import transcripts`);
   }
   const session: TranscriptSessionDescriptor = {
-    sessionId: readStringParam(params.rawParams, "sessionId", { trim: true }) ?? createSessionId(),
+    sessionId: params.ctx.owner ? createSessionId() : readStringParam(params.rawParams, "sessionId", { trim: true }) ?? createSessionId(),
     title: readStringParam(params.rawParams, "title", { trim: true }),
     source,
     startedAt: new Date().toISOString(),
     stoppedAt: new Date().toISOString(),
+    ...(params.ctx.owner ? { metadata: { captureOwner: params.ctx.owner } } : {}),
   };
+  if (await params.store.readSessionEntry(session.sessionId)) throw new Error('TRANSCRIPTS_CAPTURE_ALREADY_EXISTS');
   const transcript = readStringParam(params.rawParams, "transcript", {
     required: true,
     trim: false,
@@ -356,6 +374,7 @@ async function importTranscripts(params: {
 }
 
 async function summarizeExisting(params: {
+  ctx: TranscriptsRuntimeContext;
   config: ReturnType<typeof resolveTranscriptsConfig>;
   store: TranscriptsStore;
   rawParams: Record<string, unknown>;
@@ -368,6 +387,7 @@ async function summarizeExisting(params: {
   if (!entry) {
     throw new Error(`transcripts session not found: ${sessionId}`);
   }
+  assertCaptureOwner(params.ctx, entry.session);
   const { summaryPath, summary } = await summarizeAndPersist({
     config: params.config,
     store: params.store,
@@ -387,7 +407,7 @@ async function statusTranscripts(ctx: TranscriptsRuntimeContext) {
     ...listTranscriptSourceProviders(ctx.config).map((provider) => provider.id),
   ];
   const uniqueProviders = uniqueStrings(providers);
-  const active = [...activeSessions.values()].map((entry) => ({
+  const active = [...activeSessions.values()].filter(entry => ownsCapture(ctx, entry.session)).map((entry) => ({
     sessionId: entry.session.sessionId,
     providerId: entry.providerId,
     title: entry.session.title,
@@ -407,11 +427,13 @@ export function createTranscriptsTool(options?: {
   config?: OpenClawConfig;
   stateDir?: string;
   logger?: TranscriptsLogger;
+  owner?: TranscriptsRuntimeContext['owner'];
 }): AnyAgentTool {
   const ctx: TranscriptsRuntimeContext = {
     config: options?.config,
     stateDir: options?.stateDir ?? resolveStateDir(),
     logger: options?.logger ?? console,
+    owner: options?.owner,
   };
   return {
     name: "transcripts",
@@ -420,6 +442,10 @@ export function createTranscriptsTool(options?: {
       "Start, stop, import, summarize, or inspect transcripts from Discord, Google Meet, Slack huddles, and other meeting sources.",
     parameters: TranscriptsSchema,
     async execute(_toolCallId, rawParams) {
+      if (!ctx.owner?.sessionKey || !ctx.owner.generation || !ctx.owner.workspace
+        || getSessionEntry({ sessionKey: ctx.owner.sessionKey })?.sessionId !== ctx.owner.generation) {
+        throw new Error('TRANSCRIPTS_CALLER_IDENTITY_REQUIRED');
+      }
       const config = resolveTranscriptsConfig(ctx.config?.transcripts);
       if (!config.enabled) {
         throw new Error("transcripts are disabled");
@@ -435,7 +461,7 @@ export function createTranscriptsTool(options?: {
         case "import":
           return await importTranscripts({ ctx, store, rawParams: params });
         case "summarize":
-          return await summarizeExisting({ config, store, rawParams: params });
+          return await summarizeExisting({ ctx, config, store, rawParams: params });
         case "status":
           return await statusTranscripts(ctx);
         default:
@@ -555,6 +581,7 @@ export function createTranscriptsAutoStartService(ctx: TranscriptsRuntimeContext
           ctx,
           store,
           rawParams: { action: "stop", sessionId },
+          serviceCapture: true,
         }).catch((err: unknown) =>
           ctx.logger.warn(
             `transcripts autoStart stop failed session=${sessionId}: ${

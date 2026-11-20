@@ -1,3 +1,6 @@
+import { getExecutionWorkspaceProfile } from './project-execution-scope';
+import { createSystemProjectDispatch } from './system-project-dispatch';
+import { readSystemControl } from './workspaces-api';
 import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
@@ -2103,6 +2106,7 @@ export function createSessionsApi(ctx: {
     return gate;
   };
   const delegate = async (payload: SessionDelegationPayload): Promise<SessionDelegationResult> => {
+    if ((await readSystemControl()).paused) return { success: false, status: 'rejected', error: 'SYSTEM_EXECUTION_PAUSED' };
     const validated = validateSessionDelegationPayload(payload);
     if (!validated.ok) return { success: false, status: 'rejected', error: validated.error };
     if (!ctx.gatewayManager || !ctx.resolveCoordinator || !ctx.gatewayRpcForDelegation) {
@@ -2120,7 +2124,7 @@ export function createSessionsApi(ctx: {
       claimAdmission: delegationStore.claimAdmission,
       commitAdmission: delegationStore.commitAdmission,
       resolveCoordinator: ctx.resolveCoordinator,
-      getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getActiveWorkspaceProfile())?.id ?? null),
+      getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getExecutionWorkspaceProfile())?.id ?? null),
       resolveTaskScope: ctx.resolveTaskScope ?? (async (input) => {
         const snapshot = await loadTaskLedgerSnapshot(input.workspaceId);
         const task = snapshot.nodes.find((node) => node.id === input.taskRef);
@@ -2161,8 +2165,9 @@ export function createSessionsApi(ctx: {
   const planFlights = new Map<string, Promise<SessionDelegationResult>>();
   const dispatchPlanTask = async (p: ProjectPlanDispatchPayload, key: string): Promise<SessionDelegationResult> => {
     try {
+      if ((await readSystemControl()).paused) throw new Error('SYSTEM_EXECUTION_PAUSED');
       if (!ctx.gatewayManager || !ctx.selectSessionTask || !ctx.resolveCoordinator) throw new Error('TASK_SCOPE_OWNER_UNAVAILABLE');
-      const profile = await getActiveWorkspaceProfile();
+      const profile = await getExecutionWorkspaceProfile();
       if (!profile || profile.id !== p.workspaceId || !projectCoordinatorProfile([profile], p.sessionKey)) throw new Error('TASK_PROJECT_INACTIVE');
       const described = await ctx.gatewayManager.rpc<{session?: {sessionId?: string; hasActiveRun?: boolean; status?: string}}>('sessions.describe', {key:p.sessionKey});
       if (!p.expectedSessionGeneration || described.session?.sessionId !== p.expectedSessionGeneration) throw new Error('TASK_GENERATION_STALE');
@@ -2205,9 +2210,7 @@ export function createSessionsApi(ctx: {
         includeVerifier:false, approvalId:p.approvalId });
     } catch (error) { return {success:false,status:'rejected',error:error instanceof Error ? error.message : String(error)}; }
   };
-  return {
-    delegate,
-    dispatchPlanTask: async p => {
+  const dispatchNext: CompleteHostServiceRegistry['sessions']['dispatchPlanTask'] = async p => {
       if (!p || ![p.workspaceId,p.sessionKey,p.expectedSessionGeneration,p.planId,p.expectedChildId].every(v => typeof v === 'string' && v.trim()) || !Number.isSafeInteger(p.expectedRevision) || p.expectedRevision < 1)
         return {success:false,status:'rejected',error:'TASK_PROJECT_DISPATCH_INVALID'};
       const key = 'project-dispatch:' + createHash('sha256').update(JSON.stringify([p.workspaceId,p.sessionKey,p.expectedSessionGeneration,p.planId,p.expectedRevision,p.expectedChildId])).digest('hex');
@@ -2216,7 +2219,11 @@ export function createSessionsApi(ctx: {
       const flight = dispatchPlanTask(p,key).finally(() => planFlights.delete(key));
       planFlights.set(key,flight);
       return flight;
-    },
+    };
+  return {
+    delegate,
+    dispatchPlanTask: dispatchNext,
+    dispatchSystemProject: createSystemProjectDispatch(dispatchNext),
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const workspaceId = getOptionalWorkspaceId(payload);

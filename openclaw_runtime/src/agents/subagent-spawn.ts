@@ -1,3 +1,4 @@
+import { assertSystemExecutionAllowed } from '../../../shared/task-system/project-coordinator.js';
 /**
  * Subagent spawn executor.
  *
@@ -330,6 +331,7 @@ async function assertVerifierCandidate(orchestration: TeamOrchestrationMetadata 
 
 /** Executes only this registry's already-prepared agent request after rechecking its owner. */
 export async function dispatchQueuedSubagentRun(entry: import('./subagent-registry.types.js').SubagentRunRecord): Promise<QueuedSubagentDispatchResult> {
+  try { assertSystemExecutionAllowed(); } catch (error) { return { status: 'rejected', error: String(error) }; }
   const queued = entry.queuedDispatch;
   if (!queued) return { status: 'rejected', error: 'queued dispatch payload missing' };
   if (queued.params.sessionKey !== entry.childSessionKey || queued.params.idempotencyKey !== entry.runId) {
@@ -1191,6 +1193,7 @@ export async function spawnSubagentDirect(
   params: SpawnSubagentParams,
   ctx: SpawnSubagentContext,
 ): Promise<SpawnSubagentResult> {
+  try { assertSystemExecutionAllowed(); } catch (error) { return { status: 'error', dispatchOutcome: 'not-dispatched', error: String(error) }; }
   const task = params.task;
   const taskNameResult = normalizeSubagentTaskName(params.taskName);
   if (taskNameResult.error) {

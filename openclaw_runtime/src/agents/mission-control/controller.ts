@@ -1,3 +1,4 @@
+import { assertSystemExecutionAllowed } from '../../../../shared/task-system/project-coordinator.js';
 import crypto, { createHash } from "node:crypto";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { AgentConfig } from "../../config/types.agents.js";
@@ -1200,6 +1201,7 @@ export async function runMission(
   cfg: OpenClawConfig | undefined,
   deps: MissionControllerDeps = {},
 ): Promise<MissionRunResult> {
+  assertSystemExecutionAllowed();
   const existing = request.missionId
     ? (deps.getMission ?? getMissionRunFromStore)(request.missionId)
     : undefined;
@@ -1213,6 +1215,7 @@ export async function tickMission(
   deps: MissionControllerDeps = {},
 ): Promise<MissionRunResult> {
   const getMission = deps.getMission ?? getMissionRunFromStore;
+  assertSystemExecutionAllowed();
   const record = getMission(input.missionId);
   if (!record) throw new Error(`unknown mission "${input.missionId}"`);
   const missionFencingEnabled = goalWakeController.isMissionFencingEnabled();

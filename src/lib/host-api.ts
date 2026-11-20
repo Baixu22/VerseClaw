@@ -1,5 +1,6 @@
 import { knowledgeHostApi } from './host-api/knowledge';
 import type { SystemProjectRead } from '@shared/types/system-portfolio';
+import type { SystemControlChange } from '@shared/types/system-control';
 import type { SessionStorageScope, StorageRemovePayload } from '@shared/types/session-storage';
 import type {
   AgentCreatePayload,
@@ -348,6 +349,7 @@ import type {
   SessionSendWorkerPayload,
   SessionDelegationPayload,
   ProjectPlanDispatchPayload,
+  SystemProjectDispatchPayload,
   SessionDelegationResult,
   SessionHandoffPayload,
   SessionHandoffResult,
@@ -833,6 +835,8 @@ export const hostApi = {
     list: () => invokeHost('workspaces', 'list'),
     portfolio: () => invokeHost('workspaces', 'portfolio'),
     projectSummary: (input: SystemProjectRead) => invokeHost('workspaces', 'projectSummary', input),
+    systemControl: () => invokeHost('workspaces', 'systemControl'),
+    setSystemControl: (input: SystemControlChange) => invokeHost('workspaces', 'setSystemControl', input),
     getActive: () => invokeHost('workspaces', 'getActive'),
     create: (input: WorkspaceCreatePayload) => invokeHost('workspaces', 'create', input),
     update: (id: string, input: Omit<WorkspaceUpdatePayload, 'id'>) => (
@@ -1498,6 +1502,7 @@ export const hostApi = {
     ),
   },
   sessions: {
+    dispatchSystemProject: (input: SystemProjectDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchSystemProject', input),
     dispatchPlanTask: (input: ProjectPlanDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchPlanTask', input),
     delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (
       invokeHost('sessions', 'delegate', input)

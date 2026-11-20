@@ -206,6 +206,7 @@ import {
   registerManualCompactionRequest,
 } from "../../manual-compaction-request.js";
 import { resolveSandboxContext } from "../../sandbox.js";
+import { resolveProjectRuntimeConfig } from '../../project-runtime-policy.js';
 import { resolveSandboxRuntimeStatus } from "../../sandbox/runtime-status.js";
 import { repairSessionFileIfNeeded } from "../../session-file-repair.js";
 import { guardSessionManager } from "../../session-tool-result-guard-wrapper.js";
@@ -878,6 +879,7 @@ function collectAttemptExplicitToolAllowlistSources(params: {
 export async function runEmbeddedAttempt(
   params: EmbeddedRunAttemptParams,
 ): Promise<EmbeddedRunAttemptResult> {
+  params = { ...params, config: resolveProjectRuntimeConfig(params.config, params.sessionKey, params.sessionId, params.workspaceDir) };
   const resolvedWorkspace = resolveUserPath(params.workspaceDir);
   const archiveRecallRetention = {
     enabled: params.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,

@@ -39,3 +39,5 @@ requiredRules:
 系统总览的只读验收见 system-agent-portfolio.md：两个项目在相同Task authority或独立目录下读取各自计划与验证引用；一个目录暂不可用时保留旧观测并继续刷新另一个项目。核对四语、明暗、宽窄窗口和键盘返回的筛选保留，项目读取前后Workspace状态相同且模型调用为零。
 
 TF0686连续性验收使用既有 Working Context、Task context 与30对冻结评估入口。覆盖同workspace不同任务字段、跨workspace快照、读取期间owner变化、关键预算溢出、交接后计划决策与文件引用及产物篡改；结构投影指标与live模型质量分别记录。
+
+TF0684总控派发旅程验证后台项目A写入、项目B模型在途时全局暂停后写入被拒，UI活动workspace保持不变。三个项目在真实ResourceFabric准入队列中的等待和失败隔离由定向测试回读；重复请求不重复派发，恢复后旧控制版本拒绝。

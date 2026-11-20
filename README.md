@@ -358,3 +358,5 @@ Tasks with an independent review criterion submit a candidate for a read-only re
 System overview in the sidebar reads each registered project independently, including its plan, next action, coordinator and verification references. Open a project by name to enter its coordinator. Failed refreshes retain the previous observation with its timestamp; unattributed resource usage and cost remain unknown.
 
 Project continuity reads accepted context for the bound tasks and rechecks coordinator identity before sending. Handoffs retain task goals, constraints, pending decisions, progress and artifact references. Missing or changed artifact bytes remain explicit; oversized critical context stops the send with a diagnostic.
+
+System overview can dispatch the next ready task for an explicitly bound project without switching the active workspace. Each request uses that project’s permissions and budget. Global pause blocks new dispatches and managed effects while admitted effects settle; resuming a project cannot override the global pause.

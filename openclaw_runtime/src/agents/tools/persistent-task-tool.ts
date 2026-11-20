@@ -1,7 +1,7 @@
 import { Type } from "typebox";
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../../../shared/task-system/store.js";
-import { readProjectCoordinator } from "../../../../shared/task-system/project-coordinator.js";
+import { assertSystemExecutionAllowed, readProjectCoordinator } from "../../../../shared/task-system/project-coordinator.js";
 import { createExecutionTaskAccess } from "../execution-task-authority.js";
 import { getSessionEntry } from '../../config/sessions/store.js';
 import type {
@@ -153,13 +153,14 @@ export function createPersistentTaskTool(input: {
     execute: async (_toolCallId, raw) => {
       if (!input.sessionKey || !input.generation) throw new Error("TASK_SESSION_IDENTITY_REQUIRED");
       const p = raw as Record<string, unknown>;
+      if (['start', 'claim', 'startNextPlanTask', 'review', 'repair'].includes(String(p.action))) assertSystemExecutionAllowed();
       const planning = p.action === "planStatus" || p.action === "savePlan" || p.action === "startNextPlanTask";
       const scope = planning ? (() => {
         const ownerPath = process.env.CLAWX_WORKSPACE_OWNER_PATH;
         if (!ownerPath) throw new Error("TASK_PROJECT_COORDINATOR_REQUIRED");
         const entry = getSessionEntry({ sessionKey: input.sessionKey! });
         if (entry?.sessionId !== input.generation) throw new Error("TASK_GENERATION_STALE");
-        return readProjectCoordinator(ownerPath, input.sessionKey!, input.generation!, input.workspace, p.action === "startNextPlanTask");
+        return readProjectCoordinator(ownerPath, input.sessionKey!, input.generation!, input.workspace);
       })() : undefined;
       if (process.env.CLAWX_TASK_SCOPE_BRIDGE === '1' && !['list','current','status','changes','history','readRetainedArtifact','suggest'].includes(String(p.action))) {
         const session=getSessionEntry({sessionKey:input.sessionKey});

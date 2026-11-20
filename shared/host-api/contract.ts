@@ -1,5 +1,6 @@
 import type { RawMessage } from '../chat/types';
 import type { SystemPortfolio, SystemProjectRead, SystemProjectSnapshot } from '../types/system-portfolio';
+import type { SystemControlChange, SystemControlState } from '../types/system-control';
 import type { SessionHandoffOperation } from '../types/session-handoff';
 import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
 export type { WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
@@ -3359,6 +3360,9 @@ export type ProjectPlanDispatchPayload = {
   expectedChildId: string;
   approvalId?: string;
 };
+export type SystemProjectDispatchPayload = ProjectPlanDispatchPayload & {
+  expectedPolicyRevision: number;
+};
 export type SessionCreateHandoffResult = HostSuccess & {
   operation?: SessionHandoffOperation;
   sessionKey?: string;
@@ -5836,6 +5840,8 @@ export type HostApiContract = {
     list: () => WorkspaceSnapshotResult;
     portfolio: () => SystemPortfolio;
     projectSummary: (payload: SystemProjectRead) => SystemProjectSnapshot;
+    systemControl: () => SystemControlState;
+    setSystemControl: (payload: SystemControlChange) => SystemControlState;
     getActive: () => WorkspaceActiveResult;
     create: (payload: WorkspaceCreatePayload) => WorkspaceCreateResult;
     update: (payload: WorkspaceUpdatePayload) => WorkspaceSnapshotResult;
@@ -6209,6 +6215,7 @@ export type HostApiContract = {
   sessions: {
     delegate: (payload: SessionDelegationPayload) => SessionDelegationResult;
     dispatchPlanTask: (payload: ProjectPlanDispatchPayload) => SessionDelegationResult;
+    dispatchSystemProject: (payload: SystemProjectDispatchPayload) => SessionDelegationResult;
     delete: (payload: SessionDeletePayload) => SessionDeleteResult;
     rename: (payload: SessionRenamePayload) => HostSuccess;
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;

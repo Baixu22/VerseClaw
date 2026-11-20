@@ -72,6 +72,20 @@ describe('project coordinator planning', () => {
     await expect(tool.execute('foreign', { action: 'savePlan', ...initial, contract: initial.goal, requestId: 'foreign-write' })).rejects.toThrow('TASK_PROJECT_COORDINATOR_REQUIRED');
     expect(store.list()).toHaveLength(3);
   });
+  it('allows an explicitly bound background coordinator while global pause rejects new execution', async () => {
+    const ownerPath = join(root, 'workspaces.json');
+    const profiles = [{ id: scope.workspaceId, rootPath: root, projectCoordinatorSessionKey: scope.sessionKey }];
+    writeFileSync(ownerPath, JSON.stringify({ activeWorkspaceId: 'other-project', profiles }));
+    vi.stubEnv('CLAWX_WORKSPACE_OWNER_PATH', ownerPath);
+    const plan = store.saveProjectPlan(scope, initial);
+    const tool = createPersistentTaskTool({ workspace: root, sessionKey: scope.sessionKey, generation: scope.generation });
+    writeFileSync(ownerPath, JSON.stringify({ activeWorkspaceId: 'other-project', profiles,
+      systemControl: { paused: true, revision: 1, updatedAt: null, inFlightPolicy: 'settle-admitted-effects', recentRequests: [] } }));
+    await expect(tool.execute('paused-start', { action: 'startNextPlanTask', taskNodeId: plan.taskNodeId, expectedRevision: plan.revision, requestId: 'next' })).rejects.toThrow('SYSTEM_EXECUTION_PAUSED');
+    expect((await tool.execute('read-plan', { action: 'planStatus' })).details).toBeTruthy();
+    writeFileSync(ownerPath, JSON.stringify({ activeWorkspaceId: 'other-project', profiles }));
+    expect((await tool.execute('background-start', { action: 'startNextPlanTask', taskNodeId: plan.taskNodeId, expectedRevision: plan.revision, requestId: 'next' })).details).toBeTruthy();
+  });
 
   it('releases a settled failed writer without accepting its task or unlocking its dependents', () => {
     const plan = store.saveProjectPlan(scope, { ...initial, children: [
@@ -123,7 +137,7 @@ describe('project coordinator planning', () => {
     expect(() => store.startNextPlanTask(scope, plan.taskNodeId, plan.revision, 'blocked')).toThrow('TASK_PROJECT_NO_READY_CHILD');
   });
 
-  it('checks the active Workspace and live generation before claiming, including on replay', async () => {
+  it('checks persisted project ownership and live generation before claiming, including on replay', async () => {
     const path = join(root, 'workspaces.json');
     const profiles = [{ id: scope.workspaceId, rootPath: root, projectCoordinatorSessionKey: scope.sessionKey }];
     const activate = (activeWorkspaceId: string) => writeFileSync(path, JSON.stringify({ activeWorkspaceId, profiles }));
@@ -132,15 +146,21 @@ describe('project coordinator planning', () => {
     const tool = createPersistentTaskTool({ workspace: root, sessionKey: scope.sessionKey, generation: scope.generation });
     const next = () => tool.execute('next', { action: 'startNextPlanTask', taskNodeId: plan.taskNodeId, expectedRevision: 1, requestId: 'next', workspaceId: scope.workspaceId });
     activate('other-project');
-    await expect(next()).rejects.toThrow('TASK_PROJECT_INACTIVE');
+    profiles[0].projectCoordinatorSessionKey = 'foreign-session';
+    activate('other-project');
+    await expect(next()).rejects.toThrow('TASK_PROJECT_COORDINATOR_REQUIRED');
     expect(store.get(plan.childIds[0]).claim).toBeNull();
+    profiles[0].projectCoordinatorSessionKey = scope.sessionKey;
     activate(scope.workspaceId);
     runtime.generation = 'replaced';
     await expect(next()).rejects.toThrow('TASK_GENERATION_STALE');
     runtime.generation = scope.generation;
     expect((await next()).details).toMatchObject({ contract: { taskNodeId: plan.childIds[0] } });
     activate('other-project');
-    await expect(next()).rejects.toThrow('TASK_PROJECT_INACTIVE');
+    expect((await next()).details).toMatchObject({ contract: { taskNodeId: plan.childIds[0] } });
+    profiles[0].projectCoordinatorSessionKey = 'foreign-session';
+    activate('other-project');
+    await expect(next()).rejects.toThrow('TASK_PROJECT_COORDINATOR_REQUIRED');
   });
 
   it('persists the plan, provisional facts and dependencies across reopen and idempotent retries', () => {

@@ -14,6 +14,9 @@ import { withSessionTaskScope } from './session-task-scope.js';
 import { checkoutWritersForRun } from './worktree-writer.js';
 import { returnPersistentTaskWriter } from './persistent-task-delegation.js';
 import { getSessionEntry } from '../config/sessions/store.js';
+import { assertSystemExecutionAllowed } from '../../../shared/task-system/project-coordinator.js';
+import { requiresSessionTaskScope } from './tool-mutation.js';
+import { isSystemExecutionControl } from '../../../shared/system-execution-control.js';
 
 type Guard = ReturnType<typeof createExecutionTaskGuard>;
 type Checkout = NonNullable<SessionTaskEffectAdmission['checkout']>;
@@ -117,6 +120,9 @@ export async function executeManagedTaskTool<T>(
   const operationId = `${context?.runId ?? 'run'}:${toolCallId}`;
   const action = String((args as { action?: unknown } | null)?.action ?? '');
   const processControl = toolName === 'process' && ['poll','log','list','kill'].includes(action);
+  const systemControl = isSystemExecutionControl(toolName, args);
+  if (!systemControl && requiresSessionTaskScope(toolName, args)) assertSystemExecutionAllowed();
+  if (systemControl && !processControl) return execute();
   const executeTask = (effect: () => Promise<T>) => executeTaskGuarded(guard, operationId, toolName, effect, args);
   if (toolName === 'task_control') {
     const result = await executeTask(execute);

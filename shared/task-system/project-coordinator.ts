@@ -2,6 +2,14 @@ import { readFileSync } from "node:fs";
 import type { WorkspaceProfile } from "../types/workspace.js";
 import type { SessionKey, WorkspaceId } from "../types/identity-scope.js";
 import { canonicalPath } from "./identity.js";
+import { normalizeSystemControl } from '../types/system-control.js';
+
+export function assertSystemExecutionAllowed(): void {
+  const path = process.env.CLAWX_WORKSPACE_OWNER_PATH;
+  if (!path) return;
+  const document = JSON.parse(readFileSync(path, 'utf8')) as { systemControl?: unknown };
+  if (normalizeSystemControl(document.systemControl).paused) throw new Error('SYSTEM_EXECUTION_PAUSED');
+}
 
 export function projectCoordinatorProfile(profiles: WorkspaceProfile[], sessionKey: string) {
   const matches = profiles.filter((profile) => profile.projectCoordinatorSessionKey === sessionKey);

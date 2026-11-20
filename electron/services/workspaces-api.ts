@@ -1,6 +1,8 @@
 import { access, realpath, stat } from 'node:fs/promises';
 import { systemProjectOwnerKey } from '@shared/types/system-portfolio';
 import type { WorkspaceId } from '@shared/types/identity-scope';
+import { normalizeSystemControl, type SystemControlChange, type SystemControlState } from '@shared/types/system-control';
+import { getExecutionWorkspaceProfile, getProjectExecutionScope } from './project-execution-scope';
 import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { basename, resolve } from 'node:path';
@@ -60,6 +62,7 @@ import {
 type WorkspaceStoreDocument = {
   activeWorkspaceId: string | null;
   profiles: WorkspaceProfile[];
+  systemControl?: SystemControlState;
 };
 
 const workspaceNavigationObservers=new Set<()=>void>();
@@ -677,6 +680,29 @@ export async function getPersistedCoordinatorBinding(
 
 export async function getProjectCoordinatorProfiles(): Promise<WorkspaceProfile[]> {
   return (await readDocument()).profiles;
+}
+
+export async function readSystemControl(): Promise<SystemControlState> {
+  return normalizeSystemControl((await getWorkspaceStore()).get('systemControl'));
+}
+
+async function changeSystemControl(input: SystemControlChange): Promise<SystemControlState> {
+  if (!input || !Number.isSafeInteger(input.expectedRevision) || input.expectedRevision < 0
+    || typeof input.requestId !== 'string' || !input.requestId.trim() || input.requestId.length > 160
+    || typeof input.paused !== 'boolean') throw new Error('SYSTEM_CONTROL_INVALID');
+  const store = await getWorkspaceStore();
+  const current = normalizeSystemControl(store.get('systemControl'));
+  const prior = current.recentRequests.find(request => request.requestId === input.requestId);
+  if (prior) {
+    if (prior.paused !== input.paused) throw new Error('SYSTEM_CONTROL_REQUEST_CONFLICT');
+    return current;
+  }
+  if (current.revision !== input.expectedRevision) throw new Error('SYSTEM_CONTROL_REVISION_CONFLICT');
+  const next: SystemControlState = { revision: current.revision + 1, paused: input.paused,
+    inFlightPolicy: 'settle-admitted-effects', updatedAt: new Date().toISOString(),
+    recentRequests: [...current.recentRequests, { requestId: input.requestId, paused: input.paused }].slice(-128) };
+  store.set('systemControl', next);
+  return next;
 }
 
 export async function readWorkspaceHandoffOperation(input: {
@@ -1425,6 +1451,7 @@ async function readTaskScopeRun(ctx: WorkspacesApiContext, input: {
 
 async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTaskEffectRequest): Promise<SessionTaskEffectAdmission> {
   const request = parseSessionTaskEffectRequest(raw);
+  if ((await readSystemControl()).paused) throw new Error('SYSTEM_EXECUTION_PAUSED');
   const live = await readTaskScopeRun(ctx, request);
   if (!live.active || live.currentGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_RUN_STALE');
   const document = await readDocument();
@@ -1441,6 +1468,7 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
   });
   if (candidates.length !== 1) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
   const profile = candidates[0];
+  if (profile.permissionMode === 'readOnly' || profile.permissionMode === 'plan') throw new Error('TASK_SCOPE_PERMISSION_REVOKED');
   if (live.scheduled?.coordinator) {
     const scheduled = live.scheduled.coordinator;
     const binding = profile.coordinatorBindings?.[scheduled.sessionKey];
@@ -1601,7 +1629,8 @@ export function createWorkspacesApi(
       if (taskRef.kind !== 'ledger') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
       const document = await readDocument();
       const profile = document.profiles.find((entry) => entry.id === workspaceId);
-      if (!profile || document.activeWorkspaceId !== workspaceId) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
+      const executionWorkspaceId = getProjectExecutionScope() ? (await getExecutionWorkspaceProfile())?.id : document.activeWorkspaceId;
+      if (!profile || executionWorkspaceId !== workspaceId) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
       const associated = profile.activeSessionKey === sessionKey || Object.hasOwn(profile.sessionStates ?? {}, sessionKey)
         || Object.hasOwn(profile.coordinatorBindings ?? {}, sessionKey)
         || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey);
@@ -1661,6 +1690,8 @@ export function createWorkspacesApi(
     portfolio: async () => ({ scope: 'system', profiles: (await readDocument()).profiles.map(profile => ({
       id: profile.id as WorkspaceId, name: profile.name, ownerKey: systemProjectOwnerKey(profile),
     })) }),
+    systemControl: () => readSystemControl(),
+    setSystemControl: payload => withCoordinatorMutationLock(() => changeSystemControl(payload)),
     getActive: async () => {
       const document = await ensureDocumentWithDefault();
       const snapshot = toSnapshot(document);
@@ -1718,7 +1749,7 @@ export function createWorkspacesApi(
       if (body.activate !== false) await syncWorkspacePermissionBestEffort();
       return { ...successSnapshot(nextDocument), createdWorkspace: profile };
     },
-    update: async (payload) => {
+    update: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceUpdateBody : {};
       const id = requireId(body.id);
       const document = await readDocument();
@@ -1812,7 +1843,7 @@ export function createWorkspacesApi(
         await syncWorkspacePermissionBestEffort();
       }
       return successSnapshot(nextDocument);
-    },
+    }),
     delete: async (payload) => {
       const body = isRecord(payload) ? payload as WorkspaceIdBody : {};
       const id = requireId(body.id);

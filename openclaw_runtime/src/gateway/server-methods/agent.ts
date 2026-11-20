@@ -1,3 +1,4 @@
+import { assertSystemExecutionAllowed } from '../../../../shared/task-system/project-coordinator.js';
 // Gateway agent methods implement agent.run, agent.wait, agent.reset, identity,
 // and related session-aware RPC handlers used by UI and operator clients.
 import { randomUUID } from "node:crypto";
@@ -1219,6 +1220,8 @@ export const agentHandlers: GatewayRequestHandlers = {
       });
       return;
     }
+    try { assertSystemExecutionAllowed(); }
+    catch (error) { respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, String(error))); return; }
     let agentDedupeReserved = false;
     let agentRunAccepted = false;
     const ownerConnId = typeof client?.connId === "string" ? client.connId : undefined;
@@ -2481,6 +2484,7 @@ export const agentHandlers: GatewayRequestHandlers = {
         }
       }
 
+      assertSystemExecutionAllowed();
       const accepted = {
         runId,
         sessionKey: resolvedSessionKey,

@@ -133,6 +133,53 @@ afterEach(async () => {
 });
 
 describe('first effect consumes the canonical execution contract', () => {
+  it('rechecks a restrictive project permission before the next effect', async () => {
+    startTask(); await api().admitTaskEffect(request());
+    const document = JSON.parse(readFileSync(state.store, 'utf8'));
+    document.profiles[0].permissionMode = 'readOnly';
+    writeFileSync(state.store, JSON.stringify(document));
+    await expect(api().admitTaskEffect({ ...request(), requestId: 'permission-revoked' })).rejects.toThrow('TASK_SCOPE_PERMISSION_REVOKED');
+  });
+  it('serializes permission downgrade behind an already admitted effect boundary', async () => {
+    startTask();
+    let release!: () => void, entered!: () => void;
+    const gate = new Promise<void>(done => { release = done; });
+    const reached = new Promise<void>(done => { entered = done; });
+    const pausedLedger = { ...ledger, snapshot: async (...args: Parameters<typeof ledger.snapshot>) => { entered(); await gate; return ledger.snapshot(...args); } };
+    const live = api();
+    const original = ledger.snapshot;
+    ledger.snapshot = pausedLedger.snapshot;
+    const admission = live.admitTaskEffect(request());
+    await reached;
+    let permissionCommitted = false;
+    const update = Promise.resolve(live.update({ id: 'workspace-a', permissionMode: 'readOnly' })).then(result => { permissionCommitted = true; return result; });
+    await new Promise(done => setTimeout(done, 20));
+    expect(permissionCommitted).toBe(false);
+    ledger.snapshot = original; release();
+    await expect(admission).resolves.toMatchObject({ status: 'granted' });
+    await update;
+    await expect(live.admitTaskEffect({ ...request(), requestId: 'after-revocation' })).rejects.toThrow('TASK_SCOPE_PERMISSION_REVOKED');
+  });
+  it.each([['task_loop', 'status'], ['mission_loop', 'status'], ['transcripts', 'stop']])('keeps paused %s %s on its owning control path', async (toolName, action) => {
+    const { executeManagedTaskTool } = await import('../../openclaw_runtime/src/agents/execution-checkout-tools');
+    vi.stubEnv('CLAWX_WORKSPACE_OWNER_PATH', state.store);
+    await api().setSystemControl({ expectedRevision: 0, requestId: 'pause-control', paused: true });
+    const execute = vi.fn(async () => ({ ownerChecked: true }));
+    expect(await executeManagedTaskTool(undefined, null, 'control', toolName, { action }, undefined, execute)).toEqual({ ownerChecked: true });
+    expect(execute).toHaveBeenCalledOnce();
+    await expect(executeManagedTaskTool(undefined, null, 'write', 'write', { path: 'x' }, undefined, execute)).rejects.toThrow('SYSTEM_EXECUTION_PAUSED');
+  });
+  it('global pause rejects the next managed effect even when its project binding remains active', async () => {
+    startTask();
+    const owner = api();
+    await owner.admitTaskEffect(request());
+    const paused = await owner.setSystemControl({ expectedRevision: 0, requestId: 'global-pause', paused: true });
+    expect((await binding())?.state).toBe('active');
+    await expect(owner.admitTaskEffect({ ...request(), requestId: 'next-effect' })).rejects.toThrow('SYSTEM_EXECUTION_PAUSED');
+    expect(await api().systemControl()).toEqual(paused);
+    await owner.setSystemControl({ expectedRevision: paused.revision, requestId: 'global-resume', paused: false });
+    await expect(owner.admitTaskEffect({ ...request(), requestId: 'resumed-effect' })).resolves.toMatchObject({ status: 'granted' });
+  });
   it('binds an in-process worker through its persisted worktree owner', async () => {
     const { execFileSync } = await import('node:child_process');
     execFileSync('git', ['init', '-q', state.root], { windowsHide: true });
