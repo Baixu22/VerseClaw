@@ -1,4 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { MemorySurfaceEntry, MemorySurfaceSnapshot } from '@shared/types/memory';
 import type {
   TaskLedgerSnapshot,
@@ -45,7 +48,8 @@ vi.mock('@electron/utils/store', () => ({
 const NOW = Date.parse('2026-10-23T06:00:00.000Z');
 const WORKSPACE_ID = 'workspace-a';
 const SESSION_KEY = 'agent:architect:long-session';
-const ROOT = process.cwd();
+const ROOT = mkdtempSync(join(tmpdir(), 'continuity-workspace-'));
+afterAll(() => rmSync(ROOT, { recursive: true, force: true }));
 const POLICY = `sha256:${'a'.repeat(64)}`;
 
 function acceptedWorkingContextRecord(

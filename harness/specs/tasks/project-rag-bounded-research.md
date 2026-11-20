@@ -191,6 +191,8 @@ touchedAreas:
   - "tests/unit/typecheck-gate.test.ts"
   - "docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/**"
   - "scripts/validate-runtime-authority-convergence.mjs"
+  - "package.json"
+  - "tests/unit/chat-api-workspace-fingerprint.test.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -271,3 +273,5 @@ Knowledge身份复验使用sessions.describe的identityOnly投影，直接从同
 收敛验收按单次Git树与NUL差异批量核对来源blob，literal pathspec保留空格/方括号路径；正文恢复、修改和删除均重新读取。仓库身份的commit/tree在同次Git调用中解析并校验完整SHA，工作树和ref继续独立读取。
 
 进程迁移回归在子进程退出时清理等待计时器，超时则移除退出监听；真实终止/重启、17项断言及10/25秒等待上限保持。
+
+根测试首段最多3个worker；原三个权限/原生检查文件保持单worker隔离，随后完整执行DCS，整条1800秒与50/10/0跳过合同不变。Chat协调器测试使用独立临时workspace，避免读取仓库共享Task数据库；实际generation和权限拒绝仍按原断言执行。

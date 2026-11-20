@@ -1,10 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import {mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {TaskSystemStore} from '../../shared/task-system/store';
 import {resolveTaskDomain} from '../../shared/task-system/identity';
+
+const coordinatorRoot = mkdtempSync(resolve(tmpdir(), 'chat-coordinator-workspace-'));
+execFileSync('git', ['init', '--quiet', coordinatorRoot], { windowsHide: true, stdio: 'pipe' });
+afterAll(() => rmSync(coordinatorRoot, { recursive: true, force: true }));
 
 function computeExpectedFingerprint(rootPath: string): string {
   const absolute = resolve(rootPath);
@@ -20,7 +25,7 @@ function coordinatorBinding(overrides: Record<string, unknown> = {}) {
     sessionKey: 'agent:main:main',
     sessionGeneration: 'generation-1',
     taskLedgerReferences: [],
-    environment: { kind: 'local', canonicalRoot: process.cwd(), backend: 'git', branch: 'main', detachedHead: false, setupProfile: null },
+    environment: { kind: 'local', canonicalRoot: coordinatorRoot, backend: 'git', branch: 'main', detachedHead: false, setupProfile: null },
     archiveRestorePolicy: 'restore',
     state: 'active',
     bindingRevision: 1,
@@ -196,7 +201,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
 
   it('uses the active coordinator environment and verified session generation', async () => {
     getPersistedCoordinatorBindingMock.mockResolvedValue(coordinatorBinding({
-      environment: { kind: 'managed-worktree', canonicalRoot: process.cwd(), backend: 'git', branch: 'feature', detachedHead: false, setupProfile: null },
+      environment: { kind: 'managed-worktree', canonicalRoot: coordinatorRoot, backend: 'git', branch: 'feature', detachedHead: false, setupProfile: null },
     }));
     getWorkspaceRootPathByIdMock.mockResolvedValue('C:\\Repos\\App');
     const gatewayManager = {
@@ -208,7 +213,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
     await api.sendWithMedia({ sessionKey: 'agent:main:main', workspaceId: 'ws-app', message: 'work', idempotencyKey: 'idem-coordinator' });
     const call = (gatewayManager.rpc.mock.calls as unknown[][]).find((entry) => entry[0] === 'chat.send');
     const payload = call?.[1] as Record<string, unknown>;
-    expect(payload.workspaceDir).toBe(process.cwd());
+    expect(payload.workspaceDir).toBe(coordinatorRoot);
     expect(payload.workspaceFingerprint).toMatch(/^[0-9a-f]{16}$/);
     expect(getWorkspaceRootPathByIdMock).not.toHaveBeenCalled();
   });
