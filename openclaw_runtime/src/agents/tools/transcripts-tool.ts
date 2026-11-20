@@ -205,6 +205,7 @@ async function startTranscripts(params: {
   rawParams: Record<string, unknown>;
   abortSignal?: AbortSignal;
   startupWaitMs?: number;
+  serviceStartToken?: string;
 }) {
   if (params.abortSignal?.aborted) {
     throw new Error("transcripts start aborted");
@@ -214,14 +215,23 @@ async function startTranscripts(params: {
   if (!provider?.start) {
     throw new Error(`transcripts provider ${source.providerId} cannot start live capture`);
   }
-  const session: TranscriptSessionDescriptor = {
+  let session: TranscriptSessionDescriptor = {
     sessionId: params.ctx.owner ? createSessionId() : readStringParam(params.rawParams, "sessionId", { trim: true }) ?? createSessionId(),
     title: readStringParam(params.rawParams, "title", { trim: true }),
     source,
     startedAt: new Date().toISOString(),
     ...(params.ctx.owner ? { metadata: { captureOwner: params.ctx.owner } } : {}),
+    ...(params.serviceStartToken ? { metadata: { serviceStartToken: params.serviceStartToken } } : {}),
   };
-  if (await params.store.readSessionEntry(session.sessionId)) throw new Error('TRANSCRIPTS_CAPTURE_ALREADY_EXISTS');
+  const prior = await params.store.readSessionEntry(session.sessionId);
+  if (prior) {
+    if (!params.serviceStartToken || prior.session.metadata?.serviceStartToken !== params.serviceStartToken
+      || prior.session.metadata?.captureOwner || prior.session.stoppedAt || activeSessions.has(session.sessionId)) {
+      throw new Error('TRANSCRIPTS_CAPTURE_ALREADY_EXISTS');
+    }
+    // A retry belongs to this service's failed start and retains its original metadata.
+    session = prior.session;
+  }
   await params.store.writeSession(session);
   const result = await provider.start({
     cfg: params.ctx.config,
@@ -476,6 +486,7 @@ export function createTranscriptsAutoStartService(ctx: TranscriptsRuntimeContext
   start: () => void;
   stop: () => Promise<void>;
 } {
+  const serviceStartToken = randomUUID();
   let stopped = false;
   const timers = new Set<ReturnType<typeof setTimeout>>();
   const startedSessionIds = new Set<string>();
@@ -507,6 +518,7 @@ export function createTranscriptsAutoStartService(ctx: TranscriptsRuntimeContext
       store,
       abortSignal: abortController.signal,
       startupWaitMs: AUTO_START_PROVIDER_READY_TIMEOUT_MS,
+      serviceStartToken,
       rawParams: {
         action: "start",
         ...entry,
@@ -551,7 +563,7 @@ export function createTranscriptsAutoStartService(ctx: TranscriptsRuntimeContext
         startEntry(
           {
             ...entry,
-            sessionId: entry.sessionId ?? createSessionId(),
+            sessionId: entry.sessionId ? `${entry.sessionId}-${randomUUID().slice(0, 8)}` : createSessionId(),
           },
           1,
           store,

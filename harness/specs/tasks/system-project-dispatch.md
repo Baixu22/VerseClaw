@@ -41,6 +41,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/execution-checkout-tools.ts
   - openclaw_runtime/src/agents/project-runtime-policy.ts
   - openclaw_runtime/src/gateway/server-methods/agent.ts
+  - openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts
   - openclaw_runtime/src/agents/openclaw-tools.ts
   - openclaw_runtime/src/agents/tools/transcripts-tool.ts
   - tests/unit/system-transcript-control.test.ts

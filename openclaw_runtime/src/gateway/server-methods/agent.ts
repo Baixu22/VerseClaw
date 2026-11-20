@@ -1224,6 +1224,7 @@ export const agentHandlers: GatewayRequestHandlers = {
     catch (error) { respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, String(error))); return; }
     let agentDedupeReserved = false;
     let agentRunAccepted = false;
+    let cleanupUnacceptedRun: (() => void) | undefined;
     const ownerConnId = typeof client?.connId === "string" ? client.connId : undefined;
     const ownerDeviceId =
       typeof client?.connect?.device?.id === "string" ? client.connect.device.id : undefined;
@@ -2441,6 +2442,7 @@ export const agentHandlers: GatewayRequestHandlers = {
         controlUiVisible: !suppressVisibleSessionEffects,
         kind: "agent",
       });
+      if (activeRunAbort.registered) cleanupUnacceptedRun = activeRunAbort.cleanup;
       const existingRunAbort = context.chatAbortControllers.get(runId);
       if (!activeRunAbort.registered && existingRunAbort) {
         agentRunAccepted = existingRunAbort.kind === "agent";
@@ -2459,30 +2461,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       });
       let dispatchTaskTrackingMode: Exclude<GatewayAgentTaskTrackingMode, "plugin_subagent"> =
         taskTrackingMode === "cli" ? "cli" : "none";
-      if (taskTrackingMode === "plugin_subagent" && resolvedSessionKey) {
-        try {
-          await registerPluginSubagentRunFromGateway({
-            cfg,
-            runId,
-            childSessionKey: resolvedSessionKey,
-            task: request.message.trim(),
-            requesterOrigin: normalizeDeliveryContext({
-              channel: resolvedChannel,
-              to: resolvedTo,
-              accountId: resolvedAccountId,
-              threadId: resolvedThreadId,
-            }),
-            pluginId: normalizeOptionalString(client?.internal?.pluginRuntimeOwnerId),
-          });
-        } catch (err) {
-          context.logGateway.warn(
-            `failed to register plugin subagent run ${runId}; falling back to cli task tracking: ${formatForLog(
-              err,
-            )}`,
-          );
-          dispatchTaskTrackingMode = "cli";
-        }
-      }
+
 
       assertSystemExecutionAllowed();
       const accepted = {
@@ -2543,6 +2522,31 @@ export const agentHandlers: GatewayRequestHandlers = {
               { runId },
             );
             return;
+          }
+
+          if (taskTrackingMode === "plugin_subagent" && resolvedSessionKey) {
+            try {
+              await registerPluginSubagentRunFromGateway({
+                cfg,
+                runId,
+                childSessionKey: resolvedSessionKey,
+                task: request.message.trim(),
+                requesterOrigin: normalizeDeliveryContext({
+                  channel: resolvedChannel,
+                  to: resolvedTo,
+                  accountId: resolvedAccountId,
+                  threadId: resolvedThreadId,
+                }),
+                pluginId: normalizeOptionalString(client?.internal?.pluginRuntimeOwnerId),
+              });
+            } catch (err) {
+              context.logGateway.warn(
+                `failed to register plugin subagent run ${runId}; falling back to cli task tracking: ${formatForLog(
+                  err,
+                )}`,
+              );
+              dispatchTaskTrackingMode = "cli";
+            }
           }
 
           if (resolvedSessionKey) {
@@ -2727,6 +2731,7 @@ export const agentHandlers: GatewayRequestHandlers = {
         }
       })();
     } finally {
+      if (!agentRunAccepted) cleanupUnacceptedRun?.();
       clearUnacceptedExecApprovalFollowupDedupe();
     }
   },

@@ -171,6 +171,22 @@ describe("agent continuation generation against the real session store", () => {
       store[sessionKey].abortedLastRun = false;
     });
   });
+  it('removes an unaccepted controller when pause races admission and lets the same request retry', async () => {
+    const path = join(dir, 'workspaces.json');
+    const policy = (paused: boolean) => writeFileSync(path, JSON.stringify({ systemControl: {
+      revision: paused ? 1 : 2, paused, inFlightPolicy: 'settle-admitted-effects', recentRequests: [],
+    } }));
+    policy(false); vi.stubEnv('CLAWX_WORKSPACE_OWNER_PATH', path);
+    mocks.beforeWrite = () => policy(true);
+    const call = invocation();
+    await expect(call.run()).rejects.toThrow('SYSTEM_EXECUTION_PAUSED');
+    expect(call.context.chatAbortControllers.size).toBe(0);
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    policy(false);
+    await call.run();
+    await vi.waitFor(() => expect(mocks.ingress).toHaveBeenCalledTimes(1));
+    expect(call.respond.mock.calls.some(args => (args[1] as { status?: string })?.status === 'accepted')).toBe(true);
+  });
 
   it("resumes an idle expired generation without rotating the transcript", async () => {
     const call = invocation();
@@ -207,6 +223,7 @@ describe("agent continuation generation against the real session store", () => {
     "refuses ingress when a handoff retires the requester %s",
     async (timing) => {
       const ownerPath = join(dir, "workspaces.json");
+      writeFileSync(ownerPath, JSON.stringify({ profiles: [] }));
       vi.stubEnv("CLAWX_WORKSPACE_OWNER_PATH", ownerPath);
       const retire = () => writeFileSync(ownerPath, JSON.stringify({ profiles: [{
         id: "project",
