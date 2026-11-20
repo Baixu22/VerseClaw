@@ -24,7 +24,7 @@ Windows 插件加载将 `file:` URL 转回原生路径后执行已编译 JavaScr
 
 插件自动启用判断复用同一元数据视图中的清单与目录发现结果。provider 解析将已确认的视图传入激活判断；显式传入的发现结果保持优先。调用者未提供视图时，当前快照与默认快照继续经过原 owner 的作用域校验。
 
-Agent 启动读取 Gateway 已确认的启动插件作用域，随后由原 runtime registry owner 核对复用和子代理绑定。Windows 自动时间格式检测直接读取系统短时间模式；显式 12/24 小时设置和 Intl 回退沿原入口执行。
+Agent 启动读取 Gateway 已确认且与配置、工作区兼容的插件快照，并携带来源激活理由、清单与安装记录，由原 runtime registry owner 核对复用和子代理绑定。Windows 自动时间格式检测直接读取系统短时间模式；显式 12/24 小时设置和 Intl 回退沿原入口执行。
 
 Gateway 重启先由原生命周期 owner 核对 writer 和持久记录，再加载有待恢复工作的 ClawGraph、Mission 或 Task Loop 控制器。空表、仅终态记录和 legacy 模式省去控制器装载；Mission 沿原 taskflow running 条件执行。实际控制器继续核对存活 run、未决效果与 CAS，单个域失败后其余域继续恢复。
 

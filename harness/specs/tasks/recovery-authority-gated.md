@@ -32,6 +32,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/runtime-plugins.ts
   - tests/unit/gateway-host-time-format.test.ts
   - tests/unit/gateway-agent-startup-scope.test.ts
+  - tests/unit/gateway-agent-activation-provenance.test.ts
   - openclaw_runtime/src/plugins/activation-context.ts
   - openclaw_runtime/src/plugins/providers.runtime.ts
   - openclaw_runtime/src/plugins/plugin-metadata-snapshot.types.ts
@@ -274,6 +275,7 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-agent-activation-provenance.test.ts
   - tests/unit/session-task-scope-bridge.test.ts
   - tests/unit/gateway-late-bytecode-cache.test.ts
   - openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
@@ -329,6 +331,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Agent startup passes source activation reasons, manifests and install records from its compatible Gateway metadata scope to the existing runtime registry owner. Missing or incompatible scope retains standalone loading; runtime configuration and registry compatibility checks stay authoritative.
   - Task-scope effect admission waits for one authenticated Main bridge after restart within its original fifteen-second budget. Waiting reserves the request id and rechecks the live owner; ambiguous bridges, stale runs and late or mismatched results cannot grant effects. Readiness waiting and Main response share that budget without new dispatch attempts.
   - Workflow restart recovery checks the lifecycle owner's current writer and durable rows before loading each controller. Legacy and empty or terminal-only domains stay unloaded; Mission recovery remains taskflow-only for running rows. Live-controller, pending-effect and CAS decisions stay with the original recovery entry, and a domain failure does not suppress the other domains.
   - Read-only channel views share the selected metadata discovery with configuration and stored-auth probes. Config/workspace discovery retains the environment catalog fallback so load-path overlaps preserve bundled environment and authentication signals. Channel and plugin disablement, denial reasons and source roots retain their checks.

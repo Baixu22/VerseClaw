@@ -13,6 +13,11 @@ the consumed attempt before dispatch. A failed attempt counts too. An unacknowle
 admission is uncertain; it cannot be reclassified as an unstarted effect merely
 because the client saw an error or no visible output.
 
+Agent startup qualifies a borrowed Gateway plugin registry with the compatible
+metadata owner's source activation reasons, manifests and install records.
+Runtime defaults retain their execution role; the original registry owner checks
+configuration, roots, workspace and requested plugin scope before reuse.
+
 ACP records its current request, runtime identity, output boundary and consumed
 attempts in the existing acp_sessions row. The original two-attempt-per-backend
 plan supplies one persisted ceiling for that request; recreating a controller or

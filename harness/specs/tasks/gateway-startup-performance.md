@@ -11,6 +11,7 @@ intent: Measure the managed Gateway startup path and remove verified startup bot
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - harness/specs/rules/recovery-authority-owner-admission.md
   - openclaw_runtime/src/infra/runtime-compile-cache.ts
   - openclaw_runtime/src/agents/command/attempt-execution.runtime.ts
   - tests/unit/gateway-late-bytecode-cache.test.ts
@@ -33,6 +34,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/date-time.ts
   - openclaw_runtime/src/agents/runtime-plugins.ts
   - tests/unit/gateway-agent-startup-scope.test.ts
+  - tests/unit/gateway-agent-activation-provenance.test.ts
   - openclaw_runtime/src/plugins/activation-context.ts
   - openclaw_runtime/src/plugins/providers.runtime.ts
   - openclaw_runtime/src/plugins/plugin-metadata-snapshot.types.ts
@@ -91,6 +93,7 @@ requiredRules:
   - gateway-readiness-policy
   - repository-artifact-retention
 requiredTests:
+  - tests/unit/gateway-agent-activation-provenance.test.ts
   - tests/unit/gateway-late-bytecode-cache.test.ts
   - openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
   - openclaw_runtime/src/agents/mission-control/mission-lifecycle-cutover.test.ts
@@ -113,6 +116,7 @@ requiredTests:
   - tests/unit/gateway-process-launcher-trace.test.ts
   - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
+  - Agent startup passes source activation reasons, manifests and install records from its compatible Gateway metadata scope to the existing runtime registry owner. Missing or incompatible scope retains standalone loading; runtime configuration and registry compatibility checks stay authoritative.
   - Workflow restart recovery checks the lifecycle owner's current writer and durable rows before loading each controller. Legacy and empty or terminal-only domains stay unloaded; Mission recovery remains taskflow-only for running rows. Live-controller, pending-effect and CAS decisions stay with the original recovery entry, and a domain failure does not suppress the other domains.
   - Read-only channel views share the selected metadata discovery with configuration and stored-auth probes. Config/workspace discovery retains the environment catalog fallback so load-path overlaps preserve bundled environment and authentication signals. Channel and plugin disablement, denial reasons and source roots retain their checks.
   - Gateway startup plans and lookup tables reuse discovery from a compatible prepared metadata snapshot for channel scope and final activation. Missing discovery and changed roots retain discovery fallback; explicit channel disables and stored-auth exclusion remain intact.
