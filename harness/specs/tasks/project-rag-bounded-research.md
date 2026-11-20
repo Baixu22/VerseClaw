@@ -198,6 +198,10 @@ touchedAreas:
   - "docs/dev/evidence/project-rag/RAG-16/20261120-r10-e32a06779/**"
   - "scripts/runtime-deep-refs-baseline.json"
   - "tests/unit/chat-leading-orphan-tools.test.tsx"
+  - "openclaw_runtime/src/process/os-containment.ts"
+  - "tests/unit/os-containment-windows-token.test.ts"
+  - "openclaw_runtime/src/process/supervisor/supervisor.ts"
+  - "tests/unit/process-supervisor-exit-observation.test.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -288,3 +292,11 @@ DCS工具注册测试显式传入各自临时workspace，FactStore测试复用�
 生命周期夹具按完整换行累计stdout后识别真实child PID，前缀与数字跨分片均有回归；10秒握手、15秒drain、50周期和堆/活动记录阈值保持。
 
 源码index/vector worker显式绑定同一Runtime tsconfig路径映射，仅作用于.ts入口，干净未构建检出不再依赖workspace package的dist残留；打包.js入口保持原行为。生成物引用按既有精确file-target清单登记，原构建/哈希读取仍拒绝缺失产物，其他来源文件或目标路径继续报错。Chat orphan旅程的模块加载移到收集期，原交互断言和单用例30秒上限保持。
+
+Windows OS进程身份将PowerShell FILETIME与WMIC带时区/微秒创建时间归一到精确FILETIME ticks。跨探测器回退不再误报同一进程为复用；真正创建时间变化仍unknown，不终止或接纳新进程。无效创建时间返回unknown，错误详情保留比较的两个token。
+
+Windows CIM查询只请求进程ID、父进程ID和创建时间，三列身份合同与原5秒探测预算保持。
+
+进程adapter完成后立即清理终止计时器并停止向该PID发信号，OS验证仍继续，active记录和manifest仍按原验证结果清理。重复cancel与Windows drain直接强杀共用同一完成边界；未退出的进程仍按原5秒升级。
+
+生命周期50-cycle文件完整移入既有单worker隔离段，避免首段Git密集测试与它并行创建进程；原7项/50循环/泄漏断言与超时保持。数字进程token按BigInt精确排序，同刻子进程保留、早1微秒的旧PID关系排除。
