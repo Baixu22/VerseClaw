@@ -96,11 +96,22 @@ async function waitForPidDeath(pid: number, timeoutMs = 10_000): Promise<void> {
   throw new Error(`pid ${pid} survived drain`);
 }
 
+function createChildPidReader(): (chunk: string) => number {
+  let output = "";
+  return (chunk) => {
+    output += chunk;
+    const match = /(?:^|\n)child-pid=(\d+)\r?\n/u.exec(output);
+    const pid = match ? Number(match[1]) : -1;
+    return Number.isSafeInteger(pid) && pid > 0 ? pid : -1;
+  };
+}
+
 async function startLeakFixtureTree(
   identity: SessionAdmissionIdentity,
 ): Promise<{ runId: string; parentPid: number; childPid: number }> {
   const supervisor = getProcessSupervisor();
   let childPid = -1;
+  const readChildPid = createChildPidReader();
   const run = await supervisor.spawn({
     sessionId: identity.expectedSessionId,
     backendId: "leak50-test",
@@ -112,10 +123,7 @@ async function startLeakFixtureTree(
     argv: [process.execPath, "-e", buildLeakChildTreeScript()],
     captureOutput: false,
     onStdout: (chunk) => {
-      const match = chunk.match(/child-pid=(\d+)/u);
-      if (match) {
-        childPid = Number(match[1]);
-      }
+      childPid = readChildPid(chunk);
     },
   });
   const deadline = Date.now() + 10_000;
@@ -176,6 +184,15 @@ async function runLeakDrainCycle(index: number): Promise<number> {
 }
 
 describe("Runtime Lifecycle Governance — Phase 0 lifecycle safety contract", () => {
+  it.each([
+    ["child-", "pid=12345\n"],
+    ["child-pid=12", "345\r\n"],
+  ])("reads the complete child PID across stdout chunks %j", (first, rest) => {
+    const readChildPid = createChildPidReader();
+    expect(readChildPid(first)).toBe(-1);
+    expect(readChildPid(rest)).toBe(12345);
+  });
+
   it("required admission permit hook is live without an env opt-in", () => {
     const release = acquireSessionAdmissionPermit(
       {

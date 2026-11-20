@@ -281,3 +281,5 @@ Knowledge身份复验使用sessions.describe的identityOnly投影，直接从同
 原生目录监听回归分别等待删除失效和重建后的新通知，再断言后续文件事件；null仍是失效提示，不能用删除通知当作重建完成。原事件/句柄清理断言和15秒测试总上限保持。
 
 DCS工具注册测试显式传入各自临时workspace，FactStore测试复用已有repoRoot；Task owner入口和schema拒绝逻辑继续真实执行，避免默认cwd读取开发仓库共享数据库。
+
+生命周期夹具按完整换行累计stdout后识别真实child PID，前缀与数字跨分片均有回归；10秒握手、15秒drain、50周期和堆/活动记录阈值保持。
