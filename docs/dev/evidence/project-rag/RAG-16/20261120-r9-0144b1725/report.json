@@ -1,0 +1,122 @@
+{
+  "schema": "clawx.rag16-r9-development/v1",
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "sourceCandidate": "0144b1725d9d903af39416226b3ba5a24875e8ec",
+  "sourceTree": "5b8880f45d4b25200f4557d8052ea4a7984f4f72",
+  "status": "NO-GO",
+  "changes": [
+    "Reuse validated comparison base within one plan; preserve leading-space diff paths",
+    "Read 32 fingerprint inputs at a time without changing hash order"
+  ],
+  "withdrawnExperiment": {
+    "nodeEnvironmentFiles": 29,
+    "reason": "No material whole-suite wall-time benefit; changed sealed historical input bytes",
+    "allOriginalHashesRestored": true,
+    "historicalRegressionsAfterRestore": {
+      "passed": 11,
+      "failed": 0
+    }
+  },
+  "checks": {
+    "framework": {
+      "passed": 79,
+      "failed": 0
+    },
+    "typecheckRegression": {
+      "passed": 1,
+      "failed": 0
+    },
+    "sealedRegression": {
+      "passed": 11,
+      "failed": 0
+    },
+    "rootLastAttempt": {
+      "actor": "codex-g2-rag16-relay1",
+      "driven_by": "agent",
+      "candidate": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+      "stage": "finished",
+      "command": {
+        "actor": "codex-g2-rag16-relay1",
+        "driven_by": "agent",
+        "sourceCommit": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "test"
+        ],
+        "startedAt": "2026-11-20T02:09:11.965Z",
+        "finishedAt": "2026-11-20T02:39:25.343Z",
+        "durationMs": 1813378,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": true
+      },
+      "counts": null,
+      "summaries": [],
+      "failures": [
+        " ❯ tests/unit/rsi-historical-task-corpus.test.ts (7 tests | 1 failed) 1596ms",
+        "     × validates every retained pack checksum and raw calibration outcome from disk 810ms",
+        " ❯ tests/unit/versegit-wp6-closeout.test.ts (4 tests | 1 failed) 200ms",
+        "     × preserves exact historical stale inputs while retaining the non-GA and MC6 sidecar-only boundary 69ms"
+      ],
+      "logBytes": 15763,
+      "logSha256": "91e87a6fbb4b9f1b7302eaafa1a76c2ba57c62403d8c12f4831e03b2036b2037",
+      "observedAt": "2026-11-20T02:39:37.192Z"
+    },
+    "finalSourceFullRootRun": false,
+    "controlDecision": {
+      "status": "blocked",
+      "reason": "playwright-agent-dev, typecheck exceeded hard performance limits.",
+      "dailyLoopReady": false,
+      "releaseReady": false,
+      "fullGateComplete": false,
+      "budgetStatus": "limit",
+      "fastPathModes": [
+        "reuse-build"
+      ],
+      "requiredFullGates": [
+        "pnpm run build:vite"
+      ],
+      "watchSteps": [
+        "harness-agent-dev",
+        "contract",
+        "i18n"
+      ],
+      "limitSteps": [
+        "playwright-agent-dev",
+        "typecheck"
+      ]
+    }
+  },
+  "performance": {
+    "fingerprint": {
+      "files": 13484,
+      "serialMs": 6001.6546,
+      "batchMs": 1305.7843,
+      "sameSha256": true
+    },
+    "nodeSuiteSeconds": {
+      "before": 170.36,
+      "after": 169.71
+    },
+    "freshBuild": {
+      "durationMs": 71518,
+      "limitMs": 58000,
+      "passedPerformanceBudget": false
+    }
+  },
+  "formal25GateCycle": {
+    "priorCandidatePlan": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+    "executed": false,
+    "independentVerifierExecuted": false,
+    "deriveAgainForFinalCandidate": true
+  },
+  "remaining": [
+    "Resolve root 1800-second timeout and rerun the final candidate",
+    "Resolve control hard performance limits",
+    "Execute complete candidate-bound Executor and independent Verifier",
+    "Reconcile concurrent temporary security configuration"
+  ],
+  "recordedAt": "2026-11-20T02:46:18.052Z"
+}

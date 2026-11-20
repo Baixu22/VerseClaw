@@ -1,0 +1,40 @@
+{
+  "topProcesses": [
+    {
+      "Id": 15868,
+      "ProcessName": "python",
+      "workingMiB": 7783.0
+    },
+    {
+      "Id": 26048,
+      "ProcessName": "ChatGPT",
+      "workingMiB": 223.0
+    },
+    {
+      "Id": 15196,
+      "ProcessName": "Tabbit Browser",
+      "workingMiB": 202.0
+    },
+    {
+      "Id": 19120,
+      "ProcessName": "msedgewebview2",
+      "workingMiB": 195.0
+    },
+    {
+      "Id": 36596,
+      "ProcessName": "codex",
+      "workingMiB": 194.0
+    }
+  ],
+  "driven_by": "agent",
+  "securityReadback": {
+    "TrustDir": "",
+    "action": "read-only",
+    "reconciliation": "concurrent configuration preserved",
+    "DevMode": 1,
+    "originalDevModeExists": false
+  },
+  "observedAt": "2026-11-20T10:08:01.8539158+08:00",
+  "freeGiB": 0.598,
+  "actor": "codex-g2-rag16-relay1"
+}

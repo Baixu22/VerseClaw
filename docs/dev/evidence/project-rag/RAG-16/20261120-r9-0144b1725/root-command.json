@@ -1,0 +1,16 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "sourceCommit": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+  "command": "pnpm",
+  "args": [
+    "-w",
+    "test"
+  ],
+  "startedAt": "2026-11-20T02:09:11.965Z",
+  "finishedAt": "2026-11-20T02:39:25.343Z",
+  "durationMs": 1813378,
+  "exitCode": 1,
+  "signal": null,
+  "timedOut": true
+}

@@ -1,0 +1,71 @@
+{
+  "schema": "clawx.rag16-typecheck-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-typecheck-review",
+  "review_kind": "read-only-delta-review",
+  "result": "PASS_STATIC_REVIEW",
+  "findings": [],
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "2bb515ab5e7f7049a308925967f611fa589a51d3",
+    "working_tree": true,
+    "sha256": {
+      "scripts/typecheck-agent-dev.mjs": "4047e56163457dbc39b207d9773d9d8f72b74c8ddb5ca7df03fd9f1798a43ca3",
+      "tests/unit/typecheck-gate.test.ts": "3938d56baf1e982c7635d9bf3c077365a3c050ff4d271f25069bed536d5b5194"
+    }
+  },
+  "checks": [
+    {
+      "area": "hash byte order",
+      "file": "scripts/typecheck-agent-dev.mjs",
+      "line": 180,
+      "observation": "去重与相对路径排序保持原顺序。Promise.all 的结果按输入顺序返回，按批内下标对应原始 Buffer。每个文件仍按相对路径、NUL、原始字节、NUL 写入 SHA-256。缺失根标记继续在文件序列之后写入。"
+    },
+    {
+      "area": "error propagation",
+      "file": "scripts/typecheck-agent-dev.mjs",
+      "line": 190,
+      "observation": "任何 readFile 拒绝都会使当前批次失败。顶层在 cache 查询和启动编译之前等待 fingerprint，读取失败不能命中或写入成功缓存。并发时最先返回的文件错误决定诊断。"
+    },
+    {
+      "area": "bounded memory",
+      "file": "scripts/typecheck-agent-dev.mjs",
+      "line": 188,
+      "observation": "每批最多持有 32 个读取结果，上一批完成哈希后才读取下一批。内容内存随单批文件字节总量变化，路径清单仍按原方式保存。"
+    },
+    {
+      "area": "coverage",
+      "file": "tests/unit/typecheck-gate.test.ts",
+      "line": 39,
+      "observation": "40 个 electron/*.ts 夹具排序在现有 runtime 和 tests 路径之前，跨过首个 32 文件批次。原类型错误、诊断日志、cache miss/hit 和两类变更失效断言全保留。CACHE_INPUTS、扩展名与过滤合同和三个项目编译入口未改。"
+    }
+  ],
+  "readback": {
+    "serial": {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-fingerprint-serial.json",
+      "duration_ms": 6001.6546
+    },
+    "batch": {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-fingerprint-batch.json",
+      "duration_ms": 1305.7843
+    },
+    "matching_key": "00e3d6940f0a0661b7030866655849e2fdd5474071f767ca0a927daeb5a93bb7",
+    "matching_file_count": 13484,
+    "observed_delta_ms": 4695.8703,
+    "comparison_source": "通过静态文本比对确认串行和批量测量脚本的指纹及输入收集函数分别匹配 HEAD 实现与当前工作树。",
+    "focused_regression": {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-typecheck-regression.json",
+      "passed": 1,
+      "total": 1,
+      "attribution": "主代理已有工作树执行产物"
+    },
+    "cutoff": "指纹耗时与完整编译门禁耗时分别计量。45 秒门禁须使用本轮完整 Agent Dev 产物判断。"
+  },
+  "validation": {
+    "diff_check": "pass",
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0
+  },
+  "recorded_at": "2026-11-20T09:56:37.9736454+08:00"
+}

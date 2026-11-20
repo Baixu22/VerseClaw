@@ -1,0 +1,103 @@
+{
+  "schema": "clawx.rag16-acceptance-delta-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-acceptance-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-delta-review",
+  "formal_verifier_execution": false,
+  "result": "PASS_STATIC_REVIEW",
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "2bb515ab5e7f7049a308925967f611fa589a51d3",
+    "working_tree": true,
+    "sha256": {
+      "scripts/lib/agent-engineering-acceptance.mjs": "4b4424b6cf2a2a8ce17f3ecdea9c609d7c185f29dbc428a42420b2d1743d39d8",
+      "tests/unit/agent-engineering-acceptance.test.ts": "81d48bd02118c141a3a2b1e47d5e72ad2147e8456ec37202b133009376e5fde9"
+    }
+  },
+  "findings": [],
+  "checks": [
+    {
+      "area": "单次计划复用 base",
+      "evidence": [
+        {
+          "file": "scripts/lib/agent-engineering-acceptance.mjs",
+          "line": 342,
+          "observation": "先解析 ref 为完整 40 位 commit SHA，再验证它是本次候选的祖先。解析或 ancestry 失败仍抛错。"
+        },
+        {
+          "file": "scripts/lib/agent-engineering-acceptance.mjs",
+          "line": 650,
+          "observation": "计划先读取候选 commit。只有 spec.diffBase 去除首尾空白后等于已校验的 since 或 base SHA 才复用。其他 ref 仍独立解析、验证 ancestry 并比较 SHA。baseRef 有值的路径已经验证 since 为非空字符串。"
+        }
+      ]
+    },
+    {
+      "area": "候选提交与路径保真",
+      "evidence": [
+        {
+          "file": "scripts/lib/agent-engineering-acceptance.mjs",
+          "line": 669,
+          "observation": "由 Git 派生的差异使用已验证的 base SHA 和计划捕获的候选 commit。Git blob 查询也使用同一候选。显式 changedPaths 继续走原诊断入口。"
+        },
+        {
+          "file": "scripts/lib/agent-engineering-acceptance.mjs",
+          "line": 359,
+          "observation": "使用原始 stdout 按 NUL 分隔。normalizePath 保留路径开头的空格。source input 工作树校验继续在原始 NUL 输出上按路径查找。"
+        },
+        {
+          "file": "tests/unit/agent-engineering-acceptance.test.ts",
+          "line": 547,
+          "observation": "前导空格用例同时断言计划 changedPaths 与公开 diff 返回完整路径，并保留 requireClean:false 的正文脏改错误断言。"
+        }
+      ]
+    },
+    {
+      "area": "独立查询和移动 tag",
+      "evidence": [
+        {
+          "file": "scripts/lib/agent-engineering-acceptance.mjs",
+          "line": 379,
+          "observation": "公开 resolveChangedPaths 每次按当前 HEAD 解析并验证 since 的 ancestry。显式路径保留既有诊断分支。"
+        },
+        {
+          "file": "tests/unit/agent-engineering-acceptance.test.ts",
+          "line": 1097,
+          "observation": "同一 options 依次读取指向祖先、候选自身和无关根提交的 tag。覆盖跨调用重新解析、空差异和两个入口拒绝非祖先。单个计划的 base 局部变量不会跨调用保留。"
+        }
+      ]
+    },
+    {
+      "area": "正式 manifest 复验",
+      "evidence": [
+        {
+          "file": "scripts/lib/agent-engineering-acceptance.mjs",
+          "line": 899,
+          "observation": "正式复验以当前 checkout 重新派生 plan，并比较 baseRef、changedPaths、门禁及输入。独立 HEAD/tree/ref/clean、源 blob 和工作树漂移校验仍在原路径执行。"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "diff_check": "pass",
+    "method": "仅对指定两文件读取工作树与 HEAD 差异、追踪调用及检查回归断言",
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0,
+    "git_mutations": 0,
+    "existing_node_environment_results": {
+      "before": {
+        "artifact": "r9-node-before.json",
+        "passed": 439,
+        "total": 439
+      },
+      "after": {
+        "artifact": "r9-node-after.json",
+        "passed": 439,
+        "total": 439
+      },
+      "scope": "Node 环境候选批次"
+    }
+  },
+  "recorded_at": "2026-11-20T09:47:32.2335401+08:00"
+}

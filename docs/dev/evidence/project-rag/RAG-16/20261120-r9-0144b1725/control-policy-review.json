@@ -1,0 +1,130 @@
+{
+  "schema": "clawx.rag16-control-policy-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-control-policy-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-contract-review",
+  "formal_verifier_execution": false,
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "2bb515ab5e7f7049a308925967f611fa589a51d3",
+    "working_tree_delta_present": true
+  },
+  "result": "ALLOWED_WITH_EXPLICIT_FRESH_PERFORMANCE_RESIDUAL",
+  "conclusion": "现有合同允许复用已验证新鲜的构建生成控制证据，并由后续正式25门禁的各角色执行 fresh build。该组合补齐功能构建义务，不能把已测出的 fresh build 71,518ms>58,000ms 判为性能已修复，也不使 reuse 的 deep-test releaseReady 变成 true。",
+  "contract_basis": [
+    {
+      "file": "AGENTS.md",
+      "lines": "84-90",
+      "rule": "允许 fresh build 后复用的 full E2E 控制循环；needs-full-gate 为日常证据，PR/release review 前运行 requiredFullGates；limit 要优化或分层。"
+    },
+    {
+      "file": "harness/specs/rules/agent-dev-conformance-evidence.md",
+      "lines": "33-36",
+      "rule": "按 fast/full/nightly 分层；已构建 E2E 可显式 no-build；所有项目类型错误仍必须阻断。"
+    },
+    {
+      "file": "harness/specs/tasks/agent-dev-ecosystem-regularization.md",
+      "lines": "72,80",
+      "rule": "允许针对现有新鲜构建执行完整 Agent Dev spec；deep-test 分开记录 build 和 Playwright 耗时。"
+    },
+    {
+      "file": "scripts/agent-dev-deep-test.mjs",
+      "lines": "95-105",
+      "rule": "e2e-build 固定硬限 58,000ms；既有 mitigation 明确建议复用 fresh build，未授权修改或清除原超限结果。"
+    },
+    {
+      "file": "scripts/agent-dev-deep-test.mjs",
+      "lines": "226-273,322-327",
+      "rule": "reuse 必须存在所需构建产物且不早于相关源码；只有通过检查才标 reused/skipped。"
+    },
+    {
+      "file": "scripts/agent-dev-deep-test.mjs",
+      "lines": "562-618",
+      "rule": "reuse-build 进入 fastPathModes 并要求 pnpm run build:vite。即使 full types/unit/E2E 全过且无新 limit，仍为 needs-full-gate、fullGateComplete:false、releaseReady:false。"
+    },
+    {
+      "file": "scripts/agent-dev-audit.mjs",
+      "lines": "540-568,727-737,905",
+      "rule": "当前 deep-test blocked 或 limit 是 fail；needs-full-gate 是 warn。严格审计读取最新报告，但这不回写历史 fresh 报告或证明其性能问题消失。"
+    },
+    {
+      "file": "scripts/lib/agent-engineering-acceptance.mjs",
+      "lines": "115-129,899-925,1912,2287",
+      "rule": "正式 baseline 保留 build:vite、build:runtime、agent-dev:audit。两角色在 requireFull/clean/candidate-derived 合同下执行；不得将控制报告的 reused step 当正式构建 gate 通过。"
+    },
+    {
+      "file": "docs/dev/agent-engineering-acceptance.md",
+      "lines": "19-22,28-42,53-61",
+      "rule": "独立 detached Executor/Verifier 重跑全部 required gates，失败、超时、跳过、stale/tamper 为 NO-GO，不能删除门禁或改变超时。"
+    }
+  ],
+  "verified_fresh_evidence": {
+    "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-control-fresh/deep-test.json",
+    "sha256": "e1a609cafdfc54a49542872705be5cf3c1c2950401e6bbff009f3b8b77f28bcf",
+    "generated_at": "2026-11-20T01:57:48.587Z",
+    "execution_success": true,
+    "modes": {
+      "build": "fresh",
+      "unit": "full",
+      "typecheck": "full",
+      "e2e": "full"
+    },
+    "decision": {
+      "status": "blocked",
+      "reason": "e2e-build exceeded hard performance limits.",
+      "releaseReady": false,
+      "fullGateComplete": true
+    },
+    "typecheck_ms": 30654,
+    "electron_ms": 23506,
+    "build_ms": 71518,
+    "build_limit_ms": 58000,
+    "build_over_limit_ms": 13518,
+    "meaning": "命令/用例均成功与性能限额是否通过是两个独立字段，不能只引用 success:true。"
+  },
+  "reuse_observation": {
+    "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-control-reuse-running.json",
+    "command": [
+      "pnpm",
+      "exec",
+      "node",
+      "scripts/agent-dev-deep-test.mjs",
+      "--reuse-build"
+    ],
+    "started_at": "2026-11-20T02:00:54.508Z",
+    "modes_expected": "build reused，unit/typecheck/E2E 默认为 full；未传 cached/fast/smoke 开关。",
+    "observed": "审查时最终 command.json 尚不存在，当前 report.json 仍是 01:57:48 fresh 报告；reuse 日志已显示 verified reuse 与 4 用例运行，前两项通过。",
+    "required_after_completion": "核对最终 mode、source freshness、完整4E2E、full uncached types、全步骤退出和 performanceLimits；预期仅 build 位于 requiredFullGates。"
+  },
+  "necessary_residuals": [
+    {
+      "item": "fresh 性能超限",
+      "requirement": "保留 fresh 报告、原始构建输出和摘要，明确记录 71,518ms 比 58,000ms 超出 13,518ms。reuse 不测 fresh build 时间。"
+    },
+    {
+      "item": "最新控制审计",
+      "requirement": "最终 reuse 成功后刷新 Workbench 和严格 audit，保留 needs-full-gate 及所需 fresh build。最新审计无 fail 不能表述为历史 fresh 预算无问题。"
+    },
+    {
+      "item": "正式功能验收",
+      "requirement": "提交后重新 derive 与候选 commit/tree 绑定的25门禁；Executor/独立Verifier 各自运行原命令及原 timeouts/skip，严格 audit 证据仍需满足新鲜度。控制复用不替代正式 vite-build/runtime-build。"
+    },
+    {
+      "item": "性能验收与发布结论",
+      "requirement": "原25门禁中 fresh build 成功只满足其命令退出及原超时合同，不自动重测或消除 Agent Dev 的58秒限额。即便未来正式工程验收通过，报告仍须披露此已知 fresh-build 性能问题；不得称所有性能门禁已达标或 Agent Dev releaseReady=true。"
+    },
+    {
+      "item": "当前工作推进",
+      "requirement": "现有条款允许保存/提交源码并继续根全量、功能验收；根全量和正式门禁完成情况按其实际产物记录。"
+    }
+  ],
+  "recommended_status_text": "控制循环可使用经新鲜度验证的构建复用；本次 fresh 全量诊断的类型/Electron/构建命令均通过，fresh 构建耗时71.518秒超过58秒，性能问题保留。复用控制的最终结果待回读，正式25门禁将独立执行 fresh 构建。",
+  "actions": {
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0,
+    "policy_changes": 0
+  },
+  "recorded_at": "2026-11-20T10:03:56.8493013+08:00"
+}

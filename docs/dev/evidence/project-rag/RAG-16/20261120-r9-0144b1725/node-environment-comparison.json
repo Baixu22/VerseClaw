@@ -1,0 +1,20 @@
+{
+  "after": {
+    "failed": 0,
+    "durationSeconds": 169.71,
+    "passed": 439,
+    "environmentSeconds": 0.002,
+    "skipped": 0
+  },
+  "driven_by": "agent",
+  "sameTests": true,
+  "note": "Both runs preserve the same 439 tests. Wall time did not materially improve.",
+  "before": {
+    "failed": 0,
+    "durationSeconds": 170.36,
+    "passed": 439,
+    "environmentSeconds": 24.17,
+    "skipped": 0
+  },
+  "actor": "codex-g2-rag16-relay1"
+}

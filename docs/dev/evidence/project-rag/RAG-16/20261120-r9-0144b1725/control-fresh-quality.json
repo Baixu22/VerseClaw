@@ -1,0 +1,92 @@
+{
+  "schema": "clawx.agent-dev.quality-report.v1",
+  "generatedAt": "2026-11-20T01:57:48.040Z",
+  "success": true,
+  "buildReuse": {
+    "mode": "fresh",
+    "status": "fresh",
+    "reusable": false,
+    "reason": "fresh build mode always runs pnpm run build:vite",
+    "requiredArtifacts": [
+      "dist/index.html",
+      "dist-electron/main/index.js",
+      "dist-electron/preload/index.js"
+    ],
+    "sourcePaths": [
+      "src",
+      "electron",
+      "shared",
+      "index.html",
+      "vite.config.ts",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  },
+  "decision": {
+    "status": "blocked",
+    "reason": "e2e-build exceeded hard performance limits.",
+    "dailyLoopReady": false,
+    "releaseReady": false,
+    "fullGateComplete": true,
+    "budgetStatus": "limit",
+    "fastPathModes": [],
+    "requiredFullGates": [],
+    "watchSteps": [
+      "typecheck",
+      "contract",
+      "i18n",
+      "harness-agent-dev"
+    ],
+    "limitSteps": [
+      "e2e-build"
+    ]
+  },
+  "unitMode": "full",
+  "typecheckMode": "full",
+  "e2eMode": "full",
+  "build": {
+    "ok": true,
+    "durationMs": 71518,
+    "commandLine": "pnpm run build:vite",
+    "reused": false,
+    "skipped": false,
+    "reuseStatus": "fresh"
+  },
+  "playwright": {
+    "ok": true,
+    "durationMs": 23506,
+    "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+    "spec": "tests/e2e/agent-dev-quality.spec.ts",
+    "mode": "full",
+    "expectedTests": 4,
+    "diagnostics": {
+      "kind": "playwright",
+      "passed": 4,
+      "reportedDurationMs": 22100,
+      "tests": [
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+          "durationMs": 12000
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+          "durationMs": 12000
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+          "durationMs": 7800
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+          "durationMs": 7500
+        }
+      ]
+    },
+    "evidence": [
+      "seeded scenario accessibility report",
+      "assistant-ui welcome suggestions visual artifact",
+      "seeded scenario visual artifact",
+      "Settings > Developer Agent Dev Workbench host-api record path"
+    ]
+  }
+}

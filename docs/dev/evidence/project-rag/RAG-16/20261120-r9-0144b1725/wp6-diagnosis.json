@@ -1,0 +1,63 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "gateSummary": {
+    "required": 12,
+    "verified": 12,
+    "failed": 0,
+    "deprecated": 1,
+    "optionalDecision": 1
+  },
+  "mismatches": [
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/SHA256SUMS",
+      "mismatches": [
+        "tests/unit/versegit-mc0-baseline.test.ts: expected d31b01207e07 actual cb2912e2a827"
+      ]
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc3-evidence/SHA256SUMS",
+      "mismatches": [
+        "tests/unit/versegit-mc3-delivery.test.ts: expected 2b43c7c54523 actual 6aba2170fd65"
+      ]
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/SHA256SUMS",
+      "mismatches": [
+        "electron/services/versegit-module.ts: expected 15f36a1202e2 actual d7e32f30ee7f"
+      ]
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/SHA256SUMS",
+      "mismatches": [
+        "tests/unit/versegit-wp0-contract.test.ts: expected 0e896877a9ff actual fabc979db93a"
+      ]
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/SHA256SUMS",
+      "mismatches": [
+        "electron/services/versegit-observation.ts: expected 120fc546cfed actual b060dca0ba83"
+      ]
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/SHA256SUMS",
+      "mismatches": [
+        "electron/services/versegit-module.ts: expected 15f36a1202e2 actual d7e32f30ee7f",
+        "harness/src/profiles.mjs: expected b8b2992c5836 actual 9b47fffc9044",
+        "tests/unit/versegit-wp2-profile.test.ts: expected 6d5a0b711969 actual 68016e2254a3"
+      ]
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS",
+      "mismatches": [
+        "electron/services/versegit-receipt-bridge.ts: expected af8aebd01759 actual a379784eab4c"
+      ]
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/SHA256SUMS",
+      "mismatches": [
+        "tests/unit/versegit-wp5-soak.test.ts: expected 132cd7c0c18c actual d75d518b82a8"
+      ]
+    }
+  ]
+}

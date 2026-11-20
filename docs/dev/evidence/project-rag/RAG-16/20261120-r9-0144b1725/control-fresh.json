@@ -1,0 +1,2369 @@
+{
+  "schema": "clawx.agent-dev.deep-test.v1",
+  "generatedAt": "2026-11-20T01:57:48.587Z",
+  "success": true,
+  "totalDurationMs": 142436,
+  "buildReuse": {
+    "mode": "fresh",
+    "status": "fresh",
+    "reusable": false,
+    "reason": "fresh build mode always runs pnpm run build:vite",
+    "requiredArtifacts": [
+      "dist/index.html",
+      "dist-electron/main/index.js",
+      "dist-electron/preload/index.js"
+    ],
+    "sourcePaths": [
+      "src",
+      "electron",
+      "shared",
+      "index.html",
+      "vite.config.ts",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  },
+  "unitMode": "full",
+  "unitCoverageNote": "Full Agent Dev unit path: includes Main API, scaffolds, shared scenarios, contract, i18n, and host-api facade coverage.",
+  "typecheckMode": "full",
+  "typecheckCoverageNote": "Full typecheck path: generate bridge once, then run node and web TypeScript project checks in parallel.",
+  "e2eMode": "full",
+  "e2eCoverageNote": "Full Agent Dev quality E2E path: accessibility, visual artifact, and Settings > Developer Workbench record flow.",
+  "results": [
+    {
+      "id": "typecheck",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "goal": "Compiled contract and renderer/Main type safety",
+      "commandLine": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 30654,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 0,\n    \"durationMs\": 22803,\n    \"observationMode\": false,\n    \"errorCount\": 0,\n    \"errorLog\": \"D:\\\\ClawX-work\\\\g2-rag16-relay-20261119\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": \"00e3d6940f0a0661b7030866655849e2fdd5474071f767ca0a927daeb5a93bb7\",\n    \"inputCount\": 13484,\n    \"report\": \"D:\\\\ClawX-work\\\\g2-rag16-relay-20261119\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 29708,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 75\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 28462\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 10034\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 22803,\n      \"observationMode\": false,\n      \"errorCount\": 0,\n      \"errorLog\": \"D:\\\\ClawX-work\\\\g2-rag16-relay-20261119\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n",
+      "stderrTail": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n",
+      "diagnostics": {
+        "typecheck": {
+          "kind": "typecheck",
+          "mode": "parallel",
+          "cache": {
+            "enabled": false,
+            "status": "disabled",
+            "key": "00e3d6940f0a0661b7030866655849e2fdd5474071f767ca0a927daeb5a93bb7",
+            "inputCount": 13484,
+            "report": "D:\\ClawX-work\\g2-rag16-relay-20261119\\artifacts\\typecheck-cache\\report.json"
+          },
+          "totalDurationMs": 29708,
+          "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+          "phases": [
+            {
+              "commandLine": "node scripts/generate-ext-bridge.mjs",
+              "durationMs": 75,
+              "exitCode": 0,
+              "ok": true,
+              "skipped": false,
+              "cacheHit": false
+            },
+            {
+              "commandLine": "pnpm run typecheck:node",
+              "durationMs": 28462,
+              "exitCode": 0,
+              "ok": true,
+              "skipped": false,
+              "cacheHit": false
+            },
+            {
+              "commandLine": "pnpm run typecheck:web",
+              "durationMs": 10034,
+              "exitCode": 0,
+              "ok": true,
+              "skipped": false,
+              "cacheHit": false
+            },
+            {
+              "commandLine": "pnpm run typecheck:test",
+              "durationMs": 22803,
+              "exitCode": 0,
+              "ok": true,
+              "skipped": false,
+              "cacheHit": false
+            }
+          ],
+          "slowestPhase": {
+            "commandLine": "pnpm run typecheck:node",
+            "durationMs": 28462,
+            "exitCode": 0,
+            "ok": true,
+            "skipped": false,
+            "cacheHit": false
+          }
+        }
+      }
+    },
+    {
+      "id": "contract",
+      "command": "pnpm",
+      "args": [
+        "contract:check"
+      ],
+      "goal": "Host-api contract/facade/service drift",
+      "commandLine": "pnpm contract:check",
+      "exitCode": 0,
+      "durationMs": 1947,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "Contract check passed.\n",
+      "stderrTail": "$ node scripts/contract-check.mjs\n"
+    },
+    {
+      "id": "i18n",
+      "command": "pnpm",
+      "args": [
+        "i18n:lint"
+      ],
+      "goal": "Four-locale namespace/key coverage",
+      "commandLine": "pnpm i18n:lint",
+      "exitCode": 0,
+      "durationMs": 1234,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "i18n lint passed.\n",
+      "stderrTail": "$ node scripts/i18n-lint.mjs\n"
+    },
+    {
+      "id": "workbench",
+      "command": "pnpm",
+      "args": [
+        "agent-dev:workbench"
+      ],
+      "goal": "Static Workbench evidence generation",
+      "commandLine": "pnpm agent-dev:workbench",
+      "exitCode": 0,
+      "durationMs": 621,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "{\n  \"success\": true,\n  \"scenarioCount\": 15,\n  \"reports\": {\n    \"quality\": true,\n    \"channelConformance\": false,\n    \"scenarioRecordings\": true\n  },\n  \"output\": \"D:\\\\ClawX-work\\\\g2-rag16-relay-20261119\\\\artifacts\\\\agent-dev-workbench\\\\index.html\",\n  \"evidence\": \"D:\\\\ClawX-work\\\\g2-rag16-relay-20261119\\\\artifacts\\\\agent-dev-workbench\\\\evidence.json\"\n}\n",
+      "stderrTail": "$ node scripts/agent-dev-workbench.mjs\n"
+    },
+    {
+      "id": "harness-agent-dev",
+      "command": "pnpm",
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/scenarios/agent-dev-composable-scenarios.md"
+      ],
+      "goal": "Shared Agent Dev scenario baseline; task ownership is validated separately for each change set",
+      "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
+      "exitCode": 0,
+      "durationMs": 3120,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "Spec is valid: harness\\specs\\scenarios\\agent-dev-composable-scenarios.md\n",
+      "stderrTail": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/scenarios/agent-dev-composable-scenarios.md\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/scenarios/agent-dev-composable-scenarios.md\"\n"
+    },
+    {
+      "id": "vitest-agent-dev",
+      "command": "pnpm",
+      "args": [
+        "agent-dev:unit"
+      ],
+      "goal": "Focused Agent Dev behavior and facade tests",
+      "commandLine": "pnpm agent-dev:unit",
+      "exitCode": 0,
+      "durationMs": 7579,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "\n RUN  v4.1.1 D:/ClawX-work/g2-rag16-relay-20261119\n\n\n Test Files  7 passed (7)\n      Tests  185 passed (185)\n   Start at  09:56:05\n   Duration  5.39s (transform 454ms, setup 147ms, import 604ms, tests 7.34s, environment 792ms)\n\n",
+      "stderrTail": "$ vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts tests/unit/host-api-facade.test.ts\n"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "comms:replay"
+      ],
+      "goal": "Communication replay metrics",
+      "commandLine": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 890,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "Wrote comms replay metrics to D:\\ClawX-work\\g2-rag16-relay-20261119\\artifacts\\comms\\current-metrics.json\n",
+      "stderrTail": "$ node scripts/comms/replay.mjs\n"
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "comms:compare"
+      ],
+      "goal": "Communication baseline comparison",
+      "commandLine": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 773,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "# Comms Regression Report\n\n- Generated at: 2026-11-20T01:56:12.966Z\n- Candidate: 2bb515ab5e7f7049a308925967f611fa589a51d3 (2b52b873453e8b359cc5b0ae3f25dd5d44e01acf)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\ClawX-work\\g2-rag16-relay-20261119\\artifacts\\comms\\compare-report.md\n",
+      "stderrTail": "$ node scripts/comms/compare.mjs\n"
+    },
+    {
+      "id": "e2e-build",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "build:vite"
+      ],
+      "goal": "Reusable Vite/Electron production build for no-build Playwright loops",
+      "reuseStatus": "fresh",
+      "commandLine": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 71518,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "form-BxgE0vQu.js                        88.97 kB\ndist/assets/csharp-DSvCPggb.js                                   90.19 kB\ndist/assets/racket-BqYA7rlc.js                                   92.39 kB\ndist/assets/less-B1dDrJ26.js                                     97.63 kB\ndist/assets/blade-2xfisSek.js                                   104.98 kB\ndist/assets/objective-c-DXmwc3jG.js                             105.41 kB\ndist/assets/php-Csjmro_R.js                                     113.09 kB\ndist/assets/index-CLxKkLde.js                                   126.55 kB\ndist/assets/asciidoc-Ve4PFQV2.js                                131.53 kB\ndist/assets/mdx-Cmh6b_Ma.js                                     136.11 kB\ndist/assets/knowledge-view-utils-Bn6ZFkR_.js                    139.08 kB\ndist/assets/markdown-rendering-CVgRazkG.js                      150.10 kB\ndist/assets/objective-cpp-CLxacb5B.js                           171.97 kB\ndist/assets/javascript-wDzz0qaB.js                              174.83 kB\ndist/assets/tsx-COt5Ahok.js                                     175.54 kB\ndist/assets/jsx-g9-lgVsj.js                                     177.79 kB\ndist/assets/typescript-BPQ3VLAy.js                              181.08 kB\ndist/assets/angular-ts-CT0n3M0e.js                              183.82 kB\ndist/assets/vue-vine-BoDAl6tE.js                                190.05 kB\ndist/assets/react-vendor-BY3e-vaV.js                            192.88 kB\ndist/assets/html2canvas.esm-DXEQVQnt.js                         201.04 kB\ndist/assets/assistant-ui-runtime-BGEw5jqt.js                    210.60 kB\ndist/assets/index-DrBaRXBU.js                                   221.13 kB\ndist/assets/math-rendering-BtIipC_D.js                          258.80 kB\ndist/assets/wolfram-lXgVvXCa.js                                 262.39 kB\ndist/assets/zh-DKo_Cx5o.js                                      264.46 kB\ndist/assets/AgentAvatar-Bxq0whca.js                             307.53 kB\ndist/assets/ja-CeCRPrFB.js                                      341.56 kB\ndist/assets/ru-BHVgq163.js                                      419.57 kB\ndist/assets/document-viewers-CNerDvZX.js                        429.19 kB\ndist/assets/index-BqGxTzKI.js                                   443.26 kB\ndist/assets/lucide-icons-B6V33_Fe.js                            488.04 kB\ndist/assets/ArtifactPanel-C5S_31ft.js                           557.31 kB\ndist/assets/index-CojSl3WE.js                                   569.40 kB\ndist/assets/wasm-CG6Dc4jp.js                                    622.34 kB\ndist/assets/cpp-UfJy6YNI.js                                     626.08 kB\ndist/assets/App-B-af8zYN.js                                     691.88 kB\ndist/assets/emacs-lisp-CXvaQtF9.js                              779.88 kB\ndist/assets/GeneratedFilesPanel-B4Tunm_K.js                   1,581.61 kB\ndist/assets/editor-mJteeTi0.js                                3,750.05 kB\n✓ built in 51.70s\nvite v7.3.1 building client environment for production...\ntransforming...\n✓ 948 modules transformed.\nrendering chunks...\ndist-electron/main/index.js                                         1.38 kB\ndist-electron/main/active-sandbox-high-risk-policy-DvM9Tv5E.js      2.26 kB\ndist-electron/main/session-cascade-delete-xwTphBRu.js               3.77 kB\ndist-electron/main/execution-checkout-admission-CSmXqxr0.js         4.53 kB\ndist-electron/main/journaled-git-apply-D3JEWGSl.js                  7.81 kB\ndist-electron/main/ignore-iOTH1G_c.js                               7.91 kB\ndist-electron/main/execution-migration-BxpLpbgN.js                  9.72 kB\ndist-electron/main/worktree-service-DkwQP8KV.js                    36.99 kB\ndist-electron/main/index-B38y8vXY.js                            2,319.41 kB\n✓ built in 6.00s\nvite v7.3.1 building client environment for production...\ntransforming...\n✓ 2 modules transformed.\nrendering chunks...\ndist-electron/preload/index.js  2.50 kB\n✓ built in 17ms\n[versebrowser-build] bound; 2301 compiled outputs\n",
+      "stderrTail": "/hooks-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/mcp-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/roles-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/agent-config.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/app-version-rollback.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-service.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-system-service.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/chat-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/code-review-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sessions-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-working-context.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/services/agent-browser-api.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/resource-envelope.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/agent-browser-bridge.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/ipc-handlers.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/long-session-resource-reclamation.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/session-storage-api.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-system-service.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sessions-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-service.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-service.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/chat-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sessions-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-api.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/services/long-session-resource-reclamation.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/session-activity-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sessions-api.ts, dynamic import will not move module into another chunk.\n\n[plugin vite:reporter] \n(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/main/ipc-handlers.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/resource-envelope.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, dynamic import will not move module into another chunk.\n\n$ node scripts/versebrowser-build-provenance.mjs\n",
+      "diagnostics": {
+        "build": {
+          "kind": "vite-build",
+          "buildPasses": [
+            {
+              "index": 1,
+              "durationMs": 51700
+            },
+            {
+              "index": 2,
+              "durationMs": 6000
+            },
+            {
+              "index": 3,
+              "durationMs": 17
+            }
+          ],
+          "largestAssets": [
+            {
+              "path": "dist/assets/editor-mJteeTi0.js",
+              "sizeKb": 3750.05
+            },
+            {
+              "path": "dist-electron/main/index-B38y8vXY.js",
+              "sizeKb": 2319.41
+            },
+            {
+              "path": "dist/assets/GeneratedFilesPanel-B4Tunm_K.js",
+              "sizeKb": 1581.61
+            },
+            {
+              "path": "dist/assets/emacs-lisp-CXvaQtF9.js",
+              "sizeKb": 779.88
+            },
+            {
+              "path": "dist/assets/App-B-af8zYN.js",
+              "sizeKb": 691.88
+            },
+            {
+              "path": "dist/assets/cpp-UfJy6YNI.js",
+              "sizeKb": 626.08
+            },
+            {
+              "path": "dist/assets/wasm-CG6Dc4jp.js",
+              "sizeKb": 622.34
+            },
+            {
+              "path": "dist/assets/index-CojSl3WE.js",
+              "sizeKb": 569.4
+            }
+          ],
+          "warningCount": 10,
+          "warnings": [
+            "(!) D:/ClawX-work/g2-rag16-relay-20261119/src/stores/workspaces.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/components/agents/RolesOrchestrationPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/WelcomeProjectPicker.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/ArtifactPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAuditPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceBrowserBody.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceGitPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/MainLayout.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/Sidebar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/settings/KnowledgeOperationsSettings.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/lib/workspace-session.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/KnowledgeChat.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/use-session-reading-position.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/CodeReview/ChangeContextPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Knowledge/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Memory/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Projects/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/chat.ts, dynamic import will not move module into another chunk.",
+            "(!) D:/ClawX-work/g2-rag16-relay-20261119/src/stores/chat.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/Sidebar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/rareui/CompletionActivityMenu.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/lib/workspace-session.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatToolbar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/TeamOrchestrationCard.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/UsedKnowledge.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Cron/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Projects/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/cron.ts, dynamic import will not move module into another chunk.",
+            "(!) Some chunks are larger than 500 kB after minification. Consider:",
+            "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/store.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/manager.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/config-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/manager.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/launch-at-startup.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/menu.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/proxy.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/agent-dev-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/chat-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/efficiency-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/gateway-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/remote-control-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/remote-tasks-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sensitive-capture-gate.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/session-delegation-store.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/settings-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/support-bundle.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/system-notifications-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/usage-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/work-providers-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/app-version-rollback.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/control-ui-device-pairing.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-auth.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.",
+            "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/channel-config.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/cron-api.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/config-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/supervisor.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/agents-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/channels-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/hooks-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/mcp-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/roles-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/agent-config.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/app-version-rollback.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.",
+            "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-service.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-system-service.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/chat-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/code-review-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sessions-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-working-context.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts, dynamic import will not move module into another chunk."
+          ],
+          "totalReportedBuildMs": 57717
+        }
+      }
+    },
+    {
+      "id": "playwright-agent-dev",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "test:e2e:agent-dev-quality:run"
+      ],
+      "goal": "Electron Agent Dev scenario and in-app Workbench path",
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+      "exitCode": 0,
+      "durationMs": 23506,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "\nRunning 4 tests using 2 workers\n\n  ok 2 tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling (12.0s)\n  ok 1 tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario (12.0s)\n  ok 3 tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario (7.5s)\n  ok 4 tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (7.8s)\n\n  4 passed (22.1s)\n",
+      "stderrTail": "$ playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2\n(node:34160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:33772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:34160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:33772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "diagnostics": {
+        "playwright": {
+          "kind": "playwright",
+          "passed": 4,
+          "reportedDurationMs": 22100,
+          "tests": [
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+              "durationMs": 12000
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+              "durationMs": 12000
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+              "durationMs": 7800
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+              "durationMs": 7500
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "workbench-refresh",
+      "command": "pnpm",
+      "args": [
+        "agent-dev:workbench"
+      ],
+      "goal": "Refresh Workbench evidence after quality report generation",
+      "commandLine": "pnpm agent-dev:workbench",
+      "exitCode": 0,
+      "durationMs": 538,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "{\n  \"success\": true,\n  \"scenarioCount\": 15,\n  \"reports\": {\n    \"quality\": true,\n    \"channelConformance\": false,\n    \"scenarioRecordings\": true\n  },\n  \"output\": \"D:\\\\ClawX-work\\\\g2-rag16-relay-20261119\\\\artifacts\\\\agent-dev-workbench\\\\index.html\",\n  \"evidence\": \"D:\\\\ClawX-work\\\\g2-rag16-relay-20261119\\\\artifacts\\\\agent-dev-workbench\\\\evidence.json\"\n}\n",
+      "stderrTail": "$ node scripts/agent-dev-workbench.mjs\n"
+    }
+  ],
+  "bottlenecks": [
+    {
+      "id": "e2e-build",
+      "durationMs": 71518,
+      "commandLine": "pnpm run build:vite",
+      "skipped": false
+    },
+    {
+      "id": "typecheck",
+      "durationMs": 30654,
+      "commandLine": "pnpm run typecheck",
+      "skipped": false
+    },
+    {
+      "id": "playwright-agent-dev",
+      "durationMs": 23506,
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+      "skipped": false
+    },
+    {
+      "id": "vitest-agent-dev",
+      "durationMs": 7579,
+      "commandLine": "pnpm agent-dev:unit",
+      "skipped": false
+    },
+    {
+      "id": "harness-agent-dev",
+      "durationMs": 3120,
+      "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
+      "skipped": false
+    }
+  ],
+  "workbenchEvidence": {
+    "schema": "clawx.agent-dev.workbench-evidence.v1",
+    "generatedAt": "2026-11-20T01:57:48.550Z",
+    "scenarioCount": 15,
+    "scenarios": [
+      {
+        "id": "ui-v2-showcase",
+        "route": "/ui-v2-showcase",
+        "description": "Interactive Apple-inspired material and motion reference for Windows UI v2."
+      },
+      {
+        "id": "chat-empty",
+        "route": "/",
+        "description": "Empty chat session with setup skipped and no provider key."
+      },
+      {
+        "id": "chat-streaming",
+        "route": "/",
+        "description": "Chat page with a synthetic in-progress assistant turn."
+      },
+      {
+        "id": "models-heavy-usage",
+        "route": "/settings/models",
+        "description": "Models page with dense token usage buckets for chart validation."
+      },
+      {
+        "id": "settings-provider-error",
+        "route": "/settings/models",
+        "description": "Provider settings page with a validation error state."
+      },
+      {
+        "id": "doctor-failed",
+        "route": "/settings/advanced",
+        "description": "Advanced settings with a failed OpenClaw Doctor payload."
+      },
+      {
+        "id": "gateway-connecting",
+        "route": "/",
+        "description": "Gateway connecting banner and retry affordances."
+      },
+      {
+        "id": "knowledge-drafts",
+        "route": "/knowledge",
+        "description": "Knowledge hub with draft/proposal queues populated."
+      },
+      {
+        "id": "observability-trace-errors",
+        "route": "/observability",
+        "description": "Observability page with errored traces and node diagnostics."
+      },
+      {
+        "id": "transport-fallback-chain",
+        "route": "/",
+        "description": "Transport path exercises WS to HTTP to IPC fallback metadata."
+      },
+      {
+        "id": "skill-execution-timeout",
+        "route": "/settings/advanced",
+        "description": "Skill sandbox shows an execution timeout and budget evidence."
+      },
+      {
+        "id": "multi-agent-handoff",
+        "route": "/",
+        "description": "Conversation state includes a multi-agent handoff marker."
+      },
+      {
+        "id": "knowledge-conflict-merge",
+        "route": "/knowledge",
+        "description": "Knowledge hub contains a merge conflict review queue."
+      },
+      {
+        "id": "channel-reconnect-storm",
+        "route": "/settings/channels",
+        "description": "Channel diagnostics contain repeated reconnect events."
+      },
+      {
+        "id": "clawgraph-dag-cycle",
+        "route": "/clawgraph",
+        "description": "ClawGraph compile state includes a cycle diagnostic."
+      }
+    ],
+    "scripts": {
+      "postinstall": "node scripts/assert-pnpm-toolchain.mjs && pnpm run versebrowser:build && node scripts/patch-browser-hint.mjs && pnpm --dir openclaw_runtime install",
+      "init": "pnpm install && pnpm run uv:download && pnpm run agent-browser:download",
+      "predev": "pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
+      "dev": "vite",
+      "dev:mock": "vite --open \"/?mock=1#/\"",
+      "versebrowser:build": "pnpm --filter @verse-claw/versebrowser build",
+      "versebrowser:evidence:verify": "node scripts/versebrowser-evidence-verify.mjs",
+      "build:runtime": "node scripts/build-openclaw-runtime.mjs",
+      "provider:deepseek:configure": "node scripts/configure-deepseek-runtime.mjs",
+      "runtime:event-log:inspect": "node openclaw_runtime/scripts/inspect-runtime-event-log.mjs",
+      "runtime:memory:inspect": "node openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs",
+      "runtime:memory:hydrate-shadow": "node openclaw_runtime/scripts/inspect-runtime-memory-hydration-shadow.mjs",
+      "eval:runtime-memory:long-conversation": "pnpm exec vitest run tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts --reporter=verbose",
+      "eval:runtime-memory:round2": "pnpm exec vitest run tests/unit/runtime-memory-write-path-semantic-real.test.ts tests/unit/runtime-memory-read-path-consumer-real.test.ts tests/unit/runtime-memory-llm-real-usage.test.ts tests/unit/runtime-memory-long-term-accumulation.test.ts tests/unit/runtime-memory-adversarial-holdout.test.ts tests/unit/runtime-memory-long-conversation-real.test.ts tests/unit/runtime-memory-interleaved-read-write.test.ts tests/unit/runtime-memory-useless-content-judge.test.ts tests/unit/runtime-memory-write-path-llm-judge.test.ts tests/unit/runtime-memory-consumer-llm-judge.test.ts tests/unit/runtime-memory-llm-multi-judge.test.ts tests/unit/runtime-memory-retention-llm-judge.test.ts tests/unit/runtime-memory-maturity-score-real.test.ts --reporter=verbose",
+      "eval:runtime-memory:enhanced": "pnpm exec vitest run tests/unit/runtime-memory-eval-statistics.test.ts tests/unit/runtime-memory-eval-chain-eval.test.ts tests/unit/runtime-memory-eval-utility-scorer.test.ts tests/unit/runtime-memory-eval-temporal-evolution.test.ts tests/unit/runtime-memory-eval-topic-drift.test.ts tests/unit/runtime-memory-eval-budget-pressure.test.ts tests/unit/runtime-memory-eval-enhanced-report.test.ts tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts tests/unit/runtime-memory-eval-conflict-resolution.test.ts tests/unit/runtime-memory-eval-hazard-sentinel.test.ts tests/unit/runtime-memory-eval-cross-axis-rejection.test.ts tests/unit/runtime-memory-eval-enhanced-integration.test.ts tests/unit/runtime-memory-eval-rejection-coverage-gate.test.ts tests/unit/runtime-memory-eval-latency-benchmark.test.ts tests/unit/runtime-memory-eval-latency-benchmark-real.test.ts tests/unit/runtime-memory-eval-aggregate-report.test.ts tests/unit/runtime-memory-eval-aggregate-report-real.test.ts --reporter=verbose",
+      "eval:runtime-memory:locomo": "pnpm exec vitest run tests/unit/runtime-memory-locomo-benchmark.test.ts --reporter=verbose",
+      "eval:runtime-memory:locomo:full500": "node --experimental-strip-types scripts/run-locomo-full-evaluation.mjs",
+      "eval:runtime-memory:full": "node openclaw_runtime/scripts/run-runtime-memory-eval.mjs",
+      "eval:role-memory:eval": "pnpm exec vitest run tests/unit/role-memory-eval-pack.test.ts --reporter=verbose",
+      "eval:context-compression": "node scripts/context-compression-eval-runner.mjs",
+      "long-session:d2:evidence": "node --experimental-strip-types scripts/long-session-paired-evaluation.mjs",
+      "long-session:d2:evidence:check": "node --experimental-strip-types scripts/long-session-paired-evaluation.mjs --check",
+      "long-session:d3:decision": "node scripts/long-session-continuity-decision.mjs",
+      "long-session:d3:decision:check": "node scripts/long-session-continuity-decision.mjs --check",
+      "long-session:e1:evidence": "node --experimental-strip-types scripts/long-session-followup-evidence.mjs",
+      "long-session:e1:evidence:check": "node --experimental-strip-types scripts/long-session-followup-evidence.mjs --check",
+      "long-session:e2:evidence": "node --experimental-strip-types scripts/long-session-reclamation-evidence.mjs",
+      "long-session:e2:evidence:check": "node --experimental-strip-types scripts/long-session-reclamation-evidence.mjs --check",
+      "long-session:f1:evidence": "node --experimental-strip-types scripts/long-session-restart-evidence.mjs",
+      "long-session:f1:evidence:check": "node --experimental-strip-types scripts/long-session-restart-evidence.mjs --check",
+      "long-session:f2:evidence": "node --experimental-strip-types scripts/long-session-long-use-budget-evidence.mjs",
+      "long-session:f2:evidence:check": "node --experimental-strip-types scripts/long-session-long-use-budget-evidence.mjs --check",
+      "long-session:f3:evidence": "node --experimental-strip-types scripts/long-session-final-acceptance-evidence.mjs",
+      "long-session:f3:evidence:check": "node --experimental-strip-types scripts/long-session-final-acceptance-evidence.mjs --check",
+      "eval:ast-readonly": "pnpm exec vitest run tests/unit/runtime-ast-readonly-deep-eval.test.ts --reporter=verbose",
+      "eval:ast-investment": "pnpm exec vitest run tests/unit/runtime-ast-readonly-investment-eval.test.ts --reporter=verbose",
+      "runtime:effectiveness": "node scripts/runtime-effectiveness.mjs",
+      "runtime:effectiveness:live": "node scripts/runtime-effectiveness.mjs --live",
+      "runtime:effectiveness:report": "node scripts/runtime-effectiveness.mjs --report-only",
+      "runtime:long-stability": "node scripts/runtime-long-stability.mjs",
+      "ext:bridge": "node scripts/generate-ext-bridge.mjs",
+      "build": "node scripts/generate-ext-bridge.mjs && pnpm run build:vite && pnpm run build:runtime && zx scripts/bundle-openclaw.mjs && zx scripts/bundle-openclaw-plugins.mjs && zx scripts/bundle-openclaw-runtime.mjs && zx scripts/bundle-preinstalled-skills.mjs && node scripts/bundle-main-runtime.mjs && node scripts/run-electron-builder.mjs",
+      "prebuild:vite": "node scripts/versebrowser-build-provenance.mjs --capture && pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs",
+      "build:vite": "node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build",
+      "postbuild:vite": "node scripts/versebrowser-build-provenance.mjs",
+      "build:startup-check": "node scripts/check-renderer-startup-chunks.mjs",
+      "bundle:openclaw-plugins": "zx scripts/bundle-openclaw-plugins.mjs",
+      "bundle:preinstalled-skills": "zx scripts/bundle-preinstalled-skills.mjs",
+      "docs:policy:validate": "node scripts/validate-policy-docs.mjs",
+      "lint": "node scripts/check-no-bom.mjs && eslint . --fix && pnpm run lint:dcs && pnpm run lint:artifact-completion-class",
+      "lint:check": "node scripts/check-no-bom.mjs && eslint . --max-warnings 120 && pnpm run lint:dcs && pnpm run lint:artifact-completion-class",
+      "lint:artifact-completion-class": "node scripts/lint-artifact-completion-class.mjs",
+      "lint:bom": "node scripts/check-no-bom.mjs",
+      "lint:dcs": "pnpm --dir openclaw_runtime exec oxlint --type-aware --type-check --tsconfig=tsconfig.json --deny-warnings src/context-engine/block.ts src/context-engine/block.test.ts src/context-engine/block-store.ts src/context-engine/block-store.test.ts src/context-engine/handlers/working-memory-handler.ts src/context-engine/handlers/working-memory-handler.test.ts src/context-engine/handlers/task-loop-handler.ts src/context-engine/handlers/task-loop-handler.test.ts src/context-engine/handlers/tool-registry-handler.ts src/context-engine/handlers/tool-registry-handler.test.ts src/context-engine/handlers/compass-handler.ts src/context-engine/handlers/compass-handler.test.ts src/context-engine/handlers/role-memory-handler.ts src/context-engine/handlers/role-memory-handler.test.ts src/context-engine/assembler.ts src/context-engine/assembler.test.ts src/context-engine/dcs-observability.ts src/context-engine/dcs-observability.test.ts src/context-engine/workspace-fingerprint.ts src/context-engine/workspace-fingerprint.test.ts src/context-engine/tools/context-search-tool.ts src/context-engine/tools/context-search-tool.test.ts src/context-engine/tools/context-write-tool.ts src/context-engine/tools/context-write-tool.test.ts src/context-engine/tools/context-read-tool.ts src/context-engine/tools/context-read-tool.test.ts src/agents/tools/context-agent-tools.ts src/agents/tools/context-agent-tools.test.ts src/agents/agent-bundle-mcp-runtime.ts src/agents/agent-bundle-mcp-runtime.test.ts src/agents/agent-tools.ts src/agents/tool-catalog.ts src/agents/harness/dcs-stage0-hooks.test.ts src/agents/harness/hook-context.ts src/agents/harness/lifecycle-hook-helpers.ts src/agents/embedded-agent-runner/extensions.ts src/agents/embedded-agent-runner/extensions.working-memory.test.ts src/agents/embedded-agent-runner/extensions.task-state.test.ts src/agents/embedded-agent-runner/dcs-extension-deps.ts src/agents/embedded-agent-runner/dcs-extension-deps.test.ts src/agents/task-loop-controller.ts src/agents/task-loop-controller.dcs-phase-producer.test.ts src/agents/embedded-agent-runner/extensions.tool-registry.test.ts src/agents/embedded-agent-runner/extensions.knowledge.test.ts src/agents/embedded-agent-runner/run/attempt.ts src/agents/dcs-producer-envelope.test.ts src/agents/tools/context-agent-tools.test.ts src/agents/sessions/tools/edit.ts src/agents/sessions/tools/write.ts src/agents/sessions/tools/tool-contracts.ts src/agents/apply-patch.ts src/config/types.openclaw.ts src/config/zod-schema.ts src/config/runtime-feature-leaves.ts src/config/schema.labels.ts src/config/schema.help.ts src/config/runtime-context-block-working-memory.test.ts src/config/runtime-context-block-tool-registry.test.ts src/config/runtime-context-block-compass.test.ts src/config/runtime-context-block-role-memory.test.ts src/plugins/hook-types.ts src/plugins/hooks.ts src/sessions/session-key-utils.ts src/knowledge/sekb/experience-block-bridge.ts src/knowledge/sekb/experience-block-bridge.test.ts src/knowledge/sekb/distillation-tool.ts src/knowledge/sekb/harness-integration.test.ts src/knowledge/sekb/harness-integration.ts src/agents/embedded-agent-runner/sekb-runtime.ts src/agents/embedded-agent-runner/sekb-runtime.test.ts src/config/runtime-context-block-sekb.test.ts",
+      "typecheck:node": "tsgo --noEmit -p tsconfig.node.json --composite false",
+      "typecheck:web": "tsgo --noEmit -p tsconfig.web.json --composite false",
+      "typecheck:test": "tsgo --noEmit -p tsconfig.test.json --composite false",
+      "typecheck:agent-dev": "node scripts/typecheck-agent-dev.mjs",
+      "typecheck:cached": "node scripts/typecheck-agent-dev.mjs --cache",
+      "typecheck:force": "node scripts/typecheck-agent-dev.mjs --force",
+      "typecheck": "node scripts/typecheck-agent-dev.mjs",
+      "test": "vitest run --maxWorkers=2 --exclude tests/unit/gateway-permissions-api.test.ts --exclude tests/unit/files-permissions-api.test.ts --exclude tests/unit/runtime-memory-operator-inspection.test.ts && vitest run tests/unit/gateway-permissions-api.test.ts tests/unit/files-permissions-api.test.ts tests/unit/runtime-memory-operator-inspection.test.ts --maxWorkers=1 && pnpm run test:dcs",
+      "test:dcs": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/context-engine/block.test.ts src/context-engine/block-store.test.ts src/context-engine/handlers/working-memory-handler.test.ts src/context-engine/handlers/task-loop-handler.test.ts src/context-engine/handlers/tool-registry-handler.test.ts src/context-engine/handlers/compass-handler.test.ts src/context-engine/handlers/role-memory-handler.test.ts src/context-engine/assembler.test.ts src/context-engine/assembler.kill-switch.test.ts src/context-engine/turn-injection-budget.test.ts src/context-engine/runtime-flag-ack.test.ts src/context-engine/dcs-observability.test.ts src/context-engine/dcs-prod-flags-catalog.test.ts src/context-engine/workspace-fingerprint.test.ts src/context-engine/tools/context-search-tool.test.ts src/context-engine/tools/context-write-tool.test.ts src/context-engine/tools/context-read-tool.test.ts src/knowledge/sekb/experience-block-bridge.test.ts src/knowledge/sekb/harness-integration.test.ts src/knowledge/sekb/sekb.test.ts src/memory/memory-policy.test.ts src/memory/root-memory-files.test.ts src/runtime-core/memory-hybrid-retrieval.cjk.test.ts && pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.runtime-config.config.ts config/runtime-context-block-working-memory.test.ts config/runtime-context-block-tool-registry.test.ts config/runtime-context-block-compass.test.ts config/runtime-context-block-role-memory.test.ts config/runtime-context-block-sekb.test.ts && pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts harness/dcs-stage0-hooks.test.ts embedded-agent-runner/extensions.working-memory.test.ts embedded-agent-runner/extensions.task-state.test.ts embedded-agent-runner/dcs-extension-deps.test.ts task-loop-controller.dcs-phase-producer.test.ts embedded-agent-runner/extensions.tool-registry.test.ts embedded-agent-runner/extensions.knowledge.test.ts dcs-producer-envelope.test.ts tools/context-agent-tools.test.ts embedded-agent-runner/sekb-runtime.test.ts agent-bundle-mcp-runtime.test.ts && pnpm run maturity:findings:check && pnpm exec vitest run tests/unit/system-maturity-findings-registry.test.ts --maxWorkers=1",
+      "test:e2e": "pnpm run build:vite && playwright test",
+      "test:e2e:run": "playwright test",
+      "test:e2e:chat-cache-live": "pnpm run build:vite && playwright test tests/e2e/chat-cache-live-model.spec.ts",
+      "test:e2e:headed": "pnpm run build:vite && playwright test --headed",
+      "runtime-lifecycle-audit": "node scripts/check-runtime-lifecycle-audit.mjs",
+      "check:feature-leaf-consumers": "node scripts/check-feature-leaf-consumers.mjs",
+      "check:feature-leaf-consumers:self-test": "node scripts/check-feature-leaf-consumers.mjs --self-test",
+      "check:runtime-deep-refs": "node scripts/check-runtime-deep-refs.mjs",
+      "verify:runtime-lifecycle-ga": "node scripts/verify-runtime-lifecycle-packaged-electron.mjs && node scripts/runtime-lifecycle-goal-wake-canary.mjs",
+      "harness": "pnpm --filter @verse-claw/harness start --",
+      "harness:ci": "node scripts/harness-ci.mjs",
+      "agent-map:validate": "node scripts/agent-map-validation.mjs",
+      "agent-map:validate:gate": "node scripts/agent-map-validation.mjs --require-gate-eligible",
+      "agent-map:benchmark": "node scripts/agent-map-validation.mjs --benchmark-only",
+      "agent-map:benefit-eval": "node scripts/agent-map-benefit-eval.mjs",
+      "agent-map:investment-investigate": "node scripts/agent-map-investment-investigate.mjs",
+      "agent-dev:make": "node scripts/agent-dev-scaffold.mjs",
+      "agent-dev:promote-scenario": "node scripts/agent-dev-promote-scenario.mjs",
+      "agent-dev:workbench": "node scripts/agent-dev-workbench.mjs",
+      "agent-dev:deep-test": "node scripts/agent-dev-deep-test.mjs",
+      "agent-dev:deep-test:reuse": "node scripts/agent-dev-deep-test.mjs --reuse-build --cached-typecheck --smoke-e2e",
+      "agent-dev:deep-test:reuse:full": "node scripts/agent-dev-deep-test.mjs --reuse-build --cached-typecheck",
+      "agent-dev:audit": "node scripts/agent-dev-audit.mjs",
+      "agent-dev:audit:report": "node scripts/agent-dev-audit.mjs --no-fail",
+      "observability:problems": "pnpm --dir openclaw_runtime exec tsx ../scripts/observability-problems.mjs",
+      "memory:cutover-gate": "pnpm --dir openclaw_runtime exec tsx ../scripts/memory-cutover-gate.mjs",
+      "runtime:perf": "node scripts/run-runtime-perf.mjs",
+      "catalogs:gen": "pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs",
+      "catalogs:check": "pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs --check",
+      "agent-dev:evaluate": "node scripts/agent-dev-benefit-eval.mjs",
+      "rsi:tf0604:write": "node scripts/rsi-tf0604-baseline.mjs --write --json",
+      "rsi:tf0604:check": "node scripts/rsi-tf0604-baseline.mjs --check --json",
+      "rsi:tf0592:write": "node scripts/rsi-tf0592-statistical-adjudication.mjs --write --json",
+      "rsi:tf0592:check": "node scripts/rsi-tf0592-statistical-adjudication.mjs --check --json",
+      "rsi:decision:check": "node scripts/rsi-decision-check.mjs --json",
+      "rsi:feedback:check": "node scripts/rsi-feedback-pilot.mjs --check --json",
+      "rsi:feedback:export": "node scripts/rsi-feedback-export.mjs --write --json",
+      "agent-first:corpus:check": "node scripts/agent-first-corpus-check.mjs",
+      "rsi:corpus:write": "node scripts/rsi-historical-task-corpus.mjs --write",
+      "rsi:corpus:check": "node scripts/rsi-historical-task-corpus.mjs --check",
+      "rsi:corpus:calibrate": "node scripts/rsi-historical-task-corpus.mjs --calibrate",
+      "agent-dev:unit:node": "pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts",
+      "agent-dev:unit:fast": "pnpm agent-dev:unit",
+      "agent-dev:unit": "vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts tests/unit/host-api-facade.test.ts",
+      "agent-dev:fast": "pnpm contract:check && pnpm i18n:lint && pnpm prompt-quality:fast && pnpm agent-dev:workbench && pnpm agent-dev:unit:fast",
+      "prompt-quality:budget": "pnpm exec vitest run tests/unit/prompt-quality-budget.test.ts",
+      "prompt-quality:fast": "pnpm run prompt-quality:budget",
+      "prompt:snapshots:check:available": "node scripts/prompt-snapshots-check.mjs",
+      "agent-dev:full-local": "pnpm agent-dev:fast && pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md && pnpm test:e2e:agent-dev-quality",
+      "repo:artifacts:check": "node scripts/check-repository-artifacts.mjs",
+      "repo:test-coverage:check": "node scripts/check-test-coverage-baseline.mjs",
+      "repo:evidence:check": "node scripts/check-evidence-refs.mjs",
+      "repo:evidence:sha256": "node scripts/verify-evidence-sha256sums.mjs",
+      "repo:local-paths:check": "node scripts/check-local-paths.mjs",
+      "test:skips:report": "node scripts/report-test-skips.mjs",
+      "repo:duplicates:check": "node scripts/check-duplicate-assets.mjs",
+      "harness:specs:lifecycle": "node scripts/check-spec-lifecycle.mjs",
+      "runtime:source:check": "node scripts/check-runtime-source-policy.mjs && pnpm --dir openclaw_runtime run check:import-cycles && pnpm --dir openclaw_runtime run check:deprecated-api-usage && pnpm --dir openclaw_runtime run check:deprecated-zero-call && pnpm --dir openclaw_runtime run deadcode:unused-files && pnpm --dir openclaw_runtime run check:loc:baseline",
+      "contract:check": "node scripts/contract-check.mjs",
+      "chain-audit": "node scripts/chain-audit/run-chain-audit.mjs",
+      "chain-audit:chain": "node scripts/chain-audit/run-chain-audit.mjs --chain",
+      "chain-audit:rpc": "node scripts/chain-audit/run-chain-audit.mjs --skip-start --chain readonly",
+      "i18n:lint": "node scripts/i18n-lint.mjs",
+      "channel:conformance": "node scripts/channel-conformance.mjs",
+      "agent-dev:validate": "pnpm contract:check && pnpm i18n:lint && pnpm harness:ci && pnpm test:e2e:agent-dev-quality",
+      "test:e2e:agent-dev-quality": "pnpm run build:vite && playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2",
+      "test:e2e:agent-dev-quality:run": "playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2",
+      "test:e2e:agent-dev-quality:smoke": "playwright test tests/e2e/agent-dev-quality.spec.ts --grep \"loads the in-app Agent Dev Workbench\"",
+      "verify:security-shadow-mvp": "node scripts/verify-security-shadow-mvp.mjs",
+      "comms:replay": "node scripts/comms/replay.mjs",
+      "comms:baseline": "node scripts/comms/baseline.mjs",
+      "comms:compare": "node scripts/comms/compare.mjs",
+      "verseconf:verify": "node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/verify-verseconf-clawx-integration.mjs",
+      "verseconf:live": "node scripts/verseconf-live-chain.mjs",
+      "uv:download": "zx scripts/download-bundled-uv.mjs",
+      "vtoken:test": "node scripts/run-vtoken.mjs test",
+      "vtoken:bench": "node scripts/run-vtoken.mjs bench",
+      "vtoken:worker": "node scripts/run-vtoken.mjs worker",
+      "uv:download:mac": "zx scripts/download-bundled-uv.mjs --platform=mac",
+      "uv:download:win": "zx scripts/download-bundled-uv.mjs --platform=win",
+      "uv:download:linux": "zx scripts/download-bundled-uv.mjs --platform=linux",
+      "uv:download:all": "zx scripts/download-bundled-uv.mjs --all",
+      "agent-browser:download": "zx scripts/download-bundled-agent-browser.mjs",
+      "agent-browser:download:mac": "zx scripts/download-bundled-agent-browser.mjs --platform=mac",
+      "agent-browser:download:win": "zx scripts/download-bundled-agent-browser.mjs --platform=win",
+      "agent-browser:download:linux": "zx scripts/download-bundled-agent-browser.mjs --platform=linux",
+      "agent-browser:download:all": "zx scripts/download-bundled-agent-browser.mjs --all",
+      "node:download:win": "zx scripts/download-bundled-node.mjs --platform=win",
+      "verseshell:sync": "node scripts/verseshell-bundle.mjs sync",
+      "verseshell:rebuild": "node scripts/verseshell-bundle.mjs rebuild --platform win32 --arch x64 --mode package",
+      "verseshell:manifest:validate": "node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode dev",
+      "verseshell:manifest:validate:package": "node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode package",
+      "verseshell:package:verify": "node scripts/verseshell-bundle.mjs verify-package --platform win32 --arch x64",
+      "verseshell:mcp:install": "pnpm --dir resources/verseshell-mcp install --frozen-lockfile --ignore-scripts",
+      "verseshell:mcp:test": "pnpm --dir resources/verseshell-mcp test",
+      "verseshell:test": "node --test scripts/verseshell-bundle.test.mjs && vitest run tests/unit/verseshell-runtime-bundle.test.ts --maxWorkers=1 && pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.verseshell.config.ts --maxWorkers=1 && pnpm run verseshell:mcp:test",
+      "prep:win-binaries": "pnpm run uv:download:win && pnpm run agent-browser:download:win && pnpm run node:download:win && pnpm run verseshell:rebuild && pnpm run verseshell:manifest:validate:package",
+      "icons": "zx scripts/generate-icons.mjs",
+      "package": "node scripts/generate-ext-bridge.mjs && pnpm run build:vite && pnpm run build:runtime && zx scripts/bundle-openclaw.mjs && zx scripts/bundle-openclaw-plugins.mjs && zx scripts/bundle-openclaw-runtime.mjs && zx scripts/bundle-preinstalled-skills.mjs && node scripts/bundle-main-runtime.mjs",
+      "package:mac": "pnpm run package && node scripts/run-electron-builder.mjs --mac --publish never",
+      "package:mac:local": "SKIP_PREINSTALLED_SKILLS=1 pnpm run package && node scripts/run-electron-builder.mjs --mac --publish never",
+      "package:win": "pnpm run prep:win-binaries && pnpm run package && node scripts/patch-nsis-win.mjs && node scripts/run-electron-builder.mjs --win --publish never",
+      "package:linux": "pnpm run package && node scripts/run-electron-builder.mjs --linux --publish never",
+      "release": "pnpm run uv:download && pnpm run agent-browser:download && pnpm run package && node scripts/run-electron-builder.mjs --publish always",
+      "preversion": "node scripts/pre-version-fetch-tags.mjs",
+      "version": "node scripts/assert-release-version.mjs",
+      "version:patch": "pnpm version patch",
+      "version:minor": "pnpm version minor",
+      "version:major": "pnpm version major",
+      "version:preminor-alpha": "pnpm version preminor --preid=alpha",
+      "version:prerelease-alpha": "pnpm version prerelease --preid=alpha",
+      "version:prerelease-beta": "pnpm version prerelease --preid=beta",
+      "release:validate": "node scripts/assert-tag-matches-package.mjs",
+      "postversion": "node scripts/post-version-push.mjs",
+      "test:integration": "vitest run tests/integration/loop-stability-check.test.ts tests/integration/p1-orchestration-boundary.integration.test.ts tests/integration/p1-sensitive-content-boundary.integration.test.ts tests/integration/task-loop-checkpoint-evidence.integration.test.ts tests/integration/channel-startup.integration.test.ts",
+      "test:channel-startup": "vitest run tests/unit/config-sync-source-runtime.test.ts tests/integration/channel-startup.integration.test.ts && pnpm --dir openclaw_runtime run test:gateway src/gateway/server-startup-post-attach.channel-start.test.ts",
+      "check:rc10:dev": "pnpm run test:channel-startup && pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.cron.config.ts src/cron/operator-delivery.test.ts && vitest run tests/unit/rc10-driver-entrypoint.test.ts tests/unit/gateway-ws-client.test.ts tests/unit/gateway-ws-trace.test.ts tests/unit/rc10-context-seal.test.ts tests/unit/cron-operator-notifications.test.ts tests/unit/host-services.test.ts && pnpm run typecheck && eslint tests/unit/config-sync-source-runtime.test.ts tests/integration/channel-startup.integration.test.ts tests/unit/rc10-driver-entrypoint.test.ts tests/unit/gateway-ws-client.test.ts tests/unit/gateway-ws-trace.test.ts tests/unit/rc10-context-seal.test.ts electron/gateway/ws-client.ts electron/gateway/ws-trace.ts tests/unit/cron-operator-notifications.test.ts tests/e2e/rc10-operator-live.spec.ts electron/services/sessions-api.ts tests/unit/host-services.test.ts --max-warnings 0 && node --check scripts/rc10/driver.mjs && node --check scripts/rc10/irc-server.mjs && node --check scripts/rc10/operator-driver.mjs",
+      "sekb:hermes:export": "node scripts/sekb-hermes-ops.mjs export",
+      "sekb:hermes:protocol": "node scripts/sekb-hermes-ops.mjs protocol",
+      "sekb:hermes:report": "node scripts/sekb-hermes-ops.mjs report",
+      "sekb:hermes:suggest": "node scripts/sekb-hermes-ops.mjs suggest",
+      "sekb:hermes:confirm": "node scripts/sekb-hermes-ops.mjs confirm",
+      "sekb:hermes:reject": "node scripts/sekb-hermes-ops.mjs reject",
+      "sekb:hermes:gate": "node scripts/sekb-hermes-ops.mjs gate",
+      "sekb:a5:auto-test": "node scripts/sekb-a5-auto-test.mjs",
+      "sekb:a5:auto-test:quick": "node scripts/sekb-a5-auto-test.mjs --count 10 --sample-size 10",
+      "sekb:a5:inventory": "node scripts/sekb-enable-shadow-local.mjs",
+      "sekb:hermes:would-trigger": "node scripts/sekb-hermes-ops.mjs would-trigger",
+      "sekb:d1:synthetic-observe": "node scripts/sekb-d1-synthetic-observe.mjs",
+      "sekb:grayscale:enable": "node scripts/sekb-enable-shadow-local.mjs --enable --target electron",
+      "sekb:grayscale:disable": "node scripts/sekb-enable-shadow-local.mjs --disable --target electron",
+      "sekb:grayscale:observe": "node scripts/sekb-grayscale-observe.mjs",
+      "sekb:tier-c:campaign": "node scripts/sekb-tier-c-campaign.mjs",
+      "sekb:tier-c:merge": "node scripts/sekb-tier-c-campaign.mjs --merge-worksheets",
+      "sekb:tier-c:expand": "node scripts/sekb-tier-c-campaign.mjs --expand 100",
+      "dcs:prod-p0": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-p0-packaging.mts",
+      "dcs:prod-p0:smoke": "node scripts/dcs-prod-p0-smoke.mjs",
+      "dcs:receipt:probe": "node scripts/rc03-receipt-probe.mjs",
+      "dcs:prod-a1": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-a1-decision.mts",
+      "dcs:prod-goal-a": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-goal-a.mts",
+      "dcs:prod-b1": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-b1-c6h.mts",
+      "dcs:prod-b2": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-b2-c7h.mts",
+      "dcs:prod-goal-b": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-goal-b.mts",
+      "dcs:prod-c1": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-c1-residual.mts",
+      "dcs:prod-c4p": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-c4p.mts",
+      "dcs:prod-c5p": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-c5p.mts",
+      "dcs:prod-goal-c": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-goal-c.mts",
+      "dcs:prod-accept-2": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-round-accept-2.mts",
+      "dcs:corpus:validate": "pnpm --dir openclaw_runtime exec node --import tsx scripts/dcs-corpus-validate.mts",
+      "dcs:corpus:synthetic": "pnpm --dir openclaw_runtime exec node --import tsx scripts/dcs-corpus-synthetic-generate.mts",
+      "dcs:canary:c1": "pnpm --dir openclaw_runtime exec node --import tsx scripts/dcs-canary-c1.mts",
+      "dcs:c1:real-tool": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-c1-ab.mts",
+      "dcs:c1:gate": "node scripts/c1-authoritative-decision.mjs --check",
+      "dcs:c1:gate:write": "node scripts/c1-authoritative-decision.mjs",
+      "dcs:c1:gate:refresh": "pnpm run dcs:c1:real-tool && pnpm run dcs:canary:c1 && pnpm run dcs:c1:gate:write",
+      "maturity:baseline": "node scripts/audit-baseline-check.mjs",
+      "maturity:plan": "node scripts/validate-system-maturity-plan.mjs",
+      "maturity:traceability": "node scripts/validate-system-maturity-traceability.mjs",
+      "maturity:traceability:evidence": "node scripts/collect-p7-001-evidence.mjs",
+      "maturity:security": "node scripts/run-system-maturity-security-suite.mjs --mode pr",
+      "maturity:security:full": "node scripts/run-system-maturity-security-suite.mjs --mode full",
+      "maturity:security:evidence": "node scripts/collect-p7-002-evidence.mjs",
+      "maturity:gates": "node scripts/validate-test-gates.mjs",
+      "maturity:release-gates": "node scripts/validate-test-gates.mjs --loop release --list",
+      "maturity:validate": "node scripts/audit-baseline-check.mjs && node scripts/validate-system-maturity-plan.mjs && node scripts/validate-system-maturity-findings-registry.mjs && node scripts/validate-test-gates.mjs && node scripts/validate-system-maturity-evidence.mjs && node scripts/run-system-maturity-residual-audit.mjs && node scripts/validate-system-maturity-traceability.mjs",
+      "maturity:findings:check": "node scripts/validate-system-maturity-findings-registry.mjs",
+      "maturity:evidence": "node scripts/validate-system-maturity-evidence.mjs",
+      "maturity:orchestration-status": "node scripts/validate-orchestration-gap-status.mjs",
+      "release:windows-policy": "node scripts/validate-windows-release-policy.mjs",
+      "release:windows-policy:evidence": "node scripts/collect-p6-001-evidence.mjs",
+      "release:windows-policy:evidence:full": "node scripts/collect-p6-001-evidence.mjs --full",
+      "release:windows-update-policy": "node scripts/validate-windows-update-feed-policy.mts",
+      "release:windows-update-policy:live": "node scripts/validate-windows-update-feed-policy.mts --probe-live --version 1.0.0",
+      "release:windows-update-policy:evidence": "node scripts/collect-p6-002-evidence.mjs",
+      "release:windows-update-policy:evidence:full": "node scripts/collect-p6-002-evidence.mjs --full",
+      "release:supply-chain-policy": "node scripts/validate-supply-chain-integrity.mjs",
+      "release:supply-chain-policy:live": "node scripts/validate-supply-chain-integrity.mjs --probe-live",
+      "release:supply-chain-policy:evidence": "node scripts/collect-p6-003-evidence.mjs",
+      "release:supply-chain-policy:evidence:full": "node scripts/collect-p6-003-evidence.mjs --full",
+      "release:trust-policy": "node scripts/validate-release-trust-metadata.mjs --builder-config electron-builder.yml --workflow .github/workflows/release.yml",
+      "release:trust-policy:evidence": "node scripts/collect-p6-004-evidence.mjs",
+      "release:trust-policy:evidence:full": "node scripts/collect-p6-004-evidence.mjs --full",
+      "release:baseline:manifest": "node scripts/release-baseline-manifest.mjs",
+      "release:baseline:validate": "node scripts/validate-release-baseline.mjs",
+      "release:baseline:evidence": "node scripts/collect-p6-005-evidence.mjs",
+      "maturity:privacy": "node scripts/validate-system-maturity-privacy.mjs",
+      "maturity:privacy:evidence": "node scripts/collect-p7-003-evidence.mjs",
+      "maturity:quarterly": "node scripts/run-system-maturity-quarterly-audit.mjs",
+      "maturity:quarterly:evidence": "node scripts/collect-p7-004-evidence.mjs",
+      "maturity:sync-index": "node scripts/sync-system-maturity-index.mjs",
+      "maturity:seal": "node scripts/seal-system-maturity.mjs",
+      "maturity:residual": "node scripts/run-system-maturity-residual-audit.mjs",
+      "maturity:capability-inventory": "node scripts/run-system-maturity-capability-inventory.mjs",
+      "p0:accept": "vitest run tests/unit/p0-production-acceptance.test.ts tests/unit/default-config-matrix.test.ts tests/unit/context-orchestrator-entry-scan.test.ts tests/unit/tf0001-controlled-operable-closeout.test.ts tests/unit/versebrowser-task-session-conservation.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/openclaw-auth.test.ts",
+      "dcs:ops:preflight": "node scripts/dcs-ops-preflight.mjs",
+      "dcs:ops:preflight:gates": "node scripts/dcs-ops-preflight.mjs --gates",
+      "tf0009:agent-surrogate": "pnpm --dir openclaw_runtime exec node --import tsx scripts/tf0009-agent-surrogate.mts",
+      "acceptance:agent:plan": "node scripts/agent-engineering-acceptance.mjs plan",
+      "acceptance:agent:run": "node scripts/agent-engineering-acceptance.mjs run",
+      "acceptance:agent:verify": "node scripts/agent-engineering-acceptance.mjs verify",
+      "acceptance:agent:full": "node scripts/agent-engineering-acceptance.mjs full",
+      "acceptance:agent:status": "node scripts/agent-engineering-acceptance.mjs status",
+      "uas:00:evidence": "node scripts/uas-00-evidence-freeze.mjs",
+      "uas:00:evidence:check": "node scripts/uas-00-evidence-freeze.mjs --check",
+      "uas:06:evidence": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts",
+      "uas:06:evidence:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts --check",
+      "uas:06:real-canary": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts",
+      "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts --check",
+      "eval:runtime-memory:locomo:verify": "node --experimental-strip-types scripts/check-locomo-evidence.mjs",
+      "a4:decision-quality-audit": "pnpm --dir openclaw_runtime exec tsx ../scripts/a4-decision-quality-audit.mts",
+      "predev:mock": "pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
+      "lobe-icons:sync": "node scripts/sync-lobe-icons.mjs",
+      "lobe-icons:check": "node scripts/sync-lobe-icons.mjs --check"
+    },
+    "hostApi": {
+      "contractActions": [
+        "configureMockReplay",
+        "costReport",
+        "createConversation",
+        "createProviderConfig",
+        "diagnosticsSnapshot",
+        "featureFlags",
+        "hostApiCalls",
+        "recordScenario",
+        "resetState",
+        "scenarios",
+        "seedState",
+        "selectorContract",
+        "setFeatureFlags",
+        "skillSandboxReport",
+        "status",
+        "traceTimeline",
+        "transportTrace",
+        "visualPreset",
+        "workbenchEvidence"
+      ],
+      "facadeActions": [
+        "configureMockReplay",
+        "costReport",
+        "createConversation",
+        "createProviderConfig",
+        "diagnosticsSnapshot",
+        "featureFlags",
+        "hostApiCalls",
+        "recordScenario",
+        "resetState",
+        "scenarios",
+        "seedState",
+        "selectorContract",
+        "setFeatureFlags",
+        "skillSandboxReport",
+        "status",
+        "traceTimeline",
+        "transportTrace",
+        "visualPreset",
+        "workbenchEvidence"
+      ],
+      "serviceActions": [
+        "configureMockReplay",
+        "costReport",
+        "createConversation",
+        "createProviderConfig",
+        "diagnosticsSnapshot",
+        "featureFlags",
+        "hostApiCalls",
+        "recordScenario",
+        "resetState",
+        "scenarios",
+        "seedState",
+        "selectorContract",
+        "setFeatureFlags",
+        "skillSandboxReport",
+        "status",
+        "traceTimeline",
+        "transportTrace",
+        "visualPreset",
+        "workbenchEvidence"
+      ],
+      "missingFacadeActions": [],
+      "missingServiceActions": []
+    },
+    "traceContracts": {
+      "traceTimeline": true,
+      "costReport": true,
+      "skillSandboxReport": true
+    },
+    "artifactStatus": {
+      "workbench": true,
+      "quality": true,
+      "channelConformance": false,
+      "scenarioRecordings": true
+    },
+    "artifacts": {
+      "quality": true,
+      "channelConformance": false,
+      "scenarioRecordings": true
+    },
+    "gateCommands": {
+      "fastPr": [
+        "pnpm agent-dev:fast"
+      ],
+      "fullLocal": [
+        "pnpm agent-dev:full-local",
+        "pnpm run test:e2e:agent-dev-quality:run",
+        "pnpm channel:conformance <channel-name>"
+      ],
+      "nightlyRelease": [
+        "pnpm agent-dev:deep-test",
+        "pnpm run comms:replay",
+        "pnpm run comms:compare",
+        "pnpm run test:e2e"
+      ]
+    },
+    "performance": {
+      "latest": {
+        "generatedAt": "2026-11-20T01:57:48.040Z",
+        "success": true,
+        "totalDurationMs": 141893,
+        "decision": {
+          "status": "blocked",
+          "reason": "e2e-build exceeded hard performance limits.",
+          "dailyLoopReady": false,
+          "releaseReady": false,
+          "fullGateComplete": true,
+          "budgetStatus": "limit",
+          "fastPathModes": [],
+          "requiredFullGates": [],
+          "watchSteps": [
+            "typecheck",
+            "contract",
+            "i18n",
+            "harness-agent-dev"
+          ],
+          "limitSteps": [
+            "e2e-build"
+          ]
+        },
+        "modes": {
+          "buildReuse": "fresh",
+          "unit": "full",
+          "typecheck": "full",
+          "e2e": "full"
+        },
+        "bottlenecks": [
+          {
+            "id": "e2e-build",
+            "durationMs": 71518,
+            "commandLine": "pnpm run build:vite",
+            "skipped": false
+          },
+          {
+            "id": "typecheck",
+            "durationMs": 30654,
+            "commandLine": "pnpm run typecheck",
+            "skipped": false
+          },
+          {
+            "id": "playwright-agent-dev",
+            "durationMs": 23506,
+            "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+            "skipped": false
+          },
+          {
+            "id": "vitest-agent-dev",
+            "durationMs": 7579,
+            "commandLine": "pnpm agent-dev:unit",
+            "skipped": false
+          },
+          {
+            "id": "harness-agent-dev",
+            "durationMs": 3120,
+            "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
+            "skipped": false
+          }
+        ],
+        "diagnostics": {
+          "typecheck": {
+            "stepId": "typecheck",
+            "commandLine": "pnpm run typecheck",
+            "durationMs": 30654,
+            "kind": "typecheck",
+            "mode": "parallel",
+            "cache": {
+              "enabled": false,
+              "status": "disabled",
+              "key": "00e3d6940f0a0661b7030866655849e2fdd5474071f767ca0a927daeb5a93bb7",
+              "inputCount": 13484,
+              "report": "D:\\ClawX-work\\g2-rag16-relay-20261119\\artifacts\\typecheck-cache\\report.json"
+            },
+            "totalDurationMs": 29708,
+            "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+            "phases": [
+              {
+                "commandLine": "node scripts/generate-ext-bridge.mjs",
+                "durationMs": 75,
+                "exitCode": 0,
+                "ok": true,
+                "skipped": false,
+                "cacheHit": false
+              },
+              {
+                "commandLine": "pnpm run typecheck:node",
+                "durationMs": 28462,
+                "exitCode": 0,
+                "ok": true,
+                "skipped": false,
+                "cacheHit": false
+              },
+              {
+                "commandLine": "pnpm run typecheck:web",
+                "durationMs": 10034,
+                "exitCode": 0,
+                "ok": true,
+                "skipped": false,
+                "cacheHit": false
+              },
+              {
+                "commandLine": "pnpm run typecheck:test",
+                "durationMs": 22803,
+                "exitCode": 0,
+                "ok": true,
+                "skipped": false,
+                "cacheHit": false
+              }
+            ],
+            "slowestPhase": {
+              "commandLine": "pnpm run typecheck:node",
+              "durationMs": 28462,
+              "exitCode": 0,
+              "ok": true,
+              "skipped": false,
+              "cacheHit": false
+            }
+          },
+          "build": {
+            "stepId": "e2e-build",
+            "commandLine": "pnpm run build:vite",
+            "durationMs": 71518,
+            "kind": "vite-build",
+            "buildPasses": [
+              {
+                "index": 1,
+                "durationMs": 51700
+              },
+              {
+                "index": 2,
+                "durationMs": 6000
+              },
+              {
+                "index": 3,
+                "durationMs": 17
+              }
+            ],
+            "largestAssets": [
+              {
+                "path": "dist/assets/editor-mJteeTi0.js",
+                "sizeKb": 3750.05
+              },
+              {
+                "path": "dist-electron/main/index-B38y8vXY.js",
+                "sizeKb": 2319.41
+              },
+              {
+                "path": "dist/assets/GeneratedFilesPanel-B4Tunm_K.js",
+                "sizeKb": 1581.61
+              },
+              {
+                "path": "dist/assets/emacs-lisp-CXvaQtF9.js",
+                "sizeKb": 779.88
+              },
+              {
+                "path": "dist/assets/App-B-af8zYN.js",
+                "sizeKb": 691.88
+              },
+              {
+                "path": "dist/assets/cpp-UfJy6YNI.js",
+                "sizeKb": 626.08
+              },
+              {
+                "path": "dist/assets/wasm-CG6Dc4jp.js",
+                "sizeKb": 622.34
+              },
+              {
+                "path": "dist/assets/index-CojSl3WE.js",
+                "sizeKb": 569.4
+              }
+            ],
+            "warningCount": 10,
+            "warnings": [
+              "(!) D:/ClawX-work/g2-rag16-relay-20261119/src/stores/workspaces.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/components/agents/RolesOrchestrationPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/WelcomeProjectPicker.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/ArtifactPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAuditPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceBrowserBody.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceGitPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/MainLayout.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/Sidebar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/settings/KnowledgeOperationsSettings.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/lib/workspace-session.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/KnowledgeChat.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/use-session-reading-position.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/CodeReview/ChangeContextPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Knowledge/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Memory/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Projects/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/chat.ts, dynamic import will not move module into another chunk.",
+              "(!) D:/ClawX-work/g2-rag16-relay-20261119/src/stores/chat.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/Sidebar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/rareui/CompletionActivityMenu.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/lib/workspace-session.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatToolbar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/TeamOrchestrationCard.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/UsedKnowledge.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Cron/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Projects/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/cron.ts, dynamic import will not move module into another chunk.",
+              "(!) Some chunks are larger than 500 kB after minification. Consider:",
+              "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/store.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/manager.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/config-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/manager.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/launch-at-startup.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/menu.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/proxy.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/agent-dev-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/chat-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/efficiency-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/gateway-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/remote-control-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/remote-tasks-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sensitive-capture-gate.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/session-delegation-store.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/settings-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/support-bundle.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/system-notifications-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/usage-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/work-providers-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/app-version-rollback.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/control-ui-device-pairing.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-auth.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.",
+              "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/channel-config.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/cron-api.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/config-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/supervisor.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/agents-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/channels-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/hooks-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/mcp-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/roles-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/agent-config.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/app-version-rollback.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.",
+              "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-service.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-system-service.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/chat-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/code-review-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sessions-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-working-context.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts, dynamic import will not move module into another chunk."
+            ],
+            "totalReportedBuildMs": 57717
+          },
+          "playwright": {
+            "stepId": "playwright-agent-dev",
+            "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+            "durationMs": 23506,
+            "kind": "playwright",
+            "passed": 4,
+            "reportedDurationMs": 22100,
+            "tests": [
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+                "durationMs": 12000
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+                "durationMs": 12000
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+                "durationMs": 7800
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+                "durationMs": 7500
+              }
+            ]
+          }
+        }
+      },
+      "history": {
+        "trend": {
+          "direction": "improved",
+          "previousRunDeltaMs": -98432,
+          "sameModeDeltaMs": -98432,
+          "sameModeSampleCount": 11,
+          "previousRunGeneratedAt": "2026-11-19T17:04:22.760Z",
+          "previousSameModeGeneratedAt": "2026-11-19T17:04:22.760Z",
+          "note": "Compared with previous same-mode run 2026-11-19T17:04:22.760Z."
+        },
+        "entries": [
+          {
+            "generatedAt": "2026-11-17T18:41:44.517Z",
+            "success": true,
+            "totalDurationMs": 41320,
+            "decisionStatus": "needs-full-gate",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 6092,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 1212,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 733,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 507,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 2626,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 6542,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 724,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 614,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 21596,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 544,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 10,
+              "watch": 1,
+              "limit": 0
+            }
+          },
+          {
+            "generatedAt": "2026-11-17T20:05:27.853Z",
+            "success": true,
+            "totalDurationMs": 42227,
+            "decisionStatus": "needs-full-gate",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 6307,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 1216,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 700,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 503,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 2546,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 6780,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 667,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 600,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 22226,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 548,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 10,
+              "watch": 1,
+              "limit": 0
+            }
+          },
+          {
+            "generatedAt": "2026-11-18T19:32:21.351Z",
+            "success": true,
+            "totalDurationMs": 79971,
+            "decisionStatus": "needs-full-gate",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 40894,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 1265,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 800,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 471,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 2265,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 10358,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 634,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 556,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 22181,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 469,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 8,
+              "watch": 3,
+              "limit": 0
+            }
+          },
+          {
+            "generatedAt": "2026-11-18T21:08:10.445Z",
+            "success": true,
+            "totalDurationMs": 82460,
+            "decisionStatus": "needs-full-gate",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 43134,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 1264,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 860,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 466,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 2275,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 10466,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 602,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 574,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 22261,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 485,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 8,
+              "watch": 3,
+              "limit": 0
+            }
+          },
+          {
+            "generatedAt": "2026-11-19T16:48:03.816Z",
+            "success": true,
+            "totalDurationMs": 195650,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 128287,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 2415,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 2036,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 849,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 5590,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 13737,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 1079,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 587,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 39576,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 740,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 5,
+              "watch": 5,
+              "limit": 1
+            }
+          },
+          {
+            "generatedAt": "2026-11-19T16:55:10.781Z",
+            "success": true,
+            "totalDurationMs": 125455,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 11942,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 10576,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 5197,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 1648,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 11253,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 15018,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 854,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 792,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 67003,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 711,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 5,
+              "watch": 2,
+              "limit": 4
+            }
+          },
+          {
+            "generatedAt": "2026-11-19T17:04:22.760Z",
+            "success": false,
+            "totalDurationMs": 185155,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 25122,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 1137,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 22706,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 774,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 4179,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 14721,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 871,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 702,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 113084,
+                "skipped": false,
+                "ok": false
+              },
+              "workbench-refresh": {
+                "durationMs": 1332,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 5,
+              "watch": 4,
+              "limit": 2
+            }
+          },
+          {
+            "generatedAt": "2026-11-20T01:49:55.703Z",
+            "success": true,
+            "totalDurationMs": 86723,
+            "decisionStatus": "blocked",
+            "releaseReady": false,
+            "modes": {
+              "buildReuse": "reused",
+              "unit": "full",
+              "typecheck": "cached",
+              "e2e": "full"
+            },
+            "stepDurations": {
+              "typecheck": {
+                "durationMs": 46186,
+                "skipped": false,
+                "ok": true
+              },
+              "contract": {
+                "durationMs": 1856,
+                "skipped": false,
+                "ok": true
+              },
+              "i18n": {
+                "durationMs": 988,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench": {
+                "durationMs": 522,
+                "skipped": false,
+                "ok": true
+              },
+              "harness-agent-dev": {
+                "durationMs": 3256,
+                "skipped": false,
+                "ok": true
+              },
+              "vitest-agent-dev": {
+                "durationMs": 6873,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-replay": {
+                "durationMs": 734,
+                "skipped": false,
+                "ok": true
+              },
+              "comms-compare": {
+                "durationMs": 659,
+                "skipped": false,
+                "ok": true
+              },
+              "e2e-build": {
+                "durationMs": 1,
+                "skipped": true,
+                "ok": true
+              },
+              "playwright-agent-dev": {
+                "durationMs": 24969,
+                "skipped": false,
+                "ok": true
+              },
+              "workbench-refresh": {
+                "durationMs": 575,
+                "skipped": false,
+                "ok": true
+              }
+            },
+            "budgetSummary": {
+              "ok": 8,
+              "watch": 2,
+              "limit": 1
+            }
+          }
+        ]
+      },
+      "audit": {
+        "status": "fail",
+        "grade": "B",
+        "totalScore": 80,
+        "maxScore": 100,
+        "confidence": {
+          "level": "high",
+          "reason": "Required generated evidence is present, parseable, and within the freshness window.",
+          "freshGeneratedCount": 4,
+          "generatedSourceCount": 4,
+          "staleGeneratedCount": 0
+        },
+        "scoreBreakdown": [
+          {
+            "id": "gate-integrity",
+            "title": "Gate Integrity",
+            "score": 20,
+            "maxScore": 20,
+            "deducted": 0,
+            "status": "pass",
+            "reason": "No findings deducted points for this dimension.",
+            "findings": []
+          },
+          {
+            "id": "evidence-completeness",
+            "title": "Evidence Completeness",
+            "score": 20,
+            "maxScore": 20,
+            "deducted": 0,
+            "status": "pass",
+            "reason": "No findings deducted points for this dimension.",
+            "findings": []
+          },
+          {
+            "id": "coverage-breadth",
+            "title": "Coverage Breadth",
+            "score": 20,
+            "maxScore": 20,
+            "deducted": 0,
+            "status": "pass",
+            "reason": "No findings deducted points for this dimension.",
+            "findings": []
+          },
+          {
+            "id": "performance-discipline",
+            "title": "Performance Discipline",
+            "score": 0,
+            "maxScore": 20,
+            "deducted": 20,
+            "status": "fail",
+            "reason": "4 finding(s) deducted 20 point(s).",
+            "findings": [
+              {
+                "id": "latest-decision-blocked",
+                "severity": "fail",
+                "estimatedPenalty": 8,
+                "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+              },
+              {
+                "id": "performance-limit:typecheck",
+                "severity": "fail",
+                "estimatedPenalty": 8,
+                "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+              },
+              {
+                "id": "performance-watch:contract",
+                "severity": "warn",
+                "estimatedPenalty": 3,
+                "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+              },
+              {
+                "id": "performance-watch:harness-agent-dev",
+                "severity": "warn",
+                "estimatedPenalty": 3,
+                "recommendation": "Keep the shared scenario baseline separate from task-specific changed-path ownership checks."
+              }
+            ]
+          },
+          {
+            "id": "docs-runbook",
+            "title": "Docs And Runbook",
+            "score": 10,
+            "maxScore": 10,
+            "deducted": 0,
+            "status": "pass",
+            "reason": "No findings deducted points for this dimension.",
+            "findings": []
+          },
+          {
+            "id": "maintainability",
+            "title": "Maintainability",
+            "score": 10,
+            "maxScore": 10,
+            "deducted": 0,
+            "status": "pass",
+            "reason": "No findings deducted points for this dimension.",
+            "findings": []
+          }
+        ],
+        "disqualifierCount": 2
+      },
+      "quality": {
+        "success": true,
+        "build": {
+          "ok": true,
+          "durationMs": 71518,
+          "commandLine": "pnpm run build:vite",
+          "reused": false,
+          "skipped": false,
+          "reuseStatus": "fresh"
+        },
+        "playwright": {
+          "ok": true,
+          "durationMs": 23506,
+          "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+          "spec": "tests/e2e/agent-dev-quality.spec.ts",
+          "mode": "full",
+          "expectedTests": 4,
+          "diagnostics": {
+            "kind": "playwright",
+            "passed": 4,
+            "reportedDurationMs": 22100,
+            "tests": [
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+                "durationMs": 12000
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+                "durationMs": 12000
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+                "durationMs": 7800
+              },
+              {
+                "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+                "durationMs": 7500
+              }
+            ]
+          },
+          "evidence": [
+            "seeded scenario accessibility report",
+            "assistant-ui welcome suggestions visual artifact",
+            "seeded scenario visual artifact",
+            "Settings > Developer Agent Dev Workbench host-api record path"
+          ]
+        }
+      }
+    }
+  },
+  "performanceBudgets": {
+    "typecheck": {
+      "targetMs": 25000,
+      "limitMs": 45000,
+      "loop": "full-local",
+      "owner": "compiled contract and renderer/Main safety",
+      "mitigation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+    },
+    "contract": {
+      "targetMs": 1000,
+      "limitMs": 3000,
+      "loop": "fast-pr",
+      "owner": "host-api contract drift",
+      "mitigation": "Keep contract scanning text-based and bounded to host-api/service sources."
+    },
+    "i18n": {
+      "targetMs": 1000,
+      "limitMs": 3000,
+      "loop": "fast-pr",
+      "owner": "locale namespace/key coverage",
+      "mitigation": "Keep literal namespace scans bounded to source and locale directories."
+    },
+    "workbench": {
+      "targetMs": 1500,
+      "limitMs": 5000,
+      "loop": "fast-pr",
+      "owner": "static Workbench evidence indexing",
+      "mitigation": "Index report presence and contract metadata only; avoid expensive test/build execution inside Workbench generation."
+    },
+    "harness-agent-dev": {
+      "targetMs": 3000,
+      "limitMs": 8000,
+      "loop": "full-local",
+      "owner": "shared Agent Dev scenario baseline",
+      "mitigation": "Keep the shared scenario baseline separate from task-specific changed-path ownership checks."
+    },
+    "vitest-agent-dev": {
+      "targetMs": 10000,
+      "limitMs": 21000,
+      "loop": "fast-pr",
+      "owner": "focused Agent Dev unit and facade tests",
+      "mitigation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+    },
+    "comms-replay": {
+      "targetMs": 2000,
+      "limitMs": 5000,
+      "loop": "nightly-release",
+      "owner": "communication replay metrics",
+      "mitigation": "Keep replay corpus bounded for Agent Dev deep diagnostics; broader comms evidence belongs in release gates."
+    },
+    "comms-compare": {
+      "targetMs": 2000,
+      "limitMs": 5000,
+      "loop": "nightly-release",
+      "owner": "communication baseline comparison",
+      "mitigation": "Refresh baselines intentionally and keep compare output compact."
+    },
+    "e2e-build": {
+      "targetMs": 25000,
+      "limitMs": 58000,
+      "loop": "full-local",
+      "owner": "Vite/Electron production build",
+      "mitigation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+    },
+    "playwright-agent-dev": {
+      "targetMs": 25000,
+      "limitMs": 40000,
+      "loop": "full-local",
+      "owner": "Electron Agent Dev scenario path",
+      "mitigation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+    },
+    "workbench-refresh": {
+      "targetMs": 1500,
+      "limitMs": 5000,
+      "loop": "nightly-release",
+      "owner": "post-quality Workbench evidence refresh",
+      "mitigation": "Refresh evidence from existing artifacts only."
+    }
+  },
+  "performanceLimits": [
+    {
+      "id": "e2e-build",
+      "durationMs": 71518,
+      "targetMs": 25000,
+      "limitMs": 58000,
+      "overTargetMs": 46518,
+      "overLimitMs": 13518,
+      "ratioToTarget": 2.86,
+      "severity": "limit",
+      "loop": "full-local",
+      "owner": "Vite/Electron production build",
+      "mitigation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+      "commandLine": "pnpm run build:vite",
+      "skipped": false,
+      "reuseStatus": "fresh"
+    },
+    {
+      "id": "typecheck",
+      "durationMs": 30654,
+      "targetMs": 25000,
+      "limitMs": 45000,
+      "overTargetMs": 5654,
+      "overLimitMs": 0,
+      "ratioToTarget": 1.23,
+      "severity": "watch",
+      "loop": "full-local",
+      "owner": "compiled contract and renderer/Main safety",
+      "mitigation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+      "commandLine": "pnpm run typecheck",
+      "skipped": false
+    },
+    {
+      "id": "contract",
+      "durationMs": 1947,
+      "targetMs": 1000,
+      "limitMs": 3000,
+      "overTargetMs": 947,
+      "overLimitMs": 0,
+      "ratioToTarget": 1.95,
+      "severity": "watch",
+      "loop": "fast-pr",
+      "owner": "host-api contract drift",
+      "mitigation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+      "commandLine": "pnpm contract:check",
+      "skipped": false
+    },
+    {
+      "id": "i18n",
+      "durationMs": 1234,
+      "targetMs": 1000,
+      "limitMs": 3000,
+      "overTargetMs": 234,
+      "overLimitMs": 0,
+      "ratioToTarget": 1.23,
+      "severity": "watch",
+      "loop": "fast-pr",
+      "owner": "locale namespace/key coverage",
+      "mitigation": "Keep literal namespace scans bounded to source and locale directories.",
+      "commandLine": "pnpm i18n:lint",
+      "skipped": false
+    },
+    {
+      "id": "harness-agent-dev",
+      "durationMs": 3120,
+      "targetMs": 3000,
+      "limitMs": 8000,
+      "overTargetMs": 120,
+      "overLimitMs": 0,
+      "ratioToTarget": 1.04,
+      "severity": "watch",
+      "loop": "full-local",
+      "owner": "shared Agent Dev scenario baseline",
+      "mitigation": "Keep the shared scenario baseline separate from task-specific changed-path ownership checks.",
+      "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
+      "skipped": false
+    },
+    {
+      "id": "playwright-agent-dev",
+      "durationMs": 23506,
+      "targetMs": 25000,
+      "limitMs": 40000,
+      "overTargetMs": 0,
+      "overLimitMs": 0,
+      "ratioToTarget": 0.94,
+      "severity": "ok",
+      "loop": "full-local",
+      "owner": "Electron Agent Dev scenario path",
+      "mitigation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+      "skipped": false
+    },
+    {
+      "id": "vitest-agent-dev",
+      "durationMs": 7579,
+      "targetMs": 10000,
+      "limitMs": 21000,
+      "overTargetMs": 0,
+      "overLimitMs": 0,
+      "ratioToTarget": 0.76,
+      "severity": "ok",
+      "loop": "fast-pr",
+      "owner": "focused Agent Dev unit and facade tests",
+      "mitigation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.",
+      "commandLine": "pnpm agent-dev:unit",
+      "skipped": false
+    },
+    {
+      "id": "comms-replay",
+      "durationMs": 890,
+      "targetMs": 2000,
+      "limitMs": 5000,
+      "overTargetMs": 0,
+      "overLimitMs": 0,
+      "ratioToTarget": 0.45,
+      "severity": "ok",
+      "loop": "nightly-release",
+      "owner": "communication replay metrics",
+      "mitigation": "Keep replay corpus bounded for Agent Dev deep diagnostics; broader comms evidence belongs in release gates.",
+      "commandLine": "pnpm run comms:replay",
+      "skipped": false
+    },
+    {
+      "id": "comms-compare",
+      "durationMs": 773,
+      "targetMs": 2000,
+      "limitMs": 5000,
+      "overTargetMs": 0,
+      "overLimitMs": 0,
+      "ratioToTarget": 0.39,
+      "severity": "ok",
+      "loop": "nightly-release",
+      "owner": "communication baseline comparison",
+      "mitigation": "Refresh baselines intentionally and keep compare output compact.",
+      "commandLine": "pnpm run comms:compare",
+      "skipped": false
+    },
+    {
+      "id": "workbench",
+      "durationMs": 621,
+      "targetMs": 1500,
+      "limitMs": 5000,
+      "overTargetMs": 0,
+      "overLimitMs": 0,
+      "ratioToTarget": 0.41,
+      "severity": "ok",
+      "loop": "fast-pr",
+      "owner": "static Workbench evidence indexing",
+      "mitigation": "Index report presence and contract metadata only; avoid expensive test/build execution inside Workbench generation.",
+      "commandLine": "pnpm agent-dev:workbench",
+      "skipped": false
+    },
+    {
+      "id": "workbench-refresh",
+      "durationMs": 538,
+      "targetMs": 1500,
+      "limitMs": 5000,
+      "overTargetMs": 0,
+      "overLimitMs": 0,
+      "ratioToTarget": 0.36,
+      "severity": "ok",
+      "loop": "nightly-release",
+      "owner": "post-quality Workbench evidence refresh",
+      "mitigation": "Refresh evidence from existing artifacts only.",
+      "commandLine": "pnpm agent-dev:workbench",
+      "skipped": false
+    }
+  ],
+  "gateProfile": {
+    "full-local": {
+      "durationMs": 128798,
+      "stepCount": 4,
+      "skippedStepCount": 0,
+      "slowestStep": {
+        "id": "e2e-build",
+        "durationMs": 71518,
+        "commandLine": "pnpm run build:vite",
+        "skipped": false
+      }
+    },
+    "fast-pr": {
+      "durationMs": 11381,
+      "stepCount": 4,
+      "skippedStepCount": 0,
+      "slowestStep": {
+        "id": "vitest-agent-dev",
+        "durationMs": 7579,
+        "commandLine": "pnpm agent-dev:unit",
+        "skipped": false
+      }
+    },
+    "nightly-release": {
+      "durationMs": 2201,
+      "stepCount": 3,
+      "skippedStepCount": 0,
+      "slowestStep": {
+        "id": "comms-replay",
+        "durationMs": 890,
+        "commandLine": "pnpm run comms:replay",
+        "skipped": false
+      }
+    }
+  },
+  "diagnostics": {
+    "typecheck": {
+      "stepId": "typecheck",
+      "commandLine": "pnpm run typecheck",
+      "durationMs": 30654,
+      "kind": "typecheck",
+      "mode": "parallel",
+      "cache": {
+        "enabled": false,
+        "status": "disabled",
+        "key": "00e3d6940f0a0661b7030866655849e2fdd5474071f767ca0a927daeb5a93bb7",
+        "inputCount": 13484,
+        "report": "D:\\ClawX-work\\g2-rag16-relay-20261119\\artifacts\\typecheck-cache\\report.json"
+      },
+      "totalDurationMs": 29708,
+      "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+      "phases": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "durationMs": 75,
+          "exitCode": 0,
+          "ok": true,
+          "skipped": false,
+          "cacheHit": false
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "durationMs": 28462,
+          "exitCode": 0,
+          "ok": true,
+          "skipped": false,
+          "cacheHit": false
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "durationMs": 10034,
+          "exitCode": 0,
+          "ok": true,
+          "skipped": false,
+          "cacheHit": false
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "durationMs": 22803,
+          "exitCode": 0,
+          "ok": true,
+          "skipped": false,
+          "cacheHit": false
+        }
+      ],
+      "slowestPhase": {
+        "commandLine": "pnpm run typecheck:node",
+        "durationMs": 28462,
+        "exitCode": 0,
+        "ok": true,
+        "skipped": false,
+        "cacheHit": false
+      }
+    },
+    "build": {
+      "stepId": "e2e-build",
+      "commandLine": "pnpm run build:vite",
+      "durationMs": 71518,
+      "kind": "vite-build",
+      "buildPasses": [
+        {
+          "index": 1,
+          "durationMs": 51700
+        },
+        {
+          "index": 2,
+          "durationMs": 6000
+        },
+        {
+          "index": 3,
+          "durationMs": 17
+        }
+      ],
+      "largestAssets": [
+        {
+          "path": "dist/assets/editor-mJteeTi0.js",
+          "sizeKb": 3750.05
+        },
+        {
+          "path": "dist-electron/main/index-B38y8vXY.js",
+          "sizeKb": 2319.41
+        },
+        {
+          "path": "dist/assets/GeneratedFilesPanel-B4Tunm_K.js",
+          "sizeKb": 1581.61
+        },
+        {
+          "path": "dist/assets/emacs-lisp-CXvaQtF9.js",
+          "sizeKb": 779.88
+        },
+        {
+          "path": "dist/assets/App-B-af8zYN.js",
+          "sizeKb": 691.88
+        },
+        {
+          "path": "dist/assets/cpp-UfJy6YNI.js",
+          "sizeKb": 626.08
+        },
+        {
+          "path": "dist/assets/wasm-CG6Dc4jp.js",
+          "sizeKb": 622.34
+        },
+        {
+          "path": "dist/assets/index-CojSl3WE.js",
+          "sizeKb": 569.4
+        }
+      ],
+      "warningCount": 10,
+      "warnings": [
+        "(!) D:/ClawX-work/g2-rag16-relay-20261119/src/stores/workspaces.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/components/agents/RolesOrchestrationPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/WelcomeProjectPicker.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/ArtifactPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAuditPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceBrowserBody.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceGitPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/MainLayout.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/Sidebar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/settings/KnowledgeOperationsSettings.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/lib/workspace-session.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/KnowledgeChat.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/use-session-reading-position.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/CodeReview/ChangeContextPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Knowledge/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Memory/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Projects/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/chat.ts, dynamic import will not move module into another chunk.",
+        "(!) D:/ClawX-work/g2-rag16-relay-20261119/src/stores/chat.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/gateway.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/src/components/chat/ResourceChip.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/layout/Sidebar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/rareui/CompletionActivityMenu.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/lib/workspace-session.ts, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ChatToolbar.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/ExecutionMigrationControl.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/TeamOrchestrationCard.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/UsedKnowledge.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Chat/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/ClawGraph/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Cron/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Projects/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/Settings/sections/StorageSection.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/pages/TaskLedger/index.tsx, D:/ClawX-work/g2-rag16-relay-20261119/src/stores/cron.ts, dynamic import will not move module into another chunk.",
+        "(!) Some chunks are larger than 500 kB after minification. Consider:",
+        "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/store.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/manager.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/config-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/manager.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/launch-at-startup.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/menu.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/main/proxy.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/agent-dev-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/chat-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/efficiency-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/gateway-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/remote-control-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/remote-tasks-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sensitive-capture-gate.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/session-delegation-store.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/settings-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/support-bundle.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/system-notifications-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/usage-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/work-providers-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/app-version-rollback.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/control-ui-device-pairing.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-auth.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.",
+        "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/channel-config.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/cron-api.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/config-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/gateway/supervisor.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/agents-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/channels-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/hooks-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/mcp-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/roles-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/agent-config.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/app-version-rollback.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.",
+        "(!) D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-service.ts is dynamically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-system-service.ts but also statically imported by D:/ClawX-work/g2-rag16-relay-20261119/electron/main/index.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/chat-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/code-review-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/sessions-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-api.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/task-ledger-working-context.ts, D:/ClawX-work/g2-rag16-relay-20261119/electron/services/workspaces-api.ts, dynamic import will not move module into another chunk."
+      ],
+      "totalReportedBuildMs": 57717
+    },
+    "playwright": {
+      "stepId": "playwright-agent-dev",
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+      "durationMs": 23506,
+      "kind": "playwright",
+      "passed": 4,
+      "reportedDurationMs": 22100,
+      "tests": [
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+          "durationMs": 12000
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+          "durationMs": 12000
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+          "durationMs": 7800
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+          "durationMs": 7500
+        }
+      ]
+    }
+  },
+  "decision": {
+    "status": "blocked",
+    "reason": "e2e-build exceeded hard performance limits.",
+    "dailyLoopReady": false,
+    "releaseReady": false,
+    "fullGateComplete": true,
+    "budgetStatus": "limit",
+    "fastPathModes": [],
+    "requiredFullGates": [],
+    "watchSteps": [
+      "typecheck",
+      "contract",
+      "i18n",
+      "harness-agent-dev"
+    ],
+    "limitSteps": [
+      "e2e-build"
+    ]
+  },
+  "recommendations": [
+    "e2e-build exceeded its hard limit by 13518ms; Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+    "typecheck exceeded its target by 5654ms; Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+    "contract exceeded its target by 947ms; Keep contract scanning text-based and bounded to host-api/service sources.",
+    "i18n exceeded its target by 234ms; Keep literal namespace scans bounded to source and locale directories.",
+    "Vite/Electron build is the dominant E2E setup cost; use pnpm agent-dev:deep-test:reuse after a fresh build for repeated local loops.",
+    "Typecheck is a major fixed cost; the Agent Dev parallel typecheck path preserves both node and web projects while reducing local wait time.",
+    "Playwright runtime remains the dominant full-local cost; keep pnpm agent-dev:deep-test:reuse on smoke E2E for daily diagnosis and use pnpm agent-dev:deep-test:reuse:full only when full E2E evidence is needed."
+  ],
+  "qualityReport": "D:\\ClawX-work\\g2-rag16-relay-20261119\\artifacts\\agent-dev-quality\\report.json",
+  "history": {
+    "path": "D:\\ClawX-work\\g2-rag16-relay-20261119\\artifacts\\agent-dev-deep-test\\history.json",
+    "latest": {
+      "generatedAt": "2026-11-20T01:57:48.587Z",
+      "success": true,
+      "totalDurationMs": 142436,
+      "decisionStatus": "blocked",
+      "releaseReady": false,
+      "modes": {
+        "buildReuse": "fresh",
+        "unit": "full",
+        "typecheck": "full",
+        "e2e": "full"
+      },
+      "stepDurations": {
+        "typecheck": {
+          "durationMs": 30654,
+          "skipped": false,
+          "ok": true
+        },
+        "contract": {
+          "durationMs": 1947,
+          "skipped": false,
+          "ok": true
+        },
+        "i18n": {
+          "durationMs": 1234,
+          "skipped": false,
+          "ok": true
+        },
+        "workbench": {
+          "durationMs": 621,
+          "skipped": false,
+          "ok": true
+        },
+        "harness-agent-dev": {
+          "durationMs": 3120,
+          "skipped": false,
+          "ok": true
+        },
+        "vitest-agent-dev": {
+          "durationMs": 7579,
+          "skipped": false,
+          "ok": true
+        },
+        "comms-replay": {
+          "durationMs": 890,
+          "skipped": false,
+          "ok": true
+        },
+        "comms-compare": {
+          "durationMs": 773,
+          "skipped": false,
+          "ok": true
+        },
+        "e2e-build": {
+          "durationMs": 71518,
+          "skipped": false,
+          "ok": true
+        },
+        "playwright-agent-dev": {
+          "durationMs": 23506,
+          "skipped": false,
+          "ok": true
+        },
+        "workbench-refresh": {
+          "durationMs": 538,
+          "skipped": false,
+          "ok": true
+        }
+      },
+      "budgetSummary": {
+        "ok": 6,
+        "watch": 4,
+        "limit": 1
+      }
+    },
+    "trend": {
+      "direction": "new-baseline",
+      "previousRunDeltaMs": 55713,
+      "sameModeDeltaMs": null,
+      "sameModeSampleCount": 1,
+      "previousRunGeneratedAt": "2026-11-20T01:49:55.703Z",
+      "previousSameModeGeneratedAt": null,
+      "note": "No previous same-mode run was available; this run establishes a baseline."
+    },
+    "sampleCount": 20
+  }
+}

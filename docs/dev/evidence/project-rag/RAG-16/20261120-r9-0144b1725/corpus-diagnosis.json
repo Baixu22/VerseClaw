@@ -1,0 +1,19 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "root": "D:/tmp/rag16-r9-corpus-diagnosis-ytCvfq",
+  "referenceCommit": "ff3eecbd909e0bf61f6a565eae53c85818abbd3a",
+  "readback": {
+    "passed": false,
+    "errors": [
+      "input-digest:tf-0293-a01:tests/unit/policy-light-snapshotter.test.ts",
+      "task-definition-recomputation",
+      "validation-report"
+    ],
+    "warnings": [
+      "source-fingerprint:docs/dev/rsi-capability-and-boundaries.md"
+    ],
+    "taskCount": 24,
+    "calibratedRows": 16
+  }
+}

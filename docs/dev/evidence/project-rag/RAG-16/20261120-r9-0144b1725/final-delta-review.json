@@ -1,0 +1,285 @@
+{
+  "schema": "clawx.rag16-final-delta-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-final-delta-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-final-delta-review",
+  "formal_verifier_execution": false,
+  "result": "PASS_STATIC_DELTA_REVIEW",
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+    "comparison_base": "2bb515ab5e7f7049a308925967f611fa589a51d3",
+    "working_tree": true,
+    "rollback_uncommitted": true
+  },
+  "findings": [],
+  "conclusion": "相对2bb515ab5，源码/spec/test只余5个文件，内容为先前独立审查过的acceptance单plan/base与NUL路径修复、typecheck32批量读取及对应测试和spec。29个Node候选均恢复到原审计记录的逐字节SHA，不再形成相对该基准的差异。另有5个既有Agent Dev生成证据文件变化，单独列明。",
+  "source_delta": [
+    {
+      "file": "scripts/lib/agent-engineering-acceptance.mjs",
+      "sha256": "4b4424b6cf2a2a8ce17f3ecdea9c609d7c185f29dbc428a42420b2d1743d39d8",
+      "change": "单plan复用已验证base，diff/ancestry绑定候选commit，独立调用复验，原始NUL路径输出。",
+      "prior_review": "r9-acceptance-review.json"
+    },
+    {
+      "file": "tests/unit/agent-engineering-acceptance.test.ts",
+      "sha256": "81d48bd02118c141a3a2b1e47d5e72ad2147e8456ec37202b133009376e5fde9",
+      "change": "新增移动tag与非祖先负例，增加前导空格changedPaths断言；旧断言未删除。"
+    },
+    {
+      "file": "scripts/typecheck-agent-dev.mjs",
+      "sha256": "4047e56163457dbc39b207d9773d9d8f72b74c8ddb5ca7df03fd9f1798a43ca3",
+      "change": "每批32文件读取，按原路径/字节顺序hash；错误仍传播。",
+      "prior_review": "r9-typecheck-review.json"
+    },
+    {
+      "file": "tests/unit/typecheck-gate.test.ts",
+      "sha256": "3938d56baf1e982c7635d9bf3c077365a3c050ff4d271f25069bed536d5b5194",
+      "change": "新增40个fixture，使原缓存失效与类型错误断言跨batch；原断言/超时不变。"
+    },
+    {
+      "file": "harness/specs/tasks/project-rag-bounded-research.md",
+      "sha256": "c512f524e7c1b53eaaa0446e44ccd563caed0fd10bdcf9be808d516957b2fe48",
+      "change": "新增typecheck脚本/测试touchedAreas两项与两项实现说明。无新增验收阈值、requiredTests或skip改动。"
+    }
+  ],
+  "generated_evidence_delta": [
+    "artifacts/agent-dev-deep-test/history.json",
+    "artifacts/agent-dev-deep-test/report.json",
+    "artifacts/agent-dev-deep-test/report.md",
+    "artifacts/agent-dev-quality/report.json",
+    "artifacts/agent-dev-workbench/evidence.json"
+  ],
+  "rollback": {
+    "audit": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r8-xingchi-node-environment-audit.json",
+    "reference_field": "candidates[].current_source_sha256，记录于Node注解应用前。",
+    "candidate_count": 29,
+    "matched_original_byte_sha256": 29,
+    "mismatches": [],
+    "changed_vs_2bb515ab5": 0,
+    "interpretation": "与HEAD相比显示29个回退修改是正常状态；与2bb515ab5和原审计SHA相比全部恢复。封存manifest/hash/断言文件没有出现在相对基准的差异清单。"
+  },
+  "validation_readback": {
+    "node_comparison": {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-node-environment-comparison.json",
+      "before_seconds": 170.36,
+      "after_seconds": 169.71,
+      "passed_each": 439,
+      "failed_each": 0,
+      "skipped_each": 0,
+      "meaning": "同条件未测到实质墙钟收益。撤回候选的当前决策替代先前仅静态环境适配建议。"
+    },
+    "root": {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-root-readback.json",
+      "candidate": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+      "timedOut": true,
+      "limit_seconds": 1800,
+      "command_duration_ms": 1813378,
+      "counts": null,
+      "source_guard": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-root-source-guard.json",
+      "source_unchanged": true,
+      "observed_failures": [
+        "rsi-historical-task-corpus.test.ts",
+        "versegit-wp6-closeout.test.ts"
+      ],
+      "state": "超时，未得到全量结论。"
+    },
+    "sealed_regression": {
+      "path": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-sealed-regression.json",
+      "success": true,
+      "passed": 11,
+      "total": 11,
+      "failed": 0,
+      "files": [
+        "tests/unit/rsi-historical-task-corpus.test.ts",
+        "tests/unit/versegit-wp6-closeout.test.ts"
+      ],
+      "meaning": "回退后既有磁盘报告两项历史回归11/11通过；由主代理执行。"
+    },
+    "diff_check": "git diff --check 2bb515ab5通过"
+  },
+  "actions": {
+    "tests_started": 0,
+    "builds_started": 0,
+    "source_writes": 0,
+    "git_mutations": 0
+  },
+  "rollback_file_verification": [
+    {
+      "file": "tests/unit/rsi-candidate-evolution.test.ts",
+      "original_sha256": "ba93ca3743ac7353868d4e0455ae7047a4f9f0ad045d90fb81cb059279008b2e",
+      "current_sha256": "ba93ca3743ac7353868d4e0455ae7047a4f9f0ad045d90fb81cb059279008b2e",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/versegit-candidate-freeze.test.ts",
+      "original_sha256": "21ea030f334c7f647a59443cd4bd79f3249354eeb27c727f8dc02117c8f49d61",
+      "current_sha256": "21ea030f334c7f647a59443cd4bd79f3249354eeb27c727f8dc02117c8f49d61",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/versegit-candidate-receipts.test.ts",
+      "original_sha256": "0f53cba28df0ee242af1ba0bf9808d21dd30c313c795a49abebf53aa3bcd2832",
+      "current_sha256": "0f53cba28df0ee242af1ba0bf9808d21dd30c313c795a49abebf53aa3bcd2832",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/checkout-writer-ownership.test.ts",
+      "original_sha256": "1196e2d8dc4c4fd0ea21576ecb7589216ee0af1b250fe71a09faad57d1069901",
+      "current_sha256": "1196e2d8dc4c4fd0ea21576ecb7589216ee0af1b250fe71a09faad57d1069901",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/role-memory-v2.test.ts",
+      "original_sha256": "bdfdbb9ffa60651537aca7d07f5dbdb1790758e3eb03907243c822a7ae449bfb",
+      "current_sha256": "bdfdbb9ffa60651537aca7d07f5dbdb1790758e3eb03907243c822a7ae449bfb",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/release-baseline-p6-005.test.ts",
+      "original_sha256": "4d49e643c3b85683b67217a518da79196f48b12fd662a8f299b8c243221e1f5a",
+      "current_sha256": "4d49e643c3b85683b67217a518da79196f48b12fd662a8f299b8c243221e1f5a",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/versegit-cleanup-barrier.test.ts",
+      "original_sha256": "3be2c77d7ea44bfc6c28f9b2950c79c85e928feffe6b99bb68c3657d7b22d419",
+      "current_sha256": "3be2c77d7ea44bfc6c28f9b2950c79c85e928feffe6b99bb68c3657d7b22d419",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/worktree-registry-restart.test.ts",
+      "original_sha256": "b0f613e0f03dfd406d3a782508860b80eb4b269905a17a58a83fa29563d6ba0f",
+      "current_sha256": "b0f613e0f03dfd406d3a782508860b80eb4b269905a17a58a83fa29563d6ba0f",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/runtime-memory-read-hydration-shadow-command.test.ts",
+      "original_sha256": "998f3657e0a2b48d153bb6d61d9167b32c4d736667c2fd98b11a78d162d00537",
+      "current_sha256": "998f3657e0a2b48d153bb6d61d9167b32c4d736667c2fd98b11a78d162d00537",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/terminal-resource-native.test.ts",
+      "original_sha256": "02edef8831745377407390e0471bee1cc063ea1fc01a12877815580fb34a5c43",
+      "current_sha256": "02edef8831745377407390e0471bee1cc063ea1fc01a12877815580fb34a5c43",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/harness-git.test.ts",
+      "original_sha256": "30d31bf32ecf87d74ca9041aced54c2cb0dcaeb133f461f10311ebf9ade8c896",
+      "current_sha256": "30d31bf32ecf87d74ca9041aced54c2cb0dcaeb133f461f10311ebf9ade8c896",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/process-tree-sampler.test.ts",
+      "original_sha256": "1016cebd75e4a7583556f24aefbe2f29c649fe301210be1af5d2d2c60d8c4792",
+      "current_sha256": "1016cebd75e4a7583556f24aefbe2f29c649fe301210be1af5d2d2c60d8c4792",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/versegit-completion-lifecycle.test.ts",
+      "original_sha256": "c0f0e64e3cc4faf221dad9c1faca91dfc6289f032fd5820c9e1aaef602826d19",
+      "current_sha256": "c0f0e64e3cc4faf221dad9c1faca91dfc6289f032fd5820c9e1aaef602826d19",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/terminal-resource-ownership.test.ts",
+      "original_sha256": "e9f2d831af0d7f813744d98360bad9d9c332c3bbfd5c83e40ede13680f8f3ce6",
+      "current_sha256": "e9f2d831af0d7f813744d98360bad9d9c332c3bbfd5c83e40ede13680f8f3ce6",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/i18n-locale-parity.test.ts",
+      "original_sha256": "bf2d2ebdba896e872be25b22928f4fe28cb984c7976576f2607e02d3eae54caa",
+      "current_sha256": "bf2d2ebdba896e872be25b22928f4fe28cb984c7976576f2607e02d3eae54caa",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/versegit-mc0-baseline.test.ts",
+      "original_sha256": "b5e3538cd0d13d77d63fc8d6229532bb0a5350629bc7557fd96d45b1924b6a87",
+      "current_sha256": "b5e3538cd0d13d77d63fc8d6229532bb0a5350629bc7557fd96d45b1924b6a87",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/rc09-ownership-matrix.test.ts",
+      "original_sha256": "09efbf92eda1047488a676c46ac38e3442ecd0ec4a7527c362a8f803587ffbb4",
+      "current_sha256": "09efbf92eda1047488a676c46ac38e3442ecd0ec4a7527c362a8f803587ffbb4",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/versegit-wp5-soak.test.ts",
+      "original_sha256": "132cd7c0c18ce3deb7f4a00d3f4c998957cff7ca00cad50cb4b14c030acb82d6",
+      "current_sha256": "132cd7c0c18ce3deb7f4a00d3f4c998957cff7ca00cad50cb4b14c030acb82d6",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/lobe-icons-assets.test.ts",
+      "original_sha256": "e77a8f4bcda06736dc03d8df2f7ecc0fc7ff0adefea804b38e0dd98e83027c87",
+      "current_sha256": "e77a8f4bcda06736dc03d8df2f7ecc0fc7ff0adefea804b38e0dd98e83027c87",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/role-memory-context-provider.test.ts",
+      "original_sha256": "c0665eab06114213d6032c3cc19f28d394ad86e09b3b9c9abc036f33d5342404",
+      "current_sha256": "c0665eab06114213d6032c3cc19f28d394ad86e09b3b9c9abc036f33d5342404",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/memory-dual-gate-p3-003.test.ts",
+      "original_sha256": "b162f5a3a5de694bf1de011e7c02cd202e972560df32e55d128001f0c02323a1",
+      "current_sha256": "b162f5a3a5de694bf1de011e7c02cd202e972560df32e55d128001f0c02323a1",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/policy-light-snapshotter.test.ts",
+      "original_sha256": "c1d7fd8264b0967f55304af997278a8c227ea75388fb97f91ba1cd67b8a7bde6",
+      "current_sha256": "c1d7fd8264b0967f55304af997278a8c227ea75388fb97f91ba1cd67b8a7bde6",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/autonomy-worktree-owner.test.ts",
+      "original_sha256": "10cb40eee88fc6ef30bc3d155d2cf57f7fbfcd1ad531f76ed443ef10dda05989",
+      "current_sha256": "10cb40eee88fc6ef30bc3d155d2cf57f7fbfcd1ad531f76ed443ef10dda05989",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/terminal-session-manager.test.ts",
+      "original_sha256": "a2fbbfe562106a2e0ae33c5c9ac40ceb6c1f73c32d76dcfd5a535ff78ee47d88",
+      "current_sha256": "a2fbbfe562106a2e0ae33c5c9ac40ceb6c1f73c32d76dcfd5a535ff78ee47d88",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/tf0018-cross-workspace-session-isolation.test.ts",
+      "original_sha256": "7be4923bb91a125ae0d9dcf926e825d9872a8950b2caa02fc5d2567fd75d133a",
+      "current_sha256": "7be4923bb91a125ae0d9dcf926e825d9872a8950b2caa02fc5d2567fd75d133a",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/runtime-event-log-persistence.test.ts",
+      "original_sha256": "48f97a69d8a71a945f1298ea5eb67448de2268436afadde91d916cc3b1fc4870",
+      "current_sha256": "48f97a69d8a71a945f1298ea5eb67448de2268436afadde91d916cc3b1fc4870",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/versegit-mc3-delivery.test.ts",
+      "original_sha256": "00d5b3c81ff36ee2dc72ecd39e2cf97eb1f898ec362c2b4c699e6dc0b252cb03",
+      "current_sha256": "00d5b3c81ff36ee2dc72ecd39e2cf97eb1f898ec362c2b4c699e6dc0b252cb03",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/orchestration-worktree-merge.test.ts",
+      "original_sha256": "74671f3a3c88a306c605491212faf23b26bf415a3473ecdca6bb38d4d0093c66",
+      "current_sha256": "74671f3a3c88a306c605491212faf23b26bf415a3473ecdca6bb38d4d0093c66",
+      "equal": true
+    },
+    {
+      "file": "tests/unit/comms-scripts.test.ts",
+      "original_sha256": "f430cfe502b5241aa17229189800f5d7fefd543ecea2171ff7decae35911e656",
+      "current_sha256": "f430cfe502b5241aa17229189800f5d7fefd543ecea2171ff7decae35911e656",
+      "equal": true
+    }
+  ],
+  "recorded_at": "2026-11-20T10:42:20.2191088+08:00"
+}

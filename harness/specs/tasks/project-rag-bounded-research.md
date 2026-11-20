@@ -189,6 +189,7 @@ touchedAreas:
   - "docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/**"
   - "scripts/typecheck-agent-dev.mjs"
   - "tests/unit/typecheck-gate.test.ts"
+  - "docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/**"
 requiredProfiles:
   - "fast"
   - "comms"

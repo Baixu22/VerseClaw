@@ -1,0 +1,33 @@
+{
+  "actor": "codex-g2-rag16-relay1",
+  "driven_by": "agent",
+  "candidate": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+  "stage": "finished",
+  "command": {
+    "actor": "codex-g2-rag16-relay1",
+    "driven_by": "agent",
+    "sourceCommit": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+    "command": "pnpm",
+    "args": [
+      "-w",
+      "test"
+    ],
+    "startedAt": "2026-11-20T02:09:11.965Z",
+    "finishedAt": "2026-11-20T02:39:25.343Z",
+    "durationMs": 1813378,
+    "exitCode": 1,
+    "signal": null,
+    "timedOut": true
+  },
+  "counts": null,
+  "summaries": [],
+  "failures": [
+    " ❯ tests/unit/rsi-historical-task-corpus.test.ts (7 tests | 1 failed) 1596ms",
+    "     × validates every retained pack checksum and raw calibration outcome from disk 810ms",
+    " ❯ tests/unit/versegit-wp6-closeout.test.ts (4 tests | 1 failed) 200ms",
+    "     × preserves exact historical stale inputs while retaining the non-GA and MC6 sidecar-only boundary 69ms"
+  ],
+  "logBytes": 15763,
+  "logSha256": "91e87a6fbb4b9f1b7302eaafa1a76c2ba57c62403d8c12f4831e03b2036b2037",
+  "observedAt": "2026-11-20T02:39:37.192Z"
+}

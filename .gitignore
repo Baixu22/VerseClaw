@@ -4007,6 +4007,38 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/research-result.png
 !/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/source-mutation-guard.json
 !/docs/dev/evidence/project-rag/RAG-16/20261120-f286cf276/temporary-trust-status.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/.gitattributes
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/acceptance-framework.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/acceptance-review.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/build-review.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/control-first.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/control-fresh-cleanup.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/control-fresh-quality.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/control-fresh-source-guard.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/control-fresh.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/control-latest-audit.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/control-latest.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/control-policy-review.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/corpus-diagnosis.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/final-checks.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/final-delta-review.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/fingerprint-batch.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/fingerprint-serial.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/node-after.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/node-before.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/node-environment-comparison.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/plan-readback.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/README.md
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/report.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/resource-and-security-readback.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/root-command.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/root-readback.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/root-source-guard.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/sealed-regression.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/SHA256SUMS
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/typecheck-regression.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/typecheck-review.json
+!/docs/dev/evidence/project-rag/RAG-16/20261120-r9-0144b1725/wp6-diagnosis.json
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

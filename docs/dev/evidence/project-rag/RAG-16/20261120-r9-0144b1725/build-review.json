@@ -1,0 +1,65 @@
+{
+  "schema": "clawx.rag16-build-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag16-independent-build-review",
+  "requested_reviewer_model": "ccs-ai/gpt-6.1-sol",
+  "review_kind": "read-only-bounded-build-path-review",
+  "source": {
+    "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+    "head": "f6f8fb0edf9bbebf465e30c8012e5751dad89527",
+    "inspected_paths_clean": true,
+    "sha256": {
+      "vite.config.ts": "b63815744830a6d8ce05abd8af7ed4ce88c34970703e8a96e485ebfa2e95e04e",
+      "scripts/lib/versebrowser-build-provenance.mjs": "23dcbde34f2920bddd42d4845c0d5dbd1f4459b1c75054d2b4f3be060555f271"
+    }
+  },
+  "result": "ONE_CONCRETE_DUPLICATE_READ_OPPORTUNITY",
+  "build_observation": {
+    "log": "D:/tmp/g2-rag16-relay-20261118-01a1ef53/r9-control-full.log",
+    "duration_ms": 71518,
+    "renderer_ms": 51700,
+    "main_ms": 6000,
+    "preload_ms": 17,
+    "remaining_ms": 13801,
+    "remaining_definition": "门禁总耗时扣除日志中三段 Vite built-in 时间，仅是 pre/post、启动和其他开销的合计，不能归因到单个脚本。",
+    "report_compressed_size": "vite.config.ts:172,191,212 已对 Main/preload/renderer 设置 false，无新增建议。"
+  },
+  "recommendation": {
+    "title": "同一次 provenance 收集只遍历并计算一次 VerseBrowser dist 的字节摘要，再生成两个归档映射",
+    "location": {
+      "file": "scripts/lib/versebrowser-build-provenance.mjs",
+      "lines": "13-20,31-43"
+    },
+    "trigger": "每次 pnpm run build:vite 的 postbuild:vite 调用 collectCompiledOutputs。COMPILED_ROOTS 中两个映射具有相同 source=packages/versebrowser/dist，第一个绑定 main-runtime.asar，第二个绑定 app.asar 并过滤 .d.ts。",
+    "evidence": {
+      "file": "dist-electron/versebrowser-build-provenance.json",
+      "sourceCommit": "2bb515ab5e7f7049a308925967f611fa589a51d3",
+      "status": "bound",
+      "all_output_rows": 2301,
+      "versebrowser_main_runtime_rows": 508,
+      "versebrowser_app_rows": 381,
+      "repeated_paths_with_equal_sha256": 381,
+      "interpretation": "本次只读磁盘 proof，未扫描目录或重跑 collector。381 个非声明路径同时出现在两个归档中，哈希完全相同；当前代码每个映射都会重新 readdir/readFile/hash。"
+    },
+    "minimal_change": "在 collectCompiledOutputs 单次调用内按 mapping.source 建立局部文件摘要清单，仅保留相对路径和 SHA。对同一 source 的第二个映射复用该清单，再按各 mapping 的 archive/prefix/omitDeclarations 投影。保留 PROVENANCE_PATH 排除及最终 archive/path 排序。不得使用跨次构建缓存。",
+    "preserve": [
+      "继续产生 main-runtime.asar 的全部 508 条 VerseBrowser 记录和 app.asar 的381条非声明记录。",
+      "保留127条声明文件仅绑定 main-runtime.asar的原有过滤语义。",
+      "源码 pre-capture 与 post-snapshot 的两次 Git 身份/dirty 检查分别用于绑定构建前后，不属于可删除的重复。",
+      "实际 readFile/readdir 失败仍向外传播；任何文件都不能只按 mtime 判断等价。",
+      "保持正常构建输出冻结条件；该建议为一次完整读取快照复用，不能声称在并发改写输出时仍捕获两次读取之间的变更。"
+    ],
+    "expected_effect": "在已保存的输出清单规模下，少做一次 VerseBrowser dist 目录遍历及381次文件读取/哈希。Vite chunks、可执行产物和 provenance 的归档/路径/摘要语义保持。",
+    "verification_after_root": "主代理在根全量结束后如选择实施，以同一冻结构建输出分别运行旧/新 collector，比对完整排序输出数组及最终 JSON 字节；补充声明排除和缺文件错误用例。测量 postbuild 自身耗时后判断实际收益。",
+    "performance_bound": "此处耗时没有单独计量。不能据381次重复读取推断能消除13.518秒的fresh构建超限，renderer的51.70秒仍是最大已记录阶段。"
+  },
+  "actions": {
+    "tests_started": 0,
+    "builds_started": 0,
+    "electron_started": 0,
+    "repository_scans": 0,
+    "source_writes": 0,
+    "source_mutation_during_root": false
+  },
+  "recorded_at": "2026-11-20T10:14:25.6771339+08:00"
+}
