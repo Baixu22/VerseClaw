@@ -189,6 +189,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const steps = receipt.steps as Record<string, boolean>;
   let releaseHeld!: () => void;
   const held = new Promise<void>(resolve => { releaseHeld = resolve; });
+  let releaseTransport!: () => void;
+  const heldTransport = new Promise<void>(resolve => { releaseTransport = resolve; });
   const scopeQuestions = Array.from({ length: 9 }, (_, index) => `RAG16_SCOPE_${index + 1}`);
   const scopeQuery = scopeQuestions.join('; ');
   const planningCalls: Array<{ query: string; round: number; references: string[] }> = [];
@@ -215,6 +217,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     const find = (path: string) => input.evidence.find(source => source.lookup.endsWith(path))?.sourceId;
     const port = find('gateway.md'), archive = find('archive.md'), other = find('other-port.md');
     if (input.query.includes('cancellation')) await held;
+    if (input.query === 'Gateway port transport failure') await heldTransport;
     const coverage = port && text.includes('Gateway port is 8080.')
       ? [{ question: input.questions[0], sourceId: port, quote: 'port is 8080' }] : [];
     if (input.query.includes('conflicting')) return { text: JSON.stringify({
@@ -233,6 +236,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
   let page: Page | undefined;
   type Entry = { action: string; payload: Json; response: { data?: { success?: boolean; research?: ResearchResultV1 } } };
+  type StatusFault = { requestId: string; failed: boolean; cancelHeld: Promise<void>; releaseCancel: () => void; readback?: Json };
   try {
     page = await getStableWindow(app); await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60000 });
     const created = await host<{ activeWorkspace: { id: string; activeSessionKey: string } }>(page, 'workspaces', 'create',
@@ -284,10 +288,22 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
       const original = handlers.get('host:invoke')!;
       const entries: Entry[] = [];
       (globalThis as unknown as { rag16Entries: Entry[] }).rag16Entries = entries;
+      const fault: StatusFault = { requestId: '', failed: false, cancelHeld: Promise.resolve(), releaseCancel: () => {} };
+      (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault = fault;
       ipcMain.removeHandler('host:invoke');
       ipcMain.handle('host:invoke', async (event, request: Json) => {
+        const faultRequest = request.module === 'knowledge' && (request.payload as Json)?.requestId === fault.requestId;
+        if (faultRequest && request.action === 'researchStatus' && !fault.failed) {
+          fault.failed = true;
+          throw new Error('RAG16 injected status transport failure');
+        }
+        if (faultRequest && request.action === 'researchCancel') await fault.cancelHeld;
         const response = await original(event, request);
         if (request.module === 'knowledge') entries.push({ action: String(request.action), payload: request.payload as Json, response });
+        if (faultRequest && request.action === 'researchStatus' && !fault.readback) {
+          fault.readback = response;
+          fault.releaseCancel();
+        }
         return response;
       });
     });
@@ -384,6 +400,30 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     receipt.cancelled = cancelled; steps.ownerCancellationWithPartialEvidence = true; steps.pendingUsageRemainsUnknown = true;
     steps.lateModelCannotResume = true; steps.draftPreserved = true;
     await page.screenshot({ path: testInfo.outputPath('research-cancelled.png'), fullPage: true });
+
+    const transportQuery = 'Gateway port transport failure';
+    await queryInput.fill(transportQuery); await page.getByTestId('chat-knowledge-search-submit').click();
+    await expect.poll(() => planningCalls.some(call => call.query === transportQuery), { timeout: 30000 }).toBe(true);
+    const transportStart = (await entries()).find(entry => entry.action === 'researchStart' && entry.payload.query === transportQuery)!;
+    expect(transportStart).toBeTruthy();
+    await app.evaluate((_electron, requestId) => {
+      const fault = (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault;
+      fault.cancelHeld = new Promise<void>(resolve => { fault.releaseCancel = resolve; });
+      fault.requestId = requestId;
+    }, String(transportStart.payload.requestId));
+    try {
+      await expect(page.getByTestId('chat-research-progress')).toHaveAttribute('data-phase', 'finished', { timeout: 10000 });
+      await expect(page.getByTestId('chat-research-status')).toHaveText('Partial research');
+      await expect(page.getByTestId('chat-research-progress')).toContainText('Research could not continue.');
+      await expect(page.getByTestId('chat-research-progress')).not.toContainText('The research time limit was reached.');
+      const recovered = await app.evaluate(() => (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault.readback);
+      const recoveredOwner = (recovered?.data as { research?: ResearchResultV1 })?.research;
+      expect(recoveredOwner?.phase).toBe('planning'); expect(recoveredOwner?.evidence.length).toBeGreaterThan(0);
+      receipt.transportRecovery = recoveredOwner; steps.transportFailureReasonPreserved = true;
+    } finally {
+      await app.evaluate(() => (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault.releaseCancel());
+      releaseTransport();
+    }
 
     await writeFile(join(vault, 'concepts/other-port.md'), raw('Conflicting Gateway port', 'Gateway port is 9090.'));
     const conflict = await execute('conflicting Gateway port');

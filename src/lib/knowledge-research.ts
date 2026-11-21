@@ -19,7 +19,8 @@ export async function readKnowledgeResearch(input: Omit<KnowledgeResearchPayload
     if (!response.result.research) return { reason };
     latest = response.result.research;
     if (latest && latest.phase !== 'finished') latest = { ...latest, phase: 'finished',
-      status: reason === 'cancelled' ? 'cancelled' : 'partial', stopReason: reason === 'cancelled' ? 'cancelled' : 'deadline' };
+      status: reason === 'cancelled' ? 'cancelled' : latest.evidence.length ? 'partial' : 'unavailable',
+      stopReason: reason === 'cancelled' ? 'cancelled' : reason === 'timeout' ? 'deadline' : 'unavailable' };
     if (latest) onUpdate(latest);
     return { result: latest, reason };
   };

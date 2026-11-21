@@ -444,6 +444,46 @@ describe('Research Main owner and Host contract', () => {
   });
 });
 
+it.each([
+  ['error', true], ['error', false], ['timeout', true], ['timeout', false], ['cancelled', true], ['cancelled', false],
+] as const)('reports %s recovery with evidence=%s from the last owner snapshot', async (reason, hasEvidence) => {
+  vi.useFakeTimers();
+  const controller = new AbortController();
+  const plan = createResearchPlan({ requestId: 'recovery-state', query: 'Gateway port', scope });
+  const initial = { ...emptyResearchResult(plan), evidence: [evidence('old')] };
+  const snapshot = { ...emptyResearchResult(plan), evidence: hasEvidence ? [evidence('current')] : [] };
+  vi.mocked(hostApi.knowledge.researchStart).mockReset().mockResolvedValue({ success: true, research: initial });
+  const status = vi.mocked(hostApi.knowledge.researchStatus).mockReset().mockResolvedValue({ success: true, research: snapshot });
+  if (reason === 'error') status.mockRejectedValueOnce(new Error('Transport failed'));
+  vi.mocked(hostApi.knowledge.researchCancel).mockReset().mockResolvedValue({ success: true });
+  let updateCount = 0;
+  const updates = vi.fn(() => {
+    if (++updateCount !== 1) return;
+    if (reason === 'cancelled') controller.abort();
+    if (reason === 'timeout') vi.setSystemTime(Date.now() + 30001);
+  });
+  try {
+    const read = await readKnowledgeResearch({ query: plan.query }, controller.signal, updates, 'Research failed');
+    expect(read).toMatchObject({ reason, result: { phase: 'finished',
+      status: reason === 'cancelled' ? 'cancelled' : hasEvidence ? 'partial' : 'unavailable',
+      stopReason: reason === 'error' ? 'unavailable' : reason === 'timeout' ? 'deadline' : 'cancelled',
+      evidence: snapshot.evidence } });
+    expect(snapshot.phase).toBe('retrieving'); expect(updates).toHaveBeenCalledTimes(2);
+    expect(hostApi.knowledge.researchCancel).toHaveBeenCalled();
+  } finally { vi.useRealTimers(); }
+});
+
+it('preserves a terminal owner-change result during transport recovery', async () => {
+  const plan = createResearchPlan({ requestId: 'terminal-recovery', query: 'Gateway port', scope });
+  const terminal: ResearchResultV1 = { ...emptyResearchResult(plan), phase: 'finished', status: 'unavailable', stopReason: 'scope-changed' };
+  vi.mocked(hostApi.knowledge.researchStart).mockReset().mockResolvedValue({ success: true, research: emptyResearchResult(plan) });
+  vi.mocked(hostApi.knowledge.researchStatus).mockReset().mockRejectedValueOnce(new Error('Transport failed'))
+    .mockResolvedValue({ success: true, research: terminal });
+  vi.mocked(hostApi.knowledge.researchCancel).mockReset().mockResolvedValue({ success: true });
+  const read = await readKnowledgeResearch({ query: plan.query }, new AbortController().signal, () => {}, 'Research failed');
+  expect(read).toEqual({ reason: 'error', result: terminal });
+});
+
 it('never republishes cached evidence when cancellation readback loses the owner', async () => {
   const controller = new AbortController();
   const plan = createResearchPlan({ requestId: 'cancel-readback', query: 'Gateway port', scope });
