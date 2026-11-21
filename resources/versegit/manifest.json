@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.sidecar-package/v1",
-  "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
+  "packageId": "vg-0.1.0-win32-x64-release-20a7ce8062e2f654",
   "driven_by": "agent",
   "actor": "codex",
   "source": {
@@ -32,15 +32,15 @@
     "independentBuildRoots": 2,
     "byteIdentical": false,
     "buildHashes": {
-      "a": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
-      "b": "07557a9dd3f1ce0c055522f9e34eab23c40806ad9296ada97edb90db98588df1"
+      "a": "20a7ce8062e2f65489aad806d28e3e751977bbe013cba5872c77629aafdba7ef",
+      "b": "21a7c9f45ab3b53fee5d15ba4da76edb21192feeabb89d9bbf27e1d78a2e62f5"
     },
     "semanticIdentityEqual": true
   },
   "artifact": {
     "devPath": "resources/bin/win32-x64/vg.exe",
     "packagedPath": "bin/vg.exe",
-    "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+    "sha256": "20a7ce8062e2f65489aad806d28e3e751977bbe013cba5872c77629aafdba7ef",
     "bytes": 41011712,
     "format": "pe32+",
     "platform": "win32",

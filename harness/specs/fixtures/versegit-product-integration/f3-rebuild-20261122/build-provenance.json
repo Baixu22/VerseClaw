@@ -1,0 +1,82 @@
+{
+  "schema": "clawx.versegit.f3-build-provenance/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-11-21T18:52:23.537Z",
+  "clawxSource": {
+    "branch": "codex/g2-rag16-relay-20261119",
+    "commit": "e841206407fdb7b3b8bace7e0ed4e103482a4999",
+    "tree": "480d2a7960fa03a84480cb75714c65f86c96f42e",
+    "dirty": false
+  },
+  "source": {
+    "commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+    "archiveSha256": "33733bff0c50124e957edba151c4a1d5945b015a58e17e6cc573879761097f76",
+    "sourceInputsDigest": "52a807b0a75304af82347d2e7b3b0e7314c9063f809ba125d88c16cb12251563"
+  },
+  "recipe": {
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "--release",
+      "--bin",
+      "vg"
+    ],
+    "profile": "release",
+    "sourceDateEpoch": 1792545051,
+    "cargoIncremental": "0",
+    "cargoTarget": "x86_64-pc-windows-msvc",
+    "encodedRustflags": [
+      "--remap-path-prefix={source_root}=/versegit/source",
+      "--remap-path-prefix={target_root}=/versegit/target",
+      "-C",
+      "link-arg=/Brepro",
+      "-C",
+      "link-arg=/PDBALTPATH:%_PDB%"
+    ],
+    "cargoVersion": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "rustcVersion": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-pc-windows-msvc\nrelease: 1.98.1\nLLVM version: 22.1.8"
+  },
+  "recipeDigest": "ec075f439e019a4779dc6f35f07b4cddff9a433a4304d34e3bb48547a3a990fb",
+  "builds": [
+    {
+      "id": "A",
+      "binarySha256": "20a7ce8062e2f65489aad806d28e3e751977bbe013cba5872c77629aafdba7ef",
+      "bytes": 41011712,
+      "identity": {
+        "version": "vg 0.1.0",
+        "capabilitiesDigest": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+        "capabilitiesBytes": 3737,
+        "capabilitiesSchema": "versegit.capabilities/v1"
+      }
+    },
+    {
+      "id": "B",
+      "binarySha256": "21a7c9f45ab3b53fee5d15ba4da76edb21192feeabb89d9bbf27e1d78a2e62f5",
+      "bytes": 41011712,
+      "identity": {
+        "version": "vg 0.1.0",
+        "capabilitiesDigest": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+        "capabilitiesBytes": 3737,
+        "capabilitiesSchema": "versegit.capabilities/v1"
+      }
+    }
+  ],
+  "byteIdentical": false,
+  "semanticIdentityEqual": true,
+  "reproducibility": {
+    "status": "semantic-identity-only",
+    "claimable": false,
+    "limitation": "Two independent source/target roots produced different PE hashes; the delivered artifact is digest-pinned but byte-identical reproducibility is not claimed."
+  },
+  "platform": "win32-x64",
+  "boundaries": {
+    "published": false,
+    "defaultOn": false,
+    "liveReady": false,
+    "productApproved": false,
+    "m4Authorized": false
+  }
+}

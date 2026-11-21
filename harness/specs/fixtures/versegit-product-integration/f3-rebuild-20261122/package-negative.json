@@ -1,0 +1,46 @@
+{
+  "schema": "clawx.versegit.f3-package-negative/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "clawxSource": {
+    "branch": "codex/g2-rag16-relay-20261119",
+    "commit": "e841206407fdb7b3b8bace7e0ed4e103482a4999",
+    "tree": "480d2a7960fa03a84480cb75714c65f86c96f42e",
+    "dirty": false
+  },
+  "cases": [
+    {
+      "id": "missing",
+      "rejected": true,
+      "code": "artifact_missing",
+      "issues": [
+        "artifact_missing"
+      ]
+    },
+    {
+      "id": "hash_mismatch",
+      "rejected": true,
+      "code": "artifact_mismatch",
+      "issues": [
+        "artifact_sha256_mismatch"
+      ]
+    },
+    {
+      "id": "unsupported_schema",
+      "rejected": true,
+      "code": "schema_unsupported",
+      "issues": [
+        "unsupported_package_schema"
+      ]
+    },
+    {
+      "id": "unauthorized_profile",
+      "rejected": true,
+      "code": "profile_unauthorized",
+      "issues": [
+        "profile_unauthorized"
+      ]
+    }
+  ],
+  "passed": true
+}

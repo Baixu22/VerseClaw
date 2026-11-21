@@ -1,0 +1,77 @@
+{
+  "actor": "codex-g2-relay-r23",
+  "driven_by": "agent",
+  "sourceCandidate": "e841206407fdb7b3b8bace7e0ed4e103482a4999",
+  "approvedArtifactSha256": "20a7ce8062e2f65489aad806d28e3e751977bbe013cba5872c77629aafdba7ef",
+  "previousArtifactSha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+  "nativeSourceCommit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+  "buildHashes": {
+    "a": "20a7ce8062e2f65489aad806d28e3e751977bbe013cba5872c77629aafdba7ef",
+    "b": "21a7c9f45ab3b53fee5d15ba4da76edb21192feeabb89d9bbf27e1d78a2e62f5"
+  },
+  "byteIdentical": false,
+  "semanticIdentityEqual": true,
+  "artifact": {
+    "devPath": "resources/bin/win32-x64/vg.exe",
+    "packagedPath": "bin/vg.exe",
+    "sha256": "20a7ce8062e2f65489aad806d28e3e751977bbe013cba5872c77629aafdba7ef",
+    "bytes": 41011712,
+    "format": "pe32+",
+    "platform": "win32",
+    "arch": "x64",
+    "version": "vg 0.1.0"
+  },
+  "results": [
+    {
+      "name": "rebuilt-package",
+      "exitCode": 0,
+      "expectedSuccess": true,
+      "code": null,
+      "passed": true
+    },
+    {
+      "name": "frozen-package-rejects-rebuild",
+      "exitCode": 1,
+      "expectedSuccess": false,
+      "code": "artifact_mismatch",
+      "passed": true
+    },
+    {
+      "name": "wrong-artifact-sha",
+      "exitCode": 1,
+      "expectedSuccess": false,
+      "code": "artifact_mismatch",
+      "passed": true
+    },
+    {
+      "name": "wrong-capabilities-sha",
+      "exitCode": 1,
+      "expectedSuccess": false,
+      "code": "artifact_mismatch",
+      "passed": true
+    },
+    {
+      "name": "unsupported-schema",
+      "exitCode": 1,
+      "expectedSuccess": false,
+      "code": "schema_unsupported",
+      "passed": true
+    },
+    {
+      "name": "unauthorized-profile",
+      "exitCode": 1,
+      "expectedSuccess": false,
+      "code": "profile_unauthorized",
+      "passed": true
+    },
+    {
+      "name": "missing-binary",
+      "exitCode": 1,
+      "expectedSuccess": false,
+      "code": "artifact_missing",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "recordedAt": "2026-11-21T18:55:03.769Z"
+}

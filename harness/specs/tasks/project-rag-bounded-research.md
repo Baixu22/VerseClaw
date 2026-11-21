@@ -175,6 +175,8 @@ touchedAreas:
   - "tests/unit/session-files.test.ts"
   - "tests/unit/versegit-product-acceptance.test.ts"
   - "scripts/verify-versegit-product-integration.mjs"
+  - "resources/versegit/manifest.json"
+  - "harness/specs/fixtures/versegit-product-integration/f3-rebuild-20261122/**"
   - "tests/unit/versegit-wp2-profile.test.ts"
   - "tests/unit/versegit-wp6-closeout.test.ts"
   - "tests/unit/project-rag-memory-domains.test.ts"
@@ -276,7 +278,9 @@ Cargo 为其设置 `test=false`。完整锁定的库、12 个集成目标和文�
 
 上下文增强关闭时，Context Ladder 同步停止 BlockStore 查询；环境变量与配置两条入口均有回归。已退休 Runtime Memory 收益入口验证无读取和无持久化；rerank 默认四语言夹具明确标注 scripted-fixture，显式 live 输出要求实际凭据。正式测试启用 RESOURCE_GOVERNANCE_STRESS=1 执行资源压力产物检查，固定 50/10/0 跳过预算保持。
 
-工程验收沿用现有25门禁，资源准备同时绑定并复制VerseGit包的原始SHA与bytes。验收框架回归复用只读初始仓库模板，每个测试仍有独立.git目录并执行真实commit/worktree/ancestry/篡改校验。大型依赖在测试收集时加载，单用例和门禁超时不变。
+工程验收沿用现有25门禁，资源准备同时绑定并复制VerseGit包的已授权冻结SHA与bytes。验收框架回归复用只读初始仓库模板，每个测试仍有独立.git目录并执行真实commit/worktree/ancestry/篡改校验。大型依赖在测试收集时加载，单用例和门禁超时不变。
+
+本轮原生输入采用已授权的A产物20a7ce80，同一固定源码和1.98.1工具链的B构建21a7c9f4通过版本、能力及源码复验。当前清单登记两根实际PE摘要，版本化证据保存在f3-rebuild-20261122；原f3记录保留。四条requiredTests、原门禁命令、断言、时限和跳过预算沿用冻结合同。
 
 候选源码校验以单次Git ls-tree和NUL分隔diff批量读取，保留逐项blob、存在性与脏改判定；空格/方括号路径、删除、前导空白路径正文变化均有负例。路径列表使用未trim原始输出，跨次校验不缓存工作区。
 

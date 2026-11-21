@@ -1,0 +1,9 @@
+{
+  "source": "explicit-user-message",
+  "approved": true,
+  "answer": "允许用新包重新冻结并继续验收（推荐）",
+  "sourceCandidateAtApproval": "124d153cdbe1aef8013caaedb231139a659170ef",
+  "nativeArtifactSha256": "20a7ce8062e2f65489aad806d28e3e751977bbe013cba5872c77629aafdba7ef",
+  "scope": "Re-freeze native input for the existing 25-gate G2 RAG-16 cycle; retain previous records and existing assertions, timeouts, requiredTests and skip budgets",
+  "recordedAt": "2026-11-21T23:32:09.5240437+08:00"
+}
