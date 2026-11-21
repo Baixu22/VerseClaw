@@ -64,3 +64,5 @@ Research 的来源检索允许本地 embedding、向量和重排路径。当前�
 自动化结果标记 `actor: knowledge-research`、`driven_by: agent`、`realHumanEvidence: false`。
 
 身份复验通过同一 session owner 的 `sessions.describe(identityOnly=true)` 重新读取会话 key、generation 和状态，省略完整会话列表所需的模型与转录元数据解析。状态查询仍受5秒上限约束，证据读取前后和交付前继续复验。
+
+状态复验耗尽5秒等待时，只返回当前请求的计划、阶段和用量元数据，证据、引用、关系与推断全部置空；同一请求在原30秒期限内继续等待下一次复验。复验恢复后交付当前 owner 验证过的结果。权限、会话代际或来源版本改变仍终止该请求并清空结果。

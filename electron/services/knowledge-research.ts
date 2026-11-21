@@ -184,10 +184,11 @@ export function createKnowledgeResearchApi(options: {
     },
     researchStatus: async payload => {
       let run: Run | undefined;
+      let statusSignal: AbortSignal | undefined;
       try {
         run = selected(validate(payload));
         if (!run.scope || !run.result) return { success: true };
-        const signal = AbortSignal.timeout(5000);
+        const signal = statusSignal = AbortSignal.timeout(5000);
         await waitForRetrievalOperation(assertKnowledgeReadScopeCurrent(gatewayManager, run.scope), signal);
         const snapshot = structuredClone(run.result);
         for (const source of snapshot.evidence) if (!await verify(source, run.scope, signal)) {
@@ -197,6 +198,15 @@ export function createKnowledgeResearchApi(options: {
         if (snapshot.evidence.length) await waitForRetrievalOperation(assertKnowledgeReadScopeCurrent(gatewayManager, run.scope), signal);
         return { success: true, research: run.result.stopReason === 'scope-changed' ? structuredClone(run.result) : snapshot };
       } catch (error) {
+        if (run?.result && statusSignal?.aborted && error === statusSignal.reason) {
+          // 状态等待耗尽时只返回元数据；下一次读取仍须复验 owner。
+          if (run.result.stopReason === 'scope-changed') return { success: true, research: structuredClone(run.result) };
+          const pending = emptyResearchResult(run.result.plan);
+          pending.phase = run.result.phase === 'finished' ? 'retrieving' : run.result.phase;
+          pending.usage = { ...run.result.usage, evidenceChars: 0, evidenceTokens: 0 };
+          if (run.result.status === 'cancelled') { pending.status = 'cancelled'; pending.phase = 'finished'; pending.stopReason = 'cancelled'; }
+          return { success: true, research: structuredClone(pending) };
+        }
         if (run) invalidate(run);
         return fail(error);
       }

@@ -10,7 +10,8 @@ import { hostApi } from '@/lib/host-api';
 
 vi.mock('@/lib/host-api', () => ({ hostApi: { knowledge: { researchStart: vi.fn(), researchStatus: vi.fn(), researchCancel: vi.fn() } } }));
 
-const hostState = vi.hoisted(() => ({ changed: false, model: undefined as ((args: unknown[]) => unknown) | undefined }));
+const hostState = vi.hoisted(() => ({ changed: false, model: undefined as ((args: unknown[]) => unknown) | undefined,
+  scopeCheck: undefined as (() => Promise<void>) | undefined }));
 vi.mock('@electron/services/knowledge-read-scope', () => ({
   prepareKnowledgeReadScope: async (_gateway: unknown, input: { workspaceId?: string; sessionKey?: string }) => {
     if (input.workspaceId && input.workspaceId !== 'owner-project') throw new Error('Workspace is not the current owner');
@@ -18,7 +19,7 @@ vi.mock('@electron/services/knowledge-read-scope', () => ({
     return { fingerprint: 'owner-generation-1', expectedSessionGeneration: 'generation-1',
       identity: { workspaceId: 'owner-project', agentSessionKey: 'agent:main:owner', sessionId: 'generation-1', egressProviderRefs: [] } };
   },
-  assertKnowledgeReadScopeCurrent: async () => { if (hostState.changed) throw new Error('Workspace owner changed'); },
+  assertKnowledgeReadScopeCurrent: async () => { if (hostState.changed) throw new Error('Workspace owner changed'); await hostState.scopeCheck?.(); },
 }));
 vi.mock('@electron/services/knowledge-evidence-qa', () => ({
   selectKnowledgeModelSources: (sources: unknown[]) => ({ sources: sources.slice(0, 8), dropped: sources.slice(8) }),
@@ -321,7 +322,7 @@ describe('bounded Project RAG Research controller', () => {
 });
 
 describe('Research Main owner and Host contract', () => {
-  beforeEach(() => { hostState.changed = false; hostState.model = undefined; });
+  beforeEach(() => { hostState.changed = false; hostState.model = undefined; hostState.scopeCheck = undefined; });
   function setup(options: { modelReceipt?: boolean; body?: string } = {}) {
     const source = evidence('port', options.body ?? 'Gateway port is 8080.', 'port.md');
     const read = vi.fn(async () => {
@@ -413,6 +414,28 @@ describe('Research Main owner and Host contract', () => {
     const response = await fixture.api.researchStatus(fixture.selected);
     expect(response.success).toBe(false); expect(response.research).toBeUndefined(); expect(JSON.stringify(response)).not.toContain('8080');
   });
+  it('preserves an active Research request after a status verification timeout without exposing unchecked evidence', async () => {
+    const fixture = setup(), model = hostState.model!;
+    let release!: () => void;
+    const waiting = new Promise<void>(resolve => { release = resolve; });
+    hostState.model = async args => { const output = model(args); await waiting; return output; };
+    try {
+      expect((await fixture.api.researchStart(fixture.request)).success).toBe(true);
+      await vi.waitFor(() => expect(fixture.modelCalls).toHaveLength(1));
+      hostState.scopeCheck = async () => new Promise<void>(() => {});
+      const pending = await fixture.api.researchStatus(fixture.selected);
+      expect(pending.success).toBe(true);
+      expect(pending.research).toMatchObject({ status: 'running', phase: 'planning', evidence: [], retainedEvidence: [], steps: [],
+        graph: { nodes: [], edges: [] }, usage: { planningModelCalls: 1, actualPlanningTokens: null, actualCostUsd: null, evidenceChars: 0, evidenceTokens: 0 } });
+      expect(JSON.stringify(pending)).not.toContain('8080');
+      hostState.scopeCheck = undefined;
+      release();
+      const completed = await fixture.terminal();
+      expect(completed.research).toMatchObject({ status: 'complete', stopReason: 'covered', usage: { planningModelCalls: 1, actualPlanningTokens: 100 } });
+      expect(completed.research?.evidence).toHaveLength(1);
+      expect(fixture.modelCalls).toHaveLength(1);
+    } finally { hostState.scopeCheck = undefined; release(); }
+  }, 10000);
   it('rechecks the owner after reading bytes and keeps a revoked request empty', async () => {
     const fixture = setup(); await fixture.api.researchStart(fixture.request); await fixture.terminal();
     const read = fixture.read.getMockImplementation()!;
