@@ -80,6 +80,31 @@ describe('bounded Project RAG Research controller', () => {
   it.each([{ maxRounds: 4 }, { maxQueries: 9 }, { maxPlanningModelCalls: 3 }, { maxCostUsd: Infinity }, { maxEvidenceTokens: 5001 }, { graphMaxHops: 3 }])('rejects a larger or invalid ceiling %j', budget => {
     expect(() => createResearchPlan({ requestId: 'invalid-budget', query: 'Gateway port', scope, budget })).toThrow();
   });
+  it.each([8, 9, 200])('preserves all %i distinct clauses within the frozen question limit', count => {
+    const questions = Array.from({ length: count }, (_, index) => `Question ${index + 1}`), query = questions.join('; ');
+    const plan = createResearchPlan({ requestId: 'question-scope', query, scope });
+    expect(plan.questions).toEqual(count <= 8 ? questions : [query]);
+    expect(Object.isFrozen(plan.questions)).toBe(true);
+    expect(plan.budget).toMatchObject({ maxQueries: 8, maxPlanningModelCalls: 2 });
+  });
+  it('deduplicates clauses before applying the question limit and keeps a nonempty fallback', () => {
+    const questions = Array.from({ length: 8 }, (_, index) => `Question ${index + 1}`);
+    expect(createResearchPlan({ requestId: 'duplicate-scope', query: [...questions, questions[0]].join('; '), scope }).questions).toEqual(questions);
+    expect(createResearchPlan({ requestId: 'separator-scope', query: ';；\n', scope }).questions).toEqual([';；']);
+  });
+  it('does not complete a request whose ninth question has no coverage', async () => {
+    const firstEight = Array.from({ length: 8 }, (_, index) => `Question ${index + 1}`);
+    const query = [...firstEight, 'Uncovered ninth question'].join('; ');
+    const retrieve = vi.fn(async () => ({ evidence: [evidence('port')], partial: false }));
+    const result = await run({ query, retrieve, planNext: async ({ plan, evidence: sources }) => ({
+      review: review({ coverage: plan.questions.filter(question => firstEight.includes(question))
+        .map(question => ({ question, sourceId: 'port', quote: '8080' })) }),
+      retainedEvidence: manifest(sources), actualTokens: 10, actualCostUsd: 0.0001,
+    }) });
+    expect(result.status).toBe('partial'); expect(result.coverage).toEqual([]);
+    expect(result.gaps).toContainEqual({ schema: 'EvidenceGap/v1', question: query, reason: 'not-covered' });
+    expect(retrieve).toHaveBeenCalledTimes(1);
+  });
   it('decomposes the root, follows a genuine evidence gap, and stops at quoted coverage', async () => {
     const calls: string[] = [], deadlines: number[] = [];
     const result = await run({ query: 'Gateway port and backup path', retrieve: async query => {

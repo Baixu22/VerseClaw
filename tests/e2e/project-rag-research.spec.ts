@@ -189,12 +189,21 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const steps = receipt.steps as Record<string, boolean>;
   let releaseHeld!: () => void;
   const held = new Promise<void>(resolve => { releaseHeld = resolve; });
+  const scopeQuestions = Array.from({ length: 9 }, (_, index) => `RAG16_SCOPE_${index + 1}`);
+  const scopeQuery = scopeQuestions.join('; ');
   const planningCalls: Array<{ query: string; round: number; references: string[] }> = [];
   const llm = await startScriptedLlm(async text => {
     const line = text.split('\n').map(line => line.trim()).find(line => line.startsWith('{"researchPlanning":true'));
     if (!line) return { text: 'RAG16 ordinary reply' };
     const input = JSON.parse(line) as { query: string; round: number; questions: string[]; evidence: Array<{ sourceId: string; lookup: string }> };
     planningCalls.push({ query: input.query, round: input.round, references: input.evidence.map(source => source.sourceId) });
+    if (input.query === scopeQuery) {
+      const source = input.evidence.find(source => source.lookup.endsWith('question-scope.md'));
+      return { text: JSON.stringify({ queries: [], coverage: source && text.includes('RAG16_FIRST_EIGHT_FACTS')
+        ? input.questions.filter(question => scopeQuestions.slice(0, 8).includes(question))
+          .map(question => ({ question, sourceId: source.sourceId, quote: 'RAG16_FIRST_EIGHT_FACTS' })) : [],
+        inferences: [], conflicts: [], gaps: [] }) };
+    }
     if (input.query === 'RAG16_PLANNING_USAGE_OVERRUN') return {
       text: 'RAG16 malformed planning JSON with an over-budget usage receipt',
       usage: { prompt_tokens: 100000, completion_tokens: 30, total_tokens: 100030 },
@@ -254,6 +263,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await writeFile(join(vault, 'concepts/deltaunique.md'), raw('Delta unique', 'The linked guide beyond the two-hop limit.'));
     await writeFile(join(vault, 'concepts/usage-root.md'), raw('RAG16_PLANNING_USAGE_OVERRUN', 'RAG16_PLANNING_USAGE_OVERRUN. [next](usage-child.md)'));
     await writeFile(join(vault, 'concepts/usage-child.md'), raw('Budget follow-up', 'A local guide for a later round.'));
+    await writeFile(join(vault, 'concepts/question-scope.md'), raw('Question scope', scopeQuestions.slice(0, 8).join(' ') + '. RAG16_FIRST_EIGHT_FACTS.'));
     await host(page, 'settings', 'set', { key: 'gatewayPort', value: await allocatePort() });
     await host(page, 'gateway', 'start').catch(error => { if (!String(error).includes('timed out')) throw error; });
     await expect.poll(async () => (await host(page!, 'gateway', 'status')).state, { timeout: 120000 }).toBe('running');
@@ -315,6 +325,15 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await page.screenshot({ path: testInfo.outputPath('research-result.png'), fullPage: true });
     await page.getByTestId('chat-knowledge-search-result').filter({ hasText: 'concepts/archive.md' }).first().scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('research-source-evidence.png'), fullPage: true });
+
+    const questionScope = await execute(scopeQuery);
+    expect(questionScope.plan.questions).toEqual([scopeQuery]);
+    expect(questionScope.status).toBe('partial'); expect(questionScope.coverage).toEqual([]);
+    expect(questionScope.gaps).toContainEqual({ schema: 'EvidenceGap/v1', question: scopeQuery, reason: 'not-covered' });
+    expect(planningCalls.filter(call => call.query === scopeQuery)).toHaveLength(1);
+    expect(questionScope.usage.queries).toBe(1);
+    await expect(page.getByTestId('chat-research-gaps')).toContainText(scopeQuestions[8]);
+    receipt.questionScope = questionScope; steps.completeQuestionScopePreserved = true;
 
     const dcs = await execute('Gateway port and giant policy');
     const retained = dcs.retainedEvidence.at(-1)!;

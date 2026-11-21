@@ -79,17 +79,22 @@ export function createResearchPlan(input: {
     input.budget?.deadlineAtMs ?? Infinity,
   );
   if (!Number.isFinite(deadlineAtMs)) throw new TypeError("Invalid research deadline");
-  const questions = query
-    .split(/(?:[;；\n]+|\s+and\s+|以及|并且)/iu)
-    .map((text) => text.trim())
-    .filter(Boolean);
+  const questions = [
+    ...new Set(
+      query
+        .split(/(?:[;；\n]+|\s+and\s+|以及|并且)/iu)
+        .map((text) => text.trim())
+        .filter(Boolean),
+    ),
+  ];
   return Object.freeze({
     schema: "ResearchPlan/v1",
     requestId: input.requestId,
     query,
     scope: Object.freeze({ ...input.scope }),
     budget: Object.freeze({ ...values, deadlineAtMs }),
-    questions: Object.freeze([...new Set(questions)].slice(0, 8)),
+    // Keep the whole request when decomposition cannot preserve it within eight questions.
+    questions: Object.freeze(questions.length > 0 && questions.length <= 8 ? questions : [query]),
   });
 }
 
