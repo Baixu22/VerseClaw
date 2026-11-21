@@ -21,6 +21,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/harness/selection.compass.test.ts
   - tests/unit/gateway-lazy-harness-selection.test.ts
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/selection-loading-20261121/**
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/trajectory-loading-20261121/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/**
   - tests/unit/gateway-native-language-parser-loading.test.ts
   - openclaw_runtime/src/agents/harness/builtin-openclaw.ts
