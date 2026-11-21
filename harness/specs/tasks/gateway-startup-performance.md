@@ -11,6 +11,9 @@ intent: Measure the managed Gateway startup path and remove verified startup bot
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts
+  - openclaw_runtime/src/gateway/trajectory-gateway.ts
+  - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
   - package.json
   - harness/specs/guides/scoped-development-validation.md
   - openclaw_runtime/src/agents/harness/selection.ts
@@ -112,6 +115,7 @@ requiredRules:
   - gateway-readiness-policy
   - repository-artifact-retention
 requiredTests:
+  - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
   - openclaw_runtime/src/agents/harness/selection.compass.test.ts
   - tests/unit/gateway-lazy-harness-selection.test.ts
   - tests/unit/gateway-native-language-parser-loading.test.ts
@@ -141,6 +145,7 @@ requiredTests:
   - tests/unit/gateway-process-launcher-trace.test.ts
   - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
+  - Importing trajectory subscription cleanup hooks leaves that module's session resolver deferred. readTrajectoryPage validates session and range inputs before loading its resolver; session and path guards, pagination, error identity and subscription delivery retain their current behavior.
   - Harness selection and support queries keep context-budget and lifecycle execution wrappers unloaded. An attempt captures the selected harness and diagnostic trace before loading those wrappers; native/plugin policy, parameter and error identity remain with the existing execution functions. The runtime boundary flushes available compilation before execution.
   - Built-in harness metadata does not load the embedded attempt runtime. First execution loads the existing runner through its runtime boundary, preserving parameters, results, errors and host capabilities. That boundary flushes loaded bytecode before execution; disabled, unavailable or unsupported cache APIs retain execution.
   - Analyzer metadata and fallback analysis leave native parsers and language grammars unloaded. Each native grammar loads when its analyzer first parses a file; a reusable parser is retained only after successful language initialization. Existing symbols, imports, calls and parse-fallback warnings retain their behavior.

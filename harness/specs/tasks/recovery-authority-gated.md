@@ -11,6 +11,9 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts
+  - openclaw_runtime/src/gateway/trajectory-gateway.ts
+  - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
   - harness/specs/guides/scoped-development-validation.md
   - openclaw_runtime/src/agents/harness/selection.ts
   - openclaw_runtime/src/agents/harness/selection.runtime.ts
@@ -291,6 +294,7 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
   - openclaw_runtime/src/agents/harness/selection.compass.test.ts
   - tests/unit/gateway-lazy-harness-selection.test.ts
   - tests/unit/gateway-native-language-parser-loading.test.ts
@@ -353,6 +357,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Importing trajectory subscription cleanup hooks leaves that module's session resolver deferred. readTrajectoryPage validates session and range inputs before loading its resolver; session and path guards, pagination, error identity and subscription delivery retain their current behavior.
   - Harness selection captures its original decision and diagnostic trace before lazy context-budget/lifecycle loading. Native and plugin execution keep their existing policy, budget, result and error handling; the runtime boundary persists available compilation before an interrupted attempt.
   - Built-in harness support metadata defers the embedded execution graph until runAttempt. The runner receives the original parameters and retains result/error identity and host capabilities. Its lazy runtime boundary persists loaded bytecode before interruption without changing optional cache controls or recovery admission.
   - Analyzer metadata and fallback analysis defer native parsers and grammars until the corresponding language is analyzed. Successful language initialization owns parser reuse; loading failures remain retryable and existing parse-fallback warnings remain intact.

@@ -17,6 +17,7 @@ Agents reuse compatible Gateway plugin state during startup; configuration and w
 Native language parsers load when code analysis first needs the corresponding language.
 
 Agent context and lifecycle execution modules load when a selected run starts; harness selection uses existing metadata.
+Trajectory reads prepare their session data when requested; closing a connection releases its subscription.
 
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
