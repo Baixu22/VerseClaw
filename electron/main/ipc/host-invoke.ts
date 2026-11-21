@@ -17,28 +17,13 @@ import {
 import { hostActionTimeoutMs } from '@shared/host-api/host-action-timeouts';
 import {
   clampHostTimeoutToDeadline,
+  HostTimeoutError,
   isHostDeadlineExpired,
   readHostDeadline,
   toHostTimeoutDetails,
   type HostDeadline,
-  type HostTimeoutDetails,
 } from '@shared/host-api/host-deadline';
 import { runWithHostDeadline } from '../../utils/host-deadline-context';
-
-class HostActionTimeoutError extends Error {
-  readonly details: HostTimeoutDetails;
-
-  constructor(
-    moduleName: string,
-    actionName: string,
-    timeoutMs: number,
-    details: HostTimeoutDetails,
-  ) {
-    super(`Host action ${moduleName}.${actionName} timed out after ${Math.round(timeoutMs / 1000)}s`);
-    this.name = 'HostActionTimeoutError';
-    this.details = details;
-  }
-}
 
 async function withHostActionTimeout<T>(
   promise: Promise<T>,
@@ -59,7 +44,7 @@ async function withHostActionTimeout<T>(
       promise,
       new Promise<never>((_, reject) => {
         timer = setTimeout(
-          () => reject(new HostActionTimeoutError(params.moduleName, params.actionName, timeoutMs, toHostTimeoutDetails({
+          () => reject(new HostTimeoutError(`Host action ${params.moduleName}.${params.actionName} timed out after ${Math.round(timeoutMs / 1000)}s`, toHostTimeoutDetails({
             stage: 'main',
             deadlineMs: timeoutMs,
             elapsedMs: Date.now() - params.startedAt,
@@ -306,7 +291,7 @@ export function createHostInvokeDispatcher(
     // the action starts.
     const deadline = readHostDeadline((request as { deadline?: unknown }).deadline);
     const startedAt = Date.now();
-    const localTimeoutMs = hostActionTimeoutMs(request.module, request.action);
+    const localTimeoutMs = hostActionTimeoutMs(request.module, request.action, request.payload);
     const effectiveTimeoutMs = clampHostTimeoutToDeadline(localTimeoutMs, deadline);
     if (deadline && isHostDeadlineExpired(deadline)) {
       return {
@@ -345,7 +330,7 @@ export function createHostInvokeDispatcher(
       );
       return { id: request.id, ok: true, data };
     } catch (error) {
-      if (error instanceof HostActionTimeoutError) {
+      if (error instanceof HostTimeoutError) {
         return {
           id: request.id,
           ok: false,

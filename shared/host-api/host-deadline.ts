@@ -39,6 +39,18 @@ export type HostTimeoutDetails = {
   deadlineAtMs?: number;
 };
 
+/** Preserves the enforcing layer's timeout metadata across host boundaries. */
+export class HostTimeoutError extends Error {
+  readonly code = 'TIMEOUT';
+  readonly details: HostTimeoutDetails;
+
+  constructor(message: string, details: HostTimeoutDetails) {
+    super(message);
+    this.name = 'HostTimeoutError';
+    this.details = details;
+  }
+}
+
 const STAGES: readonly HostDeadlineStage[] = ['renderer', 'main', 'gateway', 'provider'];
 
 function readPositiveInt(value: unknown): number | undefined {

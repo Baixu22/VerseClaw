@@ -44,4 +44,6 @@ TF0684总控派发旅程验证后台项目A写入、项目B模型在途时全局
 
 TF0685配置旅程包括只读预览、实际重载、两次重载失败后的degraded、页面重载后由当前owner恢复，以及四语的desired/configured/effective/runtime-generation展示。未知费用、全局扩权、自改evaluator、secret参数、共享Agent和陈旧revision均拒绝。
 
-TF0687经验治理验证成功/失败Mission候选、审核前不可见、原session使用、跨session拒绝、撤销/替代/过期后后续读取失效。真实Gateway canary核对pending/accepted/foreign/revoked四次provider请求，并区分selector receipt和最终prompt delivery；8个留出查询复用既有预算评估，不把结构覆盖作为live模型质量。
+TF0687经验治理验证成功/失败Mission候选、审核前不可见、原session使用、跨session拒绝、撤销/替代/过期后后续读取失效。Gateway canary 通过 mission.run 产生候选，从 memory.proposals 取回同一条 episode 后审核，核对 pending/accepted/foreign/revoked四次provider请求，并区分selector receipt和最终prompt delivery；8个留出查询复用既有预算评估，不把结构覆盖作为live模型质量。
+
+Mission 的长执行请求沿共享 deadline 收紧；等待期间由原生命周期事件提供运行身份，暂停和取消使用独立忙态。控制确认后的较早执行响应保留当前控制状态。Gateway 时限耗尽以 TIMEOUT 和阶段预算返回，已到期请求不派发；方法名去空白后使用同一预算判定。

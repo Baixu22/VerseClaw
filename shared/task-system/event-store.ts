@@ -27,6 +27,10 @@ function eventMeaning(event: TaskLedgerEvent, savedLinkId?: string) {
   };
 }
 
+export function sameTaskEventMeaning(left: TaskLedgerEvent, right: TaskLedgerEvent): boolean {
+  return JSON.stringify(eventMeaning(left)) === JSON.stringify(eventMeaning(right));
+}
+
 /** Transactional storage for the existing Task Ledger event format. */
 export function withTaskEvents<T>(legacyPath: string, operation: (db: DatabaseSync) => T): T {
   mkdirSync(dirname(legacyPath), { recursive: true });

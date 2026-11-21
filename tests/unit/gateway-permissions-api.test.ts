@@ -109,6 +109,22 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 }
 
 describe('gateway permission approval flow', () => {
+  it.each([
+    { method: 'mission.run', supplied: undefined, expected: 15 * 60_000 },
+    { method: ' mission.run ', supplied: undefined, expected: 15 * 60_000 },
+    { method: 'mission.run', supplied: 150_000, expected: 150_000 },
+    { method: 'memory.proposals', supplied: undefined, expected: undefined },
+  ])('forwards the effective RPC budget for $method ($supplied)', async ({ method, supplied, expected }) => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const params = { sessionKey: 'agent:main:main' };
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({ success: true })) };
+    const fabric = { run: vi.fn((rpcMethod, rpcParams, timeoutMs, run) => run(rpcMethod, rpcParams, timeoutMs)) };
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, fabric as never);
+
+    await api.rpc({ method, params, ...(supplied === undefined ? {} : { timeoutMs: supplied }) });
+    expect(gatewayManager.rpc).toHaveBeenCalledWith(method.trim(), params, expected);
+  });
   it.each(['orchestrator.run', 'task_loop.run', 'mission.run', 'mission.tick', 'mission.resume'])('global pause refuses %s before calling Runtime', async method => {
     activeWorkspace.profile = workspace('fullAccess'); activeWorkspace.paused = true;
     const gatewayManager = { rpc: vi.fn(async () => ({ success: true })) };

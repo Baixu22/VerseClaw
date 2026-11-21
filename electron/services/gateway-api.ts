@@ -1,6 +1,7 @@
 import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { GatewayManager } from '../gateway/manager';
 import type { ResourceFabric } from './resource-fabric';
+import { hostActionTimeoutMs } from '../../shared/host-api/host-action-timeouts';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createHash } from 'node:crypto';
 import { realpathSync } from 'node:fs';
@@ -106,10 +107,15 @@ function runGatewayRpc(
   params: unknown,
   timeoutMs: number | undefined,
 ): Promise<unknown> {
+  // A synchronous Mission waits for its inner loop and reviewer. Use the host
+  // budget when the caller omits an explicit RPC limit.
+  const requestTimeoutMs = timeoutMs ?? (method === 'mission.run'
+    ? hostActionTimeoutMs('gateway', 'rpc', { method })
+    : undefined);
   return resourceFabricInstance.run(
     method,
     params,
-    timeoutMs,
+    requestTimeoutMs,
     (rpcMethod, rpcParams, rpcTimeoutMs) => gatewayManager.rpc(rpcMethod, rpcParams, rpcTimeoutMs),
   );
 }

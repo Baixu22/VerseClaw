@@ -548,4 +548,8 @@ Git 工作树存在未提交内容时拒绝回收，声明的写集也不能豁�
 
 配置操作员只接受modelRef、denyTools和contextTokens。独占Agent检查覆盖workspace所有绑定；预览生成configRevision与patch digest。应用在Workspace mutation barrier与原config mutex中写入，原配置仍是唯一真源；Workspace只保留无凭据的操作回执和已改字段备份。Runtime flags ack从已加载配置返回安全投影与gateway generation，未确认生效不标applied。重载失败按触碰字段CAS回滚并核验，冲突保留degraded；当前owner可枚举和reconcile持久操作，旧owner重放不能重启Runtime。
 
-Mission 的直接经验候选和摘要提炼候选均使用原 sessionKey 作为 session scope，记录 mission/tick 与原证据引用，设置 24h TTL。候选继续走原 Role Memory 审核 owner，未接受不进入实际 provider；canary由agent审核并保留actor。相同provider对象在撤销、替代或过期后的下一次读取重新校验原store。记忆选择回执表示selector选中，实际模型请求投递还需共享注入预算和最终request回读；M2显式12000字符canary证明投递，默认2000预算下未投递记录保留。
+Mission 的直接经验候选和摘要提炼候选均绑定原 sessionKey，记录 mission/tick 与证据引用，有效期为 24 小时。生产者保留 mission-control 身份，Mission Control 和主聊天按角色与会话范围复用经原 Role Memory owner 审核的经验。冷存储沿用原有效期；撤销、替代和过期后，后续读取重新校验 store。选择回执记录筛选结果，最终投递由注入开关、共享上下文预算和请求组装决定。
+
+mission.run 未显式指定 RPC 时限时使用共享长操作预算，各层按同一逻辑 deadline 的剩余时间收紧。Gateway 时限耗尽保留 TIMEOUT 分类、执行阶段和预算信息，已到期请求在发送前结束。Mission 面板只从当前会话的生命周期事件取得任务身份。执行请求和控制请求分别显示忙态；执行等待期间可暂停或取消，较早的执行响应到达时保留已确认的控制状态。 Runtime 接受暂停、取消或恢复后，在异步执行、审查和回滚的续行处保留最新控制状态，保存执行证据并结束旧 tick 的 trace；已有 fencing 占用由原 owner 释放。默认 Agent 或会话变化时重置 Mission 投影并更新会话版本；旧 run、旧控制响应和它们的清理回调不能替换新会话的结果或忙态。 角色目录在展开时读取一次；空目录不触发连续重试，可重新展开或使用目录刷新按钮更新。
+
+Mission 和 Task Loop 的派生生命周期证据按工作区串行写入原 Task Ledger。首次创建事实从事件 owner 回读复用；重放保持原事件字节，后续阶段写入独立批次。事务失败后，同一批次可重试；会话、节点或已记录更新的身份冲突仍会拒绝。

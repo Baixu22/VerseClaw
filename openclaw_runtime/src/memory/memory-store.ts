@@ -25,7 +25,7 @@ import {
 } from "./memory-dual-gate.js";
 import { evaluateMemoryPolicy, evaluateRetentionCandidate, getMemoryPolicySnapshot, roleAppliesToCard } from "./memory-policy.js";
 import { buildContextPack } from "./context-pack.js";
-import { isMemoryCardInContextScope, type MemoryCardScopeContext } from "./memory-card.js";
+import { isMemoryContextCandidate, isMemoryCardInContextScope, type MemoryCardScopeContext } from "./memory-card.js";
 import type {
   ContextPack,
   MemoryAuditActor,
@@ -1804,7 +1804,7 @@ export function simulateMemoryInjection(params: {
       .filter((card) => card.status === "active" || card.status === "cold"),
     dualGate,
   ).filter((card) => isMemoryCardInContextScope(card, params.scope ?? {}));
-  const memoryIds = new Set(memories.map((card) => card.id));
+  const memoryIds = new Set(memories.filter(isMemoryContextCandidate).map((card) => card.id));
   const openConflictRecords = listMemoryConflicts({ status: "open" }).filter((conflict) =>
     conflict.cardIds.some((cardId) => memoryIds.has(cardId)),
   );

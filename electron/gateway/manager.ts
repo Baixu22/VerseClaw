@@ -10,7 +10,7 @@ import { PORTS } from '../utils/config';
 import { getSetting } from '../utils/store';
 import { GatewayRpcError, JsonRpcNotification, isNotification, isResponse } from './protocol';
 import { logger } from '../utils/logger';
-import { clampHostTimeoutToDeadline } from '@shared/host-api/host-deadline';
+import { clampHostTimeoutToDeadline, HostTimeoutError, toHostTimeoutDetails } from '@shared/host-api/host-deadline';
 import { getHostDeadline } from '../utils/host-deadline-context';
 import { captureTelemetryEvent, trackMetric } from '../utils/telemetry';
 import {
@@ -1103,20 +1103,29 @@ export class GatewayManager extends EventEmitter {
     const effectiveTimeoutMs = ambientDeadline
       ? clampHostTimeoutToDeadline(timeoutMs, ambientDeadline)
       : timeoutMs;
+    const id = crypto.randomUUID();
+    const timeoutError = () => new HostTimeoutError(`RPC timeout: ${method}`, toHostTimeoutDetails({
+      stage: 'gateway',
+      deadlineMs: effectiveTimeoutMs,
+      elapsedMs: Date.now() - startedAt,
+      requestId: ambientDeadline?.requestId ?? id,
+      ...(ambientDeadline ? { deadline: ambientDeadline } : {}),
+    }));
+    // Permission or admission work may consume the caller's remaining budget.
+    // An expired request must not reach the socket and start a new Mission.
+    if (effectiveTimeoutMs <= 0) throw timeoutError();
     return await new Promise<T>((resolve, reject) => {
       if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
         reject(new Error('Gateway not connected'));
         return;
       }
 
-      const id = crypto.randomUUID();
-
       // Set timeout for request
       const timeout = setTimeout(() => {
         if (method === 'chat.send') {
           logger.warn(`[gateway-rpc] chat.send timeout id=${id} timeoutMs=${effectiveTimeoutMs}`);
         }
-        rejectPendingGatewayRequest(this.pendingRequests, id, new Error(`RPC timeout: ${method}`));
+        rejectPendingGatewayRequest(this.pendingRequests, id, timeoutError());
       }, effectiveTimeoutMs);
 
       // Store pending request

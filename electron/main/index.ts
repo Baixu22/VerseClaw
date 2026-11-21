@@ -6,6 +6,7 @@ import { markPerformance } from '../services/performance-metrics';
 import { app, BrowserWindow, dialog, nativeTheme, session } from 'electron';
 import { registerWindowVisibility } from './window-visibility';
 import { appendFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
 import { registerWebViewSecurity } from '../utils/register-webview-security';
@@ -73,7 +74,7 @@ import { stopAllOfficeWatches } from '../services/office-tools-api';
 import { stopAllKnowledgeSourceWatches } from '../services/knowledge-api';
 import { disposeVtokenBridge } from '../services/vtoken-api';
 import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
-import { appendTaskLedgerEvents } from '../services/task-ledger-service';
+import { appendTaskLedgerEvents, appendTaskLedgerLifecycleEvents } from '../services/task-ledger-service';
 import type { TaskLedgerEventInput, TaskLedgerNodeStatus } from '../../shared/types/task-ledger';
 import type { ClawGraphRunEvent, ClawGraphRunSnapshot } from '../../shared/types/clawgraph';
 import type {
@@ -170,8 +171,6 @@ const hostApiRegistry = new HostApiRegistry();
 const mainWindowFocusState = createMainWindowFocusState();
 const quitLifecycleState = createQuitLifecycleState();
 let systemThemeIconListenerRegistered = false;
-const taskLoopLedgerSeen = new Set<string>();
-const missionLedgerSeen = new Set<string>();
 const clawGraphLedgerSeen = new Set<string>();
 
 type TaskLoopLifecyclePayload = {
@@ -251,6 +250,19 @@ function taskLoopLedgerTimestamp(payload: TaskLoopLifecyclePayload): string {
   return new Date(ts).toISOString();
 }
 
+function canonicalLifecycleValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalLifecycleValue);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(
+    Object.entries(value).sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, entry]) => [key, canonicalLifecycleValue(entry)]),
+  );
+}
+
+function lifecycleEventDigest(value: unknown): string {
+  return createHash('sha256').update(JSON.stringify(canonicalLifecycleValue(value))).digest('hex').slice(0, 16);
+}
+
 async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
   if (!payload || typeof payload !== 'object') return;
   const event = payload as TaskLoopLifecyclePayload;
@@ -258,6 +270,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
   if (!loopRunId) return;
 
   const createdAt = taskLoopLedgerTimestamp(event);
+  const lifecycleDigest = lifecycleEventDigest(event);
   const goalId = `task-loop:${loopRunId}:goal`;
   const taskId = `task-loop:${loopRunId}:task`;
   const checkId = `task-loop:${loopRunId}:check`;
@@ -267,84 +280,80 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
     ? [{ type: 'trace' as const, ref: event.orchestrationRunId, label: 'Task-loop orchestration trace' }]
     : [];
   const events: TaskLedgerEventInput[] = [];
-
-  if (!taskLoopLedgerSeen.has(loopRunId)) {
-    taskLoopLedgerSeen.add(loopRunId);
-    events.push(
-      {
-        id: `task-loop:${loopRunId}:goal-created`,
-        type: 'node_created',
-        actor: 'system',
-        taskId: goalId,
-        sessionId: event.sessionKey ?? null,
-        payload: {
-          node: {
-            id: goalId,
-            title: `Task loop ${loopRunId}`,
-            kind: 'goal',
-            status: 'doing',
-            owner: 'agent',
-            priority: 'normal',
-            tags: ['task-loop'],
-            description: 'Runtime-controlled agent task loop.',
-            evidenceRefs,
-            metadata: { loopRunId },
-            createdAt,
-            updatedAt: createdAt,
-          },
+  events.push(
+    {
+      id: `task-loop:${loopRunId}:goal-created`,
+      type: 'node_created',
+      actor: 'system',
+      taskId: goalId,
+      sessionId: event.sessionKey ?? null,
+      payload: {
+        node: {
+          id: goalId,
+          title: `Task loop ${loopRunId}`,
+          kind: 'goal',
+          status: 'doing',
+          owner: 'agent',
+          priority: 'normal',
+          tags: ['task-loop'],
+          description: 'Runtime-controlled agent task loop.',
+          evidenceRefs,
+          metadata: { loopRunId },
+          createdAt,
+          updatedAt: createdAt,
         },
       },
-      {
-        id: `task-loop:${loopRunId}:task-created`,
-        type: 'node_created',
-        actor: 'system',
-        taskId,
-        sessionId: event.sessionKey ?? null,
-        payload: {
-          node: {
-            id: taskId,
-            title: 'Run bounded orchestration loop',
-            kind: 'task',
-            parentId: goalId,
-            status: 'doing',
-            owner: 'agent',
-            tags: ['task-loop', ...evidenceGateTags(event.evidenceGate)],
-            progress: event.progress ?? 0,
-            evidenceRefs,
-            metadata: {
-              loopRunId,
-              phase: event.phase,
-              iteration: event.iteration,
-              longConversationControl: longConversationControlMetadata(event),
-            },
-            createdAt,
-            updatedAt: createdAt,
+    },
+    {
+      id: `task-loop:${loopRunId}:task-created`,
+      type: 'node_created',
+      actor: 'system',
+      taskId,
+      sessionId: event.sessionKey ?? null,
+      payload: {
+        node: {
+          id: taskId,
+          title: 'Run bounded orchestration loop',
+          kind: 'task',
+          parentId: goalId,
+          status: 'doing',
+          owner: 'agent',
+          tags: ['task-loop', ...evidenceGateTags(event.evidenceGate)],
+          progress: event.progress ?? 0,
+          evidenceRefs,
+          metadata: {
+            loopRunId,
+            phase: event.phase,
+            iteration: event.iteration,
+            longConversationControl: longConversationControlMetadata(event),
           },
+          createdAt,
+          updatedAt: createdAt,
         },
       },
-      {
-        id: `task-loop:${loopRunId}:session-linked`,
-        type: 'session_linked',
-        actor: 'system',
-        taskId,
-        sessionId: event.sessionKey ?? null,
-        payload: {
-          sessionLink: {
-            id: `task-loop:${loopRunId}:session`,
-            sessionKey: event.sessionKey ?? '',
-            nodeId: taskId,
-            traceId: event.orchestrationRunId ?? null,
-            summary: 'Task-loop runtime evidence',
-            createdAt,
-          },
+    },
+    {
+      id: `task-loop:${loopRunId}:session-linked`,
+      type: 'session_linked',
+      actor: 'system',
+      taskId,
+      sessionId: event.sessionKey ?? null,
+      payload: {
+        sessionLink: {
+          id: `task-loop:${loopRunId}:session`,
+          sessionKey: event.sessionKey ?? '',
+          nodeId: taskId,
+          traceId: event.orchestrationRunId ?? null,
+          summary: 'Task-loop runtime evidence',
+          createdAt,
         },
       },
-    );
-  }
+    },
+  );
 
   events.push(
     {
-      id: `task-loop:${loopRunId}:goal-progress:${event.phase ?? 'unknown'}:${event.iteration ?? 0}:${event.status ?? 'running'}`,
+      id: `task-loop:${loopRunId}:goal-progress:${event.phase ?? 'unknown'}:${event.iteration ?? 0}:${event.status ?? 'running'}:${lifecycleDigest}`,
       type: 'progress_changed',
       actor: 'system',
       taskId: goalId,
@@ -355,7 +364,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
       },
     },
     {
-      id: `task-loop:${loopRunId}:goal-status:${event.status ?? 'running'}`,
+      id: `task-loop:${loopRunId}:goal-status:${event.status ?? 'running'}:${lifecycleDigest}`,
       type: 'status_changed',
       actor: 'system',
       taskId: goalId,
@@ -366,7 +375,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
       },
     },
     {
-      id: `task-loop:${loopRunId}:progress:${event.phase ?? 'unknown'}:${event.iteration ?? 0}:${event.status ?? 'running'}`,
+      id: `task-loop:${loopRunId}:progress:${event.phase ?? 'unknown'}:${event.iteration ?? 0}:${event.status ?? 'running'}:${lifecycleDigest}`,
       type: 'progress_changed',
       actor: 'system',
       taskId,
@@ -377,7 +386,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
       },
     },
     {
-      id: `task-loop:${loopRunId}:status:${event.status ?? 'running'}`,
+      id: `task-loop:${loopRunId}:status:${event.status ?? 'running'}:${lifecycleDigest}`,
       type: 'status_changed',
       actor: 'system',
       taskId,
@@ -391,7 +400,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
 
   if (event.phase === 'self_check' || event.selfCheckDecision) {
     events.push({
-      id: `task-loop:${loopRunId}:check:${event.iteration ?? 0}`,
+      id: `task-loop:${loopRunId}:check:${event.iteration ?? 0}:${lifecycleDigest}`,
       type: 'node_created',
       actor: 'system',
       taskId: checkId,
@@ -422,7 +431,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
 
   if (event.selfCheckDecision) {
     events.push({
-      id: `task-loop:${loopRunId}:review:${event.selfCheckDecision}`,
+      id: `task-loop:${loopRunId}:review:${event.selfCheckDecision}:${lifecycleDigest}`,
       type: 'node_created',
       actor: 'system',
       taskId: reviewId,
@@ -456,7 +465,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
     });
   }
 
-  await appendTaskLedgerEvents(undefined, events, `task-loop:${loopRunId}`);
+  await appendTaskLedgerLifecycleEvents(undefined, events, `task-loop:${loopRunId}:${lifecycleDigest}`);
 }
 
 function missionLedgerStatus(status?: MissionLifecycleEvent['status']): TaskLedgerNodeStatus {
@@ -479,6 +488,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
   if (!missionId) return;
 
   const createdAt = missionLedgerTimestamp(event);
+  const lifecycleDigest = lifecycleEventDigest(event);
   const workspaceId = event.workspaceId?.trim() || undefined;
   const goalId = `mission:${missionId}:goal`;
   const taskId = `mission:${missionId}:task`;
@@ -490,80 +500,76 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
     ...(event.taskLoopRunId ? [{ type: 'tool' as const, ref: event.taskLoopRunId, label: 'Inner task_loop run' }] : []),
   ];
   const events: TaskLedgerEventInput[] = [];
-
-  if (!missionLedgerSeen.has(missionId)) {
-    missionLedgerSeen.add(missionId);
-    events.push(
-      {
-        id: `mission:${missionId}:goal-created`,
-        type: 'node_created',
-        actor: 'system',
-        taskId: goalId,
-        sessionId: event.sessionKey,
-        payload: {
-          node: {
-            id: goalId,
-            title: `Mission Control ${missionId}`,
-            kind: 'goal',
-            status: 'doing',
-            owner: 'agent',
-            priority: 'normal',
-            tags: ['mission-control'],
-            description: 'Runtime-controlled long-goal Mission Loop.',
-            evidenceRefs,
-            metadata: { missionId },
-            createdAt,
-            updatedAt: createdAt,
-          },
+  events.push(
+    {
+      id: `mission:${missionId}:goal-created`,
+      type: 'node_created',
+      actor: 'system',
+      taskId: goalId,
+      sessionId: event.sessionKey,
+      payload: {
+        node: {
+          id: goalId,
+          title: `Mission Control ${missionId}`,
+          kind: 'goal',
+          status: 'doing',
+          owner: 'agent',
+          priority: 'normal',
+          tags: ['mission-control'],
+          description: 'Runtime-controlled long-goal Mission Loop.',
+          evidenceRefs,
+          metadata: { missionId },
+          createdAt,
+          updatedAt: createdAt,
         },
       },
-      {
-        id: `mission:${missionId}:task-created`,
-        type: 'node_created',
-        actor: 'system',
-        taskId,
-        sessionId: event.sessionKey,
-        payload: {
-          node: {
-            id: taskId,
-            title: 'Run Mission Loop ticks',
-            kind: 'task',
-            parentId: goalId,
-            status: 'doing',
-            owner: 'agent',
-            tags: ['mission-control', 'mission-loop'],
-            progress: event.progress ?? 0,
-            evidenceRefs,
-            metadata: { missionId, phase: event.phase, tick: event.tick },
-            createdAt,
-            updatedAt: createdAt,
-          },
+    },
+    {
+      id: `mission:${missionId}:task-created`,
+      type: 'node_created',
+      actor: 'system',
+      taskId,
+      sessionId: event.sessionKey,
+      payload: {
+        node: {
+          id: taskId,
+          title: 'Run Mission Loop ticks',
+          kind: 'task',
+          parentId: goalId,
+          status: 'doing',
+          owner: 'agent',
+          tags: ['mission-control', 'mission-loop'],
+          progress: event.progress ?? 0,
+          evidenceRefs,
+          metadata: { missionId, phase: event.phase, tick: event.tick },
+          createdAt,
+          updatedAt: createdAt,
         },
       },
-      {
-        id: `mission:${missionId}:session-linked`,
-        type: 'session_linked',
-        actor: 'system',
-        taskId,
-        sessionId: event.sessionKey,
-        payload: {
-          sessionLink: {
-            id: `mission:${missionId}:session`,
-            sessionKey: event.sessionKey,
-            nodeId: taskId,
-            agentId: event.agentId ?? null,
-            traceId: event.traceId ?? null,
-            summary: 'Mission Control runtime evidence',
-            createdAt,
-          },
+    },
+    {
+      id: `mission:${missionId}:session-linked`,
+      type: 'session_linked',
+      actor: 'system',
+      taskId,
+      sessionId: event.sessionKey,
+      payload: {
+        sessionLink: {
+          id: `mission:${missionId}:session`,
+          sessionKey: event.sessionKey,
+          nodeId: taskId,
+          agentId: event.agentId ?? null,
+          traceId: event.traceId ?? null,
+          summary: 'Mission Control runtime evidence',
+          createdAt,
         },
       },
-    );
-  }
+    },
+  );
 
   events.push(
     {
-      id: `mission:${missionId}:goal-progress:${event.phase}:${event.tick}:${event.status}`,
+      id: `mission:${missionId}:goal-progress:${event.phase}:${event.tick}:${event.status}:${lifecycleDigest}`,
       type: 'progress_changed',
       actor: 'system',
       taskId: goalId,
@@ -574,7 +580,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
       },
     },
     {
-      id: `mission:${missionId}:goal-status:${event.status}`,
+      id: `mission:${missionId}:goal-status:${event.status}:${lifecycleDigest}`,
       type: 'status_changed',
       actor: 'system',
       taskId: goalId,
@@ -582,7 +588,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
       payload: { nodeId: goalId, status },
     },
     {
-      id: `mission:${missionId}:task-progress:${event.phase}:${event.tick}:${event.status}`,
+      id: `mission:${missionId}:task-progress:${event.phase}:${event.tick}:${event.status}:${lifecycleDigest}`,
       type: 'progress_changed',
       actor: 'system',
       taskId,
@@ -593,7 +599,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
       },
     },
     {
-      id: `mission:${missionId}:task-status:${event.status}`,
+      id: `mission:${missionId}:task-status:${event.status}:${lifecycleDigest}`,
       type: 'status_changed',
       actor: 'system',
       taskId,
@@ -605,7 +611,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
   if (event.phase === 'checkpoint' || event.phase === 'reflect' || event.reviewerDecision) {
     const isMilestone = event.phase === 'checkpoint';
     events.push({
-      id: `mission:${missionId}:check:${event.tick}:${event.phase}`,
+      id: `mission:${missionId}:check:${event.tick}:${event.phase}:${lifecycleDigest}`,
       type: 'node_created',
       actor: 'system',
       taskId: checkId,
@@ -636,7 +642,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
 
   if (event.reviewerDecision || event.blockedReason || event.error) {
     events.push({
-      id: `mission:${missionId}:review:${event.tick}:${event.reviewerDecision ?? event.status}`,
+      id: `mission:${missionId}:review:${event.tick}:${event.reviewerDecision ?? event.status}:${lifecycleDigest}`,
       type: 'node_created',
       actor: 'system',
       taskId: reviewId,
@@ -669,7 +675,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
     });
   }
 
-  await appendTaskLedgerEvents(workspaceId, events, `mission:${missionId}`);
+  await appendTaskLedgerLifecycleEvents(workspaceId, events, `mission:${missionId}:${lifecycleDigest}`);
 }
 
 type ClawGraphLifecyclePayload = {

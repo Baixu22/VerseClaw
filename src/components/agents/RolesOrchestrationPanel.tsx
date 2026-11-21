@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -675,6 +675,9 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
   } | null>(null);
   const [missionEvents, setMissionEvents] = useState<Record<string, MissionLifecycleEvent>>({});
   const [missionRunning, setMissionRunning] = useState(false);
+  const [missionControlAction, setMissionControlAction] = useState<'pause' | 'resume' | 'cancel' | null>(null);
+  const missionControlRevision = useRef(0);
+  const missionScopeRevision = useRef(0);
   const [missionResult, setMissionResult] = useState<MissionPanelResult | null>(null);
   const [memoryCards, setMemoryCards] = useState<MemoryCardView[]>([]);
   const [memoryProposals, setMemoryProposals] = useState<MemoryProposalView[]>([]);
@@ -764,6 +767,18 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
     () => agents.find((agent) => agent.id === anchorAgentId) ?? null,
     [agents, anchorAgentId],
   );
+  useLayoutEffect(() => {
+    missionScopeRevision.current += 1;
+    missionControlRevision.current += 1;
+    setMissionEvents({});
+    setMissionResult(null);
+    setMissionRunning(false);
+    setMissionControlAction(null);
+    return () => {
+      missionScopeRevision.current += 1;
+      missionControlRevision.current += 1;
+    };
+  }, [anchorAgentId, anchorSession]);
   const showRoleMemoryDisabledToast = useCallback(() => {
     toast.message(tt('roles.memoryDisabledToast', 'Role Memory is disabled in Settings.'));
   }, [tt]);
@@ -891,10 +906,10 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
   }, [activeWorkspace?.rootPath]);
 
   useEffect(() => {
-    if (expanded && roles.length === 0 && !loading) {
+    if (expanded) {
       void loadRoles();
     }
-  }, [expanded, roles.length, loading, loadRoles]);
+  }, [expanded, loadRoles]);
 
   useEffect(() => {
     if (expanded) {
@@ -1460,6 +1475,7 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
       return;
     }
     const unsubscribe = hostEvents.onMissionControlLifecycle((event) => {
+      if (event.sessionKey !== anchorSession) return;
       setMissionEvents((prev) => ({
         ...prev,
         [`${event.missionId}:${event.tick}:${event.phase}:${event.status}:${event.ts}`]: event,
@@ -1480,7 +1496,7 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
       });
     });
     return unsubscribe;
-  }, []);
+  }, [anchorSession]);
 
   const runPlan = useCallback(async () => {
     if (!task.trim()) {
@@ -1732,6 +1748,8 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
       toast.error(tt('roles.noSession', 'No session available for orchestration. Create or select an Agent first.'));
       return;
     }
+    const controlRevision = missionControlRevision.current;
+    const scopeRevision = missionScopeRevision.current;
     setMissionRunning(true);
     try {
       const result = await hostApi.gateway.rpc('mission.run', {
@@ -1741,6 +1759,8 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
         agentId: anchorAgentId,
         ...(selectedRole ? { leadRole: selectedRole } : {}),
       });
+      // Accepted controls take precedence over an earlier run's delayed response.
+      if (scopeRevision !== missionScopeRevision.current || controlRevision !== missionControlRevision.current) return;
       const unwrapped = unwrapRpc(result);
       if (!unwrapped.ok) {
         toast.error(unwrapped.message);
@@ -1753,32 +1773,35 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
         tick: next.tick,
       }));
     } catch (err) {
-      toast.error(String(err));
+      if (controlRevision === missionControlRevision.current) toast.error(String(err));
     } finally {
-      setMissionRunning(false);
+      if (scopeRevision === missionScopeRevision.current) setMissionRunning(false);
     }
   }, [anchorAgentId, anchorSession, missionResult?.missionId, selectedRole, task, tt]);
 
   const controlMission = useCallback(async (action: 'pause' | 'resume' | 'cancel') => {
     const missionId = missionResult?.missionId;
-    if (!missionId) return;
-    setMissionRunning(true);
+    if (!missionId || missionControlAction) return;
+    const scopeRevision = missionScopeRevision.current;
+    setMissionControlAction(action);
     try {
       const result = await hostApi.gateway.rpc(`mission.${action}`, { missionId });
+      if (scopeRevision !== missionScopeRevision.current) return;
       const unwrapped = unwrapRpc(result);
       if (!unwrapped.ok) {
         toast.error(unwrapped.message);
         return;
       }
       const next = readMissionPanelResult(unwrapped.data.mission);
+      missionControlRevision.current += 1;
       setMissionResult(next);
       toast.success(tt('roles.missionUpdated', 'Mission {{status}}', { status: next.status || 'unknown' }));
     } catch (err) {
-      toast.error(String(err));
+      if (scopeRevision === missionScopeRevision.current) toast.error(String(err));
     } finally {
-      setMissionRunning(false);
+      if (scopeRevision === missionScopeRevision.current) setMissionControlAction(null);
     }
-  }, [missionResult?.missionId, tt]);
+  }, [missionControlAction, missionResult?.missionId, tt]);
 
   const approveRun = useCallback(async () => {
     if (!pendingApproval) return;
@@ -1853,7 +1876,7 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                   <Plus className="mr-1 h-3.5 w-3.5" />
                   {tt('roles.configCreate', 'New role')}
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => void loadRoles()} disabled={loading}>
+                <Button data-testid="role-catalog-refresh" aria-label={tt('refresh', 'Refresh')} variant="ghost" size="sm" onClick={() => void loadRoles()} disabled={loading}>
                   <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
                 </Button>
               </div>
@@ -3055,8 +3078,8 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                 {taskLoopRunning ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-1" />}
                 {tt('roles.taskLoop', 'Task loop')}
               </Button>
-              <Button data-testid="role-mission-run" variant="secondary" onClick={() => void runMissionLoop()} disabled={missionRunning}>
-                {missionRunning ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Sparkles className="h-4 w-4 mr-1" />}
+              <Button data-testid="role-mission-run" variant="secondary" onClick={() => void runMissionLoop()} disabled={missionRunning || missionControlAction !== null} aria-busy={missionRunning}>
+                {missionRunning ? <Loader2 aria-hidden="true" className="h-4 w-4 mr-1 animate-spin motion-reduce:animate-none" /> : <Sparkles className="h-4 w-4 mr-1" />}
                 {tt('roles.missionControl', 'Mission Control')}
               </Button>
             </div>
@@ -3279,7 +3302,7 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
               <div data-testid="role-mission-result" className="rounded-xl border border-border/60 bg-surface-input p-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <CircleDot className="h-4 w-4 text-primary" />
-                  <span className="text-xs font-medium text-foreground">
+                  <span className="text-xs font-medium text-foreground" role="status">
                     {tt('roles.missionSummary', 'Mission {{status}} at {{phase}}', {
                       status: missionResult.status,
                       phase: missionResult.phase,
@@ -3309,9 +3332,10 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                     size="sm"
                     variant="outline"
                     onClick={() => void controlMission('pause')}
-                    disabled={missionRunning || ['complete', 'blocked', 'cancelled', 'error', 'paused'].includes(String(missionResult.status))}
+                    aria-busy={missionControlAction === 'pause'}
+                    disabled={missionControlAction !== null || ['complete', 'blocked', 'cancelled', 'error', 'paused'].includes(String(missionResult.status))}
                   >
-                    <PauseCircle className="h-3.5 w-3.5 mr-1" />
+                    {missionControlAction === 'pause' ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 mr-1 animate-spin motion-reduce:animate-none" /> : <PauseCircle className="h-3.5 w-3.5 mr-1" />}
                     {tt('roles.missionPause', 'Pause')}
                   </Button>
                   <Button
@@ -3319,9 +3343,10 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                     size="sm"
                     variant="outline"
                     onClick={() => void controlMission('resume')}
-                    disabled={missionRunning || missionResult.status !== 'paused'}
+                    aria-busy={missionControlAction === 'resume'}
+                    disabled={missionRunning || missionControlAction !== null || missionResult.status !== 'paused'}
                   >
-                    <Play className="h-3.5 w-3.5 mr-1" />
+                    {missionControlAction === 'resume' ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 mr-1 animate-spin motion-reduce:animate-none" /> : <Play className="h-3.5 w-3.5 mr-1" />}
                     {tt('roles.missionResume', 'Resume')}
                   </Button>
                   <Button
@@ -3329,9 +3354,10 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                     size="sm"
                     variant="outline"
                     onClick={() => void controlMission('cancel')}
-                    disabled={missionRunning || ['complete', 'blocked', 'cancelled', 'error'].includes(String(missionResult.status))}
+                    aria-busy={missionControlAction === 'cancel'}
+                    disabled={missionControlAction !== null || ['complete', 'blocked', 'cancelled', 'error'].includes(String(missionResult.status))}
                   >
-                    <XCircle className="h-3.5 w-3.5 mr-1" />
+                    {missionControlAction === 'cancel' ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 mr-1 animate-spin motion-reduce:animate-none" /> : <XCircle className="h-3.5 w-3.5 mr-1" />}
                     {tt('roles.missionCancel', 'Cancel')}
                   </Button>
                 </div>

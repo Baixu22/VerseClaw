@@ -13,12 +13,47 @@ vi.mock('electron', () => ({
 describe('GatewayManager heartbeat recovery', () => {
   const originalPlatform = process.platform;
 
+  it('preserves Gateway timeout classification and metadata through the host dispatcher', async () => {
+    const { GatewayManager } = await import('@electron/gateway/manager');
+    const { createHostInvokeDispatcher } = await import('@electron/main/ipc/host-invoke');
+    const manager = new GatewayManager();
+    const ws = { readyState: 1, send: vi.fn() };
+    (manager as unknown as { ws: typeof ws }).ws = ws;
+    const dispatch = createHostInvokeDispatcher({
+      gateway: { rpc: () => manager.rpc('mission.run', {}, 50) },
+    } as never, { requireSender: false });
+    const deadline = { deadlineAtMs: Date.now() + 1000, timeoutMs: 1000, stage: 'renderer' as const, requestId: 'mission-short' };
+
+    const promise = dispatch({ id: 'mission-short', module: 'gateway', action: 'rpc', payload: { method: 'mission.run' }, deadline });
+    await vi.advanceTimersByTimeAsync(50);
+    expect(await promise).toMatchObject({ ok: false, error: { code: 'TIMEOUT', details: {
+      stage: 'gateway', deadlineMs: 50, elapsedMs: 50, requestId: 'mission-short', deadlineAtMs: deadline.deadlineAtMs,
+    } } });
+    expect(ws.send).toHaveBeenCalledTimes(1);
+    expect((manager as unknown as { pendingRequests: Map<string, unknown> }).pendingRequests.size).toBe(0);
+  });
+
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-03-19T00:00:00.000Z'));
     Object.defineProperty(process, 'platform', { value: originalPlatform });
+  });
+
+  it('refuses to send an RPC after its propagated deadline expired', async () => {
+    const { GatewayManager } = await import('@electron/gateway/manager');
+    const { runWithHostDeadline } = await import('@electron/utils/host-deadline-context');
+    const manager = new GatewayManager();
+    const ws = { readyState: 1, send: vi.fn() };
+    (manager as unknown as { ws: typeof ws }).ws = ws;
+    const deadline = { deadlineAtMs: Date.now() - 1, timeoutMs: 1000, stage: 'renderer' as const, requestId: 'mission-expired' };
+
+    await expect(runWithHostDeadline(deadline, () => manager.rpc('mission.run', {}, 900_000))).rejects.toMatchObject({
+      code: 'TIMEOUT', details: { stage: 'gateway', deadlineMs: 0, requestId: 'mission-expired' },
+    });
+    expect(ws.send).not.toHaveBeenCalled();
+    expect((manager as unknown as { pendingRequests: Map<string, unknown> }).pendingRequests.size).toBe(0);
   });
 
   afterEach(() => {

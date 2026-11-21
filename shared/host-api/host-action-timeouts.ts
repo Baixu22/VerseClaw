@@ -20,6 +20,7 @@ export const HOST_ACTION_LONG_TIMEOUT_MS = 15 * 60_000;
  * - vtoken.assemble: long-running ingestion assembly
  * - dcsProdFlags.setFlag/setPreview/setWorkspaceContext: bounded restart followed by runtime ack
  * - chat.sendWithMedia: a real agent turn may run several read/edit/exec steps
+ * - gateway.rpc mission.run: one bounded Mission tick runs its Task Loop and reviewer
  * - sessions.compact/compactRange: the runtime may need a live-model summary
  * (No host-api git.clone or E2E-run action exists in the current contract.)
  */
@@ -47,7 +48,18 @@ const HOST_ACTION_LONG_SET = new Set<string>([
   'sessions.compactRange',
 ]);
 
-export function hostActionTimeoutMs(module: string, action: string): number {
+export function hostActionTimeoutMs(module: string, action: string, payload?: unknown): number {
+  if (
+    module === 'gateway' &&
+    action === 'rpc' &&
+    payload && typeof payload === 'object' &&
+    !Array.isArray(payload)
+  ) {
+    const method = (payload as Record<string, unknown>).method;
+    if (typeof method === 'string' && method.trim() === 'mission.run') {
+      return HOST_ACTION_LONG_TIMEOUT_MS;
+    }
+  }
   return HOST_ACTION_LONG_SET.has(module + '.' + action)
     ? HOST_ACTION_LONG_TIMEOUT_MS
     : HOST_ACTION_DEFAULT_TIMEOUT_MS;

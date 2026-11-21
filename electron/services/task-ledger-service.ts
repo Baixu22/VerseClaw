@@ -13,7 +13,7 @@ import type {
 import { getOpenClawConfigDir } from '../utils/paths';
 import { withFileLock, writeJsonAtomic, type FileLockOptions } from '../utils/atomic-write';
 import { logger } from '../utils/logger';
-import { appendPersistentTaskEvents, readPersistentTaskEvents, readTaskEventProjection } from '../../shared/task-system/event-store';
+import { appendPersistentTaskEvents, readPersistentTaskEvents, readTaskEventProjection, sameTaskEventMeaning } from '../../shared/task-system/event-store';
 
 const SCHEMA_VERSION = 1 as const;
 
@@ -369,4 +369,51 @@ export async function appendTaskLedgerEvents(
   const nextEvents=inputs.map(input=>createTaskLedgerEvent(normalizedWorkspaceId,input,batchIdempotencyKey));
   appendPersistentTaskEvents(getTaskLedgerEventsPathForKey(normalizedWorkspaceId),nextEvents,batchIdempotencyKey);
   return loadTaskLedgerSnapshot(workspaceId);
+}
+
+const lifecycleWrites = new Map<string, Promise<TaskLedgerSnapshot>>();
+
+/** Serializes derived lifecycle batches without changing the Task Ledger owner. */
+export function appendTaskLedgerLifecycleEvents(
+  workspaceId: string | undefined,
+  inputs: TaskLedgerEventInput[],
+  batchIdempotencyKey: string,
+): Promise<TaskLedgerSnapshot> {
+  const workspaceKey = normalizeTaskLedgerWorkspaceId(workspaceId);
+  const previousWrite = lifecycleWrites.get(workspaceKey);
+  const write = (previousWrite?.catch(() => undefined) ?? Promise.resolve()).then(async () => {
+    if (!batchIdempotencyKey.trim() || inputs.some(input => !input.id?.trim())) {
+      throw new Error('TASK_LEDGER_LIFECYCLE_ID_REQUIRED');
+    }
+    const prior = new Map((await readTaskLedgerEvents(workspaceId)).events.map(event => [event.id, event]));
+    const stableInputs = inputs.map(input => {
+      const proposed = createTaskLedgerEvent(workspaceKey, { ...input, idempotencyKey: input.id });
+      const saved = prior.get(proposed.id);
+      if (!saved) return proposed;
+      // Creation facts survive later phases and host restarts. Replayed updates
+      // still have to match their original meaning; IDs cannot hide mutations.
+      const bootstrap = proposed.actor === 'system' && (
+        proposed.type === 'node_created' && /^(?:mission|task-loop):.+:(?:goal|task)-created$/.test(proposed.id) ||
+        proposed.type === 'session_linked' && /^(?:mission|task-loop):.+:session-linked$/.test(proposed.id)
+      );
+      if (saved.type !== proposed.type || saved.actor !== proposed.actor ||
+          saved.taskId !== proposed.taskId || saved.sessionId !== proposed.sessionId ||
+          saved.payload.node?.id !== proposed.payload.node?.id ||
+          saved.payload.node?.kind !== proposed.payload.node?.kind ||
+          (saved.payload.node?.parentId ?? null) !== (proposed.payload.node?.parentId ?? null) ||
+          saved.payload.sessionLink?.id !== proposed.payload.sessionLink?.id ||
+          saved.payload.sessionLink?.nodeId !== proposed.payload.sessionLink?.nodeId ||
+          saved.payload.sessionLink?.sessionKey !== proposed.payload.sessionLink?.sessionKey ||
+          (saved.payload.sessionLink?.agentId ?? null) !== (proposed.payload.sessionLink?.agentId ?? null) ||
+          (!bootstrap && !sameTaskEventMeaning(saved, proposed))) {
+        throw new Error('TASK_EVENT_ID_CONFLICT');
+      }
+      return saved;
+    });
+    return appendTaskLedgerEvents(workspaceId, stableInputs, batchIdempotencyKey);
+  });
+  lifecycleWrites.set(workspaceKey, write);
+  const release = () => { if (lifecycleWrites.get(workspaceKey) === write) lifecycleWrites.delete(workspaceKey); };
+  void write.then(release, release);
+  return write;
 }

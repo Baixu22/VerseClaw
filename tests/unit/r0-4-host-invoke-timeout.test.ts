@@ -79,6 +79,27 @@ describe('R0-4 host dispatcher timeout', () => {
     expect(response.ok).toBe(false);
     if (!response.ok) expect(response.error.code).toBe('INTERNAL');
   });
+
+  it.each([
+    { method: 'mission.run', completes: true },
+    { method: ' mission.run ', completes: true },
+    { method: 'memory.proposals', completes: false },
+  ])('enforces the nested Gateway budget for $method', async ({ method, completes }) => {
+    const payload = { method, timeoutMs: 150_000 };
+    const dispatch = createHostInvokeDispatcher({
+      gateway: { rpc: () => new Promise((resolve) => setTimeout(() => resolve('settled'), 70_000)) },
+    } as never, { requireSender: false });
+
+    const promise = dispatch({ id: method, module: 'gateway', action: 'rpc', payload });
+    await vi.advanceTimersByTimeAsync(70_000);
+    const response = await promise;
+
+    if (completes) {
+      expect(response).toEqual({ id: method, ok: true, data: 'settled' });
+    } else {
+      expect(response).toMatchObject({ id: method, ok: false, error: { code: 'TIMEOUT' } });
+    }
+  });
 });
 
 describe('NET-E host dispatcher logical deadline', () => {

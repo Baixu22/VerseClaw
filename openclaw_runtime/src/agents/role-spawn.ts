@@ -27,7 +27,7 @@ import {
 } from "./role-permissions-policy.js";
 import { buildRolePermissionDecisionEvents } from "./role-permission-audit.js";
 import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMemoryConflicts, isMemoryStoreConfigured, isRoleMemoryEnabled } from "../memory/memory-store.js";
-import { isInjectableMemoryCard, isMemoryCardInContextScope, type MemoryCardScopeContext } from "../memory/memory-card.js";
+import { isMemoryContextCandidate, isMemoryCardInContextScope, type MemoryCardScopeContext } from "../memory/memory-card.js";
 import { applyMemoryUseGateOverlay } from "../memory/memory-dual-gate.js";
 import { buildContextPack, renderContextPack } from "../memory/context-pack.js";
 import { dcsObservability } from "../context-engine/dcs-observability.js";
@@ -188,9 +188,7 @@ export function buildRoleSystemPrompt(
     memoryCards &&
     memoryCards.length > 0
   ) {
-    const legacyInjectable = memoryCards.filter((card) =>
-      isInjectableMemoryCard(card) || (card.status === "cold" && !card.supersededBy),
-    );
+    const legacyInjectable = memoryCards.filter(isMemoryContextCandidate);
     // TF-0110 (T-P0-1, req-1): consult the memory use gate on the real
     // role-spawn injection path (same semantics as
     // role-memory-context-provider.ts: gate enabled -> strict filter;
