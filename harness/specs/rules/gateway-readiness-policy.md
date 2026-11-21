@@ -5,6 +5,7 @@ type: ai-coding-rule
 appliesTo:
   - gateway-backend-communication
 requiredTests:
+  - tests/unit/gateway-lazy-harness-selection.test.ts
   - tests/unit/gateway-native-language-parser-loading.test.ts
   - tests/unit/gateway-lazy-builtin-harness.test.ts
   - tests/unit/gateway-lazy-language-parsers.test.ts
@@ -24,3 +25,5 @@ Main caches a Gateway-issued device token only after the device-token connection
 Startup queries for analyzer metadata keep native parsing dependencies deferred until file analysis. A parser becomes reusable after successful language initialization; analysis preserves the existing parse-fallback warnings and file results.
 
 Built-in harness support metadata leaves the embedded execution graph unloaded until an attempt starts. The lazy runtime boundary preserves parameters, results and errors and writes loaded bytecode before execution can be interrupted. Optional cache controls retain their existing behavior.
+
+Harness selection captures its decision and diagnostic trace before loading context-budget and lifecycle execution wrappers. Support queries leave those wrappers unloaded; execution uses the original budget and policy functions and persists available compilation at its runtime boundary.

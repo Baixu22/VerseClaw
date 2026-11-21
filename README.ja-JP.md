@@ -16,7 +16,7 @@ Agent の起動時は、設定とワークスペースが一致する Gateway �
 
 ネイティブパーサーは、対応する言語のコードを初めて解析するときに読み込みます。
 
-内蔵 Agent の実行モジュールは実行開始時に読み込まれ、機能の問い合わせでは既存のメタデータを参照します。
+Agent のコンテキストとライフサイクルの実行モジュールは実行開始時に読み込まれ、ハーネスの選択には既存のメタデータを使います。
 
 プロジェクトメニューから Git の初期化、作業ツリーの作成と切り替えを行い、各会話と下書きを引き継げます。
 
@@ -262,6 +262,7 @@ VerseBrowser: インストール・開発・ビルド時に組み込みモジュ
 | `pnpm run typecheck` | node/web/test full typecheck |
 | `pnpm run lint:check` | Lint のみ。file は変更しない |
 | `pnpm test` | Root test group と selected regression |
+| `pnpm run test:recovery:light` | 単一 worker で Harness の遅延読み込みと中断後のバイトコードキャッシュを検証 |
 | `pnpm run test:e2e` | Build + Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract / 4 言語 coverage |
 | `pnpm run harness:ci` | Repository Harness baseline |

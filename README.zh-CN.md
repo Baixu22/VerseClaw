@@ -16,7 +16,7 @@ Agent 启动复用配置和工作区匹配的 Gateway 插件状态；配置或�
 
 原生语法解析器在首次分析对应语言的代码时加载。
 
-内置 Agent 的运行模块在开始执行时加载，能力查询读取已有元数据。
+Agent 的上下文和生命周期执行模块在开始运行时加载，运行器选择读取已有元数据。
 
 项目下拉菜单提供 Git 初始化、工作树创建与切换，并沿用各自会话和草稿。
 
@@ -264,6 +264,7 @@ VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契�
 | `pnpm run typecheck` | node/web/test 全量类型检查 |
 | `pnpm run lint:check` | 只检查 lint，不改文件 |
 | `pnpm test` | 根测试组与选定回归 |
+| `pnpm run test:recovery:light` | 单 worker 验证 Harness 按需加载与字节码缓存中断恢复 |
 | `pnpm run test:e2e` | 构建并运行 Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract 与四语覆盖 |
 | `pnpm run harness:ci` | 仓库 Harness 基线 |

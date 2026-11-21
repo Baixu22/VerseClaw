@@ -34,8 +34,9 @@ function cacheFiles(directory: string | null): CacheFile[] {
 }
 
 const checkpoints = [
-  { name: 'command', file: 'agents/command/attempt-execution.runtime.ts', backend: './attempt-execution.js', helper: '../../infra/runtime-compile-cache.js', entry: 'runAgentAttempt' },
-  { name: 'embedded', file: 'agents/embedded-agent-runner/run/attempt.runtime.ts', backend: './attempt.js', helper: '../../../infra/runtime-compile-cache.js', entry: 'runEmbeddedAttempt' },
+  { name: 'command', file: 'agents/command/attempt-execution.runtime.ts', backends: ['./attempt-execution.js'], helper: '../../infra/runtime-compile-cache.js', entry: 'runAgentAttempt' },
+  { name: 'embedded', file: 'agents/embedded-agent-runner/run/attempt.runtime.ts', backends: ['./attempt.js'], helper: '../../../infra/runtime-compile-cache.js', entry: 'runEmbeddedAttempt' },
+  { name: 'selection', file: 'agents/harness/selection.runtime.ts', backends: ['./context-engine-lifecycle.js', './lifecycle.js'], helper: '../../infra/runtime-compile-cache.js', entry: 'runAgentHarnessLifecycleAttempt' },
 ] as const;
 
 async function interruptLateRuntime(mode: 'enabled' | 'disabled' | 'unavailable' | 'unsupported', checkpoint: typeof checkpoints[number]) {
@@ -43,8 +44,8 @@ async function interruptLateRuntime(mode: 'enabled' | 'disabled' | 'unavailable'
   roots.push(root);
   const source = fs.readFileSync(path.join(runtime, checkpoint.file), 'utf8');
   const backend = path.join(root, 'backend.mjs');
-  const exports = source.match(/export\s*\{([^}]+)\}\s*from\s*"[^"]+"/s)?.[1]
-    .split(',').map(value => value.trim()).filter(Boolean);
+  const exports = [...source.matchAll(/export\s*\{([^}]+)\}\s*from\s*"[^"]+"/gs)]
+    .flatMap(match => match[1].split(',').map(value => value.trim()).filter(Boolean));
   expect(exports?.length).toBeGreaterThan(0);
   fs.writeFileSync(backend, exports!.map(name => `export function ${name}() { return 42; }`).join('\n'));
   let helper = path.join(runtime, 'infra/runtime-compile-cache.ts');
@@ -59,9 +60,8 @@ async function interruptLateRuntime(mode: 'enabled' | 'disabled' | 'unavailable'
   }
   // Keep the production barrel body; redirect only its backend dependency so
   // the cache boundary can be tested without starting a provider or agent.
-  const barrel = source
-    .replace(checkpoint.backend, pathToFileURL(backend).href)
-    .replace(checkpoint.helper, pathToFileURL(helper).href);
+  let barrel = source.replace(checkpoint.helper, pathToFileURL(helper).href);
+  for (const dependency of checkpoint.backends) barrel = barrel.replace(dependency, pathToFileURL(backend).href);
   const barrelFile = path.join(root, 'attempt-runtime.mjs');
   fs.writeFileSync(barrelFile, barrel);
   const cache = path.join(root, 'cache');

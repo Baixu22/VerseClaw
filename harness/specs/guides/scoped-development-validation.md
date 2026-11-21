@@ -41,3 +41,21 @@ budgets, product locks or candidate/digest binding to save runtime.
 Harness `fast` is a historical broad profile name (including the root suite),
 not a promise of seconds. Use task-specific development commands; use
 `harness run --dry-run` to inspect the formal profile without executing it.
+
+For G3 harness lazy-loading development, use `pnpm run test:recovery:light`.
+It runs the selection, built-in harness and late bytecode-cache test files with
+one worker, serial files and stop-on-first-failure. The cache checks interrupt
+isolated Node processes at the command, embedded and selection boundaries.
+Keep Windows temporary output on `D:`; linked worktrees also set
+`pnpm_config_verify_deps_before_run=false` to reuse their installed dependencies.
+This lane records focused development evidence. Frozen G3 acceptance keeps its
+existing build, type, real recovery, live-provider and packaging gates.
+
+Concurrent development uses observed capacity. Check active commands, available
+memory, CPU and paging before each expensive step; an active chat alone does not
+reserve the entire machine. Continue source work and read-only review while one
+bounded local check runs. Use serial projects or one test worker when memory is
+the constraint, and lower the priority of owned validation processes. Retain
+separate output directories and leave other sessions' processes and dependencies
+under their owners. Record throttled runs as correctness evidence; performance
+gates use their original command and thresholds in a stable measurement window.

@@ -16,7 +16,7 @@ Agents reuse compatible Gateway plugin state during startup; configuration and w
 
 Native language parsers load when code analysis first needs the corresponding language.
 
-Built-in agent execution loads when a selected run starts; support queries use its existing metadata.
+Agent context and lifecycle execution modules load when a selected run starts; harness selection uses existing metadata.
 
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
@@ -265,6 +265,7 @@ Common commands:
 | `pnpm run typecheck` | Full node/web/test typecheck |
 | `pnpm run lint:check` | Lint without modifying files |
 | `pnpm test` | Root test groups and selected regressions |
+| `pnpm run test:recovery:light` | Focused harness loading and interrupted bytecode-cache checks with one worker |
 | `pnpm run test:e2e` | Build and run Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract and four-language coverage |
 | `pnpm run harness:ci` | Repository Harness baseline |

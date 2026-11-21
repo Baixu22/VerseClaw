@@ -11,6 +11,11 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - harness/specs/guides/scoped-development-validation.md
+  - openclaw_runtime/src/agents/harness/selection.ts
+  - openclaw_runtime/src/agents/harness/selection.runtime.ts
+  - openclaw_runtime/src/agents/harness/selection.compass.test.ts
+  - tests/unit/gateway-lazy-harness-selection.test.ts
   - tests/unit/gateway-native-language-parser-loading.test.ts
   - openclaw_runtime/src/agents/harness/builtin-openclaw.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.runtime.ts
@@ -286,6 +291,8 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - openclaw_runtime/src/agents/harness/selection.compass.test.ts
+  - tests/unit/gateway-lazy-harness-selection.test.ts
   - tests/unit/gateway-native-language-parser-loading.test.ts
   - tests/unit/gateway-lazy-builtin-harness.test.ts
   - tests/unit/gateway-lazy-language-parsers.test.ts
@@ -346,6 +353,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Harness selection captures its original decision and diagnostic trace before lazy context-budget/lifecycle loading. Native and plugin execution keep their existing policy, budget, result and error handling; the runtime boundary persists available compilation before an interrupted attempt.
   - Built-in harness support metadata defers the embedded execution graph until runAttempt. The runner receives the original parameters and retains result/error identity and host capabilities. Its lazy runtime boundary persists loaded bytecode before interruption without changing optional cache controls or recovery admission.
   - Analyzer metadata and fallback analysis defer native parsers and grammars until the corresponding language is analyzed. Successful language initialization owns parser reuse; loading failures remain retryable and existing parse-fallback warnings remain intact.
   - Agent startup passes source activation reasons, manifests and install records from its compatible Gateway metadata scope to the existing runtime registry owner. Missing or incompatible scope retains standalone loading; runtime configuration and registry compatibility checks stay authoritative.

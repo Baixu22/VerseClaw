@@ -1,18 +1,17 @@
 import { AuthStorage } from "../sessions/auth-storage.js";
 import { ModelRegistry } from "../sessions/model-registry.js";
-import { afterEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { registerAgentHarness, clearAgentHarnesses } from "./registry.js";
-import { runAgentHarnessAttempt } from "./selection.js";
 import type { AgentHarnessAttemptParams } from "./types.js";
-import {
-  getTurnInjectionBudget,
-  resetTurnInjectionBudgetsForTests,
-} from "../../context-engine/turn-injection-budget.js";
-import { getContextOrchestratorCollection } from "../../context-engine/context-orchestrator.js";
 import type { ContextEngine } from "../../context-engine/types.js";
 import type { AgentMessage } from "../runtime/index.js";
-import { assembleHarnessContextEngine } from "../../plugin-sdk/agent-harness-runtime.js";
-import { runWithHarnessContextBudget } from "./context-engine-lifecycle.js";
+let { runAgentHarnessAttempt } = await import("./selection.js");
+let { getTurnInjectionBudget, resetTurnInjectionBudgetsForTests } =
+  await import("../../context-engine/turn-injection-budget.js");
+let { getContextOrchestratorCollection } =
+  await import("../../context-engine/context-orchestrator.js");
+let { assembleHarnessContextEngine } = await import("../../plugin-sdk/agent-harness-runtime.js");
+let { runWithHarnessContextBudget } = await import("./context-engine-lifecycle.js");
 
 function attemptDefaults() {
   const authStorage = AuthStorage.inMemory();
@@ -32,6 +31,19 @@ function attemptDefaults() {
 vi.mock("./builtin-openclaw.js", () => ({
   createOpenClawAgentHarness: () => ({ id: "openclaw", label: "builtin", runAttempt: vi.fn() }),
 }));
+
+beforeEach(async () => {
+  // The separate-SDK case resets the module cache. Refresh each owner so later
+  // lazy attempts and their assertions observe the same budget collections.
+  ({ runAgentHarnessAttempt } = await import("./selection.js"));
+  ({ getTurnInjectionBudget, resetTurnInjectionBudgetsForTests } =
+    await import("../../context-engine/turn-injection-budget.js"));
+  ({ getContextOrchestratorCollection } =
+    await import("../../context-engine/context-orchestrator.js"));
+  ({ assembleHarnessContextEngine } =
+    await import("../../plugin-sdk/agent-harness-runtime.js"));
+  ({ runWithHarnessContextBudget } = await import("./context-engine-lifecycle.js"));
+});
 
 afterEach(() => {
   clearAgentHarnesses();
