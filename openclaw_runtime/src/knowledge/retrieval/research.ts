@@ -589,7 +589,9 @@ export async function runResearchPlan(options: {
                 planning.actualCostUsd < 0 ||
                 planning.actualCostUsd > maxCostUsd))
           )
-            throw new Error("Research planning usage exceeded its reservation");
+            throw Object.assign(new Error("Research planning usage exceeded its reservation"), {
+              code: "RESEARCH_PLANNING_USAGE_INVALID",
+            });
           result.usage.actualPlanningTokens =
             planning.actualTokens === null || result.usage.actualPlanningTokens === null
               ? null
@@ -681,6 +683,8 @@ export async function runResearchPlan(options: {
         } catch (error) {
           if (signal.aborted || (error as { code?: string })?.code === "RESEARCH_OWNER_CHANGED")
             throw error;
+          if ((error as { code?: string })?.code === "RESEARCH_PLANNING_USAGE_INVALID")
+            stop = "unavailable";
           notes.add("planning-unavailable");
           partial = true;
           result.usage.actualPlanningTokens = null;

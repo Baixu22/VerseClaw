@@ -90,6 +90,7 @@ touchedAreas:
   - "tests/unit/verseshell-runtime-bundle.test.ts"
   - "tests/unit/verseshell-manifest.test.ts"
   - "tests/e2e/project-rag-research.spec.ts"
+  - "tests/e2e/fixtures/fp-p1-harness.ts"
   - "eslint.config.mjs"
   - "openclaw_runtime/src/agents/execution-checkout-admission.ts"
   - "openclaw_runtime/src/agents/execution-checkout-tools.ts"
@@ -307,3 +308,5 @@ Windows CIM查询只请求进程ID、父进程ID和创建时间，三列身份�
 生命周期50-cycle文件完整移入既有单worker隔离段，避免首段Git密集测试与它并行创建进程；原7项/50循环/泄漏断言与超时保持。数字进程token按BigInt精确排序，同刻子进程保留、早1微秒的旧PID关系排除。
 
 规划器重复建议已排队的Markdown链接时，复用该查询的来源绑定、原路径和深度。查询规范化后的重复也遵循同一规则，后续扩展按原两跳预算停止；单测和既有Research Electron旅程覆盖这条链。
+
+规划回执中的token/费用为无效数值或超出本次预留时，结束本次Research，保留已准入来源和原预留，并将实际用量保持为unknown。后续链接不再触发新的规划；正常和缺少实际用量的回执继续遵循原预算。单测与现有Electron旅程的模拟usage异常覆盖停止行为。

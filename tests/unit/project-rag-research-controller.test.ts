@@ -239,6 +239,19 @@ describe('bounded Project RAG Research controller', () => {
     expect(result.status).toBe('partial'); expect(result.usage.reservedCostUsd).toBe(0.025); expect(result.usage.actualCostUsd).toBeNull();
     expect(result.gaps.some(gap => gap.reason === 'planning-usage-unknown')).toBe(true);
   });
+  it.each(['tokens', 'cost', 'negative'])('stops after planning returns invalid %s usage and retains the reservation', async kind => {
+    const retrieve = vi.fn(async () => ({ evidence: [evidence('port', 'Gateway port is 8080. [next](next.md)')], partial: false }));
+    const planNext = vi.fn(async ({ evidence: sources, maxTokens, maxCostUsd }: Parameters<Parameters<typeof runResearchPlan>[0]['planNext']>[0]) => ({
+      review: review(), retainedEvidence: manifest(sources),
+      actualTokens: kind === 'tokens' ? maxTokens + 1 : kind === 'negative' ? -1 : maxTokens,
+      actualCostUsd: kind === 'cost' ? maxCostUsd + 0.001 : maxCostUsd,
+    }));
+    const result = await run({ retrieve, planNext });
+    expect(planNext).toHaveBeenCalledTimes(1); expect(retrieve).toHaveBeenCalledTimes(1);
+    expect(result).toMatchObject({ status: 'partial', stopReason: 'unavailable', phase: 'finished',
+      usage: { planningModelCalls: 1, reservedPlanningTokens: 8000, reservedCostUsd: 0.025, actualPlanningTokens: null, actualCostUsd: null } });
+    expect(result.evidence).toHaveLength(1); expect(result.gaps.some(gap => gap.reason === 'planning-unavailable')).toBe(true);
+  });
   it('publishes independent progress snapshots rather than a mutable shared result', async () => {
     const updates: ResearchResultV1[] = [];
     const result = await run({ onUpdate: row => updates.push(row) });

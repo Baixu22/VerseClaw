@@ -195,6 +195,10 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (!line) return { text: 'RAG16 ordinary reply' };
     const input = JSON.parse(line) as { query: string; round: number; questions: string[]; evidence: Array<{ sourceId: string; lookup: string }> };
     planningCalls.push({ query: input.query, round: input.round, references: input.evidence.map(source => source.sourceId) });
+    if (input.query === 'RAG16_PLANNING_USAGE_OVERRUN') return {
+      text: JSON.stringify({ queries: [], coverage: [], inferences: [], conflicts: [], gaps: [] }),
+      usage: { prompt_tokens: 100000, completion_tokens: 30, total_tokens: 100030 },
+    };
     if (input.query === 'RAG16_LINK_BUDGET_ROOT') return { text: JSON.stringify({
       queries: [input.round === 1 ? 'concepts/betaunique.md' : 'concepts/gammaunique.md'],
       coverage: [], inferences: [], conflicts: [], gaps: [],
@@ -248,6 +252,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await writeFile(join(vault, 'concepts/betaunique.md'), raw('Beta unique', '[next](gammaunique.md)'));
     await writeFile(join(vault, 'concepts/gammaunique.md'), raw('Gamma unique', '[next](deltaunique.md)'));
     await writeFile(join(vault, 'concepts/deltaunique.md'), raw('Delta unique', 'The linked guide beyond the two-hop limit.'));
+    await writeFile(join(vault, 'concepts/usage-root.md'), raw('RAG16_PLANNING_USAGE_OVERRUN', 'RAG16_PLANNING_USAGE_OVERRUN. [next](usage-child.md)'));
+    await writeFile(join(vault, 'concepts/usage-child.md'), raw('Budget follow-up', 'A local guide for a later round.'));
     await host(page, 'settings', 'set', { key: 'gatewayPort', value: await allocatePort() });
     await host(page, 'gateway', 'start').catch(error => { if (!String(error).includes('timed out')) throw error; });
     await expect.poll(async () => (await host(page!, 'gateway', 'status')).state, { timeout: 120000 }).toBe('running');
@@ -334,6 +340,13 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     expect(linked.graph.nodes).not.toContain('concepts/deltaunique.md');
     expect(linked.usage).toMatchObject({ rounds: 3, queries: 3, planningModelCalls: 2 });
     receipt.linked = linked; steps.plannerPreservesLinkedDepth = true;
+
+    const overrun = await execute('RAG16_PLANNING_USAGE_OVERRUN');
+    expect(overrun).toMatchObject({ status: 'partial', stopReason: 'unavailable',
+      usage: { planningModelCalls: 1, queries: 1, actualPlanningTokens: null, actualCostUsd: null } });
+    expect(planningCalls.filter(call => call.query === 'RAG16_PLANNING_USAGE_OVERRUN')).toHaveLength(1);
+    expect(overrun.evidence.length).toBeGreaterThan(0);
+    receipt.planningUsageOverrun = overrun; steps.planningReservationViolationStopsCalls = true;
 
     await writeFile(join(vault, 'concepts/cancel.md'), raw('Gateway port cancellation', 'Gateway port is 8080. Cancellation evidence remains available before model completion.'));
     await queryInput.fill('Gateway port cancellation'); await page.getByTestId('chat-knowledge-search-submit').click();

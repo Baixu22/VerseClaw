@@ -26,6 +26,8 @@
 
 规划等待连接出错或超时时，Main 对尚未确认完成的内部 run 发出 owner 取消请求，再移除本地监听；迟到的接受回执仍保留取消补偿。
 
+规划回执中的 token 或费用为无效数值，或超出该次调用的预留时，Research 结束本次请求并保留已准入来源。原预留继续占用，实际用量标为未知，已排队链接也不再发起下一次规划调用。缺少实际用量的正常回执仍按已冻结的预留预算处理。
+
 一次性内部模型会话使用执行 owner 提供的 workspace、会话 key 和实际 generation 建立预算记录；这类会话没有持久 transcript 行。普通会话仍通过持久 session owner 复读身份。
 
 Research 的来源检索允许本地 embedding、向量和重排路径。当前远端 embedding/rerank 没有可供本次请求预留的费用合同，因此本控制器收紧其 egress，使用可用的本地路径并返回检索退化状态。普通 Local/Quality/Research 单次检索继续遵循既有 provider 选择。

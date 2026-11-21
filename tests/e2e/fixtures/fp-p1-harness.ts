@@ -104,12 +104,15 @@ export type LlmRequestMessage = {
   toolName?: string;
 };
 
+type LlmReply = { toolCall?: ToolCallSpec; text?: string;
+  usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number } };
+
 export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
   requestIndex: number,
   messages: readonly LlmRequestMessage[],
-) => { toolCall?: ToolCallSpec; text?: string } | Promise<{ toolCall?: ToolCallSpec; text?: string }>;
+) => LlmReply | Promise<LlmReply>;
 
 /**
  * Scripted OpenAI-compatible chat/completions endpoint. The script decides the
@@ -199,7 +202,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
           issued: action.toolCall ? action.toolCall.id : `text:${action.text?.slice(0, 40)}`,
         });
 
-        const usage = SCRIPTED_LLM_USAGE;
+        const usage = action.usage ?? SCRIPTED_LLM_USAGE;
         const finishReason = action.toolCall ? 'tool_calls' : 'stop';
 
         if (parsed.stream) {
