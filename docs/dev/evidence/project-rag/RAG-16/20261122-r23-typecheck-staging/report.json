@@ -1,0 +1,184 @@
+{
+  "schema": "ProjectRagTypecheckStagingDevelopment/v1",
+  "actor": "codex-g2-relay-r23",
+  "driven_by": "agent",
+  "sourceBase": "0f9f53589918d5a718dca6f97b6102bfc3acaf6c",
+  "sourceWasDirty": true,
+  "code": {
+    "path": "scripts/typecheck-agent-dev.mjs",
+    "sha256": "ff8e03b3bb1faae47b806040d022d8383b783063d8628c37e8832f0ba349c011"
+  },
+  "before": {
+    "generatedAt": "2026-11-21T19:41:48.181Z",
+    "durationMs": 77962,
+    "mode": "parallel",
+    "cache": "miss",
+    "GOMAXPROCS": 2,
+    "GOMEMLIMIT": "768MiB soft runtime request",
+    "decision": "blocked",
+    "phases": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "durationMs": 84,
+        "exitCode": 0
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "durationMs": 56621,
+        "exitCode": 0
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "durationMs": 14790,
+        "exitCode": 0
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "durationMs": 75419,
+        "exitCode": 0
+      }
+    ]
+  },
+  "after": {
+    "generatedAt": "2026-11-21T20:00:29.934Z",
+    "durationMs": 28667,
+    "mode": "staged",
+    "cache": "miss",
+    "GOMAXPROCS": 6,
+    "GOMEMLIMIT": "4GiB soft runtime request",
+    "decision": "needs-full-gate",
+    "limitSteps": [],
+    "phases": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "durationMs": 55,
+        "exitCode": 0
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "durationMs": 10014,
+        "exitCode": 0
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "durationMs": 3567,
+        "exitCode": 0
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "durationMs": 17326,
+        "exitCode": 0
+      }
+    ]
+  },
+  "regression": {
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0,
+    "cases": [
+      {
+        "fullName": "agent dev regularization contracts defines the required channel conformance matrix",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts writes fail-closed channel conformance reports for a scaffold-shaped channel",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts scaffolds scenarios into the shared registry and snapshot-backed E2E",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts refuses standalone E2E scaffolds for unregistered scenarios",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts scaffolds pages with four-locale namespace stubs",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts scaffolds host routes through contract, renderer facade, and Main registry",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts promotes reviewed scenario recordings into registry, fixture, harness, and E2E",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts rejects unredacted scenario recordings before promotion",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts escapes scenario metadata in the static workbench",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts renders optimized Agent Dev gate commands and quality evidence in the static workbench",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts keeps trace and sandbox reports typed for P2/P3 workbench surfaces",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts classifies Agent Dev gate performance limits with actionable loops",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts does not reuse a build when a required artifact is missing",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts does not reuse a build when relevant source is newer than dist",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts reuses a build when dist artifacts are newer than relevant source",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts classifies skipped build reuse steps without treating them as missing evidence",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts extracts structured deep-test diagnostics from command output",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts keeps full deep-test commands by default and switches only requested fast paths",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts represents a reusable build as a skipped e2e-build step in the deep-test plan",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts summarizes deep-test decisions for full gates, fast paths, and blocked runs",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts creates compact history entries and same-mode trend summaries",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts scores Agent Dev audit fixtures and flags blocked performance evidence as disqualifying",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts resolves agent-dev source change times through git for clean checkouts",
+        "status": "passed"
+      },
+      {
+        "fullName": "agent dev regularization contracts parses audit CLI reporting mode and classifies maturity levels",
+        "status": "passed"
+      },
+      {
+        "fullName": "fails on test type errors and invalidates cached checks when tests or runtime inputs change",
+        "status": "passed"
+      }
+    ]
+  },
+  "hardLimitMs": 45000,
+  "formalAcceptance": false,
+  "recordedAt": "2026-11-22T04:04:57.4587667+08:00"
+}
