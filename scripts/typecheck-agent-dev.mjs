@@ -74,16 +74,16 @@ if (bridge.exitCode !== 0) {
     const report = createCacheHitReport({ bridge, cached, fingerprint, startedAt });
     console.log(JSON.stringify(report, null, 2));
   } else {
-    const [nodeCheck, webCheck, testCheck] = await Promise.all([
+    const [nodeCheck, webCheck] = await Promise.all([
       run('pnpm', ['run', 'typecheck:node']),
       run('pnpm', ['run', 'typecheck:web']),
-      runTestCheck('pnpm', ['run', 'typecheck:test']),
     ]);
+    const testCheck = await runTestCheck('pnpm', ['run', 'typecheck:test']);
     const results = [bridge, nodeCheck, webCheck, testCheck];
     const success = results.every((result) => result.exitCode === 0);
     const report = {
       success,
-      mode: 'parallel',
+      mode: 'staged',
       testTypes: testCheck,
       cache: {
         enabled: cacheEnabled,
@@ -93,7 +93,7 @@ if (bridge.exitCode !== 0) {
         report: CACHE_REPORT,
       },
       totalDurationMs: Math.round(performance.now() - startedAt),
-      coverageNote: 'Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.',
+      coverageNote: 'Generates the extension bridge, checks node/web together, then checks tests so the largest compiler heaps do not overlap. Every project must pass; runtime-wide checks remain separate gates.',
       results,
     };
     console.log(JSON.stringify(report, null, 2));
@@ -288,7 +288,7 @@ function createCacheHitReport({ bridge, cached, fingerprint, startedAt }) {
 
   return {
     success: true,
-    mode: 'parallel',
+    mode: 'staged',
     cache: {
       enabled: true,
       status: 'hit',
