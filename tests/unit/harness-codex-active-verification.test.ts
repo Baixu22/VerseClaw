@@ -173,10 +173,9 @@ describe("TF-0570 active verification matrix", () => {
       matrix.scenarioSource!, "harness/specs/fixtures/harness-codex-active-verification",
     ]);
     cpSync(join(ROOT, "harness/specs/fixtures/harness-codex-active-verification"), join(root, "harness/specs/fixtures/harness-codex-active-verification"), { recursive: true });
-    mkdirSync(join(root, "resources/bin/win32-x64"), { recursive: true });
-    cpSync(join(ROOT, "resources/bin/win32-x64/vg.exe"), join(root, "resources/bin/win32-x64/vg.exe"));
     const missing = [
       "resources/bin/win32-x64/ae.exe",
+      "resources/bin/win32-x64/vg.exe",
       "release/win-unpacked/Verse Claw.exe",
       "release/win-unpacked/resources/openclaw-runtime/extensions/codex/package.json",
       "release/win-unpacked/resources/openclaw-runtime/extensions/codex/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe",
