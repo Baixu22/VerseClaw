@@ -227,11 +227,42 @@ describe('bounded Project RAG Research controller', () => {
       queueMicrotask(() => controller.abort()); return new Promise(() => {});
     }, planNext: async ({ evidence: sources }) => ({ review: review({ queries: ['follow-up'] }), retainedEvidence: manifest(sources), actualTokens: 10, actualCostUsd: 0.0001 }) });
     expect(result).toMatchObject({ status: 'cancelled', stopReason: 'cancelled', phase: 'finished' }); expect(result.evidence).toHaveLength(1);
+    expect(result.usage).toMatchObject({ actualPlanningTokens: 10, actualCostUsd: 0.0001 });
   });
   it('stops at the original deadline without allowing an uncooperative owner to finish late', async () => {
     const start = Date.now();
     const result = await run({ budget: { deadlineAtMs: start + 30 }, retrieve: async () => new Promise(() => {}) });
     expect(Date.now() - start).toBeLessThan(1000); expect(result.stopReason).toBe('deadline'); expect(result.usage.queries).toBe(1);
+    expect(result.usage).toMatchObject({ planningModelCalls: 0, actualPlanningTokens: 0, actualCostUsd: 0 });
+  });
+  it.each(['cancelled', 'deadline', 'scope-changed'] as const)('keeps pending planning usage unknown after %s and ignores late settlement', async reason => {
+    vi.useFakeTimers();
+    const controller = new AbortController(), updates: ResearchResultV1[] = [];
+    let entered!: () => void, release = () => {};
+    const planning = new Promise<void>(resolve => { entered = resolve; });
+    const pending = run({ signal: controller.signal, onUpdate: row => updates.push(row),
+      retrieve: async query => ({ evidence: [evidence(query)], partial: false }),
+      planNext: async ({ evidence: sources, round }) => {
+        const output = { review: review({ queries: ['follow-up'] }), retainedEvidence: manifest(sources), actualTokens: 10, actualCostUsd: 0.0001 };
+        if (round === 1) return output;
+        entered(); return new Promise<typeof output>(resolve => { release = () => resolve(output); });
+      } });
+    try {
+      await planning;
+      const usage = { planningModelCalls: 2, reservedPlanningTokens: 16000, reservedCostUsd: 0.05,
+        actualPlanningTokens: null, actualCostUsd: null };
+      expect(updates.at(-1)).toMatchObject({ phase: 'planning', usage });
+      if (reason === 'deadline') await vi.advanceTimersByTimeAsync(30000);
+      else controller.abort(reason === 'scope-changed' ? Object.assign(new Error('Owner changed'), { code: 'RESEARCH_OWNER_CHANGED' }) : undefined);
+      const result = await pending;
+      expect(result).toMatchObject({ phase: 'finished', stopReason: reason, usage });
+      expect(result.evidence).toHaveLength(reason === 'scope-changed' ? 0 : 2);
+      const terminal = structuredClone(result), published = updates.length;
+      release(); await vi.advanceTimersByTimeAsync(0);
+      expect(result).toEqual(terminal); expect(updates).toHaveLength(published);
+    } finally {
+      controller.abort(); release(); await pending; vi.useRealTimers();
+    }
   });
   it('retains an unknown provider liability and reports partial even when coverage is sufficient', async () => {
     const result = await run({ planNext: async ({ plan, evidence: sources }) => ({ review: review({ coverage: [{ question: plan.query, sourceId: 'port', quote: '8080' }] }),
@@ -362,8 +393,10 @@ describe('Research Main owner and Host contract', () => {
         expect((await fixture.terminal()).research?.phase).toBe('finished');
         return read();
       });
-      expect((await fixture.api.researchStatus(fixture.selected)).research?.phase).toBe('planning');
-      expect((await fixture.terminal()).research?.phase).toBe('finished');
+      expect((await fixture.api.researchStatus(fixture.selected)).research).toMatchObject({ phase: 'planning',
+        usage: { actualPlanningTokens: null, actualCostUsd: null } });
+      expect((await fixture.terminal()).research).toMatchObject({ phase: 'finished',
+        usage: { actualPlanningTokens: 100, actualCostUsd: 0.0001 } });
     } finally { release(); }
   });
 });

@@ -356,10 +356,13 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await page.getByTestId('chat-research-cancel').click();
     await expect(page.getByTestId('chat-research-status')).toHaveText('Research cancelled', { timeout: 10000 });
     const cancelled = await final('Gateway port cancellation'); expect(cancelled.stopReason).toBe('cancelled'); expect(cancelled.evidence.length).toBeGreaterThan(0);
+    expect(cancelled.usage).toMatchObject({ planningModelCalls: 1, reservedPlanningTokens: 8000, reservedCostUsd: 0.025,
+      actualPlanningTokens: null, actualCostUsd: null });
     const beforeLate = planningCalls.length; releaseHeld(); await page.waitForTimeout(700);
     await expect(page.getByTestId('chat-research-status')).toHaveText('Research cancelled'); expect(planningCalls.length).toBe(beforeLate);
     await expect(composer).toHaveValue('RAG16 draft survives research');
-    receipt.cancelled = cancelled; steps.ownerCancellationWithPartialEvidence = true; steps.lateModelCannotResume = true; steps.draftPreserved = true;
+    receipt.cancelled = cancelled; steps.ownerCancellationWithPartialEvidence = true; steps.pendingUsageRemainsUnknown = true;
+    steps.lateModelCannotResume = true; steps.draftPreserved = true;
     await page.screenshot({ path: testInfo.outputPath('research-cancelled.png'), fullPage: true });
 
     await writeFile(join(vault, 'concepts/other-port.md'), raw('Conflicting Gateway port', 'Gateway port is 9090.'));

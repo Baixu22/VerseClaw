@@ -560,6 +560,10 @@ export async function runResearchPlan(options: {
           (budget.maxCostUsd - result.usage.reservedCostUsd) /
             (budget.maxPlanningModelCalls - result.usage.planningModelCalls),
         );
+        const { actualPlanningTokens, actualCostUsd } = result.usage;
+        // Pending liability stays unknown if cancellation prevents a validated receipt.
+        result.usage.actualPlanningTokens = null;
+        result.usage.actualCostUsd = null;
         result.phase = "planning";
         result.usage.planningModelCalls++;
         result.usage.reservedPlanningTokens += maxTokens;
@@ -593,13 +597,13 @@ export async function runResearchPlan(options: {
               code: "RESEARCH_PLANNING_USAGE_INVALID",
             });
           result.usage.actualPlanningTokens =
-            planning.actualTokens === null || result.usage.actualPlanningTokens === null
+            planning.actualTokens === null || actualPlanningTokens === null
               ? null
-              : result.usage.actualPlanningTokens + planning.actualTokens;
+              : actualPlanningTokens + planning.actualTokens;
           result.usage.actualCostUsd =
-            planning.actualCostUsd === null || result.usage.actualCostUsd === null
+            planning.actualCostUsd === null || actualCostUsd === null
               ? null
-              : result.usage.actualCostUsd + planning.actualCostUsd;
+              : actualCostUsd + planning.actualCostUsd;
           const review = validateResearchReview(
             JSON.stringify(planning.review),
             plan,
