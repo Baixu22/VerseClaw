@@ -174,6 +174,7 @@ touchedAreas:
   - "tests/unit/session-cascade-delete-p3-004.test.ts"
   - "tests/unit/session-files.test.ts"
   - "tests/unit/versegit-product-acceptance.test.ts"
+  - "scripts/verify-versegit-product-integration.mjs"
   - "tests/unit/versegit-wp2-profile.test.ts"
   - "tests/unit/versegit-wp6-closeout.test.ts"
   - "tests/unit/project-rag-memory-domains.test.ts"
@@ -251,6 +252,8 @@ docs:
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 
 Electron 的临时工作区初始化独立 Git 仓库并清除继承的 Git 环境，使 Task authority 从本场景的工作区派生。九问资料明确保留第九问的事实缺口，状态传输故障场景提供可检索的专用资料，使两项检查进入实际规划路径。悬挂模型夹具在所有退出路径释放。
+
+历史 F5 回放仅接纳与历史清单 SHA 和 bytes 一致的原生产物。可选忽略区产物的存在性诊断文字不参与索引语义比较；产物校验结果、候选身份、来源字节及固定证据摘要继续逐项核对，错误产物仍拒绝。
 
 工程验收的 VerseShell 资格构建应用 `binary-test-targets.patch`：两个 CLI 入口没有单测，
 Cargo 为其设置 `test=false`。完整锁定的库、12 个集成目标和文档测试继续执行，集成测试

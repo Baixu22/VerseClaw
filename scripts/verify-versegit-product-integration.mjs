@@ -1114,8 +1114,15 @@ export function validateStoredArtifacts({ root = repositoryRoot } = {}) {
   if (index.candidate?.id !== state.candidate.id) issues.push('criterion index candidate differs from live source inputs');
   if (report.candidate?.id !== state.candidate.id) issues.push('global report candidate differs from live source inputs');
   if (index.source?.commit !== report.source?.commit || index.source?.tree !== report.source?.tree) issues.push('index/report source binding mismatch');
-  const liveCriteria = state.criteria.map((item) => ({ id: item.id, status: item.status, checks: item.checks, evidence: item.evidence, tasks: item.taskIds }));
-  const storedCriteria = index.criteria.map((item) => ({ id: item.id, status: item.status, checks: item.checks, evidence: item.evidence, tasks: item.taskIds }));
+  const projectCriterion = (item) => ({ id: item.id, status: item.status, evidence: item.evidence, tasks: item.taskIds,
+    checks: item.checks.map((check) => {
+      const projected = { ...check };
+      // 忽略区产物的存在性诊断可变，实际校验结果仍须一致。
+      if (item.id === 'package' && check.id === 'artifact-on-disk') delete projected.detail;
+      return projected;
+    }) });
+  const liveCriteria = state.criteria.map(projectCriterion);
+  const storedCriteria = index.criteria.map(projectCriterion);
   if (!deepEqual(liveCriteria, storedCriteria)) issues.push('criterion evidence index diverges from live replay');
   issues.push(...validateVerdict(root, verdict, state, index));
   if (report.status !== 'passed') issues.push('global report status is not passed');

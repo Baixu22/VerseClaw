@@ -35,7 +35,15 @@ beforeAll(() => {
   ]);
   cpSync(resolve(root, F5_EVIDENCE_ROOT), resolve(replayRoot, F5_EVIDENCE_ROOT), { recursive: true });
   mkdirSync(resolve(replayRoot, 'resources/bin/win32-x64'), { recursive: true });
-  cpSync(resolve(root, 'resources/bin/win32-x64/vg.exe'), resolve(replayRoot, 'resources/bin/win32-x64/vg.exe'));
+  const currentBinary = resolve(root, 'resources/bin/win32-x64/vg.exe');
+  const historicalArtifact = JSON.parse(readFileSync(resolve(replayRoot, 'resources/versegit/manifest.json'), 'utf8')).artifact;
+  if (existsSync(currentBinary)) {
+    const bytes = readFileSync(currentBinary);
+    // 历史回放仅接纳对应 manifest 的原生产物。
+    if (bytes.length === historicalArtifact.bytes && createHash('sha256').update(bytes).digest('hex') === historicalArtifact.sha256) {
+      cpSync(currentBinary, resolve(replayRoot, 'resources/bin/win32-x64/vg.exe'));
+    }
+  }
   writeFileSync(resolve(replayRoot, '.git/info/exclude'), 'resources/bin/\n');
   for (const input of frozenIndex.candidate.inputs) {
     const bytes = readFileSync(resolve(replayRoot, input.path));
@@ -250,6 +258,22 @@ describe('VerseGit product integration acceptance', () => {
       expect(state.sourceIssues).toContain(`source input differs from evidence source ${frozenIndex.source.commit}: README.md`);
     } finally {
       writeFileSync(target, original);
+    }
+  });
+  it('rejects a foreign native artifact in the historical package', () => {
+    const target = resolve(replayRoot, 'resources/bin/win32-x64/vg.exe');
+    const original = existsSync(target) ? readFileSync(target) : undefined;
+    try {
+      writeFileSync(target, 'foreign native artifact');
+      const state = buildAcceptanceState({ root: replayRoot, sourceCommit: frozenIndex.source.commit });
+      expect(state.ok).toBe(false);
+      expect(state.criteria.find((entry: { id: string }) => entry.id === 'package')?.status).toBe('failed');
+      const verified = validateStoredArtifacts({ root: replayRoot });
+      expect(verified.ok).toBe(false);
+      expect(verified.issues).toContain('live criterion failed: package');
+    } finally {
+      if (original) writeFileSync(target, original);
+      else rmSync(target);
     }
   });
 });
