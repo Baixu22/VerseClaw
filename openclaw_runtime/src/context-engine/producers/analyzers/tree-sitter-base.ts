@@ -1,10 +1,22 @@
 // Adapted from ragcode-context-engine (MIT), https://github.com/MarshallEriksen-Neura/ragcode
-// Source: src/indexing/analyzers/tree-sitter-base.ts (verbatim; import paths localized; two unused params underscored for local noUnusedParameters).
-import Parser from "tree-sitter";
+// Source: src/indexing/analyzers/tree-sitter-base.ts (local imports and lazy native parser initialization).
+import { createRequire } from "node:module";
+import type Parser from "tree-sitter";
 import type { CodeChunk, CodeFile, GraphEdge, SymbolKind, SymbolNode } from "../../fact-types.js";
 import { sha256, stableId } from "../hash.js";
 import { createFileSymbol, fallbackFileAnalysis } from "./fallback-analyzer.js";
 import type { FileAnalysis } from "./types.js";
+
+const requireNative = createRequire(import.meta.url);
+
+/** Only file analysis loads the native parser and requested grammar. */
+export function createTreeSitterParser(languageModule: string): Parser {
+  const Parser = requireNative("tree-sitter") as typeof import("tree-sitter");
+  const language: unknown = requireNative(languageModule);
+  const parser = new Parser();
+  parser.setLanguage(language);
+  return parser;
+}
 
 export interface TreeSitterNodePattern {
   type: string;
@@ -38,18 +50,20 @@ export function analyzeWithTreeSitter(
   config: TreeSitterLanguageConfig,
   repoRoot: string,
   file: CodeFile,
-  content: string
+  content: string,
 ): FileAnalysis {
   const parsed = parseTreeSitterFile(parser, file, content);
   if (!parsed.tree) {
     return {
       ...fallbackFileAnalysis(repoRoot, file, content),
-      warnings: [{
-        kind: "parser_fallback",
-        message: `tree-sitter ${file.language} analysis skipped: ${parsed.error}`,
-        count: 1,
-        samples: [file.path]
-      }]
+      warnings: [
+        {
+          kind: "parser_fallback",
+          message: `tree-sitter ${file.language} analysis skipped: ${parsed.error}`,
+          count: 1,
+          samples: [file.path],
+        },
+      ],
     };
   }
   const tree = parsed.tree;
@@ -78,7 +92,7 @@ export function analyzeWithTreeSitter(
         sourceId: symbolStack[symbolStack.length - 1]?.id ?? fileSymbol.id,
         targetId: symbol.id,
         kind: "contains",
-        metadata: { sourceFile: file.path }
+        metadata: { sourceFile: file.path },
       });
 
       // Export edge
@@ -88,7 +102,7 @@ export function analyzeWithTreeSitter(
           sourceId: fileSymbol.id,
           targetId: symbol.id,
           kind: "exports",
-          metadata: { sourceFile: file.path, name: symbol.name }
+          metadata: { sourceFile: file.path, name: symbol.name },
         });
       }
 
@@ -114,7 +128,11 @@ export function analyzeWithTreeSitter(
   return { chunks, symbols, edges };
 }
 
-function parseTreeSitterFile(parser: Parser, _file: CodeFile, content: string): { tree?: Parser.Tree; error?: string } {
+function parseTreeSitterFile(
+  parser: Parser,
+  _file: CodeFile,
+  content: string,
+): { tree?: Parser.Tree; error?: string } {
   try {
     return { tree: parser.parse(content) };
   } catch (error) {
@@ -128,7 +146,7 @@ function extractSymbol(
   patterns: TreeSitterNodePattern[],
   repoRoot: string,
   file: CodeFile,
-  content: string
+  content: string,
 ): SymbolNode | undefined {
   for (const pattern of patterns) {
     if (node.type === pattern.type) {
@@ -155,7 +173,7 @@ function extractSymbol(
         startLine,
         endLine,
         signature,
-        exported
+        exported,
       };
     }
   }
@@ -169,7 +187,7 @@ function extractImports(
   repoRoot: string,
   file: CodeFile,
   fileSymbolId: string,
-  edges: GraphEdge[]
+  edges: GraphEdge[],
 ): void {
   function visit(node: Parser.SyntaxNode): void {
     for (const pattern of patterns) {
@@ -191,8 +209,8 @@ function extractImports(
               source,
               sourceFile: file.path,
               line: node.startPosition.row + 1,
-              bindings: bindings.length > 0 ? bindings : undefined
-            }
+              bindings: bindings.length > 0 ? bindings : undefined,
+            },
           });
         }
       }
@@ -212,7 +230,7 @@ function extractCalls(
   repoRoot: string,
   file: CodeFile,
   symbolId: string,
-  edges: GraphEdge[]
+  edges: GraphEdge[],
 ): void {
   function visit(node: Parser.SyntaxNode): void {
     for (const pattern of patterns) {
@@ -228,8 +246,8 @@ function extractCalls(
             metadata: {
               targetName,
               sourceFile: file.path,
-              line: node.startPosition.row + 1
-            }
+              line: node.startPosition.row + 1,
+            },
           });
         }
       }
@@ -248,12 +266,19 @@ function createChunkFromSymbol(
   file: CodeFile,
   _content: string,
   symbol: SymbolNode,
-  node: Parser.SyntaxNode
+  node: Parser.SyntaxNode,
 ): CodeChunk {
   const body = node.text;
 
   return {
-    id: stableId([repoRoot, file.path, symbol.name, symbol.startLine, symbol.endLine, sha256(body)]),
+    id: stableId([
+      repoRoot,
+      file.path,
+      symbol.name,
+      symbol.startLine,
+      symbol.endLine,
+      sha256(body),
+    ]),
     projectId: file.projectId,
     repoRoot,
     filePath: file.path,
@@ -263,7 +288,7 @@ function createChunkFromSymbol(
     startLine: symbol.startLine,
     endLine: symbol.endLine,
     content: body,
-    contentHash: sha256(body)
+    contentHash: sha256(body),
   };
 }
 

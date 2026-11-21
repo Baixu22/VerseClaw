@@ -1,19 +1,14 @@
 // Adapted from ragcode-context-engine (MIT), https://github.com/MarshallEriksen-Neura/ragcode
-// Source: src/indexing/analyzers/python-treesitter-analyzer.ts (verbatim; import paths localized).
-import Parser from "tree-sitter";
-import Python from "tree-sitter-python";
+// Source: src/indexing/analyzers/python-treesitter-analyzer.ts (local imports and lazy native dependencies).
+import type Parser from "tree-sitter";
 import type { AnalyzeFileInput, FileAnalysis, LanguageAnalyzer } from "./types.js";
-import { analyzeWithTreeSitter, type TreeSitterLanguageConfig } from "./tree-sitter-base.js";
+import {
+  analyzeWithTreeSitter,
+  createTreeSitterParser,
+  type TreeSitterLanguageConfig,
+} from "./tree-sitter-base.js";
 
 let parser: Parser | null = null;
-
-function getParser(): Parser {
-  if (!parser) {
-    parser = new Parser();
-    parser.setLanguage(Python);
-  }
-  return parser;
-}
 
 const pythonConfig: TreeSitterLanguageConfig = {
   symbolPatterns: [
@@ -24,7 +19,7 @@ const pythonConfig: TreeSitterLanguageConfig = {
       exportModifierCheck: (node) => {
         const name = node.childForFieldName("name")?.text;
         return name ? !name.startsWith("_") : false;
-      }
+      },
     },
     {
       type: "class_definition",
@@ -33,8 +28,8 @@ const pythonConfig: TreeSitterLanguageConfig = {
       exportModifierCheck: (node) => {
         const name = node.childForFieldName("name")?.text;
         return name ? !name.startsWith("_") : false;
-      }
-    }
+      },
+    },
   ],
   importPatterns: [
     {
@@ -46,7 +41,7 @@ const pythonConfig: TreeSitterLanguageConfig = {
 
         const moduleName = name.text;
         return [{ imported: moduleName, local: moduleName }];
-      }
+      },
     },
     {
       type: "import_from_statement",
@@ -64,15 +59,15 @@ const pythonConfig: TreeSitterLanguageConfig = {
             if (nameNode) {
               bindings.push({
                 imported: nameNode.text,
-                local: aliasNode?.text ?? nameNode.text
+                local: aliasNode?.text ?? nameNode.text,
               });
             }
           }
         }
 
         return bindings;
-      }
-    }
+      },
+    },
   ],
   callPatterns: [
     {
@@ -89,15 +84,16 @@ const pythonConfig: TreeSitterLanguageConfig = {
         }
 
         return undefined;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 export const pythonTreeSitterAnalyzer: LanguageAnalyzer = {
   language: "python",
   capabilities: ["symbols", "imports", "exports", "calls"],
   analyzeFile: ({ repoRoot, file, content }: AnalyzeFileInput): FileAnalysis => {
-    return analyzeWithTreeSitter(getParser(), pythonConfig, repoRoot, file, content);
-  }
+    parser ??= createTreeSitterParser("tree-sitter-python");
+    return analyzeWithTreeSitter(parser, pythonConfig, repoRoot, file, content);
+  },
 };

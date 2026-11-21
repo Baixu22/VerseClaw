@@ -11,6 +11,16 @@ intent: Measure the managed Gateway startup path and remove verified startup bot
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - tests/unit/gateway-native-language-parser-loading.test.ts
+  - openclaw_runtime/src/agents/harness/builtin-openclaw.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.runtime.ts
+  - tests/unit/gateway-lazy-builtin-harness.test.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/tree-sitter-base.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/python-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/go-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/rust-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/java-treesitter-analyzer.ts
+  - tests/unit/gateway-lazy-language-parsers.test.ts
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/activation-provenance-20261120/**
   - harness/specs/rules/recovery-authority-owner-admission.md
   - openclaw_runtime/src/infra/runtime-compile-cache.ts
@@ -94,6 +104,10 @@ requiredRules:
   - gateway-readiness-policy
   - repository-artifact-retention
 requiredTests:
+  - tests/unit/gateway-native-language-parser-loading.test.ts
+  - tests/unit/gateway-lazy-builtin-harness.test.ts
+  - tests/unit/gateway-lazy-language-parsers.test.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/analyzers.test.ts
   - tests/unit/gateway-agent-activation-provenance.test.ts
   - tests/unit/gateway-late-bytecode-cache.test.ts
   - openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
@@ -117,6 +131,8 @@ requiredTests:
   - tests/unit/gateway-process-launcher-trace.test.ts
   - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
+  - Built-in harness metadata does not load the embedded attempt runtime. First execution loads the existing runner through its runtime boundary, preserving parameters, results, errors and host capabilities. That boundary flushes loaded bytecode before execution; disabled, unavailable or unsupported cache APIs retain execution.
+  - Analyzer metadata and fallback analysis leave native parsers and language grammars unloaded. Each native grammar loads when its analyzer first parses a file; a reusable parser is retained only after successful language initialization. Existing symbols, imports, calls and parse-fallback warnings retain their behavior.
   - Agent startup passes source activation reasons, manifests and install records from its compatible Gateway metadata scope to the existing runtime registry owner. Missing or incompatible scope retains standalone loading; runtime configuration and registry compatibility checks stay authoritative.
   - Workflow restart recovery checks the lifecycle owner's current writer and durable rows before loading each controller. Legacy and empty or terminal-only domains stay unloaded; Mission recovery remains taskflow-only for running rows. Live-controller, pending-effect and CAS decisions stay with the original recovery entry, and a domain failure does not suppress the other domains.
   - Read-only channel views share the selected metadata discovery with configuration and stored-auth probes. Config/workspace discovery retains the environment catalog fallback so load-path overlaps preserve bundled environment and authentication signals. Channel and plugin disablement, denial reasons and source roots retain their checks.

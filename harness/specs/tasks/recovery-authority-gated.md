@@ -11,6 +11,16 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - tests/unit/gateway-native-language-parser-loading.test.ts
+  - openclaw_runtime/src/agents/harness/builtin-openclaw.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.runtime.ts
+  - tests/unit/gateway-lazy-builtin-harness.test.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/tree-sitter-base.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/python-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/go-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/rust-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/java-treesitter-analyzer.ts
+  - tests/unit/gateway-lazy-language-parsers.test.ts
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/activation-provenance-20261120/**
   - tests/unit/session-task-scope-bridge.test.ts
   - openclaw_runtime/src/infra/runtime-compile-cache.ts
@@ -276,6 +286,10 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-native-language-parser-loading.test.ts
+  - tests/unit/gateway-lazy-builtin-harness.test.ts
+  - tests/unit/gateway-lazy-language-parsers.test.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/analyzers.test.ts
   - tests/unit/gateway-agent-activation-provenance.test.ts
   - tests/unit/session-task-scope-bridge.test.ts
   - tests/unit/gateway-late-bytecode-cache.test.ts
@@ -332,6 +346,8 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Built-in harness support metadata defers the embedded execution graph until runAttempt. The runner receives the original parameters and retains result/error identity and host capabilities. Its lazy runtime boundary persists loaded bytecode before interruption without changing optional cache controls or recovery admission.
+  - Analyzer metadata and fallback analysis defer native parsers and grammars until the corresponding language is analyzed. Successful language initialization owns parser reuse; loading failures remain retryable and existing parse-fallback warnings remain intact.
   - Agent startup passes source activation reasons, manifests and install records from its compatible Gateway metadata scope to the existing runtime registry owner. Missing or incompatible scope retains standalone loading; runtime configuration and registry compatibility checks stay authoritative.
   - Task-scope effect admission waits for one authenticated Main bridge after restart within its original fifteen-second budget. Waiting reserves the request id and rechecks the live owner; ambiguous bridges, stale runs and late or mismatched results cannot grant effects. Readiness waiting and Main response share that budget without new dispatch attempts.
   - Workflow restart recovery checks the lifecycle owner's current writer and durable rows before loading each controller. Legacy and empty or terminal-only domains stay unloaded; Mission recovery remains taskflow-only for running rows. Live-controller, pending-effect and CAS decisions stay with the original recovery entry, and a domain failure does not suppress the other domains.

@@ -5,7 +5,6 @@
  * through the same AgentHarness contract as external harness plugins.
  */
 import { OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
-import { runEmbeddedAttempt } from "../embedded-agent-runner/run/attempt.js";
 import type { AgentHarness } from "./types.js";
 
 /** Creates the built-in harness backed by the embedded OpenClaw agent runner. */
@@ -15,6 +14,10 @@ export function createOpenClawAgentHarness(): AgentHarness {
     label: "OpenClaw embedded agent",
     contextEngineHostCapabilities: OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST.capabilities,
     supports: () => ({ supported: true, priority: 0 }),
-    runAttempt: runEmbeddedAttempt,
+    runAttempt: async (params) => {
+      const { runEmbeddedAttempt } =
+        await import("../embedded-agent-runner/run/attempt.runtime.js");
+      return runEmbeddedAttempt(params);
+    },
   };
 }

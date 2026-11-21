@@ -5,6 +5,9 @@ type: ai-coding-rule
 appliesTo:
   - gateway-backend-communication
 requiredTests:
+  - tests/unit/gateway-native-language-parser-loading.test.ts
+  - tests/unit/gateway-lazy-builtin-harness.test.ts
+  - tests/unit/gateway-lazy-language-parsers.test.ts
   - tests/unit/gateway-device-token-reuse.test.ts
   - tests/unit/gateway-events.test.ts
   - tests/unit/gateway-ready-fallback.test.ts
@@ -17,3 +20,7 @@ A Gateway whose startup owner still rejects `connect` sets `startupPending: true
 Gateway manager fallback may mark readiness true after its timeout, but it must not emit duplicate ready transitions.
 
 Main caches a Gateway-issued device token only after the device-token connection authenticates. Reuse requires the same paired device, endpoint and shared credential. A device-token mismatch discards that token and retries once with the existing shared-secret bootstrap. Transport failures and startup unavailability retain the token. Bootstrap completes the device-token connection before publishing readiness.
+
+Startup queries for analyzer metadata keep native parsing dependencies deferred until file analysis. A parser becomes reusable after successful language initialization; analysis preserves the existing parse-fallback warnings and file results.
+
+Built-in harness support metadata leaves the embedded execution graph unloaded until an attempt starts. The lazy runtime boundary preserves parameters, results and errors and writes loaded bytecode before execution can be interrupted. Optional cache controls retain their existing behavior.

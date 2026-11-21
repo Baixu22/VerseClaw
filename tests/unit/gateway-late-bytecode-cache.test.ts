@@ -33,12 +33,17 @@ function cacheFiles(directory: string | null): CacheFile[] {
   }) : [];
 }
 
-async function interruptLateRuntime(mode: 'enabled' | 'disabled' | 'unavailable' | 'unsupported') {
+const checkpoints = [
+  { name: 'command', file: 'agents/command/attempt-execution.runtime.ts', backend: './attempt-execution.js', helper: '../../infra/runtime-compile-cache.js', entry: 'runAgentAttempt' },
+  { name: 'embedded', file: 'agents/embedded-agent-runner/run/attempt.runtime.ts', backend: './attempt.js', helper: '../../../infra/runtime-compile-cache.js', entry: 'runEmbeddedAttempt' },
+] as const;
+
+async function interruptLateRuntime(mode: 'enabled' | 'disabled' | 'unavailable' | 'unsupported', checkpoint: typeof checkpoints[number]) {
   const root = fs.mkdtempSync(path.join(tmpdir(), 'g3-late-cache-'));
   roots.push(root);
-  const source = fs.readFileSync(path.join(runtime, 'agents/command/attempt-execution.runtime.ts'), 'utf8');
+  const source = fs.readFileSync(path.join(runtime, checkpoint.file), 'utf8');
   const backend = path.join(root, 'backend.mjs');
-  const exports = source.match(/export\s*\{([^}]+)\}\s*from\s*"\.\/attempt-execution\.js"/s)?.[1]
+  const exports = source.match(/export\s*\{([^}]+)\}\s*from\s*"[^"]+"/s)?.[1]
     .split(',').map(value => value.trim()).filter(Boolean);
   expect(exports?.length).toBeGreaterThan(0);
   fs.writeFileSync(backend, exports!.map(name => `export function ${name}() { return 42; }`).join('\n'));
@@ -55,8 +60,8 @@ async function interruptLateRuntime(mode: 'enabled' | 'disabled' | 'unavailable'
   // Keep the production barrel body; redirect only its backend dependency so
   // the cache boundary can be tested without starting a provider or agent.
   const barrel = source
-    .replace('./attempt-execution.js', pathToFileURL(backend).href)
-    .replace('../../infra/runtime-compile-cache.js', pathToFileURL(helper).href);
+    .replace(checkpoint.backend, pathToFileURL(backend).href)
+    .replace(checkpoint.helper, pathToFileURL(helper).href);
   const barrelFile = path.join(root, 'attempt-runtime.mjs');
   fs.writeFileSync(barrelFile, barrel);
   const cache = path.join(root, 'cache');
@@ -77,7 +82,7 @@ async function interruptLateRuntime(mode: 'enabled' | 'disabled' | 'unavailable'
     const before = files();
     const late = await import(${JSON.stringify(pathToFileURL(barrelFile).href)});
     fs.writeFileSync(${JSON.stringify(ready + '.tmp')}, JSON.stringify({
-      cacheDir, before, after: files(), result: late.runAgentAttempt(), node: process.version,
+      cacheDir, before, after: files(), result: late[${JSON.stringify(checkpoint.entry)}](), node: process.version,
     }));
     fs.renameSync(${JSON.stringify(ready + '.tmp')}, ${JSON.stringify(ready)});
     setInterval(() => {}, 1000);
@@ -113,27 +118,29 @@ async function interruptLateRuntime(mode: 'enabled' | 'disabled' | 'unavailable'
   expect(afterKill).toEqual(proof.after);
   expect(proof.result).toBe(42);
   const readback = {
-    schema: 'LateRuntimeBytecodeCacheProof/v1', mode, pid: child.pid, exit: await exit,
+    schema: 'LateRuntimeBytecodeCacheProof/v1', mode, checkpoint: checkpoint.name, pid: child.pid, exit: await exit,
     sourceSha256: hash(source), ...proof, afterKill,
     apiBasis: mode === 'unsupported' ? 'agent-driven missing-API fixture' : 'native-node',
     driven_by: 'agent', actor: 'gateway-late-bytecode-cache-test', realHumanEvidence: false,
   };
   if (process.env.CLAWX_TEST_EVIDENCE_DIR) {
-    const evidence = path.join(process.env.CLAWX_TEST_EVIDENCE_DIR, mode + '-' + child.pid);
+    const evidence = path.join(process.env.CLAWX_TEST_EVIDENCE_DIR, checkpoint.name + '-' + mode + '-' + child.pid);
     fs.cpSync(root, path.join(evidence, 'fixture'), { recursive: true, errorOnExist: true, force: false });
     fs.writeFileSync(path.join(evidence, 'readback.json'), JSON.stringify(readback, null, 2), { flag: 'wx' });
   }
   return proof;
 }
 
-it('retains the late agent runtime bytecode across a real process kill', async () => {
-  const proof = await interruptLateRuntime('enabled');
+it.each(checkpoints)('$name retains its late runtime bytecode across a real process kill', async checkpoint => {
+  const proof = await interruptLateRuntime('enabled', checkpoint);
   expect(proof.cacheDir).toBeTruthy();
   expect(proof.after.length).toBeGreaterThan(proof.before.length);
 }, 15_000);
 
-it.each(['disabled', 'unavailable', 'unsupported'] as const)('keeps the agent entry usable when the cache is %s', async mode => {
-  const proof = await interruptLateRuntime(mode);
+const cacheFallbackCases = checkpoints.flatMap(checkpoint =>
+  (['disabled', 'unavailable', 'unsupported'] as const).map(mode => ({ checkpoint, name: checkpoint.name, mode })));
+it.each(cacheFallbackCases)('$name keeps execution usable when the cache is $mode', async ({ checkpoint, mode }) => {
+  const proof = await interruptLateRuntime(mode, checkpoint);
   expect(proof.cacheDir).toBeNull();
   expect(proof.after).toEqual([]);
 }, 15_000);
