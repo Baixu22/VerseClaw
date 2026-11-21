@@ -162,7 +162,7 @@ export function applyKnowledgeSupportReview(claims: AnswerClaimV1[], review: Kno
 export async function runKnowledgeModel(
   gateway: GatewayManager, prompt: string, label: string, timeoutMs = 60_000,
   knowledge?: { sessionKey: string; workspaceId?: string; workspaceDir?: string; references: ChatKnowledgeReference[] },
-  options?: { signal: AbortSignal; budget: ModelRequestBudget },
+  options?: { signal: AbortSignal; budget: ModelRequestBudget; validateSpend?: (spend: KnowledgeModelSpend | undefined) => void },
 ): Promise<{ text: string; runId: string; retainedEvidence?: RetainedEvidenceManifestV1; providerSpend?: KnowledgeModelSpend }> {
   const requestId = randomUUID();
   const deadline = Date.now() + timeoutMs;
@@ -206,9 +206,11 @@ export async function runKnowledgeModel(
     const waiting = gateway.rpc<Record<string, unknown>>('agent.wait', { runId, timeoutMs: waitMs,
       ...(options ? { includeProviderSpend: true } : {}) }, waitMs + 5000);
     const wait = options ? await waitForRetrievalOperation(waiting, options.signal) : await waiting;
-    if (wait.status !== 'completed' && wait.status !== 'ok') throw Error('Knowledge model did not complete: ' + sanitizeUiErrorText(
+    completed = wait.status === 'completed' || wait.status === 'ok';
+    // The caller's budget verdict must survive failed runs and unusable answer receipts.
+    options?.validateSpend?.(wait.providerSpend as KnowledgeModelSpend | undefined);
+    if (!completed) throw Error('Knowledge model did not complete: ' + sanitizeUiErrorText(
       JSON.stringify({ status: wait.status, error: wait.error, reason: wait.reason })));
-    completed = true;
     const retainedEvidence = wait.retainedEvidence as RetainedEvidenceManifestV1 | undefined;
     if (knowledge?.references.length && (!retainedEvidence || retainedEvidence.schema !== 'RetainedEvidenceManifest/v1' || !Array.isArray(retainedEvidence.units))) {
       throw Error('Knowledge model did not return a DCS retained evidence receipt');

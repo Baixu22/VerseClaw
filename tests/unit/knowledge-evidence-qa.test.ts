@@ -5,6 +5,20 @@ import type { GatewayManager } from '@electron/gateway/manager';
 const source = { id: 'deployment', lookup: 'deployment.md', title: 'Deployment', excerpt: 'Port', content: '网关部署端口配置为8080。 Review before apply.', citation: { refId: 'memory-wiki:deployment.md', owner: 'memory-wiki', subjectId: 'deployment.md', revision: '2', contentDigest: 'sha256:source', sourceRefs: ['deployment'] } };
 const valid = { claims: [{ kind: 'source', text: '网关端口是8080。', citations: [{ sourceId: source.citation.refId, quote: '端口配置为8080' }] }], unknowns: [] };
 describe('evidence QA', () => {
+  it.each(['completed', 'error'])('checks a %s run spend receipt before rejecting its empty answer', async status => {
+    const spend = { calls: 1, reservedTokens: 8000, reservedCostUsd: 0.025, actualTokens: 8001, actualCostUsd: 0.0001 };
+    const rpc = vi.fn(async (method: string) => method === 'agent' ? { runId: 'budget-run' }
+      : method === 'agent.wait' ? { status, text: '', providerSpend: spend } : {});
+    const gateway = { rpc, on: vi.fn(), off: vi.fn() } as unknown as GatewayManager;
+    const violation = Object.assign(new Error('Usage exceeded reservation'), { code: 'RESEARCH_PLANNING_USAGE_INVALID' });
+    const validateSpend = vi.fn(() => { throw violation; });
+    await expect(runKnowledgeModel(gateway, 'bounded planning', 'Research', 30000,
+      { sessionKey: 'agent:main:owner', references: [] }, { signal: new AbortController().signal,
+        budget: { maxInputTokens: 7000, maxOutputTokens: 1000, maxCostUsd: 0.025, maxCalls: 1 }, validateSpend })).rejects.toBe(violation);
+    expect(validateSpend).toHaveBeenCalledWith(spend);
+    expect(rpc.mock.calls.some(call => call[0] === 'chat.abort')).toBe(status !== 'completed');
+    expect(gateway.off).toHaveBeenCalled();
+  });
   it('caps large source sets without splitting conflict groups', () => {
     const sources = Array.from({ length: 9 }, (_, index) => ({ ...source, id: 's' + index,
       citation: { ...source.citation, refId: 's' + index }, ...(index >= 7 ? { conflictGroupId: 'pair' } : {}) }));

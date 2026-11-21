@@ -22,7 +22,11 @@ vi.mock('@electron/services/knowledge-read-scope', () => ({
 }));
 vi.mock('@electron/services/knowledge-evidence-qa', () => ({
   selectKnowledgeModelSources: (sources: unknown[]) => ({ sources: sources.slice(0, 8), dropped: sources.slice(8) }),
-  runKnowledgeModel: (...args: unknown[]) => Promise.resolve(hostState.model?.(args)),
+  runKnowledgeModel: async (...args: unknown[]) => {
+    const output = await hostState.model?.(args) as { providerSpend?: unknown } | undefined;
+    (args[5] as { validateSpend?: (spend: unknown) => void } | undefined)?.validateSpend?.(output?.providerSpend);
+    return output;
+  },
 }));
 
 const scope = { fingerprint: 'owner-generation-1', workspaceId: 'owner-project', sessionKey: 'agent:main:owner', sessionId: 'generation-1', corpus: 'wiki' as const };
@@ -363,6 +367,20 @@ describe('Research Main owner and Host contract', () => {
     const response = await fixture.terminal();
     expect(response.research?.status).toBe('partial'); expect(response.research?.evidence).toHaveLength(1);
     expect(response.research?.gaps.some(gap => gap.reason === 'planning-unavailable')).toBe(true);
+  });
+  it.each(['tokens', 'cost'] as const)('stops invalid %s usage before malformed planning text can hide it', async kind => {
+    const fixture = setup({ body: 'Gateway port is 8080. [next](next.md)' }), model = hostState.model!;
+    hostState.model = args => {
+      const output = model(args) as { text: string; providerSpend: { actualTokens: number; actualCostUsd: number } };
+      return { ...output, text: 'not JSON', providerSpend: { ...output.providerSpend,
+        ...(kind === 'tokens' ? { actualTokens: 8001 } : { actualCostUsd: 0.026 }) } };
+    };
+    await fixture.api.researchStart(fixture.request);
+    const response = await fixture.terminal();
+    expect(response.research).toMatchObject({ status: 'partial', stopReason: 'unavailable',
+      usage: { planningModelCalls: 1, actualPlanningTokens: null, actualCostUsd: null } });
+    expect(fixture.rpc).toHaveBeenCalledTimes(1); expect(fixture.modelCalls).toHaveLength(1);
+    expect(response.research?.evidence).toHaveLength(1);
   });
   it('rejects a stale owner snapshot on status delivery without returning its evidence', async () => {
     const fixture = setup(); await fixture.api.researchStart(fixture.request); await fixture.terminal();

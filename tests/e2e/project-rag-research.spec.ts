@@ -196,7 +196,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     const input = JSON.parse(line) as { query: string; round: number; questions: string[]; evidence: Array<{ sourceId: string; lookup: string }> };
     planningCalls.push({ query: input.query, round: input.round, references: input.evidence.map(source => source.sourceId) });
     if (input.query === 'RAG16_PLANNING_USAGE_OVERRUN') return {
-      text: JSON.stringify({ queries: [], coverage: [], inferences: [], conflicts: [], gaps: [] }),
+      text: 'RAG16 malformed planning JSON with an over-budget usage receipt',
       usage: { prompt_tokens: 100000, completion_tokens: 30, total_tokens: 100030 },
     };
     if (input.query === 'RAG16_LINK_BUDGET_ROOT') return { text: JSON.stringify({
@@ -347,6 +347,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     expect(planningCalls.filter(call => call.query === 'RAG16_PLANNING_USAGE_OVERRUN')).toHaveLength(1);
     expect(overrun.evidence.length).toBeGreaterThan(0);
     receipt.planningUsageOverrun = overrun; steps.planningReservationViolationStopsCalls = true;
+    steps.usageViolationPrecedesMalformedOutput = true;
 
     await writeFile(join(vault, 'concepts/cancel.md'), raw('Gateway port cancellation', 'Gateway port is 8080. Cancellation evidence remains available before model completion.'));
     await queryInput.fill('Gateway port cancellation'); await page.getByTestId('chat-knowledge-search-submit').click();

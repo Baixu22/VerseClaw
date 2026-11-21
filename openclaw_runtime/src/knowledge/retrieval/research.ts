@@ -262,6 +262,27 @@ export function validateResearchReview(
   return value;
 }
 
+/** Validate settled usage before response parsing can mask a reservation violation. */
+export function validateResearchPlanningUsage(
+  usage: { actualTokens: number | null; actualCostUsd: number | null },
+  maxTokens: number,
+  maxCostUsd: number,
+): void {
+  if (
+    (usage.actualTokens !== null &&
+      (!Number.isSafeInteger(usage.actualTokens) ||
+        usage.actualTokens < 0 ||
+        usage.actualTokens > maxTokens)) ||
+    (usage.actualCostUsd !== null &&
+      (!Number.isFinite(usage.actualCostUsd) ||
+        usage.actualCostUsd < 0 ||
+        usage.actualCostUsd > maxCostUsd))
+  )
+    throw Object.assign(new Error("Research planning usage exceeded its reservation"), {
+      code: "RESEARCH_PLANNING_USAGE_INVALID",
+    });
+}
+
 export async function runResearchPlan(options: {
   plan: ResearchPlanV1;
   signal?: AbortSignal;
@@ -583,19 +604,7 @@ export async function runResearchPlan(options: {
           );
           await reverify();
           signal.throwIfAborted();
-          if (
-            (planning.actualTokens !== null &&
-              (!Number.isSafeInteger(planning.actualTokens) ||
-                planning.actualTokens < 0 ||
-                planning.actualTokens > maxTokens)) ||
-            (planning.actualCostUsd !== null &&
-              (!Number.isFinite(planning.actualCostUsd) ||
-                planning.actualCostUsd < 0 ||
-                planning.actualCostUsd > maxCostUsd))
-          )
-            throw Object.assign(new Error("Research planning usage exceeded its reservation"), {
-              code: "RESEARCH_PLANNING_USAGE_INVALID",
-            });
+          validateResearchPlanningUsage(planning, maxTokens, maxCostUsd);
           result.usage.actualPlanningTokens =
             planning.actualTokens === null || actualPlanningTokens === null
               ? null

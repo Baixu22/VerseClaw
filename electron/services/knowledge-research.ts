@@ -5,7 +5,7 @@ import type { KnowledgeResearchPayload, KnowledgeResearchRequestPayload, Researc
 import { isMemorySourceRef } from '../../shared/knowledge/memory';
 import { isExperienceSourceRef } from '../../shared/knowledge/experience';
 import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot, matchOwnerReadPin, type SourceRefV2 } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
-import { createResearchPlan, emptyResearchResult, runResearchPlan, validateResearchReview } from '../../openclaw_runtime/src/knowledge/retrieval/research';
+import { createResearchPlan, emptyResearchResult, runResearchPlan, validateResearchPlanningUsage, validateResearchReview } from '../../openclaw_runtime/src/knowledge/retrieval/research';
 import { waitForRetrievalOperation } from '../../openclaw_runtime/src/knowledge/retrieval/embedding-session';
 import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
 import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent, type KnowledgeReadScope } from './knowledge-read-scope';
@@ -156,7 +156,8 @@ export function createKnowledgeResearchApi(options: {
             const outputTokens = Math.min(1024, Math.floor(maxTokens / 3));
             const output = await runKnowledgeModel(gatewayManager, prompt, 'Knowledge Research planner', Math.max(1, plan.budget.deadlineAtMs - Date.now()),
               { sessionKey: scope.identity.agentSessionKey, workspaceId: scope.identity.workspaceId, workspaceDir: scope.identity.workspaceDir, references },
-              { signal, budget: { maxInputTokens: maxTokens - outputTokens, maxOutputTokens: outputTokens, maxCostUsd, maxCalls: 1 } });
+              { signal, budget: { maxInputTokens: maxTokens - outputTokens, maxOutputTokens: outputTokens, maxCostUsd, maxCalls: 1 },
+                validateSpend: spend => { if (spend) validateResearchPlanningUsage(spend, maxTokens, maxCostUsd); } });
             await waitForRetrievalOperation(assertKnowledgeReadScopeCurrent(gatewayManager, scope), signal);
             const citations = output.retainedEvidence?.units.flatMap(unit => unit.citations) ?? [];
             const retained = evidence.filter(source => citations.some(citation => (citation.intentId ?? citation.refId) === source.id && citation.chunkDigest === source.contentDigest));
