@@ -1,6 +1,7 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { DatabaseSync } from 'node:sqlite';
 import type { Page } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
@@ -10,6 +11,12 @@ import type { TaskView, TaskContractInput } from '../../shared/task-system/types
 import type { ResearchResultV1 } from '../../shared/knowledge/research';
 
 type Json = Record<string, unknown>;
+async function initWorkspaceGit(workspace: string): Promise<void> {
+  // A nested fixture must not inherit the checkout's Git or Task authority.
+  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^GIT_/iu.test(key)));
+  execFileSync('git', ['init', '--quiet'], { cwd: workspace, env, windowsHide: true, stdio: 'pipe' });
+  expect((await lstat(join(workspace, '.git'))).isDirectory()).toBe(true);
+}
 async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {
   return page.evaluate(async request => {
     const response = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), ...request });
@@ -34,6 +41,7 @@ test('Project RAG discovers exact code relationships and reads the current task 
   for (const [file, content] of Object.entries(files)) {
     await mkdir(join(workspace, file, '..'), { recursive: true }); await writeFile(join(workspace, file), content);
   }
+  await initWorkspaceGit(workspace);
   const artifact = 'RAG15_EVIDENCE_REF'; await writeFile(join(workspace, 'artifact.txt'), artifact);
   const receipt: Json = { schema: 'ProjectRagCodeTaskElectron/v1', actor: process.env.PROJECT_RAG_ACTOR ?? 'rag15-electron',
     driven_by: 'agent', realHumanEvidence: false, providerKind: 'scripted-local-fixture', status: 'fail', steps: {} };
@@ -85,6 +93,7 @@ test('Project RAG discovers exact code relationships and reads the current task 
         verification: { kind: 'file-sha256', path: 'artifact.txt', sha256: createHash('sha256').update(artifact).digest('hex') } }] };
     const task = await host<{ success: boolean; result: { task: TaskView } }>(page, 'taskLedger', 'command',
       { workspaceId: owner.id, command: { action: 'create', requestId: 'rag15-task', contract: taskContract } });
+    receipt.taskCreate = task;
     expect(task.success).toBe(true); const taskId = task.result.task.contract.taskNodeId;
     await host(page, 'taskLedger', 'linkSession', { workspaceId: owner.id, sessionKey: owner.activeSessionKey, sessionGeneration: described.session.sessionId, nodeId: taskId });
     await host(page, 'workspaces', 'bindCoordinator', { workspaceId: owner.id, sessionKey: owner.activeSessionKey, agentId: 'main', expectedRevision: 0,
@@ -184,6 +193,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   test.setTimeout(480000);
   const workspace = join(homeDir, 'rag16-workspace'), vault = join(homeDir, 'rag16-vault');
   await mkdir(workspace, { recursive: true }); await mkdir(join(vault, 'concepts'), { recursive: true });
+  await initWorkspaceGit(workspace);
   const receipt: Json = { schema: 'ProjectRagResearchElectron/v1', actor: process.env.PROJECT_RAG_ACTOR ?? 'rag16-electron',
     driven_by: 'agent', realHumanEvidence: false, providerKind: 'scripted-local-fixture', status: 'fail', steps: {} };
   const steps = receipt.steps as Record<string, boolean>;
@@ -267,7 +277,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await writeFile(join(vault, 'concepts/deltaunique.md'), raw('Delta unique', 'The linked guide beyond the two-hop limit.'));
     await writeFile(join(vault, 'concepts/usage-root.md'), raw('RAG16_PLANNING_USAGE_OVERRUN', 'RAG16_PLANNING_USAGE_OVERRUN. [next](usage-child.md)'));
     await writeFile(join(vault, 'concepts/usage-child.md'), raw('Budget follow-up', 'A local guide for a later round.'));
-    await writeFile(join(vault, 'concepts/question-scope.md'), raw('Question scope', scopeQuestions.slice(0, 8).join(' ') + '. RAG16_FIRST_EIGHT_FACTS.'));
+    await writeFile(join(vault, 'concepts/question-scope.md'), raw('Question scope', scopeQuestions.slice(0, 8).join(' ') + '. RAG16_FIRST_EIGHT_FACTS. '
+      + `${scopeQuestions[8]} is listed but has no supporting fact.`));
     await host(page, 'settings', 'set', { key: 'gatewayPort', value: await allocatePort() });
     await host(page, 'gateway', 'start').catch(error => { if (!String(error).includes('timed out')) throw error; });
     await expect.poll(async () => (await host(page!, 'gateway', 'status')).state, { timeout: 120000 }).toBe('running');
@@ -402,6 +413,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await page.screenshot({ path: testInfo.outputPath('research-cancelled.png'), fullPage: true });
 
     const transportQuery = 'Gateway port transport failure';
+    await writeFile(join(vault, 'concepts/transport.md'), raw(transportQuery,
+      'Gateway port is 8080. Transport failure recovery retains local evidence while the model is pending.'));
     await queryInput.fill(transportQuery); await page.getByTestId('chat-knowledge-search-submit').click();
     await expect.poll(() => planningCalls.some(call => call.query === transportQuery), { timeout: 30000 }).toBe(true);
     const transportStart = (await entries()).find(entry => entry.action === 'researchStart' && entry.payload.query === transportQuery)!;
@@ -462,7 +475,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (page) await page.screenshot({ path: testInfo.outputPath('research-failure.png'), fullPage: true });
     throw error;
   } finally {
-    releaseHeld(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
+    releaseHeld(); releaseTransport(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
     if (page && receipt.status !== 'pass') { try { receipt.logs = await host(page, 'logs', 'recent'); receipt.entries = await app.evaluate(() => (globalThis as unknown as { rag16Entries?: Entry[] }).rag16Entries ?? []); } catch (error) { receipt.logReadError = String(error); } }
     await writeFile(testInfo.outputPath('research-receipt.json'), JSON.stringify(receipt, null, 2));
     await testInfo.attach('research-receipt', { body: await readFile(testInfo.outputPath('research-receipt.json')), contentType: 'application/json' });

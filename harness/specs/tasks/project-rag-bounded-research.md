@@ -250,6 +250,8 @@ docs:
 
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 
+Electron 的临时工作区初始化独立 Git 仓库并清除继承的 Git 环境，使 Task authority 从本场景的工作区派生。九问资料明确保留第九问的事实缺口，状态传输故障场景提供可检索的专用资料，使两项检查进入实际规划路径。悬挂模型夹具在所有退出路径释放。
+
 工程验收的 VerseShell 资格构建应用 `binary-test-targets.patch`：两个 CLI 入口没有单测，
 Cargo 为其设置 `test=false`。完整锁定的库、12 个集成目标和文档测试继续执行，集成测试
 仍构建并调用真实 CLI。源码锁登记该 Cargo 残留补丁，Main 和打包校验器绑定新的源码身份；
