@@ -1,6 +1,6 @@
 // @vitest-environment node
 import fs from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { LegacyContextEngine } from "../../openclaw_runtime/src/context-engine/legacy.js";
 import { createContextRuntimeKitContextEngine } from "../../openclaw_runtime/src/context-engine/cvk/engine.js";
 import type { OpenClawConfig } from "../../openclaw_runtime/src/config/types.openclaw.js";
@@ -16,6 +16,11 @@ import {
   type RuntimeEffectiveCapabilityInput,
 } from "../../openclaw_runtime/src/runtime-core/model-capability-effective-state.js";
 import type { AnyAgentTool } from "../../openclaw_runtime/src/agents/tools/common.js";
+
+// This fixture supplies only the core exec tool and an empty channel catalog.
+vi.mock("../../openclaw_runtime/src/plugins/channel-catalog-registry.js", () => ({
+  listChannelCatalogEntries: () => [],
+}));
 
 const NOW = Date.parse("2026-10-22T04:00:00.000Z");
 const CAPABILITY_ID = "component.coding-execution-backend";
