@@ -1,0 +1,14 @@
+{
+  "schema": "G3DeferredRuntimeReadback/v1",
+  "codeCommit": "9c52d611dfca761d792260754b928f46b3e861ca",
+  "sourceGitInputsMatched": 22,
+  "immutableSourcesMatched": 22,
+  "archiveFilesMatched": 2591,
+  "historicalBuiltInputsMatched": 984,
+  "currentCompiledInputsMatched": 1017,
+  "nativeRecoveryReceipts": 0,
+  "credentialHits": 0,
+  "driven_by": "agent",
+  "actor": "codex/g3-deferred-evidence",
+  "realHumanEvidence": false
+}
