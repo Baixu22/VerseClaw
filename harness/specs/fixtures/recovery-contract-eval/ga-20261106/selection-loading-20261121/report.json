@@ -1,0 +1,830 @@
+{
+  "schema": "G3SelectionLoadingDevelopment/v1",
+  "date": "2026-11-21",
+  "codeCommit": "140af7c59998a0a92c6804bd82cfb25267e2c07b",
+  "executionBaseHead": "d171a7530f7ac27ce3569f056930fccb02e12266",
+  "executionSourceKind": "working-source-projection",
+  "sourceRevision": "r10",
+  "taskNode": "TF-0818",
+  "decision": "NO_GO",
+  "inputs": [
+    {
+      "file": "openclaw_runtime/src/agents/harness/selection.ts",
+      "sha256": "7afc4b1cb6aad372ffb70dd07672bfc912c134b58def989a2c651f5ed11e84da",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\openclaw_runtime__src__agents__harness__selection.ts",
+      "gitBlob": "113616e6e6b6cdfc04c07f75ef6c104f1459e470",
+      "gitBlobSha256": "7afc4b1cb6aad372ffb70dd07672bfc912c134b58def989a2c651f5ed11e84da",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/harness/selection.runtime.ts",
+      "sha256": "8b57abd08034967358a3e54425a47d1361e65403f0e5e41627216a3f6d3073e3",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\openclaw_runtime__src__agents__harness__selection.runtime.ts",
+      "gitBlob": "bcd3b290d31f0b341fb116937899859853072184",
+      "gitBlobSha256": "8b57abd08034967358a3e54425a47d1361e65403f0e5e41627216a3f6d3073e3",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts",
+      "sha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\openclaw_runtime__src__agents__harness__context-engine-lifecycle.ts",
+      "gitBlob": "be086ba4208620af5373e02e3b88333c64737dfd",
+      "gitBlobSha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/harness/lifecycle.ts",
+      "sha256": "2e96e5b0bf22380c5369876ad2d518fb9935e3fcc412a5146a04539f2ee35ab1",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\openclaw_runtime__src__agents__harness__lifecycle.ts",
+      "gitBlob": "698cbabe0f99ea4ace54dd29d7e5e45e1a79c5a6",
+      "gitBlobSha256": "2e96e5b0bf22380c5369876ad2d518fb9935e3fcc412a5146a04539f2ee35ab1",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/infra/runtime-compile-cache.ts",
+      "sha256": "6dd520b5012528337567c9adf74fd10adfc5b3b414992b80a163d762b6a6f7f9",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\openclaw_runtime__src__infra__runtime-compile-cache.ts",
+      "gitBlob": "496c2067202cea426786028c7d16476802e86418",
+      "gitBlobSha256": "6dd520b5012528337567c9adf74fd10adfc5b3b414992b80a163d762b6a6f7f9",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/harness/builtin-openclaw.ts",
+      "sha256": "b1fca6eaa0ff7bd1d59692806ff84ee958566455d5e2c7103570a7725ca788a6",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\openclaw_runtime__src__agents__harness__builtin-openclaw.ts",
+      "gitBlob": "cc5aff55f17a3e971bb2310b7a1d045cfb84f260",
+      "gitBlobSha256": "b1fca6eaa0ff7bd1d59692806ff84ee958566455d5e2c7103570a7725ca788a6",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "tests/unit/gateway-lazy-harness-selection.test.ts",
+      "sha256": "f17cd72580b13f1164c980f71c390ddb2ecbd4ee9d9ceff34a34ec5e1384f262",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\tests__unit__gateway-lazy-harness-selection.test.ts",
+      "gitBlob": "3fbbbd7f6fa86fca106f376104de86b20141b452",
+      "gitBlobSha256": "f17cd72580b13f1164c980f71c390ddb2ecbd4ee9d9ceff34a34ec5e1384f262",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "tests/unit/gateway-late-bytecode-cache.test.ts",
+      "sha256": "afd63be28b9de148e41266631937453198438c0073f864a3c27529fca838d5c8",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\tests__unit__gateway-late-bytecode-cache.test.ts",
+      "gitBlob": "9d6b807a4d2c81b96be78c1e878f9f57c76d9010",
+      "gitBlobSha256": "afd63be28b9de148e41266631937453198438c0073f864a3c27529fca838d5c8",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "a7196dbb2d7cf48dd5a0352e7a794c4acd9923108fc83e5e2016340f33204778",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\harness__specs__tasks__gateway-startup-performance.md",
+      "gitBlob": "4aad4f7b33d5377bf470e53147d4bed5065a547f",
+      "gitBlobSha256": "17be46d5633c8fb01b8e4b494d4f8281e4788194ccb1080888eb833322bd6115",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "8637ad03c0d151313b54025d6ccc1aee16b7d99fc421f8ba085ba09cf68196f5",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\harness__specs__tasks__recovery-authority-gated.md",
+      "gitBlob": "01f141b0bb0019a14e80541543098c3905f38037",
+      "gitBlobSha256": "754fdcc66b72b24911be30c3ef55f1a8fbea188ff7a7a0fd81481487d646ad75",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "harness/specs/rules/gateway-readiness-policy.md",
+      "sha256": "977a448d8d5a63ee327459d5a4f934108d46a8fab7118b2268bacbfc6d8fe6a8",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\harness__specs__rules__gateway-readiness-policy.md",
+      "gitBlob": "13f0f54d4882ec1e086c2297da810bcdc2695084",
+      "gitBlobSha256": "977a448d8d5a63ee327459d5a4f934108d46a8fab7118b2268bacbfc6d8fe6a8",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "README.md",
+      "sha256": "0f6a335b32da81dceafb9d8da69775c8d49a68481a28c3c7e19a9bf32cfb3a54",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\README.md",
+      "gitBlob": "a0e08d13bda25e418147dcfc34fefd86e25da62b",
+      "gitBlobSha256": "0f6a335b32da81dceafb9d8da69775c8d49a68481a28c3c7e19a9bf32cfb3a54",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "57ad1f8b6ae0e2ad939aa064ba64e4d834e7e191e6702661ef2912c99b800bea",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\README.zh-CN.md",
+      "gitBlob": "6ed90ee26cf774fa971c7be8f6f4f79922c6f4de",
+      "gitBlobSha256": "57ad1f8b6ae0e2ad939aa064ba64e4d834e7e191e6702661ef2912c99b800bea",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "a75782e7150250eef768143441f12f05a045bc3c9ab719896b14bd75bbb15404",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\README.ja-JP.md",
+      "gitBlob": "dd79218505a2c6b0a0fac74d5adc1b25242e6e41",
+      "gitBlobSha256": "a75782e7150250eef768143441f12f05a045bc3c9ab719896b14bd75bbb15404",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "package.json",
+      "sha256": "8422a8a3ca9635ef5ef587c346a80dec2b79fd09372f73ddffaef8771b599752",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\package.json",
+      "gitBlob": "2367a759a9f83eff0843dbcf0ae7a68a847911e4",
+      "gitBlobSha256": "8422a8a3ca9635ef5ef587c346a80dec2b79fd09372f73ddffaef8771b599752",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "harness/specs/guides/scoped-development-validation.md",
+      "sha256": "32b375c566aaeefba07c00c1bb713b709653a8446707270d0b7e2a87618f0c16",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\harness__specs__guides__scoped-development-validation.md",
+      "gitBlob": "0bf66e716c4c1c023d62418a2acbe40b740649ae",
+      "gitBlobSha256": "32b375c566aaeefba07c00c1bb713b709653a8446707270d0b7e2a87618f0c16",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "tests/unit/gateway-lazy-builtin-harness.test.ts",
+      "sha256": "3e76913a88ec56b3d853af9cebf04dc70be42cecfde09a94fd584b4f9d9e89be",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\tests__unit__gateway-lazy-builtin-harness.test.ts",
+      "gitBlob": "f47590c0091852776b77046ea8293b904c509947",
+      "gitBlobSha256": "3e76913a88ec56b3d853af9cebf04dc70be42cecfde09a94fd584b4f9d9e89be",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/agents/harness/selection.compass.test.ts",
+      "sha256": "8b2572d7783980e9ec45666e4ce449d3e6ca348d30d37cae99e8c6978d7c93ba",
+      "snapshot": "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\implementation-source-r10\\openclaw_runtime__src__agents__harness__selection.compass.test.ts",
+      "gitBlob": "387e11febb7385cbe4763d4881453713101c88ce",
+      "gitBlobSha256": "8b2572d7783980e9ec45666e4ce449d3e6ca348d30d37cae99e8c6978d7c93ba",
+      "normalizedGitIdentityMatched": true
+    }
+  ],
+  "stages": [
+    {
+      "name": "selection-review-r9",
+      "exitCode": 0,
+      "elapsedMs": 308941,
+      "minimumSystemFreeMiB": 443,
+      "sourceUnchanged": true,
+      "argv": [
+        "python",
+        "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--model",
+        "ccs-ai/gpt-6.1-sol",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--prompt-file",
+        "D:/tmp/g3-capacity-development-20261121-01a1fe1d/review-notes-r9.md",
+        "--json-output",
+        "D:/tmp/g3-capacity-development-20261121-01a1fe1d/selection-review-r9-result.json",
+        "--output",
+        "D:/tmp/g3-capacity-development-20261121-01a1fe1d/selection-review-r9-result.txt"
+      ]
+    },
+    {
+      "name": "selection-typed-lint-r1",
+      "exitCode": 0,
+      "elapsedMs": 144516,
+      "minimumSystemFreeMiB": 783,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "Set-Location -LiteralPath \"C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\"; node scripts/run-oxlint.mjs --type-aware --type-check --tsconfig=tsconfig.json --deny-warnings --threads=1 src/agents/harness/selection.ts src/agents/harness/selection.runtime.ts; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "runtime-selection-r1",
+      "exitCode": 1,
+      "elapsedMs": 48757,
+      "minimumSystemFreeMiB": 2328,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-harness-loading-20261120-01a1f836/run-runtime-targets.mjs",
+        "src/agents/harness/selection.compass.test.ts",
+        "src/agents/harness/dcs-stage0-hooks.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g3-capacity-development-20261121-01a1fe1d/runtime-selection-r1-tests.json"
+      ]
+    },
+    {
+      "name": "compass-no-reset-diagnostic-r1",
+      "exitCode": 1,
+      "elapsedMs": 42664,
+      "minimumSystemFreeMiB": 946,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-harness-loading-20261120-01a1f836/run-runtime-targets.mjs",
+        "src/agents/harness/selection.compass.test.ts",
+        "--testNamePattern=native assembly shares the attempt budget",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g3-capacity-development-20261121-01a1fe1d/compass-no-reset-diagnostic-r1-tests.json"
+      ]
+    },
+    {
+      "name": "runtime-selection-r2",
+      "exitCode": 1,
+      "elapsedMs": 43988,
+      "minimumSystemFreeMiB": 1247,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-harness-loading-20261120-01a1f836/run-runtime-targets.mjs",
+        "src/agents/harness/selection.compass.test.ts",
+        "src/agents/harness/dcs-stage0-hooks.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g3-capacity-development-20261121-01a1fe1d/runtime-selection-r2-tests.json"
+      ]
+    },
+    {
+      "name": "types-bridge-r1",
+      "exitCode": 0,
+      "elapsedMs": 594,
+      "minimumSystemFreeMiB": 2954,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "scripts/generate-ext-bridge.mjs"
+      ]
+    },
+    {
+      "name": "types-web-serial-r1",
+      "exitCode": 0,
+      "elapsedMs": 10076,
+      "minimumSystemFreeMiB": 1518,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false",
+        "--incremental",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ]
+    },
+    {
+      "name": "types-node-serial-r1",
+      "exitCode": 0,
+      "elapsedMs": 27235,
+      "minimumSystemFreeMiB": 1233,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false",
+        "--incremental",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ]
+    },
+    {
+      "name": "types-test-serial-r1",
+      "exitCode": 0,
+      "elapsedMs": 67039,
+      "minimumSystemFreeMiB": 402,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false",
+        "--incremental",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ]
+    },
+    {
+      "name": "selection-review-r10",
+      "exitCode": 0,
+      "elapsedMs": 347708,
+      "minimumSystemFreeMiB": 413,
+      "sourceUnchanged": true,
+      "argv": [
+        "python",
+        "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--model",
+        "ccs-ai/gpt-6.1-sol",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--prompt-file",
+        "D:/tmp/g3-capacity-development-20261121-01a1fe1d/review-notes-r10.md",
+        "--json-output",
+        "D:/tmp/g3-capacity-development-20261121-01a1fe1d/selection-review-r10-result.json",
+        "--output",
+        "D:/tmp/g3-capacity-development-20261121-01a1fe1d/selection-review-r10-result.txt"
+      ]
+    },
+    {
+      "name": "runtime-build-serial-r1",
+      "exitCode": 0,
+      "elapsedMs": 42245,
+      "minimumSystemFreeMiB": 2113,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ]
+    },
+    {
+      "name": "built-graph-r1",
+      "exitCode": 0,
+      "elapsedMs": 1215,
+      "minimumSystemFreeMiB": 4077,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-capacity-development-20261121-01a1fe1d/check-selection-built-graph.mjs"
+      ]
+    },
+    {
+      "name": "fixture-syntax-r1",
+      "exitCode": 0,
+      "elapsedMs": 2985,
+      "minimumSystemFreeMiB": 3904,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/harness/selection.compass.test.ts"
+      ]
+    },
+    {
+      "name": "source-gates-r1",
+      "exitCode": 0,
+      "elapsedMs": 25262,
+      "minimumSystemFreeMiB": 3455,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "pnpm run runtime:source:check; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "desktop-build-r1",
+      "exitCode": 0,
+      "elapsedMs": 42433,
+      "minimumSystemFreeMiB": 337,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "pnpm run build:vite; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "startup-harness-r10",
+      "exitCode": 0,
+      "elapsedMs": 1250,
+      "minimumSystemFreeMiB": 5367,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/gateway-startup-performance.md",
+        "--since",
+        "d171a7530"
+      ]
+    },
+    {
+      "name": "recovery-harness-r10",
+      "exitCode": 0,
+      "elapsedMs": 1133,
+      "minimumSystemFreeMiB": 5350,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "d171a7530"
+      ]
+    },
+    {
+      "name": "comms-replay-r1",
+      "exitCode": 0,
+      "elapsedMs": 686,
+      "minimumSystemFreeMiB": 5358,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ]
+    },
+    {
+      "name": "comms-compare-r1",
+      "exitCode": 0,
+      "elapsedMs": 655,
+      "minimumSystemFreeMiB": 5370,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ]
+    },
+    {
+      "name": "native-recovery-r10",
+      "exitCode": 0,
+      "elapsedMs": 214214,
+      "minimumSystemFreeMiB": 1305,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "scripts/recovery-contract-matrix.mjs",
+        "--batch",
+        "--arm",
+        "candidate",
+        "--repeats",
+        "3",
+        "--windows",
+        "repeated-restart",
+        "--out",
+        "D:\\tmp\\g3-capacity-development-20261121-01a1fe1d\\native-r10"
+      ]
+    }
+  ],
+  "implementation": [
+    "Harness metadata defers context-budget and lifecycle execution until the first selected attempt.",
+    "The real selector captures its decision and diagnostic trace before loading the runtime checkpoint.",
+    "Module-reset tests rebind their selector and ledger owners before subsequent cases.",
+    "The single-worker light command and measured-capacity development policy are documented."
+  ],
+  "lightAcceptance": {
+    "evidence": "D:\\tmp\\g3-light-acceptance-20261121-01a1fe1d\\report.json",
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "realInterruptedCacheCases": 12,
+    "elapsedMs": 7613
+  },
+  "runtimeCaller": {
+    "initial": {
+      "passed": 6,
+      "failed": 7
+    },
+    "fixed": {
+      "passed": 10,
+      "failed": 3
+    },
+    "historicalFailuresMatched": true,
+    "historicalFailures": [
+      {
+        "name": "keeps a separately loaded SDK on the original attempt's ledger",
+        "message": "AssertionError: expected 2000 to be less than or equal to 1000"
+      },
+      {
+        "name": "native assembly shares the attempt budget: 'shared exhaustion'",
+        "message": "AssertionError: expected [ { role: 'user', …(2) }, …(1) ] to deeply equal [ { role: 'user', …(2) } ]"
+      },
+      {
+        "name": "native harness receives budgeted COMPASS with kill=false",
+        "message": "AssertionError: expected 'base' to contain 'NATIVE-COMPASS:'"
+      }
+    ]
+  },
+  "review": {
+    "model": "ccs-ai/gpt-6.1-sol",
+    "findings": 0,
+    "sourceUnchanged": true,
+    "elapsedMs": 347708
+  },
+  "types": {
+    "node": "passed",
+    "web": "passed",
+    "test": "passed",
+    "mode": "uncached serial projects; single checker",
+    "formal45SecondRun": "pending"
+  },
+  "compiledGraph": [
+    {
+      "entry": "selection-CaqpcdEd.js",
+      "staticModules": 291,
+      "bytes": 4237367,
+      "baseline": {
+        "entry": "selection-BeE8hJxx.js",
+        "staticModules": 857,
+        "bytes": 14538624
+      }
+    },
+    {
+      "entry": "dispatch-DF8Lt6hN.js",
+      "staticModules": 957,
+      "bytes": 15734033,
+      "baseline": {
+        "entry": "dispatch-D02z4eoi.js",
+        "staticModules": 941,
+        "bytes": 15738175
+      }
+    },
+    {
+      "entry": "server-startup-config-BiD4kdQ2.js",
+      "staticModules": 188,
+      "bytes": 3165102,
+      "baseline": {
+        "entry": "server-startup-config-BphRGeMk.js",
+        "staticModules": 187,
+        "bytes": 3164733
+      }
+    }
+  ],
+  "desktop": {
+    "elapsedMs": 42433,
+    "budgetMs": 58000,
+    "observedWithinBudget": true,
+    "priority": "BelowNormal",
+    "formalFrozenCandidateRun": "pending"
+  },
+  "native": {
+    "cases": 3,
+    "realKills": 9,
+    "latenciesMs": [
+      42529,
+      44832,
+      41763
+    ],
+    "p50Ms": 42529,
+    "p95Ms": 44832,
+    "duplicateEffects": 0,
+    "lostTasks": 0,
+    "terminalCorrect": true,
+    "provider": "loopback scripted fixture",
+    "liveProviderRequests": 0,
+    "cleanupPassed": true,
+    "survivors": 0,
+    "sourceUnchanged": true,
+    "budgetPassed": false
+  },
+  "diagnosis": {
+    "metrics": [
+      {
+        "title": "candidate/repeated-restart/0",
+        "startup": [
+          {
+            "configSyncMs": 495,
+            "spawnToReadyMs": 9598,
+            "readyToConnectMs": 1067,
+            "totalMs": 11160
+          },
+          {
+            "configSyncMs": 184,
+            "spawnToReadyMs": 8411,
+            "readyToConnectMs": 2789,
+            "totalMs": 11384
+          },
+          {
+            "configSyncMs": 203,
+            "spawnToReadyMs": 7760,
+            "readyToConnectMs": 2455,
+            "totalMs": 10418
+          },
+          {
+            "configSyncMs": 193,
+            "spawnToReadyMs": 8486,
+            "readyToConnectMs": 2623,
+            "totalMs": 11302
+          }
+        ],
+        "reconnect": [
+          {
+            "outcome": "success",
+            "attemptNo": 1,
+            "maxAttempts": 10,
+            "delayMs": 250,
+            "gateway_reconnect_success_count": 1,
+            "gateway_reconnect_attempt_count": 1,
+            "gateway_reconnect_success_rate": 1
+          },
+          {
+            "outcome": "success",
+            "attemptNo": 2,
+            "maxAttempts": 10,
+            "delayMs": 500,
+            "gateway_reconnect_success_count": 2,
+            "gateway_reconnect_attempt_count": 2,
+            "gateway_reconnect_success_rate": 1
+          },
+          {
+            "outcome": "success",
+            "attemptNo": 3,
+            "maxAttempts": 10,
+            "delayMs": 1000,
+            "gateway_reconnect_success_count": 3,
+            "gateway_reconnect_attempt_count": 3,
+            "gateway_reconnect_success_rate": 1
+          }
+        ]
+      },
+      {
+        "title": "candidate/repeated-restart/1",
+        "startup": [
+          {
+            "configSyncMs": 556,
+            "spawnToReadyMs": 9589,
+            "readyToConnectMs": 783,
+            "totalMs": 10928
+          },
+          {
+            "configSyncMs": 243,
+            "spawnToReadyMs": 8127,
+            "readyToConnectMs": 1443,
+            "totalMs": 9813
+          },
+          {
+            "configSyncMs": 242,
+            "spawnToReadyMs": 8638,
+            "readyToConnectMs": 3448,
+            "totalMs": 12328
+          },
+          {
+            "configSyncMs": 230,
+            "spawnToReadyMs": 8040,
+            "readyToConnectMs": 2161,
+            "totalMs": 10431
+          }
+        ],
+        "reconnect": [
+          {
+            "outcome": "success",
+            "attemptNo": 1,
+            "maxAttempts": 10,
+            "delayMs": 250,
+            "gateway_reconnect_success_count": 1,
+            "gateway_reconnect_attempt_count": 1,
+            "gateway_reconnect_success_rate": 1
+          },
+          {
+            "outcome": "success",
+            "attemptNo": 2,
+            "maxAttempts": 10,
+            "delayMs": 500,
+            "gateway_reconnect_success_count": 2,
+            "gateway_reconnect_attempt_count": 2,
+            "gateway_reconnect_success_rate": 1
+          },
+          {
+            "outcome": "success",
+            "attemptNo": 3,
+            "maxAttempts": 10,
+            "delayMs": 1000,
+            "gateway_reconnect_success_count": 3,
+            "gateway_reconnect_attempt_count": 3,
+            "gateway_reconnect_success_rate": 1
+          }
+        ]
+      },
+      {
+        "title": "candidate/repeated-restart/2",
+        "startup": [
+          {
+            "configSyncMs": 626,
+            "spawnToReadyMs": 9007,
+            "readyToConnectMs": 829,
+            "totalMs": 10462
+          },
+          {
+            "configSyncMs": 213,
+            "spawnToReadyMs": 8523,
+            "readyToConnectMs": 2817,
+            "totalMs": 11553
+          },
+          {
+            "configSyncMs": 156,
+            "spawnToReadyMs": 7771,
+            "readyToConnectMs": 2723,
+            "totalMs": 10650
+          },
+          {
+            "configSyncMs": 246,
+            "spawnToReadyMs": 8464,
+            "readyToConnectMs": 2473,
+            "totalMs": 11183
+          }
+        ],
+        "reconnect": [
+          {
+            "outcome": "success",
+            "attemptNo": 1,
+            "maxAttempts": 10,
+            "delayMs": 250,
+            "gateway_reconnect_success_count": 1,
+            "gateway_reconnect_attempt_count": 1,
+            "gateway_reconnect_success_rate": 1
+          },
+          {
+            "outcome": "success",
+            "attemptNo": 2,
+            "maxAttempts": 10,
+            "delayMs": 500,
+            "gateway_reconnect_success_count": 2,
+            "gateway_reconnect_attempt_count": 2,
+            "gateway_reconnect_success_rate": 1
+          },
+          {
+            "outcome": "success",
+            "attemptNo": 3,
+            "maxAttempts": 10,
+            "delayMs": 1000,
+            "gateway_reconnect_success_count": 3,
+            "gateway_reconnect_attempt_count": 3,
+            "gateway_reconnect_success_rate": 1
+          }
+        ]
+      }
+    ],
+    "repeatedStartupRangesMs": {
+      "spawnToReady": {
+        "min": 7760,
+        "max": 8638
+      },
+      "readyToConnect": {
+        "min": 1443,
+        "max": 3448
+      },
+      "configSync": {
+        "min": 156,
+        "max": 246
+      }
+    },
+    "backoffMs": [
+      1750,
+      1750,
+      1750
+    ],
+    "source": "native-r10/playwright.json stderr gateway.startup/gateway.reconnect metrics",
+    "driven_by": "agent",
+    "actor": "codex/g3-capacity-development",
+    "realHumanEvidence": false
+  },
+  "capacity": {
+    "logicalProcessors": 16,
+    "totalMemoryMiB": 15541,
+    "initialCpuPctRange": [
+      23,
+      41
+    ],
+    "initialAvailableMiBRange": [
+      2766,
+      2915
+    ],
+    "g4": "active development, targeted tests and runtime build observed",
+    "constraint": "memory and paging fluctuate across all applications; active chat status alone does not establish host saturation",
+    "policy": "one local expensive stage at a time, read-only review alongside; owned stages use reduced priority, serial compiler projects and stable admission checks"
+  },
+  "pending": [
+    "reduce repeated-restart latency to original P50 5s/P95 15s",
+    "original full typecheck 45-second gate in a stable window",
+    "same frozen candidate: two arms/five windows/three repeats, 30 live-provider pairs, second legacy run, nine metrics and packaging"
+  ],
+  "actor": "codex/g3-capacity-development",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "archive": {
+    "file": "raw-evidence.json.gz",
+    "sha256": "ce3065dd0e854e11449808097131fe5d12f70172e7c68acd20e55e11e44e5f3f",
+    "entries": 2143,
+    "bytes": 12930892,
+    "credentialValueHits": 0
+  }
+}
