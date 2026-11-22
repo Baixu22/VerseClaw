@@ -6,7 +6,7 @@
  *    settles back when the pointer leaves. Reduced motion never scrolls.
  *  - ⋯ opens the session menu anchored under the button; Archive is one click
  *    with an Undo that restores the session.
- *  - The bell swings while a session runs, and its panel lists
+ *  - The bell shares the runtime status glyph while a session runs, and its panel lists
  *    running sessions above the recent activity feed.
  *
  * Agent-driven Electron automation; screenshots are evidence of what was
@@ -24,6 +24,7 @@ const ROOT = 'D:/tmp/sidebar-polish-fixture';
 const LONG_TITLE = 'Polish the conversation sidebar so hover shows one clear set of controls and long titles scroll';
 const artifacts = process.env.CLAWX_SIDEBAR_POLISH_ARTIFACTS_DIR
   || join(process.env.CLAWX_E2E_RUN_ROOT || 'D:/tmp', 'sidebar-session-row-polish', 'screenshots');
+const PREVIEW = 'The approval stays visible while execution details fold, with file changes ready to review from the composer.';
 const now = Date.parse('2026-10-30T09:00:00Z');
 
 const workspace = {
@@ -47,7 +48,7 @@ async function seed(app: ElectronApplication, hierarchy = false) {
   } : workspace;
   const profiles = hierarchy ? [profile, { ...workspace, id: 'migration-target', name: 'Migration target', rootPath: ROOT + '-target' }] : [profile];
   const sessions = [
-    { key: MAIN, sessionId: 'sidebar-generation', displayName: 'Sidebar review', updatedAt: now },
+    { key: MAIN, sessionId: 'sidebar-generation', displayName: 'Sidebar review', lastMessagePreview: PREVIEW, updatedAt: now },
     { key: LONG, sessionId: 'sidebar-long-generation', displayName: LONG_TITLE, updatedAt: now - 60_000 },
     { key: RUNNING, sessionId: 'sidebar-running-generation', displayName: 'Background build', updatedAt: now - 30_000, status: 'running', hasActiveRun: true },
     ...(hierarchy ? [{ key: childKey, sessionId: 'sidebar-child-generation', displayName: 'Related design review', parentSessionKey: MAIN, forkedFromParent: true, updatedAt: now - 90_000 }] : []),
@@ -172,7 +173,7 @@ test.describe('Sidebar session rows and activity bell', () => {
     } finally { await closeElectronApp(app); }
   });
 
-  test('hover shows pin + more, long titles loop and settle, and reduced motion keeps them still', async ({ launchElectronApp }) => {
+  test('hover shows pin + more, long titles loop and settle, and reduced motion keeps them still', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'light' });
     try {
       await seed(app);
@@ -181,6 +182,12 @@ test.describe('Sidebar session rows and activity bell', () => {
       page.on('pageerror', (error) => errors.push(error.message));
       await pinWindowContentSize(app, { width: 1280, height: 820 });
       await page.reload();
+      const summary = page.getByTestId(`sidebar-session-summary-${MAIN}`);
+      await expect(summary).toHaveText(PREVIEW);
+      expect(await summary.evaluate((element) => getComputedStyle(element).whiteSpace)).toBe('nowrap');
+      expect(await summary.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+      expect(await summary.evaluate((element) => element.closest('.task-row')?.getBoundingClientRect().height)).toBe(44);
+      await page.screenshot({ path: testInfo.outputPath('session-summary-preview.png') });
       const longRow = page.getByTestId(`sidebar-session-${LONG}`);
       await expect(longRow).toBeVisible({ timeout: 30_000 });
       const more = page.getByTestId(`sidebar-session-more-${LONG}`);
@@ -273,7 +280,7 @@ test.describe('Sidebar session rows and activity bell', () => {
     }
   });
 
-  test('bell shows the row status orb while running, and stays aligned in the collapsed sidebar', async ({ launchElectronApp }) => {
+test('bell shows the running status animation and stays aligned in the collapsed sidebar', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'light' });
     try {
       await seed(app);
@@ -320,9 +327,23 @@ test.describe('Sidebar session rows and activity bell', () => {
       expect(bounds.menuTop).toBeGreaterThan(bounds.triggerBottom);
       await settleAnimations(page, 'chat-completion-menu');
       expect(await panel.evaluate((element) => getComputedStyle(element).opacity)).toBe('1');
+      const activityRow = panel.getByTestId(`sidebar-session-${RUNNING}`);
+      const activityMore = panel.getByTestId(`sidebar-session-more-${RUNNING}`);
+      await hoverUntilVisible(activityRow.locator('..'), activityMore);
+      await expect(panel.getByTestId(`sidebar-session-pin-${RUNNING}`)).toBeVisible();
+      await panel.getByTestId(`sidebar-session-pin-${RUNNING}`).click();
+      await expect(panel.getByTestId(`sidebar-session-pin-${RUNNING}`)).toHaveAttribute('aria-pressed', 'true');
+      await activityMore.click();
+      await expect(page.getByTestId(`sidebar-session-context-menu-${RUNNING}`)).toBeVisible();
+      await expect(panel).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(panel).toBeVisible();
+      await activityRow.click({ button: 'right' });
+      await expect(page.getByTestId(`sidebar-session-context-menu-${RUNNING}`)).toBeVisible();
+      await page.keyboard.press('Escape');
       await page.screenshot({ path: join(artifacts, 'bell-panel-light.png'), clip: { x: 0, y: 0, width: 420, height: 520 } });
 
-      await liveItems.first().click();
+      await activityRow.click();
       await expect(panel).toBeHidden();
 
       await page.evaluate(() => document.documentElement.classList.add('dark'));
@@ -341,7 +362,7 @@ test.describe('Sidebar session rows and activity bell', () => {
       const panelBox = await panel.boundingBox();
       expect(panelBox!.x).toBeGreaterThanOrEqual(0);
       expect(panelBox!.x + panelBox!.width).toBeLessThanOrEqual(1280);
-      await capture(page, 'bell-collapsed-dark');
+      await page.screenshot({ path: join(artifacts, 'bell-collapsed-dark.png'), clip: { x: 0, y: 0, width: 420, height: 520 } });
       await page.keyboard.press('Escape');
       await expect(panel).toBeHidden();
       await expect(bell).toBeFocused();

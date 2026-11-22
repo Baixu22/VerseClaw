@@ -254,8 +254,8 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
       return t ? t.textContent : null;
     });
 
-    // A 20px inline orb — the sidebar session status dot renders an OrbStatus
-    // (size 20 preset) per session. It appears after sessions.list is resolved.
+    // A 20px inline orb — the active sidebar session status uses OrbStatus'
+    // runtime animation. Settled session statuses use static semantic icons.
     report.sidebarOrb = await page.evaluate(() => {
       const c = [...document.querySelectorAll('canvas[role="img"]')].find((el) => {
         const r = el.getBoundingClientRect();

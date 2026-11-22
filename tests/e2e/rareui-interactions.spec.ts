@@ -164,10 +164,14 @@ test('conversation rail, hook selection, completion bell and Markdown TOC have r
     await page.reload();
     await expect(page.getByTestId('chat-message-4')).toBeVisible();
     await expect(page.getByTestId('chat-message-nav-rail')).toHaveCount(0);
-    expect(await page.getByTestId('chat-completion-bell').evaluate((element) => Boolean(element.closest('[data-testid="sidebar"]')))).toBe(true);
+    const bell = page.getByTestId('chat-completion-bell');
+    expect(await bell.evaluate((element) => Boolean(element.closest('[data-testid="sidebar"]')))).toBe(true);
     await seed(app, 5);
     await page.reload();
     await expect(page.getByTestId('chat-message-nav-rail')).toBeVisible();
+    await expect(bell).toHaveAttribute('data-status', 'success');
+    await expect(page.getByTestId('chat-activity-status-icon')).toHaveAttribute('data-state', 'success');
+    await expect(page.getByTestId('chat-activity-bell-icon')).toHaveCount(0);
     await expect(page.locator('[data-nav-index]')).toHaveCount(5);
     await page.getByTestId('chat-message-nav-rail-item-2').hover();
     await expect(page.getByTestId('turn-preview-2').first()).toContainText('Round 2');
@@ -195,6 +199,8 @@ test('conversation rail, hook selection, completion bell and Markdown TOC have r
     expect(completionTimes).toEqual([...completionTimes].sort((a, b) => b - a));
     await capture(page, 'completion-bell-light');
     await page.getByTestId('chat-completion-item').first().click();
+    await expect(bell).toHaveAttribute('data-status', 'none');
+    await expect(page.getByTestId('chat-activity-bell-icon')).toBeVisible();
     await expect(page.getByTestId('chat-message-nav-rail-item-8')).toHaveAttribute('data-active', 'true');
     await page.getByTestId('chat-header-session-name').click();
     const sessionMenu = page.getByTestId('chat-session-navigation-menu');

@@ -1,0 +1,108 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "git": "real",
+  "hostStorage": "real",
+  "gateway": "mocked idle transport",
+  "repositoryInitialized": true,
+  "worktreeCreated": true,
+  "independentSession": true,
+  "draftRestored": true,
+  "unpublishedBeforeRemoval": {
+    "head": "81c9fbe52dfd0c2cd290bf4087a23fbe15f64b6d",
+    "branch": "codex/cleanup-demo",
+    "clean": true,
+    "remotes": []
+  },
+  "realTerminalReleased": true,
+  "unpublishedAfterRemoval": {
+    "head": "81c9fbe52dfd0c2cd290bf4087a23fbe15f64b6d",
+    "retainedRef": "refs/heads/codex/cleanup-demo",
+    "recoveredContent": "U5 local-only committed work\n"
+  },
+  "worktreeRemovedWithBranchRetained": true,
+  "slashAndSettings": true,
+  "settingsEntry": true,
+  "snapshot": {
+    "success": true,
+    "measuredAt": "2026-11-21T14:09:39.587Z",
+    "applicationMemoryBytes": 844677120,
+    "sessions": [
+      {
+        "workspaceId": "workspace-demo",
+        "workspaceName": "Workspace demo",
+        "sessionKey": "agent:main:storage-demo",
+        "disk": {
+          "bytes": 0,
+          "partial": false
+        },
+        "label": "agent:main:storage-demo",
+        "memoryBytes": 0,
+        "terminals": 0,
+        "browsers": 0,
+        "servers": 0
+      },
+      {
+        "workspaceId": "codex-storage-demo",
+        "workspaceName": "codex/storage-demo",
+        "sessionKey": "agent:main:session-1795270152456-ykbmc2",
+        "disk": {
+          "bytes": 0,
+          "partial": false
+        },
+        "label": "agent:main:session-1795270152456-ykbmc2",
+        "memoryBytes": 0,
+        "terminals": 0,
+        "browsers": 0,
+        "servers": 0
+      }
+    ],
+    "worktrees": [
+      {
+        "path": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa/.tmp/storage-acceptance-2qzuba/workspace-demo",
+        "head": "df02c2885b9de7db88800f1445bf5f0cf7d9ddef",
+        "branch": "master",
+        "repositoryWorkspaceId": "workspace-demo",
+        "repositoryName": "Workspace demo",
+        "workspaceIds": [
+          "workspace-demo"
+        ],
+        "protection": "primary",
+        "disk": {
+          "bytes": 11434,
+          "partial": false
+        }
+      },
+      {
+        "path": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa/.tmp/storage-acceptance-2qzuba/recovered-checkout",
+        "head": "81c9fbe52dfd0c2cd290bf4087a23fbe15f64b6d",
+        "branch": "codex/cleanup-demo",
+        "repositoryWorkspaceId": "workspace-demo",
+        "repositoryName": "Workspace demo",
+        "workspaceIds": [],
+        "protection": null,
+        "disk": {
+          "bytes": 11463,
+          "partial": false
+        }
+      },
+      {
+        "path": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa/.tmp/storage-acceptance-2qzuba/workspace-demo-codex-storage-demo",
+        "head": "df02c2885b9de7db88800f1445bf5f0cf7d9ddef",
+        "branch": "codex/storage-demo",
+        "reason": "UI_CLEANUP_WORKSPACE_REFERENCE: codex-storage-demo; owner=Workspace/session lifecycle; entry=/settings/storage (originating session / Task Ledger)",
+        "repositoryWorkspaceId": "workspace-demo",
+        "repositoryName": "Workspace demo",
+        "workspaceIds": [
+          "codex-storage-demo"
+        ],
+        "protection": "active",
+        "disk": {
+          "bytes": 11804,
+          "partial": false
+        }
+      }
+    ]
+  }
+}

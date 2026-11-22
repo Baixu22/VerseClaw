@@ -121,6 +121,7 @@ type CodeDiffSharedState = {
   pierreThemes: ThemesType;
   fileDiffMetadata: FileDiffMetadata | null;
   patch: string | null;
+  showStats: boolean;
   additions: number;
   deletions: number;
 };
@@ -144,6 +145,7 @@ export type CodeDiffRootProps = CodeDiffProps & {
   expanded?: boolean;
   defaultExpanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
+  showStats?: boolean;
 };
 
 function CodeDiffRoot({
@@ -161,6 +163,7 @@ function CodeDiffRoot({
   expanded: expandedProp,
   defaultExpanded = false,
   onExpandedChange,
+  showStats = true,
 }: CodeDiffRootProps) {
   const contentId = useId();
   const resolvedTheme = useResolvedTheme();
@@ -268,6 +271,7 @@ function CodeDiffRoot({
     pierreThemes,
     fileDiffMetadata,
     patch: isPatchMode ? (patch ?? null) : null,
+    showStats,
     additions,
     deletions,
   };
@@ -296,7 +300,7 @@ export type CodeDiffSectionProps = {
 
 function CodeDiffHeader({ className }: CodeDiffSectionProps) {
   const { t } = useTranslation("chat");
-  const { language, filename, isCopied, copyCode, additions, deletions } =
+  const { language, filename, isCopied, copyCode, showStats, additions, deletions } =
     useCodeDiff();
   const hasChanges = additions > 0 || deletions > 0;
   const pathParts = filename?.replace(/\\/g, "/").split("/") ?? [];
@@ -316,7 +320,7 @@ function CodeDiffHeader({ className }: CodeDiffSectionProps) {
         </div>
         {directory && <div className="truncate font-mono text-[11px] leading-4 text-muted-foreground">{directory}</div>}
       </div>
-      {hasChanges && (
+      {showStats && hasChanges && (
         <span className="shrink-0 whitespace-nowrap text-xs font-mono tabular-nums">
           {additions > 0 && (
             <span className="text-emerald-700 dark:text-emerald-400">+{additions}</span>

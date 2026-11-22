@@ -1,20 +1,29 @@
 /**
- * RunTerminalSurfaces — renders `command.output` runtime events as Tool UI
- * terminal cards instead of the flat text rows the execution graph used to
- * show. See `src/pages/Chat/run-surface-promotion.ts` for why the graph no
- * longer renders these events.
+ * RunTerminalSurfaces — renders each `command.output` event as an ordered,
+ * expandable execution row with the shared terminal for its full output.
  */
+import { Terminal as TerminalIcon } from 'lucide-react';
+import { Collapsible } from '@/components/ui/collapsible';
+import { CallChip } from '@/components/tool-ui/shared/call-chip';
 import { Terminal } from '@/components/tool-ui/terminal';
 import type { RunTerminalSurface } from '@/components/tool-ui/run-surfaces';
+import { useTranslation } from 'react-i18next';
+
+function formatDuration(durationMs?: number): string | null {
+  if (durationMs == null) return null;
+  return durationMs < 1000 ? `${Math.round(durationMs)}ms` : `${(durationMs / 1000).toFixed(1)}s`;
+}
 
 export function RunTerminalSurfaces({ surfaces }: { surfaces: RunTerminalSurface[] }) {
+  const { t } = useTranslation('chat');
   if (surfaces.length === 0) return null;
 
   return (
     <div className="space-y-2" data-testid="chat-run-terminals">
-      {surfaces.map((surface) => (
-        <div key={surface.id} data-testid="chat-run-terminal" data-status={surface.status}>
+      {surfaces.map((surface) => {
+        const output = (
           <Terminal
+            transcriptDetail
             id={surface.id}
             command={surface.command}
             cwd={surface.cwd}
@@ -28,8 +37,28 @@ export function RunTerminalSurfaces({ surfaces }: { surfaces: RunTerminalSurface
             truncated={surface.truncated}
             maxCollapsedLines={10}
           />
-        </div>
-      ))}
+        );
+        return (
+          <div key={surface.id} data-testid="chat-run-terminal" data-status={surface.status}>
+            <Collapsible
+              variant="plain"
+              defaultOpen={surface.status !== 'completed'}
+              title={surface.status === 'running' || surface.status === 'failed'
+              ? <CallChip name={surface.command} icon="terminal" status={surface.status === 'running' ? 'running' : 'error'} statusLabel={t(`processPanel.status.${surface.status}`)} showTimer={false} />
+                : <code className="block min-w-0 truncate font-mono text-xs" title={surface.command}>{surface.command}</code>}
+              leading={surface.status === 'completed' ? <TerminalIcon className="size-3.5" /> : undefined}
+              trailing={(
+                <span className="shrink-0 text-[11px] text-muted-foreground">
+                  {t(`processPanel.status.${surface.status}`)}{formatDuration(surface.durationMs) ? ` · ${formatDuration(surface.durationMs)}` : ''}
+                </span>
+              )}
+              buttonTestId="chat-run-terminal-toggle"
+            >
+              {output}
+            </Collapsible>
+          </div>
+        );
+      })}
     </div>
   );
 }

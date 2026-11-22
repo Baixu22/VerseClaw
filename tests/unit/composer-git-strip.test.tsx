@@ -125,18 +125,22 @@ describe('ComposerGitStrip', () => {
     mockGitContext();
   });
 
-  it('shows only the changed-file summary until details are explicitly opened', async () => {
+  it('shows branch and change context while keeping branch details behind the menu', async () => {
+    const onOpenGitPanel = vi.fn();
     render(
       <ComposerGitStrip
         workspace={workspace()}
-        onOpenGitPanel={vi.fn()}
+        onOpenGitPanel={onOpenGitPanel}
         onSwitchWorktreeWorkspace={vi.fn()}
       />,
     );
 
     expect(await screen.findByTestId('composer-git-strip')).toHaveTextContent('3 files changed');
-    expect(screen.getByTestId('composer-git-strip')).not.toHaveTextContent('feature/current');
+    expect(screen.getByTestId('composer-git-change-count')).toHaveTextContent('3 files changed');
+    expect(screen.getByTestId('composer-git-trigger')).toHaveTextContent('feature/current');
     expect(hostApiMock.git.branches).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('composer-git-review'));
+    expect(onOpenGitPanel).toHaveBeenCalledOnce();
     fireEvent.click(screen.getByTestId('composer-git-trigger'));
     expect(await screen.findByTestId('composer-git-menu')).toHaveTextContent('feature/current');
     expect(screen.getByTestId('composer-git-menu')).toHaveTextContent('ahead 2 / behind 1');
@@ -153,9 +157,9 @@ describe('ComposerGitStrip', () => {
     const props = { onOpenGitPanel: vi.fn(), onSwitchWorktreeWorkspace: vi.fn() };
     const view = render(<ComposerGitStrip {...props} workspace={workspace()} />);
     view.rerender(<ComposerGitStrip {...props} workspace={{ ...workspace(), id: 'next-workspace', rootPath: '/workspace/next' }} />);
-    expect(await screen.findByTestId('composer-git-trigger')).toHaveTextContent('4 files changed');
+    expect(await screen.findByTestId('composer-git-change-count')).toHaveTextContent('4 files changed');
     await act(async () => { complete({ ...original, status: { ...original.status, branch: 'old-workspace-branch' } }); });
-    expect(screen.getByTestId('composer-git-trigger')).toHaveTextContent('4 files changed');
+    expect(screen.getByTestId('composer-git-change-count')).toHaveTextContent('4 files changed');
   });
 
   it('hides when the active workspace is not a repository', async () => {
@@ -196,7 +200,7 @@ describe('ComposerGitStrip', () => {
   it('counts a file once when it appears in both staged and unstaged buckets',async()=>{
     const original=await hostApiMock.git.status();original.status.changes=[original.status.changes[0],{...original.status.changes[0],staged:false,unstaged:true,bucket:'unstaged'}];hostApiMock.git.status.mockResolvedValue(original);
     render(<ComposerGitStrip workspace={workspace()} onOpenGitPanel={vi.fn()} onSwitchWorktreeWorkspace={vi.fn()}/>);
-    expect(await screen.findByTestId('composer-git-trigger')).toHaveTextContent('1 files changed');
+    expect(await screen.findByTestId('composer-git-change-count')).toHaveTextContent('1 files changed');
   });
 
   it('checks out a branch through the host Git API and refreshes context', async () => {

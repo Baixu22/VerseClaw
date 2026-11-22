@@ -14,7 +14,7 @@ export type PlusMenuMorphProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   className?: string;
-  triggerLabel?: string;
+  triggerLabel: string;
   disabled?: boolean;
   triggerTestId?: string;
   containerTestId?: string;
@@ -39,7 +39,7 @@ function PlusMenuMorph({
   open: openProp,
   onOpenChange,
   className,
-  triggerLabel = 'Open menu',
+  triggerLabel,
   disabled = false,
   triggerTestId,
   containerTestId,
@@ -54,6 +54,7 @@ function PlusMenuMorph({
     [openProp, onOpenChange],
   );
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [panelSize, setPanelSize] = useState({ width: 156, height: 44 });
 
@@ -84,12 +85,19 @@ function PlusMenuMorph({
   }, [disabled, open, setOpen]);
 
   useEffect(() => {
+    if (open) menuRef.current?.querySelector('button')?.focus({ preventScroll: true });
+  }, [open]);
+
+  useEffect(() => {
     if (!open) return;
     const onDocClick = (event: MouseEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus({ preventScroll: true });
+      }
     };
     document.addEventListener('click', onDocClick);
     document.addEventListener('keydown', onKey);
@@ -119,13 +127,16 @@ function PlusMenuMorph({
     <span className="pm-morph-slot" data-testid={`${containerTestId ?? 'pm-morph'}-slot`}>
       <div
         ref={rootRef}
+        onBlur={(event) => {
+          if (open && event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+        }}
         className={cn('pm-morph', className)}
         style={tokens}
         data-open={open ? 'true' : 'false'}
         data-direction="up-left"
         data-testid={containerTestId}
       >
-        <div ref={menuRef} className="pm-morph-menu">
+        <div ref={menuRef} className="pm-morph-menu" inert={!open}>
           {items.map((item) => (
             <button
               key={item.key}
@@ -133,6 +144,7 @@ function PlusMenuMorph({
               data-testid={item.testId}
               onClick={() => {
                 setOpen(false);
+                triggerRef.current?.focus({ preventScroll: true });
                 item.onSelect();
               }}
             >
@@ -145,7 +157,9 @@ function PlusMenuMorph({
           type="button"
           className="pm-morph-plus"
           aria-expanded={open}
-          aria-label={open ? 'Close menu' : triggerLabel}
+          ref={triggerRef}
+          tabIndex={open ? -1 : 0}
+          aria-label={triggerLabel}
           disabled={disabled}
           data-testid={triggerTestId}
           onClick={toggle}

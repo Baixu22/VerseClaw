@@ -240,8 +240,7 @@ export function SessionTaskDock({
   );
   const task = snapshot?.task ?? null;
   const planTodos = plan?.todos ?? [];
-  const planSettled = planTodos.length > 0 && planTodos.every((todo) => isSettled(todo.status));
-  const planVisible = planTodos.length > 0 && (runActive || !planSettled);
+  const planVisible = planTodos.length > 0 && runActive;
   const taskId = task?.contract.taskNodeId ?? (planVisible && plan ? `plan:${plan.id}` : "");
   if (!hasConversation || !taskId) return null;
   return (

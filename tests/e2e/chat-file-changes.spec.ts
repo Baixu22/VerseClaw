@@ -194,6 +194,11 @@ test.describe('Verse Claw chat file changes', () => {
       await expect(fileDiff).toContainText('demo.ts');
       await expect(fileDiff).toContainText('+1');
       await expect(fileDiff).toContainText('-1');
+      const diffContent = fileDiff.getByTestId('code-diff-content');
+      await expect(fileDiff.getByTestId('chat-mutation-file-toggle')).toHaveAttribute('aria-expanded', 'false');
+      await expect(diffContent).toHaveCount(0);
+      await fileDiff.getByTestId('chat-mutation-file-toggle').click();
+      await expect(diffContent).toBeVisible();
 
       await page.setViewportSize({ width: 640, height: 1200 });
       await fileDiff.scrollIntoViewIfNeeded();
@@ -205,7 +210,6 @@ test.describe('Verse Claw chat file changes', () => {
       expect(detailsBox).not.toBeNull();
       expect(cardBox!.x).toBeGreaterThanOrEqual(detailsBox!.x - 1);
       expect(cardBox!.x + cardBox!.width).toBeLessThanOrEqual(detailsBox!.x + detailsBox!.width + 1);
-      const diffContent = fileDiff.getByTestId('code-diff-content');
       expect(await diffContent.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
       expect(await page.getByTestId('chat-scroll-container').evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
       const narrowPath = testInfo.outputPath('chat-git-diff-narrow.png');

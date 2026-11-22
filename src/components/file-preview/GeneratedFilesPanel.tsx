@@ -1,5 +1,6 @@
 import { FileText, FolderOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { FileLineStatsLabel } from '@/components/tool-ui/shared/file-line-stats';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
 import {
@@ -35,7 +36,7 @@ export function GeneratedFilesPanel({
   };
 
   return (
-    <div className={cn('space-y-0.5', className)} data-testid="chat-generated-files">
+    <div className={cn('git-surface space-y-0.5', className)} data-testid="chat-generated-files">
       <p className="pb-0.5 text-xs font-medium text-muted-foreground">
         {t('generatedFiles.title', { count: files.length, defaultValue: 'File changes ({{count}})' })}
       </p>
@@ -55,7 +56,7 @@ export function GeneratedFilesPanel({
             disabled={!onClick}
             onClick={onClick}
             className={cn(
-              'group/file flex min-h-7 w-full min-w-0 items-center gap-2 rounded-sm px-1 text-left text-sm text-muted-foreground',
+              'git-row group/file flex min-h-8 w-full min-w-0 items-center gap-2 text-left text-sm text-muted-foreground',
               onClick && 'hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
               !onClick && 'cursor-default',
             )}
@@ -64,13 +65,8 @@ export function GeneratedFilesPanel({
             {revealOnly
               ? <FolderOpen className="h-3.5 w-3.5 shrink-0" />
               : <FileText className="h-3.5 w-3.5 shrink-0" />}
-            <span className="min-w-0 flex-1 truncate font-medium">{file.fileName}</span>
-            {lineStats && (
-              <span className="shrink-0 whitespace-nowrap font-mono text-xs tabular-nums">
-                <span className="text-emerald-600 dark:text-emerald-400">+{lineStats.added}</span>
-                <span className="ml-1 text-rose-600 dark:text-rose-400">-{lineStats.removed}</span>
-              </span>
-            )}
+            <span className="min-w-0 flex-1"><span className="block truncate font-medium">{file.fileName}</span><span className="block truncate text-[11px] font-normal text-muted-foreground">{file.filePath}</span></span>
+            {lineStats && <FileLineStatsLabel stats={lineStats} />}
             <span className="shrink-0 text-xs text-muted-foreground/75">
               {revealOnly
                 ? t('generatedFiles.openFolder', 'Open folder')

@@ -120,13 +120,12 @@ import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-st
 import { CodingRunEvidence } from '@/components/assistant-render/CodingRunEvidence';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
 import { extractAssistantReasoning, type AssistantReasoning } from '@/components/assistant-render/model';
-import { PendingRunApprovals } from '@/components/tool-ui/PendingRunApprovals';
+import { ComposerRequestDock } from './ComposerRequestDock';
+import { collectComposerInteractions } from './composer-interactions';
 import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
-import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
 import { CallChip } from '@/components/tool-ui/shared/call-chip';
 import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileDiff, projectRunProcesses, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
-import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
@@ -175,6 +174,7 @@ type ChatMessageRenderRow = {
   key: string;
   message: RawMessage;
   hidden: boolean;
+  canForkFromMessage: boolean;
   suppressAssistantText: boolean;
   suppressToolCards: boolean;
   suppressReasoning: boolean;
@@ -1524,9 +1524,15 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     return sendMessage(text, resolved);
   }, [knowledgeMode, messages.length, sending, sendMessage]);
 
-  const handleSubmitInteractionResponse = useCallback((responseText: string) => {
-    void handleSendMessage(responseText);
-  }, [handleSendMessage]);
+  const [interactionSend, setInteractionSend] = useState<{ sessionKey: string; text: string } | null>(null);
+  const handleSubmitInteractionResponse = useCallback(async (responseText: string) => {
+    setInteractionSend({ sessionKey: currentSessionKey, text: responseText });
+    await handleSendMessage(responseText, { respondToInteraction: true });
+    const snapshot = useChatStore.getState();
+    const sendError = snapshot.currentSessionKey === currentSessionKey ? snapshot.error : null;
+    if (sendError) throw new Error(sendError);
+    setInteractionSend((current) => current?.sessionKey === currentSessionKey && current.text === responseText ? null : current);
+  }, [currentSessionKey, handleSendMessage]);
 
   const handleOpenRecoveryMemoryDraft = useCallback(() => {
     const sessionLabel = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
@@ -1702,7 +1708,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
   /** The status card's 环境 section links out to the Git review tab. */
-  const handleOpenEnvironment = useCallback(() => {
+  const handleOpenChangesReview = useCallback(() => {
     setSessionActivityOpenOverrides((current) => ({ ...current, [currentSessionKey]: false }));
     openWorkspacePanel({ panel: 'review', view: 'changes' });
     if (!activeWorkspaceId) return;
@@ -2751,14 +2757,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     }
     seenApprovalIds.current = current;
   }, [addAttentionNudge, currentSessionKey, notifyDesktop, pendingApprovals, t]);
-  const handleApprovalDecision = useCallback(async (id: string, decision: 'approved' | 'denied') => {
-    try {
-      await decideApproval(id, decision);
-    } catch (error) {
-      toastUserError(error);
-      throw error;
-    }
-  }, [decideApproval]);
+  const handleApprovalDecision = decideApproval;
   // Which turn shows which approval. Undecided approvals outlive the run that
   // raised them, so this cannot be "whatever the latest run is" — see
   // assignApprovalsToRunCards.
@@ -2813,9 +2812,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
    * own promoted surfaces (`UserRunCard.surfaces`) are rebuilt from history and
    * outlive the run, so they carry the section afterwards. Merged, live wins.
    *
-   * The plan works the same way and for the same reason, and because both sides
-   * come from `promoteRunSurfaces` the card and the conversation cannot disagree
-   * about what the plan says.
+   * Read plans from the turn cards: they reconcile live proposals with both
+   * live and historical tool receipts, including rejected updates.
    *
    * Declared here rather than with the other activity state because it reads
    * `userRunCards`, which is computed above.
@@ -2826,18 +2824,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       .sort((left, right) => (right.startedAt ?? 0) - (left.startedAt ?? 0)),
     [currentSessionKey, runtimeRuns],
   );
-  const sessionActivityPlan = useMemo(() => {
-    for (const run of sessionActivityRuns) {
-      const { plan } = promoteRunSurfaces({ runState: run });
-      if (plan && plan.todos.length > 0) return plan;
-    }
-    // Newest turn first: the plan the user is looking at is the latest one.
-    for (let index = userRunCards.length - 1; index >= 0; index -= 1) {
-      const plan = userRunCards[index].surfaces.plan;
-      if (plan && plan.todos.length > 0) return plan;
-    }
-    return null;
-  }, [sessionActivityRuns, userRunCards]);
   const sessionActivityProcesses = useMemo(() => mergeProcessSurfaces(
     sessionActivityRuns.flatMap((run) => projectRunProcesses(run)),
     userRunCards.flatMap((card) => card.surfaces.terminals.map(processFromTerminalSurface)),
@@ -2877,16 +2863,14 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
    * view and stays.
    */
   const isTurnSummaryExpanded = useCallback((card: UserRunCard) => {
-    const cardApprovals = approvalsByRunKey.get(card.runKey) ?? [];
     const defaultExpanded = card.status === 'error'
       || card.status === 'aborted'
       || card.steps.some((step) => step.status === 'error')
       || card.surfaces.terminals.some((terminal) => terminal.status === 'failed')
       || (card.status === 'completed' && runActivityKeepExpandedOnComplete)
       || (!card.active && !card.hasVisibleReply);
-    return cardApprovals.length > 0
-      || (runActivityExpandedOverrides[turnDisclosureKey(currentSessionKey, card)] ?? defaultExpanded);
-  }, [approvalsByRunKey, currentSessionKey, runActivityExpandedOverrides, runActivityKeepExpandedOnComplete]);
+    return runActivityExpandedOverrides[turnDisclosureKey(currentSessionKey, card)] ?? defaultExpanded;
+  }, [currentSessionKey, runActivityExpandedOverrides, runActivityKeepExpandedOnComplete]);
 
 
   const [visibleSessionActivitySnapshot, sessionActivitySnapshotPending] = useMemo(() => {
@@ -3044,55 +3028,70 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [messages, userRunCards]);
 
   const messageWorkspaceRoot = activeWorkspace?.rootPath || currentAgent?.workspace || null;
-  const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => messages.map((msg, idx) => {
-    const hasUserFacingMedia = hasUserFacingMediaAttachments(msg);
-    // User-facing progress stays in the transcript; internal narration stays
-    // in the process log. Folding a tool must never swallow its explanation.
-    const repeatsLiveReply = visibleStreamingText != null
-      && extractText(msg).trim() === visibleStreamingText.trim()
-      && userRunCards.some((card) => card.active && idx > card.triggerIndex);
-    const suppressAssistantText = foldedNarrationIndices.has(idx)
-      && (isInternalProcessNarration(extractText(msg)) || repeatsLiveReply);
-    const suppressToolCards = runSegmentMessageIndices.has(idx);
-    const suppressReasoning = runCardReasoning.adoptedIndices.has(idx);
-    const textOverride = replyTextOverrides.get(idx);
-    /*
-     * Row visibility has exactly ONE authority, shared with `<ChatMessage>`.
-     *
-     * This check used to reason about the message independently — "tool-only
-     * assistant inside a run segment" and "narration folded into the graph"
-     * both dropped the whole row — while ChatMessage separately believed Tool
-     * UI cards survived a run segment. This fired first, so they never met, and
-     * every tool-call-driven card (weather, question-flow, option-list, …) was
-     * unreachable mid-run. Deriving both sides from `projectMessageRender`
-     * makes that class of drift structurally impossible.
-     *
-     * `isUser` deliberately mirrors ChatMessage's own `message.role === 'user'`
-     * so the two calls share a projection-cache entry rather than parsing twice.
-     */
-    const projection = projectMessageRender(msg, {
-      isUser: msg.role === 'user',
-      suppressAssistantText,
-      suppressToolCards,
-      suppressReasoning,
-      textOverride,
-    });
-    const hidden = isInternalMessage(msg) && !hasUserFacingMedia
-      ? true
-      : !projection.hasRenderableContent;
+  const composerInteractions = useMemo(() => collectComposerInteractions([
+    ...messages,
+    ...(sending ? [buildStreamingRenderMessage({ stream: streamState, streamingReplyText, streamingTimestamp })] : []),
+  ], interactionSend?.sessionKey === currentSessionKey ? interactionSend.text : undefined),
+  [messages, sending, streamState, streamingReplyText, streamingTimestamp, interactionSend, currentSessionKey]);
+  const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => {
+    let hasAssistantForkAncestor = false;
+    const liveReplyText = visibleStreamingText?.trim();
+    return messages.map((msg, idx) => {
+      const transcriptEntryId = getTranscriptEntryId(msg);
+      const canForkFromMessage = Boolean(transcriptEntryId && hasAssistantForkAncestor);
+      if (normalizeMessageRole(msg.role) === 'assistant' && transcriptEntryId) hasAssistantForkAncestor = true;
+      const hasUserFacingMedia = hasUserFacingMediaAttachments(msg);
+      // User-facing progress stays in the transcript; internal narration stays
+      // in the process log. Folding a tool must never swallow its explanation.
+      const repeatsLiveReply = msg.role === 'assistant' && Boolean(liveReplyText)
+        && extractText(msg).trim() === liveReplyText
+        && userRunCards.some((card) => card.active && idx > card.triggerIndex && idx <= card.segmentEnd);
+      const suppressAssistantText = foldedNarrationIndices.has(idx)
+        && (isInternalProcessNarration(extractText(msg)) || repeatsLiveReply);
+      const suppressToolCards = runSegmentMessageIndices.has(idx);
+      const suppressReasoning = runCardReasoning.adoptedIndices.has(idx);
+      // The live copy already renders this reply, including any fenced Tool UI cards.
+      const textOverride = repeatsLiveReply ? '' : replyTextOverrides.get(idx);
+      /*
+       * Row visibility has exactly ONE authority, shared with `<ChatMessage>`.
+       *
+       * This check used to reason about the message independently — "tool-only
+       * assistant inside a run segment" and "narration folded into the graph"
+       * both dropped the whole row — while ChatMessage separately believed Tool
+       * UI cards survived a run segment. This fired first, so they never met, and
+       * every tool-call-driven card (weather, question-flow, option-list, …) was
+       * unreachable mid-run. Deriving both sides from `projectMessageRender`
+       * makes that class of drift structurally impossible.
+       *
+       * `isUser` deliberately mirrors ChatMessage's own `message.role === 'user'`
+       * so the two calls share a projection-cache entry rather than parsing twice.
+       */
+      const projection = projectMessageRender(msg, {
+        isUser: msg.role === 'user',
+        suppressComposerInteractions: true,
+        suppressAssistantText,
+        suppressToolCards,
+        suppressReasoning,
+        textOverride,
+      });
+      const hidden = isInternalMessage(msg) && !hasUserFacingMedia
+        ? true
+        : !projection.hasRenderableContent;
 
-    return {
-      index: idx,
-      key: msg.id || `msg-${idx}`,
-      message: msg,
-      hidden,
-      suppressAssistantText,
-      suppressToolCards,
-      suppressReasoning,
-      textOverride,
-      runCards: userRunCardsByTriggerIndex.get(idx) ?? [],
-    };
-  }), [
+      return {
+        index: idx,
+        key: msg.id || `msg-${idx}`,
+        message: msg,
+        hidden,
+        canForkFromMessage,
+        suppressAssistantText,
+        suppressToolCards,
+        suppressReasoning,
+        textOverride,
+        runCards: userRunCardsByTriggerIndex.get(idx) ?? [],
+      };
+    });
+  }, [
     foldedNarrationIndices,
     messages,
     replyTextOverrides,
@@ -3518,7 +3517,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             activityRetentionMinutes={sessionActivityRetentionMinutes}
             onOpenRecovery={() => navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`)}
             onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
-            onOpenEnvironment={handleOpenEnvironment}
+            onOpenEnvironment={handleOpenChangesReview}
             onOpenSubagent={handleOpenSubagentTranscript}
             onOpenProcess={handleOpenProcess}
             onRetryStatus={() => void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey })}
@@ -3623,11 +3622,14 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         showActions={!foldedNarrationIndices.has(row.index)}
                         suppressProcessAttachments={row.suppressToolCards}
                         suppressReasoning={row.suppressReasoning}
+                        suppressComposerInteractions
                         onOpenFile={handleOpenAttachedFile}
                         workspaceRoot={messageWorkspaceRoot}
                         canSubmitInteractionResponse={isGatewayRunning && !inputRunActive}
                         onSubmitInteractionResponse={handleSubmitInteractionResponse}
                         onDraftInteractionResponse={handleAppendComposerDraft}
+                        onQuoteResponse={handleQuoteSelection}
+                        canForkFromMessage={row.canForkFromMessage && !forkDisabled}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
                         onForkFromMessage={handleForkFromMessage}
@@ -3648,16 +3650,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         const cardReasoning = card.active
                           ? (runCardReasoning.byRunKey.get(runKey) ?? streamingReasoning)
                           : (runCardReasoning.byRunKey.get(runKey) ?? EMPTY_REASONING_ITEMS);
-                        // A pending approval blocks the run and is the only way
-                        // to unblock it. It overrides the user's own collapse —
-                        // a decision the agent is waiting on must never be
-                        // hidden behind a disclosure the user forgot they shut.
-                        // Shared with the session rail's yield rule (see
-                        // `isTurnSummaryExpanded`) so both surfaces agree on
-                        // when the plan's full view is on screen.
                         const expanded = isTurnSummaryExpanded(card);
                         const activeTool = card.active
-                          ? card.steps.findLast((step) => step.kind === 'tool' && step.status === 'running')
+                          ? card.steps.findLast((step) => step.kind === 'tool' && step.status === 'running'
+                            && !composerInteractions.some((interaction) => interaction.id === step.id))
                           : undefined;
                         const activeTerminal = card.active
                           ? card.surfaces.terminals.findLast((terminal) => terminal.status === 'running')
@@ -3680,6 +3676,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         return (
                           <div key={`run-${currentSessionKey}:${card.triggerIndex}`}>
                             <TurnSummaryCard
+                              waitingForInput={card.active && (composerInteractions.length > 0 || cardApprovals.length > 0)}
                               status={card.status}
                               startedAt={card.startedAt}
                               endedAt={card.endedAt}
@@ -3695,8 +3692,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                 tools: card.steps.filter((step) => step.kind === 'tool').length,
                                 thoughts: cardReasoning.length,
                                 plan: card.surfaces.plan?.todos.length ?? 0,
-                                files: generatedFiles.length,
-                                diffs: diffSurfaces.length,
+                                files: new Set([...chipFiles.map((file) => file.filePath), ...diffSurfaces.map((diff) => diff.filePath)]).size,
                                 agents: card.orchestrations.length,
                                 terminals: card.surfaces.terminals.length,
                                 approvals: cardApprovals.length,
@@ -3708,13 +3704,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                 }))
                               }
                             >
-                              {/* Pending approvals first — the run is blocked on them. */}
-                              {cardApprovals.length > 0 && (
-                                <PendingRunApprovals
-                                  approvals={cardApprovals}
-                                  onDecision={handleApprovalDecision}
-                                />
-                              )}
                               {card.surfaces.plan && (
                                 <ToolUiPlanView
                                   title={t('task.steps')}
@@ -3722,6 +3711,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                   description={card.surfaces.plan.description}
                                   todos={card.surfaces.plan.todos}
                                   compact
+                                  defaultCollapsed
                                   testId="chat-run-plan"
                                 />
                               )}
@@ -3751,7 +3741,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                               <ExecutionGraphCard
                                 key={`graph-${currentSessionKey}:${card.triggerIndex}`}
                                 agentLabel={card.agentLabel}
-                                steps={card.steps}
+                                steps={card.steps.filter((step) => !composerInteractions.some((interaction) => interaction.id === step.id))}
+                                terminals={card.surfaces.terminals}
                                 active={card.active}
                                 suppressThinking={card.suppressThinking || cardReasoning.length > 0 || Boolean(activeTool || activeTerminal)}
                                 traceId={card.traceId}
@@ -3770,7 +3761,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                   }));
                                 }}
                               />
-                              <RunTerminalSurfaces surfaces={card.surfaces.terminals} />
                               {card.orchestrations.map((orchestration) => (
                                 <TeamOrchestrationCard
                                   key={`team-orchestration-${orchestration.id}`}
@@ -3790,20 +3780,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                   })}
 
                   </div>
-                  {/* A pending approval must NEVER be invisible — it is the only
-                      control that can unblock the agent. Attribution to a turn
-                      is best-effort: a turn whose whole output was "I need
-                      permission" plus a text reply produces no activity card at
-                      all once its run ends, and with no card there is nowhere
-                      for approvalsByRunKey to land. This standalone section is
-                      the floor under that case (the audit's F4 tail, found by
-                      the carryover mock scenario). */}
-                  {pendingApprovals.length > 0 && userRunCards.length === 0 && (
-                    <PendingRunApprovals
-                      approvals={pendingApprovals}
-                      onDecision={handleApprovalDecision}
-                    />
-                  )}
 
                   {/* Streaming message — render when reply text is separated from graph,
                       OR when there's streaming content without an active graph */}
@@ -3846,6 +3822,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                       liveUsage={liveUsage}
                       onOpenFile={handleOpenAttachedFile}
                       workspaceRoot={messageWorkspaceRoot}
+                      suppressComposerInteractions
                       canSubmitInteractionResponse={false}
                       onSubmitInteractionResponse={handleSubmitInteractionResponse}
                       onDraftInteractionResponse={handleAppendComposerDraft}
@@ -3924,10 +3901,20 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       {!isEmpty && (
         <div className="relative mx-auto w-full max-w-[768px] px-4" data-testid="chat-task-tray">
           <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
-            plan={sessionActivityPlan} runActive={inputRunActive} onOpenTask={handleOpenSessionTask} />
+            plan={userRunCards.findLast((card) => card.active)?.surfaces.plan ?? null} runActive={inputRunActive} onOpenTask={handleOpenSessionTask} />
+        </div>
+      )}
+      {activeWorkspace && !isEmpty && (
+        <div className="relative mx-auto w-full max-w-[768px] px-4">
+          <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active={!isEmpty} sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
         </div>
       )}
       <ChatInput
+        requestPending={pendingApprovals.length > 0 || composerInteractions.length > 0}
+        requestContent={(
+          <ComposerRequestDock key={currentSessionKey} approvals={pendingApprovals} interactions={composerInteractions}
+            canSubmit={isGatewayRunning} onDecision={handleApprovalDecision} onSubmit={handleSubmitInteractionResponse} />
+        )}
         onSend={handleSendMessage}
         disabled={!isGatewayRunning}
         sending={inputRunActive}
@@ -3966,11 +3953,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         /* The input is the only elevated surface in the conversation. */
         className={cn('relative', sendingAnimation && 'codex-composer-host--sending')}
       />
-      {activeWorkspace && !isEmpty && (
-        <div className="relative mx-auto w-full max-w-[768px] px-4">
-          <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active={!isEmpty} sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
-        </div>
-      )}
       {/* Reference stacking under the stage is composer → context → chips, then
         * a spacer that grows like the message area above it; the two spacers
         * together centre the group without the composer leaving its slot. */}

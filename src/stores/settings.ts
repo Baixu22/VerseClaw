@@ -164,6 +164,9 @@ export const useSettingsStore = create<SettingsState>()(
           set((state) => ({
             ...state,
             ...hostSettings,
+            // The renderer owns the rail toggle and responsive collapse. A late
+            // settings read must not reopen the rail over a narrow conversation.
+            sidebarCollapsed: state.sidebarCollapsed,
             ...(resolvedLanguage ? { language: resolvedLanguage } : {}),
             ...(typeof settings.sidebarWidth === 'number'
               ? { sidebarWidth: clampSidebarWidth(settings.sidebarWidth) }

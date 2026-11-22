@@ -1,7 +1,6 @@
-import { ExternalLink, Github } from 'lucide-react';
+import { ExternalLink, Github, GitPullRequest, GitCommitHorizontal, CircleDot } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { hostApi } from '@/lib/host-api';
-import { cn } from '@/lib/utils';
 
 interface GitHubLinkInfo {
   type: 'repo' | 'issue' | 'pr' | 'commit' | 'profile' | 'other';
@@ -15,8 +14,9 @@ function parseGitHubUrl(url: string): GitHubLinkInfo | null {
     const parsed = new URL(url);
     if (parsed.hostname.replace(/^www\./i, '') !== 'github.com') return null;
     const parts = parsed.pathname.replace(/^\/+|\/+$/g, '').split('/');
-    if (parts.length < 2) return null;
+    if (!parts[0]) return null;
     const owner = parts[0];
+    if (parts.length === 1) return { type: 'profile', owner };
     const second = parts[1];
 
     if (parts.length === 2) {
@@ -50,24 +50,24 @@ export function GitHubCard({ url }: { url: string }) {
     ? `${info.owner}/${info.repo}`
     : info.type === 'profile'
       ? info.owner
-      : `${info.owner}/${info.repo} ${info.id}`;
+      : `${info.owner}/${info.repo}${info.id ? ` ${info.id}` : ''}`;
 
   const typeLabel = t(`githubCard.type.${info.type}`, info.type);
+  const Icon = info.type === 'pr' ? GitPullRequest : info.type === 'commit' ? GitCommitHorizontal : info.type === 'issue' ? CircleDot : Github;
 
   return (
     <button
       type="button"
       onClick={() => void hostApi.shell.openExternal(url)}
-      className={cn(
-        'group inline-flex max-w-full items-center gap-2.5 rounded-lg border border-conversation px-3 py-2 text-left text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/10',
-      )}
+      className="git-surface git-link-card"
+      title={url}
     >
-      <Github className="h-4 w-4 shrink-0 text-foreground/70" />
+      <span className="git-icon"><Icon className="h-4 w-4" aria-hidden="true" /></span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate font-medium text-foreground">{label}</span>
+        <span className="git-link-label block font-medium text-foreground">{label}</span>
         <span className="block text-xs text-muted-foreground">{typeLabel}</span>
       </span>
-      <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+      <ExternalLink className="git-link-external h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
     </button>
   );
 }

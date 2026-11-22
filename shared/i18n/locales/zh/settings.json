@@ -1026,6 +1026,11 @@
       "resources": "仍有进程运行",
       "dirty": "包含本地文件或修改",
       "unavailable": "目录不可用"
+    },
+    "filters": {
+      "all": "全部",
+      "removable": "可移除",
+      "protected": "受保护"
     }
   }
 }

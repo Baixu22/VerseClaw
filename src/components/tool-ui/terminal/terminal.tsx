@@ -20,6 +20,7 @@ import { cn } from "./_adapter";
 const COPY_ID = "terminal-output";
 
 type TerminalControlledProps = {
+  transcriptDetail?: boolean;
   fill?: boolean;
   status?: 'running' | 'completed' | 'failed';
   expanded?: boolean;
@@ -34,6 +35,7 @@ type TerminalHeaderProps = Pick<
   "command" | "cwd" | "exitCode"
 > & {
   status?: TerminalControlledProps['status'];
+  transcriptDetail?: boolean;
   formattedDuration: string | null;
   hasOutput: boolean;
   copiedId: string | null;
@@ -73,15 +75,16 @@ function TerminalHeader({
   copiedId,
   onCopy,
   status,
+  transcriptDetail,
 }: TerminalHeaderProps) {
   const { t } = useTranslation("chat");
   return (
     <div className="bg-surface-modal flex min-w-0 shrink-0 items-center gap-2 border-b border-border/70 px-3 py-2">
-      {status === 'running'
+      {!transcriptDetail && (status === 'running'
         ? <OrbStatus state="working" size={20} label={t('processPanel.status.running')} />
-        : <TerminalIcon className="text-muted-foreground h-4 w-4 shrink-0" aria-hidden="true" />}
+        : <TerminalIcon className="text-muted-foreground h-4 w-4 shrink-0" aria-hidden="true" />)}
       <div className="min-w-0 flex-1">
-        <code className="text-foreground block truncate font-mono text-xs leading-5" title={command}>{command}</code>
+        <code className={cn('text-foreground block font-mono text-xs leading-5', transcriptDetail ? 'whitespace-pre-wrap [overflow-wrap:anywhere]' : 'truncate')} title={command}>{command}</code>
         {cwd && <div className="truncate font-mono text-[11px] leading-4 text-muted-foreground" title={cwd}>{cwd}</div>}
       </div>
       <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
@@ -173,14 +176,14 @@ function TerminalOutput({
             followingOutput.current = node.scrollHeight - node.scrollTop - node.clientHeight < 4;
           }}
         >
-          <div className="min-w-max">
+          <div className="min-w-0 max-w-full">
             {stdout && (
-              <div className="text-foreground whitespace-pre">
+              <div className="text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
                 <Ansi>{stdout}</Ansi>
               </div>
             )}
             {stderr && (
-              <div className="mt-2 whitespace-pre text-red-700 dark:text-red-400">
+              <div className="mt-2 whitespace-pre-wrap break-words text-red-700 dark:text-red-400 [overflow-wrap:anywhere]">
                 <Ansi>{stderr}</Ansi>
               </div>
             )}
@@ -244,6 +247,7 @@ function TerminalRoot({
   onExpandedChange,
   fill = false,
   status,
+  transcriptDetail,
 }: TerminalRootProps) {
   const [uncontrolledExpanded, setUncontrolledExpanded] =
     useState(defaultExpanded);
@@ -292,6 +296,7 @@ function TerminalRoot({
           hasOutput={hasOutput}
           copiedId={copiedId}
           onCopy={handleCopy}
+          transcriptDetail={transcriptDetail}
           status={status}
         />
 

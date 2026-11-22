@@ -156,6 +156,8 @@ interface ChatInputProps {
    * any in-flight attachment — so the hero look is a prop, not a second copy.
    */
   hero?: boolean;
+  requestContent?: ReactNode;
+  requestPending?: boolean;
   draftValue?: string;
   onDraftChange?: (value: string) => void;
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
@@ -992,6 +994,8 @@ export function ChatInput({
   contextRange,
   liveUsage,
   hero = false,
+  requestContent,
+  requestPending,
   draftValue,
   onDraftChange,
   workspace,
@@ -3239,7 +3243,7 @@ export function ChatInput({
   );
 
   return (
-    <RuntimeApprovalPrompt sessionKey={currentSessionKey} agentId={currentAgentId} hero={hero}>
+    <RuntimeApprovalPrompt sessionKey={currentSessionKey} agentId={currentAgentId} hero={hero} requestContent={requestContent} requestPending={requestPending}>
     <div
       ref={composerHostRef}
       className={cn(
@@ -3540,6 +3544,7 @@ export function ChatInput({
               <PlusMenuMorph
                 disabled={inputDisabled || sending}
                 open={morphOpen}
+                triggerLabel={t('composer.actions.add')}
                 triggerTestId="chat-composer-actions"
                 containerTestId="chat-composer-morph"
                 onOpenChange={(next) => {

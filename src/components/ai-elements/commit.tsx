@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react';
-import { CheckCircle2, GitCommitHorizontal, Loader2, ShieldAlert } from 'lucide-react';
+import { CircleCheck, CircleX, GitCommitHorizontal, Loader2, ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
-import { AiElementCard, MetricPill } from './card';
 
 export type CommitOperationState = 'ready' | 'running' | 'success' | 'blocked' | 'failed';
 
@@ -24,8 +22,9 @@ export type CommitSummaryProps = {
 
 function operationIcon(state: CommitOperationState) {
   if (state === 'running') return <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-700 dark:text-blue-400" />;
-  if (state === 'blocked' || state === 'failed') return <ShieldAlert className="h-3.5 w-3.5 text-amber-700 dark:text-amber-400" />;
-  if (state === 'success') return <CheckCircle2 className="h-3.5 w-3.5 text-green-700 dark:text-green-400" />;
+  if (state === 'blocked') return <ShieldAlert className="h-3.5 w-3.5" />;
+  if (state === 'failed') return <CircleX className="h-3.5 w-3.5" />;
+  if (state === 'success') return <CircleCheck className="h-3.5 w-3.5" />;
   return <GitCommitHorizontal className="h-3.5 w-3.5 text-muted-foreground" />;
 }
 
@@ -44,32 +43,27 @@ export function CommitSummary({
   const op = operation ?? { state: 'ready' as const };
 
   return (
-    <AiElementCard
-      icon={<GitCommitHorizontal className="h-3.5 w-3.5" />}
-      label={t('toolUi.commit.label', 'Commit')}
-      title={branch ?? t('toolUi.commit.detached', 'Detached HEAD')}
-      data-testid="ai-commit-card"
-      className="bg-background"
-    >
-      <div className="space-y-3">
-        <div className="flex flex-wrap gap-2" data-testid="ai-commit-summary">
-          <MetricPill label={t('toolUi.commit.staged', 'staged')} value={staged} tone={staged > 0 ? 'success' : 'neutral'} />
-          <MetricPill label={t('toolUi.commit.unstaged', 'unstaged')} value={unstaged} tone={unstaged > 0 ? 'warning' : 'neutral'} />
-          <MetricPill label={t('toolUi.commit.untracked', 'untracked')} value={untracked} />
-          {conflicted > 0 ? <MetricPill label={t('toolUi.commit.conflicted', 'conflicted')} value={conflicted} tone="danger" /> : null}
-          <span className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-input px-2 py-1 font-mono text-xs">
+    <section className="git-surface git-commit-card" data-testid="ai-commit-card">
+      <header className="flex min-w-0 items-center gap-2.5">
+        <span className="git-icon"><GitCommitHorizontal className="h-4 w-4" aria-hidden="true" /></span>
+        <div className="min-w-0"><p className="text-xs text-muted-foreground">{t('toolUi.commit.label', 'Commit')}</p>
+          <h3 className="git-path text-sm font-medium">{branch ?? t('toolUi.commit.detached', 'Detached HEAD')}</h3></div>
+      </header>
+      <div>
+        <dl className="git-commit-stats" data-testid="ai-commit-summary">
+          <div><dd>{staged}</dd><dt>{t('toolUi.commit.staged', 'staged')}</dt></div>
+          <div><dd>{unstaged}</dd><dt>{t('toolUi.commit.unstaged', 'unstaged')}</dt></div>
+          <div><dd>{untracked}</dd><dt>{t('toolUi.commit.untracked', 'untracked')}</dt></div>
+          {conflicted > 0 && <div data-tone="danger"><dd>{conflicted}</dd><dt>{t('toolUi.commit.conflicted', 'conflicted')}</dt></div>}
+          <div className="font-mono text-xs">
             <span className="text-green-700 dark:text-green-400">+{additions}</span>
             <span className="text-red-700 dark:text-red-400">-{deletions}</span>
-          </span>
-        </div>
+          </div>
+        </dl>
         <div
-          className={cn(
-            'rounded-md border px-2.5 py-2 text-xs',
-            op.state === 'ready' && 'border-border bg-surface-input text-muted-foreground',
-            op.state === 'running' && 'border-blue-500/25 bg-blue-500/10 text-blue-700 dark:text-blue-400',
-            op.state === 'success' && 'border-green-500/25 bg-green-500/10 text-green-700 dark:text-green-400',
-            (op.state === 'blocked' || op.state === 'failed') && 'border-amber-500/25 bg-amber-500/10 text-amber-800 dark:text-amber-300',
-          )}
+          className="git-operation"
+          data-state={op.state}
+          role="status"
           data-testid="ai-commit-operation"
         >
           <div className="flex items-center gap-2">
@@ -84,6 +78,6 @@ export function CommitSummary({
         </div>
         {children}
       </div>
-    </AiElementCard>
+    </section>
   );
 }

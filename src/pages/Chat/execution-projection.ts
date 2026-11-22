@@ -147,7 +147,7 @@ export function sanitizeGraphSteps(steps: TaskStep[], promotedStepIds?: Readonly
     // Rows already rendered by a rich card — see run-surface-promotion.ts for
     // the promotion table. Plan tools are filtered by name because the history
     // path derives its step ids from message ids rather than runtime ids.
-    if (step.kind === 'tool' && isPlanToolName(step.label)) return false;
+    if (step.kind === 'tool' && step.status !== 'error' && isPlanToolName(step.label)) return false;
     if (promotedStepIds?.has(step.id)) return false;
     return true;
   });

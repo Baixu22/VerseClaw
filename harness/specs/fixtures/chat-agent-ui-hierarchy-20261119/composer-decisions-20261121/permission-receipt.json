@@ -1,0 +1,1 @@
+{"driven_by":"agent","transport":"Electron IPC fixture","calls":[{"module":"permissions","action":"decideApproval","payload":{"id":"ux-permission-1","decision":"denied"}}]}

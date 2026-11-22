@@ -1,0 +1,611 @@
+{
+  "schema": 1,
+  "driven_by": "agent",
+  "actor": "Codex",
+  "date": "2026-11-21",
+  "timezone": "Asia/Shanghai",
+  "worktree": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa",
+  "branch": "codex/chat-ui-hierarchy-20261119",
+  "head": "47303b18996f94ec7fd9afbc89ba1dac0910e66d",
+  "dirty": true,
+  "sourceHashes": [
+    {
+      "file": "src/components/assistant-ui/orb-status.tsx",
+      "sha256": "c0f7e8dcb06371ce3480d45a5244ad2ace967a8190c42d0c55884fb096e72470"
+    },
+    {
+      "file": "src/components/assistant-render/ThinkingReasoning.tsx",
+      "sha256": "83544f04ed696217d113219b3e7a740f6950cebe31b91684c89d9289351ebfd2"
+    },
+    {
+      "file": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "34c062dcad669edfa5b42cbbcc4c13b54862f8b2ef46af0c10defd465bd31518"
+    },
+    {
+      "file": "src/components/layout/Sidebar.tsx",
+      "sha256": "28b510dcbdc278ff60d97a01b05f50ef78112335b0c39186c2111672e7d16084"
+    },
+    {
+      "file": "src/components/rareui/CompletionActivityMenu.tsx",
+      "sha256": "bceb5d21c56400f6a1d18c9c05838e07fddbb5834b0c1bc947f2dcd8475334fc"
+    },
+    {
+      "file": "src/components/rareui/NotificationBell.tsx",
+      "sha256": "57c6a212830b96fd81114471c4aef6eb81b66228a4eff26bcb2bb9c6713fb11d"
+    },
+    {
+      "file": "src/components/runtime-approvals/RuntimeApprovalPrompt.tsx",
+      "sha256": "711b0b7baf7f9816ae5d406cc53622ce1ddd138462430e9e958696413a7cb575"
+    },
+    {
+      "file": "src/components/tool-ui/PendingRunApprovals.tsx",
+      "sha256": "c12d2d95bccf8a57aa575901f128d9edf5fad67103f5b09369b368df142e87cf"
+    },
+    {
+      "file": "src/components/tool-ui/agent-interactions.tsx",
+      "sha256": "5b75fff342d12edb40aa1a8e85d5608095065304e601536937703816b4aaeac1"
+    },
+    {
+      "file": "src/components/tool-ui/approval-card/approval-card.tsx",
+      "sha256": "7f587cbcb41cbef9c8cea513fef80e589f3482c0b846ba0c4216cb8cf0e98260"
+    },
+    {
+      "file": "src/hooks/use-message-viewport.ts",
+      "sha256": "e4f5992fd222d4c4a9afc7d71d31f5653b5c81e994859f16da385347f3e2bdab"
+    },
+    {
+      "file": "src/pages/Chat/ComposerRequestDock.tsx",
+      "sha256": "57b698aa195b3e4f7eb8a955059c8f1182e8833ac9793f6965ba5243b54d8364"
+    },
+    {
+      "file": "src/pages/Chat/composer-interactions.ts",
+      "sha256": "14e8012cb036a96bd4b3ee6a06ada58fa04b25abeae2287c970ee0b3bf97254a"
+    },
+    {
+      "file": "src/pages/Chat/message-render-projection.ts",
+      "sha256": "817b4200ce36f347cf8ef8c25b7a59cd0656c53f3178b33d3d9ea2d80601df16"
+    },
+    {
+      "file": "src/pages/Chat/SessionTaskDock.tsx",
+      "sha256": "463387a82f6321814b1527f902fcc20f1c25c88ed41e91dd77033d7399431897"
+    },
+    {
+      "file": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "0a588882bd71443e297398412e9774b6b3a5c5cae6976905cfec96c3f2cb78be"
+    },
+    {
+      "file": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "006ef8d269dbf4da52e37e1b1af5e0b7c8c8ca1ca5cc97bfc8f09cefa0030f70"
+    },
+    {
+      "file": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "ae55cb19854e08f602b324503ae9ca31fe9583563d515e3aa694c7cd0ce6093d"
+    },
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "sha256": "891c09894f5a3863ce48a9964c909e935019ad8cca0afb40222fad4c9551772b"
+    },
+    {
+      "file": "src/pages/Chat/use-run-approvals.ts",
+      "sha256": "2cdcf229c177e7490bd0c01a2697aafca57585290541173e943332ab63a5c389"
+    },
+    {
+      "file": "src/stores/chat.ts",
+      "sha256": "29b455e903024b6285b36eef5238659aa759d43708e4b94a60939af12bb71e82"
+    },
+    {
+      "file": "shared/chat/types.ts",
+      "sha256": "4f8cb03ddb19e4f7bdae92886259e089861369c25a0a2f91bf3f44e22a98d06e"
+    },
+    {
+      "file": "shared/i18n/locales/en/chat.json",
+      "sha256": "267e6c6c1c69320343d847328ef143d5842558ab0519a92e826892e80b05e42d"
+    },
+    {
+      "file": "shared/i18n/locales/zh/chat.json",
+      "sha256": "2280c46ca155d398b73d9f2cd42aa01d0300bb4865c291b9e742eddc16b6f353"
+    },
+    {
+      "file": "shared/i18n/locales/ja/chat.json",
+      "sha256": "24774dad6f11b44c78fa8f82205f3694ccdde282f8a286a7da26263e0be8f2bb"
+    },
+    {
+      "file": "shared/i18n/locales/ru/chat.json",
+      "sha256": "6e3a11283301fededa8c4168d14c16ece53b9de69c9c42175a03ea749b49965e"
+    }
+  ],
+  "t3Reference": {
+    "path": "D:/ClawX-analysis/t3code",
+    "commit": "470ca63499293f7f680f8ad2e77381a6752f1348",
+    "files": [
+      "apps/web/src/components/ChatView.tsx",
+      "apps/web/src/components/chat/ChatComposer.tsx"
+    ]
+  },
+  "acceptance": {
+    "uiJourneys": "PASS",
+    "visualReview": {
+      "status": "PASS",
+      "reviewedBy": "agent",
+      "screenshots": 19,
+      "criteria": [
+        "consistent status silhouettes and bounds",
+        "no overlapping reasoning lines",
+        "composer request placement",
+        "reachable approval actions",
+        "complete narrow layouts",
+        "stable theme after transitions"
+      ],
+      "reviewedAt": "2026-11-21T11:45:22.744Z"
+    },
+    "uniqueElectronTests": 20,
+    "passed": 20,
+    "realHostPermissions": "PASS: terminal.run generated requests, UI approve/deny, persisted workspace-permissions.json readback",
+    "runtimeExecApproval": "PASS: real Electron UI/IPC with runtime request fixtures",
+    "providerCalls": 0,
+    "unit": {
+      "report": "D:/tmp/ui-ux-20261121-01a1fdaa/unit-final.json",
+      "total": 290,
+      "passed": 290,
+      "closure": 60,
+      "viewportClosure": 6
+    },
+    "webTypecheck": "PASS",
+    "viteRendererAndElectronBuild": "PASS",
+    "i18n": "PASS",
+    "harness": "PASS",
+    "comms": "PASS",
+    "nodeAndFullTestTypecheck": "BLOCKED: vendored runtime dependencies/types missing (markdown-it, jiti/static, OpenTelemetry, tree-sitter and runtime SDK links); see node/test logs",
+    "eslint": {
+      "errors": 0,
+      "warnings": 4,
+      "log": "D:/tmp/ui-ux-20261121-01a1fdaa/lint-final.log"
+    }
+  },
+  "runs": [
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-final.json",
+      "sha256": "04ebb8460018fda6080dd8c940b0d4c179c1a626f5b359b6e16e567b1a0bb3f9",
+      "stats": {
+        "startTime": "2026-11-21T11:29:51.468Z",
+        "duration": 227801.525,
+        "expected": 19,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-closure.json",
+      "sha256": "4c45edff462e4afad5f35f7a07dd1385f23ecc4a3a87bfbaef8d1ac26b3cc392",
+      "stats": {
+        "startTime": "2026-11-21T11:34:17.436Z",
+        "duration": 129355.424,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-icons.json",
+      "sha256": "63193dae70c71955ca325311f51957c4fa7a5fa5f219b61c78c7d7e7a3147212",
+      "stats": {
+        "startTime": "2026-11-21T11:35:49.770Z",
+        "duration": 15101.313,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-bell.json",
+      "sha256": "aa72e581524c35fa70d76608bd9e15cd55e116010385cc70573a98341d95720d",
+      "stats": {
+        "startTime": "2026-11-21T11:41:11.607Z",
+        "duration": 19959.079999999998,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "tests": [
+    {
+      "file": "chat-long-task-control.spec.ts",
+      "title": "shows recovery status and drains queued follow-up through Host API",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:29:53.134Z",
+      "durationMs": 17143,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "real host command gate persists approve and deny decisions selected in the composer",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:34:46.522Z",
+      "durationMs": 14746,
+      "run": "e2e-closure.json",
+      "attachments": [
+        "real-host-permission-receipt.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "reasoning retains every line and folded process leaves no empty transcript gap",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:35:01.292Z",
+      "durationMs": 12746,
+      "run": "e2e-closure.json",
+      "attachments": [
+        "reasoning-geometry.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "plan and questions stay at the composer, submit once, preserve drafts and survive scroll",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:35:14.050Z",
+      "durationMs": 12634,
+      "run": "e2e-closure.json",
+      "attachments": [
+        "request-receipts.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "host approval stays visible across turns and retains retry state and request identity",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:35:26.697Z",
+      "durationMs": 11529,
+      "run": "e2e-closure.json",
+      "attachments": [
+        "permission-receipt.json"
+      ]
+    },
+    {
+      "file": "chat-tool-ui-interaction-flow.spec.ts",
+      "title": "one question stays visible as the terminal reply is replaced by history",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:31:13.707Z",
+      "durationMs": 11654,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-tool-ui-interaction-flow.spec.ts",
+      "title": "option-list: select option, send response, verify user message and mock assistant reply",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:30:55.353Z",
+      "durationMs": 8792,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-tool-ui-interaction-flow.spec.ts",
+      "title": "question-flow: navigate steps, send response, verify user message and mock assistant reply",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:31:04.155Z",
+      "durationMs": 9533,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "keeps live activity compact, animated and readable without assistant avatars",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:35:38.247Z",
+      "durationMs": 11814,
+      "run": "e2e-closure.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "keeps interleaved command output in the execution order with separate tool inputs and results",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:35:50.076Z",
+      "durationMs": 12857,
+      "run": "e2e-closure.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "collapses completed long task process and expands details on demand",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:36:02.948Z",
+      "durationMs": 12091,
+      "run": "e2e-closure.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "leaves short conversations unwrapped",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:36:15.055Z",
+      "durationMs": 10818,
+      "run": "e2e-closure.json",
+      "attachments": []
+    },
+    {
+      "file": "runtime-approval-bridge.spec.ts",
+      "title": "covers the composer without a modal and restores its draft after approval",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:32:03.759Z",
+      "durationMs": 12892,
+      "run": "e2e-final.json",
+      "attachments": [
+        "runtime-approval-geometry-light.json",
+        "runtime-approval-geometry-dark.json",
+        "runtime-approval-geometry-narrow.json",
+        "runtime-approval-geometry-zoom150.json"
+      ]
+    },
+    {
+      "file": "runtime-approval-bridge.spec.ts",
+      "title": "answers a pending runtime approval from the conversation input area",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:32:16.660Z",
+      "durationMs": 11144,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "runtime-approval-bridge.spec.ts",
+      "title": "offers only the decisions the runtime listed for the request",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:32:27.813Z",
+      "durationMs": 10271,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "sidebar-session-row-polish.spec.ts",
+      "title": "keeps the header compact, separates navigation from actions, and retains migration dialogs",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:32:38.102Z",
+      "durationMs": 16190,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "sidebar-session-row-polish.spec.ts",
+      "title": "hover shows pin + more, long titles loop and settle, and reduced motion keeps them still",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:32:54.306Z",
+      "durationMs": 16734,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "sidebar-session-row-polish.spec.ts",
+      "title": "more menu opens under its button and archive offers an undo",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:33:11.055Z",
+      "durationMs": 13518,
+      "run": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "sidebar-session-row-polish.spec.ts",
+      "title": "bell shows the running status animation and stays aligned in the collapsed sidebar",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:41:13.065Z",
+      "durationMs": 17580,
+      "run": "e2e-bell.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "success and error use matching outline bounds in session rows and activity",
+      "status": "passed",
+      "startedAt": "2026-11-21T11:35:51.179Z",
+      "durationMs": 12719,
+      "run": "e2e-icons.json",
+      "attachments": [
+        "status-bounds.json"
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "screenshots/real-host-approval.png",
+      "sha256": "89848b119f1423108db0d3d4ba87322f5f5643b2583aa537bb60a18c0c9e8758",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-743d2-ns-selected-in-the-composer\\real-host-approval.png"
+    },
+    {
+      "name": "screenshots/permission-retry.png",
+      "sha256": "6223cac25c0838569022da9bd61261c3c82847dde354428ba81979b7da9eff6c",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-83572--state-and-request-identity\\permission-retry.png"
+    },
+    {
+      "name": "screenshots/process-dark.png",
+      "sha256": "7683d9c1689c57e6244be2d0f922bd9fe0daac2dd4495f26177fb9de7c2beddd",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-b1297-ves-no-empty-transcript-gap\\process-dark.png"
+    },
+    {
+      "name": "screenshots/process-light.png",
+      "sha256": "8896ff975532f3e22c77cefd4348941dfa22ef8d15ba0980f710c94daecd9874",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-b1297-ves-no-empty-transcript-gap\\process-light.png"
+    },
+    {
+      "name": "screenshots/process-collapsed.png",
+      "sha256": "c78f387d4a7bde03710e15d5dd9d7a8c81353f4de4f5497bee572f9fc9015c31",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-b1297-ves-no-empty-transcript-gap\\process-collapsed.png"
+    },
+    {
+      "name": "screenshots/plan-dark.png",
+      "sha256": "024997e3162e258b3062edeca2b72c09d12840378ef47f3ee409d37512e0bfe8",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\plan-dark.png"
+    },
+    {
+      "name": "screenshots/plan-light.png",
+      "sha256": "eb656e10c6dd70c9bde972eaa9913d51b9f7af704087831b219bf1465875e143",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\plan-light.png"
+    },
+    {
+      "name": "screenshots/question-375.png",
+      "sha256": "9fa0e25e3761e8df177cdf88bf1e06321f3ecbc70762bb31590fe3603e92aa9d",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\question-375.png"
+    },
+    {
+      "name": "screenshots/question-640.png",
+      "sha256": "2038be180f11f6919559d7599d471e8040d9f6adfaf6c3e48df7eac51ff669d1",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\question-640.png"
+    },
+    {
+      "name": "screenshots/session-states-dark.png",
+      "sha256": "3610038d6c63df7a55c2e849227e590ed9f4adb167f4255f8ff2b0e1d4923520",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-icons-results\\chat-runtime-ux-acceptance-b9bf6-n-session-rows-and-activity\\session-states-dark.png"
+    },
+    {
+      "name": "screenshots/session-states-light.png",
+      "sha256": "260888e213f33f6eea31889a147e07abe54b5ba29b1b4b6b95f35505c7ab4f70",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-icons-results\\chat-runtime-ux-acceptance-b9bf6-n-session-rows-and-activity\\session-states-light.png"
+    },
+    {
+      "name": "screenshots/ordered-run-output-narrow.png",
+      "sha256": "a6c3881db81ba3c822fae7e087428a3902931aa07df1c1dee33830a676fc7edb",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-final-results\\chat-turn-summary-collapse-03eec-ate-tool-inputs-and-results\\ordered-run-output-narrow.png"
+    },
+    {
+      "name": "screenshots/ordered-run-output-wide.png",
+      "sha256": "dd08b3dee9b71e0ac8e3373fa3e1f99926535f062b3101ceababc06d1f6e6472",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-final-results\\chat-turn-summary-collapse-03eec-ate-tool-inputs-and-results\\ordered-run-output-wide.png"
+    },
+    {
+      "name": "screenshots/runtime-approval-dark.png",
+      "sha256": "86874f91c619354b181726ea21819bf85a25982cca7fa826c160ea4abcbbb026",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-final-results\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-page-dark.png"
+    },
+    {
+      "name": "screenshots/runtime-approval-light.png",
+      "sha256": "255ff4f7762c8cd1871582aa5afc9fe6b6276d1bcb12af88411e774efdeda00d",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-final-results\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-page-light.png"
+    },
+    {
+      "name": "screenshots/runtime-approval-narrow.png",
+      "sha256": "7a9ee052ea0e62a27a95bece369a32bd07022a60000f1f5cb324f518a1f36856",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-final-results\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-page-narrow.png"
+    },
+    {
+      "name": "screenshots/runtime-approval-zoom150.png",
+      "sha256": "6916ef3ff3f120c5d01ea0ee133d984e84fe81cfa410f4c41f5de1a9f680edbc",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-final-results\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-zoom150.png"
+    },
+    {
+      "name": "screenshots/bell-panel-light.png",
+      "sha256": "8e26773059f62b1c3b37ee0584500a3b2d93d86edd0a163ebae73ee4d098bb43",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\bell-final\\bell-panel-light.png"
+    },
+    {
+      "name": "screenshots/bell-collapsed-dark.png",
+      "sha256": "c2182b4c73ad6cf1192f9289b7f83a992f6cadd9e7d12412dc7b1af5d20686ed",
+      "source": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\bell-final\\bell-collapsed-dark.png"
+    }
+  ],
+  "preservedFailures": [
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-01.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-02.log",
+      "sha256": "f84844306b97d66ab9fbfb7e2ec56059878f532a979cf03075663d1a799d8740"
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-04.json",
+      "sha256": "dd6117b05bce661647e7f3fbc70aeef4ef052aacb3eb28f3ffeca4447ad4f091"
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-05.json",
+      "sha256": "a15ad8023c45ce1b11a7813a85377932e446decbceb564cf9e63b06dc403f180"
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-06.json",
+      "sha256": "aef16ce6fa0c613abcebb23285838d0d14baf65e98c4d4049eca424a728577ae"
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/e2e-closure.json",
+      "sha256": "4c45edff462e4afad5f35f7a07dd1385f23ecc4a3a87bfbaef8d1ac26b3cc392"
+    },
+    {
+      "file": "D:/tmp/ui-ux-20261121-01a1fdaa/unit-02.json",
+      "sha256": "56c6897475c695b669d5c53fce43f9dccc7160692bd6be8cdda3d9087d921ff3"
+    }
+  ],
+  "environment": {
+    "preview": "http://127.0.0.1:5291",
+    "previewPid": 27896,
+    "baselinePatch": "D:/tmp/ui-ux-20261121-01a1fdaa/baseline.patch",
+    "dependencyRepair": "pnpm harness triggered automatic dependency installation. Relative links through the shared node_modules junction failed. Repaired 1422 dependency links and 20 package links, preserved package lock, rebuilt versebrowser.",
+    "repairReceipts": [
+      "D:/tmp/ui-ux-20261121-01a1fdaa/repaired-links.json",
+      "D:/tmp/ui-ux-20261121-01a1fdaa/repaired-package-links.json"
+    ],
+    "ego": "Space 15; browser interactions passed; screenshot API repeatedly timed out. Final visual evidence uses Electron captures."
+  },
+  "buildHashes": [
+    {
+      "file": "dist/.vite/manifest.json",
+      "sha256": "d67f61e47206676810de7c415bf17ce580504b533b189a4704d7d3d2a245a773"
+    },
+    {
+      "file": "dist/index.html",
+      "sha256": "63738d289e536598d87fd057a29b4c52a49c1b065d23c05cff73d56edc23d556"
+    },
+    {
+      "file": "dist-electron/main/index.js",
+      "sha256": "b53613be11ca16a1a10fe1ee32b17e5b51d8769359c636d35839a21cf9807da9"
+    },
+    {
+      "file": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    },
+    {
+      "file": "dist/assets/index-D6X_aRzw.js",
+      "sha256": "ea83691fb6ec1bff86969f7388a4a3768879048e08689ecbe08c19051be45d3a"
+    },
+    {
+      "file": "dist/assets/CompactionArtifactViewer-CKl24XP8.js",
+      "sha256": "3d51355a07d8c599f8cfc0f68803a51409b362fc93d28972f1b895857fc3d684"
+    },
+    {
+      "file": "dist/assets/KnowledgeChat-D2x8UNjz.js",
+      "sha256": "02a1ccd3728d64a4bed27c7828dbd95422887e4f7255794c22b352246b152289"
+    },
+    {
+      "file": "dist/assets/chat-core-DUmvs6Iu.js",
+      "sha256": "532e08f7d50923d1d53e5cfd1fff2c1bbff080b12ea2c189f7184a2d7e3a7f01"
+    }
+  ],
+  "testSourceHashes": [
+    {
+      "file": "tests/e2e/chat-long-task-control.spec.ts",
+      "sha256": "f79262bf99b0deaa4174b3fb0ff81f7696d5c82f6ee937860d9289fb79823dfc"
+    },
+    {
+      "file": "tests/e2e/chat-runtime-ux-acceptance.spec.ts",
+      "sha256": "9edcf02976440ac9dcc482af8391c8edcf21a30b24c2cfa82ea4fab3f9c1c4ae"
+    },
+    {
+      "file": "tests/e2e/chat-tool-ui-interaction-flow.spec.ts",
+      "sha256": "2dedcfb7ef09f34e6c7c8b48220b59ac02861acf85f9c5441771f8b737b18e30"
+    },
+    {
+      "file": "tests/e2e/chat-turn-summary-collapse.spec.ts",
+      "sha256": "31b0523facf7950edcfc4933eaa82f97dcf9abfb124957f6f83189c5ea655d17"
+    },
+    {
+      "file": "tests/e2e/runtime-approval-bridge.spec.ts",
+      "sha256": "6645bd85584af1d485a5d2dc635a9b29d22bf94b2e5cf8a52ef932f964f1449b"
+    },
+    {
+      "file": "tests/e2e/sidebar-session-row-polish.spec.ts",
+      "sha256": "0a030c7c1e81b91ea291ffb7de012c956d6f9b682904ae4e7fc4a2d24c6d6cd7"
+    }
+  ],
+  "verifiedAt": "2026-11-21T11:45:22.745Z"
+}

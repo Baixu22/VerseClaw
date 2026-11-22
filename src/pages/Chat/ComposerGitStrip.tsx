@@ -261,15 +261,13 @@ export function ComposerGitStrip({ workspace, disabled = false, active = true, s
   const behind = status.behind ?? 0;
 
   return (
-    <div className="relative flex justify-center pb-2" data-testid="composer-git-strip">
-      <button
+    <div className="codex-composer-git-strip relative mb-1 flex min-w-0 items-center gap-2 text-xs text-muted-foreground" data-conflicts={status.hasConflicts || undefined} data-testid="composer-git-strip">
+      <Button
         ref={popover.triggerRef}
         type="button"
-        className={cn(
-          "inline-flex min-h-7 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-left text-xs text-muted-foreground transition-colors",
-          "hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10",
-          open && "bg-black/5 text-foreground dark:bg-white/10",
-        )}
+        variant="ghost"
+        size="sm"
+        className="h-7 min-w-0 shrink gap-1.5 px-1.5 font-normal"
         onClick={() => {
           setOpen((current) => !current);
           if (!open) void refresh(true);
@@ -277,29 +275,24 @@ export function ComposerGitStrip({ workspace, disabled = false, active = true, s
         aria-haspopup="dialog"
         aria-expanded={open}
         data-testid="composer-git-trigger"
-        title={t("composer.git.openPanel")}
+        title={t('composer.git.branches')}
       >
-        <span className="flex min-w-0 items-center gap-1.5">
-          <GitBranch className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <span className="truncate">{t("composer.git.filesChanged", { count: changeCount })}</span>
-          {status.hasConflicts && (
-            <AlertTriangle
-              className="h-3.5 w-3.5 text-orange-700 dark:text-orange-400"
-              aria-label={t("composer.git.conflicts", { count: status.conflictedCount })}
-            />
-          )}
+        <KindIcon className="size-3.5 shrink-0" aria-hidden="true" />
+        <span className="truncate font-mono">{branchLabel}</span>
+        {loading ? <Loader2 className="size-3 shrink-0 motion-safe:animate-spin" /> : <ChevronDown className="size-3 shrink-0" />}
+      </Button>
+      <span className="shrink-0" data-testid="composer-git-change-count">{t('composer.git.filesChanged', { count: changeCount })}</span>
+      {status.hasConflicts && (
+        <span className="inline-flex min-w-0 items-center gap-1 text-orange-700 dark:text-orange-400" title={stateLabel}>
+          <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{stateLabel}</span>
         </span>
-        <span className="flex min-w-0 shrink-0 items-center gap-1.5 text-muted-foreground">
-          {loading ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
-          )}
-        </span>
-      </button>
+      )}
+      <Button type="button" variant="ghost" size="sm" className="composer-git-review-button ml-auto h-7 shrink-0 gap-1 px-1.5 text-xs" onClick={onOpenGitPanel} aria-label={t('composer.git.reviewChanges')} data-testid="composer-git-review">
+        <GitCompareArrows className="size-3.5" aria-hidden="true" /><span className="composer-git-review-label">{t('composer.git.reviewChanges')}</span>
+      </Button>
 
       {open && createPortal(
-        <div ref={popover.layerRef} style={popover.style} className="codex-git-menu" role="dialog" aria-label={t('composer.git.branches')} data-testid="composer-git-menu">
+        <div ref={popover.layerRef} style={popover.style} className="git-surface codex-git-menu" role="dialog" aria-label={t('composer.git.branches')} data-testid="composer-git-menu">
           <div className="codex-git-menu__head">
             <span className={cn('codex-git-kind', linkedWorktree && 'codex-git-kind--worktree')}>
               <KindIcon aria-hidden="true" />
@@ -366,14 +359,14 @@ export function ComposerGitStrip({ workspace, disabled = false, active = true, s
                 const current = pathEquals(worktree.path, currentWorktree?.path);
                 return (
                   <div key={worktree.path} className="codex-git-menu__row" data-current={current || undefined}>
-                    {index === 0 ? <HardDrive className="text-muted-foreground" aria-hidden="true" /> : <FolderGit2 className="text-violet-700 dark:text-violet-300" aria-hidden="true" />}
+                    {index === 0 ? <HardDrive className="text-muted-foreground" aria-hidden="true" /> : <FolderGit2 className="text-muted-foreground" aria-hidden="true" />}
                     <span className="min-w-0">
                       <span className="flex min-w-0 items-center gap-1.5">
                         <span className="truncate text-xs font-medium">{basenameFromPath(worktree.path)}</span>
                         <span className="shrink-0 text-2xs text-muted-foreground">{' · '}</span>
                         <span className="truncate font-mono text-2xs text-muted-foreground">{worktree.branch || compactCommit(worktree.head)} · {compactCommit(worktree.head)}</span>
                       </span>
-                      <span className="block truncate font-mono text-2xs text-muted-foreground" title={worktree.path}>{worktree.path}</span>
+                      <span className="git-path block font-mono text-2xs text-muted-foreground">{worktree.path}</span>
                     </span>
                     <span className="flex shrink-0 items-center gap-1">
                       {current ? <Badge variant="success" className="rounded-full px-1.5 py-0 text-2xs">{t('composer.git.current')}</Badge> : null}

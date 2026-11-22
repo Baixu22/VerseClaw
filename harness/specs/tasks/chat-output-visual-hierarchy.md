@@ -62,6 +62,7 @@ touchedAreas:
   - tests/unit/chat-tool-card-suppression.test.tsx
   - harness/specs/rules/ui-motion-material-system.md
   - tests/e2e/chat-turn-summary-collapse.spec.ts
+  - tests/e2e/chat-user-message-actions.spec.ts
   - tests/e2e/chat-run-state-events.spec.ts
   - tests/e2e/chat-workspace-header.spec.ts
   - tests/e2e/product-acceptance-space-bunny.spec.ts
@@ -78,14 +79,14 @@ touchedAreas:
   - README.ru-RU.md
 expectedUserBehavior:
   - Empty Chat shows an unboxed project picker beneath the composer. Its menu exposes local checkout and linked-worktree controls independently of Gateway connectivity. The three starter actions are kept behind one keyboard-accessible Quick start disclosure, hidden while drafting without moving the composer.
-  - Observed file changes reveal a compact entry below the composer. Its details retain branch search and checkout through hostApi.git.branches and checkoutBranch under gateway-backend-communication. Failed reads offer retry, blocked checkouts preserve the current label, and switching projects resets the loaded identity. Project and worktree selection use the owning conversation state-preservation handlers.
+  - Observed file changes reveal a compact review bar above the composer with the branch, unique changed-file count and a direct review action. Branch search and checkout remain in its menu and use hostApi.git.branches and checkoutBranch under gateway-backend-communication. Failed reads offer retry, blocked checkouts preserve the current label, and switching projects resets the loaded identity. Project and worktree selection use the owning conversation state-preservation handlers.
   - Session environment stays absent for a clean repository, a policy snapshot or a running reply alone. Observed changes, MCP calls, skill reads or worker/process activity reveal its entry. Automatic disclosure follows the existing preference beside the conversation; manual disclosure is a dismissible overlay.
   - Environment sources show only observed call identities and skill names, with tool names behind disclosure. Groups preview at most three rows and retain overflow on demand. Active workers precede completed history; clicking a worker opens its own workspace tab.
   - Workspace expand/collapse changes its width; closing hides it while preserving mounted tabs and selected content. Reopening restores the current tab. Workers are entered through the environment rather than the workspace launcher.
   - Turn headers show at most two useful counts. Diagnostics sit at the end of the disclosure; history tool calls and their results share one expandable row, with unmatched results retained.
   - Session status uses one continuous surface. Running and failed processes remain visible regardless of history length; completed processes are available in a keyboard-accessible history disclosure.
   - An opened process uses the shared terminal surface with a live status, full-output copying and bounded scrolling. Incoming output follows only while the reader remains at the end.
-  - Assistant messages use one text column without avatars. User-facing progress remains visible without duplicating the live reply when history catches up.
+  - Assistant messages use one text column without avatars. User-facing progress remains visible without duplicating the live reply when history catches up. Completed replies expose a compact, content-aligned footer for copy, quote into the composer and eligible fork, with timestamp and token usage in the same row.
   - Active runs default to a compact disclosure with only the current tool animated. Reasoning, execution graphs and passive Tool UI records open on demand; pending approvals and errors remain visible. Explicit expansion and the completed-run preference still apply.
   - A completed turn retains a compact, wrapping process summary and an independently visible final answer.
   - File paths and commands lead their headers; counts, copy controls and disclosure buttons stay reachable in narrow layouts.
@@ -117,6 +118,7 @@ requiredTests:
   - pnpm run i18n:lint
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/chat-turn-summary-collapse.spec.ts tests/e2e/chat-tool-ui-execution-surfaces.spec.ts tests/e2e/chat-file-changes.spec.ts tests/e2e/runtime-approval-bridge.spec.ts tests/e2e/chat-composer-git-strip.spec.ts
+  - pnpm run test:e2e:run tests/e2e/chat-user-message-actions.spec.ts --grep "assistant response hover actions"
   - pnpm run test:e2e:run tests/e2e/chat-task-visualizer.spec.ts --grep "internal yield"
 acceptance:
   - Agent-driven Electron evidence covers the welcome project picker and its nested worktree controls, successful branch switching in changed-file details, the three actions behind disclosure, light/dark/narrow layouts, and stable composer placement when drafting.
@@ -133,7 +135,7 @@ acceptance:
   - Structured code and output preserve leading indentation and trailing newlines; only native clipboard CRLF conversion is normalized in Windows assertions.
   - Existing approval and error states remain visible and retain their authority; no transport, runtime, product-lock or permission changes are made.
   - Long previews support keyboard scrolling without trapping the page, and final output and both sides of a replacement remain visible in the collapsed viewport.
-  - Runtime approval is a nonmodal panel at the input location, with no global overlay. It shares the composer's column, followed by the optional changed-file entry, and keeps the original draft mounted while pending. Other conversations and transcript controls stay usable; each request retains its own rejection and busy state.
+  - Runtime approval is a nonmodal panel at the input location, with no global overlay. It shares the composer's column; when file changes exist, the review bar sits above that composer area. The original draft stays mounted while pending. Other conversations and transcript controls stay usable; each request retains its own rejection and busy state.
   - Copying the command or pressing Escape does not decide the request. The input stays hidden and inert until every pending request for its session resolves; its original draft and attachments remain intact.
 docs:
   required: true

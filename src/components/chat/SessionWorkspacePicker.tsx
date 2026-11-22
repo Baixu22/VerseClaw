@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Check, ChevronDown, FolderGit2, Loader2, Plus, HardDrive } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -7,10 +8,11 @@ import type { GitRepositoryStatus, GitWorktree } from '@shared/types/git';
 import { hostApi } from '@/lib/host-api';
 import { isLinkedWorktreePath, pathEquals } from '@/lib/git-ui';
 import { cn } from '@/lib/utils';
+import { useDismissOnOutside, usePopover } from '@/components/settings/primitives/usePopover';
+import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ComposerPopover } from './ComposerPopover';
 
 export function SessionWorkspacePicker({ disabled, onSelect, onChanged, refreshSignal = 0, embedded = false }: {
   embedded?: boolean;
@@ -21,18 +23,19 @@ export function SessionWorkspacePicker({ disabled, onSelect, onChanged, refreshS
 }) {
   const { t } = useTranslation('settings', { keyPrefix: 'storage' });
   const navigate = useNavigate();
+  const menuId = useId();
+  const popover = usePopover<HTMLButtonElement>({ align: 'right', gap: 8, fitViewport: true });
+  const { open, setOpen } = popover;
+  const overlayContainer = useOverlayPortalContainer();
   const workspace = useWorkspacesStore((state) => state.activeWorkspace);
   const workspaceId = workspace?.id;
   const workspaceRoot = workspace?.rootPath;
-  const [open, setOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [branch, setBranch] = useState('');
   const [base, setBase] = useState('HEAD');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ workspaceId: string; status: GitRepositoryStatus; trees: GitWorktree[] } | null>(null);
-  const root = useRef<HTMLSpanElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
   const revision = useRef(0);
   const refresh = useCallback(async () => {
     if (!workspaceId || !workspaceRoot) return;
@@ -53,15 +56,32 @@ export function SessionWorkspacePicker({ disabled, onSelect, onChanged, refreshS
     const owner = revision;
     return () => { owner.current++; };
   }, [refresh, refreshSignal]);
+  const focusFrameRef = useRef<number | null>(null);
+  useEffect(() => () => {
+    if (focusFrameRef.current !== null) cancelAnimationFrame(focusFrameRef.current);
+  }, []);
+  useDismissOnOutside({
+    open,
+    onDismiss: () => setOpen(false),
+    onEscape: () => {
+      setOpen(false);
+      popover.triggerRef.current?.focus();
+      if (focusFrameRef.current !== null) cancelAnimationFrame(focusFrameRef.current);
+      focusFrameRef.current = requestAnimationFrame(() => {
+        focusFrameRef.current = null;
+        popover.triggerRef.current?.focus();
+      });
+    },
+    refs: [popover.triggerRef, popover.layerRef],
+  });
   useEffect(() => {
-    if (!open) return;
-    root.current?.querySelector<HTMLInputElement>('input')?.focus();
-    const dismiss = (event: PointerEvent) => { if (!root.current?.contains(event.target as Node)) setOpen(false); };
-    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(false); trigger.current?.focus(); } };
-    document.addEventListener('pointerdown', dismiss);
-    document.addEventListener('keydown', escape);
-    return () => { document.removeEventListener('pointerdown', dismiss); document.removeEventListener('keydown', escape); };
-  }, [open]);
+    if (!open) {
+      setCreating(false);
+      return;
+    }
+    const frame = requestAnimationFrame(() => popover.layerRef.current?.querySelector<HTMLElement>('button:not(:disabled), input')?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [open, popover.layerRef]);
   const current = data?.workspaceId === workspace?.id ? data : null;
   const isLinked = current ? isLinkedWorktreePath(current.trees, current.status.repoRoot) : false;
   const run = async (operation: () => Promise<void>) => {
@@ -71,22 +91,25 @@ export function SessionWorkspacePicker({ disabled, onSelect, onChanged, refreshS
     finally { setBusy(false); }
   };
   if (!workspace) return null;
-  return <span ref={root} className={embedded ? "relative flex min-w-0 flex-col gap-2 px-2" : "relative inline-flex min-w-0"}>
-    <button ref={trigger} type="button" className={cn('codex-welcome-context__subcontrol', isLinked && 'is-worktree', open && 'is-open')} data-testid="session-worktree-trigger"
-      data-git-kind={!current ? 'unknown' : isLinked ? 'worktree' : 'local'} aria-haspopup="dialog" aria-expanded={open} disabled={disabled || busy}
+  return <span className={embedded ? "relative flex min-w-0 flex-col gap-2 px-2" : "relative inline-flex min-w-0"}>
+    <button ref={popover.triggerRef} type="button" className={cn('codex-welcome-context__subcontrol', isLinked && 'is-worktree', open && 'is-open')} data-testid="session-worktree-trigger"
+      data-git-kind={!current ? 'unknown' : isLinked ? 'worktree' : 'local'} aria-haspopup="dialog" aria-controls={open ? menuId : undefined} aria-expanded={open} disabled={disabled || busy}
       onClick={() => { setOpen(!open); if (!open) { setError(null); void refresh(); } }}>
       {!current ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : isLinked ? <FolderGit2 className="h-3.5 w-3.5" aria-hidden="true" /> : <HardDrive className="h-3.5 w-3.5" aria-hidden="true" />}
       <span>{!current ? t(error ? 'loadFailed' : 'loading') : !current.status.isRepository ? t('init') : isLinked ? t('worktree') : t('local')}</span>
       {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ChevronDown className={cn('codex-composer-chevron', open && 'is-open')} />}
     </button>
-    <ComposerPopover open={open} inline={embedded} className="codex-composer-menu w-[min(340px,calc(100vw-32px))] overflow-y-auto text-left"
-      role="dialog" aria-label={t('environment')} data-testid="session-worktree-menu">
+    {open && typeof document !== 'undefined' && createPortal(
+      <div ref={popover.layerRef} style={{ ...popover.style, width: 'min(380px, calc(100vw - 16px))' }}
+        className="git-surface codex-composer-menu codex-composer-popover codex-session-worktree-menu text-left"
+        id={menuId} role="dialog" aria-label={t('environment')} data-testid="session-worktree-menu"
+        data-overlay-owner={embedded ? 'welcome-project' : undefined} data-state="open">
       <p className="codex-composer-menu__label">{t('environmentHint')}</p>
       {!current && !error && <p className="p-3 text-xs" role="status">{t('loading')}</p>}
       {current?.trees.map((tree, index) => <button key={tree.path} type="button" className="codex-composer-menu__item"
         disabled={busy || disabled || tree.bare || tree.prunable || pathEquals(tree.path, current.status.repoRoot)}
         title={tree.path} onClick={() => void run(async () => { await onSelect(tree); setOpen(false); })}>
-        {index === 0 ? <HardDrive className="h-4 w-4 shrink-0 opacity-75" aria-hidden="true" /> : <FolderGit2 className="h-4 w-4 shrink-0 text-violet-700 dark:text-violet-300" aria-hidden="true" />}
+        <span className="git-icon">{index === 0 ? <HardDrive className="h-4 w-4" aria-hidden="true" /> : <FolderGit2 className="h-4 w-4" aria-hidden="true" />}</span>
         <span className="min-w-0 flex-1"><span className="block truncate font-mono text-xs">{tree.branch || tree.head?.slice(0, 8) || t('worktree')}</span>
           <span className="block truncate text-[11px] text-muted-foreground">{index === 0 ? t('local') : t('worktree')} · {tree.path}</span></span>
         {pathEquals(tree.path, current.status.repoRoot) && <Check className="h-3.5 w-3.5 shrink-0" />}
@@ -115,6 +138,8 @@ export function SessionWorkspacePicker({ disabled, onSelect, onChanged, refreshS
       {error && <p role="alert" className="break-words px-3 py-2 text-xs text-red-700 dark:text-red-400">{error}</p>}
       <div className="codex-composer-menu__divider" />
       <button type="button" className="codex-composer-menu__item" onClick={() => { setOpen(false); navigate('/settings/storage'); }}><HardDrive className="h-4 w-4" />{t('title')}</button>
-    </ComposerPopover>
+      </div>,
+      overlayContainer ?? document.body,
+    )}
   </span>;
 }

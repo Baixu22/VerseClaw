@@ -1,0 +1,198 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/git-ui-20261121-01a1fdaa/results-03",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "git-ui-consistency.spec.ts",
+      "file": "git-ui-consistency.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Git surfaces retain complete content and clear actions in light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20361,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-21T14:08:08.867Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "journey",
+                      "contentType": "application/json",
+                      "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsInRoZW1lIjoibGlnaHQiLCJzb3VyY2UiOiJSZWFsIEVsZWN0cm9uIHdpdGggY29udHJvbGxlZCBob3N0IHJlc3BvbnNlcyIsImNoZWNrcyI6WyJHaXRIdWIgY2FyZHMiLCJyZXZpZXcgYW5kIGRpZmYiLCJoaXN0b3J5IGRpc2Nsb3N1cmUiLCJwcm90ZWN0ZWQgd29ya3RyZWUiLCJjcmVhdGUgcGF0aCBwcmV2aWV3IiwiY29tbWl0IGZvcm0iLCJhdWRpdCBzZWFyY2gvY29weS9maWx0ZXIiLCJzdG9yYWdlIGZpbHRlci9jYW5jZWwiLCJuYXJyb3cgbGF5b3V0Il19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8e3b619e8b60bb22cb8-c9eaf7c296e5fc8eeab2",
+          "file": "git-ui-consistency.spec.ts",
+          "line": 51,
+          "column": 6
+        },
+        {
+          "title": "Git surfaces retain complete content and clear actions in dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21325,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-21T14:08:29.260Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "journey",
+                      "contentType": "application/json",
+                      "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsInRoZW1lIjoiZGFyayIsInNvdXJjZSI6IlJlYWwgRWxlY3Ryb24gd2l0aCBjb250cm9sbGVkIGhvc3QgcmVzcG9uc2VzIiwiY2hlY2tzIjpbIkdpdEh1YiBjYXJkcyIsInJldmlldyBhbmQgZGlmZiIsImhpc3RvcnkgZGlzY2xvc3VyZSIsInByb3RlY3RlZCB3b3JrdHJlZSIsImNyZWF0ZSBwYXRoIHByZXZpZXciLCJjb21taXQgZm9ybSIsImF1ZGl0IHNlYXJjaC9jb3B5L2ZpbHRlciIsInN0b3JhZ2UgZmlsdGVyL2NhbmNlbCIsIm5hcnJvdyBsYXlvdXQiXX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8e3b619e8b60bb22cb8-15113ff8d22372c3d771",
+          "file": "git-ui-consistency.spec.ts",
+          "line": 51,
+          "column": 6
+        }
+      ]
+    },
+    {
+      "title": "session-worktree-storage.spec.ts",
+      "file": "session-worktree-storage.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real repository, isolated worktree, storage command and settings in light/dark/narrow layouts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 54604,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-21T14:08:50.627Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8582c5067f0ab6cc5353-4229dee4b702021f86c7",
+          "file": "session-worktree-storage.spec.ts",
+          "line": 25,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-21T14:08:06.639Z",
+    "duration": 99987.72899999999,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

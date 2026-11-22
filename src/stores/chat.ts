@@ -2673,6 +2673,20 @@ function getOpenRunSegmentFromHistory(
   return [];
 }
 
+function hasPersistedFinalText(state: ChatState, runId: string, final: RawMessage): boolean {
+  const run = state.runtimeRuns[runId];
+  const startedAt = state.lastUserMessageAt
+    ?? (run && run.sessionKey === state.currentSessionKey ? run.startedAt : undefined);
+  if (startedAt == null || final.role !== 'assistant' || final._attachedFiles?.length) return false;
+  const recorded = getOpenRunSegmentFromHistory(state.messages, startedAt).at(-1);
+  if (recorded?.role !== 'assistant' || !recorded.__openclaw?.id || getMessageStopReason(recorded) !== 'stop') return false;
+  const isTextReply = (content: unknown) => typeof content === 'string' || (Array.isArray(content)
+    && content.every((block) => block?.type === 'text' || block?.type === 'thinking'));
+  if (!isTextReply(final.content) || !isTextReply(recorded.content)) return false;
+  const text = getMessageText(final.content).trim();
+  return text.length > 0 && text === getMessageText(recorded.content).trim();
+}
+
 /** Only treat inbound runs as user-visible for this long after the last user send. */
 const USER_INITIATED_RUN_MAX_AGE_MS = 10 * 60 * 1000;
 
@@ -4344,7 +4358,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     // active, queue it so it auto-sends when the run drains. Long-task
     // interventions (inputMode) are NOT queued — they have their own
     // guide/interrupt/queue path in the gateway.
-    if (get().sending && targetSessionKey === get().currentSessionKey && !inputMode) {
+    if (get().sending && targetSessionKey === get().currentSessionKey && !inputMode && !opts?.respondToInteraction) {
       get().queuePendingMessage(text, { ...opts, workspaceId: originWorkspaceId, expectedSessionGeneration, targetSessionKey });
       return;
     }
@@ -4424,6 +4438,15 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       if (stuckGeneration !== _checkStuckGeneration) return;
       const state = get();
       if (!state.sending) return;
+
+      const approvalEvents = state.runtimeRuns[state.activeRunId ?? '']?.events
+        .filter((event) => event.type === 'approval.updated') ?? [];
+      const latestApprovals = new Map(approvalEvents.map((event) => [event.itemId ?? event.toolCallId ?? 'approval', event]));
+      if ([...latestApprovals.values()].some((event) => /^(pending|waiting|requested)$/.test(event.phase ?? event.status ?? ''))) {
+        _lastChatEventAt = Date.now();
+        _checkStuckTimer = setTimeout(checkStuck, 10_000);
+        return;
+      }
 
       const hasStream = hasMeaningfulStreamingActivity(
         state.streamingMessage,
@@ -5028,8 +5051,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
               }
               : { ...normalizedFinalMessage, role: (normalizedFinalMessage.role || 'assistant') as RawMessage['role'], id: msgId };
             const clearPendingImages = { pendingToolImages: [] as AttachedFileMeta[] };
-            // Check if message already exists (prevent duplicates)
-            const alreadyExists = s.messages.some(m => m.id === msgId);
+            // History can publish the canonical reply before the synthetic final event arrives.
+            const alreadyExists = s.messages.some(m => m.id === msgId)
+              || (hasOutput && !toolOnly && hasPersistedFinalText(s, runId, msgWithImages));
             if (alreadyExists) {
               return toolOnly ? {
                 streamingText: '',

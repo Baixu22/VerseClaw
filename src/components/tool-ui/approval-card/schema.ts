@@ -48,6 +48,7 @@ export const safeParseSerializableApprovalCard: (
 ) => SerializableApprovalCard | null =
   SerializableApprovalCardSchemaContract.safeParse;
 export interface ApprovalCardProps extends SerializableApprovalCard {
+  presentation?: 'card' | 'composer';
   className?: string;
   onConfirm?: () => void | Promise<void>;
   onCancel?: () => void | Promise<void>;

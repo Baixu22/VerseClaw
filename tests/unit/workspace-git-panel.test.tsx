@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { WorkspaceGitPanel } from '@/components/file-preview/WorkspaceGitPanel';
 
@@ -244,7 +244,8 @@ describe('WorkspaceGitPanel', () => {
     hostApiMock.git.worktrees.mockResolvedValue({
       worktrees: [
         { path: '/workspace/demo', branch: 'feature/git-panel', head: 'abc123' },
-        { path: '/workspace/demo-feature-a', branch: 'feature/a', head: 'def456', locked: true, prunable: true },
+        { path: '/workspace/demo-feature-a', branch: 'feature/a', head: 'def456' },
+        { path: '/workspace/protected', branch: 'feature/protected', head: 'locked', locked: true, prunable: true },
       ],
     });
     hostApiMock.git.stashList.mockResolvedValue({
@@ -425,7 +426,9 @@ describe('WorkspaceGitPanel', () => {
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'Worktree' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Switch' }));
+    const rows = screen.getAllByTestId('workspace-git-worktree-row');
+    expect(within(rows[2]).getByRole('button', { name: 'Switch' })).toBeDisabled();
+    fireEvent.click(within(rows[1]).getByRole('button', { name: 'Switch' }));
     await waitFor(() => {
       expect(hostApiMock.workspaces.create).toHaveBeenCalledWith({
         name: 'demo-feature-a',

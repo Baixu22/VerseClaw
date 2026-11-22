@@ -443,6 +443,14 @@ test('keeps environment summaries bounded and opens a worker only on demand', as
     await toggle.click();
     await expect(rail).toHaveAttribute('data-layer', 'overlay');
     await expect(page.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
+    await page.setViewportSize({ width: 390, height: 720 });
+    const railBounds = await rail.boundingBox();
+    expect(railBounds).not.toBeNull();
+    expect(railBounds!.x).toBeGreaterThanOrEqual(0);
+    expect(railBounds!.x + railBounds!.width).toBeLessThanOrEqual(390);
+    expect(await rail.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+    await page.screenshot({ path: testInfo.outputPath('session-status-rail-narrow.png') });
+    await page.setViewportSize({ width: 1600, height: 1000 });
     await expect(page.getByTestId('session-activity-sources')).toContainText('review');
     await expect(page.getByTestId('session-activity-subagent-environment-worker-0')).toBeVisible();
     await expect(page.getByTestId('session-activity-subagent-environment-worker-1')).toBeHidden();

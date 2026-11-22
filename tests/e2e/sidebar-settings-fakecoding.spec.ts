@@ -32,6 +32,21 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       });
       expect(Math.abs(footerGeometry.height - 45)).toBeLessThanOrEqual(1);
 
+      const collapseToggle = page.getByTestId('sidebar-collapse-toggle');
+      await collapseToggle.click();
+      await expect(page.getByTestId('sidebar')).toHaveCSS('width', '64px');
+      const collapsedFooter = await page.evaluate(() => {
+        const sidebar = document.querySelector<HTMLElement>('[data-testid="sidebar"]')!.getBoundingClientRect();
+        const footer = document.querySelector<HTMLElement>('.sidebar-footer')!.getBoundingClientRect();
+        const settings = document.querySelector<HTMLElement>('[data-testid="sidebar-nav-settings"]')!.getBoundingClientRect();
+        return { sidebarBottom: sidebar.bottom, footerTop: footer.top, footerBottom: footer.bottom, settingsCenter: settings.top + settings.height / 2 };
+      });
+      expect(Math.abs(collapsedFooter.sidebarBottom - collapsedFooter.footerBottom)).toBeLessThanOrEqual(1);
+      expect(collapsedFooter.settingsCenter).toBeGreaterThanOrEqual(collapsedFooter.footerTop);
+      expect(collapsedFooter.settingsCenter).toBeLessThanOrEqual(collapsedFooter.footerBottom);
+      await collapseToggle.click();
+      await expect(page.getByTestId('sidebar')).not.toHaveCSS('width', '64px');
+
       /* Session-area alignment against the FakeCoding reference: the section
          label is a real collapse control, actions are hover-only, and a nested
          session title starts at the same x as its workspace title (row 8px +
@@ -186,6 +201,8 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       });
       await page.waitForTimeout(100);
       await expect(page.getByTestId('sidebar')).toBeVisible();
+      await page.getByTestId('sidebar-collapse-toggle').click();
+      await expect(page.getByTestId('sidebar-collapse-toggle')).toHaveAttribute('aria-label', 'Expand sidebar');
       await expect(page.getByTestId('sidebar-nav-settings')).toBeVisible();
       const layout = await page.evaluate(() => {
         const sidebarElement = document.querySelector<HTMLElement>('[data-testid="sidebar"]')!;

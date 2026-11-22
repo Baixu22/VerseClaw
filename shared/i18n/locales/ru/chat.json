@@ -1,4 +1,13 @@
 {
+  "composerRequests": {
+    "title": "Ожидается ваш ответ",
+    "approvePlan": "Одобрить план",
+    "revisePlan": "Запросить изменения",
+    "pendingCount": "Ожидают: {{count}}",
+    "planTitle": "Проверка плана",
+    "questionTitle": "Требуется ваш ответ",
+    "resumeHint": "Ответьте здесь для продолжения. Черновик сообщения сохранён."
+  },
   "operationGenerationUnavailable": "Идентификатор сеанса недоступен. Обновите данные перед продолжением.",
   "gatewayNotRunning": "Шлюз не запущен",
   "retry": "Повторить",
@@ -370,8 +379,11 @@
     "summarizeUpToHere": "Сжать до этой точки",
     "summarizeFromHere": "Сжать начиная отсюда",
     "forkFromHere": "Задать вопрос в новом сеансе",
+    "forkFromResponse": "Задать вопрос по этому ответу в новом сеансе",
     "copy": "Копировать сообщение",
     "copied": "Скопировано",
+    "copyFailed": "Не удалось скопировать ответ",
+    "quoteResponse": "Цитировать в поле ввода",
     "edit": "Редактировать",
     "editInputLabel": "Редактировать сообщение",
     "cancelEdit": "Отмена",
@@ -598,7 +610,8 @@
       "collapse": "Свернуть изменения",
       "before": "До изменений",
       "after": "После изменений",
-      "content": "Изменения файла"
+      "content": "Изменения файла",
+      "lineStatsLabel": "Изменение строк: +{{added}}, -{{removed}}"
     },
     "terminal": {
       "copy": "Копировать вывод",
@@ -659,19 +672,19 @@
       "empty": "No reasoning summary was provided."
     },
     "commit": {
-      "label": "Commit",
-      "detached": "Detached HEAD",
-      "staged": "staged",
-      "unstaged": "unstaged",
-      "untracked": "untracked",
-      "conflicted": "conflicted",
+      "label": "Коммит",
+      "detached": "Отсоединённый HEAD",
+      "staged": "в индексе",
+      "unstaged": "вне индекса",
+      "untracked": "неотслеживаемые",
+      "conflicted": "конфликты",
       "operationWithAction": "{{action}}: {{status}}",
       "operation": {
-        "ready": "Ready",
-        "running": "Running",
-        "success": "Done",
-        "blocked": "Blocked",
-        "failed": "Failed"
+        "ready": "Готово",
+        "running": "Выполняется",
+        "success": "Завершено",
+        "blocked": "Ожидает действия",
+        "failed": "Ошибка"
       }
     },
     "tokenUsage": {
@@ -795,6 +808,9 @@
   "agentsPanel": {
     "title": "Субагенты",
     "description": "Переписка и назначение задач для этой сессии",
+    "transcriptLabel": "Переписка",
+    "lifecycleDetails": "Сведения о выполнении",
+    "dispatchLabel": "Отправить инструкцию для {{role}}",
     "empty": "В этой сессии субагенты ещё не создавались.",
     "transcriptEmpty": "В переписке этого субагента пока нет сообщений.",
     "transcriptUnavailable": "У этого субагента пока нет доступной сессии.",
@@ -1164,11 +1180,11 @@
         "activeRepository": "Active repo"
       },
       "toolTabs": {
-        "worktrees": "Worktree",
+        "worktrees": "Рабочие деревья",
         "commit": "Коммит",
         "branch": "Ветка",
         "integrate": "Интеграция",
-        "stash": "Stash",
+        "stash": "Отложенное",
         "github": "PR",
         "compactHint": "Компактные инструменты"
       },
@@ -1197,7 +1213,7 @@
         "resetHelp": "Сброс изменяет историю и всегда требует разрешения."
       },
       "worktrees": {
-        "title": "Worktrees",
+        "title": "Рабочие деревья",
         "newBranch": "Новая ветка",
         "existingBranch": "Существующая",
         "startPointPlaceholder": "Начальная точка, по умолчанию HEAD",
@@ -1267,6 +1283,15 @@
         "stashes": "Stashes",
         "aheadBehind": "ahead {{ahead}} / behind {{behind}}",
         "unknown": "Unknown"
+      },
+      "branches": {
+        "title": "Ветки",
+        "empty": "Нет локальных веток"
+      },
+      "commits": {
+        "title": "История коммитов",
+        "empty": "Нет коммитов",
+        "aheadBehind": "Впереди / позади текущей ветки"
       }
     }
   },
@@ -2263,6 +2288,7 @@
       "kindDetached": "Отделён",
       "mainCheckout": "Основная копия",
       "linkedWorktree": "Связанное рабочее дерево",
+      "reviewChanges": "Посмотреть изменения",
       "filesChanged": "Изменено файлов: {{count}}",
       "filesChanged_one": "Изменён {{count}} файл"
     },
@@ -2380,7 +2406,11 @@
     "pendingTitle": "Операции, ожидающие подтверждения",
     "pendingDescription": "Проверьте записанную операцию и продолжите её из сохранённого состояния.",
     "resumeMutation": "Проверить и продолжить",
-    "pendingKinds": {"archive": "Архивирование", "restore": "Восстановление", "delete": "Удаление"},
+    "pendingKinds": {
+      "archive": "Архивирование",
+      "restore": "Восстановление",
+      "delete": "Удаление"
+    },
     "searchPlaceholder": "Поиск в архиве",
     "ungrouped": "Без группы",
     "noMatches": "Совпадений не найдено",
@@ -2601,6 +2631,7 @@
     },
     "badge": {
       "tools": "{{count}} вызовов инструментов",
+      "tools_one": "{{count}} вызов инструмента",
       "thoughts": "{{count}} мыслей",
       "approvals": "{{count}} запросов",
       "plan": "{{count}} шагов",
@@ -2724,6 +2755,7 @@
   },
   "completionActivity": {
     "label": "Активность, непрочитанных: {{count}}",
+    "labelStatus": "Активность: {{status}}, непрочитанных: {{count}}",
     "title": "Активность",
     "empty": "Здесь появятся завершённые запуски, ошибки и запросы, требующие внимания.",
     "completed": "Запуск завершён",
@@ -2981,5 +3013,17 @@
       "binding-committed": "Подтверждение цели",
       "confirmed": "Целевая среда готова"
     }
+  },
+  "gitSurface": {
+    "searchAudit": "Поиск команд, путей и коммитов",
+    "clearSearch": "Очистить поиск",
+    "noMatches": "Записи не найдены",
+    "subject": "Содержание",
+    "effect": "Действие",
+    "paths": "Пути",
+    "reason": "Причина",
+    "copyDetails": "Копировать детали",
+    "history": "Ветки и история",
+    "tools": "Инструменты репозитория"
   }
 }

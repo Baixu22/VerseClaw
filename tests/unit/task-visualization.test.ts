@@ -81,6 +81,8 @@ describe('deriveTaskSteps', () => {
         label: 'read',
         status: 'completed',
         kind: 'tool',
+        eventOrder: 1,
+        inputDetail: JSON.stringify({ filePath: '/tmp/demo.md' }, null, 2),
       }),
       expect.objectContaining({
         id: 'cmd-1',
@@ -90,6 +92,31 @@ describe('deriveTaskSteps', () => {
         detail: 'Scanning workspace',
       }),
     ]);
+  });
+
+  it('keeps tool arguments and first-seen order as runtime output updates arrive', () => {
+    const steps = deriveRuntimeTaskSteps({
+      runId: 'ordered-run',
+      status: 'running',
+      assistantText: '',
+      thinkingText: '',
+      events: [
+        { type: 'run.started', runId: 'ordered-run', sessionKey: 'agent:main:main' },
+        { type: 'tool.started', runId: 'ordered-run', toolCallId: 'read-1', name: 'read_file', ts: 1, args: { path: 'src/one.ts' } },
+        { type: 'tool.completed', runId: 'ordered-run', toolCallId: 'read-1', name: 'read_file', ts: 2, result: { text: 'read' }, isError: false },
+        { type: 'tool.started', runId: 'ordered-run', toolCallId: 'write-1', name: 'write_file', ts: 3, args: { path: 'src/two.ts' } },
+        { type: 'tool.updated', runId: 'ordered-run', toolCallId: 'write-1', name: 'write_file', partialResult: 'writing' },
+      ],
+    });
+
+    expect(steps.map(({ id, eventOrder }) => [id, eventOrder])).toEqual([
+      ['read-1', 1],
+      ['write-1', 3],
+    ]);
+    expect(steps[1]).toMatchObject({
+      inputDetail: JSON.stringify({ path: 'src/two.ts' }, null, 2),
+      detail: 'writing',
+    });
   });
   // #41: the runtime's external-write classification rides across the
   // approval.updated event as a display-only `risk` projection and lands on the

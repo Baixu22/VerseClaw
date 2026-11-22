@@ -47,6 +47,16 @@ function View({ rows = items, session = 'session', position }: { rows?: typeof i
 }
 
 describe('measured message viewport', () => {
+  it('removes the estimated gap when a row becomes empty after process promotion', async () => {
+    const view = render(<View rows={items.slice(0, 3)} />);
+    await act(async () => { await vi.advanceTimersByTimeAsync(32); });
+    const row = screen.getByTestId('row-1');
+    act(() => observers.forEach(observer => {
+      if (observer.nodes.has(row)) observer.callback([{ target: row, borderBoxSize: [{ blockSize: 0 }] } as unknown as ResizeObserverEntry], {} as ResizeObserver);
+    }));
+    expect(screen.getByTestId('row-2').style.top).toBe('232px');
+    view.unmount();
+  });
   it('restores a saved message across session changes before and after measured heights arrive', async () => {
     const view=render(<View rows={items.slice(0,1)} session="child"/>);
     await act(async()=>{await vi.advanceTimersByTimeAsync(32);});

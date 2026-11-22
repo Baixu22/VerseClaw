@@ -1,0 +1,336 @@
+{
+  "date": "2026-11-21",
+  "driven_by": "agent",
+  "actor": "Codex",
+  "worktree": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa",
+  "branch": "codex/chat-ui-hierarchy-20261119",
+  "baseline": "47303b18996f94ec7fd9afbc89ba1dac0910e66d",
+  "uncommitted": true,
+  "result": {
+    "visualReview": "PASS",
+    "unit": {
+      "passed": 35,
+      "total": 35
+    },
+    "initialElectron": {
+      "startTime": "2026-11-21T12:49:06.361Z",
+      "duration": 166932.35799999998,
+      "expected": 10,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "finalElectron": {
+      "startTime": "2026-11-21T12:58:09.954Z",
+      "duration": 71712.229,
+      "expected": 5,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "optionsCapture": {
+      "startTime": "2026-11-21T13:04:04.781Z",
+      "duration": 14719.902,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "webTypecheck": "PASS",
+    "build": "PASS",
+    "lint": {
+      "errors": 0,
+      "warnings": 1
+    },
+    "i18n": "PASS",
+    "harness": "PASS",
+    "providerCalls": 0,
+    "minimumDangerTextContrast": 4.678163675109271
+  },
+  "sourceHashes": [
+    {
+      "file": "src/styles/codex-composer-shell.css",
+      "sha256": "31ea74392f6bd5b04bbeea289cb128111ac7539eb2942351268f8f39709963f4",
+      "beforeSha256": "a3bc458e33873832d6dfd1f3544d811a828d35e6927eb9bac317cb59ca4b355b"
+    },
+    {
+      "file": "src/components/chat/ComposerDecisionSurface.tsx",
+      "sha256": "4d9c082d483e051f8dd1f509ec285c9ccad89f92c814033ba10dc1fc91e92c67",
+      "beforeSha256": "7bbd5544cb77ee963273b93ddbcd98ca718b4e62c6edd1e3ec0c7c7a64fea3cf"
+    },
+    {
+      "file": "src/pages/Chat/ComposerRequestDock.tsx",
+      "sha256": "282a5567261b4989538588f851c330bd79c0fa6d7378bcff8cb84fc4a7e83fc1",
+      "beforeSha256": "346060f224fda31a33b702f9e9db3d4d83756d9bb3c92d49451f2d5ac6daa711"
+    },
+    {
+      "file": "src/components/tool-ui/agent-interactions.tsx",
+      "sha256": "5696b78b96f0b513b2eb7363dda9dbafd738b029beec5bfa474b5a0969939b4b",
+      "beforeSha256": "4eadaac9c05b1b8f67fc2c9c2da5c4ca477a2b65672e4dbdfe9a5081930da327"
+    },
+    {
+      "file": "src/components/runtime-approvals/RuntimeApprovalPrompt.tsx",
+      "sha256": "aa1f1f2fede29ebf28335999f8581ad4f4a9548ed48c2aa1223fbafd3d27e260",
+      "beforeSha256": "4aea875ca3271db45e6ef8479d1ddad59d802e75c218c05e7530622ef401ddf5"
+    },
+    {
+      "file": "src/components/tool-ui/approval-card/approval-card.tsx",
+      "sha256": "dab7f222b55b789c640fb4bf0659fbc1b70b666d929577fa6ad27b94a4504604",
+      "beforeSha256": "3c0d89da9e5aa6e9077b15cbf5b48152bfbe787611adcee55e58da7c42e7d71d"
+    },
+    {
+      "file": "tests/e2e/chat-runtime-ux-acceptance.spec.ts",
+      "sha256": "a5e64a33239750975b1df802646f28e3092856dc00f7461e07bb694757609702",
+      "beforeSha256": "74d729fedbccbf09171084a78b3a130387829b9264c5810c28bb2bf8a3aede00"
+    }
+  ],
+  "builds": [
+    {
+      "file": "dist/index.html",
+      "sha256": "addf8cd833446f5d762e5483a11ecff99c0c2475c18f05271e9e37e644783c7a"
+    },
+    {
+      "file": "dist/.vite/manifest.json",
+      "sha256": "9c8384d35b465a5b297cdf700e017f976ccbdda1fc9075d3fc2ec3b32ae9f3a9"
+    },
+    {
+      "file": "dist-electron/main/index.js",
+      "sha256": "b53613be11ca16a1a10fe1ee32b17e5b51d8769359c636d35839a21cf9807da9"
+    },
+    {
+      "file": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ],
+  "tests": [
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "real host command gate persists approve and deny decisions selected in the composer",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:58:11.712Z",
+      "durationMs": 18218,
+      "attachments": [
+        "real-host-permission-receipt.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "irreversible permissions keep restrained danger accents and readable controls in both themes",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:58:42.615Z",
+      "durationMs": 11999,
+      "attachments": [
+        "danger-control-contrast.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "plan and questions stay at the composer, submit once, preserve drafts and survive scroll",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:58:54.632Z",
+      "durationMs": 14142,
+      "attachments": [
+        "request-receipts.json"
+      ]
+    },
+    {
+      "file": "runtime-approval-bridge.spec.ts",
+      "title": "covers the composer without a modal and restores its draft after approval",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:59:08.798Z",
+      "durationMs": 11684,
+      "attachments": [
+        "runtime-approval-geometry-light.json",
+        "runtime-approval-geometry-dark.json",
+        "runtime-approval-geometry-narrow.json",
+        "runtime-approval-geometry-zoom150.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "options preferences and model confirmations use the same decision surface",
+      "status": "passed",
+      "startedAt": "2026-11-21T13:04:06.225Z",
+      "durationMs": 12358,
+      "attachments": [
+        "shared-surface-style.json"
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/runtime-priority-dark.png",
+      "title": "运行时审批 · 橙色提示",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\runtime-priority-dark.png",
+      "sha256": "eefa7370efe86512529053886481e816c51ad624987803d24c33212b6c12213f"
+    },
+    {
+      "file": "screenshots/real-host-approval-dark.png",
+      "title": "工作区权限 · 橙色提示与红色拒绝",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-743d2-ns-selected-in-the-composer\\real-host-approval-dark.png",
+      "sha256": "47931ca4fb5177ad38dcd9ae58f58800d2d2ebc57a4fddb028cf5987cf198d0a"
+    },
+    {
+      "file": "screenshots/danger-dark-1280.png",
+      "title": "不可逆请求 · 深色珊瑚红",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-84d9a-ble-controls-in-both-themes\\danger-dark-1280.png",
+      "sha256": "afbcd7e1e00c9e55c4aec74e22b404b71cfc4d6342f87d62f107ec36dca923f4"
+    },
+    {
+      "file": "screenshots/danger-light-1280.png",
+      "title": "不可逆请求 · 浅色砖红",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-84d9a-ble-controls-in-both-themes\\danger-light-1280.png",
+      "sha256": "4ec97340d7d857181fbb972598fb7a4a013d9d2d082582df98701330ad67a851"
+    },
+    {
+      "file": "screenshots/question-dark.png",
+      "title": "Choose 选项 · 轻量勾选",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\question-dark.png",
+      "sha256": "6a07a7827d68886f8706c52eeadbf829698a3265c77c54a7289f38e757dc7f3f"
+    },
+    {
+      "file": "screenshots/question-light.png",
+      "title": "Choose 选项 · 浅色",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\question-light.png",
+      "sha256": "902ee8442883c3102ee207354585f67bc830dea4f5bd33f501ff975d0f5878b7"
+    },
+    {
+      "file": "screenshots/question-hover-dark.png",
+      "title": "选择行 · 悬停",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\question-hover-dark.png",
+      "sha256": "e0ad4b0827704daf8f4024399bf392bca15b247af44117acfe039ade45665d04"
+    },
+    {
+      "file": "screenshots/question-keyboard-dark.png",
+      "title": "选择行 · 键盘焦点",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\question-keyboard-dark.png",
+      "sha256": "8c5eafca9cdea3bb3950d9a5112b45b57a6f80de36661c2743664c19d1d68375"
+    },
+    {
+      "file": "screenshots/question-375.png",
+      "title": "选择行 · 375 px",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\question-375.png",
+      "sha256": "040407c549826f6d2b5b63b0c2430f38578b5d42abf824be20aecc3e93f9b3fa"
+    },
+    {
+      "file": "screenshots/question-640.png",
+      "title": "选择行 · 640 px",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\question-640.png",
+      "sha256": "0722de4fcd738ceaf6de465742334e8d1f25661b284f8faf462ca61b8db2f8b5"
+    },
+    {
+      "file": "screenshots/danger-dark-375.png",
+      "title": "危险审批 · 375 px 深色",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-84d9a-ble-controls-in-both-themes\\danger-dark-375.png",
+      "sha256": "a8fc3be583d8ade3af1066a8879ef06ba490c8244420a8a29358698f0a69f55f"
+    },
+    {
+      "file": "screenshots/danger-light-375.png",
+      "title": "危险审批 · 375 px 浅色",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-84d9a-ble-controls-in-both-themes\\danger-light-375.png",
+      "sha256": "a1e360ac25dfed23c2404b9302de007a65b4f210759827c50b28ebca327fb850"
+    },
+    {
+      "file": "screenshots/surface-option-list-dark.png",
+      "title": "选项列表 · 同一勾选样式",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-options\\chat-runtime-ux-acceptance-c2ff9-e-the-same-decision-surface\\surface-option-list-dark.png",
+      "sha256": "4c06d0b5134ff177a01edc549702846828908bfa8a0b980fb923dd65ddd114ab"
+    },
+    {
+      "file": "screenshots/surface-preferences-panel-dark.png",
+      "title": "偏好 · 同一决策面板",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-options\\chat-runtime-ux-acceptance-c2ff9-e-the-same-decision-surface\\surface-preferences-panel-dark.png",
+      "sha256": "9710e0290da75e93a5fd641f0a53856e0948a39e2cec852d9b2cf6b2beee9567"
+    },
+    {
+      "file": "screenshots/surface-approval-dark.png",
+      "title": "模型确认 · 同一决策面板",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-options\\chat-runtime-ux-acceptance-c2ff9-e-the-same-decision-surface\\surface-approval-dark.png",
+      "sha256": "61c8615c7e973316ff2b2d42179e33826ae9faf0c0560ee53e154cb10a75e7a3"
+    },
+    {
+      "file": "screenshots/plan-dark.png",
+      "title": "计划 · 同一决策面板",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll\\plan-dark.png",
+      "sha256": "5673966de616ba8b6b51462ea60e6b9a7a7f49a6fa4bbb34dcfebe5bdf1b3c33"
+    },
+    {
+      "file": "screenshots/real-host-approval-light.png",
+      "title": "工作区权限 · 浅色",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\chat-runtime-ux-acceptance-743d2-ns-selected-in-the-composer\\real-host-approval-light.png",
+      "sha256": "6c24f7a1d7136a1d875fea8c42a834d8b6a4087baf44efa472388586ed42b49d"
+    },
+    {
+      "file": "screenshots/runtime-approval-page-light.png",
+      "title": "运行时审批 · 浅色",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-page-light.png",
+      "sha256": "ba4a188f54d6c28db1a0f20a4f1c1b8f4acc811e76c99c26ad2721daae9f3ca0"
+    },
+    {
+      "file": "screenshots/runtime-approval-page-narrow.png",
+      "title": "运行时审批 · 窄屏",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-page-narrow.png",
+      "sha256": "dc7321fa96f3938f794264604e7105e30d00ffb82ce32563abfe0428d0814f7e"
+    },
+    {
+      "file": "screenshots/runtime-approval-zoom150.png",
+      "title": "运行时审批 · 150% 缩放",
+      "source": "D:\\tmp\\ui-warmth-20261121-01a1fdaa\\results-accepted\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-zoom150.png",
+      "sha256": "920d07c93a19390174d3edd1d949f70b5d580e96ee1040a26bdf7f2c3c19f295"
+    }
+  ],
+  "iterations": [
+    {
+      "artifact": "D:/tmp/ui-warmth-20261121-01a1fdaa/contrast.json",
+      "finding": "Initial danger text had insufficient contrast; early theme-transition sampling also included intermediate colors."
+    },
+    {
+      "artifact": "D:/tmp/ui-warmth-20261121-01a1fdaa/contrast-reloaded.json",
+      "finding": "Settled 60% danger mix remained below 4.5:1 on tinted dark buttons."
+    },
+    {
+      "artifact": "D:/tmp/ui-warmth-20261121-01a1fdaa/contrast-accepted.json",
+      "finding": "Final 45% mix and 8%/12% button washes passed in both themes; minimum text ratio 4.678."
+    }
+  ],
+  "runs": [
+    {
+      "file": "D:/tmp/ui-warmth-20261121-01a1fdaa/unit.json",
+      "sha256": "95c658b1dcf8bca6dd5b261de960c4919609ca960403816434df13f1604cc879"
+    },
+    {
+      "file": "D:/tmp/ui-warmth-20261121-01a1fdaa/e2e.json",
+      "sha256": "7a40a012d6328e53e90295664afa4c1bdc22c8d9330a301d9b404f5b0692b6a7"
+    },
+    {
+      "file": "D:/tmp/ui-warmth-20261121-01a1fdaa/e2e-accepted.json",
+      "sha256": "7fde345ee9d072c999b1cafff81b509b65344f0c0961b98cb37156399c19c695"
+    },
+    {
+      "file": "D:/tmp/ui-warmth-20261121-01a1fdaa/e2e-options.json",
+      "sha256": "5535b188144af94331c1e7b5e0fe72df056c8150d7942d81b9895ddab60df0eb"
+    },
+    {
+      "file": "D:/tmp/ui-warmth-20261121-01a1fdaa/build-accepted.log",
+      "sha256": "47239e21f8f0d4f2c381eaf8d0f69eb4d5bc8c554c835f9ca81ff6a6d6915cb6"
+    },
+    {
+      "file": "D:/tmp/ui-warmth-20261121-01a1fdaa/lint-final.log",
+      "sha256": "1ece445eb5df2436819ecd0e04817dc9142dba37dfe2b8e5925e0013e9021709"
+    }
+  ],
+  "evidenceTypes": {
+    "permission": "Real Electron terminal permission gate, UI approval/denial, persisted readback.",
+    "runtime": "Real Electron with controlled IPC approval frames.",
+    "conversation": "Controlled histories and responses in real Electron.",
+    "ego": "Real browser clicks, Space selection, request submit, permission deny and screenshots; mock=1."
+  },
+  "capturedAt": "2026-11-21T13:04:57.753Z",
+  "visualReview": {
+    "actor": "Codex",
+    "driven_by": "agent",
+    "images": 20,
+    "method": "Contact sheets plus full-size selection, narrow danger, theme and before/after image review",
+    "reviewedAt": "2026-11-21T13:06:31.070Z"
+  }
+}

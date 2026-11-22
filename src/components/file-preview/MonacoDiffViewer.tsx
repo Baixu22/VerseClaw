@@ -72,7 +72,7 @@ export default function MonacoDiffViewer({
           domReadOnly: true,
           originalEditable: false,
           renderSideBySide: true,
-          useInlineViewWhenSpaceIsLimited: false,
+          useInlineViewWhenSpaceIsLimited: true,
           renderIndicators: false,
           renderOverviewRuler: false,
           renderMarginRevertIcon: false,

@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useCallback, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { Check, CheckCircle2, ChevronLeft, ChevronRight, Clipboard, Copy, HelpCircle, Table as TableIcon, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
 import { SlidersHorizontal } from '@/components/icons/codex-icons';
 import { useTranslation } from 'react-i18next';
@@ -36,6 +36,8 @@ type PlanTodoStatus = ToolUiPlanTodoStatus;
 type PlanInteraction = {
   type: 'plan';
   id: string;
+  requiresApproval?: boolean;
+  choice?: 'approved' | 'revise';
   /**
    * Absent for runtime plan tools (`update_plan` carries only `explanation`).
    * Renderers must fall back to their own heading instead of showing an empty
@@ -420,6 +422,7 @@ type ToolUseLike = {
 };
 
 type AgentInteractionRendererProps = {
+  presentation?: 'card' | 'composer';
   interactions: ToolUiInteraction[];
   compactProcess?: boolean;
   canSubmit?: boolean;
@@ -444,6 +447,7 @@ type ParsedToolUiContent = {
 };
 
 const TOOL_UI_FENCE_RE = /```([^\n`]*)\r?\n([\s\S]*?)```/g;
+const ToolUiPresentation = createContext<'card' | 'composer'>('card');
 const TOOL_UI_WRAPPER_KEYS = [
   'toolUi',
   'tool_ui',
@@ -654,6 +658,8 @@ function parsePlan(payload: Record<string, unknown>, fallbackId: string): PlanIn
     type: 'plan',
     id: asString(payload.id) ?? fallbackId,
     ...(title ? { title } : {}),
+    requiresApproval: payload.requiresApproval === true || payload.status === 'proposed',
+    ...(payload.choice === 'approved' || payload.choice === 'revise' ? { choice: payload.choice } : {}),
     description: asString(payload.description) ?? asString(payload.explanation),
     todos,
     maxVisibleTodos: asNumber(payload.maxVisibleTodos),
@@ -2327,7 +2333,7 @@ function removeMarkdownRanges(text: string, blocks: MarkdownInteractionBlock[]):
   return output;
 }
 
-export function parseToolUiContent(text: string): ParsedToolUiContent {
+export function parseToolUiContent(text: string, { streaming = false }: { streaming?: boolean } = {}): ParsedToolUiContent {
   const interactions: ToolUiInteraction[] = [];
   const unknownResources: ConversationUnknownResource[] = [];
   let output = '';
@@ -2359,6 +2365,20 @@ export function parseToolUiContent(text: string): ParsedToolUiContent {
     }
   }
   output += text.slice(lastIndex);
+  // A partially streamed structured fence belongs to its eventual card. Keep
+  // ordinary code fences visible, and retain malformed final payloads for inspection.
+  if (streaming) {
+    const fence = /(?:^|\n)```([^\n`]*)\r?\n/g;
+    let opening: RegExpExecArray | null;
+    while ((opening = fence.exec(output)) !== null) {
+      if (!interactionTypeFromFenceInfo(opening[1]).explicit) continue;
+      if (output.indexOf('```', fence.lastIndex) < 0) {
+        output = output.slice(0, opening.index);
+        break;
+      }
+    }
+    output = output.replace(/(?:^|\n)```(?:tool(?:-ui(?:-json)?)?|toolui)[^\n]*$/, '');
+  }
   const markdownFallback = parseMarkdownInteractions(output, `tool-ui-markdown-${interactions.length + 1}`);
 
   return {
@@ -2394,6 +2414,7 @@ function ActionFooter({
   onDraftResponse,
 }: ActionFooterProps) {
   const { t } = useTranslation('chat');
+  const inComposer = useContext(ToolUiPresentation) === 'composer';
   const [copied, setCopied] = useState(false);
   const canSend = canSubmit && !!onSubmitResponse;
   const canDraft = !!onDraftResponse;
@@ -2405,7 +2426,7 @@ function ActionFooter({
   }, [responseText]);
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2">
+    <div className={inComposer ? 'composer-decision-actions' : 'flex flex-wrap items-center justify-end gap-2'}>
       <Button
         type="button"
         variant="ghost"
@@ -2416,7 +2437,7 @@ function ActionFooter({
         data-testid="chat-tool-ui-action-copy"
       >
         {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
-        {copied ? t('toolUi.actions.copied') : t('toolUi.actions.copyResponse')}
+        <span className={inComposer ? 'sr-only' : undefined}>{copied ? t('toolUi.actions.copied') : t('toolUi.actions.copyResponse')}</span>
       </Button>
       {canDraft && !canSend && (
         <Button
@@ -2441,7 +2462,7 @@ function ActionFooter({
           className="gap-2"
           data-testid="chat-tool-ui-action-send"
         >
-          <CheckCircle2 className="h-3.5 w-3.5" />
+          {!inComposer && <CheckCircle2 className="h-3.5 w-3.5" />}
           {t('toolUi.actions.sendResponse')}
         </Button>
       )}
@@ -2458,6 +2479,9 @@ function ToolUiShell({
   label: string;
   children: React.ReactNode;
 }) {
+  if (useContext(ToolUiPresentation) === 'composer') {
+    return <div className="composer-decision-tool" data-testid="chat-tool-ui-card">{children}</div>;
+  }
   return (
     <section
       className="w-full rounded-lg border border-black/10 bg-surface-modal/80 px-4 py-3 shadow-sm dark:border-white/10"
@@ -2472,10 +2496,13 @@ function ToolUiShell({
   );
 }
 
-function PlanCard({ interaction }: { interaction: PlanInteraction }) {
+function PlanCard({ interaction, canSubmit, onSubmitResponse }: { interaction: PlanInteraction; canSubmit?: boolean; onSubmitResponse?: (text: string) => void }) {
+  const { t } = useTranslation('chat');
+  const inComposer = useContext(ToolUiPresentation) === 'composer';
   // No ToolUiShell wrapper: the plan view ships its own collapsible header
   // (icon + title + done/total counter), so the shell would double it up.
   return (
+    <div className="space-y-2" data-testid={interaction.requiresApproval ? 'chat-plan-proposal' : undefined}>
     <ToolUiPlanView
       title={interaction.title ?? ''}
       showTitle={Boolean(interaction.title)}
@@ -2483,6 +2510,15 @@ function PlanCard({ interaction }: { interaction: PlanInteraction }) {
       todos={interaction.todos}
       maxVisibleTodos={interaction.maxVisibleTodos}
     />
+    {interaction.requiresApproval && !interaction.choice && (
+      <div className={inComposer ? 'composer-decision-footer composer-decision-actions' : 'flex justify-end gap-2'}>
+        <Button variant={inComposer ? 'ghost' : 'outline'} className={inComposer ? 'mr-auto' : undefined} size="sm" disabled={!canSubmit} data-testid="chat-plan-revise"
+          onClick={() => onSubmitResponse?.(createInteractionResponse('plan', interaction.id, 'revise', interaction.todos))}>{t('composerRequests.revisePlan')}</Button>
+        <Button size="sm" disabled={!canSubmit} data-testid="chat-plan-approve"
+          onClick={() => onSubmitResponse?.(createInteractionResponse('plan', interaction.id, 'approve', interaction.todos))}>{t('composerRequests.approvePlan')}</Button>
+      </div>
+    )}
+    </div>
   );
 }
 
@@ -2494,6 +2530,7 @@ function OptionListCard(props: {
 }) {
   const { interaction, canSubmit, onSubmitResponse, onDraftResponse } = props;
   const { t } = useTranslation('chat');
+  const inComposer = useContext(ToolUiPresentation) === 'composer';
   const mode = interaction.selectionMode ?? 'multi';
   const [selected, setSelected] = useState(() => selectedIdsFromValue(interaction.choice ?? interaction.defaultValue));
   const minSelections = interaction.minSelections ?? 1;
@@ -2532,12 +2569,12 @@ function OptionListCard(props: {
             {interaction.description && <p className="text-sm text-muted-foreground">{interaction.description}</p>}
           </div>
         )}
-        <div className="overflow-hidden rounded-lg border border-black/10 bg-surface-input/70 dark:border-white/10">
+        <div className={inComposer ? 'composer-decision-options' : 'overflow-hidden rounded-lg border border-black/10 bg-surface-input/70 dark:border-white/10'}>
           {interaction.options.map((option, index) => {
             const selectedNow = activeSelected.has(option.id);
             return (
               <div key={option.id}>
-                {index > 0 && <Separator />}
+                {index > 0 && !inComposer && <Separator />}
                 <button
                   type="button"
                   role="option"
@@ -2545,7 +2582,7 @@ function OptionListCard(props: {
                   disabled={option.disabled || isReceipt}
                   onClick={() => toggle(option.id)}
                   data-testid={`chat-tool-ui-option-${option.id}`}
-                  className="flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-black/5 disabled:cursor-default disabled:opacity-70 dark:hover:bg-white/10"
+                  className={inComposer ? 'composer-decision-option' : 'flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-black/5 disabled:cursor-default disabled:opacity-70 dark:hover:bg-white/10'}
                 >
                   <SelectionMark mode={mode} selected={selectedNow} />
                   <span className="min-w-0 flex-1">
@@ -2558,6 +2595,7 @@ function OptionListCard(props: {
           })}
         </div>
         {!isReceipt && (
+          <div className={inComposer ? 'composer-decision-footer' : undefined}>
           <ActionFooter
             canSubmit={canSubmit}
             disabled={disabled}
@@ -2565,6 +2603,7 @@ function OptionListCard(props: {
             onSubmitResponse={onSubmitResponse}
             onDraftResponse={onDraftResponse}
           />
+          </div>
         )}
         {isReceipt && <p className="text-xs text-muted-foreground">{t('toolUi.receipt.saved')}</p>}
       </div>
@@ -2573,6 +2612,14 @@ function OptionListCard(props: {
 }
 
 function SelectionMark({ mode, selected }: { mode: 'single' | 'multi'; selected: boolean }) {
+  const inComposer = useContext(ToolUiPresentation) === 'composer';
+  if (inComposer) {
+    return (
+      <span className="composer-decision-choice" data-mode={mode} data-selected={selected} aria-hidden="true">
+        <Check className="h-3 w-3" strokeWidth={2} />
+      </span>
+    );
+  }
   return (
     <span
       className={cn(
@@ -2595,6 +2642,7 @@ function QuestionFlowCard(props: {
 }) {
   const { interaction, canSubmit, onSubmitResponse, onDraftResponse } = props;
   const { t } = useTranslation('chat');
+  const inComposer = useContext(ToolUiPresentation) === 'composer';
   const steps = interaction.steps ?? (interaction.title && interaction.options ? [{
     id: 'current',
     title: interaction.title,
@@ -2670,7 +2718,7 @@ function QuestionFlowCard(props: {
           <div className="flex items-center justify-between text-xs font-medium uppercase text-muted-foreground">
             <span>{t('toolUi.questionFlow.step', { current: stepIndex + 1, total: steps.length })}</span>
           </div>
-          <div className="flex gap-1">
+          <div className={inComposer ? 'hidden' : 'flex gap-1'}>
             {steps.map((step, index) => (
               <span key={step.id} className={cn('h-1.5 flex-1 rounded-full', index <= stepIndex ? 'bg-primary' : 'bg-black/10 dark:bg-white/10')} />
             ))}
@@ -2680,16 +2728,17 @@ function QuestionFlowCard(props: {
           <h3 className="text-sm font-semibold text-foreground">{currentStep.title}</h3>
           {currentStep.description && <p className="text-sm text-muted-foreground">{currentStep.description}</p>}
         </div>
-        <div className="overflow-hidden rounded-lg border border-black/10 bg-surface-input/70 dark:border-white/10">
+        <div className={inComposer ? 'composer-decision-options' : 'overflow-hidden rounded-lg border border-black/10 bg-surface-input/70 dark:border-white/10'}>
           {currentStep.options.map((option, index) => (
             <div key={option.id}>
-              {index > 0 && <Separator />}
+              {index > 0 && !inComposer && <Separator />}
               <button
                 type="button"
                 disabled={option.disabled}
                 onClick={() => toggle(option.id)}
+                aria-pressed={selected.has(option.id)}
                 data-testid={`chat-tool-ui-question-option-${option.id}`}
-                className="flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-black/5 disabled:opacity-60 dark:hover:bg-white/10"
+                className={inComposer ? 'composer-decision-option' : 'flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-black/5 disabled:opacity-60 dark:hover:bg-white/10'}
               >
                 <SelectionMark mode={currentStep.selectionMode ?? 'single'} selected={selected.has(option.id)} />
                 <span className="min-w-0 flex-1">
@@ -2700,14 +2749,14 @@ function QuestionFlowCard(props: {
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-between gap-3">
+        <div className={inComposer ? 'composer-decision-footer composer-decision-actions' : 'flex items-center justify-between gap-3'}>
           <Button
             type="button"
             variant="ghost"
             size="sm"
             disabled={stepIndex === 0}
             onClick={() => setStepIndex((current) => Math.max(0, current - 1))}
-            className="gap-1"
+            className={inComposer ? 'mr-auto gap-1' : 'gap-1'}
             data-testid="chat-tool-ui-question-back"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
@@ -2746,6 +2795,7 @@ function PreferencesPanelCard(props: {
 }) {
   const { interaction, canSubmit, onSubmitResponse, onDraftResponse } = props;
   const { t } = useTranslation('chat');
+  const inComposer = useContext(ToolUiPresentation) === 'composer';
   const initialValue = useMemo(() => buildPreferencesInitialValue(interaction), [interaction]);
   const isReceipt = !!interaction.choice;
   const [value, setValue] = useState<PreferencesValue>(() => interaction.choice ?? initialValue);
@@ -2760,7 +2810,7 @@ function PreferencesPanelCard(props: {
     <ToolUiShell icon={<SlidersHorizontal className="h-3.5 w-3.5" />} label={t('toolUi.preferencesPanel.label')}>
       <div className="space-y-3" data-testid="chat-tool-ui-preferences-panel">
         {interaction.title && <h3 className="text-sm font-semibold text-foreground">{interaction.title}</h3>}
-        <div className="overflow-hidden rounded-lg border border-black/10 bg-surface-input/70 dark:border-white/10">
+        <div className={inComposer ? 'composer-decision-preferences' : 'overflow-hidden rounded-lg border border-black/10 bg-surface-input/70 dark:border-white/10'}>
           {interaction.sections.map((section, sectionIndex) => (
             <div key={`${section.heading ?? 'section'}-${sectionIndex}`} className="p-3">
               {section.heading && <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">{section.heading}</p>}
@@ -2782,12 +2832,14 @@ function PreferencesPanelCard(props: {
         {isReceipt ? (
           <p className="text-xs text-muted-foreground">{t(interaction.error ? 'toolUi.receipt.error' : 'toolUi.receipt.saved')}</p>
         ) : (
+          <div className={inComposer ? 'composer-decision-footer' : undefined}>
           <ActionFooter
             canSubmit={canSubmit}
             responseText={responseText}
             onSubmitResponse={onSubmitResponse}
             onDraftResponse={onDraftResponse}
           />
+          </div>
         )}
       </div>
     </ToolUiShell>
@@ -3242,6 +3294,7 @@ function CodeBlockCard({ interaction }: { interaction: CodeBlockInteraction }) {
 }
 
 export function AgentInteractionRenderer({
+  presentation = 'card',
   interactions,
   compactProcess = false,
   canSubmit,
@@ -3261,14 +3314,15 @@ export function AgentInteractionRenderer({
         case 'test-results': return item.summary.failed === 0;
         case 'progress-tracker': return !item.steps.some((step) => step.status === 'failed')
           && item.choice?.outcome !== 'failed' && item.choice?.outcome !== 'partial';
-        case 'code-diff':
-        case 'plan': return true;
+        case 'code-diff': return true;
+        case 'plan': return !item.requiresApproval;
         default: return false;
       }
     }) : [];
   const output = interactions.filter((item) => !process.includes(item));
 
   return (
+    <ToolUiPresentation.Provider value={presentation}>
     <div className="w-full min-w-0 space-y-3" data-testid="chat-tool-ui-interactions">
       {process.length > 0 && (
           <details
@@ -3297,7 +3351,7 @@ export function AgentInteractionRenderer({
         const key = `${interaction.type}-${interaction.id}`;
         switch (interaction.type) {
           case 'plan':
-            return <PlanCard key={key} interaction={interaction} />;
+            return <PlanCard key={key} interaction={interaction} canSubmit={canSubmit} onSubmitResponse={onSubmitResponse} />;
           case 'option-list':
             return (
               <OptionListCard
@@ -3424,19 +3478,14 @@ export function AgentInteractionRenderer({
           case 'approval-card':
             return (
               <div key={key} data-testid="chat-tool-ui-approval">
+                <fieldset disabled={presentation === 'composer' && !canSubmit} className="min-w-0">
                 <ApprovalCard
+                  presentation={presentation}
                   {...interaction}
-                  onConfirm={() => onSubmitResponse?.(JSON.stringify({
-                    type: 'approval-card',
-                    id: interaction.id,
-                    action: 'approved',
-                  }, null, 2))}
-                  onCancel={() => onSubmitResponse?.(JSON.stringify({
-                    type: 'approval-card',
-                    id: interaction.id,
-                    action: 'denied',
-                  }, null, 2))}
+                  onConfirm={() => onSubmitResponse?.(createInteractionResponse('approval-card', interaction.id, 'approved', null))}
+                  onCancel={() => onSubmitResponse?.(createInteractionResponse('approval-card', interaction.id, 'denied', null))}
                 />
+                </fieldset>
               </div>
             );
           case 'terminal':
@@ -3467,5 +3516,6 @@ export function AgentInteractionRenderer({
         }
       })}
     </div>
+    </ToolUiPresentation.Provider>
   );
 }

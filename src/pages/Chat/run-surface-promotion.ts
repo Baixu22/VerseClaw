@@ -78,6 +78,7 @@ import {
 } from '@/components/tool-ui/run-surfaces';
 import { parseToolUiInteraction } from '@/components/tool-ui/agent-interactions';
 import type { ToolUiPlanTodo } from '@/components/tool-ui/plan-view';
+import type { RawMessage } from '@shared/chat/types';
 import type { GeneratedFile } from '@/lib/generated-files';
 import type { ChatRuntimeRunState } from '@/stores/chat/types';
 import {
@@ -119,7 +120,7 @@ export type RunPlanSurface = {
 };
 
 /** Minimal shape of a transcript message this module reads plan tool calls from. */
-export type PlanSourceMessage = { content?: unknown };
+export type PlanSourceMessage = Partial<Pick<RawMessage, 'content' | 'toolCallId' | 'isError' | 'details' | '_toolResults'>> & { role?: string };
 
 export type PromotedRunSurfaces = {
   terminals: RunTerminalSurface[];
@@ -161,7 +162,7 @@ function planSurfaceFromPayload(payload: unknown, fallbackId: string): RunPlanSu
  * there, so a plan renders identically whether it arrives as a live runtime
  * event or as a `tool_use` block replayed from history.
  */
-function readPlanSurface(runState: ChatRuntimeRunState): {
+function readPlanSurface(runState: ChatRuntimeRunState, rejected: ReadonlySet<string>): {
   plan: RunPlanSurface | null;
   stepIds: string[];
 } {
@@ -172,7 +173,7 @@ function readPlanSurface(runState: ChatRuntimeRunState): {
     if (event.type !== 'tool.started' && event.type !== 'tool.updated' && event.type !== 'tool.completed') {
       continue;
     }
-    if (!isPlanToolName(event.name)) continue;
+    if (!isPlanToolName(event.name) || rejected.has(event.toolCallId)) continue;
     stepIds.push(event.toolCallId);
 
     const args = event.type === 'tool.updated'
@@ -192,7 +193,7 @@ function readPlanSurface(runState: ChatRuntimeRunState): {
  * run, so the same plan has to be recoverable from the `tool_use` blocks left
  * in the transcript. Without this the plan card would disappear on reload.
  */
-function readPlanSurfaceFromMessages(messages: PlanSourceMessage[]): RunPlanSurface | null {
+function readPlanSurfaceFromMessages(messages: PlanSourceMessage[], rejected: ReadonlySet<string>): RunPlanSurface | null {
   let latest: RunPlanSurface | null = null;
   for (const message of messages) {
     const content = message?.content;
@@ -205,7 +206,8 @@ function readPlanSurfaceFromMessages(messages: PlanSourceMessage[]): RunPlanSurf
       const name = typeof record.name === 'string' ? record.name : undefined;
       if (!isPlanToolName(name)) continue;
       const id = typeof record.id === 'string' ? record.id : `plan-${name}`;
-      const surface = planSurfaceFromPayload(record.input ?? record.args, id);
+      if (rejected.has(id)) continue;
+      const surface = planSurfaceFromPayload(record.input ?? record.args ?? record.arguments, id);
       if (surface) latest = surface;
     }
   }
@@ -224,7 +226,23 @@ export function promoteRunSurfaces({
   const diffs = generatedFiles
     .map((file) => projectGeneratedFileDiff(file))
     .filter((surface): surface is RunCodeDiffSurface => surface != null);
-  const historyPlan = readPlanSurfaceFromMessages(segmentMessages);
+  // A failed completion invalidates only its own proposed steps, even when
+  // the proposal and its receipt arrive through different transports.
+  const rejected = new Set<string>();
+  const failed = (value: unknown) => !!value && typeof value === 'object'
+    && 'status' in value && value.status === 'error';
+  for (const message of segmentMessages) {
+    if (['toolresult', 'tool_result'].includes(message.role?.toLowerCase() ?? '') && message.toolCallId && (message.isError || failed(message.details))) {
+      rejected.add(message.toolCallId);
+    }
+    for (const receipt of message._toolResults ?? []) {
+      if (receipt.toolCallId && (receipt.isError || failed(receipt.result))) rejected.add(receipt.toolCallId);
+    }
+  }
+  for (const event of runState?.events ?? []) {
+    if (event.type === 'tool.completed' && (event.isError || failed(event.result) || failed(event.meta))) rejected.add(event.toolCallId);
+  }
+  const historyPlan = readPlanSurfaceFromMessages(segmentMessages, rejected);
 
   if (!runState) {
     return diffs.length === 0 && !historyPlan
@@ -233,7 +251,7 @@ export function promoteRunSurfaces({
   }
 
   const terminals = projectCommandSurfaces(runState);
-  const { plan, stepIds: planStepIds } = readPlanSurface(runState);
+  const { plan, stepIds: planStepIds } = readPlanSurface(runState, rejected);
   const promotedStepIds = new Set<string>(planStepIds);
 
   for (const event of runState.events) {

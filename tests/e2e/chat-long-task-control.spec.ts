@@ -393,6 +393,8 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       ]));
       await page.getByTestId('chat-composer-input').fill('stop and replace the active validation plan');
       await page.keyboard.press('Shift+Enter');
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('stop and replace the active validation plan\n');
+      await page.keyboard.press('Control+Shift+Enter');
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & { __longTaskChatSendCalls?: Array<Record<string, unknown>> }).__longTaskChatSendCalls
           ?.filter((call) => call?.inputMode === 'interrupt').length ?? 0

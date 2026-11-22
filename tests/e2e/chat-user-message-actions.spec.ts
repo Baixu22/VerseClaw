@@ -6,6 +6,7 @@ const USER_MESSAGE_TEXT = '连接测试';
 const UPDATED_MESSAGE_TEXT = '连接测试，更新一下';
 const OLD_ASSISTANT_TEXT = '旧回复应在重发前被移除。';
 const MOCK_ASSISTANT_ACK = '收到更新后的消息。';
+const ASSISTANT_FOOTER_TEXT = '这里是一条完整的助手回复，用于检查底部操作行的对齐、引用与分叉。';
 const FIXED_TIME_MS = new Date('2026-06-28T23:55:00+08:00').getTime();
 
 function stableStringify(value: unknown): string {
@@ -36,6 +37,18 @@ const workspace = {
 
 const seededHistory = [
   {
+    id: 'assistant-message-actions-prior-user',
+    role: 'user',
+    content: '之前的问题',
+    timestamp: (FIXED_TIME_MS - 2000) / 1000,
+  },
+  {
+    id: 'assistant-message-actions-ancestor',
+    role: 'assistant',
+    content: '先前的回复',
+    timestamp: (FIXED_TIME_MS - 1000) / 1000,
+  },
+  {
     id: 'user-message-actions-seed',
     role: 'user',
     content: USER_MESSAGE_TEXT,
@@ -49,7 +62,14 @@ const seededHistory = [
   },
 ];
 
-function chatMessageActionMocks() {
+const assistantFooterHistory = [
+  { id: 'assistant-footer-user-1', role: 'user', content: 'Earlier question', timestamp: (FIXED_TIME_MS - 2_000) / 1000 },
+  { id: 'assistant-footer-answer-1', role: 'assistant', content: 'Earlier answer', timestamp: (FIXED_TIME_MS - 1_000) / 1000 },
+  { id: 'assistant-footer-user-2', role: 'user', content: 'Continue', timestamp: FIXED_TIME_MS / 1000 },
+  { id: 'assistant-footer-answer-2', role: 'assistant', content: ASSISTANT_FOOTER_TEXT, timestamp: (FIXED_TIME_MS + 1_000) / 1000 },
+];
+
+function chatMessageActionMocks(history = seededHistory) {
   const contextRange = {
     success: true,
     range: {
@@ -58,8 +78,8 @@ function chatMessageActionMocks() {
       maxTokens: 8000,
       usedTokens: 0,
       visibleMessageStartIndex: 0,
-      visibleMessageEndIndex: 1,
-      retainedMessageCount: 2,
+      visibleMessageEndIndex: history.length - 1,
+      retainedMessageCount: history.length,
       truncatedMessageCount: 0,
       summarizedMessageCount: 0,
       status: 'bestEffort',
@@ -79,11 +99,11 @@ function chatMessageActionMocks() {
       },
       [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
         success: true,
-        result: { messages: seededHistory },
+        result: { messages: history },
       },
       [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
         success: true,
-        result: { messages: seededHistory },
+        result: { messages: history },
       },
     },
     hostApi: {
@@ -146,7 +166,43 @@ function chatMessageActionMocks() {
       [stableStringify(['usage', 'contextRange', {
         sessionKey: SESSION_KEY,
         modelRef: null,
+        messageCount: 3,
+        usedTokens: null,
+      }])]: contextRange,
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
+        messageCount: 3,
+        usedTokens: 0,
+      }])]: contextRange,
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
         messageCount: 2,
+        usedTokens: 0,
+      }])]: contextRange,
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
+        messageCount: 4,
+        usedTokens: null,
+      }])]: contextRange,
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
+        messageCount: 4,
+        usedTokens: 0,
+      }])]: contextRange,
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
+        messageCount: 5,
+        usedTokens: null,
+      }])]: contextRange,
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
+        messageCount: 5,
         usedTokens: 0,
       }])]: contextRange,
       [stableStringify(['usage', 'contextRange', {
@@ -240,21 +296,23 @@ test.describe('Verse Claw user message hover actions', () => {
       await page.setViewportSize({ width: 1136, height: 520 });
       await openSeededChat(page);
 
-      const messageRow = page.getByTestId('chat-message-0');
-      const messageBubble = page.getByTestId('chat-user-message-bubble');
+      const messageRow = page.locator('[data-testid^="chat-message-"]').filter({
+        has: page.getByText(USER_MESSAGE_TEXT),
+      }).last();
+      const messageBubble = messageRow.getByTestId('chat-user-message-bubble');
       const messageText = messageRow.locator('p').filter({ hasText: USER_MESSAGE_TEXT });
       await expect(messageText).toBeVisible({ timeout: 30_000 });
       await expect(page.getByText(OLD_ASSISTANT_TEXT)).toBeVisible();
 
       await messageText.hover();
-      const actions = page.getByTestId('chat-user-message-actions');
+      const actions = messageRow.getByTestId('chat-user-message-actions');
       await expect(actions).toHaveCSS('opacity', '1');
-      await expect(page.getByTestId('chat-user-message-copy')).toHaveAttribute('aria-label', '复制消息');
-      await expect(page.getByTestId('chat-user-message-edit')).toHaveAttribute('aria-label', '编辑');
+      await expect(messageRow.getByTestId('chat-user-message-copy')).toHaveAttribute('aria-label', '复制消息');
+      await expect(messageRow.getByTestId('chat-user-message-edit')).toHaveAttribute('aria-label', '编辑');
       // #180: the hover bar also offers a per-message fork point.
-      await expect(page.getByTestId('chat-user-message-fork')).toHaveAttribute(
+      await expect(messageRow.getByTestId('chat-user-message-fork')).toHaveAttribute(
         'aria-label',
-        '从此处分叉',
+        '在新会话中提问',
       );
       const bubbleBox = await messageBubble.boundingBox();
       const actionsBox = await actions.boundingBox();
@@ -289,12 +347,12 @@ test.describe('Verse Claw user message hover actions', () => {
         maxDiffPixels: 128,
       });
 
-      await page.getByTestId('chat-user-message-copy').click();
+      await messageRow.getByTestId('chat-user-message-copy').click();
       await expect.poll(async () => page.evaluate(() => (
         (window as typeof window & { __copiedUserMessages?: string[] }).__copiedUserMessages ?? []
       ))).toEqual([USER_MESSAGE_TEXT]);
 
-      await page.getByTestId('chat-user-message-edit').click();
+      await messageRow.getByTestId('chat-user-message-edit').click();
       const editor = page.getByTestId('chat-user-message-editor');
       await expect(editor).toBeVisible();
       await expect(page.getByTestId('chat-user-message-editor-input')).toHaveValue(USER_MESSAGE_TEXT);
@@ -353,38 +411,84 @@ test.describe('Verse Claw user message hover actions', () => {
         }),
       }));
 
-      // #180: the hover action forks from *this* message — the host call must
-      // carry the message's transcript entry id as `fromLeafId`.
+      // A fork starts as a draft from this message; creating a session requires
+      // the separate confirmation action.
       await messageText.hover();
-      await page.getByTestId('chat-user-message-fork').click();
-      await expect.poll(async () => app.evaluate(() => (
+      await messageRow.getByTestId('chat-user-message-fork').click();
+      const forkDraft = page.getByTestId('question-fork-draft');
+      await expect(forkDraft).toHaveValue(UPDATED_MESSAGE_TEXT);
+      await page.keyboard.press('Escape');
+      await expect(page.getByTestId('question-fork-dialog')).toHaveCount(0);
+      const forkCalls = await app.evaluate(() => (
         (globalThis as typeof globalThis & {
           __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> }>;
-        }).__verseClawE2eHostCalls?.some((call) => call?.module === 'sessions' && call?.action === 'fork') ?? false
-      ))).toBe(true);
-      const forkCall = await app.evaluate(() => (
-        (globalThis as typeof globalThis & {
-          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> }>;
-        }).__verseClawE2eHostCalls?.findLast((call) => call?.module === 'sessions' && call?.action === 'fork') ?? null
+        }).__verseClawE2eHostCalls?.filter((call) => call?.module === 'sessions' && call?.action === 'fork').length ?? 0
       ));
-      expect(forkCall).toEqual(expect.objectContaining({
-        module: 'sessions',
-        action: 'fork',
-        payload: expect.objectContaining({
-          sessionKey: SESSION_KEY,
-          // The action must name a concrete transcript entry. Which entry it is
-          // depends on the flow above (the edit/resend rebuilds the message), so
-          // the assertion pins the shape — the exact forwarding is unit-tested
-          // in tests/unit/workspace-session.test.ts.
-          fromLeafId: expect.any(String),
-        }),
-      }));
-      const forkLeafId = (forkCall as { payload?: { fromLeafId?: string } } | null)?.payload?.fromLeafId;
-      expect(forkLeafId?.trim()).not.toBe('');
+      expect(forkCalls).toBe(0);
       await testInfo.attach('user-message-actions-host-calls', {
         body: JSON.stringify(hostCalls, null, 2),
         contentType: 'application/json',
       });
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+});
+
+test.describe('Verse Claw assistant response hover actions', () => {
+  test('keeps copy, quote and eligible fork actions together under the response', async ({ launchElectronApp }, testInfo) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, chatMessageActionMocks(assistantFooterHistory));
+      const page = await getStableWindow(app);
+      await page.setViewportSize({ width: 1136, height: 720 });
+      await openSeededChat(page);
+
+      const response = page.locator('.prose').filter({ hasText: ASSISTANT_FOOTER_TEXT }).last();
+      await expect(response).toBeVisible({ timeout: 30_000 });
+      await response.hover();
+      const actions = page.getByTestId('chat-assistant-message-actions').last();
+      await expect(actions).toHaveCSS('opacity', '1');
+      await expect(actions.getByTestId('chat-assistant-message-copy')).toBeVisible();
+      await expect(actions.getByTestId('chat-assistant-message-fork')).toBeVisible();
+      await expect(actions.getByTestId('chat-assistant-message-quote')).toBeVisible();
+      await expect(actions.getByTestId('chat-assistant-message-quote')).toHaveAttribute('aria-label', '引用到输入框');
+      await expect(actions.getByTestId('chat-assistant-message-fork')).toHaveAttribute('aria-label', '基于此回复在新会话中提问');
+
+      const responseBox = await response.boundingBox();
+      const actionsBox = await actions.boundingBox();
+      expect(responseBox).not.toBeNull();
+      expect(actionsBox).not.toBeNull();
+      expect(Math.abs(actionsBox!.x - responseBox!.x)).toBeLessThanOrEqual(8);
+      expect(actionsBox!.width).toBeLessThan(responseBox!.width);
+      await page.screenshot({ path: testInfo.outputPath('assistant-footer-actions.png') });
+
+      await page.setViewportSize({ width: 390, height: 720 });
+      await response.hover();
+      const narrowBounds = await actions.boundingBox();
+      const narrowLayout = await page.evaluate(() => {
+        const column = document.querySelector<HTMLElement>('.codex-conversation-inset');
+        return column ? { width: column.clientWidth, scrollWidth: column.scrollWidth } : null;
+      });
+      expect(narrowBounds).not.toBeNull();
+      expect(narrowBounds!.x + narrowBounds!.width).toBeLessThanOrEqual(390);
+      expect(narrowLayout).not.toBeNull();
+      expect(narrowLayout!.scrollWidth).toBeLessThanOrEqual(narrowLayout!.width + 1);
+      await page.screenshot({ path: testInfo.outputPath('assistant-footer-actions-narrow.png') });
+      await page.setViewportSize({ width: 1136, height: 720 });
+
+      await actions.getByTestId('chat-assistant-message-copy').click();
+      await expect.poll(async () => page.evaluate(() => (
+        (window as typeof window & { __copiedUserMessages?: string[] }).__copiedUserMessages ?? []
+      ))).toEqual([ASSISTANT_FOOTER_TEXT]);
+
+      await actions.getByTestId('chat-assistant-message-quote').click();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(`> ${ASSISTANT_FOOTER_TEXT}\n\n`);
+      await actions.getByTestId('chat-assistant-message-fork').click();
+      await expect(page.getByTestId('question-fork-draft')).toHaveValue(ASSISTANT_FOOTER_TEXT);
+      await page.keyboard.press('Escape');
+      await expect(page.getByTestId('question-fork-draft')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);
     }

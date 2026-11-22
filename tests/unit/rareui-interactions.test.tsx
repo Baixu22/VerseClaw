@@ -248,9 +248,14 @@ describe('Rare UI production adaptations', () => {
     expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'waiting');
     expect(screen.queryByTestId('chat-activity-waiting')).toBeNull();
     expect(screen.getByTestId('chat-activity-live-item')).toHaveAttribute('data-state', 'waiting');
+
+    view.rerender(<TooltipProvider><CompletionActivityMenu liveSessions={[]} /></TooltipProvider>);
+    expect(screen.getByTestId('chat-completion-bell')).toHaveAttribute('data-status', 'error');
+    expect(screen.getByTestId('chat-activity-status-icon')).toHaveAttribute('data-state', 'error');
+    expect(screen.queryByTestId('chat-activity-bell-icon')).toBeNull();
   });
 
-  it('draws live state with the row orb and keeps the corner for the unread count only', async () => {
+  it('draws live and unread settled states with shared glyphs', async () => {
     const view = render(<NotificationBell count={12} live="waiting" tone="error" aria-label="Activity" />);
     expect(screen.getByTestId('chat-completion-unread-dot')).toHaveTextContent('9+');
     expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'waiting');
@@ -260,6 +265,11 @@ describe('Rare UI production adaptations', () => {
     view.rerender(<NotificationBell count={0} live="idle" aria-label="Activity" />);
     expect(screen.queryByTestId('chat-activity-live-orb')).toBeNull();
     expect(screen.getByTestId('chat-activity-bell-icon')).toBeInTheDocument();
+    view.rerender(<NotificationBell count={1} live="idle" attention="success" attentionLabel="Completed" aria-label="Activity" />);
+    expect(screen.getByTestId('chat-activity-status-icon')).toHaveAttribute('data-state', 'success');
+    expect(screen.getByRole('img', { name: 'Completed' })).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-activity-bell-icon')).toBeNull();
+    expect(document.querySelector('[data-slot="dot-matrix"]')).toBeNull();
   });
 
   it('shows an honest empty state when nothing ran and nothing is running', async () => {

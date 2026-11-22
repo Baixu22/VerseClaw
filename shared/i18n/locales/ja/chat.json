@@ -1,4 +1,13 @@
 {
+  "composerRequests": {
+    "title": "回答を待っています",
+    "approvePlan": "計画を承認",
+    "revisePlan": "変更を依頼",
+    "pendingCount": "{{count}} 件待機中",
+    "planTitle": "計画を確認",
+    "questionTitle": "回答が必要です",
+    "resumeHint": "ここで回答すると続行します。下書きは保持されています。"
+  },
   "operationGenerationUnavailable": "セッションの識別情報を取得できません。更新してから続行してください。",
   "gatewayNotRunning": "ゲートウェイが停止中",
   "retry": "再試行",
@@ -370,8 +379,11 @@
     "summarizeUpToHere": "ここまでを要約",
     "summarizeFromHere": "ここから要約",
     "forkFromHere": "新しいセッションで質問",
+    "forkFromResponse": "この返信をもとに新しいセッションで質問",
     "copy": "メッセージをコピー",
     "copied": "コピーしました",
+    "copyFailed": "返信をコピーできませんでした",
+    "quoteResponse": "入力欄に引用",
     "edit": "編集",
     "editInputLabel": "メッセージを編集",
     "cancelEdit": "キャンセル",
@@ -598,7 +610,8 @@
       "collapse": "差分を折りたたむ",
       "before": "変更前",
       "after": "変更後",
-      "content": "ファイルの差分"
+      "content": "ファイルの差分",
+      "lineStatsLabel": "行数の変更: +{{added}}、-{{removed}}"
     },
     "terminal": {
       "copy": "出力をコピー",
@@ -659,19 +672,19 @@
       "empty": "No reasoning summary was provided."
     },
     "commit": {
-      "label": "Commit",
-      "detached": "Detached HEAD",
-      "staged": "staged",
-      "unstaged": "unstaged",
-      "untracked": "untracked",
-      "conflicted": "conflicted",
+      "label": "コミット",
+      "detached": "分離された HEAD",
+      "staged": "ステージ済み",
+      "unstaged": "未ステージ",
+      "untracked": "未追跡",
+      "conflicted": "競合",
       "operationWithAction": "{{action}}: {{status}}",
       "operation": {
-        "ready": "Ready",
-        "running": "Running",
-        "success": "Done",
-        "blocked": "Blocked",
-        "failed": "Failed"
+        "ready": "準備完了",
+        "running": "実行中",
+        "success": "完了",
+        "blocked": "対応待ち",
+        "failed": "失敗"
       }
     },
     "tokenUsage": {
@@ -795,6 +808,9 @@
   "agentsPanel": {
     "title": "サブエージェント",
     "description": "このセッションの記録とタスク割り当て",
+    "transcriptLabel": "会話履歴",
+    "lifecycleDetails": "実行と検証の詳細",
+    "dispatchLabel": "{{role}} に指示を送信",
     "empty": "このセッションではまだサブエージェントが生成されていません。",
     "transcriptEmpty": "このサブエージェントにはまだメッセージがありません。",
     "transcriptUnavailable": "このサブエージェントには読み取れるセッションがまだありません。",
@@ -1164,11 +1180,11 @@
         "activeRepository": "Active repo"
       },
       "toolTabs": {
-        "worktrees": "Worktree",
+        "worktrees": "ワークツリー",
         "commit": "コミット",
         "branch": "ブランチ",
         "integrate": "Integrate",
-        "stash": "Stash",
+        "stash": "スタッシュ",
         "github": "PR",
         "compactHint": "コンパクトツール"
       },
@@ -1197,7 +1213,7 @@
         "resetHelp": "Reset は破壊的な操作のため、常に承認が必要です。"
       },
       "worktrees": {
-        "title": "Worktrees",
+        "title": "ワークツリー",
         "newBranch": "新規ブランチ",
         "existingBranch": "既存",
         "startPointPlaceholder": "開始点、既定は HEAD",
@@ -1267,6 +1283,15 @@
         "stashes": "Stashes",
         "aheadBehind": "ahead {{ahead}} / behind {{behind}}",
         "unknown": "Unknown"
+      },
+      "branches": {
+        "title": "ブランチ",
+        "empty": "ローカルブランチはありません"
+      },
+      "commits": {
+        "title": "コミット履歴",
+        "empty": "コミットはありません",
+        "aheadBehind": "現在のブランチより先行 / 遅延"
       }
     }
   },
@@ -2263,6 +2288,7 @@
       "kindDetached": "分離",
       "mainCheckout": "メインのチェックアウト",
       "linkedWorktree": "リンクされたワークツリー",
+      "reviewChanges": "変更を確認",
       "filesChanged": "{{count}} ファイルを変更",
       "filesChanged_one": "{{count}} ファイルを変更"
     },
@@ -2380,7 +2406,11 @@
     "pendingTitle": "確認待ちの操作",
     "pendingDescription": "記録された操作を確認し、保存された状態から続行します。",
     "resumeMutation": "確認して続行",
-    "pendingKinds": {"archive": "アーカイブ", "restore": "復元", "delete": "削除"},
+    "pendingKinds": {
+      "archive": "アーカイブ",
+      "restore": "復元",
+      "delete": "削除"
+    },
     "searchPlaceholder": "アーカイブ済みの会話を検索",
     "ungrouped": "未分類",
     "noMatches": "一致する会話がありません",
@@ -2601,6 +2631,7 @@
     },
     "badge": {
       "tools": "ツール呼び出し {{count}} 件",
+      "tools_one": "ツール呼び出し {{count}} 件",
       "thoughts": "思考 {{count}} 件",
       "approvals": "承認待ち {{count}} 件",
       "plan": "計画 {{count}} ステップ",
@@ -2724,6 +2755,7 @@
   },
   "completionActivity": {
     "label": "アクティビティ、未読 {{count}} 件",
+    "labelStatus": "アクティビティ、{{status}}、未読 {{count}} 件",
     "title": "アクティビティ",
     "empty": "完了した実行、エラー、対応が必要なリクエストがここに表示されます。",
     "completed": "実行が完了しました",
@@ -2981,5 +3013,17 @@
       "binding-committed": "移行先を確認中",
       "confirmed": "移行先の準備完了"
     }
+  },
+  "gitSurface": {
+    "searchAudit": "コマンド、パス、コミットを検索",
+    "clearSearch": "検索をクリア",
+    "noMatches": "一致する記録はありません",
+    "subject": "内容",
+    "effect": "影響",
+    "paths": "パス",
+    "reason": "理由",
+    "copyDetails": "詳細をコピー",
+    "history": "ブランチと履歴",
+    "tools": "リポジトリツール"
   }
 }

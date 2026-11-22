@@ -177,4 +177,32 @@ describe('ExecutionGraphCard flat activity rows', () => {
     );
     expect(screen.getByTestId('chat-execution-step-detail')).toHaveTextContent(subagentStep.detail!);
   });
+
+  it('interleaves command output at the command start position', () => {
+    const before: TaskStep = { ...subagentStep, id: 'read-before', label: 'read_file', kind: 'tool', detail: '{"path":"src/one.ts"}', eventOrder: 1 };
+    const after: TaskStep = { ...subagentStep, id: 'write-after', label: 'write_file', kind: 'tool', detail: '{"path":"src/two.ts"}', eventOrder: 3 };
+    const { container } = render(
+      <ExecutionGraphCard
+        agentLabel="main"
+        steps={[before, after]}
+        terminals={[{
+          type: 'terminal',
+          id: 'command-middle',
+          command: 'pnpm test',
+          output: 'PASS unit tests',
+          status: 'completed',
+          exitCode: 0,
+          truncated: false,
+          eventOrder: 2,
+        }]}
+        active={false}
+      />,
+    );
+
+    const rows = [...container.querySelectorAll('[data-testid="chat-execution-step"], [data-testid="chat-execution-timeline-terminal"]')];
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toHaveTextContent('read_file');
+    expect(rows[1]).toHaveTextContent('pnpm test');
+    expect(rows[2]).toHaveTextContent('write_file');
+  });
 });

@@ -300,7 +300,7 @@ test.describe('Chat composer Git strip', () => {
       await page.screenshot({ path: testInfo.outputPath('runtime-approval-inline-with-git.png') });
       await prompt.screenshot({ path: testInfo.outputPath('runtime-approval-inline-prompt.png') });
       const currentStripBox = (await strip.boundingBox())!;
-      expect(currentStripBox.y).toBeGreaterThanOrEqual(promptBox.y + promptBox.height);
+      expect(currentStripBox.y + currentStripBox.height).toBeLessThanOrEqual(promptBox.y + 1);
 
       await page.getByTestId('runtime-approval-deny').click();
       await expect(prompt).toHaveCount(0);
@@ -329,6 +329,7 @@ test.describe('Chat composer Git strip', () => {
       const strip = page.getByTestId('composer-git-strip');
       await expect(strip).toBeVisible({ timeout: 30_000 });
       await expect(strip).toContainText('3 files changed');
+      await expect(page.getByTestId('composer-git-trigger')).toContainText('feature/current');
 
       const composerShell = page.getByTestId('chat-composer-shell');
       await expect(composerShell).toBeVisible();
@@ -341,8 +342,28 @@ test.describe('Chat composer Git strip', () => {
         }, { timeout: 5_000 }).toBeLessThanOrEqual(2);
       };
       await assertComposerAligned();
+      const assertStripAboveComposer = async () => {
+        await expect.poll(async () => {
+          const stripBox = await strip.boundingBox();
+          const composerBox = await composerShell.boundingBox();
+          if (!stripBox || !composerBox) return false;
+          return stripBox.y + stripBox.height <= composerBox.y + 1;
+        }).toBe(true);
+      };
+      await assertStripAboveComposer();
       await page.setViewportSize({ width: 960, height: 820 });
       await assertComposerAligned();
+      await assertStripAboveComposer();
+      await page.setViewportSize({ width: 640, height: 820 });
+      await assertComposerAligned();
+      await assertStripAboveComposer();
+      expect(await strip.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      await page.setViewportSize({ width: 390, height: 720 });
+      await assertComposerAligned();
+      await assertStripAboveComposer();
+      await expect(page.getByTestId('composer-git-review').locator('.composer-git-review-label')).toBeHidden();
+      expect(await strip.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      await page.screenshot({ path: testInfo.outputPath('composer-git-layout-narrow.png'), animations: 'disabled' });
       await page.setViewportSize({ width: 1280, height: 820 });
       await page.screenshot({ path: testInfo.outputPath('composer-git-layout.png') });
 
@@ -452,6 +473,10 @@ test.describe('Chat composer Git strip', () => {
           .__verseClawE2eHostCalls ?? []
       ));
       expect(calls.filter((call) => call.module === 'shell')).toHaveLength(0);
+      await page.keyboard.press('Escape');
+      await expect(menu).toHaveCount(0);
+      await page.getByTestId('composer-git-review').click();
+      await expect(page.getByTestId('workspace-review-panel')).toBeVisible({ timeout: 30_000 });
     } finally {
       await closeElectronApp(app);
     }

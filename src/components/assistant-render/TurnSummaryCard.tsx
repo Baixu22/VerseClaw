@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { Collapsible } from '@/components/ui/collapsible';
 import { useId, type ReactNode } from 'react';
 import { useTickingNow } from '@/hooks/use-ticking-now';
 import { useTranslation } from 'react-i18next';
@@ -75,20 +75,7 @@ function TurnSummaryBadges({ counts }: { counts: TurnSummaryCounts }) {
   );
 }
 
-/**
- * The turn's process disclosure — the single owner of everything the agent did
- * on the way to its answer.
- *
- * It used to own only the tool-side work (execution graph, terminals, diffs,
- * plan, approvals) while the reasoning stream rendered separately, at the top of
- * the assistant message. That put thinking, tool work and the final answer at
- * one flat level: on a reasoning model the first two dwarf the third, and
- * scrolling back to the prompt meant scrolling past all of it. `reasoning` moved
- * in here so a turn reads as prompt → one folded line → answer.
- *
- * The final answer deliberately stays OUTSIDE: this component never wraps the
- * reply text, so collapsing can never hide the thing the user asked for.
- */
+/** The final answer and actionable approvals are siblings of this disclosure. */
 export function TurnSummaryCard({
   status,
   startedAt,
@@ -99,6 +86,7 @@ export function TurnSummaryCard({
   activity,
   reasoning,
   reasoningStreaming = false,
+  waitingForInput = false,
   onExpandedChange,
   children,
 }: {
@@ -115,6 +103,7 @@ export function TurnSummaryCard({
   reasoning?: AssistantReasoning[];
   /** True while thinking is still arriving — keeps the stream open + shimmering. */
   reasoningStreaming?: boolean;
+  waitingForInput?: boolean;
   onExpandedChange: (expanded: boolean) => void;
   children: ReactNode;
 }) {
@@ -122,10 +111,10 @@ export function TurnSummaryCard({
   const detailsId = useId();
   // Tick locally while the turn is live so the elapsed-time label advances
   // without forcing the whole Chat page to re-render every second.
-  const tickingNow = useTickingNow(status === 'running');
+  const tickingNow = useTickingNow(status === 'running' && !waitingForInput);
   const effectiveNow = now ?? tickingNow;
   const duration = formatDuration(startedAt, endedAt, effectiveNow, t);
-  const label = status === 'running'
+  const label = waitingForInput ? t('composerRequests.title') : status === 'running'
     ? duration
       ? t('turnSummary.workingFor', { duration })
       : t('turnSummary.working')
@@ -144,70 +133,30 @@ export function TurnSummaryCard({
       data-testid="chat-turn-summary-card"
       data-status={status}
     >
-      <div className="flex min-w-0 items-start">
-        <div className="min-w-0 flex-1">
-          <button
-            type="button"
-            className={cn(
-              'flex w-full min-w-0 items-start gap-2 rounded-md py-1.5 text-left text-[13px] leading-5',
-              'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2',
-              'transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
-              status === 'error' && 'text-destructive hover:text-destructive',
+      <Collapsible
+        variant="plain"
+        open={expanded}
+        onOpenChange={onExpandedChange}
+        buttonTestId="chat-turn-summary-toggle"
+        contentId={detailsId}
+        contentTestId="chat-turn-summary-details"
+        contentClassName="flex min-w-0 flex-col gap-1.5"
+        title={
+          <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5">
+            {status === 'running' && !activity && !expanded && (
+              <span data-testid="chat-turn-summary-orb"><OrbStatus state={waitingForInput ? 'waiting' : 'working'} size={20} label={label} /></span>
             )}
-            aria-expanded={expanded}
-            aria-controls={detailsId}
-            onClick={() => onExpandedChange(!expanded)}
-            data-testid="chat-turn-summary-toggle"
-          >
-            <ChevronRight
-              className={cn(
-                'mt-0.5 h-3.5 w-3.5 shrink-0 opacity-60 transition-[transform,opacity] duration-150 motion-reduce:transition-none',
-                'group-hover/run-activity:opacity-100 group-focus-within/run-activity:opacity-100',
-                expanded && 'rotate-90 opacity-100',
-              )}
-              aria-hidden="true"
-            />
-            <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
-              {status === 'running' && !activity && !expanded ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="shrink-0" data-testid="chat-turn-summary-orb">
-                    <OrbStatus state="working" size={20} label={label} />
-                  </span>
-                  <span>{label}</span>
-                </span>
-              ) : (
-                <span>{label}</span>
-              )}
-              {!expanded && summary && <TurnSummaryBadges counts={summary} />}
-            </span>
-          </button>
-
-          {!expanded && activity && (
-            <div className="mt-1 min-w-0 pl-5" data-testid="chat-turn-current-activity">
-              {activity}
-            </div>
-          )}
-
-          {expanded && (
-            <div
-              id={detailsId}
-              className="ml-3 flex min-w-0 flex-col gap-3 border-l border-border/70 py-2 pl-3"
-              data-testid="chat-turn-summary-details"
-            >
-              {/* Reasoning leads: it is what the agent did BEFORE reaching for a
-                  tool, so the disclosure reads in the order the work happened. */}
-              {reasoning && reasoning.length > 0 && (
-                <ThinkingReasoning
-                  items={reasoning}
-                  streaming={reasoningStreaming}
-                  defaultOpen
-                />
-              )}
-              {children}
-            </div>
-          )}
-        </div>
-      </div>
+            <span className={cn(status === 'error' && 'text-destructive')}>{label}</span>
+            {!expanded && summary && <TurnSummaryBadges counts={summary} />}
+          </span>
+        }
+      >
+        {reasoning && reasoning.length > 0 && <ThinkingReasoning items={reasoning} streaming={reasoningStreaming} />}
+        {children}
+      </Collapsible>
+      {!expanded && activity && (
+        <div className="mt-0.5 min-w-0 pl-1" data-testid="chat-turn-current-activity">{activity}</div>
+      )}
     </section>
   );
 }

@@ -70,7 +70,7 @@ test.describe('Runtime approval bridge', () => {
       await expect(title).toHaveCSS('font-size', '14px');
       await expect(title).toHaveCSS('font-weight', '600');
       expect(await commandView.textContent()).toBe(command);
-      await expect(commandView).toHaveCSS('white-space', 'pre');
+      await expect(commandView).toHaveCSS('white-space', 'pre-wrap');
       await page.keyboard.press('Escape');
       await page.getByTestId('chat-page').click({ position: { x: 20, y: 20 } });
       await expect(prompt).toBeVisible();
@@ -132,7 +132,7 @@ test.describe('Runtime approval bridge', () => {
           body: JSON.stringify({ driven_by: 'agent', actor: process.env.COMPASS_AGENT_NAME ?? 'agent', realHumanEvidence: false, geometry: measuredGeometry }),
           contentType: 'application/json',
         });
-        expect(await commandView.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+        expect(await commandView.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
         if (layout.zoom === 1) {
           await prompt.screenshot({ path: testInfo.outputPath(`runtime-approval-${layout.name}.png`) });
           await page.screenshot({ path: testInfo.outputPath(`runtime-approval-page-${layout.name}.png`) });

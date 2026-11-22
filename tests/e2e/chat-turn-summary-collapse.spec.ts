@@ -170,6 +170,7 @@ test.describe('Verse Claw chat turn summary collapse', () => {
       await expect(page.getByTestId('chat-assistant-avatar')).toHaveCount(0);
       await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
       await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
+      await expect(page.getByTestId('chat-turn-summary-badge-tools')).toHaveText('1 tool call');
       const activity = page.getByTestId('chat-turn-current-activity');
       await expect(activity.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
       const progress = activity.getByTestId('chat-call-chip-progress');
@@ -203,6 +204,61 @@ test.describe('Verse Claw chat turn summary collapse', () => {
       await expect(toggle).toHaveAttribute('aria-expanded', 'false');
       await expect(page.getByTestId('chat-turn-summary-orb')).toBeVisible();
       await expect(page.getByTestId('chat-assistant-avatar')).toHaveCount(0);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
+  test('keeps interleaved command output in the execution order with separate tool inputs and results', async ({ launchElectronApp }, testInfo) => {
+    const history = [
+      { role: 'user', id: 'ordered-user', content: 'Read, test, and update these files.' },
+      { role: 'assistant', id: 'ordered-progress', content: 'I will read the source, run its tests, then write the update.' },
+    ];
+    const { app, page } = await openChatWithHistory(launchElectronApp, history);
+    const identity = { runId: 'ordered-run', sessionKey: SESSION_KEY };
+
+    try {
+      const now = Date.now();
+      const events = [
+        { type: 'run.started', startedAt: now, ts: now },
+        { type: 'tool.started', toolCallId: 'read-one', name: 'read_file', ts: now + 1, args: { path: 'src/one.ts' } },
+        { type: 'tool.completed', toolCallId: 'read-one', name: 'read_file', ts: now + 2, result: { summary: 'Source loaded' }, isError: false },
+        { type: 'tool.started', toolCallId: 'run-tests', name: 'exec', ts: now + 3, args: { command: 'pnpm test' } },
+        { type: 'command.output', toolCallId: 'run-tests', itemId: 'test-output', name: 'exec', title: 'pnpm test', output: 'PASS unit tests', phase: 'update', status: 'running', ts: now + 4 },
+        { type: 'tool.started', toolCallId: 'write-two', name: 'write_file', ts: now + 5, args: { path: 'src/two.ts' } },
+        { type: 'tool.completed', toolCallId: 'write-two', name: 'write_file', ts: now + 6, result: { summary: 'Updated source' }, isError: false },
+      ];
+      await app.evaluate(({ BrowserWindow }, payload) => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          for (const event of payload.events) win.webContents.send('chat:runtime-event', { ...payload.identity, ...event });
+        }
+      }, { identity, events });
+
+      const summaryToggle = page.getByTestId('chat-turn-summary-toggle');
+      await expect(summaryToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(page.getByTestId('chat-turn-current-activity').getByTestId('chat-call-chip')).toHaveCount(1);
+      await summaryToggle.click();
+
+      const rows = page.locator('[data-testid="chat-execution-graph"] [data-testid="chat-execution-step"], [data-testid="chat-execution-graph"] [data-testid="chat-execution-timeline-terminal"]');
+      await expect(rows).toHaveText([/read_file/, /pnpm test/, /write_file/]);
+      const readStep = page.getByTestId('chat-execution-step-toggle').filter({ hasText: 'read_file' });
+      await readStep.click();
+      const readDetail = page.getByRole('region', { name: 'read_file' });
+      await expect(readDetail).toContainText('src/one.ts');
+      await expect(readDetail).toContainText('Source loaded');
+
+      const commandToggle = page.getByTestId('chat-run-terminal-toggle');
+      await expect(commandToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.getByTestId('terminal-output')).toContainText('PASS unit tests');
+      await expect(page.getByTestId('chat-execution-graph').locator('[data-testid="chat-call-chip"][data-status="running"]')).toHaveCount(1);
+      await page.setViewportSize({ width: 1136, height: 720 });
+      await page.screenshot({ path: testInfo.outputPath('ordered-run-output-wide.png'), animations: 'disabled' });
+      await page.setViewportSize({ width: 390, height: 720 });
+      const graph = page.getByTestId('chat-execution-graph');
+      const terminalOutput = page.getByTestId('terminal-output');
+      expect(await graph.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      expect(await terminalOutput.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      await page.screenshot({ path: testInfo.outputPath('ordered-run-output-narrow.png'), animations: 'disabled' });
     } finally {
       await closeElectronApp(app);
     }

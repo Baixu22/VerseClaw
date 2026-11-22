@@ -633,13 +633,12 @@
   opacity: 1;
 }
 
-/* styles.css:318 — official row cadence is 30px + 1px, giving the ~31px stride
- * the list's own rhythm assumes. The row was temporarily 44px to fit a second
- * line (the project-name subtitle); that subtitle is now the pinned project
- * header, so the row is back on the official single-line height. Tailwind's
- * `space-y-0.5` in the folder tree would otherwise add a competing 2px gap at
- * some depths only. */
+/* Rows with a distinct preview reserve one extra line. */
 .codex-sidebar .task-row { height: 30px; margin-bottom: 1px; }
+.codex-sidebar .task-row--summary { height: 44px; }
+.codex-sidebar .task-preview { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--cdx-text-3); font-size: 11px; line-height: 15px; font-weight: 400; }
+.codex-sidebar .session-family__child:has(.task-row--summary)::before { top: 22px; }
+.codex-sidebar .ws-family-row:has(> .task-row--summary) > :is(.ws-family-toggle, .session-family__count) { top: 50%; transform: translateY(-50%); }
 .codex-sidebar .project-tasks > .space-y-0\.5 > :not([hidden]) ~ :not([hidden]),
 .codex-sidebar .project-tasks .space-y-0\.5 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
@@ -923,6 +922,7 @@
 /* Official footer profile geometry: 45px footer, 29px trigger, 259px menu. */
 .codex-sidebar .sidebar-footer {
   flex: none;
+  margin-top: auto;
   display: flex;
   align-items: center;
   gap: 6px;

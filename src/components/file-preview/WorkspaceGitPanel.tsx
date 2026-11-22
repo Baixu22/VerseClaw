@@ -9,6 +9,8 @@ import {
   Download,
   FolderOpen,
   GitBranch,
+  GitCommitHorizontal,
+  FolderGit2,
   GitPullRequest,
   GitPullRequestCreate,
   GitCompareArrows,
@@ -753,16 +755,16 @@ export function WorkspaceGitPanel({
   ];
   return (
     <>
-    <div className="flex h-full min-h-0 flex-col bg-background" data-testid="workspace-git-panel">
-      {/* Single slim header — branch + key stats inline */}
+    <div className="git-surface git-review flex h-full min-h-0 flex-col bg-background" data-testid="workspace-git-panel">
+      {/* Repository context remains visible while changes scroll. */}
       <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
         <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-2">
+          <div className="git-review-heading">
             <GitBranch className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <span className="truncate text-sm font-medium text-foreground">
               {status?.detached ? t('workspace.git.detached') : status?.branch || t('workspace.git.loading')}
             </span>
-            <Badge variant={stateVariant} className="shrink-0 px-1.5 py-0 text-2xs">{stateLabel}</Badge>
+            <span className="git-status shrink-0" data-tone={stateVariant === 'destructive' ? 'danger' : stateVariant === 'warning' ? 'warning' : undefined}>{stateLabel}</span>
             {totalChanges > 0 && (
               <span className="shrink-0 text-2xs text-muted-foreground">
                 {totalChanges} {t('artifactPanel.tabs.changes')}
@@ -787,7 +789,7 @@ export function WorkspaceGitPanel({
             className="h-7 w-7 shrink-0"
             onClick={() => void refresh()}
             disabled={loading}
-            title={t('workspace.git.actions.refresh')}
+            title={t('workspace.git.actions.refresh')} aria-label={t('workspace.git.actions.refresh')}
           >
             <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
           </Button>
@@ -826,8 +828,8 @@ export function WorkspaceGitPanel({
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2">
-        <section className="flex min-h-[300px] shrink-0 flex-col overflow-hidden rounded-md border border-black/[0.07] bg-surface-modal dark:border-white/[0.09]">
+      <div className="git-review-layout">
+        <section className="git-review-index">
           {/* Status — working tree changes */}
           <div className="flex min-h-0 flex-[1.15] flex-col">
             <div className="flex shrink-0 items-center justify-between border-b border-black/[0.07] px-3 py-1.5 dark:border-white/[0.09]">
@@ -847,9 +849,9 @@ export function WorkspaceGitPanel({
                 </div>
               ) : (
                 <div className="divide-y divide-black/[0.07] dark:divide-white/[0.09]">
-                  {groupedChanges.map((group) => (
+                  {groupedChanges.filter(group => group.changes.length > 0).map((group) => (
                     <div key={group.bucket}>
-                      <div className="sticky top-0 z-10 bg-surface-modal/95 px-3 py-1 text-2xs font-medium uppercase tracking-wide text-muted-foreground/70 backdrop-blur">
+                      <div className="sticky top-0 z-10 bg-surface-modal px-3 py-2 text-xs font-medium text-muted-foreground">
                         {t(`workspace.git.groups.${group.bucket}`, { count: group.changes.length })}
                       </div>
                       <div className="space-y-0.5 px-1.5 pb-1.5">
@@ -865,16 +867,18 @@ export function WorkspaceGitPanel({
                               key={`${change.bucket}:${change.path}`}
                               type="button"
                               className={cn(
-                                'flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
+                                'git-row flex w-full items-center gap-2 text-left text-xs',
                                 effectiveSelectedPath === change.path && 'bg-black/5 dark:bg-white/10',
                               )}
                               onClick={() => selectChange(change)}
+                              aria-pressed={effectiveSelectedPath === change.path}
+                              title={change.path}
                             >
-                              <span className="min-w-0 flex-1 truncate font-mono text-foreground">{change.path}</span>
+                              <span className="git-path min-w-0 flex-1 font-mono text-foreground">{change.path}</span>
                               {changeStats ? (
                                 <span className="shrink-0 font-mono text-2xs text-muted-foreground">{changeStats}</span>
                               ) : null}
-                              <Badge variant={badge.variant} className="shrink-0 px-1.5 py-0 text-2xs">{badge.label}</Badge>
+                              <span className="shrink-0 font-mono text-[11px] git-muted" data-tone={change.conflicted ? 'danger' : change.untracked ? 'warning' : undefined}>{badge.label}</span>
                             </button>
                           );
                         })}
@@ -886,7 +890,9 @@ export function WorkspaceGitPanel({
             </div>
           </div>
 
-          {/* Branches — click a branch to inspect its history */}
+          <details className="git-history" data-testid="workspace-git-history">
+            <summary><GitCommitHorizontal className="h-3.5 w-3.5" aria-hidden="true" />{t('gitSurface.history')}</summary>
+          {/* Branches select the history being inspected. */}
           <div className="flex min-h-0 flex-none flex-col border-t border-black/[0.07] dark:border-white/[0.09]" data-testid="workspace-git-branches">
             <div className="flex shrink-0 items-center justify-between px-3 py-1.5">
               <span className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('workspace.git.branches.title', 'Branches')}</span>
@@ -978,24 +984,26 @@ export function WorkspaceGitPanel({
               ))}
             </div>
           </div>
+          </details>
         </section>
 
-        <section className="flex min-h-[360px] min-w-0 shrink-0 flex-col overflow-hidden rounded-md border border-black/10 bg-[#0d1117] text-slate-100 dark:border-white/10">
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3 py-2">
+        <section className="git-review-diff" data-testid="workspace-git-diff">
+          <div className="git-diff-heading">
             <div className="min-w-0">
-              <p className="truncate font-mono text-xs text-slate-100">{effectiveSelectedPath || t('workspace.git.diff.empty')}</p>
-              <p className="mt-0.5 text-2xs text-slate-400">
+              <p className="git-path font-mono text-xs text-foreground">{effectiveSelectedPath || t('workspace.git.diff.empty')}</p>
+              <p className="mt-0.5 text-2xs text-muted-foreground">
                 {effectiveDiffMode === 'staged' ? t('workspace.git.diff.staged') : t('workspace.git.diff.unstaged')}
               </p>
             </div>
-            <div className="inline-flex shrink-0 rounded-md border border-white/10 bg-white/5 p-0.5">
+            <div className="git-segments" aria-label={t('artifactPanel.tabs.changes')} role="group">
               {(['unstaged', 'staged'] as const).map((mode) => (
                 <button
+                  aria-pressed={effectiveDiffMode === mode}
                   key={mode}
                   type="button"
                   className={cn(
-                    'rounded px-2 py-1 text-2xs text-slate-400',
-                    effectiveDiffMode === mode && 'bg-white/10 text-white',
+                    'rounded px-2 py-1 text-xs text-muted-foreground',
+                    effectiveDiffMode === mode && 'text-foreground',
                   )}
                   onClick={() => {
                     if (controlledDiffMode === undefined) setInternalDiffMode(mode);
@@ -1009,43 +1017,43 @@ export function WorkspaceGitPanel({
           </div>
           <div className="min-h-0 flex-1 overflow-hidden">
             {canRenderMonacoDiff && effectiveSelectedPath ? (
-              <Suspense fallback={<div className="flex h-full items-center justify-center text-xs text-slate-400">{t('workspace.git.loading')}</div>}>
+              <Suspense fallback={<div className="flex h-full items-center justify-center text-xs text-muted-foreground">{t('workspace.git.loading')}</div>}>
                 <MonacoDiffViewerLazy
                   filePath={effectiveSelectedPath}
                   original={diff?.original}
                   modified={diff?.modified ?? ''}
-                  className="min-h-[260px]"
+                  className="min-h-0"
                 />
               </Suspense>
             ) : (
               <pre className="h-full min-h-0 overflow-auto p-3 font-mono text-2xs leading-relaxed">
                 {diffLoading ? (
-                  <span className="text-slate-400">{t('workspace.git.loading')}</span>
+                  <span className="text-muted-foreground">{t('workspace.git.loading')}</span>
                 ) : diff?.binary ? (
-                  <span className="text-slate-400">{t('workspace.git.diff.binary')}</span>
+                  <span className="text-muted-foreground">{t('workspace.git.diff.binary')}</span>
                 ) : diff?.tooLarge ? (
-                  <span className="text-slate-400">{t('workspace.git.diff.tooLarge')}</span>
+                  <span className="text-muted-foreground">{t('workspace.git.diff.tooLarge')}</span>
                 ) : diff?.patch ? (
                   diff.patch
                 ) : (
-                  <span className="text-slate-400">{t('workspace.git.diff.empty')}</span>
+                  <span className="text-muted-foreground">{t('workspace.git.diff.empty')}</span>
                 )}
               </pre>
             )}
           </div>
-          <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-t border-white/10 px-3 py-1.5">
+          <div className="git-diff-actions shrink-0">
             <Button type="button" size="sm" className="h-7 text-2xs" onClick={stageSelected} disabled={!canStage || operationLoading === 'stage'}>
               {operationLoading === 'stage' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Plus className="mr-1 h-3 w-3" />}
               {t('workspace.git.actions.stage')}
             </Button>
-            <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-2xs text-slate-100 hover:bg-white/10" onClick={unstageSelected} disabled={!canUnstage || operationLoading === 'unstage'}>
+            <Button type="button" variant="outline" size="sm" className="h-7 text-xs" onClick={unstageSelected} disabled={!canUnstage || operationLoading === 'unstage'}>
               {t('workspace.git.actions.unstage')}
             </Button>
-            <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-2xs text-slate-100 hover:bg-white/10" onClick={() => void copyPatch()} disabled={!canCopyPatch}>
+            <Button type="button" variant="outline" size="sm" className="h-7 text-xs" onClick={() => void copyPatch()} disabled={!canCopyPatch}>
               <ClipboardCopy className="mr-1 h-3 w-3" />
               {t('workspace.git.actions.copyPatch')}
             </Button>
-            <Button type="button" variant="destructive" size="sm" className="h-7 text-2xs" onClick={() => setRevertPath(effectiveSelectedPath)} disabled={!canRevert || operationLoading === 'revert'}>
+            <Button type="button" variant="ghost" size="sm" className="git-danger h-7 text-xs" onClick={() => setRevertPath(effectiveSelectedPath)} disabled={!canRevert || operationLoading === 'revert'}>
               {operationLoading === 'revert' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <RotateCcw className="mr-1 h-3 w-3" />}
               {t('workspace.git.actions.revert')}
             </Button>
@@ -1059,7 +1067,7 @@ export function WorkspaceGitPanel({
           <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2">
             <div className="flex min-w-0 items-center gap-2">
               <PanelRightOpen className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-90" />
-              <span className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('workspace.git.toolTabs.worktrees')}</span>
+              <span className="text-xs font-medium text-foreground">{t('gitSurface.tools')}</span>
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
               {worktrees.length > 0 && <Badge variant="outline" className="px-1.5 py-0 text-2xs">{worktrees.length}</Badge>}
@@ -1067,11 +1075,12 @@ export function WorkspaceGitPanel({
               {githubReady && <Badge variant="success" className="px-1.5 py-0 text-2xs">GH</Badge>}
             </div>
           </summary>
-          <div className="border-t border-black/5 p-2 dark:border-white/10">
-            <div className="flex min-w-0 items-center gap-0.5 rounded-md bg-surface-input p-0.5" data-testid="workspace-git-tool-tabs">
+          <div className="border-t border-border">
+            <div className="git-tool-tabs"><div className="git-segments" data-testid="workspace-git-tool-tabs" role="group" aria-label={t('gitSurface.tools')}>
               {toolTabs.map((tab) => (
                 <button
                   key={tab.id}
+                  aria-pressed={activeToolPanel === tab.id}
                   type="button"
                   className={cn(
                     'h-6 shrink-0 rounded px-2.5 text-2xs text-muted-foreground',
@@ -1083,34 +1092,34 @@ export function WorkspaceGitPanel({
                 </button>
               ))}
             </div>
-            <div className="mt-2 max-h-[220px] overflow-y-auto pr-1">
+            </div><div className="git-tool-body">
           {activeToolPanel === 'worktrees' ? (
-            <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+            <section className="min-w-0">
               <div className="flex items-center justify-between gap-2">
                 <PanelTitle icon={<HardDrive className="h-3.5 w-3.5" />} title={t('workspace.git.worktrees.title')} />
                 <Button type="button" variant="ghost" size="sm" className="h-6 px-1.5 text-2xs" onClick={pruneWorktrees} disabled={operationLoading === 'prune'}>
                   {t('workspace.git.actions.pruneWorktrees')}
                 </Button>
               </div>
-              <div className="mt-2 max-h-28 space-y-1 overflow-y-auto rounded-md border border-black/5 bg-surface-input p-1 dark:border-white/10">
+              <div className="git-worktree-list">
                 {worktrees.length === 0 ? (
                   <p className="px-1 py-1 text-2xs text-muted-foreground">{t('workspace.git.worktrees.empty')}</p>
                 ) : worktrees.map((worktree) => {
                   const current = pathEquals(worktree.path, currentWorktree?.path);
                   return (
-                    <div key={worktree.path} className="rounded bg-background px-2 py-1 dark:bg-white/5">
+                    <div key={worktree.path} className="git-worktree-row" data-testid="workspace-git-worktree-row">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="min-w-[120px] flex-1">
-                          <p className="truncate font-mono text-2xs text-foreground">{basenameFromPath(worktree.path)}</p>
-                          <p className="truncate text-2xs text-muted-foreground">{worktree.branch || compactCommit(worktree.head)}</p>
+                          <p className="git-path flex items-center gap-1.5 text-xs font-medium text-foreground"><FolderGit2 className="h-3.5 w-3.5 shrink-0" />{worktree.branch || compactCommit(worktree.head)}</p>
+                          <p className="git-path mt-1 font-mono text-[11px] text-muted-foreground">{worktree.path}</p>
                         </div>
                         <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">
-                          {current ? <Badge variant="success" className="px-1.5 py-0 text-2xs">{t('workspace.git.worktrees.current')}</Badge> : null}
+                          {current ? <span className="git-status">{t('workspace.git.worktrees.current')}</span> : null}
                           {worktree.locked ? (
-                            <Badge variant="warning" className="gap-1 px-1.5 py-0 text-2xs">
+                            <span className="git-status" data-tone="warning">
                               <AlertTriangle className="h-3 w-3" />
                               {t('workspace.git.worktrees.locked')}
-                            </Badge>
+                            </span>
                           ) : null}
                           {worktree.prunable ? <Badge variant="outline" className="px-1.5 py-0 text-2xs">{t('workspace.git.worktrees.prunable')}</Badge> : null}
                           <Button
@@ -1130,7 +1139,7 @@ export function WorkspaceGitPanel({
                               size="sm"
                               className="h-6 px-1.5 text-2xs"
                               onClick={() => void switchWorktreeWorkspace(worktree)}
-                              disabled={operationLoading === `switch:${worktree.path}`}
+                              disabled={Boolean(operationLoading) || worktree.bare || worktree.prunable}
                             >
                               {operationLoading === `switch:${worktree.path}` ? (
                                 <Loader2 className="mr-1 h-3 w-3 animate-spin" />
@@ -1147,7 +1156,7 @@ export function WorkspaceGitPanel({
                               size="sm"
                               className="h-6 px-1.5 text-2xs text-red-700 hover:text-red-700 dark:text-red-400"
                               onClick={() => removeWorktree(worktree)}
-                              disabled={operationLoading === `remove:${worktree.path}`}
+                              disabled={Boolean(operationLoading) || worktree.locked || worktree.bare || worktree === worktrees[0]}
                             >
                               <Trash2 className="mr-1 h-3 w-3" />
                               {t('workspace.git.actions.removeWorktree')}
@@ -1159,15 +1168,17 @@ export function WorkspaceGitPanel({
                   );
                 })}
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-1 rounded-md bg-surface-input p-0.5">
+              <details className="git-worktree-form" data-testid="workspace-git-create-worktree"><summary><Plus className="h-3.5 w-3.5" />{t('workspace.git.actions.addWorktree')}</summary>
+              <div className="git-segments mt-2">
                 {(['new', 'existing'] as const).map((mode) => (
                   <button
                     key={mode}
                     type="button"
                     className={cn(
                       'rounded px-2 py-1 text-2xs text-muted-foreground',
-                      worktreeMode === mode && 'bg-black/5 text-foreground dark:bg-white/10',
+                      worktreeMode === mode && 'text-foreground',
                     )}
+                    aria-pressed={worktreeMode === mode}
                     onClick={() => setWorktreeMode(mode)}
                   >
                     {mode === 'new' ? t('workspace.git.worktrees.newBranch') : t('workspace.git.worktrees.existingBranch')}
@@ -1203,7 +1214,7 @@ export function WorkspaceGitPanel({
               )}
               <div className="mt-2 rounded-md border border-black/5 bg-surface-input px-2 py-1.5 text-2xs dark:border-white/10" data-testid="workspace-git-worktree-target">
                 <p className="font-medium text-muted-foreground">{t('workspace.git.worktrees.defaultPath')}</p>
-                <p className="mt-0.5 truncate font-mono text-foreground">
+                <p className="git-path mt-0.5 font-mono text-foreground">
                   {worktreeTargetPreview || t('workspace.git.worktrees.defaultPathUnavailable')}
                 </p>
               </div>
@@ -1216,6 +1227,7 @@ export function WorkspaceGitPanel({
                 {operationLoading === 'worktreeAdd' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <GitCompareArrows className="mr-1.5 h-3 w-3" />}
                 {t('workspace.git.actions.addWorktree')}
               </Button>
+              </details>
             </section>
           ) : null}
 

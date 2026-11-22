@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "agent",
+  "realHumanEvidence": false,
+  "geometry": {
+    "inViewport": true,
+    "noHorizontalOverflow": true,
+    "controls": [
+      {
+        "testId": "runtime-approval-command",
+        "left": 16.666656494140625,
+        "right": 16.666656494140625,
+        "bottom": 125.33332061767578
+      },
+      {
+        "testId": "runtime-approval-deny",
+        "left": 16.666656494140625,
+        "right": 663.572925567627,
+        "bottom": 12.666656494140625
+      },
+      {
+        "testId": "runtime-approval-allow-always",
+        "left": 519.8958435058594,
+        "right": 115.06248474121094,
+        "bottom": 12.666656494140625
+      },
+      {
+        "testId": "runtime-approval-allow-once",
+        "left": 628.9375305175781,
+        "right": 16.66663360595703,
+        "bottom": 12.666656494140625
+      }
+    ]
+  }
+}

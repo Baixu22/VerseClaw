@@ -101,7 +101,8 @@ const gitBranches = [
 
 const gitWorktrees = [
   { path: '/workspace/demo', branch: 'feature/git-panel', head: 'abc123' },
-  { path: '/workspace/demo-feature-a', branch: 'feature/a', head: 'aaa111', locked: true, prunable: true },
+  { path: '/workspace/demo-feature-a', branch: 'feature/a', head: 'aaa111' },
+  { path: '/workspace/protected-checkout', branch: 'feature/protected', head: 'bbb222', locked: true, prunable: true },
 ];
 
 const gitStashes = [
@@ -546,12 +547,12 @@ test.describe('Workspace Git panel', () => {
       await page.setViewportSize({ width: 1280, height: 800 });
 
       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');
-      await toolDrawer.locator('summary').click();
+      await toolDrawer.locator(':scope > summary').click();
       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');
       await expect(toolTabs.getByRole('button', { name: 'Worktree' })).toBeVisible();
       await expect(toolTabs.getByRole('button', { name: 'Stash' })).toBeVisible();
       await expect(toolTabs.getByRole('button', { name: 'Commit' })).toBeVisible();
-      await expect(gitPanel.getByText('demo-feature-a')).toBeVisible();
+      await expect(gitPanel.getByText('/workspace/demo-feature-a', { exact: true })).toBeVisible();
       await expect(gitPanel.getByText('Current')).toBeVisible();
       await expect(gitPanel.getByText('Locked')).toBeVisible();
       await expect(gitPanel.getByText('Prunable')).toBeVisible();
@@ -616,11 +617,12 @@ test.describe('Workspace Git panel', () => {
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
       await toolTabs.getByRole('button', { name: 'Worktree' }).click();
+      await gitPanel.getByTestId('workspace-git-create-worktree').locator('summary').click();
       await gitPanel.getByPlaceholder('Branch for worktree').fill('feature/new-worktree');
       await expect(gitPanel.getByTestId('workspace-git-worktree-target')).toContainText('/workspace/demo-feature-new-worktree');
       await gitPanel.getByRole('button', { name: 'Add worktree' }).click();
 
-      await gitPanel.getByRole('button', { name: 'Remove' }).click();
+      await gitPanel.getByTestId('workspace-git-worktree-row').filter({ hasText: '/workspace/demo-feature-a' }).getByRole('button', { name: 'Remove', exact: true }).click();
       await expect(gitPanel.getByText('Remove needs approval')).toBeVisible();
       await expect(gitPanel.getByText('Removing a worktree requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
@@ -637,7 +639,7 @@ test.describe('Workspace Git panel', () => {
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
       await toolTabs.getByRole('button', { name: 'Worktree' }).click();
-      await gitPanel.getByRole('button', { name: 'Switch' }).click();
+      await gitPanel.getByTestId('workspace-git-worktree-row').filter({ hasText: '/workspace/demo-feature-a' }).getByRole('button', { name: 'Switch', exact: true }).click();
       await expect.poll(async () => app.evaluate(() => {
         const calls = (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? [];
         return calls.some((call) => call.module === 'workspaces' && call.action === 'create');
@@ -831,7 +833,7 @@ test.describe('Workspace Git panel', () => {
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
       await expect(gitPanel).toBeVisible();
       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');
-      await toolDrawer.locator('summary').click();
+      await toolDrawer.locator(':scope > summary').click();
       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');
       await expect(toolTabs).toBeVisible();
       await toolTabs.getByRole('button', { name: 'PR' }).click();
@@ -1030,10 +1032,11 @@ test.describe('Workspace Git panel', () => {
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
       await expect(gitPanel).toBeVisible();
       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');
-      await toolDrawer.locator('summary').click();
+      await toolDrawer.locator(':scope > summary').click();
       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');
       await toolTabs.getByRole('button', { name: 'Worktree' }).click();
 
+      await gitPanel.getByTestId('workspace-git-create-worktree').locator('summary').click();
       await gitPanel.getByPlaceholder('Branch for worktree').fill('feature/root');
       await expect(gitPanel.getByTestId('workspace-git-worktree-target')).toContainText('C:/repo-feature-root');
       await gitPanel.getByRole('button', { name: 'Add worktree' }).click();

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { ChatMessage } from '@/pages/Chat/ChatMessage';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -552,11 +552,43 @@ describe('ChatMessage image copy', () => {
     renderMessage(<ChatMessage message={message} />);
 
     // The lone URL paragraph is itself a link card, with its own buttons.
-    fireEvent.click(within(screen.getByTestId('chat-assistant-message-actions')).getByRole('button'));
+    fireEvent.click(screen.getByTestId('chat-assistant-message-copy'));
     await vi.waitFor(() => {
       expect(navigator.clipboard.write).toHaveBeenCalledTimes(1);
     });
     expect(navigator.clipboard.writeText).not.toHaveBeenCalled();
+  });
+
+  it('keeps response actions compact and quotes or forks through existing callbacks', async () => {
+    const onQuoteResponse = vi.fn();
+    const onForkFromMessage = vi.fn();
+    renderMessage(
+      <ChatMessage
+        message={{ id: 'assistant-actions', role: 'assistant', content: 'A concise answer.' }}
+        onQuoteResponse={onQuoteResponse}
+        onForkFromMessage={onForkFromMessage}
+        canForkFromMessage
+      />,
+    );
+
+    const actionBar = screen.getByTestId('chat-assistant-message-actions');
+    expect(actionBar).toHaveClass('w-fit', 'justify-start');
+    expect(actionBar).not.toHaveClass('w-full');
+    expect(actionBar).toHaveClass('[@media(hover:none)]:!opacity-100', 'motion-reduce:transition-none');
+    expect(screen.getByTestId('chat-assistant-message-copy')).toBeVisible();
+    expect(screen.getByTestId('chat-assistant-message-fork')).toBeVisible();
+    expect(screen.getByTestId('chat-assistant-message-quote')).toBeVisible();
+    expect(screen.getByTestId('chat-assistant-message-quote')).toHaveAttribute('aria-label', expect.stringMatching(/\S/));
+    expect(screen.getByTestId('chat-assistant-message-fork')).toHaveAttribute('aria-label', expect.stringMatching(/\S/));
+
+    fireEvent.click(screen.getByTestId('chat-assistant-message-quote'));
+    expect(onQuoteResponse).toHaveBeenCalledWith('A concise answer.');
+    fireEvent.click(screen.getByTestId('chat-assistant-message-fork'));
+    expect(onForkFromMessage).toHaveBeenCalledWith('assistant-actions');
+    fireEvent.click(screen.getByTestId('chat-assistant-message-copy'));
+    await vi.waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('A concise answer.');
+    });
   });
 });
 

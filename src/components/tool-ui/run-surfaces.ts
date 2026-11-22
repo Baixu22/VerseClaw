@@ -1,5 +1,4 @@
-import type { GeneratedFile } from '@/lib/generated-files';
-import { supportsInlineDiff } from '@/lib/generated-files';
+import { computeLineStats, supportsInlineDiff, type FileLineStats, type GeneratedFile } from '@/lib/generated-files';
 import type { TaskStep } from '@/pages/Chat/task-visualization';
 import type { ChatRuntimeRunState } from '@/stores/chat/types';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
@@ -10,6 +9,7 @@ export const MAX_CODE_DIFF_CHARS = 256 * 1024;
 export type RunTerminalSurface = {
   type: 'terminal';
   id: string;
+  eventOrder?: number;
   toolCallId?: string;
   command: string;
   cwd?: string;
@@ -28,6 +28,7 @@ export type RunCodeDiffSurface = {
   patch?: string;
   original?: string;
   modified?: string;
+  lineStats?: FileLineStats | null;
   mode: 'full' | 'snippet';
   confidence: 'trusted';
 };
@@ -126,13 +127,14 @@ function terminalDisplayOutput(output: string): Pick<RunTerminalSurface, 'output
 export function projectCommandSurfaces(runState: ChatRuntimeRunState | null | undefined): RunTerminalSurface[] {
   if (!runState) return [];
 
-  const tools = new Map<string, { command?: string; cwd?: string }>();
+  const tools = new Map<string, { command?: string; cwd?: string; order: number }>();
   const surfaces = new Map<string, RunTerminalSurface & { rawOutput: string }>();
 
-  for (const event of runState.events) {
+  for (const [order, event] of runState.events.entries()) {
     if (event.type === 'tool.started') {
       const args = asRecord(event.args);
       tools.set(event.toolCallId, {
+        order,
         command: nonEmptyString(args?.command) ?? nonEmptyString(args?.cmd),
         cwd: nonEmptyString(args?.cwd),
       });
@@ -153,6 +155,7 @@ export function projectCommandSurfaces(runState: ChatRuntimeRunState | null | un
     surfaces.set(id, {
       type: 'terminal',
       id,
+      eventOrder: existing?.eventOrder ?? tool?.order ?? order,
       toolCallId: event.toolCallId ?? existing?.toolCallId,
       command,
       cwd: event.cwd ?? existing?.cwd ?? tool?.cwd,
@@ -363,6 +366,7 @@ export function projectGeneratedFileDiff(file: GeneratedFile): RunCodeDiffSurfac
       filePath: artifact.file,
       language: languageFromFile(file),
       patch: artifact.patch,
+      lineStats: computeLineStats(file),
       mode: 'full',
       confidence: 'trusted',
     };
@@ -401,6 +405,7 @@ export function projectGeneratedFileDiff(file: GeneratedFile): RunCodeDiffSurfac
     language: languageFromFile(file),
     original,
     modified,
+    lineStats: computeLineStats(file),
     mode,
     confidence: 'trusted',
   };

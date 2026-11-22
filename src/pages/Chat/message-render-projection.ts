@@ -61,6 +61,7 @@ import {
   type ConversationResource,
 } from './conversation-resources';
 import { extractImages, extractText, extractToolUse, isUnresolvableImageUrl } from './message-utils';
+import { isComposerInteraction } from './composer-interactions';
 import { isPlanToolName, MESSAGE_CARD_EXCLUDED_TOOL_UI_TYPES } from './run-surface-promotion';
 
 export type ExtractedImage = { url?: string; data?: string; mimeType: string };
@@ -83,6 +84,8 @@ export type MessageRenderFlags = {
    * the row survives as an empty gap between the folded process and the answer.
    */
   suppressReasoning?: boolean;
+  suppressComposerInteractions?: boolean;
+  isStreaming?: boolean;
   textOverride?: string;
 };
 
@@ -339,7 +342,9 @@ function flagKey(flags: MessageRenderFlags): string {
     flags.suppressAssistantText ? 'T' : 't',
     flags.suppressToolCards ? 'C' : 'c',
     flags.suppressReasoning ? 'R' : 'r',
-    flags.textOverride ?? '',
+    flags.suppressComposerInteractions ? 'I' : 'i',
+    flags.isStreaming ? 'S' : 's',
+    flags.textOverride == null ? 'n' : `o${flags.textOverride}`,
   ].join('\u0000');
 }
 
@@ -348,7 +353,7 @@ function computeProjection(message: RawMessage, flags: MessageRenderFlags): Mess
   const rawText = flags.textOverride ?? extractText(message);
   const parsed = isUser
     ? { displayText: rawText, interactions: [] as ToolUiInteraction[], unknownResources: [] as ConversationResource[] }
-    : parseToolUiContent(rawText);
+    : parseToolUiContent(rawText, { streaming: flags.isStreaming });
 
   const reasoning = isUser || suppressReasoning ? [] : extractAssistantReasoning(message);
 
@@ -359,7 +364,7 @@ function computeProjection(message: RawMessage, flags: MessageRenderFlags): Mess
   const hasText = !hideAssistantText && displayText.trim().length > 0;
 
   const tools = extractToolUse(message);
-  const visibleTools = suppressToolCards ? [] : tools;
+  const visibleTools = suppressToolCards ? [] : tools.filter((tool) => !parseToolUiToolUses([tool]).length);
   const projectedToolUiInteractions = isUser
     ? parsed.interactions
     : [
@@ -368,7 +373,9 @@ function computeProjection(message: RawMessage, flags: MessageRenderFlags): Mess
         ...projectWebSearchInteractions(message, tools),
       ];
   const toolUiInteractions = Array.from(
-    new Map(projectedToolUiInteractions.map((interaction) => [interaction.type + ':' + interaction.id, interaction])).values(),
+    new Map(projectedToolUiInteractions
+      .filter((interaction) => !flags.suppressComposerInteractions || !isComposerInteraction(interaction))
+      .map((interaction) => [interaction.type + ':' + interaction.id, interaction])).values(),
   );
 
   const contentImages = extractImages(message).filter((img) => imageSrc(img) != null);

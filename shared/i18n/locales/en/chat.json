@@ -1,4 +1,13 @@
 {
+  "composerRequests": {
+    "title": "Waiting for your response",
+    "approvePlan": "Approve plan",
+    "revisePlan": "Request changes",
+    "pendingCount": "{{count}} pending",
+    "planTitle": "Review plan",
+    "questionTitle": "Your input is needed",
+    "resumeHint": "Respond here to continue. Your message draft is saved."
+  },
   "operationGenerationUnavailable": "The session identity is unavailable. Refresh before continuing.",
   "gatewayNotRunning": "Gateway Not Running",
   "retry": "Retry",
@@ -370,8 +379,11 @@
     "summarizeUpToHere": "Summarize up to here",
     "summarizeFromHere": "Summarize from here",
     "forkFromHere": "Ask in a new session",
+    "forkFromResponse": "Ask about this response in a new session",
     "copy": "Copy message",
     "copied": "Copied",
+    "copyFailed": "Failed to copy response",
+    "quoteResponse": "Quote in composer",
     "edit": "Edit",
     "editInputLabel": "Edit message",
     "cancelEdit": "Cancel",
@@ -598,7 +610,8 @@
       "collapse": "Collapse diff",
       "before": "Before",
       "after": "After",
-      "content": "File differences"
+      "content": "File differences",
+      "lineStatsLabel": "Line changes: +{{added}}, -{{removed}}"
     },
     "terminal": {
       "copy": "Copy output",
@@ -795,6 +808,9 @@
   "agentsPanel": {
     "title": "Sub-agents",
     "description": "Transcripts and dispatch for this session",
+    "transcriptLabel": "Conversation",
+    "lifecycleDetails": "Execution details",
+    "dispatchLabel": "Send an instruction to {{role}}",
     "empty": "This session has not spawned any sub-agents yet.",
     "transcriptEmpty": "No messages in this sub-agent transcript yet.",
     "transcriptUnavailable": "This sub-agent has no readable session yet.",
@@ -1267,6 +1283,15 @@
         "worktreeWorkspaceCreated": "Workspace created for this worktree",
         "worktreeWorkspaceSwitched": "Switched to worktree workspace",
         "worktreeWorkspaceSwitchFailed": "Failed to switch worktree workspace: {{error}}"
+      },
+      "branches": {
+        "title": "Branches",
+        "empty": "No local branches"
+      },
+      "commits": {
+        "title": "Commits",
+        "empty": "No commits",
+        "aheadBehind": "Ahead / behind current branch"
       }
     }
   },
@@ -2263,6 +2288,7 @@
       "kindDetached": "Detached",
       "mainCheckout": "Main checkout",
       "linkedWorktree": "Linked worktree",
+      "reviewChanges": "Review changes",
       "filesChanged": "{{count}} files changed",
       "filesChanged_one": "{{count}} file changed"
     },
@@ -2380,7 +2406,11 @@
     "pendingTitle": "Operations awaiting confirmation",
     "pendingDescription": "Check the recorded operation and continue it from its saved state.",
     "resumeMutation": "Check and continue",
-    "pendingKinds": {"archive": "Archive", "restore": "Restore", "delete": "Delete"},
+    "pendingKinds": {
+      "archive": "Archive",
+      "restore": "Restore",
+      "delete": "Delete"
+    },
     "searchPlaceholder": "Search archived conversations",
     "ungrouped": "Ungrouped",
     "noMatches": "No matching conversations",
@@ -2601,6 +2631,7 @@
     },
     "badge": {
       "tools": "{{count}} tool calls",
+      "tools_one": "{{count}} tool call",
       "thoughts": "{{count}} thoughts",
       "approvals": "{{count}} approvals",
       "plan": "{{count}} steps",
@@ -2724,6 +2755,7 @@
   },
   "completionActivity": {
     "label": "Activity, {{count}} unread",
+    "labelStatus": "Activity, {{status}}, {{count}} unread",
     "title": "Activity",
     "empty": "Completions, failures and requests that need you will appear here.",
     "completed": "Run completed",
@@ -2981,5 +3013,17 @@
       "binding-committed": "Confirming target",
       "confirmed": "Ready in target"
     }
+  },
+  "gitSurface": {
+    "searchAudit": "Search commands, paths or commits",
+    "clearSearch": "Clear search",
+    "noMatches": "No matching records",
+    "subject": "Subject",
+    "effect": "Effect",
+    "paths": "Paths",
+    "reason": "Reason",
+    "copyDetails": "Copy details",
+    "history": "Branches and history",
+    "tools": "Repository tools"
   }
 }

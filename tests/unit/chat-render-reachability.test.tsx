@@ -130,9 +130,15 @@ vi.mock('@/hooks/use-stick-to-bottom-instant', () => ({
 }));
 vi.mock('@/hooks/use-min-loading', () => ({ useMinLoading: () => false }));
 vi.mock('@/pages/Chat/ChatToolbar', () => ({ ChatToolbar: () => null }));
-vi.mock('@/pages/Chat/ChatInput', () => ({ ChatInput: () => null }));
+vi.mock('@/pages/Chat/ChatInput', () => ({ ChatInput: ({ requestContent }: { requestContent?: React.ReactNode }) => <div data-testid="chat-composer-slot">{requestContent}</div> }));
+
+beforeEach(() => {
+  HTMLElement.prototype.scrollTo = vi.fn();
+});
 
 const BASE_STATE = {
+  hydrateStartup: vi.fn(),
+  startupPhase: 'ready',
   loading: false,
   error: null,
   runError: null,
@@ -293,10 +299,31 @@ describe('Tool UI cards emitted as tool calls inside a run segment', () => {
     expect(screen.getByText('Postgres')).toBeInTheDocument();
   });
 
-  /**
-   * The dual of the suppression test: a tool that has no Tool UI renderer must
-   * still stay folded into the execution graph rather than surfacing a bubble.
-   */
+  it('renders one fenced question while the same reply is both streaming and in history', async () => {
+    const text = ['Choose a finish:', '```tool-ui', JSON.stringify({
+      type: 'question-flow', id: 'paper-finish', steps: [{
+        id: 'finish', title: 'Which finish?', selectionMode: 'single',
+        options: [{ id: 'matte', label: 'Matte' }, { id: 'glossy', label: 'Glossy' }],
+      }],
+    }), '```'].join('\n');
+    const reply = { role: 'assistant', content: [{ type: 'text', text }] };
+    await seedChat({
+      messages: [{ role: 'user', content: 'Ask me about paper.' }, {
+        ...reply, __openclaw: { id: 'persisted-question' }, stopReason: 'stop',
+        content: [{ type: 'thinking', thinking: 'Ask about matte and gloss.' }, ...reply.content],
+      }],
+      sending: true,
+      activeRunId: 'question-history-before-stream-teardown',
+      streamingMessage: reply,
+    });
+    await mountChat();
+
+    const cards = screen.getAllByTestId('chat-tool-ui-question-flow');
+    expect(cards).toHaveLength(1);
+    expect(within(cards[0]).getByText('Which finish?')).toBeVisible();
+  });
+
+  /** A tool with no Tool UI renderer stays inside the execution graph. */
   it('still hides a plain tool call that has no card renderer', async () => {
     await seedChat({
       messages: [
@@ -1001,7 +1028,7 @@ describe('Turn summary contents badges', () => {
     expect(screen.queryByTestId('chat-turn-summary-badges')).not.toBeInTheDocument();
   });
 
-  it('marks a pending approval in the badge row', async () => {
+  it('keeps a pending approval visible while process details open and close', async () => {
     await seedWorkspace();
     await seedChat({
       sending: true,
@@ -1024,11 +1051,18 @@ describe('Turn summary contents badges', () => {
     approvalsMock.mockResolvedValue({ ok: true, approvals: [pendingApprovalFixture] });
     await mountChat();
 
-    await waitFor(() => expect(screen.getByTestId('chat-run-pending-approvals')).toBeInTheDocument());
-    // Forced open, so the row is not visible right now — collapse is refused.
-    // What we assert is that the count reaches the card at all.
-    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
-    expect(screen.getByTestId('chat-run-pending-approvals')).toBeInTheDocument();
+    const approvals = await screen.findByTestId('chat-run-pending-approvals');
+    const toggle = screen.getByTestId('chat-turn-summary-toggle');
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('chat-turn-summary-details')).not.toBeInTheDocument();
+    expect(approvals).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(approvals).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(approvals).toBeInTheDocument();
   });
 });
 

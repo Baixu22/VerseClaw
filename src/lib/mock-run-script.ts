@@ -499,6 +499,11 @@ export async function runMockScript(ctx: MockRunContext, scenario: MockScenario)
 
   // ── F1 worst symptom: a run BLOCKED on a question the user must see ──
   if (scenario === 'ask') {
+    if (ctx.userText.startsWith('Tool UI response:\n')) {
+      finishRun({ role: 'assistant', id: `${runId}-reply`, timestamp: Date.now() / 1000,
+        content: [{ type: 'text', text: '已收到你的选择，继续处理。' }], stop_reason: 'end_turn' });
+      return;
+    }
     await sleep(300);
     if (stopped()) return;
     runtime({ type: 'thinking.delta', delta: '两个部署目标都可行，需要用户拍板…' });

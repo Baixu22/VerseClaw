@@ -14,11 +14,11 @@
  * session-activity store rather than passed down, so the header keeps tracking
  * the worker's status while you read.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Loader2, RefreshCw, Send } from 'lucide-react';
+import { ChevronDown, Loader2, RefreshCw, Send } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -54,6 +54,7 @@ function statusTone(status: SessionActivitySubagentStatus | undefined): string {
 export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: string }) {
   const { t } = useTranslation('chat');
   const navigate = useNavigate();
+  const dispatchInputId = useId();
   const parentSessionKey = useChatStore((s) => s.currentSessionKey);
   const anchorAgentId = useChatStore((s) => s.currentAgentId);
   const workspace = useWorkspacesStore((s) => s.activeWorkspace);
@@ -175,80 +176,87 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
 
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-subagent-panel">
-      <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={parentSessionKey}
-        generation={snapshot?.session.sessionId} snapshot={snapshot} worker={entry ?? undefined}
-        childSessionKey={childSessionKey}
-        task={loadedTranscript?.scope === viewScope ? loadedTranscript.task : null}
-        verificationReceipts={loadedTranscript?.scope === viewScope ? loadedTranscript.verificationReceipts : undefined}
-        onOpenResources={workspace?.id ? () => navigate('/settings/storage?' + new URLSearchParams({
-          workspaceId: workspace.id, sessionKey: parentSessionKey,
-        }).toString()) : undefined} />
-      {sendPhase && <p role="status" data-testid="worker-send-phase">{t(`delegationStages.status.${sendPhase}`)}</p>}
-      <div className="mb-3 flex items-start gap-2.5">
-        <span className="relative inline-flex shrink-0">
-          <AgentAvatar
-            agentId={identity.avatarId}
-            name={identity.name}
-            avatar={identity.avatar}
-            size={32}
-          />
-          {entry?.role && (
-            <RoleBadge roleName={entry.role} size={15} className="absolute -bottom-0.5 -right-0.5" />
-          )}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-semibold text-foreground">{identity.name}</p>
-            {entry?.role && (
-              <span className="shrink-0 truncate text-xs text-muted-foreground">{entry.role}</span>
-            )}
-            {statusLabel && (
-              <Badge variant={entry?.status === 'error' ? 'destructive' : 'outline'} className="shrink-0">
-                {statusLabel}
-              </Badge>
-            )}
+      <header className="mb-2 shrink-0 rounded-xl border border-border/60 bg-surface-input p-3">
+        <div className="flex min-w-0 items-start gap-2.5">
+          <span className="relative inline-flex shrink-0">
+            <AgentAvatar agentId={identity.avatarId} name={identity.name} avatar={identity.avatar} size={34} />
+            {entry?.role && <RoleBadge roleName={entry.role} size={15} className="absolute -bottom-0.5 -right-0.5" />}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+              <p className="truncate text-sm font-semibold text-foreground">{identity.name}</p>
+              {entry?.role && <span className="truncate text-xs text-muted-foreground">{entry.role}</span>}
+              {statusLabel && (
+                <Badge variant={entry?.status === 'error' ? 'destructive' : 'outline'} className={cn(
+                  'shrink-0',
+                  entry?.status === 'started' && 'border-primary/30 bg-primary/5 text-primary',
+                  entry?.status === 'aborted' && 'border-destructive/30 text-destructive',
+                )}>
+                  {statusLabel}
+                </Badge>
+              )}
+            </div>
+            {entry?.task && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground" title={entry.task}>{entry.task}</p>}
           </div>
-          {entry?.task && (
-            <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{entry.task}</p>
-          )}
-          <p data-testid="workspace-subagent-model" className="mt-0.5 break-words text-2xs text-muted-foreground">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-8 shrink-0"
+            disabled={loading}
+            onClick={() => void load()}
+            aria-label={t('common:actions.refresh')}
+            title={t('common:actions.refresh')}
+            data-testid="workspace-subagent-refresh"
+          >
+            <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} aria-hidden="true" />
+          </Button>
+        </div>
+        <div className="mt-2 flex min-w-0 flex-wrap gap-x-3 gap-y-1 border-t border-border/50 pt-2 text-2xs text-muted-foreground">
+          <span data-testid="workspace-subagent-model" className="min-w-0 break-words">
             {t('delegationStages.model', { model: loadedTranscript?.scope === viewScope && loadedTranscript.model
               ? loadedTranscript.model : t('delegationStages.status.unavailable') })}
-          </p>
-          <p data-testid="workspace-subagent-cost" className="mt-0.5 break-words text-2xs text-muted-foreground">
+          </span>
+          <span data-testid="workspace-subagent-cost" className="break-words">
             {t('delegationStages.cost', { cost: loadedTranscript?.scope === viewScope && typeof loadedTranscript.costUsd === 'number'
               && Number.isFinite(loadedTranscript.costUsd) && loadedTranscript.costUsd >= 0
               ? new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 6 }).format(loadedTranscript.costUsd)
               : t('delegationStages.costUnknown') })}
-          </p>
-          {entry?.error && (
-            <p className="mt-0.5 text-xs text-destructive">{entry.error}</p>
-          )}
+          </span>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="h-8 shrink-0"
-          disabled={loading}
-          onClick={() => void load()}
-          data-testid="workspace-subagent-refresh"
-        >
-          <RefreshCw className={cn('mr-1.5 h-3.5 w-3.5', loading && 'animate-spin')} />
-          {t('common:actions.refresh')}
-        </Button>
-      </div>
+        {entry?.error && <p className="mt-2 rounded-md border border-destructive/20 bg-destructive/5 px-2 py-1.5 text-xs text-destructive">{entry.error}</p>}
+      </header>
+
+      {sendPhase && (
+        <p role="status" data-testid="worker-send-phase" className="mb-2 shrink-0 rounded-lg border border-border/60 bg-surface-input px-3 py-2 text-xs">
+          {t(`delegationStages.status.${sendPhase}`)}
+        </p>
+      )}
+
+      <details className="group/delegation mb-2 shrink-0" data-testid="workspace-subagent-details">
+        <summary className="flex min-h-8 cursor-pointer list-none items-center gap-2 rounded-lg px-2 text-xs text-muted-foreground hover:bg-muted/50 hover:text-foreground [&::-webkit-details-marker]:hidden">
+          <span className="min-w-0 flex-1">{t('agentsPanel.lifecycleDetails')}</span>
+          <ChevronDown className="size-3.5 shrink-0 transition-transform group-open/delegation:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="pt-2">
+          <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={parentSessionKey}
+            generation={snapshot?.session.sessionId} snapshot={snapshot} worker={entry ?? undefined}
+            childSessionKey={childSessionKey}
+            task={loadedTranscript?.scope === viewScope ? loadedTranscript.task : null}
+            verificationReceipts={loadedTranscript?.scope === viewScope ? loadedTranscript.verificationReceipts : undefined}
+            onOpenResources={workspace?.id ? () => navigate('/settings/storage?' + new URLSearchParams({
+              workspaceId: workspace.id, sessionKey: parentSessionKey,
+            }).toString()) : undefined} />
+        </div>
+      </details>
 
       <div
         ref={scrollRef}
-        className="min-h-0 flex-1 overflow-y-auto rounded-md border border-black/10 dark:border-white/10"
+        className="min-h-0 flex-1 overflow-y-auto rounded-xl border border-border/60 bg-background/60"
         data-testid="workspace-subagent-transcript"
       >
         {transcriptError ? (
-          <div
-            className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center"
-            data-testid="workspace-subagent-transcript-failed"
-          >
+          <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center" data-testid="workspace-subagent-transcript-failed">
             <p className="text-xs text-destructive">{t(transcriptError.messageKey)}</p>
             {transcriptError.errorId ? (
               <p className="text-[11px] text-muted-foreground">
@@ -256,13 +264,7 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
               </p>
             ) : null}
             {transcriptError.retry ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 text-xs"
-                onClick={transcriptError.retry}
-                data-testid="workspace-subagent-transcript-retry"
-              >
+              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={transcriptError.retry} data-testid="workspace-subagent-transcript-retry">
                 {t('retry')}
               </Button>
             ) : null}
@@ -276,22 +278,26 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
             {t('agentsPanel.transcriptEmpty')}
           </div>
         ) : (
-          <div className="divide-y divide-black/5 dark:divide-white/10">
+          <div role="log" aria-label={t('agentsPanel.transcriptLabel')} aria-live="polite" className="flex min-h-full flex-col gap-3 p-3">
             {transcript.map((message, index) => {
               const role = normalizeMessageRole(message.role);
               const text = extractText(message);
               if (!text.trim()) return null;
+              const userMessage = role === 'user';
+              const systemMessage = role === 'system' || role === 'toolresult';
               return (
-                <div key={message.id ?? `${role}-${index}`} className="p-2.5">
-                  <p className={cn(
-                    'text-[10px] font-medium uppercase tracking-wide',
-                    role === 'assistant' ? statusTone(entry?.status) : 'text-muted-foreground',
+                <div key={message.id ?? `${role}-${index}`} className={cn('flex min-w-0', userMessage ? 'justify-end' : systemMessage ? 'justify-center' : 'justify-start')} data-message-role={role}>
+                  <article className={cn(
+                    'min-w-0 max-w-[92%] rounded-2xl px-3 py-2',
+                    userMessage && 'bg-primary/10 text-foreground',
+                    role === 'assistant' && 'border border-border/50 bg-surface-input text-foreground',
+                    systemMessage && 'max-w-full rounded-lg border border-border/50 bg-muted/40 text-muted-foreground',
                   )}>
-                    {role === 'assistant'
-                      ? identity.name
-                      : t(`agentsPanel.role.${role}`, { defaultValue: role })}
-                  </p>
-                  <p className="mt-1 whitespace-pre-wrap break-words text-xs text-foreground">{text}</p>
+                    <p className={cn('mb-1 text-2xs font-medium', role === 'assistant' ? statusTone(entry?.status) : systemMessage ? 'text-muted-foreground' : 'text-foreground/70')}>
+                      {role === 'assistant' ? identity.name : t(`agentsPanel.role.${role}`, { defaultValue: role })}
+                    </p>
+                    <p className="whitespace-pre-wrap break-words text-[13px] leading-relaxed">{text}</p>
+                  </article>
                 </div>
               );
             })}
@@ -299,28 +305,41 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
         )}
       </div>
 
-      <div className="mt-2 flex items-end gap-2">
-        <Textarea
-          value={dispatchTask}
-          onChange={(event) => setDispatchTask(event.target.value)}
-          placeholder={t('agentsPanel.dispatchPlaceholder', { role: identity.name })}
-          rows={2}
-          className="min-h-0 flex-1 resize-none text-xs"
-          data-testid="workspace-subagent-dispatch-input"
-        />
-        <Button
-          type="button"
-          size="sm"
-          className="h-8 shrink-0"
-          disabled={!dispatchTask.trim() || dispatching || !childGeneration || sendPhase === 'unknown'}
-          aria-label={t('composer.send')}
-          onClick={() => void handleDispatch()}
-          data-testid="workspace-subagent-dispatch"
-        >
-          {dispatching
-            ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-            : <Send className="h-3.5 w-3.5" aria-hidden="true" />}
-        </Button>
+      <div className="mt-2 shrink-0 border-t border-border/60 pt-2">
+        <label htmlFor={dispatchInputId} className="mb-1 block text-2xs font-medium text-muted-foreground">
+          {t('agentsPanel.dispatchLabel')}
+        </label>
+        <div className="flex items-end gap-2">
+          <Textarea
+            id={dispatchInputId}
+            value={dispatchTask}
+            onChange={(event) => setDispatchTask(event.target.value)}
+            placeholder={t('agentsPanel.dispatchPlaceholder', { role: identity.name })}
+            rows={2}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229
+                || dispatching || !childGeneration || sendPhase === 'unknown') return;
+              event.preventDefault();
+              void handleDispatch();
+            }}
+            className="min-h-0 flex-1 resize-none text-xs"
+            data-testid="workspace-subagent-dispatch-input"
+          />
+          <Button
+            type="button"
+            size="sm"
+            className="h-9 shrink-0 gap-1.5 px-3"
+            disabled={!dispatchTask.trim() || dispatching || !childGeneration || sendPhase === 'unknown'}
+            aria-label={t('composer.send')}
+            onClick={() => void handleDispatch()}
+            data-testid="workspace-subagent-dispatch"
+          >
+            {dispatching
+              ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+              : <Send className="size-3.5" aria-hidden="true" />}
+            <span>{t('composer.send')}</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

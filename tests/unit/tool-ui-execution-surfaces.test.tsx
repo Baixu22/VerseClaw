@@ -112,9 +112,19 @@ describe('official Tool UI execution payloads', () => {
       }]} />
       <RunMutationDiffs surfaces={[{
         type: 'code-diff', id: 'long-diff', filePath: 'src/demo.ts', language: 'typescript',
-        patch, mode: 'full', confidence: 'trusted',
+        patch, lineStats: { added: 30, removed: 0 }, mode: 'full', confidence: 'trusted',
       }]} />
     </>);
+
+    const fileToggle = screen.getByTestId('chat-mutation-file-toggle');
+    expect(fileToggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('code-diff-content')).not.toBeInTheDocument();
+    fireEvent.click(fileToggle);
+    expect(screen.getByTestId('code-diff-content')).toBeVisible();
+    expect(screen.getAllByRole('group')).toHaveLength(1);
+    const terminalToggle = screen.getByTestId('chat-run-terminal-toggle');
+    expect(terminalToggle).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(terminalToggle);
 
     for (const [expand, collapse] of [
       ['toolUi.terminal.showAll', 'toolUi.terminal.collapse'],
@@ -129,6 +139,20 @@ describe('official Tool UI execution payloads', () => {
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(output));
     fireEvent.click(screen.getByRole('button', { name: 'toolUi.codeDiff.copy' }));
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(patch));
+  });
+
+  it('keeps one running progress chip beside wrapped live terminal output', () => {
+    const output = `${'a'.repeat(180)}\nsecond line`;
+    render(<RunTerminalSurfaces surfaces={[{
+      type: 'terminal', id: 'running-command', command: 'pnpm test', output,
+      status: 'running', truncated: false,
+    }]} />);
+
+    expect(screen.getByTestId('chat-run-terminal-toggle')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getAllByTestId('chat-call-chip')).toHaveLength(1);
+    expect(screen.getByTestId('terminal-output')).toHaveTextContent(/a{180} second line/);
+    expect(screen.getByTestId('terminal-output').querySelector('.whitespace-pre-wrap')).not.toBeNull();
+    expect(screen.getByTestId('terminal-output').querySelector('.min-w-max')).toBeNull();
   });
 
   it('renders a journal-backed mutation patch and copies the same text fallback', async () => {
@@ -151,12 +175,17 @@ describe('official Tool UI execution payloads', () => {
       filePath: 'src/demo.ts',
       language: 'typescript',
       patch,
+      lineStats: { added: 1, removed: 1 },
       mode: 'full',
       confidence: 'trusted',
     }]} />);
 
     expect(screen.getByTestId('chat-mutation-code-diff')).toHaveTextContent('demo.ts');
     expect(screen.getByTestId('chat-mutation-code-diff')).toHaveTextContent('+1 -1');
+    expect(screen.queryByTestId('code-diff-content')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('chat-mutation-file-toggle'));
+    expect(screen.getByTestId('code-diff-content')).toBeVisible();
+    expect(screen.getAllByRole('group')).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: 'toolUi.codeDiff.copy' }));
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(patch));
   });

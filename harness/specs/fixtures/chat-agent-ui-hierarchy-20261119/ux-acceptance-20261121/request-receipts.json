@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "transport": "Electron IPC fixture",
+  "calls": [
+    {
+      "module": "chat",
+      "action": "sendWithMedia",
+      "payload": {
+        "sessionKey": "agent:main:main",
+        "workspaceId": "ux-acceptance",
+        "message": "Tool UI response:\n{\n  \"type\": \"plan\",\n  \"id\": \"plan-proposal\",\n  \"action\": \"approve\",\n  \"value\": [\n    {\n      \"id\": \"read\",\n      \"label\": \"Read the current implementation\",\n      \"status\": \"pending\"\n    },\n    {\n      \"id\": \"verify\",\n      \"label\": \"Verify the user journey\",\n      \"status\": \"pending\"\n    }\n  ]\n}",
+        "deliver": false,
+        "idempotencyKey": "c3d3f669-3573-44e0-85aa-383ba598cf45",
+        "expectedSessionGeneration": "ux-generation",
+        "knowledgeMode": "suggest"
+      }
+    },
+    {
+      "module": "chat",
+      "action": "sendWithMedia",
+      "payload": {
+        "sessionKey": "agent:main:main",
+        "workspaceId": "ux-acceptance",
+        "message": "Tool UI response:\n{\n  \"type\": \"question-flow\",\n  \"id\": \"question-request\",\n  \"action\": \"complete\",\n  \"value\": {\n    \"scope\": [\n      \"chat\"\n    ],\n    \"theme\": [\n      \"both\"\n    ]\n  }\n}",
+        "deliver": false,
+        "idempotencyKey": "e353f4dd-e6a1-4f8a-8139-25ffcd797e64",
+        "expectedSessionGeneration": "ux-generation",
+        "knowledgeMode": "suggest"
+      }
+    }
+  ]
+}
