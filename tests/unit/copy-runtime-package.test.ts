@@ -121,6 +121,40 @@ it('rejects missing installed dependencies even when a user-level copy is availa
   expect(() => copyRuntimeDependencies(source, output)).toThrow('Missing installed dependency sdk');
 });
 
+it('ships an owner-registered external pnpm store as physical dependencies', () => {
+  const root = fixture(), installation = join(root, 'installation');
+  const source = join(installation, 'extensions', 'native'), store = join(root, 'virtual-store');
+  pkg(source, 'native-plugin', '1', { sdk: '1' });
+  pkg(join(store, 'sdk'), 'sdk', '1', { schema: '2' });
+  pkg(join(store, 'sdk', 'node_modules', 'schema'), 'schema', '2');
+  mkdirSync(join(installation, 'node_modules'), { recursive: true });
+  symlinkSync(join(store, 'sdk'), join(installation, 'node_modules', 'sdk'), 'junction');
+  writeFileSync(join(installation, 'node_modules', '.modules.yaml'), JSON.stringify({
+    packageManager: 'pnpm@11.2.2', virtualStoreDir: store,
+  }));
+  expect(collectRuntimeDependencyPackages(source, installation).size).toBe(2);
+  const output = join(root, 'output'); pkg(output, 'native-plugin', '1');
+  expect(copyRuntimeDependencies(source, output, installation)).toBe(2);
+  rmSync(installation, { recursive: true, force: true });
+  rmSync(store, { recursive: true, force: true });
+  expect(lstatSync(join(output, 'node_modules', 'sdk')).isSymbolicLink()).toBe(false);
+  expect(createRequire(join(output, 'node_modules', 'sdk', 'index.js'))('schema')).toBe('2');
+});
+
+it('rejects a foreign dependency outside the registered pnpm virtual store', () => {
+  const root = fixture(), source = join(root, 'source'), store = join(root, 'store');
+  pkg(source, 'plugin', '1', { sdk: '1' });
+  pkg(store, 'unused', '1');
+  pkg(join(root, 'foreign', 'sdk'), 'sdk', '1');
+  mkdirSync(join(source, 'node_modules'), { recursive: true });
+  symlinkSync(join(root, 'foreign', 'sdk'), join(source, 'node_modules', 'sdk'), 'junction');
+  writeFileSync(join(source, 'node_modules', '.modules.yaml'), JSON.stringify({
+    packageManager: 'pnpm@11.2.2', virtualStoreDir: store,
+  }));
+  expect(() => collectRuntimeDependencyPackages(source)).toThrow('Missing installed dependency sdk');
+  expect(() => copyRuntimeDependencies(source, join(root, 'output'))).toThrow('Missing installed dependency sdk');
+});
+
 it('loads Main dependencies and their children from the complete packaged graph', () => {
   const root = fixture();
   const main = join(root, 'app.asar', 'dist-electron', 'main', 'index.js');
