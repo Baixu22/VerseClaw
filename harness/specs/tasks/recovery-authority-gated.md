@@ -11,6 +11,7 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/plugins/bundled-channel-runtime.ts
   - openclaw_runtime/src/channels/plugins/bundled.ts
   - tests/unit/gateway-bundled-channel-metadata.test.ts
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/bundled-metadata-20261123/**

@@ -4,7 +4,6 @@
  * Loads generated bundled channel entries, setup metadata, secrets, and legacy migration hooks.
  */
 import path from "node:path";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { extractErrorCode, formatErrorMessage } from "../../infra/errors.js";
 import { isPathInside } from "../../infra/path-guards.js";
@@ -17,10 +16,9 @@ import type {
 import {
   listBundledChannelPluginMetadata,
   resolveBundledChannelGeneratedPath,
+  shouldIncludeBundledChannelSetupFeatureForConfig,
   type BundledChannelPluginMetadata,
 } from "../../plugins/bundled-channel-runtime.js";
-import { normalizePluginsConfig } from "../../plugins/config-state.js";
-import { passesManifestOwnerBasePolicy } from "../../plugins/manifest-owner-policy.js";
 import { unwrapDefaultModuleExport } from "../../plugins/module-export.js";
 import { registerPluginMetadataProcessMemoLifecycleClear } from "../../plugins/plugin-metadata-lifecycle.js";
 import {
@@ -477,46 +475,6 @@ function listBundledChannelPluginIdsForRoot(
   return listBundledChannelMetadata(rootScope, loadContext)
     .map((metadata) => metadata.manifest.id)
     .toSorted((left, right) => left.localeCompare(right));
-}
-
-function shouldIncludeBundledChannelSetupFeatureForConfig(params: {
-  metadata: BundledChannelPluginMetadata;
-  config?: OpenClawConfig;
-}): boolean {
-  if (!params.config) {
-    return true;
-  }
-  const pluginId = params.metadata.manifest.id;
-  if (
-    !passesManifestOwnerBasePolicy({
-      plugin: { id: pluginId },
-      normalizedConfig: normalizePluginsConfig(params.config.plugins),
-      allowRestrictiveAllowlistBypass: true,
-    })
-  ) {
-    return false;
-  }
-
-  let hasExplicitChannelDisable = false;
-  for (const channelId of params.metadata.manifest.channels ?? [pluginId]) {
-    const normalizedChannelId = normalizeOptionalLowercaseString(channelId);
-    if (!normalizedChannelId) {
-      continue;
-    }
-    const channelConfig = (params.config.channels as Record<string, unknown> | undefined)?.[
-      normalizedChannelId
-    ];
-    if (!channelConfig || typeof channelConfig !== "object" || Array.isArray(channelConfig)) {
-      continue;
-    }
-    if ((channelConfig as { enabled?: unknown }).enabled === false) {
-      hasExplicitChannelDisable = true;
-      continue;
-    }
-    return true;
-  }
-
-  return !hasExplicitChannelDisable;
 }
 
 function listBundledChannelPluginIdsForSetupFeature(

@@ -1,7 +1,11 @@
 /** Loads bundled channel plugin runtime entries and setup metadata. */
 import fs from "node:fs";
 import path from "node:path";
+import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { resolveBundledPluginGeneratedPath } from "./bundled-plugin-metadata.js";
+import { normalizePluginsConfig } from "./config-state.js";
+import { passesManifestOwnerBasePolicy } from "./manifest-owner-policy.js";
 import type { PluginManifestRecord } from "./manifest-registry.js";
 import type { OpenClawPackageManifest } from "./manifest.js";
 import { loadPluginManifestRegistryForPluginRegistry } from "./plugin-registry.js";
@@ -28,6 +32,47 @@ export type BundledChannelPluginMetadata = {
   packageManifest?: OpenClawPackageManifest;
   rootDir: string;
 };
+
+/** Applies plugin and channel policy to metadata before a setup entry is loaded. */
+export function shouldIncludeBundledChannelSetupFeatureForConfig(params: {
+  metadata: BundledChannelPluginMetadata;
+  config?: OpenClawConfig;
+}): boolean {
+  if (!params.config) {
+    return true;
+  }
+  const pluginId = params.metadata.manifest.id;
+  if (
+    !passesManifestOwnerBasePolicy({
+      plugin: { id: pluginId },
+      normalizedConfig: normalizePluginsConfig(params.config.plugins),
+      allowRestrictiveAllowlistBypass: true,
+    })
+  ) {
+    return false;
+  }
+
+  let hasExplicitChannelDisable = false;
+  for (const channelId of params.metadata.manifest.channels ?? [pluginId]) {
+    const normalizedChannelId = normalizeOptionalLowercaseString(channelId);
+    if (!normalizedChannelId) {
+      continue;
+    }
+    const channelConfig = (params.config.channels as Record<string, unknown> | undefined)?.[
+      normalizedChannelId
+    ];
+    if (!channelConfig || typeof channelConfig !== "object" || Array.isArray(channelConfig)) {
+      continue;
+    }
+    if ((channelConfig as { enabled?: unknown }).enabled === false) {
+      hasExplicitChannelDisable = true;
+      continue;
+    }
+    return true;
+  }
+
+  return !hasExplicitChannelDisable;
+}
 
 function resolveBundledMetadataScope(params?: {
   rootDir?: string;

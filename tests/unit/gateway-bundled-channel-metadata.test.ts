@@ -19,10 +19,22 @@ vi.mock('../../openclaw_runtime/src/channels/plugins/bundled-root.js', () => ({
     cacheKey: mocks.root,
   }),
 }));
-vi.mock('../../openclaw_runtime/src/plugins/bundled-channel-runtime.js', () => ({
-  listBundledChannelPluginMetadata: mocks.metadata,
-  resolveBundledChannelGeneratedPath: (_root: string, entry: { source: string }) => entry.source,
+vi.mock('../../openclaw_runtime/src/plugins/bundled-plugin-metadata.js', () => ({
+  resolveBundledPluginGeneratedPath: vi.fn(),
 }));
+vi.mock('../../openclaw_runtime/src/plugins/plugin-registry.js', () => ({
+  loadPluginManifestRegistryForPluginRegistry: vi.fn(),
+}));
+vi.mock(
+  '../../openclaw_runtime/src/plugins/bundled-channel-runtime.js',
+  async (importOriginal) => ({
+    ...(await importOriginal<
+      typeof import('../../openclaw_runtime/src/plugins/bundled-channel-runtime')
+    >()),
+    listBundledChannelPluginMetadata: mocks.metadata,
+    resolveBundledChannelGeneratedPath: (_root: string, entry: { source: string }) => entry.source,
+  })
+);
 vi.mock('../../openclaw_runtime/src/channels/plugins/module-loader.js', () => ({
   loadChannelPluginModule: mocks.module,
 }));
@@ -112,6 +124,16 @@ it('reapplies channel and plugin disablement to the shared metadata', () => {
     })
   ).toEqual([]);
   expect(bundled.listBundledChannelLegacyStateMigrationDetectors()).toHaveLength(1);
+  expect(
+    bundled.listBundledChannelLegacyStateMigrationDetectors({
+      config: { plugins: { allow: ['other'] } },
+    })
+  ).toHaveLength(1);
+  for (const plugins of [{ deny: ['example'] }, { entries: { example: { enabled: false } } }]) {
+    expect(
+      bundled.listBundledChannelLegacyStateMigrationDetectors({ config: { plugins } })
+    ).toEqual([]);
+  }
   expect(mocks.metadata).toHaveBeenCalledTimes(1);
 });
 

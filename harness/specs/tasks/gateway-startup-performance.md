@@ -11,6 +11,7 @@ intent: Measure the managed Gateway startup path and remove verified startup bot
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - openclaw_runtime/src/plugins/bundled-channel-runtime.ts
   - openclaw_runtime/src/channels/plugins/bundled.ts
   - tests/unit/gateway-bundled-channel-metadata.test.ts
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/bundled-metadata-20261123/**
