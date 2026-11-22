@@ -12,5 +12,6 @@
   "reviewFindings": 0,
   "driven_by": "agent",
   "actor": "codex/g3-native-parent-development",
-  "realHumanEvidence": false
+  "realHumanEvidence": false,
+  "deliveryChecksumPolicy": "CRLF normalized to LF for .md/.json text; exact binary bytes for gzip"
 }

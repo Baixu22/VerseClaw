@@ -13,3 +13,5 @@ WorkBuddy ccs-workbuddy/deepseek-v4.1-flash复核0发现；结果由原始autore
 G3 GA为NO_GO。本候选完整类型、构建和真实恢复指标等待受限验收窗口，没有新增恢复测量。前候选41.935秒记录不作为本候选性能结果。全部产物为agent驱动。
 
 report.json保存候选、命令、峰值与复核，verification.json保存读回结果，raw-evidence.json.gz保留72份原始输入/输出；SHA256SUMS校验这四份交付文件。本地完整记录仍位于D:/tmp/g3-slim-development-20261122-01a1fe77/。
+
+交付校验采用Git规范LF文本：README.md、report.json和verification.json先将CRLF归一化为LF，再计算SHA256；raw-evidence.json.gz按原始二进制字节计算。SHA256SUMS可直接校验Git blob或LF检出的文件，Windows工作副本按此换行规则核对。
