@@ -14,6 +14,7 @@ touchedAreas:
   - openclaw_runtime/src/plugins/sdk-alias.ts
   - openclaw_runtime/src/plugins/plugin-sdk-native-resolver.ts
   - scripts/gateway-workspace-alias.test.mjs
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/native-package-root-20261122/**
   - package.json
   - openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts
   - openclaw_runtime/src/gateway/trajectory-gateway.ts
@@ -362,6 +363,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Native loader package-root resolution probes each ancestor manifest once within its twelve-directory search. A trusted OpenClaw name or executable retains priority over the nearest ordinary package; missing, malformed and unreadable metadata retain the nearest observed package or module directory. Later calls read current metadata, and bundled and external parent scopes retain their existing boundaries.
   - Native CJS and ESM alias resolution normalizes each parent path once before testing registered roots. First-match ordering, missing-path lexical fallback, outside-root rejection and fresh symlink targets on subsequent calls retain their existing behavior; unknown aliases and absent parents skip filesystem normalization.
   - Workspace export alias enumeration reads the selected package manifest before resolving a fallback package root. Missing or invalid selected manifests retain fallback resolution; selected packaged-entry discovery, alias ordering and non-null JSON handling retain their existing behavior.
   - Importing trajectory subscription cleanup hooks leaves that module's session resolver deferred. readTrajectoryPage validates session and range inputs before loading its resolver; session and path guards, pagination, error identity and subscription delivery retain their current behavior.

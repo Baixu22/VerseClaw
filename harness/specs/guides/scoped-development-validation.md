@@ -53,9 +53,11 @@ existing build, type, real recovery, live-provider and packaging gates.
 
 For memory-sensitive G3 workspace alias development, use
 `pnpm run test:recovery:tiny`. It exercises the production alias enumerator and
-native CJS/ESM parent-boundary resolver with in-memory filesystem fixtures in
+native package-root and CJS/ESM parent-boundary resolvers with in-memory filesystem fixtures in
 one Node process and a 96 MiB heap limit. Native resolution normalizes each
 parent once per call and reads a changed symlink target on the following call.
+Package-root scans retain the nearest observed manifest for fallback within the
+same call, while preserving trusted OpenClaw ancestor priority and the twelve-directory limit.
 It keeps SDK loader imports, Vitest workers and build steps out of this check.
 Record the process RSS peak separately from the JavaScript heap limit.
 The package script limits the JavaScript heap. Use the recorded bounded local

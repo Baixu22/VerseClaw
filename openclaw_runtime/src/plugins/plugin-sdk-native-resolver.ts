@@ -159,10 +159,13 @@ function findBundledPluginRoot(modulePath: string): string | undefined {
 }
 
 function resolveLoaderPackageRootFromModulePath(modulePath: string): string {
-  let cursor = path.dirname(path.resolve(modulePath));
+  const moduleDirectory = path.dirname(path.resolve(modulePath));
+  let cursor = moduleDirectory;
+  let nearestPackageRoot: string | undefined;
   for (let i = 0; i < 12; i += 1) {
     const packageJsonPath = path.join(cursor, "package.json");
     if (fs.existsSync(packageJsonPath)) {
+      nearestPackageRoot ??= cursor;
       try {
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as {
           bin?: unknown;
@@ -186,7 +189,7 @@ function resolveLoaderPackageRootFromModulePath(modulePath: string): string {
     }
     cursor = parent;
   }
-  return findNearestPackageRoot(modulePath);
+  return nearestPackageRoot ?? moduleDirectory;
 }
 
 function resolveAllowedParentRoot(modulePath: string): string {

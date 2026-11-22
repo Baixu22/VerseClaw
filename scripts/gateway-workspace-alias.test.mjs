@@ -181,6 +181,162 @@ const nativeScript = new vm.Script(
   ),
   { filename: nativeSourcePath }
 );
+const packageRootEnd = nativeSource.indexOf('\nfunction resolveAllowedParentRoots(', normalizeEnd);
+assert(packageRootEnd > normalizeEnd, 'Native package-root implementation boundary is missing');
+const packageRootScript = new vm.Script(
+  stripTypeScriptTypes(nativeSource.slice(normalizeStart, packageRootEnd)),
+  { filename: nativeSourcePath }
+);
+
+function packageRootFixture(files, modulePath) {
+  const probes = [];
+  const reads = [];
+  const context = vm.createContext({
+    path,
+    fs: {
+      existsSync(file) {
+        probes.push(file);
+        return files.has(file);
+      },
+      readFileSync(file) {
+        reads.push(file);
+        const contents = files.get(file);
+        if (contents === null) throw new Error('Unreadable package manifest');
+        return contents;
+      },
+      realpathSync: (file) => path.resolve(file),
+    },
+  });
+  packageRootScript.runInContext(context);
+  return {
+    context,
+    probes,
+    reads,
+    resolve: () => context.resolveLoaderPackageRootFromModulePath(modulePath),
+  };
+}
+
+const rootScanModule = path.resolve(
+  'native-package-root-fixture',
+  ...Array.from({ length: 14 }, (_, i) => `level-${i}`),
+  'entry.js'
+);
+const rootScanDirectories = [path.dirname(rootScanModule)];
+for (let i = 0; i < 12; i += 1) {
+  rootScanDirectories.push(path.dirname(rootScanDirectories.at(-1)));
+}
+const packagePath = (directory) => path.join(directory, 'package.json');
+const rootScanPaths = rootScanDirectories.slice(0, 12).map(packagePath);
+for (const [name, manifests, expectedDepth, scanned] of [
+  [
+    'named OpenClaw ancestor',
+    [
+      [0, '{}'],
+      [2, '{"name":"openclaw"}'],
+    ],
+    2,
+    3,
+  ],
+  [
+    'OpenClaw executable ancestor',
+    [
+      [0, '{}'],
+      [2, '{"bin":{"openclaw":"cli.js"}}'],
+    ],
+    2,
+    3,
+  ],
+  [
+    'ordinary nearest package and invalid executable',
+    [
+      [0, '{}'],
+      [2, '{"bin":{"openclaw":1}}'],
+    ],
+    0,
+    12,
+  ],
+  [
+    'nearest ancestor ordinary package',
+    [
+      [2, '{}'],
+      [5, '{}'],
+    ],
+    2,
+    12,
+  ],
+  [
+    'malformed nearest manifest',
+    [
+      [0, '{'],
+      [2, '{}'],
+    ],
+    0,
+    12,
+  ],
+  [
+    'unreadable nearest manifest',
+    [
+      [0, null],
+      [2, '{}'],
+    ],
+    0,
+    12,
+  ],
+  ['no package manifests', [], 0, 12],
+  [
+    'OpenClaw ancestor beyond the search limit',
+    [
+      [0, '{}'],
+      [12, '{"name":"openclaw"}'],
+    ],
+    0,
+    12,
+  ],
+]) {
+  test(`native package-root scan retains ${name} without repeated probes`, () => {
+    const files = new Map(
+      manifests.map(([depth, contents]) => [packagePath(rootScanDirectories[depth]), contents])
+    );
+    const fixture = packageRootFixture(files, rootScanModule);
+    assert.equal(fixture.resolve(), rootScanDirectories[expectedDepth]);
+    assert.deepEqual(fixture.probes, rootScanPaths.slice(0, scanned));
+    assert.deepEqual(
+      fixture.reads,
+      fixture.probes.filter((file) => files.has(file))
+    );
+  });
+}
+
+test('native package roots read new manifest facts on the following call', () => {
+  const files = new Map([[rootScanPaths[0], '{}']]);
+  const fixture = packageRootFixture(files, rootScanModule);
+  assert.equal(fixture.resolve(), rootScanDirectories[0]);
+  files.set(rootScanPaths[2], '{"name":"openclaw"}');
+  assert.equal(fixture.resolve(), rootScanDirectories[2]);
+  assert.deepEqual(fixture.probes, [...rootScanPaths, ...rootScanPaths.slice(0, 3)]);
+});
+
+test('native parent scopes retain bundled plugin roots and external package boundaries', () => {
+  const root = path.resolve('native-package-owner-fixture');
+  for (const parent of [
+    'extensions',
+    'dist/extensions',
+    'dist-runtime/extensions',
+    'node_modules',
+  ]) {
+    const pluginRoot = path.join(root, parent, 'example');
+    const modulePath = path.join(pluginRoot, 'src', 'entry.js');
+    const fixture = packageRootFixture(
+      new Map([
+        [packagePath(root), '{"name":"openclaw"}'],
+        [packagePath(pluginRoot), '{}'],
+      ]),
+      modulePath
+    );
+    assert.equal(fixture.context.resolveAllowedParentRoot(modulePath), pluginRoot);
+  }
+});
+
 const nativeRequest = 'openclaw/plugin-sdk/example';
 const allowedRoot = path.resolve('native-alias-allowed-fixture');
 const blockedRoot = path.resolve('native-alias-blocked-fixture');
