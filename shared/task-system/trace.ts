@@ -72,6 +72,7 @@ export type TaskTraceSnapshot = {
   evidence: TaskEvidence[];
   retention: TaskArtifactRetentionReceipt[];
   usageEvents: TaskTraceEvent[];
+  runEvents: TaskTraceEvent[];
   operationIds: string[];
 };
 export type TaskTraceDiagnostic = {
@@ -147,7 +148,7 @@ export type TaskTraceReport = {
     calls: number;
     unknownCalls: number;
     duplicateObservations: number;
-    records: Array<{ call: TaskModelCall; usage: TaskModelUsage | null }>;
+    records: Array<{ call: TaskModelCall; usage: TaskModelUsage | null; run: ScopedRunId | null }>;
   };
   phases: Record<
     "queue" | "execution" | "verification" | "recovery",
@@ -229,6 +230,27 @@ function unionDuration(intervals: Array<{ start: number; end: number }>): number
   return total;
 }
 
+function readRuns(events: TaskTraceEvent[]): TaskTraceRun[] {
+  return events
+    .filter((event) => event.kind === "run_started")
+    .map((event) => {
+      const start = event.payload as Omit<TaskTraceRun, "endedAt">;
+      const end = events.find(
+        (end) =>
+          end.seq > event.seq &&
+          end.kind === "run_finished" &&
+          same(object(end.payload).credential, start.credential) &&
+          object(end.payload).runId === start.runId,
+      );
+      const settled = object(end?.payload).provenance as TaskRunProvenance | undefined;
+      return {
+        ...start,
+        endedAt: end?.at ?? null,
+        provenance: settled?.run ? settled : start.provenance,
+      };
+    });
+}
+
 /** Query existing owner records and diagnose missing or changed references. */
 export function readTaskTrace(
   store: TaskSystemStore,
@@ -272,24 +294,8 @@ export function readTaskTrace(
   const delegations = events
     .filter((e) => e.kind === "delegation_prepared")
     .map((e) => e.payload as TaskWriterDelegation);
-  const runs = events
-    .filter((e) => e.kind === "run_started")
-    .map((e) => {
-      const start = e.payload as Omit<TaskTraceRun, "endedAt">;
-      const end = events.find(
-        (end) =>
-          end.seq > e.seq &&
-          end.kind === "run_finished" &&
-          same(object(end.payload).credential, start.credential) &&
-          object(end.payload).runId === start.runId,
-      );
-      const settledProvenance = object(end?.payload).provenance as TaskRunProvenance | undefined;
-      return {
-        ...start,
-        endedAt: end?.at ?? null,
-        provenance: settledProvenance?.checkout ? settledProvenance : start.provenance,
-      };
-    });
+  const runs = readRuns(events);
+  const familyRuns = readRuns(snapshot.runEvents);
   const operations = events
     .filter((e) => e.kind === "operation_started")
     .map((e) => {
@@ -528,7 +534,21 @@ export function readTaskTrace(
     unknownCalls = 0,
     unknownTokens = false;
   const records = [...calls.values()].map((call) => {
-    if (!call.provenance?.run) diagnose("source_identity_unknown", call.callId);
+    // The first model call can precede checkout admission. Join its original
+    // run receipt while preserving the model-call facts captured at start.
+    const originalRun = familyRuns.find(
+      (run) =>
+        run.runId === call.runId &&
+        run.taskRevision === call.taskRevision &&
+        same(run.credential, call.credential),
+    );
+    const resolvedRun = call.provenance?.run ?? originalRun?.provenance?.run;
+    const run =
+      resolvedRun?.runId === call.runId &&
+      resolvedRun.scope.sessionKey === call.credential.sessionKey
+        ? resolvedRun
+        : null;
+    if (!run) diagnose("source_identity_unknown", call.callId);
     const value = conflicts.has(call.callId) ? null : (usage.get(call.callId) ?? null);
     if (conflicts.has(call.callId)) diagnose("cost_conflict", call.callId);
     if (!value || value.costUsd === null || !value.priceVersion) {
@@ -537,7 +557,7 @@ export function readTaskTrace(
     } else knownSubtotalUsd += value.costUsd;
     if (!value?.usage) unknownTokens = true;
     else knownTokens += value.usage.total;
-    return { call, usage: value };
+    return { call, usage: value, run };
   });
   if (!records.length) diagnose("cost_unknown", task.contract.taskNodeId);
   const phases: TaskTraceReport["phases"] = {

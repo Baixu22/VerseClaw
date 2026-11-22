@@ -617,10 +617,11 @@ export class TaskSystemStore {
       const readEvents = (id: string): TaskTraceEvent[] => (this.db.prepare('SELECT seq,kind,at,json FROM task_events WHERE task_id=? ORDER BY seq')
         .all(id) as Array<{ seq: number; kind: string; at: number; json: string }>).map(({ json, ...row }) => ({ ...row, payload: JSON.parse(json) }));
       const events = readEvents(taskNodeId);
+      const familyEvents = [events, ...descendants.map(child => readEvents(child.contract.taskNodeId))].flat();
       return { task, ancestors, descendants, events, evidence: this.getTaskEvidence(taskNodeId), retention: this.retentionReceipts(taskNodeId),
         operationIds: (this.db.prepare('SELECT id FROM task_operations WHERE task_id=?').all(taskNodeId) as Array<{ id: string }>).map(row => row.id),
-        usageEvents: [events, ...descendants.map(child => readEvents(child.contract.taskNodeId))].flat()
-          .filter(event => ['model_call_started', 'model_usage', 'model_usage_conflict'].includes(event.kind)) };
+        usageEvents: familyEvents.filter(event => ['model_call_started', 'model_usage', 'model_usage_conflict'].includes(event.kind)),
+        runEvents: familyEvents.filter(event => ['run_started', 'run_finished'].includes(event.kind)) };
     });
   }
   changes(

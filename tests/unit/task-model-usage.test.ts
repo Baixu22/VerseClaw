@@ -4,7 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { TaskSystemStore } from "../../shared/task-system/store";
-import { resolveTaskDomain } from "../../shared/task-system/identity";
+import { resolveTaskDomain, type TaskAuthorityAccess } from "../../shared/task-system/identity";
+import { normalizeRunScope, type ScopedRunId } from "../../shared/types/identity-scope";
 import { readTaskTrace, type TaskModelUsage } from "../../shared/task-system/trace";
 import {
   createTaskRuntimeGuard,
@@ -17,9 +18,21 @@ import { createDiagnosticTraceContext } from "../../openclaw_runtime/src/infra/d
 import type { AssistantMessage, Model } from "../../openclaw_runtime/src/llm/types";
 
 const fixtures: Array<{ store: TaskSystemStore; root: string }> = [];
-function fixture() {
+function fixture(provenance?: TaskAuthorityAccess["runProvenance"]) {
   const root = mkdtempSync(join(tmpdir(), "v1-model-usage-"));
-  const store = new TaskSystemStore(resolveTaskDomain(root));
+  const domain = resolveTaskDomain(root);
+  const store = new TaskSystemStore(
+    domain,
+    undefined,
+    provenance
+      ? {
+          domain,
+          assertCurrent() {},
+          resolveRelated: resolveTaskDomain,
+          runProvenance: provenance,
+        }
+      : undefined,
+  );
   fixtures.push({ store, root });
   const task = store.start(
     {
@@ -59,6 +72,124 @@ afterEach(() => {
 });
 
 describe("Task model-call attribution", () => {
+  it("links a call preceding checkout admission to its original settled run without rewriting the call", () => {
+    const state: { run?: ScopedRunId } = {};
+    const f = fixture(() => (state.run ? { run: state.run } : {}));
+    f.store.beginModelCall(f.credential, {
+      callId: "before-checkout",
+      runId: "original-run",
+      provider: "provider",
+      model: "model",
+    });
+    f.store.beginRun(f.credential, "original-run");
+    f.store.recordModelUsage(f.credential, "before-checkout", usage());
+    state.run = normalizeRunScope({
+      runId: "original-run",
+      scope: {
+        workspaceId: "original-project",
+        projectId: "original-project",
+        sessionKey: "writer",
+      },
+    });
+    f.store.endRun(f.credential, "original-run");
+    const report = readTaskTrace(
+      f.store,
+      { taskNodeId: f.task.contract.taskNodeId },
+      () => "fixture",
+    );
+    expect(report.costs.records[0].run).toEqual(state.run);
+    expect(report.costs.records[0].call.provenance).toEqual({});
+    expect(report.diagnostics).not.toContainEqual({
+      code: "source_identity_unknown",
+      ref: "before-checkout",
+    });
+  });
+  it("links a child call to the child's run in a parent cost report", () => {
+    const state: { run?: ScopedRunId } = {};
+    const f = fixture(() => (state.run ? { run: state.run } : {}));
+    const [child] = f.store.decompose(
+      f.credential,
+      [
+        {
+          key: "child",
+          contract: {
+            objective: "Child execution",
+            target: ".",
+            constraints: [],
+            acceptance: [
+              {
+                id: "check",
+                description: "Check",
+                verification: { kind: "owner-receipt", owner: "fixture" },
+              },
+            ],
+          },
+        },
+      ],
+      "child-plan",
+    );
+    const claim = f.store.claim(
+      child.contract.taskNodeId,
+      "child-session",
+      "child-generation",
+      "child-claim",
+    ).claim!;
+    f.store.beginModelCall(claim, {
+      callId: "child-before-checkout",
+      runId: "child-run",
+      provider: "provider",
+      model: "model",
+    });
+    f.store.beginRun(claim, "child-run");
+    f.store.recordModelUsage(claim, "child-before-checkout", usage());
+    state.run = normalizeRunScope({
+      runId: "child-run",
+      scope: {
+        workspaceId: "original-project",
+        projectId: "original-project",
+        sessionKey: "child-session",
+      },
+    });
+    f.store.endRun(claim, "child-run");
+    const report = readTaskTrace(
+      f.store,
+      { taskNodeId: f.task.contract.taskNodeId },
+      () => "fixture",
+    );
+    expect(report.runs).toEqual([]);
+    expect(report.costs.records[0].run).toEqual(state.run);
+    expect(report.costs.calls).toBe(1);
+    expect(report.costs.totalUsd).toBe(0.02);
+  });
+  it("keeps an unlinked original call unknown when a later owner reuses the run id", () => {
+    const state: { run?: ScopedRunId } = {};
+    const f = fixture(() => (state.run ? { run: state.run } : {}));
+    f.store.beginModelCall(f.credential, {
+      callId: "old-call",
+      runId: "same-run-id",
+      provider: "provider",
+      model: "model",
+    });
+    const next = f.store.handoff(f.credential, "next-writer", "generation-b");
+    state.run = normalizeRunScope({
+      runId: "same-run-id",
+      scope: {
+        workspaceId: "original-project",
+        projectId: "original-project",
+        sessionKey: "next-writer",
+      },
+    });
+    f.store.beginRun(next.claim!, "same-run-id");
+    f.store.endRun(next.claim!, "same-run-id");
+    f.store.recordModelUsage(f.credential, "old-call", usage());
+    const report = readTaskTrace(
+      f.store,
+      { taskNodeId: f.task.contract.taskNodeId },
+      () => "fixture",
+    );
+    expect(report.costs.records[0].run).toBeNull();
+    expect(report.diagnostics).toContainEqual({ code: "source_identity_unknown", ref: "old-call" });
+  });
   it("retains one original call when identical observations are replayed", () => {
     const f = fixture();
     const call = { callId: "physical-a", runId: "run-a", provider: "provider", model: "model" };

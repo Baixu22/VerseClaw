@@ -205,6 +205,12 @@ test("V1: query actual execution and retain acceptance after deleting its source
     const modelRequests = llm.log.filter((request) => request.turn.includes(marker));
     expect(modelRequests).toHaveLength(3);
     expect(accepted.costs.calls).toBe(modelRequests.length);
+    for (const record of accepted.costs.records) {
+      expect(record.run).toMatchObject({
+        runId: accepted.runs[0].runId,
+        scope: { workspaceId: project.workspaceId, sessionKey: project.sessionKey },
+      });
+    }
     expect(new Set(accepted.costs.records.map((record) => record.call.callId)).size).toBe(
       modelRequests.length,
     );
