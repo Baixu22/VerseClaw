@@ -246,8 +246,8 @@ test("V1: query actual execution and retain acceptance after deleting its source
       await expect(panel.getByTestId("task-trace-cost")).toContainText(labels.trace.unknown);
       for (const width of [1280, 960]) {
         const viewport = await pinWindowContentSize(app, { width, height: 900 });
-        const window = await app.browserWindow(page);
-        const zoomFactor = await window.evaluate((win) => win.webContents.getZoomFactor());
+        const browserWindow = await app.browserWindow(page);
+        const zoomFactor = await browserWindow.evaluate((win) => win.webContents.getZoomFactor());
         const rendererViewport = await page.evaluate(() => ({
           width: window.innerWidth,
           height: window.innerHeight,
