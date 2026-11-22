@@ -2,6 +2,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import acpCorePackageJson from "../../packages/acp-core/package.json" with { type: "json" };
+import markdownCorePackageJson from "../../packages/markdown-core/package.json" with { type: "json" };
 import { pluginSdkSubpaths } from "../../scripts/lib/plugin-sdk-entries.mjs";
 import privateLocalOnlyPluginSdkSubpaths from "../../scripts/lib/plugin-sdk-private-local-only-subpaths.json" with { type: "json" };
 import {
@@ -103,7 +104,7 @@ function sourcePackageAliasesFromExports(packageId: string, exports: Record<stri
   return Object.keys(exports)
     .map((exportKey) => (exportKey === "." ? undefined : exportKey.slice(2)))
     .filter((subpath) => subpath === undefined || (subpath && !subpath.includes("..")))
-    .toSorted((a, b) => (a ?? "").localeCompare(b ?? ""))
+    .toSorted((a, b) => (b?.length ?? 0) - (a?.length ?? 0) || (a ?? "").localeCompare(b ?? ""))
     .map((subpath) => sourcePackageAlias(packageId, subpath));
 }
 
@@ -416,6 +417,7 @@ export const sharedVitestConfig = {
       sourcePackageAlias("media-core", "read-response-with-limit"),
       sourcePackageAlias("media-core"),
       ...sourcePackageAliasesFromExports("acp-core", acpCorePackageJson.exports),
+      ...sourcePackageAliasesFromExports("markdown-core", markdownCorePackageJson.exports),
       ...sourcePluginSdkSubpaths.map((subpath) => ({
         find: `openclaw/plugin-sdk/${subpath}`,
         replacement: path.join(repoRoot, "src", "plugin-sdk", `${subpath}.ts`),
