@@ -9,13 +9,18 @@ import en from "../../shared/i18n/locales/en/taskLedger.json";
 import zh from "../../shared/i18n/locales/zh/taskLedger.json";
 import ja from "../../shared/i18n/locales/ja/taskLedger.json";
 import ru from "../../shared/i18n/locales/ru/taskLedger.json";
-import { closeElectronApp, expect, getStableWindow, test } from "./fixtures/electron";
+import {
+  closeElectronApp,
+  expect,
+  getStableWindow,
+  pinWindowContentSize,
+  test,
+} from "./fixtures/electron";
 import { hostInvoke, SCRIPTED_LLM_USAGE, startScriptedLlm } from "./fixtures/fp-p1-harness";
 import {
   configureSessionChainProvider,
   createSessionChainProject,
   createSessionChainTask,
-  setSessionChainViewport,
 } from "./fixtures/session-task-chain";
 
 const sha = (value: string | Buffer) => createHash("sha256").update(value).digest("hex");
@@ -26,7 +31,7 @@ type CommandResult<T> = { success: boolean; result: T; error?: string };
 
 test("V1: query actual execution and retain acceptance after deleting its source session", async ({
   launchElectronApp,
-  homeDir,
+  userDataDir,
 }, info) => {
   test.setTimeout(360_000);
   const root = info.outputPath("project");
@@ -202,8 +207,15 @@ test("V1: query actual execution and retain acceptance after deleting its source
     expect(accepted.task.contract.state).toBe("done");
     expect(accepted.checks).toHaveLength(2);
     expect(accepted.checks.every((check) => check.state === "current")).toBe(true);
-    const modelRequests = llm.log.filter((request) => request.turn.includes(marker));
+    const modelRequests = llm.log.filter((request) =>
+      ["v1write", "v1check", "text:V1_TRACE_READY"].includes(request.issued ?? ""),
+    );
     expect(modelRequests).toHaveLength(3);
+    expect(modelRequests.map((request) => request.issued)).toEqual([
+      "v1write",
+      "v1check",
+      "text:V1_TRACE_READY",
+    ]);
     expect(accepted.costs.calls).toBe(modelRequests.length);
     for (const record of accepted.costs.records) {
       expect(record.run).toMatchObject({
@@ -233,7 +245,14 @@ test("V1: query actual execution and retain acceptance after deleting its source
       await expect(panel.getByTestId("task-trace-status")).toHaveText(labels.trace.states.current);
       await expect(panel.getByTestId("task-trace-cost")).toContainText(labels.trace.unknown);
       for (const width of [1280, 960]) {
-        const viewport = await setSessionChainViewport(app, { width, height: 900 });
+        const viewport = await pinWindowContentSize(app, { width, height: 900 });
+        const window = await app.browserWindow(page);
+        const zoomFactor = await window.evaluate((win) => win.webContents.getZoomFactor());
+        const rendererViewport = await page.evaluate(() => ({
+          width: window.innerWidth,
+          height: window.innerHeight,
+          devicePixelRatio: window.devicePixelRatio,
+        }));
         const overflow = await page.evaluate(
           () => document.documentElement.scrollWidth - window.innerWidth,
         );
@@ -244,6 +263,8 @@ test("V1: query actual execution and retain acceptance after deleting its source
           locale,
           width,
           viewport,
+          zoomFactor,
+          rendererViewport,
           path: file,
           sha256: sha(await readFile(file)),
           overflow,
@@ -252,15 +273,15 @@ test("V1: query actual execution and retain acceptance after deleting its source
     }
     expect((await trace()).events).toHaveLength(eventCount);
     const transcript = join(
-      homeDir,
-      ".openclaw",
+      userDataDir,
+      "openclaw-source-state",
       "agents",
       "main",
       "sessions",
       `${project.generation}.jsonl`,
     );
     expect(existsSync(transcript)).toBe(true);
-    const removed = await hostInvoke(app, "sessions", "delete", { key: project.sessionKey });
+    const removed = await hostInvoke(app, "sessions", "delete", { id: project.sessionKey });
     await record("sessionDeleted", removed);
     expect(existsSync(transcript)).toBe(false);
     const retained = await trace();
