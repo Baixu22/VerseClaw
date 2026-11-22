@@ -51,6 +51,32 @@ Keep Windows temporary output on `D:`; linked worktrees also set
 This lane records focused development evidence. Frozen G3 acceptance keeps its
 existing build, type, real recovery, live-provider and packaging gates.
 
+For memory-sensitive G3 workspace alias development, use
+`pnpm run test:recovery:tiny`. It exercises the production alias enumerator and
+native CJS/ESM parent-boundary resolver with in-memory filesystem fixtures in
+one Node process and a 96 MiB heap limit. Native resolution normalizes each
+parent once per call and reads a changed symlink target on the following call.
+It keeps SDK loader imports, Vitest workers and build steps out of this check.
+Record the process RSS peak separately from the JavaScript heap limit.
+The package script limits the JavaScript heap. Use the recorded bounded local
+launcher to apply the process memory and CPU limits below.
+
+The smaller local lane runs the same checks with a 64 MiB Node heap and a
+128 MiB private commit ceiling. Tiny checks require three samples with at least
+1 GiB available and stop their owned job below 768 MiB. Repository checks and
+read-only review use a 1.5 GiB admission floor and a 1 GiB pressure floor. Keep
+the 10% CPU ceiling and serial execution; low-cost development continues when
+these limits permit it during another task's full acceptance window.
+
+When the owner requests low peak occupancy, keep validation steps serial and
+start them only after checking available memory. On this Windows laptop, owned
+Node contract checks use a Job Object configured before the process resumes: one process,
+256 MiB private commit limit and 10% CPU limit. Admission requires three samples
+with at least 2 GiB available; memory pressure below 1 GiB stops the owned job
+and retains its partial receipt. Large build, type and Electron checks stay
+pending until a bounded decomposition is ready and the shared resource window
+permits it.
+
 Concurrent development uses observed capacity. Check active commands, available
 memory, CPU and paging before each expensive step; an active chat alone does not
 reserve the entire machine. Continue source work and read-only review while one

@@ -266,6 +266,7 @@ VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契�
 | `pnpm run lint:check` | 只检查 lint，不改文件 |
 | `pnpm test` | 根测试组与选定回归 |
 | `pnpm run test:recovery:light` | 单 worker 验证 Harness 按需加载与字节码缓存中断恢复 |
+| `pnpm run test:recovery:tiny` | 单个 Node 进程、96 MiB 堆上限验证工作区别名与原生 SDK 目录边界 |
 | `pnpm run test:e2e` | 构建并运行 Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract 与四语覆盖 |
 | `pnpm run harness:ci` | 仓库 Harness 基线 |

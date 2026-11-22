@@ -206,8 +206,8 @@ function resolveAllowedParentRoots(
   return [...roots];
 }
 
-function isWithinRoot(candidate: string, root: string): boolean {
-  const relative = path.relative(root, normalizePathForBoundary(candidate));
+function isWithinRoot(normalizedCandidate: string, root: string): boolean {
+  const relative = path.relative(root, normalizedCandidate);
   return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
 }
 
@@ -240,7 +240,8 @@ function resolveAliasTargetForParentPath(
   if (!entries || !parentFilename) {
     return undefined;
   }
-  return entries.find((entry) => isWithinRoot(parentFilename, entry.parentRoot))?.target;
+  const normalizedParentFilename = normalizePathForBoundary(parentFilename);
+  return entries.find((entry) => isWithinRoot(normalizedParentFilename, entry.parentRoot))?.target;
 }
 
 function listPluginSdkNativeAliases(

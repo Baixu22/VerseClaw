@@ -1093,14 +1093,15 @@ export function listWorkspacePackageExportAliasEntries(params: {
     params.packageDir,
     "package.json",
   );
-  const fallbackPackageRoot = resolveOpenClawPackageRootSync({ cwd: process.cwd() });
-  const packageJson =
-    tryReadJsonSync<PluginSdkPackageJson>(packageJsonPath) ??
-    (fallbackPackageRoot
+  let packageJson = tryReadJsonSync<PluginSdkPackageJson>(packageJsonPath);
+  if (packageJson === null || packageJson === undefined) {
+    const fallbackPackageRoot = resolveOpenClawPackageRootSync({ cwd: process.cwd() });
+    packageJson = fallbackPackageRoot
       ? tryReadJsonSync<PluginSdkPackageJson>(
           path.join(fallbackPackageRoot, "packages", params.packageDir, "package.json"),
         )
-      : null);
+      : null;
+  }
   const exports = packageJson?.exports;
   if (!exports || typeof exports !== "object" || Array.isArray(exports)) {
     return listRootPackagedWorkspacePackageAliasEntries(params);

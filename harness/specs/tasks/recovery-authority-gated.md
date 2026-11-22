@@ -11,6 +11,10 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/plugins/sdk-alias.ts
+  - openclaw_runtime/src/plugins/plugin-sdk-native-resolver.ts
+  - scripts/gateway-workspace-alias.test.mjs
+  - package.json
   - openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts
   - openclaw_runtime/src/gateway/trajectory-gateway.ts
   - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
@@ -294,6 +298,7 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - scripts/gateway-workspace-alias.test.mjs
   - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
   - openclaw_runtime/src/agents/harness/selection.compass.test.ts
   - tests/unit/gateway-lazy-harness-selection.test.ts
@@ -357,6 +362,8 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Native CJS and ESM alias resolution normalizes each parent path once before testing registered roots. First-match ordering, missing-path lexical fallback, outside-root rejection and fresh symlink targets on subsequent calls retain their existing behavior; unknown aliases and absent parents skip filesystem normalization.
+  - Workspace export alias enumeration reads the selected package manifest before resolving a fallback package root. Missing or invalid selected manifests retain fallback resolution; selected packaged-entry discovery, alias ordering and non-null JSON handling retain their existing behavior.
   - Importing trajectory subscription cleanup hooks leaves that module's session resolver deferred. readTrajectoryPage validates session and range inputs before loading its resolver; session and path guards, pagination, error identity and subscription delivery retain their current behavior.
   - Harness selection captures its original decision and diagnostic trace before lazy context-budget/lifecycle loading. Native and plugin execution keep their existing policy, budget, result and error handling; the runtime boundary persists available compilation before an interrupted attempt.
   - Built-in harness support metadata defers the embedded execution graph until runAttempt. The runner receives the original parameters and retains result/error identity and host capabilities. Its lazy runtime boundary persists loaded bytecode before interruption without changing optional cache controls or recovery admission.

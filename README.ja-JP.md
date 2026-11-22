@@ -264,6 +264,7 @@ VerseBrowser: インストール・開発・ビルド時に組み込みモジュ
 | `pnpm run lint:check` | Lint のみ。file は変更しない |
 | `pnpm test` | Root test group と selected regression |
 | `pnpm run test:recovery:light` | 単一 worker で Harness の遅延読み込みと中断後のバイトコードキャッシュを検証 |
+| `pnpm run test:recovery:tiny` | Node 単一プロセス、96 MiB ヒープ上限でワークスペース別名とネイティブ SDK の境界を検証 |
 | `pnpm run test:e2e` | Build + Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract / 4 言語 coverage |
 | `pnpm run harness:ci` | Repository Harness baseline |
