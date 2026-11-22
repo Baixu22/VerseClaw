@@ -521,7 +521,7 @@ describe('Channels page status refresh', () => {
       expect(screen.getByText('Feishu / Lark')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'account.add' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'account.add' }));
 
     const appIdInput = await screen.findByPlaceholderText('channels:meta.feishu.fields.appId.placeholder');
     const appSecretInput = screen.getByPlaceholderText('channels:meta.feishu.fields.appSecret.placeholder');

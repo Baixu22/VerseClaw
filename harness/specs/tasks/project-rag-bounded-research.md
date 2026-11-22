@@ -160,6 +160,7 @@ touchedAreas:
   - "tests/unit/gateway-p4-001-auth-binding.test.ts"
   - "tests/unit/harness-codex-active-verification.test.ts"
   - "tests/unit/model-capability-effective-state-tf0512.test.ts"
+  - "tests/unit/channels-page.test.tsx"
   - "tests/unit/harness-spec-portability.test.ts"
   - "tests/unit/ke-integration-full-chain.test.ts"
   - "tests/unit/ke-p1-1-candidate-wiring.test.ts"
@@ -295,6 +296,8 @@ Knowledge身份复验使用sessions.describe的identityOnly投影，直接从同
 冷类型检查先并行检查Node/Web，再独立检查Test，避免两个最大编译进程的内存重叠；报告明确记录staged模式。三项目的命令、严格参数、缓存失效条件和45秒控制阈值保持。
 
 运行时能力夹具显式提供空频道目录，与其唯一的core exec工具一致。能力profile、ack、权限、隔离、digest与生成回执仍使用原实现和19项断言；夹具生成不再重复扫描已安装插件目录，原30秒用例上限保持。
+
+频道账号夹具等待新增账号按钮完成加载后再操作，随后按原13项用例验证凭据保留、刷新与恢复行为；用例时限保持。
 
 收敛验收按单次Git树与NUL差异批量核对来源blob，literal pathspec保留空格/方括号路径；正文恢复、修改和删除均重新读取。仓库身份的commit/tree在同次Git调用中解析并校验完整SHA，工作树和ref继续独立读取。
 
