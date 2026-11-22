@@ -58,6 +58,8 @@ one Node process and a 96 MiB heap limit. Native resolution normalizes each
 parent once per call and reads a changed symlink target on the following call.
 Package-root scans retain the nearest observed manifest for fallback within the
 same call, while preserving trusted OpenClaw ancestor priority and the twelve-directory limit.
+Parent-scope selection shares those scan results: bundled plugins use their normalized
+plugin boundary, while external plugins use their own nearest package boundary.
 It keeps SDK loader imports, Vitest workers and build steps out of this check.
 Record the process RSS peak separately from the JavaScript heap limit.
 The package script limits the JavaScript heap. Use the recorded bounded local

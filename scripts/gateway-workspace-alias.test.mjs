@@ -165,7 +165,7 @@ const nativeSourcePath = fileURLToPath(
 );
 const nativeSource = fs.readFileSync(nativeSourcePath, 'utf8');
 const normalizeStart = nativeSource.indexOf('function normalizePathForBoundary(');
-const normalizeEnd = nativeSource.indexOf('\nfunction findNearestPackageRoot(', normalizeStart);
+const normalizeEnd = nativeSource.indexOf('\nfunction resolveNativePackageRoots(', normalizeStart);
 const nativeStart = nativeSource.indexOf('function isWithinRoot(');
 const nativeEnd = nativeSource.indexOf('\nfunction listPluginSdkNativeAliases(', nativeStart);
 assert(
@@ -188,9 +188,10 @@ const packageRootScript = new vm.Script(
   { filename: nativeSourcePath }
 );
 
-function packageRootFixture(files, modulePath) {
+function packageRootFixture(files, modulePath, realpath = path.resolve) {
   const probes = [];
   const reads = [];
+  const normalized = [];
   const context = vm.createContext({
     path,
     fs: {
@@ -204,7 +205,10 @@ function packageRootFixture(files, modulePath) {
         if (contents === null) throw new Error('Unreadable package manifest');
         return contents;
       },
-      realpathSync: (file) => path.resolve(file),
+      realpathSync(file) {
+        normalized.push(file);
+        return realpath(file);
+      },
     },
   });
   packageRootScript.runInContext(context);
@@ -212,7 +216,8 @@ function packageRootFixture(files, modulePath) {
     context,
     probes,
     reads,
-    resolve: () => context.resolveLoaderPackageRootFromModulePath(modulePath),
+    normalized,
+    resolve: () => context.resolveNativePackageRoots(modulePath).packageRoot,
   };
 }
 
@@ -335,6 +340,78 @@ test('native parent scopes retain bundled plugin roots and external package boun
     );
     assert.equal(fixture.context.resolveAllowedParentRoot(modulePath), pluginRoot);
   }
+});
+
+for (const [name, manifests, expectedDepth, scanned] of [
+  ['no manifests', [], 0, 12],
+  [
+    'ordinary ancestor packages',
+    [
+      [2, '{}'],
+      [5, '{}'],
+    ],
+    2,
+    12,
+  ],
+  [
+    'trusted ancestor outside bundled directories',
+    [
+      [2, '{}'],
+      [5, '{"name":"openclaw"}'],
+    ],
+    2,
+    6,
+  ],
+  [
+    'malformed nearest manifest',
+    [
+      [2, '{'],
+      [5, '{"bin":{"openclaw":"cli.js"}}'],
+    ],
+    2,
+    6,
+  ],
+]) {
+  test(`native parent scopes reuse one package scan with ${name}`, () => {
+    const fixture = packageRootFixture(
+      new Map(
+        manifests.map(([depth, contents]) => [packagePath(rootScanDirectories[depth]), contents])
+      ),
+      rootScanModule
+    );
+    assert.equal(
+      fixture.context.resolveAllowedParentRoot(rootScanModule),
+      rootScanDirectories[expectedDepth]
+    );
+    assert.deepEqual(fixture.probes, rootScanPaths.slice(0, scanned));
+  });
+}
+
+test('native parent scopes preserve normalization order and fresh symlink destinations', () => {
+  const root = path.resolve('native-parent-scope-link-fixture');
+  const realRoot = path.resolve('native-parent-scope-real-fixture');
+  const pluginRoot = path.join(root, 'node_modules', 'example');
+  const modulePath = path.join(pluginRoot, 'src', 'entry.js');
+  let destination = path.join(realRoot, 'extensions', 'example', 'entry.js');
+  const fixture = packageRootFixture(
+    new Map([
+      [packagePath(root), '{"name":"openclaw"}'],
+      [packagePath(pluginRoot), '{}'],
+    ]),
+    modulePath,
+    (file) => (file === modulePath ? destination : file === root ? realRoot : path.resolve(file))
+  );
+  assert.equal(
+    fixture.context.resolveAllowedParentRoot(modulePath),
+    path.join(realRoot, 'extensions', 'example')
+  );
+  destination = path.join(realRoot, 'outside', 'entry.js');
+  assert.equal(fixture.context.resolveAllowedParentRoot(modulePath), pluginRoot);
+  assert.deepEqual(fixture.normalized, [modulePath, root, modulePath, root]);
+  const expectedProbes = [path.dirname(modulePath), pluginRoot, path.dirname(pluginRoot), root].map(
+    packagePath
+  );
+  assert.deepEqual(fixture.probes, [...expectedProbes, ...expectedProbes]);
 });
 
 const nativeRequest = 'openclaw/plugin-sdk/example';
