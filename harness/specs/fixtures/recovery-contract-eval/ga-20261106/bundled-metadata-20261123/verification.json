@@ -3,8 +3,8 @@
   "sourceInputsVerified": 11,
   "allGitBlobsMatchNormalizedSources": true,
   "protectedBytesAndStagingPreserved": true,
-  "archiveRecordsReadBack": 1362,
-  "archiveSha256": "8c81c9cea0e9ead3cb15142eb80086f96a832d8d84e0925cead1a45eb91ceab9",
+  "archiveRecordsReadBack": 1365,
+  "archiveSha256": "4e1b4d2cb72ddac5ce6916609921495088993465f2d658f75a36b2d3f5c0c53e",
   "credentials": {
     "variableNamesScanned": [
       "RECOVERY_LIVE_API_KEY",
@@ -22,5 +22,13 @@
   "excludedLocalRecords": 18,
   "actor": "codex/g3-development-r21",
   "driven_by": "agent",
-  "realHumanEvidence": false
+  "realHumanEvidence": false,
+  "sealingLogBinding": {
+    "earlyPrefixSnapshots": [
+      "D:\\tmp\\g3-full-development-20261122-r20\\seal-g3-partial-r21-r1.stdout.log"
+    ],
+    "completeReceiptsAdded": 3,
+    "originalArchiveSha256": "8c81c9cea0e9ead3cb15142eb80086f96a832d8d84e0925cead1a45eb91ceab9",
+    "originalArchiveRetained": "D:\\tmp\\g3-full-development-20261122-r20\\raw-evidence-before-log-binding-repair-r21.json.gz"
+  }
 }

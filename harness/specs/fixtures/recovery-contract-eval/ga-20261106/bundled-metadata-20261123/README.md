@@ -22,7 +22,7 @@ GA为NO_GO，实际未过门禁见report.json.failedGates。完整类型45.578�
 
 开发执行恢复标准配置，重型步骤串行，临时产物D:。原开发限制与旧候选数据保存为历史；冻结门槛、原始失败和样本均保留。
 
-raw-evidence.json.gz含1362份原件和源头字节，每项逐SHA256解压回读，已授权凭据值匹配0。任务图、会话交接与本地历史单独保留。
+raw-evidence.json.gz含1365份快照与结算原件和源头字节，每项逐SHA256解压回读，已授权凭据值匹配0。任务图、会话交接与本地历史单独保留。
 
 在该源码候选检出中重算两臂：
 
@@ -32,3 +32,5 @@ node scripts/recovery-contract-eval.mjs --bundle <本地原采样bundle> --batch
 ```
 
 完整命令、raw采样bundle、恢复后的原比较器与本批失败在字节归档中；独立legacy复跑和大型任务图导出待串行窗口。全部产物为agent驱动，realHumanEvidence=false。
+
+封存程序的早期日志标注为前缀快照，完整结算回执另保留三份；原归档字节保留于前一证据提交及本地备份。

@@ -392,7 +392,7 @@
     "independent legacy repeat",
     "large Task Forest apply/export"
   ],
-  "recordsArchived": 1362,
+  "recordsArchived": 1365,
   "execution": {
     "cpuLimit": null,
     "privateMemoryLimit": null,
@@ -403,5 +403,13 @@
   },
   "actor": "codex/g3-development-r21",
   "driven_by": "agent",
-  "realHumanEvidence": false
+  "realHumanEvidence": false,
+  "sealingLogBinding": {
+    "earlyPrefixSnapshots": [
+      "D:\\tmp\\g3-full-development-20261122-r20\\seal-g3-partial-r21-r1.stdout.log"
+    ],
+    "completeReceiptsAdded": 3,
+    "originalArchiveSha256": "8c81c9cea0e9ead3cb15142eb80086f96a832d8d84e0925cead1a45eb91ceab9",
+    "originalArchiveRetained": "D:\\tmp\\g3-full-development-20261122-r20\\raw-evidence-before-log-binding-repair-r21.json.gz"
+  }
 }
