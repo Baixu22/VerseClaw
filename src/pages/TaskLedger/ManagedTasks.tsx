@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { hostApi } from "@/lib/host-api";
 import type { TaskSystemCommand, TaskView } from "@shared/task-system/types";
+import { TaskTracePanel } from '@/components/task-ledger/TaskTracePanel';
 
 export function ManagedTasks({
   workspaceId,
@@ -77,10 +78,11 @@ export function ManagedTasks({
     setStale(false);
   }, [workspaceId]);
   useEffect(() => {
+    const versionRef = requestVersion;
     const timer = setTimeout(() => void load(), 180);
     return () => {
       clearTimeout(timer);
-      requestVersion.current++;
+      versionRef.current++;
       dependencyRead.current = null;
     };
   }, [load]);
@@ -466,6 +468,7 @@ export function ManagedTasks({
                 </Button>
               )}
             </div>
+            {workspaceId && <TaskTracePanel workspaceId={workspaceId} taskNodeId={contract.taskNodeId} revision={contract.revision} digest={contract.digest} />}
           </article>
         );
       })}

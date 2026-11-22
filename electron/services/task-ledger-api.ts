@@ -2,7 +2,7 @@ import { randomUUID, createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { GatewayManager } from '../gateway/manager';
-import { listManagedTasks, pageManagedTasks, readSessionTask, taskSystemCommand, openTaskSystem } from './task-system-service';
+import { listManagedTasks, pageManagedTasks, readSessionTask, taskSystemCommand, openTaskSystem, readManagedTaskTrace } from './task-system-service';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type {
   TaskLedgerAddEdgePayload,
@@ -158,6 +158,7 @@ export function createTaskLedgerApi(gatewayManager?: GatewayManager): CompleteHo
   return {
     managedTasks: async (payload) => ({ success: true, tasks: await listManagedTasks(payload?.workspaceId) }),
     queryTasks: async (payload) => ({ success: true, ...await pageManagedTasks(payload?.workspaceId, payload) }),
+    trace: async (payload) => ({ success: true, report: await readManagedTaskTrace(payload.workspaceId, payload) }),
     sessionTask: async (payload) => ({success:true,...await readSessionTask(payload.workspaceId,payload.sessionKey,gatewayManager,payload.expectedSessionGeneration)}),
     command: async (payload) => {
       try { return { success: true, result: await taskSystemCommand(payload.workspaceId,payload.command,gatewayManager) }; }

@@ -1,4 +1,5 @@
 import { ManagedTasks } from './ManagedTasks';
+import { TaskTracePanel } from '@/components/task-ledger/TaskTracePanel';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Download, GitBranch, GitMerge, History, Link2, ListTree, Plus, RefreshCw, Search, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -335,6 +336,7 @@ export default function TaskLedgerPage() {
         </TabsContent>
 
         <TabsContent value="tree" className="h-[calc(100%-3rem)] overflow-y-auto">
+          {focusedNodeId && workspaceId && hasScopedWorkspace && <div className="mb-3"><TaskTracePanel workspaceId={workspaceId} taskNodeId={focusedNodeId} defaultOpen /></div>}
           <QuietLoadingSurface
             surfaceId="task-ledger"
             loading={loading && !snapshot}

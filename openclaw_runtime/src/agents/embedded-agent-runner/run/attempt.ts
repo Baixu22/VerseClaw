@@ -420,7 +420,7 @@ import {
   shouldWarnEmbeddedRunStageSummary,
 } from "./attempt-stage-timing.js";
 import { buildAttemptSystemPrompt } from "./attempt-system-prompt.js";
-import { restoreTaskModelContext, finishPersistentTaskRun } from "../../../../../shared/task-system/runtime.js";
+import { restoreTaskModelContext, finishPersistentTaskRun, createTaskModelUsageRecorder } from "../../../../../shared/task-system/runtime.js";
 import { createExecutionTaskGuard, wrapReviewerReadConfirmation } from "../../execution-task-guard.js";
 import { flushEmbeddedAttemptTrajectoryRecorder } from "./attempt-trajectory-flush-cleanup.js";
 import {
@@ -3362,8 +3362,11 @@ export async function runEmbeddedAttempt(
         );
       }
       let diagnosticModelCallSeq = 0;
+      const taskModelGuard = isRawModelRun ? null : createExecutionTaskGuard(effectiveWorkspace, params.sessionKey, params.sessionId, params.runId);
+      const taskModelUsage = createTaskModelUsageRecorder(taskModelGuard);
+      // Diagnostic call sequences restart per attempt; Task receipts keep that original scope.
+      const taskUsageCallKey = (callId: string) => JSON.stringify([params.runId, params.attemptIndex ?? 0, callId]);
       if(!isRawModelRun){
-        const taskModelGuard=createExecutionTaskGuard(effectiveWorkspace,params.sessionKey,params.sessionId,params.runId);
         const taskModelStream=wrapReviewerReadConfirmation(activeSession.agent.streamFn,taskModelGuard);
         activeSession.agent.streamFn=(model,context,options)=>taskModelStream(model,{
           ...context,systemPrompt:restoreTaskModelContext(taskModelGuard,context.systemPrompt??'',Math.min(12_000,Math.floor((params.contextWindowInfo?.tokens??model.contextWindow??48_000)/4))),
@@ -3394,6 +3397,15 @@ export async function runEmbeddedAttempt(
             params.config?.diagnostics?.otel?.enabled === true &&
             isDiagnosticFlagEnabled("trace.cost-sampling", params.config),
           nextCallId: () => `${params.runId}:model:${(diagnosticModelCallSeq += 1)}`,
+          onUsageStarted: ({ callId }) => {
+            try { taskModelUsage.start(taskUsageCallKey(callId), params.provider, params.modelId); }
+            catch (error) { log.warn(`task model usage start unavailable: ${String(error)}`); }
+          },
+          onUsage: ({ callId, endedAt, snapshot }) => {
+            try { taskModelUsage.finish(taskUsageCallKey(callId), { terminal: snapshot.terminal, usage: snapshot.usage,
+              costUsd: snapshot.costUsd, priceVersion: snapshot.price.version, toolCallIdHashes: snapshot.toolCallIdHashes, endedAt }); }
+            catch (error) { log.warn(`task model usage settlement unavailable: ${String(error)}`); }
+          },
           onStarted: ({ callId }) => {
             const trajectoryStepId = `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
             trajectoryProducer?.startStep(

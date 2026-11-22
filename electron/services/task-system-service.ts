@@ -1,11 +1,12 @@
 import { existsSync, statSync } from "node:fs";
 import type { WorkspaceProfile } from '../../shared/types/workspace';
-import { canonicalWorktreePath, findManagedWorktreeByRoot, worktreeNativeIdentity } from '../../openclaw_runtime/src/agents/worktree-registry';
+import { canonicalWorktreePath, findManagedWorktreeByRoot, worktreeNativeIdentity, filesystemInstance } from '../../openclaw_runtime/src/agents/worktree-registry';
 import { assertCleanupCommitRetained, assertWorktreeIndexVisible, removeNativeGitWorktree } from '../../openclaw_runtime/src/agents/worktree-service';
 import type { GitOperationResult } from '../../shared/types/git';
 import { checkoutWriterSnapshot } from '../../openclaw_runtime/src/agents/worktree-writer';
 import { resolveExecutionDomain } from '../../openclaw_runtime/src/agents/execution-domain';
 import { TaskSystemStore } from "../../shared/task-system/store";
+import { readTaskTrace, type TaskTraceQuery } from '../../shared/task-system/trace';
 import { canonicalPath } from "../../shared/task-system/identity";
 import { projectCoordinatorProfile, projectCoordinatorScope } from "../../shared/task-system/project-coordinator";
 import { createExecutionTaskAccess, openExecutionTaskStore, inheritExecutionTaskReference, type ExecutionTaskAuthorityBasis } from "../../openclaw_runtime/src/agents/execution-task-authority";
@@ -118,6 +119,15 @@ export async function listManagedTasks(workspaceId?: string | null): Promise<Tas
   } finally {
     store?.close();
   }
+}
+export async function readManagedTaskTrace(workspaceId: string, query: TaskTraceQuery) {
+  if (typeof query?.taskNodeId !== 'string' || !query.taskNodeId.trim() || (query.revision !== undefined && (!Number.isSafeInteger(query.revision) || query.revision < 1)) ||
+      (query.digest !== undefined && !/^[a-f0-9]{64}$/i.test(query.digest)) ||
+      (query.candidate !== undefined && (typeof query.candidate !== 'string' || !query.candidate.trim()))) throw new Error('TASK_TRACE_QUERY_INVALID');
+  const store = await openTaskSystem(workspaceId);
+  if (!store) throw new Error('TASK_STORE_UNAVAILABLE');
+  try { return readTaskTrace(store, query, filesystemInstance); }
+  finally { store.close(); }
 }
 export async function pageManagedTasks(
   workspaceId: string | null | undefined,

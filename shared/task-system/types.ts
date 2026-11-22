@@ -60,6 +60,7 @@ export type TaskEvidence = {
   path: string;
   sha256: string;
   verifier: string;
+  operationId?: string;
   createdAt: number;
   repairAttempt?: number;
   submissionSequence?: number;

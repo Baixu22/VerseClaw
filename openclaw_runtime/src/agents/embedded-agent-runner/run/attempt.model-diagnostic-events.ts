@@ -15,6 +15,7 @@ import {
   type DiagnosticModelCallContent,
   type DiagnosticMemoryUsage,
   emitTrustedDiagnosticEventWithPrivateData,
+  type DiagnosticModelCallUsageSnapshot,
 } from "../../../infra/diagnostic-events.js";
 import type { DiagnosticModelContentCapturePolicy } from "../../../infra/diagnostic-llm-content.js";
 import {
@@ -51,6 +52,8 @@ type ModelCallDiagnosticContext = {
   nextCallId: () => string;
   costDiagnosticsEnabled?: boolean;
   onStarted?: (info: { callId: string }) => void;
+  onUsageStarted?: (info: { callId: string }) => void;
+  onUsage?: (info: { callId: string; startedAt: number; endedAt: number; snapshot: DiagnosticModelCallUsageSnapshot }) => void;
   onFinished?: (info: {
     callId: string;
     outcome: "completed" | "error";
@@ -93,6 +96,9 @@ type ModelCallObservationState = {
   contentCapture?: DiagnosticModelContentCapturePolicy;
   lastStreamProgressAt?: number;
   onFinished?: ModelCallDiagnosticContext["onFinished"];
+  onUsage?: ModelCallDiagnosticContext['onUsage'];
+  usageReported?: boolean;
+  costDiagnosticsEnabled?: boolean;
 };
 
 const MODEL_CALL_STREAM_PROGRESS_INTERVAL_MS = 30_000;
@@ -447,7 +453,7 @@ function emitModelCallCompleted(
     {
       type: "model.call.completed",
       ...eventBase,
-      ...(state.usageObserver
+      ...(state.costDiagnosticsEnabled && state.usageObserver
         ? { usageSnapshot: state.usageObserver.finish(state.signal?.aborted) }
         : {}),
       durationMs,
@@ -465,6 +471,14 @@ function emitModelCallCompleted(
     outcome: "completed",
     durationMs,
   });
+  reportModelUsage(eventBase, startedAt, state);
+}
+
+function reportModelUsage(eventBase: ModelCallEventBase, startedAt: number, state: ModelCallObservationState, aborted = false): void {
+  if (!state.onUsage || !state.usageObserver || state.usageReported) return;
+  state.usageReported = true;
+  state.onUsage({ callId: eventBase.callId, startedAt, endedAt: Date.now(),
+    snapshot: state.usageObserver.finish(aborted || state.signal?.aborted) });
 }
 
 function emitModelCallError(
@@ -479,7 +493,7 @@ function emitModelCallError(
     {
       type: "model.call.error",
       ...eventBase,
-      ...(state.usageObserver
+      ...(state.costDiagnosticsEnabled && state.usageObserver
         ? {
             usageSnapshot: state.usageObserver.finish(
               fields.failureKind === "aborted" || state.signal?.aborted,
@@ -504,6 +518,7 @@ function emitModelCallError(
     durationMs,
     ...(fields.errorCategory ? { errorCategory: fields.errorCategory } : {}),
   });
+  reportModelUsage(eventBase, startedAt, state, fields.failureKind === 'aborted');
 }
 
 function withDiagnosticTraceparentHeader(
@@ -691,15 +706,18 @@ export function wrapStreamFnWithDiagnosticModelCallEvents(
     const modelContent = streamContextModelContentFields(ctx.contentCapture, streamContext);
     emitModelCallStarted(eventBase, modelContent);
     ctx.onStarted?.({ callId });
+    ctx.onUsageStarted?.({ callId });
     const startedAt = Date.now();
     const state: ModelCallObservationState = {
       responseStreamBytes: 0,
-      ...(ctx.costDiagnosticsEnabled === true
+      ...(ctx.costDiagnosticsEnabled === true || ctx.onUsage
         ? { usageObserver: createModelCallUsageObserver(model), signal: options?.signal }
         : {}),
       modelContent,
       contentCapture: ctx.contentCapture,
       onFinished: ctx.onFinished,
+      onUsage: ctx.onUsage,
+      costDiagnosticsEnabled: ctx.costDiagnosticsEnabled,
     };
     const propagatedOptions = withDiagnosticTraceparentHeader(options, trace, state);
 

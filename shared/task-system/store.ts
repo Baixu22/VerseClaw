@@ -29,11 +29,12 @@ import type {
 import { taskSimilarity } from "./recognition.js";
 import { nextReadyPlanChild, TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
 import { retainTaskArtifact, readRetainedTaskArtifact, type TaskArtifactReference, type TaskArtifactRetentionReceipt } from './artifact-retention.js';
+import type { TaskModelCall, TaskModelUsage, TaskTraceEvent, TaskTraceSnapshot } from './trace.js';
 
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
 const LEASE_MS = 120_000;
-const TASK_SCHEMA_VERSION = 7;
+export const TASK_SCHEMA_VERSION = 7;
 function runProcessExited(pid: number | null): boolean {
   if (pid === null || !Number.isSafeInteger(pid) || pid <= 0 || pid === process.pid) return false;
   try {
@@ -63,6 +64,10 @@ function hasIndependentReview(contract: Pick<TaskContractInput, 'acceptance'>): 
 }
 function credentialIdentity(credential: TaskCredential): TaskCredential {
   return { taskNodeId: credential.taskNodeId, sessionKey: credential.sessionKey, generation: credential.generation, epoch: credential.epoch };
+}
+function sameModelIdentity(call: TaskModelCall, credential: TaskCredential, identity: Pick<TaskModelCall, 'callId' | 'runId' | 'provider' | 'model'>): boolean {
+  return JSON.stringify(call.credential) === JSON.stringify(credentialIdentity(credential)) &&
+    call.callId === identity.callId && call.runId === identity.runId && call.provider === identity.provider && call.model === identity.model;
 }
 
 export function normalizeTaskContract(input: TaskContractInput): TaskContractInput {
@@ -591,6 +596,32 @@ export class TaskSystemStore {
       at: number;
       json: string;
     }>;
+  }
+  traceSnapshot(taskNodeId: string): TaskTraceSnapshot {
+    return this.transaction(() => {
+      const task = this.get(text(taskNodeId, 'TASK_ID', 300));
+      const ancestors: TaskContract[] = [];
+      let parent = task.parentTaskNodeId;
+      while (parent) {
+        const view = this.get(parent);
+        ancestors.push(view.contract); parent = view.parentTaskNodeId;
+      }
+      const descendants: TaskView[] = [];
+      const pending = [...(task.childTaskNodeIds ?? [])], seen = new Set([taskNodeId]);
+      while (pending.length) {
+        const id = pending.shift()!;
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const child = this.get(id); descendants.push(child); pending.push(...(child.childTaskNodeIds ?? []));
+      }
+      const readEvents = (id: string): TaskTraceEvent[] => (this.db.prepare('SELECT seq,kind,at,json FROM task_events WHERE task_id=? ORDER BY seq')
+        .all(id) as Array<{ seq: number; kind: string; at: number; json: string }>).map(({ json, ...row }) => ({ ...row, payload: JSON.parse(json) }));
+      const events = readEvents(taskNodeId);
+      return { task, ancestors, descendants, events, evidence: this.getTaskEvidence(taskNodeId), retention: this.retentionReceipts(taskNodeId),
+        operationIds: (this.db.prepare('SELECT id FROM task_operations WHERE task_id=?').all(taskNodeId) as Array<{ id: string }>).map(row => row.id),
+        usageEvents: [events, ...descendants.map(child => readEvents(child.contract.taskNodeId))].flat()
+          .filter(event => ['model_call_started', 'model_usage', 'model_usage_conflict'].includes(event.kind)) };
+    });
   }
   changes(
     consumer: string,
@@ -1700,6 +1731,10 @@ export class TaskSystemStore {
       this.db
         .prepare("INSERT INTO task_operation_owners VALUES(?,?,?)")
         .run(operationId, process.pid, this.now());
+      const run = this.db.prepare('SELECT run_id FROM task_active_runs WHERE task_id=? AND epoch=?')
+        .get(credential.taskNodeId, credential.epoch) as { run_id: string } | undefined;
+      this.event(credential.taskNodeId, 'operation_started', { operationId, tool: kind,
+        credential: credentialIdentity(credential), revision: view.contract.revision, runId: run?.run_id });
     });
   }
   beginRun(credential: TaskCredential, runId: string): void {
@@ -1722,6 +1757,70 @@ export class TaskSystemStore {
       this.db
         .prepare("INSERT OR REPLACE INTO task_active_runs(task_id,epoch,run_id,owner_pid) VALUES(?,?,?,?)")
         .run(credential.taskNodeId, credential.epoch, runId, process.pid);
+      this.event(credential.taskNodeId, 'run_started', { runId, credential: credentialIdentity(credential),
+        taskRevision: view.contract.revision, startedAt: this.now(), provenance: this.access?.runProvenance?.(credential, runId) });
+    });
+  }
+  modelCallScope(sessionKey: string, generation: string, runId: string): { credential: TaskCredential; role: TaskModelCall['actorRole'] } | null {
+    const view = this.binding(sessionKey, generation);
+    if (!view) return null;
+    const claim = view.claim;
+    if (!view.referenceOnly && claim && claim.sessionKey === sessionKey && claim.generation === generation &&
+        claim.worktree === this.domain.worktree && claim.contractRevision === view.contract.revision && claim.state !== 'released')
+      return { credential: credentialIdentity(claim), role: 'assigned' };
+    const child = this.delegationForChild(sessionKey);
+    if (child?.mode === 'observer' && child.phase !== 'returned' && child.child.generation === generation && child.childRunId === runId &&
+        child.taskNodeId === view.contract.taskNodeId && child.contractRevision === view.contract.revision)
+      return { credential: credentialIdentity(child.child), role: 'observer' };
+    const reference = this.db.prepare('SELECT role FROM task_references WHERE session_key=? AND task_id=? AND generation=?')
+      .get(sessionKey, view.contract.taskNodeId, generation) as { role: string } | undefined;
+    if (reference?.role !== 'coordinator') return null;
+    const delegation = (this.db.prepare('SELECT json FROM task_writer_delegations WHERE task_id=?').all(view.contract.taskNodeId) as Row[])
+      .map(row => JSON.parse(row.json) as TaskWriterDelegation).find(d => d.phase !== 'returned' && d.parent.sessionKey === sessionKey &&
+        d.parent.generation === generation && d.contractRevision === view.contract.revision);
+    return delegation ? { credential: credentialIdentity(delegation.parent), role: 'coordinator' } : null;
+  }
+  beginModelCall(credential: TaskCredential, identity: Pick<TaskModelCall, 'callId' | 'runId' | 'provider' | 'model'>): TaskModelCall {
+    return this.transaction(() => {
+      for (const key of ['callId', 'runId', 'provider', 'model'] as const) text(identity[key], `MODEL_${key}`, 512);
+      const existing = this.read<TaskModelCall>('SELECT result AS json FROM task_requests WHERE id=?', `model-call:${identity.callId}`);
+      if (existing) {
+        if (!sameModelIdentity(existing, credential, identity)) throw new Error('TASK_MODEL_CALL_IDENTITY_CONFLICT');
+        return existing;
+      }
+      const scope = this.modelCallScope(credential.sessionKey, credential.generation, identity.runId);
+      if (!scope || JSON.stringify(scope.credential) !== JSON.stringify(credentialIdentity(credential))) throw new Error('TASK_MODEL_SCOPE_MISMATCH');
+      const view = this.get(credential.taskNodeId);
+      const call: TaskModelCall = { ...identity, credential: credentialIdentity(credential), taskRevision: view.contract.revision,
+        sourceDigest: view.contract.digest, startedAt: this.now(), actorRole: scope.role, provenance: this.access?.runProvenance?.(credential, identity.runId) };
+      this.request(`model-call:${identity.callId}`, { credential: credentialIdentity(credential), ...identity }, () => {
+        this.event(credential.taskNodeId, 'model_call_started', call); return call;
+      });
+      return call;
+    });
+  }
+  recordModelUsage(credential: TaskCredential, callId: string, usage: TaskModelUsage): boolean {
+    return this.transaction(() => {
+      const call = this.read<TaskModelCall>('SELECT result AS json FROM task_requests WHERE id=?', `model-call:${callId}`);
+      if (!call || JSON.stringify(call.credential) !== JSON.stringify(credentialIdentity(credential))) throw new Error('TASK_MODEL_CALL_REQUIRED');
+      if (!['done', 'error', 'aborted', 'incomplete', 'conflicting'].includes(usage.terminal) ||
+          !Number.isFinite(usage.endedAt) || usage.endedAt < call.startedAt ||
+          (usage.usage !== null && (!['input', 'output', 'cacheRead', 'cacheWrite', 'total'].every(key => Number.isSafeInteger(usage.usage![key as keyof NonNullable<TaskModelUsage['usage']>]) && usage.usage![key as keyof NonNullable<TaskModelUsage['usage']>] >= 0) ||
+            usage.usage.total < usage.usage.input + usage.usage.output + usage.usage.cacheRead + usage.usage.cacheWrite)) ||
+          (usage.costUsd !== null && (!usage.usage || !usage.priceVersion || !Number.isFinite(usage.costUsd) || usage.costUsd < 0)) ||
+          !Array.isArray(usage.toolCallIdHashes) || usage.toolCallIdHashes.length > 128 || usage.toolCallIdHashes.some(value => !/^[a-f0-9]{64}$/.test(value)))
+        throw new Error('TASK_MODEL_USAGE_INVALID');
+      const prior = this.read<{ callId: string; usage: TaskModelUsage }>('SELECT result AS json FROM task_requests WHERE id=?', `model-usage:${callId}`);
+      if (prior && JSON.stringify(prior.usage) !== JSON.stringify(usage)) {
+        this.request(`model-usage-conflict:${callId}:${digest(usage)}`, { callId, usageDigest: digest(usage) }, () => {
+          this.event(credential.taskNodeId, 'model_usage_conflict', { callId, usageDigest: digest(usage) }); return false;
+        });
+        return false;
+      }
+      this.request(`model-usage:${callId}`, { callId, usage }, () => {
+        this.event(credential.taskNodeId, 'model_usage', { callId, usage, source: 'runtime-model-call-observer' }); return { callId, usage };
+      });
+      return true;
     });
   }
   reserveDelegation(credential: TaskCredential, requestId: string): 'reserved' | 'existing' {
@@ -1741,10 +1840,13 @@ export class TaskSystemStore {
     });
   }
   endRun(credential: TaskCredential, runId: string): void {
-    this.assertAuthorityCurrent();
-    this.db
-      .prepare("DELETE FROM task_active_runs WHERE task_id=? AND epoch=? AND run_id=? AND owner_pid=?")
-      .run(credential.taskNodeId, credential.epoch, runId, process.pid);
+    this.transaction(() => {
+      const changes = this.db
+        .prepare("DELETE FROM task_active_runs WHERE task_id=? AND epoch=? AND run_id=? AND owner_pid=?")
+        .run(credential.taskNodeId, credential.epoch, runId, process.pid).changes;
+      if (Number(changes) === 1) this.event(credential.taskNodeId, 'run_finished', { runId, credential: credentialIdentity(credential),
+        provenance: this.access?.runProvenance?.(credential, runId) });
+    });
   }
   recover(
     taskNodeId: string,
@@ -1822,7 +1924,7 @@ export class TaskSystemStore {
             d.dispatchOperationIds.includes(operationId),
         );
       if (dispatch) {
-        this.db
+        const changes = this.db
           .prepare(
             "UPDATE task_operations SET state=?,result=? WHERE id=? AND epoch=? AND state='delegated'",
           )
@@ -1831,7 +1933,9 @@ export class TaskSystemStore {
             result.slice(0, 1000),
             operationId,
             credential.epoch,
-          );
+          ).changes;
+        if (Number(changes) === 1) this.event(credential.taskNodeId, 'operation_settled', { operationId,
+          credential: credentialIdentity(credential), state: state === 'completed' ? 'completed' : 'delegation_unknown', resultDigest: digest(result) });
         return;
       }
       this.assertOwner(credential, true);
@@ -1847,6 +1951,7 @@ export class TaskSystemStore {
           credential.epoch,
         ).changes;
       if (Number(changes) !== 1) throw new Error("TASK_OPERATION_STATE_CONFLICT");
+      this.event(credential.taskNodeId, 'operation_settled', { operationId, credential: credentialIdentity(credential), state, resultDigest: digest(result) });
       if (background)
         this.db
           .prepare("INSERT OR REPLACE INTO task_operation_handles VALUES(?,?,?)")
@@ -1963,10 +2068,12 @@ export class TaskSystemStore {
           exitCode: details.exitCode,
           ...(details.exitSignal ? { exitSignal: details.exitSignal } : {}),
         });
+        this.event(credential.taskNodeId, 'operation_settled', { operationId: row.id, credential: credentialIdentity(credential),
+          state: 'completed', resultDigest: digest({ exitCode: details.exitCode, exitSignal: details.exitSignal }) });
       });
       this.transaction(() => this.settleCancellation(credential.taskNodeId));
       if (this.get(credential.taskNodeId).contract.state !== "cancelled")
-        this.recordToolVerification(credential, "exec", handle.params, result, handle.inputs);
+        this.recordToolVerification(credential, "exec", handle.params, result, handle.inputs, row.id);
     }
   }
   submit(credential: TaskCredential, candidate: string): TaskView {
@@ -2145,6 +2252,7 @@ export class TaskSystemStore {
     params: unknown,
     result: unknown,
     inputArtifacts: Array<{ path: string; sha256: string }>,
+    operationId?: string,
   ): void {
     if (
       tool !== "exec" ||
@@ -2189,6 +2297,7 @@ export class TaskSystemStore {
           sha256: artifacts[0].sha256,
           inputArtifacts: artifacts,
           verifier: "runtime-tool-owner",
+          ...(operationId ? { operationId } : {}),
           repairAttempt: this.repairAttempt(credential.taskNodeId),
           createdAt: this.now(),
         };

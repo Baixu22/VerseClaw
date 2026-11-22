@@ -204,5 +204,67 @@
     "showSteps": "Show steps",
     "hideSteps": "Hide steps",
     "updated": "Updated {{time}}"
+  },
+  "trace": {
+    "open": "Task report",
+    "loading": "Loading task report…",
+    "unavailable": "The task report is unavailable. Refresh to try again.",
+    "unknown": "Unknown",
+    "elapsed": "{{seconds}} s",
+    "source": "Task version {{revision}} · {{target}}",
+    "goal": "Goal: {{goal}}",
+    "calls": "Model calls",
+    "tokens": "Tokens",
+    "cost": "Estimated cost",
+    "estimatedCost": "Estimated USD {{amount}}",
+    "checks": "Checks and artifacts ({{count}})",
+    "diagnosticCount": "References to inspect ({{count}})",
+    "raw": "Technical trace",
+    "executionCount": "{{runs}} runs · {{operations}} operations",
+    "states": {
+      "current": "Current records",
+      "stale": "Source or artifact changed",
+      "incomplete": "Trace references missing"
+    },
+    "artifacts": {
+      "current": "Verified bytes",
+      "retained": "Retained proof verified",
+      "stale": "Content changed",
+      "incomplete": "Verification incomplete",
+      "superseded": "Earlier candidate",
+      "missing": "Missing",
+      "unavailable": "Unavailable"
+    },
+    "phases": {
+      "queue": "Waiting for claim",
+      "execution": "Execution",
+      "verification": "Verification",
+      "recovery": "Recovery"
+    },
+    "operations": {
+      "completed": "Returned",
+      "pending": "Pending",
+      "unknown": "Effect unknown",
+      "reconciled": "Reconciled",
+      "delegation_unknown": "Delegation unknown"
+    },
+    "diagnostics": {
+      "source_changed": "The task version changed.",
+      "source_missing": "The source contract record is missing.",
+      "candidate_changed": "The requested candidate differs from the submitted candidate.",
+      "receipt_missing": "A required verification receipt is missing.",
+      "receipt_invalid": "A receipt does not match its original source or check.",
+      "artifact_changed": "Artifact content changed: {{ref}}",
+      "artifact_missing": "Artifact missing: {{ref}}",
+      "artifact_unavailable": "Artifact cannot be verified: {{ref}}",
+      "checkout_replaced": "The original checkout instance was replaced.",
+      "run_missing": "An operation has no matching run record.",
+      "operation_missing": "An operation reference is missing.",
+      "effect_missing": "An operation still needs its effect receipt.",
+      "cost_unknown": "Some model-call amounts are unknown.",
+      "cost_conflict": "Usage receipts conflict and cannot be totalled.",
+      "phase_unknown": "The {{phase}} time boundary is missing.",
+      "source_identity_unknown": "An execution scope or checkout identity was not recorded."
+    }
   }
 }

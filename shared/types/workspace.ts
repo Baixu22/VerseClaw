@@ -349,6 +349,8 @@ export interface WorkspaceContextRange {
 
 export interface LiveTokenUsage {
   sessionKey: string;
+  scope?: 'session';
+  requestedRunId?: string | null;
   runId?: string | null;
   inputTokens: number;
   outputTokens: number;

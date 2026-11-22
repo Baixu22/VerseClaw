@@ -47,3 +47,5 @@ TF0685配置旅程包括只读预览、实际重载、两次重载失败后的de
 TF0687经验治理验证成功/失败Mission候选、审核前不可见、原session使用、跨session拒绝、撤销/替代/过期后后续读取失效。Gateway canary 通过 mission.run 产生候选，从 memory.proposals 取回同一条 episode 后审核，核对 pending/accepted/foreign/revoked四次provider请求，并区分selector receipt和最终prompt delivery；8个留出查询复用既有预算评估，不把结构覆盖作为live模型质量。
 
 Mission 的长执行请求沿共享 deadline 收紧；等待期间由原生命周期事件提供运行身份，暂停和取消使用独立忙态。控制确认后的较早执行响应保留当前控制状态。Gateway 时限耗尽以 TIMEOUT 和阶段预算返回，已到期请求不派发；方法名去空白后使用同一预算判定。
+
+TF0688 追溯旅程通过编译 Gateway 写入真实文件并执行原验证命令，随后由 Task owner 接受固定候选。agent 在任务卡展开四语报告，核对源输入、会话代次、运行、检出、效果与模型调用；页面重载和来源会话删除后保留原验收与用量。修改产物或传入旧来源摘要时，报告显示失效诊断。费用按原模型调用去重，未知价格保留未知金额；完整源码、回执和截图绑定同一候选。

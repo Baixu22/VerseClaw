@@ -204,5 +204,67 @@
     "showSteps": "ステップを表示",
     "hideSteps": "ステップを隠す",
     "updated": "{{time}}に更新"
+  },
+  "trace": {
+    "open": "タスク追跡レポート",
+    "loading": "タスクレポートを読み込み中…",
+    "unavailable": "タスクレポートを取得できません。更新して再試行してください。",
+    "unknown": "不明",
+    "elapsed": "{{seconds}} 秒",
+    "source": "タスクバージョン {{revision}} · {{target}}",
+    "goal": "目標：{{goal}}",
+    "calls": "モデル呼び出し",
+    "tokens": "トークン数",
+    "cost": "推定費用",
+    "estimatedCost": "推定 {{amount}} 米ドル",
+    "checks": "検証と成果物（{{count}}）",
+    "diagnosticCount": "確認が必要な参照（{{count}}）",
+    "raw": "技術トレース",
+    "executionCount": "{{runs}} 回の実行 · {{operations}} 件の操作",
+    "states": {
+      "current": "現在の記録",
+      "stale": "ソースまたは成果物が変更済み",
+      "incomplete": "追跡参照が不足"
+    },
+    "artifacts": {
+      "current": "内容を検証済み",
+      "retained": "保存済み証拠を検証済み",
+      "stale": "内容が変更済み",
+      "incomplete": "検証未完了",
+      "superseded": "過去の候補",
+      "missing": "見つかりません",
+      "unavailable": "取得不可"
+    },
+    "phases": {
+      "queue": "取得待ち",
+      "execution": "実行",
+      "verification": "検証",
+      "recovery": "復旧"
+    },
+    "operations": {
+      "completed": "応答済み",
+      "pending": "処理待ち",
+      "unknown": "効果が不明",
+      "reconciled": "照合済み",
+      "delegation_unknown": "委任結果が不明"
+    },
+    "diagnostics": {
+      "source_changed": "タスクバージョンが変更されました。",
+      "source_missing": "ソース契約の記録がありません。",
+      "candidate_changed": "要求された候補と提出済み候補が異なります。",
+      "receipt_missing": "必要な検証記録がありません。",
+      "receipt_invalid": "記録が元のソースまたは検証と一致しません。",
+      "artifact_changed": "成果物の内容が変更されました：{{ref}}",
+      "artifact_missing": "成果物がありません：{{ref}}",
+      "artifact_unavailable": "成果物を検証できません：{{ref}}",
+      "checkout_replaced": "元のチェックアウトが置換されました。",
+      "run_missing": "操作に対応する実行記録がありません。",
+      "operation_missing": "操作の参照がありません。",
+      "effect_missing": "操作結果の記録がまだ必要です。",
+      "cost_unknown": "一部のモデル呼び出し費用は不明です。",
+      "cost_conflict": "使用量の記録が競合し、費用を集計できません。",
+      "phase_unknown": "{{phase}}の時間境界がありません。",
+      "source_identity_unknown": "実行スコープまたはチェックアウト識別情報が記録されていません。"
+    }
   }
 }

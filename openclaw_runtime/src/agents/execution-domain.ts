@@ -8,6 +8,7 @@ import { openExecutionStateDatabase as openOpenClawStateDatabase, runExecutionSt
 import { filesystemInstance } from "./worktree-registry.js";
 import { TaskSystemStore } from "../../../shared/task-system/store.js";
 import { checkoutWriterSnapshot } from "./worktree-writer.js";
+import { TASK_SCHEMA_VERSION } from '../../../shared/task-system/store.js';
 import { withExecutionTaskBarrier } from './execution-task-barrier.js';
 
 type DomainDatabase = Pick<DB, "execution_domain_registrations">;
@@ -50,7 +51,7 @@ function assertAuthorityDatabase(domain: TaskDomain): void {
   const db = new DatabaseSync(domain.database, { readOnly: true });
   try {
     const version = db.prepare("PRAGMA user_version").get() as { user_version: number };
-    if (version.user_version !== 6) throw new Error("execution_task_authority_schema_mismatch");
+    if (version.user_version !== TASK_SCHEMA_VERSION) throw new Error("execution_task_authority_schema_mismatch");
     const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('task_contracts','task_claims','task_bindings')").all();
     if (tables.length !== 3) throw new Error("execution_task_authority_invalid");
   } finally { db.close(); }
