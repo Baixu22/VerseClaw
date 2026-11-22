@@ -248,7 +248,9 @@
     "harness/specs/fixtures/task-system-ui-consolidation/20261122/sources.json",
     "harness/specs/fixtures/task-system-ui-consolidation/20261122/validation.json",
     "harness/specs/fixtures/task-system-ui-consolidation/20261122/verify.py",
-    "harness/specs/fixtures/task-system-ui-consolidation/20261122/SHA256SUMS"
+    "harness/specs/fixtures/task-system-ui-consolidation/20261122/SHA256SUMS",
+    "harness/specs/fixtures/task-system-ui-consolidation/20261122/journey.json",
+    "harness/specs/fixtures/task-system-ui-consolidation/20261122/unit-tests.json"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",

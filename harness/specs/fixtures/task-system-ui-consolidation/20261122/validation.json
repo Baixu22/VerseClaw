@@ -59,6 +59,24 @@
       "driven_by": "agent",
       "actor": "codex-ui-integration",
       "command": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-11-22T20:06:38.936790+00:00",
+      "durationSeconds": 3.042,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\artifacts-final-r4.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\artifacts-final-r4.stderr.log",
+      "receiptFile": "artifacts-final-r4.command.json",
+      "receiptSha256": "de4e042fdf32af7852ebf8ac733ed50183c726336a66a1eaed752405a57e3450",
+      "stdoutSha256": "57dd7836ee41f40ed62cba0e9211a37f71ace825ddf83cd966da4d13e585c44b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
         "python",
         "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
         "--mode",
@@ -498,6 +516,474 @@
       "receiptSha256": "4059fbb3e638b098eca7d8902a83e143eb73f801326314517c7fdcd46428daaa",
       "stdoutSha256": "935a9e12baac2b8192e946838c9634c15747dd4a6a849a13bbb14e43c0af5f20",
       "stderrSha256": "aef58802b76608d1b596c828472edb513a07423427d1ac28e1005ee371421484"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:27:03.334992+00:00",
+      "durationSeconds": 7.391,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-artifacts-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-artifacts-r1.stderr.log",
+      "receiptFile": "clean-artifacts-r1.command.json",
+      "receiptSha256": "8a91f27b3b72cff3d807be5a497cf3e790378061f7cfe366a700a977648c91e0",
+      "stdoutSha256": "57dd7836ee41f40ed62cba0e9211a37f71ace825ddf83cd966da4d13e585c44b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:26:59.460382+00:00",
+      "durationSeconds": 0.2,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-comms-compare-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-comms-compare-r1.stderr.log",
+      "receiptFile": "clean-comms-compare-r1.command.json",
+      "receiptSha256": "1356177566ad2f1cc90af869d717475d724dd19343aac498758e3268270f8acf",
+      "stdoutSha256": "e68773c8dfc809724515a4b9a0b4d9df86ae06eeaa13d7bbff2f4279780c62ea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:26:58.836546+00:00",
+      "durationSeconds": 0.211,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-comms-replay-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-comms-replay-r1.stderr.log",
+      "receiptFile": "clean-comms-replay-r1.command.json",
+      "receiptSha256": "38148fd7fc4de4f99013aed50b4f3fdb877b4b5c5753e85a492424fef1d2c8bf",
+      "stdoutSha256": "c591581bb2c7b99e5cee30ba5b5b7959d413c26b51f64c15484eb9f61d27b30f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:25:16.515693+00:00",
+      "durationSeconds": 1.629,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-contract-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-contract-r1.stderr.log",
+      "receiptFile": "clean-contract-r1.command.json",
+      "receiptSha256": "df8de5892e004321a6d11f1d9a58931d3b45a787aef53c19f80a5667433dcd80",
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-system-ui-consolidation.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:/tmp/task-ui-integration-20261122-01a203cc/e2e-clean-r1"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:27:43.852144+00:00",
+      "durationSeconds": 47.124,
+      "exitCode": 1,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r1.stderr.log",
+      "receiptFile": "clean-e2e-r1.command.json",
+      "receiptSha256": "2c27f1836d1d31ee22d5aa0161d0c6ee8cebeb8db697b605bc8186d6732f2fcd",
+      "stdoutSha256": "3271b49b7d72f5f8789cf281edf68bea3ec67a9e98830c7dfc415a86ba5dd3e5",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-system-ui-consolidation.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:/tmp/task-ui-integration-20261122-01a203cc/e2e-clean-r2"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:32:52.288081+00:00",
+      "durationSeconds": 41.881,
+      "exitCode": 1,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r2.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r2.stderr.log",
+      "receiptFile": "clean-e2e-r2.command.json",
+      "receiptSha256": "6df0be325d2998d3a91f6b41c92b806776bb63bf6840b3479ed0626e1a29309c",
+      "stdoutSha256": "37eb585418f089204601223bb0cfc8f5e5c63fabf1c355a0274470bc4f0d156a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-system-ui-consolidation.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:/tmp/task-ui-integration-20261122-01a203cc/e2e-clean-r3"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:36:45.162145+00:00",
+      "durationSeconds": 51.235,
+      "exitCode": 1,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r3.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r3.stderr.log",
+      "receiptFile": "clean-e2e-r3.command.json",
+      "receiptSha256": "974c88765450dd199b548bcc65e430ccf72f5331aaab6eb15689e72a4613ba40",
+      "stdoutSha256": "cbaa060ca511851ecbbfe3d2102eb7adbd2e96bb87f70bcc0f64b3f286590477",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-system-ui-consolidation.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:/tmp/task-ui-integration-20261122-01a203cc/e2e-clean-r4"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:44:32.264839+00:00",
+      "durationSeconds": 18.692,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r4.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r4.stderr.log",
+      "receiptFile": "clean-e2e-r4.command.json",
+      "receiptSha256": "4051a4594441b5d8789f4f716f1225c6258dfb88dde279629cd6ab385719a17f",
+      "stdoutSha256": "5b781bf952d030431476c1111f753fcc1c9e37bbd51d49430d4ca432d8244fa4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:21:26.541827+00:00",
+      "durationSeconds": 0.067,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-generate-bridge-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-generate-bridge-r1.stderr.log",
+      "receiptFile": "clean-generate-bridge-r1.command.json",
+      "receiptSha256": "a9b681b68f9008b434dd4249fa20d5f22af8cf49cf2993a6aa236e0e62850146",
+      "stdoutSha256": "f01521bac4f42f37a0daeca717c0f0e68c6aef0b468265b3b5f3fef2b7176f0d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/task-system-ui-consolidation-20261122.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:27:02.022934+00:00",
+      "durationSeconds": 0.87,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-harness-dry-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-harness-dry-r1.stderr.log",
+      "receiptFile": "clean-harness-dry-r1.command.json",
+      "receiptSha256": "ce022059f45fea5213ccabe7163d12e6469558f5f2fc14b0d46756c1c154fa93",
+      "stdoutSha256": "c256ecb7d3381d56031780ed4c6a78ac368ca15cae30d9d7aeac0aa4a35a89e3",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/task-system-ui-consolidation-20261122.md"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:27:00.098386+00:00",
+      "durationSeconds": 1.504,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-harness-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-harness-r1.stderr.log",
+      "receiptFile": "clean-harness-r1.command.json",
+      "receiptSha256": "7c8a847dcf97e7da24d89650e1cf2a066cd5389324b2cdb945891bd12833a965",
+      "stdoutSha256": "d85d970c81ee5c0d56e76807c02c74e6c87d0cfe51d84cdd6581a67d9c54a812",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:25:16.516710+00:00",
+      "durationSeconds": 0.445,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-i18n-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-i18n-r1.stderr.log",
+      "receiptFile": "clean-i18n-r1.command.json",
+      "receiptSha256": "17f91ca617c208eccb2ec26d65c48fff10d811b3ff39db7e09afa0e21addf131",
+      "stdoutSha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:14:37.858775+00:00",
+      "durationSeconds": 0.277,
+      "exitCode": 1,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-runtime-build-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-runtime-build-r1.stderr.log",
+      "receiptFile": "clean-runtime-build-r1.command.json",
+      "receiptSha256": "2406046ba5e8492dc73d1e4666a4aa798b9f9e060ea6cbe187d5be4e9a90376e",
+      "stdoutSha256": "bc85f892c738268af9452cc7597142e9101d321123b52a10ca42d07fcdc1d95f",
+      "stderrSha256": "682292bdad87675c4ba3544e2e12eb07563fd4c14aa3c389b365c9e803981f0e"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:22:10.681627+00:00",
+      "durationSeconds": 41.655,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-runtime-build-r2.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-runtime-build-r2.stderr.log",
+      "receiptFile": "clean-runtime-build-r2.command.json",
+      "receiptSha256": "091b8aebb2cedf43965d30bb61e3fb2ccf11b5e3ecc963c2edbc13b298b3c84c",
+      "stdoutSha256": "7a8e4ce57291608f2094b7af84f85f703c934ac55a38e57e6fbdbebd08e4b569",
+      "stderrSha256": "76dae9c48c3df413b8b52937b24a0c323b7e3a3be84a16f8dfed7e8c0cd5a373"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:22:10.704798+00:00",
+      "durationSeconds": 37.048,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-node-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-node-r1.stderr.log",
+      "receiptFile": "clean-typecheck-node-r1.command.json",
+      "receiptSha256": "54d9b5b301dd82b04456336036e9b25851d397c5ec22e266ebe0fb9b14f8a2bf",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:14:37.867926+00:00",
+      "durationSeconds": 0.063,
+      "exitCode": 1,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-web-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-web-r1.stderr.log",
+      "receiptFile": "clean-typecheck-web-r1.command.json",
+      "receiptSha256": "5292a086796559c5c7bc18a3ee711fe211162a94c40a554a8373c798d001e0e5",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "6cc78e13273f8e3e43833ed2c37d4a3ade9cf1294f5ccf08b53baf77629ca0e0"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:19:57.385789+00:00",
+      "durationSeconds": 8.063,
+      "exitCode": 2,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-web-r2.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-web-r2.stderr.log",
+      "receiptFile": "clean-typecheck-web-r2.command.json",
+      "receiptSha256": "f600a44e385765102b9b29d75c532d16e71af8a609b0b2973fdee104b146d40f",
+      "stdoutSha256": "cb5903c54274eceb530b909b527286913a4e4cedd0644f7b8aa7806545e76005",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:22:10.704798+00:00",
+      "durationSeconds": 7.67,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-web-r3.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-web-r3.stderr.log",
+      "receiptFile": "clean-typecheck-web-r3.command.json",
+      "receiptSha256": "68265197f4b534c936350461964c2eecf24aa9682205cbd5275ab22b87a1d2f1",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/task-trace-panel.test.tsx",
+        "tests/unit/session-chain-panels.test.tsx",
+        "tests/unit/session-family-navigation.test.tsx",
+        "tests/unit/session-folder-tree.test.tsx",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/knowledge-chat.test.tsx",
+        "tests/unit/project-rag-chat-policy.test.tsx",
+        "tests/unit/contract-check.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/task-ui-async-recovery.test.tsx",
+        "tests/unit/project-rag-plan-owner.test.ts",
+        "tests/unit/chat-artifact-panel-layout.test.tsx",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "tests/unit/chat-save-to-knowledge.test.tsx",
+        "tests/unit/chat-session-status-rail.test.tsx",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/task-ui-integration-20261122-01a203cc/clean-unit-r1.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:14:37.865925+00:00",
+      "durationSeconds": 0.065,
+      "exitCode": 1,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-unit-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-unit-r1.stderr.log",
+      "receiptFile": "clean-unit-r1.command.json",
+      "receiptSha256": "e78c45eaaff6a9388cce8a2c090f6a0e8212072dd3ddaa5d622d3a94d86be1fa",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "b3aaa1bd1e8cc7526f55e49a41cc2b0a7e69138b2acc952690f10061ba76d3cc"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/task-trace-panel.test.tsx",
+        "tests/unit/session-chain-panels.test.tsx",
+        "tests/unit/session-family-navigation.test.tsx",
+        "tests/unit/session-folder-tree.test.tsx",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/knowledge-chat.test.tsx",
+        "tests/unit/project-rag-chat-policy.test.tsx",
+        "tests/unit/contract-check.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/task-ui-async-recovery.test.tsx",
+        "tests/unit/project-rag-plan-owner.test.ts",
+        "tests/unit/chat-artifact-panel-layout.test.tsx",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "tests/unit/chat-save-to-knowledge.test.tsx",
+        "tests/unit/chat-session-status-rail.test.tsx",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/task-ui-integration-20261122-01a203cc/clean-unit-r2.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:19:57.385789+00:00",
+      "durationSeconds": 133.552,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-unit-r2.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-unit-r2.stderr.log",
+      "receiptFile": "clean-unit-r2.command.json",
+      "receiptSha256": "9deea02f1958441bfa0439b87c6b639d386aed2a2b0c8b826760d8b2b5773c3e",
+      "stdoutSha256": "7a7596d0c8c9d380427f05edada48fd44a8b1b69de3a7e4f5406d93643468250",
+      "stderrSha256": "3a890ef5d888b08d82724a1c6abec81ee5ffa9da1b049fde30266e00f2e2241d"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:25:16.515693+00:00",
+      "durationSeconds": 75.733,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-vite-build-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-vite-build-r1.stderr.log",
+      "receiptFile": "clean-vite-build-r1.command.json",
+      "receiptSha256": "4a1184bee1f873c92b2731733011887fa38b93e694f380877552083a670346c7",
+      "stdoutSha256": "af4eed3df5c1fc1b55e7664606fb015e126782b02b48f2312733cf7863589ce6",
+      "stderrSha256": "289ad3b5c32a81aaef51f877adb326f60804aaa02a47747690f298577afef669"
     },
     {
       "driven_by": "agent",
@@ -972,6 +1458,26 @@
       "receiptFile": "runtime-deps-reconcile-r1.command.json",
       "receiptSha256": "720d81ce5b88c2700a786ed80f7e9957377ba0449000e7287343ac59426b4806",
       "stdoutSha256": "5be3ba718a8384059fe3ade438f29f0abd10e5e59ba0d745b50687b65a165955",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "list",
+        "--json"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-11-22T20:12:42.995280+00:00",
+      "durationSeconds": 0.29,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\tf-current-for-close.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\tf-current-for-close.stderr.log",
+      "receiptFile": "tf-current-for-close.command.json",
+      "receiptSha256": "4226dd9c6372290d2dc167362752c8d165fe191fc4248b72a82c91696b12b395",
+      "stdoutSha256": "323ef750f6dce8e50e360495eb55ca0016a64a02efbebf35d5fc714b2c4ea921",
       "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
@@ -1541,6 +2047,13 @@
     "autoreview-ui-r1.command.json",
     "autoreview-ui-r2.command.json",
     "autoreview-ui-r3.command.json",
+    "clean-e2e-r1.command.json",
+    "clean-e2e-r2.command.json",
+    "clean-e2e-r3.command.json",
+    "clean-runtime-build-r1.command.json",
+    "clean-typecheck-web-r1.command.json",
+    "clean-typecheck-web-r2.command.json",
+    "clean-unit-r1.command.json",
     "contract-r1.command.json",
     "final-typecheck-node-r1.command.json",
     "final-typecheck-node-r3.command.json",
@@ -1595,22 +2108,22 @@
     },
     {
       "file": "after/ledger-light-1280.png",
-      "sha256": "d0f914efec236adc9a6028f4467d2d57af9ba1e38b9b613d289fec6f74611bae",
+      "sha256": "619015014c320f66864a9231d91864e74e7e3d816edc13c4d0aff2199936b46b",
       "stage": "after"
     },
     {
       "file": "after/trace-light-1280.png",
-      "sha256": "c6b0314d1b529a8cb0a004e276871a60b0b1a9e7ffc6510e54ff21d31fb761df",
+      "sha256": "01581b37d84ce9cd90d37cb04bee1434ea61107c991bc5c3171d2a55dee46978",
       "stage": "after"
     },
     {
       "file": "after/tree-light-1280.png",
-      "sha256": "78275158ae425c1bb1ab5fb3e11c3865f7f4fc1ae6c3fe07a96dc89182588308",
+      "sha256": "8825148ae0decebdfe415e0d4f76fad1a97a4c5914dedc413847848b3ec7ec49",
       "stage": "after"
     },
     {
       "file": "after/projects-light-1280.png",
-      "sha256": "431281b382f46c2417d7bed495f5f77029c32254608d5f61ae53fd9c6d0b70a4",
+      "sha256": "a357a39e9fa0b5716d77ce78dde7394809eb691403768bbc393c68527daa7fa2",
       "stage": "after"
     },
     {
@@ -1620,12 +2133,12 @@
     },
     {
       "file": "after/tray-dark-960.png",
-      "sha256": "5731c33361f4678584049f888f2ce15d422241acd1723575f7a57146e8deba05",
+      "sha256": "b4bdeadc6d2fbc8e4734213e9b9f289a13bf4e182ca104b14d504af05158ae6c",
       "stage": "after"
     },
     {
       "file": "after/tray-expanded-dark-960.png",
-      "sha256": "4eaf7d4df80559c9d6ef0a8c621362281a77362ec2775502f297de65ab6fb8c6",
+      "sha256": "1bc3fb2496d492abd2bc374cb6fb26eb71daae9500235a0ef9dae49fbbfc2327",
       "stage": "after"
     },
     {
@@ -1635,12 +2148,12 @@
     },
     {
       "file": "after/ledger-ja-960.png",
-      "sha256": "8ca4afea3ecb3ee4373c63142e99efa854167519784808fb91d7ee22f2d6639e",
+      "sha256": "620e58993a815b1fa512a2a6d7cbb94e0cd25bd0141ee4467cf3e853535d1f11",
       "stage": "after"
     },
     {
       "file": "after/ledger-ru-960.png",
-      "sha256": "4432471347c17ee1019a2a99dc45c67ecdb1c13d004ed2a71063fbd498756dfc",
+      "sha256": "2d7ab45ccc792ed85f754710397f97cda1be6a26d4f2e10199e1f5953952fa1f",
       "stage": "after"
     }
   ]

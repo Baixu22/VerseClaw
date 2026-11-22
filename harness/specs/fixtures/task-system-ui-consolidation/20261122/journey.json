@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-task-ui",
+  "sourceRun": "clean-e2e-r4",
+  "stats": {
+    "startTime": "2026-11-22T20:44:33.116Z",
+    "duration": 17823.548,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "viewports": [
+    "1280x800 light",
+    "960x800 dark"
+  ],
+  "locales": [
+    "en",
+    "zh",
+    "ja",
+    "ru"
+  ],
+  "sourceChanged": false
+}

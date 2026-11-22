@@ -1,5 +1,308 @@
 {
   "driven_by": "agent",
-  "status": "pending",
-  "commands": []
+  "candidate": {
+    "driven_by": "agent",
+    "actor": "codex-ui-integration",
+    "commit": "a15290ca66e7cc3d67c53a5eda53345221abd146",
+    "tree": "c23011176af0a659b091ab2f8166f954c83bbb08",
+    "dirty": false,
+    "workspace": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "dependencyReuse": {
+      "driven_by": "agent",
+      "linkage": "canonical-package-junctions",
+      "folders": [
+        {
+          "folder": "",
+          "from": "D:\\ClawX\\node_modules",
+          "links": 1561
+        },
+        {
+          "folder": "openclaw_runtime",
+          "from": "D:\\ClawX\\openclaw_runtime\\node_modules",
+          "links": 1163
+        },
+        {
+          "folder": "packages/versebrowser",
+          "from": "D:\\ClawX\\packages\\versebrowser\\node_modules",
+          "links": 20
+        },
+        {
+          "folder": "resources/verseshell-mcp",
+          "from": "D:\\ClawX\\resources\\verseshell-mcp\\node_modules",
+          "links": 0
+        }
+      ]
+    },
+    "sourceStatusAfter": "",
+    "e2eRunRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-nL19JC",
+    "generatedInputs": [
+      "src/extensions/_ext-bridge.generated.ts",
+      "electron/extensions/_ext-bridge.generated.ts"
+    ]
+  },
+  "commands": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:21:26.541827+00:00",
+      "durationSeconds": 0.067,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-generate-bridge-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-generate-bridge-r1.stderr.log",
+      "receiptSha256": "a9b681b68f9008b434dd4249fa20d5f22af8cf49cf2993a6aa236e0e62850146"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:22:10.681627+00:00",
+      "durationSeconds": 41.655,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-runtime-build-r2.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-runtime-build-r2.stderr.log",
+      "receiptSha256": "091b8aebb2cedf43965d30bb61e3fb2ccf11b5e3ecc963c2edbc13b298b3c84c"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:22:10.704798+00:00",
+      "durationSeconds": 7.67,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-web-r3.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-web-r3.stderr.log",
+      "receiptSha256": "68265197f4b534c936350461964c2eecf24aa9682205cbd5275ab22b87a1d2f1"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:22:10.704798+00:00",
+      "durationSeconds": 37.048,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-node-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-typecheck-node-r1.stderr.log",
+      "receiptSha256": "54d9b5b301dd82b04456336036e9b25851d397c5ec22e266ebe0fb9b14f8a2bf"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/task-trace-panel.test.tsx",
+        "tests/unit/session-chain-panels.test.tsx",
+        "tests/unit/session-family-navigation.test.tsx",
+        "tests/unit/session-folder-tree.test.tsx",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/knowledge-chat.test.tsx",
+        "tests/unit/project-rag-chat-policy.test.tsx",
+        "tests/unit/contract-check.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/task-ui-async-recovery.test.tsx",
+        "tests/unit/project-rag-plan-owner.test.ts",
+        "tests/unit/chat-artifact-panel-layout.test.tsx",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "tests/unit/chat-save-to-knowledge.test.tsx",
+        "tests/unit/chat-session-status-rail.test.tsx",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/task-ui-integration-20261122-01a203cc/clean-unit-r2.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:19:57.385789+00:00",
+      "durationSeconds": 133.552,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-unit-r2.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-unit-r2.stderr.log",
+      "receiptSha256": "9deea02f1958441bfa0439b87c6b639d386aed2a2b0c8b826760d8b2b5773c3e"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:25:16.515693+00:00",
+      "durationSeconds": 1.629,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-contract-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-contract-r1.stderr.log",
+      "receiptSha256": "df8de5892e004321a6d11f1d9a58931d3b45a787aef53c19f80a5667433dcd80"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:25:16.516710+00:00",
+      "durationSeconds": 0.445,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-i18n-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-i18n-r1.stderr.log",
+      "receiptSha256": "17f91ca617c208eccb2ec26d65c48fff10d811b3ff39db7e09afa0e21addf131"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:25:16.515693+00:00",
+      "durationSeconds": 75.733,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-vite-build-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-vite-build-r1.stderr.log",
+      "receiptSha256": "4a1184bee1f873c92b2731733011887fa38b93e694f380877552083a670346c7"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:26:58.836546+00:00",
+      "durationSeconds": 0.211,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-comms-replay-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-comms-replay-r1.stderr.log",
+      "receiptSha256": "38148fd7fc4de4f99013aed50b4f3fdb877b4b5c5753e85a492424fef1d2c8bf"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:26:59.460382+00:00",
+      "durationSeconds": 0.2,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-comms-compare-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-comms-compare-r1.stderr.log",
+      "receiptSha256": "1356177566ad2f1cc90af869d717475d724dd19343aac498758e3268270f8acf"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/task-system-ui-consolidation-20261122.md"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:27:00.098386+00:00",
+      "durationSeconds": 1.504,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-harness-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-harness-r1.stderr.log",
+      "receiptSha256": "7c8a847dcf97e7da24d89650e1cf2a066cd5389324b2cdb945891bd12833a965"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/task-system-ui-consolidation-20261122.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:27:02.022934+00:00",
+      "durationSeconds": 0.87,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-harness-dry-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-harness-dry-r1.stderr.log",
+      "receiptSha256": "ce022059f45fea5213ccabe7163d12e6469558f5f2fc14b0d46756c1c154fa93"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:27:03.334992+00:00",
+      "durationSeconds": 7.391,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-artifacts-r1.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-artifacts-r1.stderr.log",
+      "receiptSha256": "8a91f27b3b72cff3d807be5a497cf3e790378061f7cfe366a700a977648c91e0"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-ui-integration",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-system-ui-consolidation.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:/tmp/task-ui-integration-20261122-01a203cc/e2e-clean-r4"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-22T20:44:32.264839+00:00",
+      "durationSeconds": 18.692,
+      "exitCode": 0,
+      "stdout": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r4.stdout.log",
+      "stderr": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\clean-e2e-r4.stderr.log",
+      "receiptSha256": "4051a4594441b5d8789f4f716f1225c6258dfb88dde279629cd6ab385719a17f"
+    }
+  ],
+  "unitTests": 388,
+  "journey": {
+    "startTime": "2026-11-22T20:44:33.116Z",
+    "duration": 17823.548,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
 }

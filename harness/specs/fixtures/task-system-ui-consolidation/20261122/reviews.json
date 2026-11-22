@@ -285,5 +285,12 @@
       "reason": "knowledgeRequestKey includes input.trim(); both Auto-read and before-send editing cancellation checks passed."
     }
   ],
-  "pendingFinalReview": true
+  "pendingFinalReview": false,
+  "finalAcceptedActionableFindings": 0,
+  "finalReviewChain": [
+    "autoreview-owner-1-r3.json",
+    "autoreview-owner-3-r1.json",
+    "autoreview-final-fix-r1.json"
+  ],
+  "excludedReview": "autoreview-g5-late-r1.json"
 }

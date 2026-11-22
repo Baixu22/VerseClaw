@@ -1,0 +1,1657 @@
+{
+  "driven_by": "agent",
+  "sourceRun": "clean-unit-r2",
+  "tests": 388,
+  "passed": 388,
+  "failed": 0,
+  "files": [
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/chat-artifact-panel-layout.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "Chat artifact panel layout keeps the chat toolbar background draggable while actions remain clickable",
+          "status": "passed"
+        },
+        {
+          "name": "Chat artifact panel layout keeps the chat page as the positioned workspace surface on macOS",
+          "status": "passed"
+        },
+        {
+          "name": "Chat artifact panel layout renders the right artifact panel as a flex sibling that squeezes the chat",
+          "status": "passed"
+        },
+        {
+          "name": "Chat artifact panel layout gives the side panel no surface of its own, so it stays co-planar with the chat",
+          "status": "passed"
+        },
+        {
+          "name": "Chat artifact panel layout keeps the conversation canvas plain without grid decoration",
+          "status": "passed"
+        },
+        {
+          "name": "Chat artifact panel layout hides the chat assistive rail while the artifact panel is open",
+          "status": "passed"
+        },
+        {
+          "name": "Chat artifact panel layout does not show the chat assistive rail before work starts",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/chat-input.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "ChatInput draft persistence hydrates the composer from draftValue and reports draft edits",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence clears the parent draft after sending",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence keeps the new conversation draft when an old task-loop upgrade finishes",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence surfaces Task Loop upgrade for complex project work without auto-sending",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence sends the selected knowledge scope with the composer payload",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence changes knowledge invocation mode from the knowledge menu",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence shows suggest-mode knowledge candidates and attaches them only after user action",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence dismisses knowledge preflight for the same input and still sends if routing fails",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence searches and attaches specific knowledge references before sending",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput draft persistence does not render or send Work Mode",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands opens the slash menu, filters commands, and selects with Enter",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands filters slash commands by command prefix without matching descriptions",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands closes the slash menu with Escape",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands keeps unknown slash commands in the composer instead of sending",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands opens wiki search from slash command and attaches selected context",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands changes knowledge scope from slash commands without sending",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands runs steward audit slash command without sending a chat prompt",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands falls back to a review prompt when no code review hook is provided",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands creates a ledger node and best-effort links the current session",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands opens Mission Control guidance through the Agents route",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands opens the compaction dialog from /compact",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands runs the existing fork callback from /fork",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash commands shows the generation reason and refuses every disabled handoff control",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput capability action preflight confirms a local skill enable action before sending trusted metadata",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput capability action preflight cancels a capability action without sending or changing configuration",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput capability action preflight confirms MCP JSON registration and injects reload results",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput capability action preflight blocks high-risk MCP JSON before registration",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /new starts a fresh session through the onNewSession prop",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /resume switches to the session matching the keyword",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /resume without args shows a hint instead of switching",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /rename renames the current session",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /archive archives the current session",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /delete permanently deletes the current session after confirmation",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /clear resets the local message view through the store action",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /copy copies the last assistant response as markdown",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands /copy shows a hint when there is no assistant response",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands keeps long-task modes out of ordinary Chat and queues the running draft locally",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput slash session lifecycle commands sends revise-goal from the delivery menu of a /loop session",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status keeps passive message and token counts out of the composer footer",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status offers Stop beside Send while a draft is pending, and /loop delivery modes from one menu",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status binds Mod+Enter to guide and Mod+Shift+Enter to interrupt, leaving Shift+Enter a newline",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status queues the draft immediately when the running primary control is clicked",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status pauses the run with one click when there is no composer draft",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status renders a persisted pause as a resume action",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status omits the context status when no context data is available",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status opens the manual compaction dialog from /compact and confirms with extra instructions",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status closes a compaction dialog when switching conversations",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status cancels a delayed compaction confirmation after leaving and returning to a conversation",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status preserves the new conversation dialog when an old compaction completes",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status dismisses a pending cache-risk confirmation when its conversation is left",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status no longer renders compaction diagnostics in the composer status line",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status keeps compaction diagnostics hidden in basic mode while preserving send payload",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status refuses /compact while the session is sending",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput read-only context status keeps compact unavailable until its session generation is ready",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput direct model selection selects directly, remembers the preference and never writes agent defaults",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput direct model selection keeps the previous model and preference after a rejected save",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput direct model selection does not close another conversation menu when the previous save finishes",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting hides the @agent picker when only one agent is configured",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting uses native textarea rendering when no skill token is present",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting lets the user select an agent target and sends it with the message",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting disables the input while gateway is running but not yet ready",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting shows gateway readiness as a read-only composer status while starting",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting routes permission mode changes through the direct permission menu",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting falls back to read-only when a persisted workspace has an invalid permission mode",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting routes workspace folder and new session actions through the permission menu",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting keeps @agent targeting separate from switching the workspace agent",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting keeps skill access in the slash palette instead of a toolbar trigger",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting groups non-primary composer actions inside the add menu",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting keeps Office actions visible and routes to setup when no enabled Office skill is available",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting inserts an office action as a skill token plus a prompt template",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting inserts the selected skill from a slash query and prefixes sends",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting keeps a leading selected skill token on the normal send path",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting removes the full inline skill token with one backspace",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting skips across the inline skill block with arrow keys",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting adds left spacing when inserting a skill after adjacent text",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting allows inserting the same skill multiple times as separate blocks",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting opens the artifact preview panel when the inline skill token is clicked",
+          "status": "passed"
+        },
+        {
+          "name": "ChatInput agent targeting stages dropped folders via disk path instead of buffer upload",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation preserves a changed draft and ignores a late Auto-read result",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation cancels an optional Auto-read and completes the requested plain send once",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation does not reopen source inspection after a profile change",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation queues ordinary follow-ups when long-task interventions are unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation dispatches a running draft once while a before-send hook is pending",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation preserves an edited draft when an earlier before-send hook finishes",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation routes Auto-read before a running plain send",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation routes Auto-read before a running queue send",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation routes Auto-read before a running guide send",
+          "status": "passed"
+        },
+        {
+          "name": "RAG-11 composer cancellation uses the long-task queue only when a checkpoint names the owned root",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/chat-render-reachability.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "Run-log replay provenance badge renders the translated badge instead of the raw i18n key",
+          "status": "passed"
+        },
+        {
+          "name": "Tool UI cards emitted as tool calls inside a run segment renders a card from a tool-only assistant turn",
+          "status": "passed"
+        },
+        {
+          "name": "Tool UI cards emitted as tool calls inside a run segment renders a card from a mixed text + tool_use turn whose text was folded into the graph",
+          "status": "passed"
+        },
+        {
+          "name": "Tool UI cards emitted as tool calls inside a run segment renders a question the run is blocked on, with no final reply yet",
+          "status": "passed"
+        },
+        {
+          "name": "Tool UI cards emitted as tool calls inside a run segment renders one fenced question while the same reply is both streaming and in history",
+          "status": "passed"
+        },
+        {
+          "name": "Tool UI cards emitted as tool calls inside a run segment still hides a plain tool call that has no card renderer",
+          "status": "passed"
+        },
+        {
+          "name": "Plan surface replays an update_plan tool call from history into the turn summary",
+          "status": "passed"
+        },
+        {
+          "name": "Plan surface does not also render the plan as a message card",
+          "status": "passed"
+        },
+        {
+          "name": "Plan surface omits the execution graph entirely when every row was promoted",
+          "status": "passed"
+        },
+        {
+          "name": "Permission approvals surfaces a pending host approval in the transcript",
+          "status": "passed"
+        },
+        {
+          "name": "Permission approvals renders exactly one approval card when a tool call also parses as one",
+          "status": "passed"
+        },
+        {
+          "name": "Permission approvals surfaces a pending approval even when no turn produced an activity card",
+          "status": "passed"
+        },
+        {
+          "name": "Permission approvals keeps an undecided approval visible after the next run starts",
+          "status": "passed"
+        },
+        {
+          "name": "Permission approvals forces the turn summary open while an approval is pending",
+          "status": "passed"
+        },
+        {
+          "name": "Thinking reasoning shows reasoning from a message thinking block",
+          "status": "passed"
+        },
+        {
+          "name": "Thinking reasoning keeps reasoning on a turn whose narration text was folded away",
+          "status": "passed"
+        },
+        {
+          "name": "Thinking reasoning hides reasoning entirely while the process fold is shut",
+          "status": "passed"
+        },
+        {
+          "name": "Thinking reasoning keeps thought counts out of the compact header while retaining reasoning details",
+          "status": "passed"
+        },
+        {
+          "name": "Thinking reasoning merges reasoning from every message in the run segment into one panel",
+          "status": "passed"
+        },
+        {
+          "name": "Thinking reasoning keeps progress text visible when a referenced attachment fails to materialize",
+          "status": "passed"
+        },
+        {
+          "name": "Thinking reasoning shows live reasoning from the runtime run while streaming",
+          "status": "passed"
+        },
+        {
+          "name": "Generated file ownership shows a diffable file as a diff only, never also as a chip",
+          "status": "passed"
+        },
+        {
+          "name": "Generated file ownership still chips a file the diff projection cannot render",
+          "status": "passed"
+        },
+        {
+          "name": "Turn summary contents badges labels contents while collapsed, then shows them when opened",
+          "status": "passed"
+        },
+        {
+          "name": "Turn summary contents badges keeps a pending approval visible while process details open and close",
+          "status": "passed"
+        },
+        {
+          "name": "Turn disclosure survives the optimistic→server id swap keeps the turn open after the trigger message id changes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/chat-save-to-knowledge.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "Chat toolbar slash entry groups secondary session tools behind More actions",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/chat-session-status-rail.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "Chat session status rail keeps the sidebar closed when a plan arrives and leaves transcript width unchanged",
+          "status": "passed"
+        },
+        {
+          "name": "Chat session status rail keeps changed environments quiet until the user opens status",
+          "status": "passed"
+        },
+        {
+          "name": "Chat session status rail keeps a clean environment hidden even while a reply is running",
+          "status": "passed"
+        },
+        {
+          "name": "Chat session status rail honors never-auto-expand and opens an overlay on demand",
+          "status": "passed"
+        },
+        {
+          "name": "Chat session status rail uses the manual overlay at narrow widths without automatically covering the conversation",
+          "status": "passed"
+        },
+        {
+          "name": "Chat session status rail opens and closes the requested overlay without creating a passive sidebar",
+          "status": "passed"
+        },
+        {
+          "name": "Chat session status rail never insets the transcript for the workspace panel and the rail at once",
+          "status": "passed"
+        },
+        {
+          "name": "Chat session status rail does not bring back the recovery-assist rail",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/contract-check.test.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "contract check parses contract, facade, and scenario registry entries",
+          "status": "passed"
+        },
+        {
+          "name": "contract check inlines aliased module facades for contract parsing",
+          "status": "passed"
+        },
+        {
+          "name": "contract check passes representative aligned P0 inputs",
+          "status": "passed"
+        },
+        {
+          "name": "contract check reports readable drift for missing facade actions and registry ids",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: alias contract members lists alias members and resolves their relative type imports",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: alias contract members resolves alias members to their actions when the defining type text is supplied",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: alias contract members fails closed when an alias member cannot be resolved",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: alias contract members reconciles alias member actions against the facade and invokeHost",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface finds a namespace registration after an interpolated template",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface ignores comments, strings, unrelated handles and shadowed IPC objects",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface resolves scoped aliases and parenthesized/type-wrapped IPC receivers",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface keeps the original bound channel for register('payload');",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface keeps the original bound channel for register.call(ipcMain, 'payload');",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface keeps the original bound channel for register.apply(ipcMain, ['payload']);",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface keeps the original bound channel for const alias = register; alias.bind(null, 'payload')();",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface retains nonliteral bound channels and handleOnce identity",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface does not treat dynamic or default bindings from ordinary objects as IPC",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface enumerates ipcMain.handle sites including multi-line and non-literal forms",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface parses the preload allowlist and fails closed when it is missing",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface enforces the final zero-handler, host-invoke-only preload invariant",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface fails closed when the registry or the site enumeration is absent",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface rejects an unregistered flat channel with its file and line",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface rejects a stale registry entry whose handler is gone",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface rejects channels that bypass HostApiRegistry or use non-literal names",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface requires the single typed host:invoke entry to exist",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface requires every dual-entry channel to be acknowledged with a typed module and a reason",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface rejects flat channels outside any typed domain and unknown typed actions",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface requires migrate and freeze dispositions to carry a removal plan and rejects unknown dispositions",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: flat IPC admission surface reconciles the preload allowlist in both directions",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) passes on the current repository without fixtures",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) ships every negative class as a checked-in fixture",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-allowlist-dangling.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-spread-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bypass-registry.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-commented-handle.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-computed-handle.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-default-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-default-receiver.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dual-entry-unacknowledged.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-duplicate-typed-entry.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dynamic-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-escaped-identifier.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-handle-once.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-import-alias.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-alias.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-apply.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-call.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-named-default-import.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-namespace-alias.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-nested-default-binding.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-object-alias.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-aliased.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-bound-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-computed.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-default-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-default-receiver.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-direct-invoke.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-dynamic.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-mismatch.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-named-default-import.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-nested-default-binding.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-spaced.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-cjs.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-cts.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-js.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-jsx.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-mjs.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-mts.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-ts.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-tsx.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-removal-plan-missing.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-retired-channel-live.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-spaced-handle.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-static-method-name.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-template-before-namespace.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-unregistered-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture host-api-alias-member-unreconciled.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture host-api-unresolved-alias-member.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture knowledge-embedding-facade-missing.json through the real entry with a single locatable diagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-bound-typed-entry.json through the real entry without diagnostics",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-ordinary-bindings.json through the real entry without diagnostics",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-preload-bound-host-invoke.json through the real entry without diagnostics",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual ts production probes off disk",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual tsx production probes off disk",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual mts production probes off disk",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual cts production probes off disk",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual js production probes off disk",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual jsx production probes off disk",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual mjs production probes off disk",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual cjs production probes off disk",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) matches standalone and batch results for flat-ipc-allowlist-dangling.json",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) matches standalone and batch results for flat-ipc-bound-typed-entry.json",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) keeps a broken batch fixture separate from the next valid case",
+          "status": "passed"
+        },
+        {
+          "name": "contract check: real gate entry (node scripts/contract-check.mjs) distinguishes a broken fixture (exit 2) from a gate failure (exit 1)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/knowledge-api.test.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "knowledge host API rejects unpinned memory reads and an all-corpus raw-memory fallback",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API reads native-memory for SourceSet answers and preserves Studio pins",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API reads role-memory for SourceSet answers and preserves Studio pins",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API reads experience for SourceSet answers and preserves Studio pins",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API wraps wiki.status and reports Gateway failures",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API validates operations config before RPC and preserves the config base hash",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API rejects late operations snapshots after a session generation changes",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API uses owner config for omitted profiles, keeps explicit bounds and fails closed without config",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API returns a read-only SEKB runtime lessons report without Gateway writes",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API resolves Host SEKB state dir and workspace root without using process.cwd defaults",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API exposes SEKB ops host routes without gateway RPC and without auto-writes",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API passes explicit experienceShadow through the production SEKB confirm route",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API omits experienceShadow entirely when the explicit request is absent",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API configures memory-wiki defaults without overwriting unrelated plugin config",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API refuses Knowledge setup without changing a blocking plugin policy: 'not-in-allowlist'",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API refuses Knowledge setup without changing a blocking plugin policy: 'blocked-by-denylist'",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API refuses Knowledge setup without changing a blocking plugin policy: 'blocked-by-denylist'",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API preserves the runtime policy for an explicitly selected plugin slot",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API enumerates bounded text files and skips large or non-text imports",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API keeps draft review and steward review local until a reviewed change is applied",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API runs the semantic steward invoker through the gateway agent RPC when the active role is semantic",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API orchestrates inbox candidates into drafts without applying wiki writes",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API keeps automatic knowledge candidates as pending Inbox items without reviewed apply",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API triages inbox candidates as duplicate, incomplete, or ready for review",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API forces watched-directory automation to remain review-gated",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API reconciles watched file changes into versioned agent-driven review candidates",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API records knowledge provenance references as metadata only",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API validates proposals and applies only approved create proposals",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API converts legacy applyDraft calls into review-gated drafts without direct wiki apply",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API forwards the selected profile for explicit Wiki search",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API routes knowledge context only when scope and mode allow read-only search",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API keeps Runtime Lessons opt-in and records only current acknowledged candidates",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API preserves array Gateway rows and SourceRef in Host search",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API preserves results Gateway rows and SourceRef in Host search",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API preserves hits Gateway rows and SourceRef in Host search",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API matches error-experience advisories and updates effectiveness counters",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API aggregates governance quality metrics from audit issues and error-experience counters",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API auto-read uses owner admission and rejects raw scores without it",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API validates OKF bundles while preserving frontmatter and treating compatibility issues as warnings",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API rejects OKF concept files missing frontmatter or type",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API imports selected OKF concepts through wiki.ingest and records mapping metadata without wiki.apply",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API rejects archived Source Set evidence without fallback (semantic=false)",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API rejects archived Source Set evidence without fallback (semantic=true)",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API retains explicit Source Set version pins and rejects a changed owner revision",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API reports unverified Source Set excerpts as partial rather than a calibrated answer",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API applies saved Source Set workspace context without granting cross-workspace reads",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API checks source answers and support outcome: same",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API checks source answers and support outcome: changed",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API checks source answers and support outcome: provider-error",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API checks source answers and support outcome: unsupported",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API persists source sets and answers from their selected sources without applying durable wiki changes",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API uses the selected semantic service with owner pins and one shared deadline (query expires=false)",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API uses the selected semantic service with owner pins and one shared deadline (query expires=true)",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API normalizes provider whitespace before deriving owner egress and sending configure",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API keeps admitted lexical evidence available when the embedding status service fails",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API creates reviewable studio artifact drafts from selected source sets",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance pairs 10 drafts and 10 proposals without cross-selection",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance rejects stale approvals as conflicts and never calls wiki.apply",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance concurrent same captureKey calls create exactly one inbox candidate",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance idempotent apply retry is duplicate success and writes an operation journal",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API KS-03 GovernanceStore cutover hard acceptance new inbox/draft/proposal records go to SQLite and JSON governance writers stay zero",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API KS-03 GovernanceStore cutover hard acceptance imports legacy JSON in one transaction and leaves it read-only with parity 100%",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API KS-02 truthful DCS projection sink exposes a blockstore sink with read-back verification when state DB opens",
+          "status": "passed"
+        },
+        {
+          "name": "knowledge host API KS-02 truthful DCS projection sink falls back to a journal sink and never claims blockstore when state DB cannot open",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/knowledge-chat.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "Chat knowledge mode sends the selected open mode and preserves the exact citation pointer on navigation",
+          "status": "passed"
+        },
+        {
+          "name": "Chat knowledge mode restores the v1 checkpoint and opens its citation in Library",
+          "status": "passed"
+        },
+        {
+          "name": "Chat knowledge mode uses selected sources and saves a cited draft only after the explicit action",
+          "status": "passed"
+        },
+        {
+          "name": "Chat knowledge mode follows the Host evidence request, failure, retry and bounded follow-up context",
+          "status": "passed"
+        },
+        {
+          "name": "Chat knowledge mode preserves source version evidence and hides unmeasured confidence in excerpt responses",
+          "status": "passed"
+        },
+        {
+          "name": "Chat knowledge mode reflects source-set waiting and the actual draft/review phases before opening governed review",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/project-rag-chat-policy.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "Project RAG interaction policy keys the full query and independent scope/mode/profile identity",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy cancels optional reads and ignores late completion",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy has a finite timeout and preserves a completed read",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy displays only retained references from the terminal DCS receipt",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy waits for the active run and marks a missing receipt explicitly",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy does not count a dropped chunk from the same parent as retained",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy keeps an ambiguous legacy selection comparison unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy retries a terminal publication race and displays zero retained evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy retries an acknowledged terminal response until its manifest is published",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG interaction policy ignores a late receipt after the owning run changes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/project-rag-plan-owner.test.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "Project RAG owner-side plan keeps indexed owner bytes unchanged during gateway retrieval and pinned inspection",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan fuses actual FTS candidates with an injected dense lane using the same chunk pins",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan rejects an index generation change before returning ranked results",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan returns owner-verified lexical evidence on dense provider failure",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan uses explicit pins without starting a vector query or rebuilding the index",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan reads a current chunk pin without separate line arguments and rejects an altered digest",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan rejects a revoked owner pin even when a lane supplies the previous quote",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan keeps a denial sticky across a same-query restore in another lane",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan keeps a page fallback inside the same owner scope when the index is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan does not invoke a remote embedding in the local profile",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan rejects query operator injection without changing the active projection",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan rejects automatic reading of an exact source with a disclosed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan admits a single current confirmed exact source with content",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan keeps unknown freshness and advisory trust out of Auto-read",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan accepts either valid owner timestamp without a malformed timestamp masking the other",
+          "status": "passed"
+        },
+        {
+          "name": "Project RAG owner-side plan does not admit ambiguous exact parents or empty evidence",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/session-chain-panels.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "session task and worker panels consume owner results renders the worker transcript as a labeled conversation and keeps lifecycle detail collapsible",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results sends from the workspace session composer on Enter and preserves Shift+Enter",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results shows and scrolls the actual transcript while its task owner is still loading",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results keeps an unavailable recorded cost (undefined) unknown rather than zero",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results keeps an unavailable recorded cost (null) unknown rather than zero",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results preserves a recorded zero cost when the owner actually supplies it",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results reads acceptance for the displayed worker generation and preserves its transcript when that owner is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results keeps a project-wide Ledger warning unavailable and removes task selection",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results refreshes the current worker generation after definite rejection while retaining the input",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results uses the successful queued receipt without inventing a run or task acceptance",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results uses the successful steered receipt without inventing a run or task acceptance",
+          "status": "passed"
+        },
+        {
+          "name": "session task and worker panels consume owner results reconciles an unknown send with its original intervention key and clears only the acknowledged input",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/session-family-navigation.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "keeps an empty header task scope available and surfaces a failed read",
+          "status": "passed"
+        },
+        {
+          "name": "keeps an empty non-header task view hidden when requested",
+          "status": "passed"
+        },
+        {
+          "name": "ends loading when the header loses its task scope and ignores the pending read",
+          "status": "passed"
+        },
+        {
+          "name": "family navigation explicitly expands newly loaded children while retaining the order of other roots",
+          "status": "passed"
+        },
+        {
+          "name": "family navigation keeps interacted rows ordered while live status and child counts update",
+          "status": "passed"
+        },
+        {
+          "name": "family navigation uses keyboard disclosure without moving or selecting sessions",
+          "status": "passed"
+        },
+        {
+          "name": "family navigation reveals a selected child and leaves an explicit collapse intact on later renders",
+          "status": "passed"
+        },
+        {
+          "name": "family navigation navigates to the real spawn parent and exposes unloaded sources separately",
+          "status": "passed"
+        },
+        {
+          "name": "family navigation keeps every actual parent in a multi-generation relation view",
+          "status": "passed"
+        },
+        {
+          "name": "does not show a late Task Ledger response from another project",
+          "status": "passed"
+        },
+        {
+          "name": "does not carry task selection busy state into a different session scope",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/session-folder-tree.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "SessionFolderTree folder mutation dispatch discloses multiple children without duplicating them or filing them in a different group",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree folder mutation dispatch reveals the selected child when its family initially mounts",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree folder mutation dispatch renders the full nesting depth",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree folder mutation dispatch deletes the grandchild folder, not its ancestor",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree folder mutation dispatch deletes the mid-level folder with its own id",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree folder mutation dispatch renames the grandchild folder, not its ancestor",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree session rows renders grouped and ungrouped sessions through the shared row renderer",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree session rows adds no move control of its own next to the row",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree session rows marks the tree as grouped so filed sessions step in under their group label",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree drag-and-drop auto grouping shows the after-target guide line and dispatches the group request on drop",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree drag-and-drop auto grouping ignores dropping a session onto itself",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree drag-and-drop auto grouping nests grouped members in the stream container and leaves ungrouped rows outside it",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree drag-and-drop auto grouping draws no tree connectors",
+          "status": "passed"
+        },
+        {
+          "name": "SessionFolderTree drag-and-drop auto grouping renders the group header as a label with no leading glyph",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/session-task-dock.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "quiet conversation task dock keeps a blank conversation free of task controls and performs no task lookup",
+          "status": "passed"
+        },
+        {
+          "name": "quiet conversation task dock docks beside the composer, collapsed to the current step, and hides from its menu without cancelling",
+          "status": "passed"
+        },
+        {
+          "name": "quiet conversation task dock ignores an old session response and preserves the new task when calls finish out of order",
+          "status": "passed"
+        },
+        {
+          "name": "quiet conversation task dock refreshes after the matching task tool completes, without reopening a hidden task",
+          "status": "passed"
+        },
+        {
+          "name": "quiet conversation task dock keeps the last task marked stale when the owner is unavailable and recovers without changing ownership",
+          "status": "passed"
+        },
+        {
+          "name": "quiet conversation task dock reveals a new task without inheriting the previous task's hidden preference",
+          "status": "passed"
+        },
+        {
+          "name": "quiet conversation task dock shows the goal once and uses checkpoint facts as steps without inventing a percentage",
+          "status": "passed"
+        },
+        {
+          "name": "quiet conversation task dock derives progress from known child tasks and retains the parent acceptance state",
+          "status": "passed"
+        },
+        {
+          "name": "task handles shortens UUIDs like a commit and keeps short owner IDs whole",
+          "status": "passed"
+        },
+        {
+          "name": "task handles copies the full task ID from the chip and the menu",
+          "status": "passed"
+        },
+        {
+          "name": "task handles reports a copy failure instead of claiming success",
+          "status": "passed"
+        },
+        {
+          "name": "task handles opens the task and each child task in the ledger by their own IDs",
+          "status": "passed"
+        },
+        {
+          "name": "task handles offers no ID or ledger actions for a run plan that has no durable task",
+          "status": "passed"
+        },
+        {
+          "name": "task handles supports arrow keys and Escape in the menu, returning focus to its trigger",
+          "status": "passed"
+        },
+        {
+          "name": "dock lifetime retires an incomplete run plan when its run ends",
+          "status": "passed"
+        },
+        {
+          "name": "dock lifetime lets a finished plan leave with its run; the transcript keeps the record",
+          "status": "passed"
+        },
+        {
+          "name": "dock lifetime folds a finished durable task to a one-line receipt instead of removing its ID",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/task-trace-panel.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "task report UI reads on expansion, preserves unknown amounts and avoids duplicate reads on collapse",
+          "status": "passed"
+        },
+        {
+          "name": "task report UI discards delayed replies after changing the task scope",
+          "status": "passed"
+        },
+        {
+          "name": "task report UI rejects a mismatched report identity and allows an explicit retry",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/unit/task-ui-async-recovery.test.tsx",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "keeps pending configuration recovery available through edits and previews",
+          "status": "passed"
+        },
+        {
+          "name": "keeps operations blocked until a fresh poll confirms the saved configuration",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}

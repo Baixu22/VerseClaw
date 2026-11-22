@@ -24,6 +24,12 @@ assert scan['hits'] == 0
 checks = json.loads((root/'clean-checks.json').read_text(encoding='utf-8'))
 assert checks['driven_by'] == 'agent' and checks['commands']
 assert all(command['exitCode'] == 0 for command in checks['commands'])
+assert checks['candidate']['commit'] == report['candidate']['commit']
+units = json.loads((root/'unit-tests.json').read_text(encoding='utf-8'))
+assert units['failed'] == 0 and units['passed'] == units['tests'] == 388
+journey = json.loads((root/'journey.json').read_text(encoding='utf-8'))
+assert journey['stats']['expected'] == 1 and journey['stats']['unexpected'] == 0
 reviews = json.loads((root/'reviews.json').read_text(encoding='utf-8'))
 assert reviews['pendingFinalReview'] is False
+assert reviews['finalAcceptedActionableFindings'] == 0
 print(json.dumps({'passed':True, 'driven_by':'agent', 'candidate':report['candidate']['commit'], 'retainedFiles':len(files)}))
