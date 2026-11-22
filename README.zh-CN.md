@@ -165,7 +165,7 @@ pnpm dev
 
 `pnpm dev` 会先构建 VerseBrowser、嵌入式 runtime 和 bundled skills，再打开 Vite 与 Electron。Gateway 通常需要 10–30 秒就绪；只打开 Vite 页面不能获得完整 Electron Host services。
 
-已构建的 Gateway 启动时先尝试原生加载已解析的 JavaScript Doctor 契约，减少 SDK 别名加载器准备。Windows 插件的文件 URL 会转为文件系统路径，用于原生加载和缓存失效。挂载源码与外部插件仍使用各自的契约，迁移检查照常执行。运行 `pnpm run build:runtime` 后，可用 `node scripts/measure-gateway-startup.mjs` 在隔离的回环环境和空缓存下对照测速；每个有效样本都必须实际调用被测加载器并完成认证 RPC。
+已构建的 Gateway 启动时先尝试原生加载已解析的 JavaScript Doctor 契约，减少 SDK 别名加载器准备。Windows 插件的文件 URL 会转为文件系统路径，用于原生加载和缓存失效。挂载源码与外部插件仍使用各自的契约，迁移检查照常执行。内置渠道列表与 ID 查找共享各自根目录的元数据，渠道别名和每次请求的禁用判断使用同一份数据。运行 `pnpm run build:runtime` 后，可用 `node scripts/measure-gateway-startup.mjs` 在隔离的回环环境和空缓存下对照测速；每个有效样本都必须实际调用被测加载器并完成认证 RPC。
 
 Gateway 在运行时入口、静态模型目录、模型别名查询和插件激活判断中复用当前插件元数据。Telegram 与 Matrix 迁移检查在发现对应旧文件后加载数据读取模块。Reach Readers 在首次工具执行时初始化浏览器与转写服务。桌面构建并行执行前端编译、内置浏览器补丁与编译及 Electron 构建，等待全部产物完成后退出，并保留源码和产物溯源记录。
 

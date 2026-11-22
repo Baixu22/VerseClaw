@@ -104,3 +104,15 @@ the constraint, and lower the priority of owned validation processes. Retain
 separate output directories and leave other sessions' processes and dependencies
 under their owners. Record throttled runs as correctness evidence; performance
 gates use their original command and thresholds in a stable measurement window.
+
+Resource budgets belong to the selected execution run. An owner request to restore
+standard execution replaces earlier CPU, heap, process-memory and admission limits.
+Record standard runs separately with observational resource metrics and cleanup of
+their owned processes. Windows temporary output continues to use `D:`.
+
+For G3 bundled channel metadata changes, run
+`node node_modules/vitest/vitest.mjs run tests/unit/gateway-bundled-channel-metadata.test.ts tests/unit/gateway-channel-sidecar-loading.test.ts tests/unit/gateway-doctor-contract-loading.test.ts --maxWorkers=1 --no-file-parallelism`.
+The generated fixtures exercise the production loader with one root-owned metadata
+view, channel aliases, per-request disablement, setup fallback, read failures and
+root switching/eviction. Fresh runtime builds and authenticated Electron recovery
+measurements provide the subsequent startup evidence.

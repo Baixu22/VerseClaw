@@ -11,6 +11,9 @@ intent: Measure the managed Gateway startup path and remove verified startup bot
 expectedUserBehavior:
   - Gateway starts with the configured plugins and migrations intact and becomes usable after an authenticated RPC succeeds.
 touchedAreas:
+  - openclaw_runtime/src/channels/plugins/bundled.ts
+  - tests/unit/gateway-bundled-channel-metadata.test.ts
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/bundled-metadata-20261123/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/native-alias-clear-20261122/**
   - openclaw_runtime/src/plugins/plugin-module-loader-cache.ts
   - scripts/gateway-plugin-loader-cache.test.mjs
@@ -125,6 +128,7 @@ requiredRules:
   - gateway-readiness-policy
   - repository-artifact-retention
 requiredTests:
+  - tests/unit/gateway-bundled-channel-metadata.test.ts
   - scripts/gateway-plugin-loader-cache.test.mjs
   - scripts/gateway-workspace-alias.test.mjs
   - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
@@ -157,6 +161,7 @@ requiredTests:
   - tests/unit/gateway-process-launcher-trace.test.ts
   - tests/unit/gateway-plugin-env-contract.test.ts
 acceptance:
+  - Bundled channel enumeration and ID lookup share one metadata view in the existing root-owned load context. Plugin identities retain sorted enumeration and alias ownership, setup hints retain their fallback, and channel/plugin disablement is evaluated for each request. Failed reads remain retryable, empty results remain cached, and root switching or eviction uses the corresponding context. Registry refresh and Gateway teardown clear metadata, loaded entries and their loader caches through the existing lifecycle owner.
   - Clearing native plugin aliases copies and rewrites only entries containing a selected parent root. Unrelated owners retain their arrays and resolution order; selected owners are removed, empty aliases are deleted, and repeated cleanup leaves survivors untouched. CJS and ESM parent boundaries retain their existing resolution behavior.
   - Plugin loader cache entries use caller-supplied aliases directly. An omitted native mode uses the existing Node/Bun and built-dist policy; an omitted alias map retains cached default SDK configuration. Content keys, filename and explicit scope precedence, source-mode loader reuse, and native alias installation on cache hits retain their existing behavior. A tiny ESM projection links the production SDK import declaration to its real exported policy functions and detects missing imports and exports.
   - Native parent-scope selection reuses the loader root and nearest package root from one ancestor scan. Bundled plugins retain their normalized plugin boundary; external plugins retain their nearest package boundary even under a trusted OpenClaw ancestor. Module normalization stays before scanning, and subsequent calls read current metadata and symlink destinations.
