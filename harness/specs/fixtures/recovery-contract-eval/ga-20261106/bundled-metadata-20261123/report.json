@@ -1,0 +1,407 @@
+{
+  "schema": "G3BundledMetadataCloseout/v1",
+  "recordedAt": "2026-11-22T19:43:57.994507+00:00",
+  "candidate": {
+    "commit": "f2cf0be47f63f6f72ec7c43e5109eaff705307ab",
+    "tree": "d4e105e53d7e7b4ebe74842eb45065c5b6e0b852",
+    "dirty": false,
+    "root": "D:\\tmp\\g3-full-development-20261122-r20\\candidate",
+    "previousCommit": "e2988370e67aaedd16345bc387e9acd9179ed7fe",
+    "sourceInputsVerified": 11,
+    "baselineCompiledArtifacts": [
+      {
+        "file": "bundled-awiA1gTF.js",
+        "sha256": "c6c323752dee5ac44478acf835712ce4e052488639624e326d953039cc129a48"
+      },
+      {
+        "file": "state-migrations-D8q_b3yr.js",
+        "sha256": "2fbef835790062e2e1db3b511851ae150c944678fad59f6b38a29a09aab26bb3"
+      }
+    ],
+    "dependencies": "Existing root, runtime, runtime UI and VerseBrowser node_modules junctions",
+    "actor": "codex/g3-development-r21",
+    "driven_by": "agent",
+    "realHumanEvidence": false
+  },
+  "sourceCommits": [
+    "e2988370e67aaedd16345bc387e9acd9179ed7fe",
+    "f2cf0be47f63f6f72ec7c43e5109eaff705307ab"
+  ],
+  "sourceFingerprint": "0aabb350ca94ee4aa0afab5d6e1d1f306f39217cc889b2a77049dfedafbecd6a",
+  "sourceInputsVerified": 11,
+  "implementation": {
+    "sharedRootMetadata": true,
+    "ownerLifecycleReset": true,
+    "setupPolicyBodyUnchanged": true,
+    "loaderLines": 924,
+    "loaderBaselineLines": 941,
+    "metadataModuleLines": 184
+  },
+  "focusedTests": {
+    "passed": 18,
+    "failed": 0
+  },
+  "reviews": [
+    {
+      "revision": "r20",
+      "actionableFindings": 0
+    },
+    {
+      "revision": "r21",
+      "actionableFindings": 0,
+      "rawOutOfScopePlaceholderCount": 1,
+      "model": "ccs-workbuddy/deepseek-v4.1-flash"
+    }
+  ],
+  "runtimeCoreTypesMs": 10234,
+  "runtimeExtensionTypesMs": 16313,
+  "runtimeBuildMs": 64609,
+  "uncachedTypesMs": 45578,
+  "desktopBuildMs": 69250,
+  "windowSamples": 30,
+  "qualitySamples": 50,
+  "evaluation": {
+    "schema": "RecoveryContractEval/v1",
+    "generatedAt": "2026-11-22T19:40:09.238Z",
+    "drivenBy": "agent",
+    "actor": "recovery-contract-eval-driver",
+    "realHumanEvidence": false,
+    "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+    "status": "EVIDENCE_INSUFFICIENT",
+    "qualityClaimAllowed": false,
+    "metrics": {
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrectness": 1,
+      "unknownClassifiableRate": 0,
+      "mustPreserveFidelity": null,
+      "falseCompletionClaims": null,
+      "nextActionAccuracy": null,
+      "recoveryLatencyP50": null,
+      "recoveryLatencyP95": null
+    },
+    "coverage": {
+      "windows": [
+        {
+          "windowId": "intent-after-persist-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "effect-before-receipt-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "child-created-before-parent-advance-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "store-write-failure",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "repeated-restart",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        }
+      ],
+      "longSession": {
+        "requiredPairs": 30,
+        "observedPairs": 24,
+        "completePairs": 24,
+        "liveProviderPairs": 24,
+        "scriptedProviderPairs": 0,
+        "agentDerivedPairs": 0,
+        "families": {
+          "compression": 0,
+          "handoff": 6,
+          "fork": 6,
+          "restart": 6,
+          "revocation": 6
+        }
+      }
+    },
+    "gates": [
+      {
+        "name": "duplicateEffects",
+        "observed": 0,
+        "threshold": "= 0",
+        "pass": true
+      },
+      {
+        "name": "lostTasks",
+        "observed": 0,
+        "threshold": "= 0",
+        "pass": true
+      },
+      {
+        "name": "terminalCorrectness",
+        "observed": 1,
+        "threshold": "= 1",
+        "pass": true
+      },
+      {
+        "name": "unknownClassifiableRate",
+        "observed": 0,
+        "threshold": "<= 0.02",
+        "pass": true
+      },
+      {
+        "name": "mustPreserveFidelity",
+        "observed": null,
+        "threshold": "= 1",
+        "pass": null
+      },
+      {
+        "name": "falseCompletionClaims",
+        "observed": null,
+        "threshold": "= 0",
+        "pass": null
+      },
+      {
+        "name": "nextActionAccuracy",
+        "observed": null,
+        "threshold": ">= 0.95",
+        "pass": null
+      },
+      {
+        "name": "recoveryLatencyP50",
+        "observed": null,
+        "threshold": "<= 5000ms",
+        "pass": null
+      },
+      {
+        "name": "recoveryLatencyP95",
+        "observed": null,
+        "threshold": "<= 15000ms",
+        "pass": null
+      },
+      {
+        "name": "diskEvidenceComplete",
+        "observed": 0,
+        "threshold": "= 0 failures",
+        "pass": true
+      },
+      {
+        "name": "rerunOutsideAllowedRegion",
+        "observed": 0,
+        "threshold": "= 0 violations",
+        "pass": true
+      }
+    ],
+    "blockers": [],
+    "unmeasured": [
+      "long-session live-provider pairs: 24/30",
+      "long-session family compression: 0/6 live-provider pairs"
+    ],
+    "decision": {
+      "disposition": "evidence-insufficient",
+      "productDefaultChanged": false,
+      "requiresPublisherDecision": false
+    }
+  },
+  "legacyEvaluation": {
+    "schema": "RecoveryContractEval/v1",
+    "generatedAt": "2026-11-22T19:40:08.964Z",
+    "drivenBy": "agent",
+    "actor": "recovery-contract-eval-driver",
+    "realHumanEvidence": false,
+    "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+    "status": "EVIDENCE_INSUFFICIENT",
+    "qualityClaimAllowed": false,
+    "metrics": {
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrectness": 0.6,
+      "unknownClassifiableRate": 0.4,
+      "mustPreserveFidelity": null,
+      "falseCompletionClaims": null,
+      "nextActionAccuracy": null,
+      "recoveryLatencyP50": null,
+      "recoveryLatencyP95": null
+    },
+    "coverage": {
+      "windows": [
+        {
+          "windowId": "intent-after-persist-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "effect-before-receipt-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "child-created-before-parent-advance-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "store-write-failure",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "repeated-restart",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        }
+      ],
+      "longSession": {
+        "requiredPairs": 30,
+        "observedPairs": 26,
+        "completePairs": 26,
+        "liveProviderPairs": 26,
+        "scriptedProviderPairs": 0,
+        "agentDerivedPairs": 0,
+        "families": {
+          "compression": 2,
+          "handoff": 6,
+          "fork": 6,
+          "restart": 6,
+          "revocation": 6
+        }
+      }
+    },
+    "gates": [
+      {
+        "name": "duplicateEffects",
+        "observed": 0,
+        "threshold": "= 0",
+        "pass": true
+      },
+      {
+        "name": "lostTasks",
+        "observed": 0,
+        "threshold": "= 0",
+        "pass": true
+      },
+      {
+        "name": "terminalCorrectness",
+        "observed": 0.6,
+        "threshold": "= 1",
+        "pass": false
+      },
+      {
+        "name": "unknownClassifiableRate",
+        "observed": 0.4,
+        "threshold": "<= 0.02",
+        "pass": false
+      },
+      {
+        "name": "mustPreserveFidelity",
+        "observed": null,
+        "threshold": "= 1",
+        "pass": null
+      },
+      {
+        "name": "falseCompletionClaims",
+        "observed": null,
+        "threshold": "= 0",
+        "pass": null
+      },
+      {
+        "name": "nextActionAccuracy",
+        "observed": null,
+        "threshold": ">= 0.95",
+        "pass": null
+      },
+      {
+        "name": "recoveryLatencyP50",
+        "observed": null,
+        "threshold": "<= 5000ms",
+        "pass": null
+      },
+      {
+        "name": "recoveryLatencyP95",
+        "observed": null,
+        "threshold": "<= 15000ms",
+        "pass": null
+      },
+      {
+        "name": "diskEvidenceComplete",
+        "observed": 0,
+        "threshold": "= 0 failures",
+        "pass": true
+      },
+      {
+        "name": "rerunOutsideAllowedRegion",
+        "observed": 6,
+        "threshold": "= 0 violations",
+        "pass": false
+      }
+    ],
+    "blockers": [],
+    "unmeasured": [
+      "long-session live-provider pairs: 26/30",
+      "long-session family compression: 2/6 live-provider pairs"
+    ],
+    "decision": {
+      "disposition": "evidence-insufficient",
+      "productDefaultChanged": false,
+      "requiresPublisherDecision": false
+    }
+  },
+  "baseline": {
+    "status": "PENDING_SERIAL_WINDOW",
+    "matched": null,
+    "primaryHash": null,
+    "repeatHash": null,
+    "comparatorSha256": "71062d7d652a18dcaa3071921b1907554de3499fd37fb8c9cc5e4bf99371b81b"
+  },
+  "gaStatus": "NO_GO",
+  "failedGates": [
+    {
+      "gate": "frozen-recovery-contract",
+      "status": "EVIDENCE_INSUFFICIENT"
+    },
+    {
+      "gate": "typecheck",
+      "actualMs": 45578,
+      "limitMs": 45000
+    },
+    {
+      "gate": "desktop-build",
+      "actualMs": 69250,
+      "limitMs": 58000
+    },
+    {
+      "gate": "harness-ci",
+      "reason": "Fresh Agent Dev type/unit/contract timing hard limits"
+    },
+    {
+      "gate": "legacy-structure",
+      "status": "PENDING_SERIAL_WINDOW"
+    }
+  ],
+  "pendingSerialWindow": [
+    "independent legacy repeat",
+    "large Task Forest apply/export"
+  ],
+  "recordsArchived": 1362,
+  "execution": {
+    "cpuLimit": null,
+    "privateMemoryLimit": null,
+    "admissionLimit": null,
+    "temporaryVolume": "D:",
+    "heavySteps": "serial",
+    "actor": "codex/g3-development-r21"
+  },
+  "actor": "codex/g3-development-r21",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}

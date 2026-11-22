@@ -1,0 +1,26 @@
+{
+  "schema": "G3EvidenceVerification/v1",
+  "sourceInputsVerified": 11,
+  "allGitBlobsMatchNormalizedSources": true,
+  "protectedBytesAndStagingPreserved": true,
+  "archiveRecordsReadBack": 1362,
+  "archiveSha256": "8c81c9cea0e9ead3cb15142eb80086f96a832d8d84e0925cead1a45eb91ceab9",
+  "credentials": {
+    "variableNamesScanned": [
+      "RECOVERY_LIVE_API_KEY",
+      "ANYSEARCH_API_KEY",
+      "DDDAI_API_KEY",
+      "EXA_API_KEY",
+      "LOCAL3065_API_KEY",
+      "SILICONFLOW_API_KEY",
+      "Z30_API_KEY"
+    ],
+    "hits": 0,
+    "valuesRecorded": false
+  },
+  "privateTaskHistoryExcluded": true,
+  "excludedLocalRecords": 18,
+  "actor": "codex/g3-development-r21",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}
