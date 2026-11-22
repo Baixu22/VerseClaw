@@ -60,6 +60,9 @@ Package-root scans retain the nearest observed manifest for fallback within the
 same call, while preserving trusted OpenClaw ancestor priority and the twelve-directory limit.
 Parent-scope selection shares those scan results: bundled plugins use their normalized
 plugin boundary, while external plugins use their own nearest package boundary.
+Native alias cleanup checks preserve unrelated owner arrays, remove selected roots
+and retain CJS/ESM resolution. Empty and repeated cleanup skip copying or rewriting
+unaffected entries.
 Loader configuration checks use the production cache entry, native mode and content-key
 functions. Caller-supplied aliases skip default SDK preparation; missing fields retain
 the existing policy and cached configuration. Cache hits still install native aliases.

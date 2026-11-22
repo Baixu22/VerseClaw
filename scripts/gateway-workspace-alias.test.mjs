@@ -526,3 +526,114 @@ test('unknown aliases, absent parents and non-file URLs skip filesystem normaliz
   );
   assert.deepEqual(fixture.probes, []);
 });
+
+const clearStart = nativeSource.indexOf('function clearNativeAliasesForParentRoots(');
+const clearEnd = nativeSource.indexOf(
+  '\nexport function installOpenClawPluginSdkNativeResolver(',
+  clearStart
+);
+assert(clearStart >= 0 && clearEnd > clearStart, 'Native alias cleanup boundary is missing');
+const clearScript = new vm.Script(stripTypeScriptTypes(nativeSource.slice(clearStart, clearEnd)), {
+  filename: nativeSourcePath,
+});
+const clearRoot = path.resolve('native-alias-clear-fixture');
+const clearOwners = ['a', 'b', 'c'].map((name) => path.join(clearRoot, name));
+const clearEntry = (parentRoot) => ({ parentRoot, target: path.join(parentRoot, 'sdk.js') });
+
+function nativeClearFixture(groups) {
+  const operations = { filters: 0, sets: 0, deletes: 0 };
+  const aliases = new Map(
+    groups.map(([request, roots]) => {
+      const entries = roots.map(clearEntry);
+      entries.filter = function (...args) {
+        operations.filters += 1;
+        return Array.prototype.filter.apply(this, args);
+      };
+      return [request, entries];
+    })
+  );
+  const set = aliases.set.bind(aliases);
+  const remove = aliases.delete.bind(aliases);
+  aliases.set = (key, value) => {
+    operations.sets += 1;
+    return set(key, value);
+  };
+  aliases.delete = (key) => {
+    operations.deletes += 1;
+    return remove(key);
+  };
+  const context = vm.createContext({
+    path,
+    fileURLToPath,
+    pluginSdkNativeAliases: aliases,
+    fs: { realpathSync: path.resolve },
+  });
+  nativeScript.runInContext(context);
+  clearScript.runInContext(context);
+  return { aliases, operations, context };
+}
+
+test('empty native alias cleanup skips map traversal', () => {
+  const fixture = nativeClearFixture([[nativeRequest, clearOwners]]);
+  fixture.aliases[Symbol.iterator] = () => assert.fail('Empty cleanup must not traverse aliases');
+  fixture.context.clearNativeAliasesForParentRoots([]);
+  assert.deepEqual(fixture.operations, { filters: 0, sets: 0, deletes: 0 });
+});
+
+test('unrelated native alias cleanup keeps arrays without copying or rewriting', () => {
+  const fixture = nativeClearFixture([[nativeRequest, clearOwners.slice(0, 2)]]);
+  const entries = fixture.aliases.get(nativeRequest);
+  fixture.context.clearNativeAliasesForParentRoots([clearOwners[2]]);
+  assert.equal(fixture.aliases.get(nativeRequest), entries);
+  assert.deepEqual(fixture.operations, { filters: 0, sets: 0, deletes: 0 });
+  assert.equal(
+    fixture.context.resolveAliasTargetForParent(nativeRequest, {
+      filename: path.join(clearOwners[1], 'parent.js'),
+    }),
+    clearEntry(clearOwners[1]).target
+  );
+});
+
+test('native alias cleanup removes only selected owners and preserves CJS and ESM resolution', () => {
+  const fixture = nativeClearFixture([
+    [nativeRequest, clearOwners],
+    ['owned-alias', [clearOwners[0]]],
+    ['retained-alias', [clearOwners[1]]],
+  ]);
+  const retained = fixture.aliases.get('retained-alias');
+  fixture.context.clearNativeAliasesForParentRoots([
+    clearOwners[0],
+    clearOwners[0],
+    clearOwners[2],
+  ]);
+  assert.deepEqual(fixture.aliases.get(nativeRequest), [clearEntry(clearOwners[1])]);
+  assert.equal(fixture.aliases.has('owned-alias'), false);
+  assert.equal(fixture.aliases.get('retained-alias'), retained);
+  assert.deepEqual(fixture.operations, { filters: 2, sets: 1, deletes: 1 });
+  assert.equal(
+    fixture.context.resolveAliasTargetForParent(nativeRequest, {
+      filename: path.join(clearOwners[0], 'parent.js'),
+    }),
+    undefined
+  );
+  assert.equal(
+    fixture.context.resolveAliasTargetForParentUrl(
+      nativeRequest,
+      pathToFileURL(path.join(clearOwners[1], 'parent.js')).href
+    ),
+    clearEntry(clearOwners[1]).target
+  );
+});
+
+test('repeating native alias cleanup leaves surviving owners untouched', () => {
+  const fixture = nativeClearFixture([
+    [nativeRequest, clearOwners.slice(0, 2)],
+    ['retained-alias', [clearOwners[1]]],
+  ]);
+  fixture.context.clearNativeAliasesForParentRoots([clearOwners[0]]);
+  const entries = fixture.aliases.get(nativeRequest);
+  Object.assign(fixture.operations, { filters: 0, sets: 0, deletes: 0 });
+  fixture.context.clearNativeAliasesForParentRoots([clearOwners[0]]);
+  assert.equal(fixture.aliases.get(nativeRequest), entries);
+  assert.deepEqual(fixture.operations, { filters: 0, sets: 0, deletes: 0 });
+});

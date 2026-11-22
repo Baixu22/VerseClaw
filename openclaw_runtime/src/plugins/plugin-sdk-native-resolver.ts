@@ -359,6 +359,9 @@ function clearNativeAliasesForParentRoots(parentRoots: readonly string[]): void 
   }
   const parentRootSet = new Set(parentRoots);
   for (const [request, entries] of pluginSdkNativeAliases) {
+    if (!entries.some((entry) => parentRootSet.has(entry.parentRoot))) {
+      continue;
+    }
     const nextEntries = entries.filter((entry) => !parentRootSet.has(entry.parentRoot));
     if (nextEntries.length === 0) {
       pluginSdkNativeAliases.delete(request);

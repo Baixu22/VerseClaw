@@ -11,6 +11,7 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/native-alias-clear-20261122/**
   - openclaw_runtime/src/plugins/plugin-module-loader-cache.ts
   - scripts/gateway-plugin-loader-cache.test.mjs
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/loader-config-20261122/**
@@ -368,6 +369,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Clearing native plugin aliases copies and rewrites only entries containing a selected parent root. Unrelated owners retain their arrays and resolution order; selected owners are removed, empty aliases are deleted, and repeated cleanup leaves survivors untouched. CJS and ESM parent boundaries retain their existing resolution behavior.
   - Plugin loader cache entries use caller-supplied aliases directly. An omitted native mode uses the existing Node/Bun and built-dist policy; an omitted alias map retains cached default SDK configuration. Content keys, filename and explicit scope precedence, source-mode loader reuse, and native alias installation on cache hits retain their existing behavior. A tiny ESM projection links the production SDK import declaration to its real exported policy functions and detects missing imports and exports.
   - Native parent-scope selection reuses the loader root and nearest package root from one ancestor scan. Bundled plugins retain their normalized plugin boundary; external plugins retain their nearest package boundary even under a trusted OpenClaw ancestor. Module normalization stays before scanning, and subsequent calls read current metadata and symlink destinations.
   - Native loader package-root resolution probes each ancestor manifest once within its twelve-directory search. A trusted OpenClaw name or executable retains priority over the nearest ordinary package; missing, malformed and unreadable metadata retain the nearest observed package or module directory. Later calls read current metadata, and bundled and external parent scopes retain their existing boundaries.
