@@ -11,6 +11,9 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/plugins/plugin-module-loader-cache.ts
+  - scripts/gateway-plugin-loader-cache.test.mjs
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/loader-config-20261122/**
   - openclaw_runtime/src/plugins/sdk-alias.ts
   - openclaw_runtime/src/plugins/plugin-sdk-native-resolver.ts
   - scripts/gateway-workspace-alias.test.mjs
@@ -300,6 +303,7 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - scripts/gateway-plugin-loader-cache.test.mjs
   - scripts/gateway-workspace-alias.test.mjs
   - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
   - openclaw_runtime/src/agents/harness/selection.compass.test.ts
@@ -364,6 +368,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Plugin loader cache entries use caller-supplied aliases directly. An omitted native mode uses the existing Node/Bun and built-dist policy; an omitted alias map retains cached default SDK configuration. Content keys, filename and explicit scope precedence, source-mode loader reuse, and native alias installation on cache hits retain their existing behavior. A tiny ESM projection links the production SDK import declaration to its real exported policy functions and detects missing imports and exports.
   - Native parent-scope selection reuses the loader root and nearest package root from one ancestor scan. Bundled plugins retain their normalized plugin boundary; external plugins retain their nearest package boundary even under a trusted OpenClaw ancestor. Module normalization stays before scanning, and subsequent calls read current metadata and symlink destinations.
   - Native loader package-root resolution probes each ancestor manifest once within its twelve-directory search. A trusted OpenClaw name or executable retains priority over the nearest ordinary package; missing, malformed and unreadable metadata retain the nearest observed package or module directory. Later calls read current metadata, and bundled and external parent scopes retain their existing boundaries.
   - Native CJS and ESM alias resolution normalizes each parent path once before testing registered roots. First-match ordering, missing-path lexical fallback, outside-root rejection and fresh symlink targets on subsequent calls retain their existing behavior; unknown aliases and absent parents skip filesystem normalization.

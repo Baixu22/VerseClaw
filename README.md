@@ -267,7 +267,7 @@ Common commands:
 | `pnpm run lint:check` | Lint without modifying files |
 | `pnpm test` | Root test groups and selected regressions |
 | `pnpm run test:recovery:light` | Focused harness loading and interrupted bytecode-cache checks with one worker |
-| `pnpm run test:recovery:tiny` | Workspace exports, native SDK package roots and parent boundaries in one Node process with a 96 MiB heap limit |
+| `pnpm run test:recovery:tiny` | Workspace exports, native SDK boundaries and plugin loader configuration in one Node process with a 96 MiB heap limit |
 | `pnpm run test:e2e` | Build and run Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract and four-language coverage |
 | `pnpm run harness:ci` | Repository Harness baseline |

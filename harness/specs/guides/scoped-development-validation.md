@@ -60,6 +60,12 @@ Package-root scans retain the nearest observed manifest for fallback within the
 same call, while preserving trusted OpenClaw ancestor priority and the twelve-directory limit.
 Parent-scope selection shares those scan results: bundled plugins use their normalized
 plugin boundary, while external plugins use their own nearest package boundary.
+Loader configuration checks use the production cache entry, native mode and content-key
+functions. Caller-supplied aliases skip default SDK preparation; missing fields retain
+the existing policy and cached configuration. Cache hits still install native aliases.
+The same Node process links a tiny ESM projection using the production SDK import
+declaration and exported policy functions. Missing-import and missing-export controls
+must fail; Windows fixtures stay on `D:` and are removed after the check.
 It keeps SDK loader imports, Vitest workers and build steps out of this check.
 Record the process RSS peak separately from the JavaScript heap limit.
 The package script limits the JavaScript heap. Use the recorded bounded local
@@ -71,6 +77,12 @@ The smaller local lane runs the same checks with a 64 MiB Node heap and a
 read-only review use a 1.5 GiB admission floor and a 1 GiB pressure floor. Keep
 the 10% CPU ceiling and serial execution; low-cost development continues when
 these limits permit it during another task's full acceptance window.
+
+The two G3 task-spec metadata validations can use Node plus the native Git executable
+from `mingw64/bin`, with the same two-process 128 MiB private commit ceiling,
+10% CPU ceiling and 1 GiB/768 MiB admission/pressure floors as the serial Git-part
+lane. Bind this launcher to the two task specs and the current diff base; retain
+every deferred or interrupted receipt.
 
 When the owner requests low peak occupancy, keep validation steps serial and
 start them only after checking available memory. On this Windows laptop, owned
