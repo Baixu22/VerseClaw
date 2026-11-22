@@ -11,3 +11,5 @@ Carbon 使用六张实际 Electron 运行截图完成图片分析与视觉定稿
 主线候选 `a15290ca66e7cc3d67c53a5eda53345221abd146` 在独立干净检出完成复核：388 项定向单测全部通过，前端/Main 类型、接口、四语、通信回放及比较、源码保留和 Harness 检查通过；运行时从源码构建并启动 Gateway，桌面构建和 Electron 交互旅程通过。截图覆盖 1280×800 Light、960×800 Dark 及 en/zh/ja/ru 文案。具体回执见 `clean-checks.json`、`unit-tests.json`、`journey.json`。
 
 干净检出使用已安装依赖的规范包链接，生成扩展桥与构建资产。Electron 使用主工作区的专用隔离临时目录完成旅程。`validation.json` 保留每次执行与原始失败记录的恢复位置；初次 Windows 相对依赖链接、缺少生成桥以及临时目录启动失败均保留，后续结果使用新跑次记录。运行 `python verify.py` 可核对候选、产物哈希、凭据扫描和最终检查结果。
+
+全仓 `harness:ci` 的 59 项 Harness/source-policy 回归与文档规则通过，生成目录已同步。该入口随后停在 Agent Dev 审计：旧证据超过 24 小时新鲜度，既有 deep-test 性能条目仍为 blocked。具体失败与后续刷新归属见 `baseline-ci.json`；本次任务界面的干净候选结果记录在独立的 `clean-checks.json` 中。

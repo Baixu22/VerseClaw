@@ -3,11 +3,95 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-11-11T08:41:27.249Z
+Generated at: 2026-11-22T20:56:45.246Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
 This file is generated — edit the source of truth instead.
+
+## project-rag-bounded-research
+
+- wave: RAG-16
+- kind: request
+- key: `knowledge.researchStart`
+- default: false
+- defaultDisplay: explicit request only
+- risk: request-only
+- enable: Select Research in the Chat knowledge picker and run an explicit source search.
+- rollback: Cancel the current research and select Local or Quality; the selected source scope is retained.
+- executor: wired — `electron/services/knowledge-research.ts:56`
+
+> One owner scope and deadline cover at most three rounds, eight queries and two budgeted planning calls. Missing pricing, discarded evidence and cancellation return partial results.
+
+## project-rag-code-relationships
+
+- wave: RAG-15
+- kind: request
+- key: `context_understand.intent`
+- default: "lookup"
+- defaultDisplay: lookup
+- risk: request-only
+- enable: Request relationship or research in the normal coding context tool; context_impact explicitly requests the same exact relationship discovery.
+- rollback: Use lookup; the existing context-view-tools rollback removes the tool family.
+- executor: wired — `openclaw_runtime/src/agents/tools/context-agent-tools.ts:407`
+
+> Current owner/version checks admit each endpoint; traversal defaults to one hop and is capped at two hops and 32 files.
+
+## project-rag-task-context-hint
+
+- wave: RAG-15
+- kind: request
+- key: `context_understand.includeTaskHint`
+- default: true
+- defaultDisplay: true for relationship/research
+- risk: request-only
+- enable: Read the bound task revision, constraints and evidence references in an explicit relationship request or taskLedger.contextHint.
+- rollback: Set includeTaskHint=false; the independent taskLedger.contextHint request accepts enabled=false.
+- executor: wired — `openclaw_runtime/src/knowledge/retrieval/task-context-hint.ts:129`
+
+> The current session generation and Task Ledger binding own the read; changed or missing bindings return a gap without a task write.
+
+## project-rag-default-profile
+
+- wave: RAG-12
+- kind: config
+- key: `plugins.entries.memory-wiki.config.retrieval.profile`
+- default: "local"
+- defaultDisplay: local
+- risk: opt-in
+- enable: Choose Local, Quality or Research in Settings > Models & Providers > Knowledge operations.
+- rollback: Restore local and reread the owner configuration after Gateway restart.
+- executor: wired — `openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts:119`
+
+> The configured default applies to omitted profiles; source scope and interaction mode remain request facts.
+
+## project-rag-answer-strategy
+
+- wave: RAG-12
+- kind: config
+- key: `plugins.entries.memory-wiki.config.retrieval.answerMode`
+- default: "strict"
+- defaultDisplay: strict
+- risk: opt-in
+- enable: Choose the default answer strategy in Knowledge operations; Knowledge Librarian keeps the current explicit selection.
+- rollback: Restore strict in Knowledge operations.
+- executor: wired — `src/pages/Chat/KnowledgeChat.tsx:62`
+
+> Open answers identify model knowledge separately from owner evidence.
+
+## project-rag-index-storage-budget
+
+- wave: RAG-12
+- kind: config
+- key: `plugins.entries.memory-wiki.config.retrieval.maxStorageBytes`
+- default: "536870912"
+- defaultDisplay: 512 MiB
+- risk: opt-in
+- enable: Set the index publication storage budget in Knowledge operations.
+- rollback: Restore the previous verified budget and rebuild the current owner index.
+- executor: wired — `openclaw_runtime/src/knowledge/retrieval/index-controller.ts:258`, `openclaw_runtime/src/knowledge/retrieval/index-controller.ts:268`
+
+> Publication checks actual database, WAL and SHM bytes; staging and retired-generation cleanup remain visible.
 
 ## context-view-tools
 

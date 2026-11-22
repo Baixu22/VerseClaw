@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ui-integration",
+  "command": "pnpm run harness:ci",
+  "runs": [
+    {"receipt":"baseline-harness-ci-r1.command.json","exitCode":1,"failure":"Generated catalogs were stale; catalogs:gen subsequently completed and the source catalogs were refreshed."},
+    {"receipt":"baseline-harness-ci-r2.command.json","exitCode":1,"failure":"Agent Dev evidence is 101.88 hours old and its prior deep-test decision remains blocked by recorded hard performance limits."}
+  ],
+  "passedBeforeAudit": ["59 Harness/source-policy tests", "spec lifecycle", "duplicate allowlist", "10 policy-document checks", "catalog freshness after regeneration"],
+  "remainingBaselineWork": "Refresh Agent Dev Workbench/deep-test/quality evidence in the owning acceptance workstream after its serial resource window is released.",
+  "resourceBoundary": "This chat will not start additional build/typecheck/test/Electron batches while G4/G2 hold the serial resource window.",
+  "rawRecoveryDirectory": "D:/tmp/task-ui-integration-20261122-01a203cc"
+}
