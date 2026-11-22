@@ -36,6 +36,8 @@ touchedAreas:
   - openclaw_runtime/src/memory/memory-card.ts
   - openclaw_runtime/src/memory/context-pack.ts
   - openclaw_runtime/src/memory/memory-store.ts
+  - openclaw_runtime/src/plugins/provider-public-artifacts.ts
+  - tests/unit/provider-policy-ownership.test.ts
   - tests/unit/mission-control-loop.test.ts
   - tests/unit/project-experience-governance.test.ts
   - tests/unit/host-action-timeouts.test.ts
@@ -83,7 +85,9 @@ acceptance:
   - The memory journey waits for the Mission's admitted child sessions and parent session to become idle before querying its episode, preserving the original per-query deadline.
   - Before the first episode query, the journey reads current-generation completion batches and requires terminal execution plus settled delivery receipts for the Mission's admitted children. Pending or unknown delivery keeps that preflight open.
   - Fixed candidate tests and an actual Gateway memory lifecycle journey provide agent-labelled evidence with no silent failures or skips.
+  - Repeated thinking and session-history queries reuse the existing bundled provider ownership metadata until the bundled root changes. Explicit registries remain authoritative for configuration validation, keeping the completion-delivery preflight within its original deadline.
 requiredTests:
+  - pnpm exec vitest run tests/unit/provider-policy-ownership.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/fp-p1-host-bridge-deadline.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/roles-orchestration-panel.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/mission-control-loop.test.ts tests/unit/project-experience-governance.test.ts tests/unit/role-memory-v2.test.ts tests/unit/role-memory-context-provider.test.ts tests/unit/role-memory-eval-pack.test.ts tests/unit/host-action-timeouts.test.ts tests/unit/r0-4-host-invoke-timeout.test.ts tests/unit/r0-4-host-api-client-timeout.test.ts tests/unit/gateway-permissions-api.test.ts tests/unit/gateway-manager-heartbeat.test.ts tests/unit/memory-authority-contract.test.ts tests/unit/task-ledger-lifecycle.test.ts tests/unit/task-ledger-service.test.ts tests/unit/durable-task-event-store.test.ts tests/unit/role-spawn.test.ts tests/unit/error-governance-boundary.test.ts --maxWorkers=1

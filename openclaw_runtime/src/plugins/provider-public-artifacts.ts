@@ -17,6 +17,9 @@ import { loadBundledPluginPublicArtifactModuleSync } from "./public-surface-load
 
 const PROVIDER_POLICY_ARTIFACT_CANDIDATES = ["provider-policy-api.js"] as const;
 const providerPolicySurfaceByPluginId = new Map<string, BundledProviderPolicySurface | null>();
+let bundledProviderPolicyRegistry:
+  | { directory: string; plugins: PluginManifestRegistry["plugins"] }
+  | undefined;
 
 /** Provider policy hooks loaded from bundled plugin public artifacts. */
 export type BundledProviderPolicySurface = {
@@ -86,7 +89,24 @@ function resolveBundledProviderPolicyPluginId(
     return null;
   }
 
-  const registry = options.manifestRegistry ?? loadPluginManifestRegistry();
+  let registry = options.manifestRegistry;
+  if (!registry) {
+    // Gateway metadata stays fixed until restart. Share one root-bound ownership
+    // snapshot so thinking/history reads do not rediscover every plugin.
+    // Explicit registries retain authority over config validation.
+    if (
+      !bundledProviderPolicyRegistry ||
+      bundledProviderPolicyRegistry.directory !== bundledPluginsDir
+    ) {
+      bundledProviderPolicyRegistry = {
+        directory: bundledPluginsDir,
+        plugins: loadPluginManifestRegistry().plugins.filter(
+          (plugin) => plugin.origin === "bundled",
+        ),
+      };
+    }
+    registry = bundledProviderPolicyRegistry;
+  }
   for (const plugin of registry.plugins.toSorted((left, right) =>
     left.id.localeCompare(right.id),
   )) {
